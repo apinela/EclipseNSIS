@@ -35,7 +35,6 @@ import net.sf.eclipsensis.util.IOUtility;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.Action;
@@ -232,7 +231,6 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                             }
                             dialog.setDialogSize(dialogSize);
                             Font font = FontUtility.getFont(lang);
-                            final DashedLineBorder border = new DashedLineBorder();
                             for(Iterator iter=dialog.getChildren().iterator(); iter.hasNext(); ) {
                                 InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
                                 if(widget instanceof InstallOptionsPicture) {
@@ -259,7 +257,6 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                                 gc.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
                                                 gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_BLACK));
                                                 gc.fillRectangle(0, 0, dim.width, dim.height);
-                                                border.paint(new SWTGraphics(gc),new org.eclipse.draw2d.geometry.Rectangle(0, 0, dim.width, dim.height));
                                                 Image widgetImage = picture.getImage();
                                                 Rectangle rect = widgetImage.getBounds();
                                                 int x, y, width, height;
@@ -280,6 +277,9 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                                     height = rect.height;
                                                 }
                                                 gc.drawImage(widgetImage, 0, 0, rect.width, rect.height, x, y, width, height);
+                                                gc.setLineStyle(SWT.LINE_CUSTOM);
+                                                gc.setLineDash(DashedLineBorder.DASHES);
+                                                gc.drawRectangle(0, 0, dim.width-1, dim.height-1);
                                                 gc.dispose();
                                                 ImageLoader loader = new ImageLoader();
                                                 loader.data = new ImageData[]{bitmap.getImageData()};

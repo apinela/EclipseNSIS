@@ -27,8 +27,7 @@ import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.startup.FileAssociationChecker;
 import net.sf.eclipsensis.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
@@ -43,6 +42,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.editors.text.*;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -56,6 +56,9 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     private Position mCurrentPosition = null;
     private Mutex mMutex = new Mutex();
     private HTMLExporter mHTMLExporter;
+    private boolean mTextDragAndDropEnabled= false;
+    private boolean mTextDragAndDropInstalled= false;
+    private Object mTextDragAndDropToken;
 
     /**
      *
@@ -175,6 +178,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     {
         super.createPartControl(parent);
         ProjectionViewer viewer= (ProjectionViewer) getSourceViewer();
+
         mProjectionSupport= new ProjectionSupport(viewer, getAnnotationAccess(), getSharedColors());
         mProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
         mProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
@@ -388,60 +392,176 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         };
         viewer.addSelectionChangedListener(listener);
         viewer.addPostSelectionChangedListener(listener);
+        return viewer;
+    }
 
-        //Add support for Drag & Drop
-        final StyledText text2 = viewer.getTextWidget();
-        DropTarget target = new DropTarget(text2, DND.DROP_DEFAULT | DND.DROP_COPY);
-        target.setTransfer(new Transfer[]{NSISCommandTransfer.INSTANCE, FileTransfer.getInstance()});
-        target.addDropListener(new DropTargetAdapter() {
-            public void dragEnter(DropTargetEvent e)
+    //This is copied from AbstractTextEditor so that we can support
+    //text as well as custom drag & drop
+    protected void installTextDragAndDrop(ISourceViewer viewer)
+    {
+        if (mTextDragAndDropEnabled || viewer == null) {
+            return;
+        }
+
+        if (mTextDragAndDropInstalled) {
+            mTextDragAndDropEnabled= true;
+            return;
+        }
+
+        final IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
+        if (dndService == null) {
+            return;
+        }
+
+        mTextDragAndDropEnabled= true;
+
+        final StyledText st= viewer.getTextWidget();
+
+        // Install drag source
+        final ISelectionProvider selectionProvider= viewer.getSelectionProvider();
+        final DragSource source= new DragSource(st, DND.DROP_COPY | DND.DROP_MOVE);
+        source.setTransfer(new Transfer[] {TextTransfer.getInstance()});
+        source.addDragListener(new DragSourceAdapter() {
+            String mSelectedText;
+            Point mSelection;
+            public void dragStart(DragSourceEvent event)
             {
-                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
-                   FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
-                    //Don't want default feedback- we will do it ourselves
-                    e.feedback = DND.FEEDBACK_NONE;
-                    if (e.detail == DND.DROP_DEFAULT) {
-                        e.detail = DND.DROP_COPY;
+                mTextDragAndDropToken= null;
+
+                if (!mTextDragAndDropEnabled) {
+                    event.doit= false;
+                    event.image= null;
+                    return;
+                }
+
+                try {
+                    mSelection= st.getSelection();
+                    int offset= st.getOffsetAtLocation(new Point(event.x, event.y));
+                    Point p= st.getLocationAtOffset(offset);
+                    if (p.x > event.x) {
+                        offset--;
+                    }
+                    event.doit= offset > mSelection.x && offset < mSelection.y;
+
+                    ISelection selection= selectionProvider.getSelection();
+                    if (selection instanceof ITextSelection)
+                        mSelectedText= ((ITextSelection)selection).getText();
+                    else // fallback to widget
+                        mSelectedText= st.getSelectionText();
+                } catch (IllegalArgumentException ex) {
+                    event.doit= false;
+                }
+            }
+
+            public void dragSetData(DragSourceEvent event)
+            {
+                event.data= mSelectedText;
+                mTextDragAndDropToken= this; // Can be any non-null object
+            }
+
+            public void dragFinished(DragSourceEvent event)
+            {
+                try {
+                    if (event.detail == DND.DROP_MOVE && validateEditorInputState()) {
+                        Point newSelection= st.getSelection();
+                        int length= mSelection.y - mSelection.x;
+                        int delta= 0;
+                        if (newSelection.x < mSelection.x)
+                            delta= length;
+                        st.replaceTextRange(mSelection.x + delta, length, ""); //$NON-NLS-1$
+
+                        if (mTextDragAndDropToken == null) {
+                            // Move in same editor - end compound change
+                            IRewriteTarget target= (IRewriteTarget)getAdapter(IRewriteTarget.class);
+                            if (target != null)
+                                target.endCompoundChange();
+                        }
+
+                    }
+                } finally {
+                    mTextDragAndDropToken= null;
+                }
+            }
+        });
+
+        // Install drag target
+        DropTargetListener dropTargetListener= new DropTargetAdapter() {
+            private Point mSelection;
+
+            public void dragEnter(DropTargetEvent event)
+            {
+                if(NSISCommandTransfer.INSTANCE.isSupportedType(event.currentDataType) ||
+                   FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+                   //Don't want default feedback- we will do it ourselves
+                    event.feedback = DND.FEEDBACK_NONE;
+                    if (event.detail == DND.DROP_DEFAULT) {
+                        event.detail = DND.DROP_COPY;
+                    }
+                }
+                else {
+                    mTextDragAndDropToken= null;
+                    mSelection= st.getSelection();
+
+                    if (!mTextDragAndDropEnabled)
+                    {
+                        event.detail= DND.DROP_NONE;
+                        event.feedback= DND.FEEDBACK_NONE;
+                        return;
+                    }
+
+                    if (event.detail == DND.DROP_DEFAULT) {
+                        event.detail= DND.DROP_MOVE;
                     }
                 }
             }
 
-            public void dragOperationChanged(DropTargetEvent e)
+            public void dragOperationChanged(DropTargetEvent event)
             {
-                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
-                   FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
-                    //Don't want default feedback- we will do it ourselves
-                    e.feedback = DND.FEEDBACK_NONE;
-                    if (e.detail == DND.DROP_DEFAULT) {
-                        e.detail = DND.DROP_COPY;
+                if (NSISCommandTransfer.INSTANCE.isSupportedType(event.currentDataType) ||
+                    FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+                    // Don't want default feedback- we will do it ourselves
+                    event.feedback = DND.FEEDBACK_NONE;
+                    if (event.detail == DND.DROP_DEFAULT) {
+                        event.detail = DND.DROP_COPY;
+                    }
+                }
+                else {
+                    if (!mTextDragAndDropEnabled) {
+                        event.detail= DND.DROP_NONE;
+                        event.feedback= DND.FEEDBACK_NONE;
+                        return;
+                    }
+
+                    if (event.detail == DND.DROP_DEFAULT) {
+                        event.detail= DND.DROP_MOVE;
                     }
                 }
             }
 
-            public void dragOver(DropTargetEvent e)
+            public void dragOver(DropTargetEvent event)
             {
-                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
-                   FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
-                    //Don't want default feedback- we will do it ourselves
-                    e.feedback = DND.FEEDBACK_NONE;
-                    text2.setFocus();
-                    Point location = text2.getDisplay().map(null, text2, e.x, e.y);
+                if (NSISCommandTransfer.INSTANCE.isSupportedType(event.currentDataType) ||
+                    FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+                    // Don't want default feedback- we will do it ourselves
+                    event.feedback = DND.FEEDBACK_NONE;
+                    st.setFocus();
+                    Point location = st.getDisplay().map(null, st, event.x, event.y);
                     location.x = Math.max(0, location.x);
                     location.y = Math.max(0, location.y);
                     int offset;
                     try {
-                        offset = text2.getOffsetAtLocation(new Point(location.x, location.y));
+                        offset = st.getOffsetAtLocation(new Point(location.x, location.y));
                     }
                     catch (IllegalArgumentException ex) {
                         try {
-                            offset = text2.getOffsetAtLocation(new Point(0, location.y));
+                            offset = st.getOffsetAtLocation(new Point(0, location.y));
                         }
                         catch (IllegalArgumentException ex2) {
-                            offset = text2.getCharCount();
-                            Point maxLocation = text2.getLocationAtOffset(offset);
+                            offset = st.getCharCount();
+                            Point maxLocation = st.getLocationAtOffset(offset);
                             if (location.y >= maxLocation.y) {
                                 if (location.x < maxLocation.x) {
-                                    offset = text2.getOffsetAtLocation(new Point(location.x, maxLocation.y));
+                                    offset = st.getOffsetAtLocation(new Point(location.x, maxLocation.y));
                                 }
                             }
                         }
@@ -449,22 +569,205 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                     IDocument doc = getDocumentProvider().getDocument(getEditorInput());
                     offset = getCaretOffsetForInsertCommand(doc, offset);
 
-                    text2.setCaretOffset(offset);
+                    st.setCaretOffset(offset);
+                }
+                else {
+                    if (!mTextDragAndDropEnabled) {
+                        event.feedback= DND.FEEDBACK_NONE;
+                        return;
+                    }
+
+                    event.feedback |= DND.FEEDBACK_SCROLL;
                 }
             }
 
-            public void drop(DropTargetEvent e)
+            public void drop(DropTargetEvent event)
             {
-                if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType)) {
-                    insertCommand((NSISCommand)e.data, false);
+                if (NSISCommandTransfer.INSTANCE.isSupportedType(event.currentDataType)) {
+                    insertCommand((NSISCommand)event.data, false);
                 }
-                else if(FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
-                    insertFiles((String[])e.data);
+                else if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+                    insertFiles((String[])event.data);
+                }
+                else {
+                    try {
+                        if (!mTextDragAndDropEnabled) {
+                            return;
+                        }
+
+                        if (mTextDragAndDropToken != null && event.detail == DND.DROP_MOVE) {
+                            // Move in same editor
+                            int caretOffset= st.getCaretOffset();
+                            if (mSelection.x <= caretOffset && caretOffset <= mSelection.y) {
+                                event.detail= DND.DROP_NONE;
+                                return;
+                            }
+
+                            // Start compound change
+                            IRewriteTarget target= (IRewriteTarget)getAdapter(IRewriteTarget.class);
+                            if (target != null) {
+                                target.beginCompoundChange();
+                            }
+                        }
+
+                        if (!validateEditorInputState()) {
+                            event.detail= DND.DROP_NONE;
+                            return;
+                        }
+
+                        String text= (String)event.data;
+                        Point newSelection= st.getSelection();
+                        st.insert(text);
+                        st.setSelectionRange(newSelection.x, text.length());
+                    }
+                    finally {
+                        mTextDragAndDropToken= null;
+                    }
                 }
             }
-        });
-        return viewer;
+        };
+        dndService.addMergedDropTarget(st, DND.DROP_DEFAULT | DND.DROP_MOVE | DND.DROP_COPY,
+                                        new Transfer[] {NSISCommandTransfer.INSTANCE,
+                                                        FileTransfer.getInstance(),
+                                                        TextTransfer.getInstance()},
+                                        dropTargetListener);
+
+        mTextDragAndDropInstalled= true;
+        mTextDragAndDropEnabled= true;
     }
+
+    //This is copied from AbstractTextEditor so that we can support
+    //text as well as custom drag & drop
+    protected void uninstallTextDragAndDrop(ISourceViewer viewer)
+    {
+        mTextDragAndDropEnabled= false;
+    }
+    /**
+     * @param text
+     * @param target
+     */
+//    protected void initializeDragAndDrop(ISourceViewer viewer)
+//    {
+//        final StyledText text = viewer.getTextWidget();
+//        IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
+//        if(dndService != null) {
+//            int ops = DND.DROP_DEFAULT | DND.DROP_COPY;
+//            Transfer[] transfers = new Transfer[]{NSISCommandTransfer.INSTANCE,
+//                                                  FileTransfer.getInstance()};
+//
+//            final ITextEditorDropTargetListener listener = getTextEditorDropTargetListener();
+//
+//            if (listener != null) {
+//                ops |= DND.DROP_MOVE;
+//                transfers = (Transfer[])Common.joinArrays(new Object[] {transfers, listener.getTransfers()});
+//            }
+//
+//            DropTargetListener listener2 = new DropTargetListener() {
+//                public void dragEnter(DropTargetEvent e)
+//                {
+//                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
+//                       FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+//                        //Don't want default feedback- we will do it ourselves
+//                        e.feedback = DND.FEEDBACK_NONE;
+//                        if (e.detail == DND.DROP_DEFAULT) {
+//                            e.detail = DND.DROP_COPY;
+//                        }
+//                    }
+//                    else if(listener != null) {
+//                        listener.dragEnter(e);
+//                    }
+//                }
+//
+//                public void dragOperationChanged(DropTargetEvent e)
+//                {
+//                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
+//                       FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+//                        //Don't want default feedback- we will do it ourselves
+//                        e.feedback = DND.FEEDBACK_NONE;
+//                        if (e.detail == DND.DROP_DEFAULT) {
+//                            e.detail = DND.DROP_COPY;
+//                        }
+//                    }
+//                    else if(listener != null) {
+//                        listener.dragOperationChanged(e);
+//                    }
+//                }
+//
+//                public void dragOver(DropTargetEvent e)
+//                {
+//                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
+//                       FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+//                        //Don't want default feedback- we will do it ourselves
+//                        e.feedback = DND.FEEDBACK_NONE;
+//                       text.setFocus();
+//                        Point location = text.getDisplay().map(null, text, e.x, e.y);
+//                        location.x = Math.max(0, location.x);
+//                        location.y = Math.max(0, location.y);
+//                        int offset;
+//                        try {
+//                            offset = text.getOffsetAtLocation(new Point(location.x, location.y));
+//                        }
+//                        catch (IllegalArgumentException ex) {
+//                            try {
+//                                offset = text.getOffsetAtLocation(new Point(0, location.y));
+//                            }
+//                            catch (IllegalArgumentException ex2) {
+//                                offset = text.getCharCount();
+//                                Point maxLocation = text.getLocationAtOffset(offset);
+//                                if (location.y >= maxLocation.y) {
+//                                    if (location.x < maxLocation.x) {
+//                                        offset = text.getOffsetAtLocation(new Point(location.x, maxLocation.y));
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        IDocument doc = getDocumentProvider().getDocument(getEditorInput());
+//                        offset = getCaretOffsetForInsertCommand(doc, offset);
+//
+//                        text.setCaretOffset(offset);
+//                    }
+//                    else if(listener != null) {
+//                        listener.dragOver(e);
+//                    }
+//                }
+//
+//                public void drop(DropTargetEvent e)
+//                {
+//                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType)) {
+//                        insertCommand((NSISCommand)e.data, false);
+//                    }
+//                    else if(FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+//                        insertFiles((String[])e.data);
+//                    }
+//                    else if(listener != null) {
+//                        listener.drop(e);
+//                    }
+//                }
+//
+//                public void dragLeave(DropTargetEvent e)
+//                {
+//                    if(listener != null) {
+//                        listener.dragLeave(e);
+//                    }
+//                }
+//
+//                public void dropAccept(DropTargetEvent e)
+//                {
+//                    if(listener != null) {
+//                        listener.dropAccept(e);
+//                    }
+//                }
+//            };
+//            dndService.addMergedDropTarget(text, DND.DROP_DEFAULT | DND.DROP_COPY,
+//                                           transfers,listener2);
+//        }
+//
+//
+//        IPreferenceStore store= getPreferenceStore();
+//        if (store != null && store.getBoolean(PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED)) {
+//            installTextDragAndDrop(viewer);
+//        }
+//    }
 
     private void insertFiles(String[] files)
     {
@@ -600,7 +903,10 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                                 styledText.setFocus();
                             }
                             int offset = styledText.getCaretOffset();
-                            text = text + doc.getLineDelimiter(styledText.getLineAtOffset(offset));
+                            String delim = doc.getLineDelimiter(styledText.getLineAtOffset(offset));
+                            if (delim != null) {
+                                text = text + delim;
+                            }
                             doc.replace(offset, 0, text);
                             styledText.setCaretOffset(offset + text.length());
                         }

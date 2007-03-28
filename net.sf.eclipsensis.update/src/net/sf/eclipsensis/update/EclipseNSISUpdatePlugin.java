@@ -14,9 +14,11 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
 import net.sf.eclipsensis.update.scheduler.Scheduler;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -69,6 +71,19 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
     {
         mPluginId = context.getBundle().getSymbolicName();
         super.start(context);
+        migratePreferences();
+    }
+
+    private void migratePreferences()
+    {
+        IPreferenceStore prefs = getPreferenceStore();
+        int pluginPrefsVersion = prefs.getInt(IUpdatePreferenceConstants.PLUGIN_PREFERENCES_VERSION);
+        if(IUpdatePreferenceConstants.PLUGIN_PREFERENCES_VERSION_NUMBER > pluginPrefsVersion) {
+            prefs.setValue(IUpdatePreferenceConstants.DAILY_TIME, 3600*prefs.getInt(IUpdatePreferenceConstants.DAILY_TIME));
+            prefs.setValue(IUpdatePreferenceConstants.WEEKLY_TIME, 3600*prefs.getInt(IUpdatePreferenceConstants.WEEKLY_TIME));
+            prefs.setValue(IUpdatePreferenceConstants.MONTHLY_TIME, 3600*prefs.getInt(IUpdatePreferenceConstants.MONTHLY_TIME));
+            prefs.setValue(IUpdatePreferenceConstants.PLUGIN_PREFERENCES_VERSION, IUpdatePreferenceConstants.PLUGIN_PREFERENCES_VERSION_NUMBER);
+        }
     }
 
     /**

@@ -11,6 +11,7 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFileDialog;
@@ -83,7 +84,10 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
      */
     public void setDestination(String destination)
     {
-        mDestination = destination;
+        if(!Common.stringsAreEqual(mDestination, destination)) {
+            setDirty();
+            mDestination = destination;
+        }
     }
 
     /**
@@ -99,7 +103,10 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
      */
     public void setName(String name)
     {
-        mName = name;
+        if(!Common.stringsAreEqual(mName, name)) {
+            setDirty();
+            mName = name;
+        }
     }
 
     /**
@@ -115,10 +122,13 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
      */
     public void setOverwriteMode(int overwriteMode)
     {
-        mOverwriteMode = overwriteMode;
+        if(mOverwriteMode != overwriteMode) {
+            setDirty();
+            mOverwriteMode = overwriteMode;
+        }
     }
 
-    public String validate(boolean recursive)
+    public String doValidate()
     {
         if(!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
@@ -127,7 +137,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.destination.error"); //$NON-NLS-1$
         }
         else {
-            return super.validate(recursive);
+            return super.doValidate();
         }
     }
 

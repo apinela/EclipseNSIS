@@ -3,14 +3,13 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.search;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -65,7 +64,7 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
         mAnalyzer = analyzer;
         mSearcher = new NSISHelpSearcher(this);
     }
-    
+
     public NSISHelpSearcher getSearcher()
     {
         return mSearcher;
@@ -77,7 +76,7 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
             mScheduler.cancelJobs(JOB_FAMILY);
         }
     }
- 
+
     public void indexHelp()
     {
         stopIndexing();
@@ -96,8 +95,8 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
                     mIndexLocation.mkdirs();
                 }
                 writer = new IndexWriter(mIndexLocation.getAbsolutePath(), mAnalyzer, true);
-                writer.maxFieldLength = 1000000;
-        
+                writer.setMaxFieldLength(1000000);
+
                 status = indexDocs(monitor, writer, mDocumentRoot);
                 if(status.isOK()) {
                     writer.optimize();
@@ -125,8 +124,8 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
             }
             return status;
         }
-        
-        private IStatus indexDocs(IProgressMonitor monitor, IndexWriter writer, File file) throws Exception 
+
+        private IStatus indexDocs(IProgressMonitor monitor, IndexWriter writer, File file) throws Exception
         {
             if (file.isDirectory()) {
                 File[] files = file.listFiles();
@@ -140,7 +139,7 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
                         return status;
                     }
                 }
-            } 
+            }
             else {
                 if(monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
@@ -155,18 +154,18 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
             }
             return Status.OK_STATUS;
         }
-        
+
         private Document makeDocument(File f) throws IOException, InterruptedException
         {
             Document doc = new Document();
 
-            doc.add(Field.UnIndexed(INDEX_FIELD_URL, IOUtility.getFileURLString(f)));
+            doc.add(new Field(INDEX_FIELD_URL, IOUtility.getFileURLString(f), Field.Store.YES, Field.Index.NO));
 
-            HTMLParser parser = new HTMLParser(f);
+            HTMLParser parser = new HTMLParser(new FileInputStream(f));
 
-            doc.add(Field.Text(INDEX_FIELD_CONTENTS, parser.getReader()));
-            doc.add(Field.UnIndexed(INDEX_FIELD_SUMMARY, parser.getSummary()));
-            doc.add(Field.Text(INDEX_FIELD_TITLE, parser.getTitle()));
+            doc.add(new Field(INDEX_FIELD_CONTENTS, parser.getReader(), Field.TermVector.NO));
+            doc.add(new Field(INDEX_FIELD_SUMMARY, parser.getSummary(), Field.Store.YES, Field.Index.NO));
+            doc.add(new Field(INDEX_FIELD_TITLE, parser.getTitle(), Field.Store.YES, Field.Index.TOKENIZED));
 
             return doc;
         }

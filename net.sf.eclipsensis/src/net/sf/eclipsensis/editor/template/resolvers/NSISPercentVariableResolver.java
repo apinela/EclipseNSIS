@@ -10,11 +10,14 @@
 package net.sf.eclipsensis.editor.template.resolvers;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.editor.template.INSISTemplateConstants;
 
 import org.eclipse.jface.text.templates.SimpleTemplateVariableResolver;
 
 public class NSISPercentVariableResolver extends SimpleTemplateVariableResolver
 {
+    private static final String PERCENT_VARIABLE_VALUE = Character.toString(INSISTemplateConstants.IDENTIFIER_BOUNDARY);
+
     /**
      * @param type
      * @param description
@@ -22,6 +25,6 @@ public class NSISPercentVariableResolver extends SimpleTemplateVariableResolver
     public NSISPercentVariableResolver()
     {
         super("percent", EclipseNSISPlugin.getResourceString("nsis.resolvers.percent.description")); //$NON-NLS-1$ //$NON-NLS-2$
-        setEvaluationString("%"); //$NON-NLS-1$
+        setEvaluationString(PERCENT_VARIABLE_VALUE);
     }
 }

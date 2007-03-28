@@ -98,10 +98,10 @@ public class InstallOptionsWizardPage extends WizardPage
         composite.setLayout(layout);
         final Label l = NSISWizardDialogUtil.createLabel(composite,InstallOptionsPlugin.getResourceString("wizard.page.header"), true, null, false); //$NON-NLS-1$
         l.setFont(JFaceResources.getBannerFont());
-        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         final Label l2 = NSISWizardDialogUtil.createLabel(composite,InstallOptionsPlugin.getResourceString("wizard.page.text"), true, null, false); //$NON-NLS-1$
-        final GridData gridData = (GridData)NSISWizardDialogUtil.getLayoutControl(l2).getLayoutData();
+        final GridData gridData = (GridData)l2.getLayoutData();
         Dialog.applyDialogFont(l2);
         gridData.widthHint = Common.calculateControlSize(l2,80,0).x;
 
@@ -264,7 +264,7 @@ public class InstallOptionsWizardPage extends WizardPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
         Label l = NSISWizardDialogUtil.createLabel(composite,InstallOptionsPlugin.getResourceString("create.from.template.label"),b.getSelection(),m,true); //$NON-NLS-1$
-        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         final List list = new List(composite,SWT.BORDER|SWT.SINGLE|SWT.FULL_SELECTION);
         data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -278,7 +278,7 @@ public class InstallOptionsWizardPage extends WizardPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
         l = NSISWizardDialogUtil.createLabel(composite,InstallOptionsPlugin.getResourceString("template.description.label"),true,m,false); //$NON-NLS-1$
-        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         final StyledText t = new StyledText(composite,SWT.BORDER|SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
         data = new GridData(SWT.FILL, SWT.FILL, true, true);

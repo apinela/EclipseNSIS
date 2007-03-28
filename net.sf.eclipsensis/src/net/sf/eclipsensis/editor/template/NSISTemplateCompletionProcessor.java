@@ -34,7 +34,7 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
             if(n == 0) {
                 n = tp1.getDisplayString().toLowerCase().compareTo(tp2.getDisplayString().toLowerCase());
             }
-            return 0;
+            return n;
         }
 
     };
@@ -105,30 +105,19 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
             int offset)
     {
         ICompletionProposal[] proposals = super.computeCompletionProposals(viewer, offset);
-        if(mInsertTemplatesMode) {
-            Arrays.sort(proposals, PROPOSAL_COMPARATOR);
-        }
-        else {
-            ArrayList list = new ArrayList();
-            for (int i = 0; i < proposals.length; i++) {
-                if(((NSISTemplateProposal)proposals[i]).getRelevance() > 0) {
-                    list.add(proposals[i]);
-                }
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < proposals.length; i++) {
+            if(((TemplateProposal)proposals[i]).getRelevance() > 0) {
+                list.add(proposals[i]);
             }
-            Collections.sort(list, PROPOSAL_COMPARATOR);
-            proposals = (ICompletionProposal[])Common.appendArray(list.toArray(NSISInformationUtility.EMPTY_COMPLETION_PROPOSAL_ARRAY),
+        }
+        Collections.sort(list, PROPOSAL_COMPARATOR);
+        proposals = (ICompletionProposal[])list.toArray(NSISInformationUtility.EMPTY_COMPLETION_PROPOSAL_ARRAY);
+        if(!mInsertTemplatesMode) {
+            proposals = (ICompletionProposal[])Common.appendArray(proposals,
                                                                   NSISInformationUtility.getCompletionsAtOffset(viewer, offset));
         }
         return proposals;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createProposal(org.eclipse.jface.text.templates.Template, org.eclipse.jface.text.templates.TemplateContext, org.eclipse.jface.text.Region, int)
-     */
-    protected ICompletionProposal createProposal(Template template,
-            TemplateContext context, IRegion region, int relevance)
-    {
-        return new NSISTemplateProposal(template, context, region, getImage(template), relevance);
     }
 
     /* (non-Javadoc)
@@ -136,7 +125,8 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
      */
     protected int getRelevance(Template template, String prefix)
     {
-        if (template.getName().toLowerCase().startsWith(prefix.toLowerCase())) {
+        if( (mInsertTemplatesMode && Common.isEmpty(prefix)) ||
+            (template.getName().toLowerCase().startsWith(prefix.toLowerCase()))) {
             return 90;
         }
         return 0;

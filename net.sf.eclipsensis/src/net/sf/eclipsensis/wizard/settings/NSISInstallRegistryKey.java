@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallRegistryKeyDialog;
 
@@ -42,12 +43,18 @@ public class NSISInstallRegistryKey extends NSISInstallRegistryItem
 
     protected void setRootKeyInternal(int rootKey)
     {
-        mRootKey = rootKey;
+        if(mRootKey != rootKey) {
+            setDirty();
+            mRootKey = rootKey;
+        }
     }
 
     protected void setSubKeyInternal(String subKey)
     {
-        mSubKey = subKey;
+        if(!Common.stringsAreEqual(mSubKey, subKey)) {
+            setDirty();
+            mSubKey = subKey;
+        }
     }
 
     /* (non-Javadoc)

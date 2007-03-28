@@ -102,7 +102,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
             }
         });
         Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.description.label",true,null,false); //$NON-NLS-1$
-        ((GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData()).horizontalSpan = 2;
+        ((GridData)l.getLayoutData()).horizontalSpan = 2;
         final Text t2 = NSISWizardDialogUtil.createText(composite,mStore.getString("description"),SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL,1,true,null); //$NON-NLS-1$
         Dialog.applyDialogFont(t2);
         gd = (GridData)t2.getLayoutData();

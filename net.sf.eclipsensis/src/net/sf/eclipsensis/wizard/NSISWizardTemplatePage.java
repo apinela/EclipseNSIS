@@ -62,12 +62,12 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
             public void modifyText(ModifyEvent e)
             {
                 mTemplate.setName(((Text)e.widget).getText());
-                validatePage(0xffff);
+                validatePage(VALIDATE_ALL);
             }
         });
 
         Label l = NSISWizardDialogUtil.createLabel(composite,"template.dialog.description.label",true,null,false); //$NON-NLS-1$
-        GridData data = (GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData();
+        GridData data = (GridData)l.getLayoutData();
         data.horizontalSpan=2;
 
         t = NSISWizardDialogUtil.createText(composite,mTemplate.getDescription(),SWT.BORDER|SWT.MULTI|SWT.WRAP,2,true,null);
@@ -94,7 +94,7 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
             }
         });
 
-        validatePage(0xffff);
+        validatePage(VALIDATE_ALL);
 
         return composite;
     }

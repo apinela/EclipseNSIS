@@ -11,6 +11,9 @@ package net.sf.eclipsensis.update.preferences;
 
 public interface IUpdatePreferenceConstants
 {
+    public static final int PLUGIN_PREFERENCES_VERSION_NUMBER = 1;
+
+    public static final String PLUGIN_PREFERENCES_VERSION = "pluginPreferencesVersion"; //$NON-NLS-1$
     public static final String USE_HTTP_PROXY = "useHttpProxy"; //$NON-NLS-1$
     public static final String HTTP_PROXY_HOST = "httpProxyHost"; //$NON-NLS-1$
     public static final String HTTP_PROXY_PORT = "httpProxyPort"; //$NON-NLS-1$

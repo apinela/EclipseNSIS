@@ -11,8 +11,7 @@ package net.sf.eclipsensis.wizard.settings;
 
 import java.util.Collection;
 
-import net.sf.eclipsensis.util.AbstractNodeConvertible;
-import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.util.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -23,6 +22,13 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
 
     private NSISWizardSettings mSettings = null;
     private INSISInstallElement mParent = null;
+    private transient String mError = null;
+    private transient boolean mDirty = true;
+
+    protected final void setDirty()
+    {
+        mDirty = true;
+    }
 
     public Object clone() throws CloneNotSupportedException
     {
@@ -95,12 +101,25 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
         return NODE;
     }
 
-    public final String validate()
+    public String getError()
     {
-        return validate(true);
+        return mError;
     }
 
-    public String validate(boolean recursive)
+    public String validate(Collection changedElements)
+    {
+        if(mDirty) {
+            String error = doValidate();
+            if(!Common.stringsAreEqual(mError,error)) {
+                changedElements.add(this);
+            }
+            mError = error;
+            mDirty = false;
+        }
+        return mError;
+    }
+
+    protected String doValidate()
     {
         return null;
     }

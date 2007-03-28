@@ -81,10 +81,10 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
 
         final Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.welcome.header", true, null, false); //$NON-NLS-1$
         l.setFont(JFaceResources.getBannerFont());
-        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         final Label l2 = NSISWizardDialogUtil.createLabel(composite,"wizard.welcome.text", true, null, false); //$NON-NLS-1$
-        final GridData gridData = (GridData)NSISWizardDialogUtil.getLayoutControl(l2).getLayoutData();
+        final GridData gridData = (GridData)l2.getLayoutData();
         Dialog.applyDialogFont(l2);
         gridData.widthHint = Common.calculateControlSize(l2,80,0).x;
 
@@ -143,8 +143,10 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        Label l = NSISWizardDialogUtil.createLabel(composite,"create.from.template.label",b.getSelection(),m,true); //$NON-NLS-1$
-        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        Label l = NSISWizardDialogUtil.createLabel(composite,"available.templates.label",b.getSelection(),m,true); //$NON-NLS-1$
+        data = (GridData)l.getLayoutData();
+        data.horizontalAlignment = SWT.FILL;
+        data.grabExcessHorizontalSpace = true;
 
         final List list = new List(composite,SWT.BORDER|SWT.SINGLE|SWT.FULL_SELECTION);
         data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -157,7 +159,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
         l = NSISWizardDialogUtil.createLabel(composite,"template.description.label",true,m,false); //$NON-NLS-1$
-        NSISWizardDialogUtil.getLayoutControl(l).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         final StyledText t = new StyledText(composite,SWT.BORDER|SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
         t.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         t.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -200,7 +202,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
                 else {
                     mTemplate = null;
                 }
-                validatePage(0xffff);
+                validatePage(VALIDATE_ALL);
             }
         });
 
@@ -220,7 +222,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
             public void widgetSelected(SelectionEvent e)
             {
                 mCreateFromTemplate = b.getSelection();
-                validatePage(0xffff);
+                validatePage(VALIDATE_ALL);
             }
         });
 

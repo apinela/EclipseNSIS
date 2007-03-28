@@ -37,7 +37,7 @@ public class JobScheduler
     {
         if(mRunning) {
             mRunning = false;
-            IJobManager manager = Platform.getJobManager();
+            IJobManager manager = Job.getJobManager();
             if(manager != null) {
                 for(Iterator iter = mJobFamilies.iterator(); iter.hasNext(); ) {
                     manager.cancel(iter.next());
@@ -97,7 +97,7 @@ public class JobScheduler
     {
         if(family != null && mRunning && mJobFamilies.contains(family)) {
             mJobFamilies.remove(family);
-            Platform.getJobManager().cancel(family);
+            Job.getJobManager().cancel(family);
         }
     }
 }

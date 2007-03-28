@@ -97,9 +97,15 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
     /* (non-Javadoc)
      * @see org.eclipse.ui.IStorageEditorInput#getStorage()
      */
-    public IStorage getStorage() throws CoreException
+    public IStorage getStorage()
     {
-        return mInput.getStorage();
+        try {
+            return mInput.getStorage();
+        }
+        catch (CoreException e) {
+            InstallOptionsPlugin.getDefault().log(e);
+            return getFile();
+        }
     }
 
     /* (non-Javadoc)

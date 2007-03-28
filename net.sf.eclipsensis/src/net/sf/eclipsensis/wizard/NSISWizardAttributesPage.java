@@ -39,10 +39,9 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 {
     public static final String NAME = "nsisWizardAttributes"; //$NON-NLS-1$
 
-    private static final int INSTDIR_CHECK=1;
-    private static final int SMGRP_CHECK=2;
-    private static final int LANG_CHECK=4;
-    private static final int ALL_CHECK=INSTDIR_CHECK|SMGRP_CHECK|LANG_CHECK;
+    private static final int INSTDIR_CHECK=0x1;
+    private static final int SMGRP_CHECK=0x10;
+    private static final int LANG_CHECK=0x100;
     private static String[] cInstallDirErrors = {"empty.installation.directory.error"}; //$NON-NLS-1$
 
     private static Collator cLanguageCollator = Collator.getInstance(Locale.US);
@@ -65,7 +64,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
     private boolean validateField(int flag)
     {
         if(validatePage(flag)) {
-            return validatePage(ALL_CHECK & ~flag);
+            return validatePage(VALIDATE_ALL & ~flag);
         }
         else {
             return false;
@@ -138,7 +137,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         createLanguagesGroup(composite);
 
-        validatePage(ALL_CHECK);
+        validatePage(VALIDATE_ALL);
         return composite;
     }
 
@@ -192,7 +191,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         leftComposite.setLayout(layout);
 
         Label l = NSISWizardDialogUtil.createLabel(leftComposite, "available.languages.label", true, m, false); //$NON-NLS-1$
-        ((GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData()).horizontalSpan = 2;
+        ((GridData)l.getLayoutData()).horizontalSpan = 2;
 
         final List availableLangList = new List(leftComposite,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
         data = new GridData(SWT.FILL,SWT.FILL,true,true);
@@ -247,7 +246,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         rightComposite.setLayout(layout);
 
         l = NSISWizardDialogUtil.createLabel(rightComposite, "selected.languages.label", true, m, isScriptWizard()); //$NON-NLS-1$
-        ((GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData()).horizontalSpan = 2;
+        ((GridData)l.getLayoutData()).horizontalSpan = 2;
 
         final List selectedLangList = new List(rightComposite,SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL|SWT.MULTI);
         data = new GridData(SWT.FILL,SWT.FILL,true,true);
@@ -603,7 +602,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 validateField(SMGRP_CHECK);
                 NSISWizardContentsPage page = (NSISWizardContentsPage)mWizard.getPage(NSISWizardContentsPage.NAME);
                 if(page != null) {
-                    page.setPageComplete(page.validatePage(0xFFFF));
+                    page.setPageComplete(page.validatePage(VALIDATE_ALL));
                     page.refresh();
                     mWizard.getContainer().updateButtons();
                 }

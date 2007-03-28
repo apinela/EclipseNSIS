@@ -513,7 +513,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         if(font != null && font != mInstallOptionsFont) {
             mInstallOptionsFont = FontUtility.getInstallOptionsFont();
             JobScheduler scheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
-            scheduler.scheduleUIJob(mJobFamily,"Refresh InstallOptions Design Editor",
+            scheduler.scheduleUIJob(mJobFamily,InstallOptionsPlugin.getResourceString("refresh.design.editor.job.name"), //$NON-NLS-1$
                                     mSchedulingRule,mJobStatusRunnable);
         }
     }

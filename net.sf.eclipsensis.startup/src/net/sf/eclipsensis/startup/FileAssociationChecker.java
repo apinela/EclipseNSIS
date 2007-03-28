@@ -82,7 +82,7 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
                     bundleContext.removeBundleListener(this);
                 }
                 tracker.unregisterHandler(FileAssociationChecker.this);
-                Platform.getJobManager().cancel(JOB_FAMILY);
+                Job.getJobManager().cancel(JOB_FAMILY);
             }
         });
     }

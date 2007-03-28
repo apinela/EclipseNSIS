@@ -131,7 +131,7 @@ public abstract class NSISParam
         private boolean mEnabled = true;
         private Map mSettings = null;
         private INSISParamEditor mParentEditor;
-        private boolean mRequiredFields;
+        private boolean mRequiredFields = false;
 
         public NSISParamEditor(INSISParamEditor parentEditor)
         {
@@ -298,8 +298,16 @@ public abstract class NSISParam
                     mRequiredFields = shouldDecorate();
                     mNameLabel = NSISWizardDialogUtil.createLabel(parent, null, true, null, mRequiredFields);
                     mNameLabel.setText(getName());
-                    Control layoutControl = NSISWizardDialogUtil.getLayoutControl(mNameLabel);
-                    layoutControl.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
+                    mNameLabel.addDisposeListener(new DisposeListener() {
+                        public void widgetDisposed(DisposeEvent e)
+                        {
+                            if(e.widget == mNameLabel) {
+                                mRequiredFields = false;
+                            }
+                        }
+                    });
+                    GridData data = (GridData)mNameLabel.getLayoutData();
+                    data.horizontalAlignment = SWT.FILL;
                 }
             }
             else {
@@ -335,8 +343,7 @@ public abstract class NSISParam
             }
             else {
                 if(mNameLabel != null) {
-                    Control c = NSISWizardDialogUtil.getLayoutControl(mNameLabel);
-                    ((GridData)c.getLayoutData()).horizontalSpan++;
+                    ((GridData)mNameLabel.getLayoutData()).horizontalSpan++;
                 }
                 else if(mOptionalButton != null) {
                     ((GridData)mOptionalButton.getLayoutData()).horizontalSpan++;
@@ -394,11 +401,7 @@ public abstract class NSISParam
         protected void updateState(boolean state)
         {
             if(Common.isValid(mNameLabel)) {
-                mNameLabel.setEnabled(state);
-                Control c = NSISWizardDialogUtil.getLayoutControl(mNameLabel);
-                if(c != mNameLabel) {
-                    c.setEnabled(state);
-                }
+                NSISWizardDialogUtil.setEnabled(mNameLabel,state);
             }
             if(Common.isValid(mControl)) {
                 mControl.setEnabled(state);

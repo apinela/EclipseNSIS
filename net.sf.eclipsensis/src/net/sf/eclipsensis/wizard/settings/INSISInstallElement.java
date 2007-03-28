@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import net.sf.eclipsensis.util.INodeConvertible;
 import net.sf.eclipsensis.wizard.INSISWizardConstants;
@@ -47,6 +48,6 @@ public interface INSISInstallElement extends INSISWizardConstants, Serializable,
     public void setSettings(NSISWizardSettings settings);
     public NSISWizardSettings getSettings();
     public Object clone() throws CloneNotSupportedException;
-    public String validate();
-    public String validate(boolean recursive);
+    public String validate(Collection changedElements);
+    public String getError();
 }

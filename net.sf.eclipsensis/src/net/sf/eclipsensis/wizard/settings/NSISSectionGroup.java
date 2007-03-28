@@ -105,7 +105,10 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
      */
     public void setCaption(String caption)
     {
-        mCaption = caption;
+        if(!Common.stringsAreEqual(mCaption,caption)) {
+            setDirty();
+            mCaption = caption;
+        }
     }
 
     /**
@@ -121,7 +124,10 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
      */
     public void setBold(boolean bold)
     {
-        mBold = bold;
+        if(mBold != bold) {
+            setDirty();
+            mBold = bold;
+        }
     }
 
     /**
@@ -137,7 +143,10 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
      */
     public void setDescription(String description)
     {
-        mDescription = description;
+        if(!Common.stringsAreEqual(mDescription,description)) {
+            setDirty();
+            mDescription = description;
+        }
     }
 
     public boolean isDefaultExpanded()
@@ -147,7 +156,10 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
 
     public void setDefaultExpanded(boolean defaultExpanded)
     {
-        mDefaultExpanded = defaultExpanded;
+        if(mDefaultExpanded != defaultExpanded) {
+            setDirty();
+            mDefaultExpanded = defaultExpanded;
+        }
     }
 
     protected Object getNodeValue(Node node, String name, Class clasz)
@@ -177,13 +189,13 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
         return super.createChildNode(document, name, value);
     }
 
-    public String validate(boolean recursive)
+    public String doValidate()
     {
         if(Common.isEmpty(getCaption())) {
             return EclipseNSISPlugin.getResourceString("wizard.missing.sectiongroup.caption.error"); //$NON-NLS-1$
         }
         else {
-            return super.validate(recursive);
+            return super.doValidate();
         }
     }
 

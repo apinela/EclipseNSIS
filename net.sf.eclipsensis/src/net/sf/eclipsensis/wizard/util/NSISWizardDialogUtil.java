@@ -32,17 +32,23 @@ import org.eclipse.swt.widgets.*;
 
 public class NSISWizardDialogUtil
 {
+    public static final String CONTROL_DECORATION = "ControlDecoration"; //$NON-NLS-1$
     public static final FieldDecoration REQ_FIELD_DECORATION = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_REQUIRED);
+    public static final FieldDecoration DISABLED_REQ_FIELD_DECORATION;
 
-    public static final String LAYOUT_CONTROL = "LAYOUT_CONTROL"; //$NON-NLS-1$
     public static final String LABEL = "LABEL"; //$NON-NLS-1$
     public static final String IMAGE = "IMAGE"; //$NON-NLS-1$
 
-    private static final IControlCreator CONTROL_CREATOR = new IControlCreator() {
-        public Control createControl(Composite controlParent, int style) {
-            return new Label(controlParent, style);
-        }
-    };
+    static {
+        final Image[] image = {REQ_FIELD_DECORATION.getImage()};
+        Display.getDefault().syncExec(new Runnable() {
+            public void run()
+            {
+                image[0] = new Image(image[0].getDevice(),image[0],SWT.IMAGE_DISABLE);
+            }
+        });
+        DISABLED_REQ_FIELD_DECORATION = new FieldDecoration(image[0], null);
+    }
 
     private NSISWizardDialogUtil()
     {
@@ -53,15 +59,6 @@ public class NSISWizardDialogUtil
         if(masterSlaveController != null) {
             masterSlaveController.addSlave(slave);
         }
-    }
-
-    public static Control getLayoutControl(Control c)
-    {
-        Object data = c.getData(LAYOUT_CONTROL);
-        if(data instanceof Control) {
-            return (Control)data;
-        }
-        return c;
     }
 
     public static Label createRequiredFieldsLabel(Composite parent)
@@ -75,7 +72,6 @@ public class NSISWizardDialogUtil
         l.setImage(REQ_FIELD_DECORATION.getImage());
         l.setLayoutData(new GridData(SWT.FILL,SWT.BEGINNING,false,false));
         l = NSISWizardDialogUtil.createLabel(c,"wizard.required.text",true,null,false); //$NON-NLS-1$
-        l.setData(LAYOUT_CONTROL,c);
         FontData[] fd = l.getFont().getFontData();
         for (int i = 0; i < fd.length; i++) {
             fd[i].height *= 0.9;
@@ -96,6 +92,38 @@ public class NSISWizardDialogUtil
         return createLabel(parent, SWT.LEFT|SWT.WRAP, labelResource, enabled, masterSlaveController, isRequired);
     }
 
+    public static void setEnabled(Control c, boolean enabled)
+    {
+        if(c != null && !c.isDisposed()) {
+            c.setEnabled(enabled);
+            updateDecoration(c);
+        }
+    }
+
+    public static boolean isDecorated(Control c)
+    {
+        try {
+            ControlDecoration decoration = (ControlDecoration)c.getData(CONTROL_DECORATION);
+            return decoration != null;
+        }
+        catch (ClassCastException e) {
+            return false;
+        }
+    }
+
+    /**
+     * @param c
+     * @param enabled
+     */
+    private static void updateDecoration(Control c)
+    {
+        ControlDecoration decoration = (ControlDecoration)c.getData(CONTROL_DECORATION);
+        if(decoration != null) {
+            FieldDecoration d = (c.isEnabled()?REQ_FIELD_DECORATION:DISABLED_REQ_FIELD_DECORATION);
+            decoration.setImage(d.getImage());
+            decoration.setDescriptionText(d.getDescription());
+        }
+    }
     /**
      * @param parent
      * @param style
@@ -107,30 +135,32 @@ public class NSISWizardDialogUtil
      */
     public static Label createLabel(Composite parent, int style, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        Label l;
-        Control layoutControl;
-        if(isRequired) {
-            DecoratedField field = new DecoratedField(parent,style,CONTROL_CREATOR);
-            field.setUseMaximumDecorationWidth(false);
-            l = (Label)field.getControl();
-            layoutControl = field.getLayoutControl();
-            field.addFieldDecoration(REQ_FIELD_DECORATION,SWT.LEFT|SWT.TOP,false);
-            l.setData(LAYOUT_CONTROL,layoutControl);
-        }
-        else {
-            l = new Label(parent,style);
-            layoutControl = l;
-        }
-
+        Label l = new Label(parent,style);
         if(labelResource != null) {
             l.setText(EclipseNSISPlugin.getResourceString(labelResource));
         }
+        l.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
         l.setEnabled(enabled);
-        GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-        layoutControl.setLayoutData(data);
+        if(isRequired) {
+            decorate(l);
+        }
 
-        addSlave(masterSlaveController, layoutControl);
+        addSlave(masterSlaveController, l);
         return l;
+    }
+
+    /**
+     * @param controll
+     */
+    public static void decorate(Control controll)
+    {
+        ControlDecoration controlDecoration;
+        controlDecoration = new ControlDecoration(controll,SWT.LEFT|SWT.TOP,null);
+        controll.setData(CONTROL_DECORATION, controlDecoration);
+        updateDecoration(controll);
+        if(controlDecoration.getImage() != null) {
+            ((GridData)controll.getLayoutData()).horizontalIndent += controlDecoration.getImage().getBounds().width;
+        }
     }
 
     public static Composite checkParentLayoutColumns(Composite parent, int numColumns)

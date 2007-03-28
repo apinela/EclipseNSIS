@@ -93,12 +93,14 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     protected final void clearChildTypes()
     {
         mChildTypes.clear();
+        setDirty();
     }
 
     protected final void addChildType(String childType)
     {
         if(NSISInstallElementFactory.isValidType(childType)) {
             mChildTypes.add(childType);
+            setDirty();
         }
     }
 
@@ -131,6 +133,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
                 mChildren.add(index, child);
                 child.setParent(this);
                 child.setSettings(getSettings());
+                setDirty();
                 return true;
             }
             else {
@@ -171,6 +174,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
             mChildren.remove(child);
             child.setParent(null);
             child.setSettings(null);
+            setDirty();
             return true;
         }
         return false;
@@ -188,6 +192,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
                 child.setParent(null);
                 child.setSettings(null);
             }
+            setDirty();
             return true;
         }
         return false;
@@ -251,6 +256,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
                 }
             }
         }
+        setDirty();
     }
 
     public final void resetChildren(boolean recursive)
@@ -328,23 +334,28 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         }
     }
 
-    public String validate(boolean recursive)
+    public String validate(Collection changedElements)
     {
-        String error = null;
+        String error = super.validate(changedElements);
         if(hasChildren()) {
-            if(recursive) {
-                INSISInstallElement[] children = getChildren();
-                for (int i = 0; i < children.length; i++) {
-                    if((error = children[i].validate()) != null) {
-                        break;
-                    }
+            String childError;
+            INSISInstallElement[] children = getChildren();
+            for (int i = 0; i < children.length; i++) {
+                childError = children[i].validate(changedElements);
+                if(error == null && childError != null) {
+                    error = childError;
                 }
             }
         }
-        else {
-            error = EclipseNSISPlugin.getFormattedString("empty.contents.error",new Object[]{getDisplayName()}); //$NON-NLS-1$
+        return error;
+    }
+
+    public String doValidate()
+    {
+        if(!hasChildren()) {
+            return EclipseNSISPlugin.getFormattedString("empty.contents.error",new Object[]{getDisplayName()}); //$NON-NLS-1$
         }
-        return (error==null?super.validate(recursive):error);
+        return super.doValidate();
     }
 
     public int hashCode()

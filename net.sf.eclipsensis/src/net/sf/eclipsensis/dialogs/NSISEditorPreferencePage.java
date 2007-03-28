@@ -100,12 +100,11 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
             }
         };
         Arrays.sort(cSyntaxStyleListModel, comparator);
-        cPreferenceKeys = new String[cSyntaxStyleListModel.length+3];
+        cPreferenceKeys = new String[cSyntaxStyleListModel.length+2];
         int i = 0;
         for (; i < cSyntaxStyleListModel.length; i++) {
             cPreferenceKeys[i] = cSyntaxStyleListModel[i][1];
         }
-        cPreferenceKeys[i++] = USE_SPACES_FOR_TABS;
         cPreferenceKeys[i++] = MATCHING_DELIMITERS;
         cPreferenceKeys[i++] = MATCHING_DELIMITERS_COLOR;
     }
@@ -162,10 +161,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         layout.numColumns= 2;
         appearanceComposite.setLayout(layout);
 
-        String label = EclipseNSISPlugin.getResourceString("use.spaces"); //$NON-NLS-1$
-        addCheckBox(appearanceComposite, label, USE_SPACES_FOR_TABS, 0);
-
-        label= EclipseNSISPlugin.getResourceString("show.matching.delimiters"); //$NON-NLS-1$
+        String label = EclipseNSISPlugin.getResourceString("show.matching.delimiters"); //$NON-NLS-1$
         Button cb = addCheckBox(appearanceComposite, label, MATCHING_DELIMITERS, 0);
         Label l = new Label(appearanceComposite, SWT.NONE);
         l.setText(EclipseNSISPlugin.getResourceString("matching.delimiters.color")); //$NON-NLS-1$
@@ -276,7 +272,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         Control previewer= createPreviewer(syntaxComposite);
         gd= new GridData(SWT.FILL, SWT.FILL, true, true);
         gd.widthHint= convertWidthInCharsToPixels(20);
-        gd.heightHint= convertHeightInCharsToPixels(10);
+        gd.heightHint= convertHeightInCharsToPixels(12);
         previewer.setLayoutData(gd);
 
         return syntaxComposite;

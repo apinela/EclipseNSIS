@@ -135,7 +135,7 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
 
         int start= end;
 
-        if (start >= (regionStart+1) && string.charAt(start - 1) == '%') {
+        if (start >= (regionStart+1) && string.charAt(start - 1) == IDENTIFIER_BOUNDARY) {
             return start - 1;
         }
 
@@ -143,7 +143,7 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
             start--;
         }
 
-        if (start >= (regionStart+1) && string.charAt(start - 1) == '%') {
+        if (start >= (regionStart+1) && string.charAt(start - 1) == IDENTIFIER_BOUNDARY) {
             return start - 1;
         }
 

@@ -109,7 +109,7 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
             childBounds[1].width -= WinAPI.GetSystemMetrics(WinAPI.SM_CXVSCROLL);
         }
         childBounds[2] = childBounds[1].getCopy().shrink(1,1);
-        int height = FontUtility.getInstallOptionsFont().getFontData()[0].height+6;
+        int height = FontUtility.getInstallOptionsFont().getFontData()[0].getHeight()+6;
         childBounds[2].y += (childBounds[2].height-height)/2;
         childBounds[2].height = height;
         return childBounds;

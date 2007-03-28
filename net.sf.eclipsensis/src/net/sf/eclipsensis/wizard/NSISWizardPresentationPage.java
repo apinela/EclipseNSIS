@@ -33,13 +33,12 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     private static final long DEFAULT_RESOLUTION = 32; //32 FPS
     private static final double OS_VERSION;
 
-    private static final int LICDATA_CHECK=1;
-    private static final int SPLIMG_CHECK=2;
-    private static final int SPLWAV_CHECK=4;
-    private static final int SPLDLY_CHECK=8;
-    private static final int BGIMG_CHECK=16;
-    private static final int BGWAV_CHECK=32;
-    private static final int ALL_CHECK=LICDATA_CHECK|SPLIMG_CHECK|SPLWAV_CHECK|SPLDLY_CHECK|BGIMG_CHECK|BGWAV_CHECK;
+    private static final int LICDATA_CHECK=0x1;
+    private static final int SPLIMG_CHECK=0x10;
+    private static final int SPLWAV_CHECK=0x100;
+    private static final int SPLDLY_CHECK=0x1000;
+    private static final int BGIMG_CHECK=0x10000;
+    private static final int BGWAV_CHECK=0x100000;
 
     private static final String[] cLicFileErrors = {"empty.license.file.error"}; //$NON-NLS-1$
     private static final String[] cSplashImageErrors = {"empty.splash.image.error"}; //$NON-NLS-1$
@@ -101,7 +100,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         createSplashGroup(composite, bundle);
         createBackgroundGroup(composite, bundle);
 
-        setPageComplete(validatePage(ALL_CHECK));
+        setPageComplete(validatePage(VALIDATE_ALL));
 
         return composite;
     }
@@ -702,7 +701,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     private boolean validateField(int flag)
     {
         if(validatePage(flag)) {
-            return validatePage(ALL_CHECK & ~flag);
+            return validatePage(VALIDATE_ALL & ~flag);
         }
         else {
             return false;

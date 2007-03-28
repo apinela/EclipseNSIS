@@ -46,12 +46,18 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
 
     protected void setRootKeyInternal(int rootKey)
     {
-        mRootKey = rootKey;
+        if(mRootKey != rootKey) {
+            setDirty();
+            mRootKey = rootKey;
+        }
     }
 
     protected void setSubKeyInternal(String subKey)
     {
-        mSubKey = subKey;
+        if(!Common.stringsAreEqual(mSubKey, subKey)) {
+            setDirty();
+            mSubKey = subKey;
+        }
     }
 
     /* (non-Javadoc)
@@ -109,7 +115,10 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
      */
     public void setData(String data)
     {
-        mData = data;
+        if(!Common.stringsAreEqual(mData, data)) {
+            setDirty();
+            mData = data;
+        }
     }
 
     /**
@@ -125,7 +134,10 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
      */
     public void setValue(String value)
     {
-        mValue = value;
+        if(!Common.stringsAreEqual(mValue, value)) {
+            setDirty();
+            mValue = value;
+        }
     }
 
     /**
@@ -141,12 +153,15 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
      */
     public void setValueType(int valueType)
     {
-        mValueType = valueType;
+        if(mValueType != valueType) {
+            setDirty();
+            mValueType = valueType;
+        }
     }
 
-    public String validate(boolean recursive)
+    public String doValidate()
     {
-        String error = super.validate(recursive);
+        String error = super.doValidate();
         if(Common.isEmpty(error)) {
             switch(getValueType()) {
                 case INSISWizardConstants.REG_BIN:

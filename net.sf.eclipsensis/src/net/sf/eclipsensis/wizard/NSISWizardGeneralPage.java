@@ -32,13 +32,12 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
 {
     public static final String NAME = "nsisWizardGeneral"; //$NON-NLS-1$
 
-    private static final int APPNAME_CHECK=1;
-    private static final int PUBURL_CHECK=2;
-    private static final int INSTFILE_CHECK=4;
-    private static final int INSTICON_CHECK=8;
-    private static final int UNINSTFILE_CHECK=16;
-    private static final int UNINSTICON_CHECK=32;
-    private static final int ALL_CHECK=APPNAME_CHECK|PUBURL_CHECK|INSTFILE_CHECK|INSTICON_CHECK|UNINSTFILE_CHECK|UNINSTICON_CHECK;
+    private static final int APPNAME_CHECK=0x1;
+    private static final int PUBURL_CHECK=0x10;
+    private static final int INSTFILE_CHECK=0x100;
+    private static final int INSTICON_CHECK=0x1000;
+    private static final int UNINSTFILE_CHECK=0x10000;
+    private static final int UNINSTICON_CHECK=0x100000;
 
     private static String[] cInstallFileErrors = {"empty.installer.file.error"}; //$NON-NLS-1$
     private static String[] cUninstallFileErrors = {"empty.uninstaller.file.error"}; //$NON-NLS-1$
@@ -62,7 +61,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
     private boolean validateField(int flag)
     {
         if(validatePage(flag)) {
-            return validatePage(ALL_CHECK & ~flag);
+            return validatePage(VALIDATE_ALL & ~flag);
         }
         else {
             return false;
@@ -107,7 +106,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         createInstallerGroup(composite);
         createUninstallerGroup(composite);
 
-        validatePage(ALL_CHECK);
+        validatePage(VALIDATE_ALL);
 
         return composite;
     }
@@ -307,7 +306,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
             {
                 boolean selection = b.getSelection();
                 mWizard.getSettings().setCreateUninstaller(selection);
-                validatePage(ALL_CHECK);
+                validatePage(VALIDATE_ALL);
             }
         });
 

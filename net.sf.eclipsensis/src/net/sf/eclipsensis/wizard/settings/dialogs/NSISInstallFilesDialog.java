@@ -80,7 +80,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         composite.setLayout(layout);
 
         Label label = NSISWizardDialogUtil.createLabel(composite,SWT.LEFT,"wizard.source.files.label",true,null,true); //$NON-NLS-1$
-        ((GridData)NSISWizardDialogUtil.getLayoutControl(label).getLayoutData()).horizontalSpan = 2;
+        ((GridData)label.getLayoutData()).horizontalSpan = 2;
 
         Composite composite2 = new Composite(composite, SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.FILL, true, true);

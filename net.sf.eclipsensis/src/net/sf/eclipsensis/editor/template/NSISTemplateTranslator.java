@@ -28,6 +28,11 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
         return mErrorMessage;
     }
 
+    public TemplateBuffer translate(Template template) throws TemplateException
+    {
+        return translate(template.getPattern());
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateTranslator#translate(java.lang.String)
      */
@@ -108,8 +113,7 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
         }
 
         String translatedString= buffer.toString();
-        TemplateVariable[] variables= new TemplateVariable[map.size()];
-        int i=0;
+        List variables = new ArrayList();
         for(Iterator iter=map.keySet().iterator(); iter.hasNext(); ) {
             String name = (String)iter.next();
             List list = (List)map.get(name);
@@ -117,9 +121,9 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
             for (int j = 0; j < offsets.length; j++) {
                 offsets[j] = ((Integer)list.get(j)).intValue();
             }
-            variables[i++] = createVariable(name, name, offsets);
+            variables.add(new TemplateVariable(name, name, offsets));
         }
 
-        return new TemplateBuffer(translatedString, variables);
+        return new TemplateBuffer(translatedString, (TemplateVariable[])variables.toArray(new TemplateVariable[variables.size()]));
     }
 }

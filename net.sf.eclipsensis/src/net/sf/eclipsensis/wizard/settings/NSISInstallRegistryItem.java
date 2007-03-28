@@ -75,7 +75,7 @@ public abstract class NSISInstallRegistryItem extends AbstractNSISInstallItem
         setSubKeyInternal(subKey);
     }
 
-    public String validate(boolean recursive)
+    public String doValidate()
     {
         if(getRootKey() < 0) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.root.key.error"); //$NON-NLS-1$
@@ -85,7 +85,7 @@ public abstract class NSISInstallRegistryItem extends AbstractNSISInstallItem
             if(Common.isEmpty(subKey) || subKey.endsWith("\\") || subKey.startsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
                 return EclipseNSISPlugin.getResourceString("wizard.invalid.sub.key.error"); //$NON-NLS-1$
             }
-            return super.validate(recursive);
+            return super.doValidate();
         }
     }
     

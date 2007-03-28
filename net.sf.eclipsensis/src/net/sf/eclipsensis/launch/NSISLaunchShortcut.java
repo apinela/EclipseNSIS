@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -16,6 +16,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.NSISCompileTestUtility;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -68,11 +69,12 @@ public class NSISLaunchShortcut implements ILaunchShortcut
             }
         }
     }
-    
+
     private void launch(IPath path, String mode)
     {
         try {
-            if (INSISConstants.NSI_EXTENSION.equalsIgnoreCase(path.getFileExtension())) {
+            path = NSISCompileTestUtility.INSTANCE.getCompileScript(path);
+            if (path != null && INSISConstants.NSI_EXTENSION.equalsIgnoreCase(path.getFileExtension())) {
                 ILaunchConfiguration config = findConfiguration(path);
                 if(config != null) {
                     DebugUITools.launch(config, mode);
@@ -118,7 +120,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         catch (CoreException e) {
             EclipseNSISPlugin.getDefault().log(e);
         }
-        
+
         if(candidateConfigs.size() > 0) {
             if(candidateConfigs.size() > 1) {
                 return chooseConfiguration(candidateConfigs);
@@ -132,7 +134,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         }
     }
 
-    private ILaunchConfiguration createConfiguration(IPath path) 
+    private ILaunchConfiguration createConfiguration(IPath path)
     {
         NSISLaunchSettings settings;
         String script;
@@ -151,27 +153,27 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         }
         settings.setScript(script);
         settings.setRunInstaller(false);
-        
+
         ILaunchConfiguration config = null;
         ILaunchConfigurationWorkingCopy wc = null;
         try {
             wc = mConfigType.newInstance(null, mLaunchManager.generateUniqueLaunchConfigurationNameFrom(path.lastSegment()));
         } catch (CoreException exception) {
             reportCreatingConfiguration(exception);
-            return null;        
+            return null;
         }
         settings.setLaunchConfig(wc);
         settings.store();
         try {
-            config = wc.doSave();       
+            config = wc.doSave();
         } catch (CoreException exception) {
-            reportCreatingConfiguration(exception);         
-            return null;        
+            reportCreatingConfiguration(exception);
+            return null;
         }
         return config;
     }
-    
-    protected void reportCreatingConfiguration(final CoreException exception) 
+
+    protected void reportCreatingConfiguration(final CoreException exception)
     {
         Display.getDefault().asyncExec(new Runnable() {
             public void run() {
@@ -183,8 +185,8 @@ public class NSISLaunchShortcut implements ILaunchShortcut
             }
         });
     }
-    
-    private ILaunchConfiguration chooseConfiguration(List configList) 
+
+    private ILaunchConfiguration chooseConfiguration(List configList)
     {
         IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
         ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
@@ -197,7 +199,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         if (result == Window.OK) {
             return (ILaunchConfiguration) dialog.getFirstResult();
         }
-        return null;        
+        return null;
     }
 
     private Shell getShell()
@@ -212,7 +214,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         }
         return shell;
     }
-    
+
     private String getLocation(IPath path)
     {
         String fullname = null;

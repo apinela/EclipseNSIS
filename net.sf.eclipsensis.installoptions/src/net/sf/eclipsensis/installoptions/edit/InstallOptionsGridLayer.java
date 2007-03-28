@@ -31,7 +31,6 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
 
     protected void paintGrid(Graphics g)
     {
-        //FIXME Revalidate here
         try {
             Font f = FontUtility.getInstallOptionsFont();
             double dpuX = ((double)FigureUtility.dialogUnitsToPixelsX(1000,f))/1000;

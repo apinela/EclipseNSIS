@@ -14,7 +14,6 @@ import java.util.*;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.XMLUtil;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -127,11 +126,9 @@ public class RadioParam extends GroupParam
                     radioButton.setText(nameLabel.getText());
                     nameLabel.setText(""); //$NON-NLS-1$
 
-                    Control control = NSISWizardDialogUtil.getLayoutControl(nameLabel);
-
-                    Composite parent2 = control.getParent();
+                    Composite parent2 = nameLabel.getParent();
                     GridLayout layout = (GridLayout)parent2.getLayout();
-                    GridData data = (GridData)control.getLayoutData();
+                    GridData data = (GridData)nameLabel.getLayoutData();
                     if(layout.numColumns > data.horizontalSpan) {
                         GridData data2;
                         if(Common.isValid(((NSISParamEditor)editor).mControl)) {
@@ -143,7 +140,7 @@ public class RadioParam extends GroupParam
                         data2.horizontalSpan += data.horizontalSpan;
                         data2.grabExcessHorizontalSpace |= data.grabExcessHorizontalSpace;
                         data2.grabExcessVerticalSpace |= data.grabExcessVerticalSpace;
-                        control.dispose();
+                        nameLabel.dispose();
                         parent2.layout(true);
                     }
                 }

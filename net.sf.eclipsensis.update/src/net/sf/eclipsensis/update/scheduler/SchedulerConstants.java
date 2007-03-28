@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -15,19 +15,18 @@ public class SchedulerConstants
 {
     public static final boolean DEFAULT_AUTO_UPDATE = false;
     public static final boolean DEFAULT_IGNORE_PREVIEW = false;
-    
+
     public static final int SCHEDULE_ON_STARTUP = 0;
     public static final int SCHEDULE_DAILY = 1;
     public static final int SCHEDULE_WEEKLY = 2;
     public static final int SCHEDULE_MONTHLY = 3;
     public static final int DEFAULT_SCHEDULE = SCHEDULE_ON_STARTUP;
-    
+
     public static final int UPDATE_NOTIFY = 0;
     public static final int UPDATE_DOWNLOAD = 1;
     public static final int UPDATE_INSTALL = 3;
     public static final int DEFAULT_ACTION = UPDATE_NOTIFY;
 
-    public static final int[] TIMES_OF_DAY;
     public static final int DEFAULT_TIME_OF_DAY = 0;
 
     public static final int[] DAYS_OF_WEEK;
@@ -35,15 +34,9 @@ public class SchedulerConstants
 
     public static final int[] DAYS_OF_MONTH;
     public static final int DEFAULT_DAY_OF_MONTH = 0;
-    
+
     static {
         Calendar cal = Calendar.getInstance();
-        
-        TIMES_OF_DAY = new int[cal.getMaximum(Calendar.HOUR_OF_DAY)-cal.getMinimum(Calendar.HOUR_OF_DAY)+1];
-        int time = cal.getMinimum(Calendar.HOUR_OF_DAY);
-        for (int i = 0; i < TIMES_OF_DAY.length; i++) {
-            TIMES_OF_DAY[i] = time++;
-        }
 
         DAYS_OF_WEEK = new int[cal.getMaximum(Calendar.DAY_OF_WEEK)-cal.getMinimum(Calendar.DAY_OF_WEEK)+1];
         int firstDay = cal.getFirstDayOfWeek();
@@ -60,7 +53,7 @@ public class SchedulerConstants
             DAYS_OF_MONTH[i] = day++;
         }
     }
-    
+
     public static int validateSchedule(int schedule)
     {
         switch(schedule) {
@@ -73,7 +66,7 @@ public class SchedulerConstants
                 return DEFAULT_SCHEDULE;
         }
     }
-    
+
     public static int validateAction(int action)
     {
         switch(action) {

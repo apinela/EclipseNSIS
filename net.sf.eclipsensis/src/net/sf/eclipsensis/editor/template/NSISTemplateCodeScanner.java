@@ -22,6 +22,7 @@ import org.eclipse.jface.text.rules.Token;
 
 public class NSISTemplateCodeScanner extends NSISCodeScanner
 {
+    private static final String START_STOP_SEQUENCE = Character.toString(INSISTemplateConstants.IDENTIFIER_BOUNDARY);
     protected NSISWordPatternRule mTemplateVariableRule;
 
     /**
@@ -63,7 +64,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
                 public boolean isWordStart(char character)
                 {
                     mFoundEndSequence = false;
-                    if(character == '%') {
+                    if(character == INSISTemplateConstants.IDENTIFIER_BOUNDARY) {
                         mFoundEndSequence = true;
                         return true;
                     }
@@ -73,7 +74,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
                 public boolean isWordPart(char character)
                 {
                     if(!mFoundEndSequence) {
-                        if(character == '%') {
+                        if(character == INSISTemplateConstants.IDENTIFIER_BOUNDARY) {
                             mFoundEndSequence = true;
                             return true;
                         }
@@ -87,7 +88,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
                         return false;
                     }
                 }
-            }, "%","%",new Token(new TextAttribute(JFaceResources.getColorRegistry().get(INSISPreferenceConstants.TEMPLATE_VARIABLE_COLOR)))); //$NON-NLS-1$ //$NON-NLS-2$
+            }, START_STOP_SEQUENCE,START_STOP_SEQUENCE,new Token(new TextAttribute(JFaceResources.getColorRegistry().get(INSISPreferenceConstants.TEMPLATE_VARIABLE_COLOR))));
         }
         return mTemplateVariableRule;
     }

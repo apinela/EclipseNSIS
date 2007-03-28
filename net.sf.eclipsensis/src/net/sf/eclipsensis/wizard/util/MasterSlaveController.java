@@ -93,7 +93,7 @@ public class MasterSlaveController extends SelectionAdapter
             }
         }
         enabled = enabled?(enabler != null?enabler.canEnable(control):enabled):enabled;
-        control.setEnabled(enabled);
+        NSISWizardDialogUtil.setEnabled(control,enabled);
         if(enabler != null) {
             enabler.enabled(control,enabled);
         }

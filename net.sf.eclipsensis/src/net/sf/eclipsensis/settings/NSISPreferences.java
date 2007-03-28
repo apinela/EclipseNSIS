@@ -34,6 +34,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 public class NSISPreferences extends NSISSettings implements IFileChangeListener, INSISPreferenceConstants
 {
@@ -54,7 +56,9 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
 
     public static final NSISPreferences INSTANCE;
 
-    public static final Version VERSION_2_07 = new Version("2.07"); //$NON-NLS-1$
+    protected static final Version PLUGIN_VERSION_0_9_6 = new Version("0.9.6"); //$NON-NLS-1$
+
+    public static final Version NSIS_VERSION_2_07 = new Version("2.07"); //$NON-NLS-1$
     public static final String NSIS_CONFIG_COMPRESSION_SUPPORT="NSIS_CONFIG_COMPRESSION_SUPPORT"; //$NON-NLS-1$
 
     public static final Version VERSION_2_24 = new Version("2.24"); //$NON-NLS-1$
@@ -174,8 +178,6 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         initializePreference(MATCHING_DELIMITERS,Boolean.TRUE);
         initializePreference(MATCHING_DELIMITERS_COLOR,StringConverter.asString(new RGB(128,128,128)));
-
-        initializePreference(USE_SPACES_FOR_TABS,Boolean.TRUE);
     }
 
     private void initializeSyntaxPreference(String name, RGB foreground, RGB background, boolean bold,
@@ -224,6 +226,21 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializePreference(NSIS_HELP_VIEW_SHOW_NAV, Boolean.TRUE);
         initializePreference(NSIS_HELP_VIEW_SYNCHED, Boolean.TRUE);
         super.load();
+    }
+
+    protected boolean migrate(Version settingsVersion)
+    {
+        boolean b = super.migrate(settingsVersion);
+        if(EclipseNSISPlugin.getDefault().getVersion().compareTo(settingsVersion) > 0) {
+            if(PLUGIN_VERSION_0_9_6.compareTo(settingsVersion) > 0) {
+                mPreferenceStore.setDefault(USE_SPACES_FOR_TABS,true);
+                EditorsUI.getPreferenceStore().setValue(
+                        AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS,
+                        mPreferenceStore.getBoolean(USE_SPACES_FOR_TABS));
+                b = true;
+            }
+        }
+        return b;
     }
 
     /**
@@ -389,7 +406,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             mNSISVersion = NSISValidator.getNSISVersion(mNSISExe);
             mNSISDefaultSymbols = NSISValidator.loadNSISDefaultSymbols(mNSISExe);
             FileMonitor.INSTANCE.register(mNSISExe,this);
-            mSolidCompressionSupported = (mNSISVersion.compareTo(VERSION_2_07) >=0 && mNSISDefaultSymbols.containsKey(NSIS_CONFIG_COMPRESSION_SUPPORT));
+            mSolidCompressionSupported = (mNSISVersion.compareTo(NSIS_VERSION_2_07) >=0 && mNSISDefaultSymbols.containsKey(NSIS_CONFIG_COMPRESSION_SUPPORT));
             mProcessPrioritySupported = mNSISVersion.compareTo(VERSION_2_24) >=0;
         }
         else {
@@ -650,7 +667,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         if(Common.isEmpty(fileName)) {
             fileName = makeSettingFileName(name);
         }
-        File objectFile = new File(cPluginStateLocation,fileName);
+        File objectFile = new File(PLUGIN_STATE_LOCATION,fileName);
         if(object == null) {
             if(objectFile.exists()) {
                 objectFile.delete();
@@ -672,7 +689,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     public Object loadObject(String name)
     {
         String fileName = getString(name);
-        File objectFile = new File(cPluginStateLocation,fileName);
+        File objectFile = new File(PLUGIN_STATE_LOCATION,fileName);
         Object object = null;
         if(objectFile.exists()) {
             try {

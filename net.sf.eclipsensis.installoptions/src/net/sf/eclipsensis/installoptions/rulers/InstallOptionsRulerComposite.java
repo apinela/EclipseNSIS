@@ -22,7 +22,7 @@ import org.eclipse.gef.*;
 import org.eclipse.gef.internal.ui.rulers.*;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.KeyEvent;

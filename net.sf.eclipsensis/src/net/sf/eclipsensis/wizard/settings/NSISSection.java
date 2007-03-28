@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.INSISKeywordsListener;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionDialog;
 
@@ -110,7 +111,10 @@ public class NSISSection extends AbstractNSISInstallGroup
      */
     public void setBold(boolean bold)
     {
-        mBold = bold;
+        if(mBold != bold) {
+            setDirty();
+            mBold = bold;
+        }
     }
     /**
      * @return Returns the defaultUnselected.
@@ -124,7 +128,10 @@ public class NSISSection extends AbstractNSISInstallGroup
      */
     public void setDefaultUnselected(boolean defaultUnselected)
     {
-        mDefaultUnselected = defaultUnselected;
+        if(mDefaultUnselected != defaultUnselected) {
+            setDirty();
+            mDefaultUnselected = defaultUnselected;
+        }
     }
     /**
      * @return Returns the hidden.
@@ -138,7 +145,10 @@ public class NSISSection extends AbstractNSISInstallGroup
      */
     public void setHidden(boolean hidden)
     {
-        mHidden = hidden;
+        if(mHidden != hidden) {
+            setDirty();
+            mHidden = hidden;
+        }
     }
     /**
      * @return Returns the name.
@@ -152,7 +162,10 @@ public class NSISSection extends AbstractNSISInstallGroup
      */
     public void setName(String name)
     {
-        mName = name;
+        if(!Common.stringsAreEqual(mName,name)) {
+            setDirty();
+            mName = name;
+        }
     }
 
     /**
@@ -168,7 +181,10 @@ public class NSISSection extends AbstractNSISInstallGroup
      */
     public void setDescription(String description)
     {
-        mDescription = description;
+        if(!Common.stringsAreEqual(mDescription,description)) {
+            setDirty();
+            mDescription = description;
+        }
     }
 
     protected Object getNodeValue(Node node, String name, Class clasz)

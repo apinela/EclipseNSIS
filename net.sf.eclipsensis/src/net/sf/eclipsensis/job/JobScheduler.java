@@ -34,7 +34,7 @@ public class JobScheduler
     {
         if(mRunning) {
             mRunning = false;
-            IJobManager manager = Platform.getJobManager();
+            IJobManager manager = Job.getJobManager();
             if(manager != null) {
                 for(Iterator iter = mJobFamilies.iterator(); iter.hasNext(); ) {
                     manager.cancel(iter.next());
@@ -46,7 +46,7 @@ public class JobScheduler
 
     public boolean isScheduled(Object family)
     {
-        return !Common.isEmptyArray(Platform.getJobManager().find(family));
+        return !Common.isEmptyArray(Job.getJobManager().find(family));
     }
 
     public void scheduleUIJob(String name, IJobStatusRunnable runnable)
@@ -157,9 +157,9 @@ public class JobScheduler
     {
         if(family != null && mRunning && mJobFamilies.contains(family)) {
             mJobFamilies.remove(family);
-            Platform.getJobManager().cancel(family);
+            Job.getJobManager().cancel(family);
             try {
-                Platform.getJobManager().join(family, new NullProgressMonitor());
+                Job.getJobManager().join(family, new NullProgressMonitor());
             }
             catch (Exception e) {
                 EclipseNSISPlugin.getDefault().log(e);

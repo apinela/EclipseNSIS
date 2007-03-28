@@ -16,7 +16,6 @@ import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.jobs.NSISUpdateJobSettings;
 import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
@@ -50,7 +49,7 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
 
     public void shutDown()
     {
-        Platform.getJobManager().cancel(NSISUpdateJobSettings.JOB_FAMILY);
+        Job.getJobManager().cancel(NSISUpdateJobSettings.JOB_FAMILY);
         mScheduledJob = null;
     }
 
@@ -98,7 +97,7 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
     private synchronized void schedule(long delay)
     {
         if(mScheduledJob != null) {
-            Platform.getJobManager().cancel(mScheduledJob);
+            Job.getJobManager().cancel(mScheduledJob);
             mScheduledJob = null;
         }
         if (delay >= 0) {
@@ -149,54 +148,40 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
 
     private long computeDelayForDailySchedule()
     {
-        int n = mPreferences.getInt(IUpdatePreferenceConstants.DAILY_TIME);
-        if(n >= 0 && n < SchedulerConstants.TIMES_OF_DAY.length) {
-            Calendar cal = Calendar.getInstance();
-            int targetHour = SchedulerConstants.TIMES_OF_DAY[n];
-            int currentHour = cal.get(Calendar.HOUR_OF_DAY);
-            int currentMin = cal.get(Calendar.MINUTE);
-            int currentSec = cal.get(Calendar.SECOND);
-            int currentMilliSec = cal.get(Calendar.MILLISECOND);
+        int targetTime = mPreferences.getInt(IUpdatePreferenceConstants.DAILY_TIME) % 86400;
+        Calendar cal = Calendar.getInstance();
+        int currentTime = cal.get(Calendar.HOUR_OF_DAY)*3600 + cal.get(Calendar.MINUTE)*60 + cal.get(Calendar.SECOND);
+        int currentMilliSec = cal.get(Calendar.MILLISECOND);
 
-            if(currentHour == targetHour && currentMin == 0 && currentSec == 0) {
-                return 0;
-            }
-
-            int hourDiff = targetHour-currentHour + (currentHour >= targetHour?24:0);
-            return ((hourDiff * 60 - currentMin) * 60 - currentSec) * 1000 - currentMilliSec;
+        if(currentTime == targetTime) {
+            return 0;
         }
-        return -1;
+
+        return (targetTime - currentTime + (currentTime >= targetTime?86400:0)) * 1000 - currentMilliSec;
     }
 
     private long computeDelayForWeeklySchedule()
     {
         int m = mPreferences.getInt(IUpdatePreferenceConstants.DAY_OF_WEEK);
-        int n = mPreferences.getInt(IUpdatePreferenceConstants.WEEKLY_TIME);
-        if((m >= 0 && m < SchedulerConstants.DAYS_OF_WEEK.length) &&
-           (n >= 0 && n < SchedulerConstants.TIMES_OF_DAY.length)) {
+        if(m >= 0 && m < SchedulerConstants.DAYS_OF_WEEK.length) {
             int targetDay = SchedulerConstants.DAYS_OF_WEEK[m];
-            int targetHour = SchedulerConstants.TIMES_OF_DAY[n];
+            int targetTime = mPreferences.getInt(IUpdatePreferenceConstants.WEEKLY_TIME) % 86400;
 
             Calendar cal = Calendar.getInstance();
+
             int currentDay = cal.get(Calendar.DAY_OF_WEEK);
-            int currentHour = cal.get(Calendar.HOUR_OF_DAY);
-            int currentMin = cal.get(Calendar.MINUTE);
-            int currentSec = cal.get(Calendar.SECOND);
+            int currentTime = cal.get(Calendar.HOUR_OF_DAY)*3600 + cal.get(Calendar.MINUTE)*60 + cal.get(Calendar.SECOND);
             int currentMilliSec = cal.get(Calendar.MILLISECOND);
 
-            if(currentDay == targetDay && currentHour == targetHour &&
-                    currentMin == 0 && currentSec == 0) {
+            if(currentDay == targetDay && currentTime == targetTime) {
                 return 0;
             }
             int dayDiff = targetDay - currentDay;
             if (targetDay < currentDay ||
-                    (targetDay == currentDay &&
-                            (targetHour < currentHour ||
-                                    (targetHour == currentHour && currentMin > 0)))) {
+                (targetDay == currentDay && targetTime < currentTime)) {
                 dayDiff += 7;
             }
-            return (((dayDiff*24 + targetHour - currentHour)*60 - currentMin)*60 -
-                        currentSec)*1000 - currentMilliSec;
+            return (dayDiff*86400 + targetTime - currentTime)*1000 - currentMilliSec;
         }
         return -1;
     }
@@ -204,35 +189,32 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
     private long computeDelayForMonthlySchedule()
     {
         int m = mPreferences.getInt(IUpdatePreferenceConstants.DAY_OF_MONTH);
-        int n = mPreferences.getInt(IUpdatePreferenceConstants.MONTHLY_TIME);
-        if((m >= 0 && m < SchedulerConstants.DAYS_OF_MONTH.length) &&
-           (n >= 0 && n < SchedulerConstants.TIMES_OF_DAY.length)) {
+        if(m >= 0 && m < SchedulerConstants.DAYS_OF_MONTH.length) {
+            long targetTime = mPreferences.getInt(IUpdatePreferenceConstants.MONTHLY_TIME);
             int targetDay = SchedulerConstants.DAYS_OF_MONTH[m];
-            int targetHour = SchedulerConstants.TIMES_OF_DAY[n];
 
             Calendar cal = Calendar.getInstance();
 
+            long now = cal.getTimeInMillis();
             int currentYear = cal.get(Calendar.YEAR);
             int currentMonth = cal.get(Calendar.MONTH);
             int currentDay = cal.get(Calendar.DAY_OF_MONTH);
             int maxDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-            int currentHour = cal.get(Calendar.HOUR_OF_DAY);
-            int currentMin = cal.get(Calendar.MINUTE);
-            int currentSec = cal.get(Calendar.SECOND);
+            int currentTime = cal.get(Calendar.HOUR_OF_DAY)*3600 + cal.get(Calendar.MINUTE)*60 + cal.get(Calendar.SECOND);
 
-            long now = cal.getTimeInMillis();
 
-            if(currentDay == (targetDay>maxDay?maxDay:targetDay) && currentHour == targetHour &&
-                    currentMin == 0 && currentSec == 0) {
+            if(currentDay == (targetDay>maxDay?maxDay:targetDay) && currentTime == targetTime) {
                 return 0;
             }
-            cal.set(Calendar.MINUTE,0);
-            cal.set(Calendar.SECOND,0);
             cal.set(Calendar.MILLISECOND,0);
-            cal.set(Calendar.HOUR_OF_DAY,targetHour);
+            cal.set(Calendar.SECOND,(int)(targetTime % 60));
+            targetTime /= 60;
+            cal.set(Calendar.MINUTE,(int)(targetTime % 60));
+            targetTime /= 60;
+            cal.set(Calendar.HOUR_OF_DAY,(int)targetTime);
 
             cal.set(Calendar.DAY_OF_MONTH, (targetDay>maxDay?maxDay:targetDay));
-            long targetTime = cal.getTimeInMillis();
+            targetTime = cal.getTimeInMillis();
 
             if (targetTime < now) {
                 int targetYear = currentYear;

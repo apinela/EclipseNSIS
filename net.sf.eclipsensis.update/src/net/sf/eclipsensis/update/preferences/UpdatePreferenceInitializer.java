@@ -21,7 +21,9 @@ public class UpdatePreferenceInitializer extends AbstractPreferenceInitializer i
     {
         IEclipsePreferences prefs = new DefaultScope().getNode(EclipseNSISUpdatePlugin.getDefault().getPluginId());
 
-        prefs.put(USE_HTTP_PROXY, Boolean.FALSE.toString());
+        prefs.putInt(PLUGIN_PREFERENCES_VERSION, 0); //$NON-NLS-1$
+
+        prefs.putBoolean(USE_HTTP_PROXY, false);
         prefs.put(HTTP_PROXY_HOST, ""); //$NON-NLS-1$
         prefs.put(HTTP_PROXY_PORT, ""); //$NON-NLS-1$
 
@@ -29,16 +31,15 @@ public class UpdatePreferenceInitializer extends AbstractPreferenceInitializer i
         prefs.put(SOURCEFORGE_MIRROR, NSISUpdateURLs.getDefaultDownloadSite());
         prefs.putBoolean(AUTOSELECT_SOURCEFORGE_MIRROR, true);
 
-        prefs.put(IGNORE_PREVIEW, Boolean.valueOf(SchedulerConstants.DEFAULT_IGNORE_PREVIEW).toString());
+        prefs.putBoolean(IGNORE_PREVIEW, SchedulerConstants.DEFAULT_IGNORE_PREVIEW);
 
-        prefs.put(AUTO_UPDATE, Boolean.valueOf(SchedulerConstants.DEFAULT_AUTO_UPDATE).toString());
-        prefs.put(UPDATE_SCHEDULE, Integer.toString(SchedulerConstants.DEFAULT_SCHEDULE));
-        prefs.put(UPDATE_ACTION, Integer.toString(SchedulerConstants.DEFAULT_ACTION));
-        prefs.put(DAILY_TIME, Integer.toString(SchedulerConstants.DEFAULT_TIME_OF_DAY));
-        prefs.put(DAY_OF_WEEK, Integer.toString(SchedulerConstants.DEFAULT_DAY_OF_WEEK));
-        prefs.put(WEEKLY_TIME, Integer.toString(SchedulerConstants.DEFAULT_TIME_OF_DAY));
-        prefs.put(DAY_OF_MONTH, Integer.toString(SchedulerConstants.DEFAULT_DAY_OF_MONTH));
-        prefs.put(MONTHLY_TIME, Integer.toString(SchedulerConstants.DEFAULT_TIME_OF_DAY));
+        prefs.putBoolean(AUTO_UPDATE, SchedulerConstants.DEFAULT_AUTO_UPDATE);
+        prefs.putInt(UPDATE_SCHEDULE, SchedulerConstants.DEFAULT_SCHEDULE);
+        prefs.putInt(UPDATE_ACTION, SchedulerConstants.DEFAULT_ACTION);
+        prefs.putInt(DAILY_TIME, SchedulerConstants.DEFAULT_TIME_OF_DAY);
+        prefs.putInt(DAY_OF_WEEK, SchedulerConstants.DEFAULT_DAY_OF_WEEK);
+        prefs.putInt(WEEKLY_TIME, SchedulerConstants.DEFAULT_TIME_OF_DAY);
+        prefs.putInt(DAY_OF_MONTH, SchedulerConstants.DEFAULT_DAY_OF_MONTH);
+        prefs.putInt(MONTHLY_TIME, SchedulerConstants.DEFAULT_TIME_OF_DAY);
     }
-
 }

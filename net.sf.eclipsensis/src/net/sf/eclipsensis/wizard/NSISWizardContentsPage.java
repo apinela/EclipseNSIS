@@ -27,14 +27,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
 public class NSISWizardContentsPage extends AbstractNSISWizardPage implements INSISConstants
 {
     public static final String NAME = "nsisWizardContents"; //$NON-NLS-1$
-
-    private static final int ALL_CHECK=0;
 
     private static final int[] cDeleteConfirmButtonIds = {IDialogConstants.YES_ID, IDialogConstants.YES_TO_ALL_ID, IDialogConstants.NO_ID, IDialogConstants.NO_TO_ALL_ID};
 
@@ -84,7 +83,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
 
         Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.contents.text",true,null,false); //$NON-NLS-1$
         Dialog.applyDialogFont(l);
-        final GridData gridData = (GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData();
+        final GridData gridData = (GridData)l.getLayoutData();
         gridData.widthHint = Common.calculateControlSize(l,80,0).x;
         composite.addListener (SWT.Resize,  new Listener () {
             boolean init = false;
@@ -136,90 +135,91 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         mTreeViewer.setContentProvider(new NSISInstallElementTreeContentProvider(settings));
         mTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         mTreeViewer.setInput(settings);
+        ColumnViewerToolTipSupport.enableFor(mTreeViewer);
 
-        final Listener labelListener = new Listener () {
-            public void handleEvent (Event event) {
-                Label label = (Label)event.widget;
-                Shell shell = label.getShell ();
-                switch (event.type) {
-                    case SWT.MouseDown:
-                        mTreeViewer.setSelection (new StructuredSelection(label.getData ("_INSTALLITEM"))); //$NON-NLS-1$
-                        // fall through
-                    case SWT.MouseExit:
-                        shell.dispose ();
-                        break;
-                }
-            }
-        };
-
-        Listener treeListener = new Listener () {
-            Shell tip = null;
-            Label label = null;
-            public void handleEvent (Event event) {
-                switch (event.type) {
-                    case SWT.MouseMove: {
-                        if(tip == null) {
-                            break;
-                        }
-                        TreeItem item = tree.getItem (new Point (event.x, event.y));
-                        if (item != null) {
-                            Object data = item.getData();
-                            if(data == label.getData("_INSTALLITEM")) { //$NON-NLS-1$
-                                break;
-                            }
-                        }
-                    }
-                    case SWT.FocusOut:
-                    case SWT.Dispose:
-                    case SWT.KeyDown: {
-                        if (tip == null) {
-                            break;
-                        }
-                        tip.dispose ();
-                        tip = null;
-                        label = null;
-                        break;
-                    }
-                    case SWT.MouseHover: {
-                        TreeItem item = tree.getItem (new Point (event.x, event.y));
-                        if (item != null) {
-                            if (tip != null  && !tip.isDisposed ()) {
-                                tip.dispose ();
-                            }
-                            Object data = item.getData();
-                            if(data instanceof INSISInstallElement) {
-                                String tooltip = ((INSISInstallElement)data).validate(false);
-                                if(tooltip != null) {
-                                    tip = new Shell(tree.getShell(), SWT.ON_TOP | SWT.TOOL);
-                                    FillLayout fillLayout = new FillLayout ();
-                                    fillLayout.marginHeight = 1;
-                                    fillLayout.marginWidth = 2;
-                                    tip.setLayout (fillLayout);
-                                    tip.setBackground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
-                                    label = new Label (tip, SWT.NONE);
-                                    label.setForeground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_FOREGROUND));
-                                    label.setBackground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
-                                    label.setData ("_INSTALLITEM", data); //$NON-NLS-1$
-                                    label.setText (EclipseNSISPlugin.getFormattedString("wizard.error.message.format",new String[]{tooltip})); //$NON-NLS-1$
-                                    label.addListener (SWT.MouseExit, labelListener);
-                                    label.addListener (SWT.MouseDown, labelListener);
-                                    Point size = tip.computeSize (SWT.DEFAULT, SWT.DEFAULT);
-                                    Point pt = tree.toDisplay(event.x,event.y);
-                                    tip.setBounds (pt.x, pt.y+26, size.x, size.y);
-                                    tip.setVisible (true);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        };
-        tree.setToolTipText(""); //$NON-NLS-1$
-        tree.addListener (SWT.FocusOut, treeListener);
-        tree.addListener (SWT.Dispose, treeListener);
-        tree.addListener (SWT.KeyDown, treeListener);
-        tree.addListener (SWT.MouseMove, treeListener);
-        tree.addListener (SWT.MouseHover, treeListener);
+//        final Listener labelListener = new Listener () {
+//            public void handleEvent (Event event) {
+//                Label label = (Label)event.widget;
+//                Shell shell = label.getShell ();
+//                switch (event.type) {
+//                    case SWT.MouseDown:
+//                        mTreeViewer.setSelection (new StructuredSelection(label.getData ("_INSTALLITEM"))); //$NON-NLS-1$
+//                        // fall through
+//                    case SWT.MouseExit:
+//                        shell.dispose ();
+//                        break;
+//                }
+//            }
+//        };
+//
+//        Listener treeListener = new Listener () {
+//            Shell tip = null;
+//            Label label = null;
+//            public void handleEvent (Event event) {
+//                switch (event.type) {
+//                    case SWT.MouseMove: {
+//                        if(tip == null) {
+//                            break;
+//                        }
+//                        TreeItem item = tree.getItem (new Point (event.x, event.y));
+//                        if (item != null) {
+//                            Object data = item.getData();
+//                            if(data == label.getData("_INSTALLITEM")) { //$NON-NLS-1$
+//                                break;
+//                            }
+//                        }
+//                    }
+//                    case SWT.FocusOut:
+//                    case SWT.Dispose:
+//                    case SWT.KeyDown: {
+//                        if (tip == null) {
+//                            break;
+//                        }
+//                        tip.dispose ();
+//                        tip = null;
+//                        label = null;
+//                        break;
+//                    }
+//                    case SWT.MouseHover: {
+//                        TreeItem item = tree.getItem (new Point (event.x, event.y));
+//                        if (item != null) {
+//                            if (tip != null  && !tip.isDisposed ()) {
+//                                tip.dispose ();
+//                            }
+//                            Object data = item.getData();
+//                            if(data instanceof INSISInstallElement) {
+//                                String tooltip = ((INSISInstallElement)data).validate(false);
+//                                if(tooltip != null) {
+//                                    tip = new Shell(tree.getShell(), SWT.ON_TOP | SWT.TOOL);
+//                                    FillLayout fillLayout = new FillLayout ();
+//                                    fillLayout.marginHeight = 1;
+//                                    fillLayout.marginWidth = 2;
+//                                    tip.setLayout (fillLayout);
+//                                    tip.setBackground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
+//                                    label = new Label (tip, SWT.NONE);
+//                                    label.setForeground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_FOREGROUND));
+//                                    label.setBackground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
+//                                    label.setData ("_INSTALLITEM", data); //$NON-NLS-1$
+//                                    label.setText (EclipseNSISPlugin.getFormattedString("wizard.error.message.format",new String[]{tooltip})); //$NON-NLS-1$
+//                                    label.addListener (SWT.MouseExit, labelListener);
+//                                    label.addListener (SWT.MouseDown, labelListener);
+//                                    Point size = tip.computeSize (SWT.DEFAULT, SWT.DEFAULT);
+//                                    Point pt = tree.toDisplay(event.x,event.y);
+//                                    tip.setBounds (pt.x, pt.y+26, size.x, size.y);
+//                                    tip.setVisible (true);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        };
+//        tree.setToolTipText(""); //$NON-NLS-1$
+//        tree.addListener (SWT.FocusOut, treeListener);
+//        tree.addListener (SWT.Dispose, treeListener);
+//        tree.addListener (SWT.KeyDown, treeListener);
+//        tree.addListener (SWT.MouseMove, treeListener);
+//        tree.addListener (SWT.MouseHover, treeListener);
 
         final StructuredViewerUpDownMover mover = new StructuredViewerUpDownMover() {
             private TreeViewer mTreeViewer = null;
@@ -408,7 +408,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                                                     mTreeViewer.expandToLevel(element,AbstractTreeViewer.ALL_LEVELS);
                                                 }
                                                 updateSelectComponents();
-                                                setPageComplete(validatePage(ALL_CHECK));
+                                                setPageComplete(validatePage(VALIDATE_ALL));
                                             }
                                         }
                                     }
@@ -515,7 +515,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             }
         });
 
-        setPageComplete(validatePage(ALL_CHECK));
+        setPageComplete(validatePage(VALIDATE_ALL));
 
         return composite;
     }
@@ -718,7 +718,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                                 newParent.addChild(index++,el);
                         }
                     }
-                    setPageComplete(validatePage(ALL_CHECK));
+                    setPageComplete(validatePage(VALIDATE_ALL));
                 }
                 catch(Exception ex) {
                     delayedValidateAfterError(ex.getLocalizedMessage(),2000);
@@ -780,7 +780,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                             target.addChild(index++,el);
                         }
                     }
-                    setPageComplete(validatePage(ALL_CHECK));
+                    setPageComplete(validatePage(VALIDATE_ALL));
                 }
                 catch(Exception ex) {
                     delayedValidateAfterError(ex.getLocalizedMessage(),2000);
@@ -947,7 +947,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                 if(element.hasChildren()) {
                     tv.expandToLevel(element,AbstractTreeViewer.ALL_LEVELS);
                 }
-                setPageComplete(validatePage(ALL_CHECK));
+                setPageComplete(validatePage(VALIDATE_ALL));
             }
         }
         catch(Exception ex) {
@@ -997,7 +997,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                             }
                         }
                     }
-                    setPageComplete(validatePage(ALL_CHECK));
+                    setPageComplete(validatePage(VALIDATE_ALL));
                 }
                 catch(Exception ex) {
                     delayedValidateAfterError(ex.getLocalizedMessage(),2000);
@@ -1026,7 +1026,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                 display.asyncExec(new Runnable() {
                     public void run()
                     {
-                        setPageComplete(validatePage(ALL_CHECK));
+                        setPageComplete(validatePage(VALIDATE_ALL));
                     }
                  });
             }
@@ -1236,7 +1236,11 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         else {
             NSISWizardSettings settings = mWizard.getSettings();
 
-            String error = settings.getInstaller().validate();
+            List changedElements = new ArrayList();
+            String error = settings.getInstaller().validate(changedElements);
+            if(mTreeViewer != null && changedElements.size() > 0) {
+                mTreeViewer.update(changedElements.toArray(),null);
+            }
             setErrorMessage(error);
             boolean b = (error == null);
             setPageComplete(b);

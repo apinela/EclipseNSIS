@@ -31,18 +31,18 @@ import org.eclipse.ui.PlatformUI;
 
 public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener, IEclipseNSISService
 {
-    private static final Version HELP_URL_PROVIDER_VERSION = new Version("1.1"); //$NON-NLS-1$
-    
+    private static final Version HELP_URL_PROVIDER_VERSION = new Version("1.2"); //$NON-NLS-1$
+
     private static final String VERSION = "version"; //$NON-NLS-1$
     private static final String INDEX = "index"; //$NON-NLS-1$
     private static final String TOC = "toc"; //$NON-NLS-1$
     private static final String HELP_URLS = "helpUrls"; //$NON-NLS-1$
     private static final String CHM_HELP_URLS = "chmHelpUrls"; //$NON-NLS-1$
     private static final String KEYWORD_HELP = "keywordHelp"; //$NON-NLS-1$
-    
+
     public static final String KEYWORD_HELP_HTML_PREFIX;
     public static final String KEYWORD_HELP_HTML_SUFFIX="\n</body></html>"; //$NON-NLS-1$
-    
+
     public static final String KEYWORD_URI_SCHEME="keyword:"; //$NON-NLS-1$
     public static final String HELP_URI_SCHEME="help:"; //$NON-NLS-1$
 
@@ -75,7 +75,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private NSISHelpSearchManager mSearchManager = null;
 
     private ResourceBundle mBundle;
-    
+
     private boolean mNSISHelpAvailable;
     private File mCacheFile;
     private String mCachedHelpLocation;
@@ -83,11 +83,11 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private File mNoHelpFile;
 
     private File mStateLocation;
-    
+
     static {
         File styleSheet = null;
         try {
-            styleSheet = IOUtility.ensureLatest(EclipseNSISPlugin.getDefault().getBundle(), 
+            styleSheet = IOUtility.ensureLatest(EclipseNSISPlugin.getDefault().getBundle(),
                                         new Path(EclipseNSISPlugin.getResourceString("hoverhelp.style.sheet")), //$NON-NLS-1$
                                         new File(EclipseNSISPlugin.getPluginStateLocation(),EclipseNSISPlugin.getResourceString("hoverhelp.state.location"))); //$NON-NLS-1$
         }
@@ -332,7 +332,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                         mCachedHelpDocsLocation.mkdirs();
                     }
                     IOUtility.deleteDirectoryContents(mCachedHelpDocsLocation);
-                    
+
                     String[] tocAndIndex = new String[2];
                     WinAPI.ExtractHtmlHelp(mNSISHtmlHelpFile.getAbsolutePath(), mCachedHelpDocsLocation.getAbsolutePath(), tocAndIndex);
 
@@ -369,15 +369,19 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                     Map urlContentsMap = new CaseInsensitiveMap();
                                     List processedFiles = new ArrayList();
                                     CaseInsensitiveSet keywords = new CaseInsensitiveSet(keywordHelpMap.keySet());
-                                    CaseInsensitiveSet urls = new CaseInsensitiveSet(keywordHelpMap.values());
-                                    for (Iterator iter = urls.iterator(); iter.hasNext();) {
+                                    CaseInsensitiveMap urlKeywordMap = new CaseInsensitiveMap();
+                                    for (Iterator iter = keywordHelpMap.entrySet().iterator(); iter.hasNext();) {
+                                        Map.Entry entry = (Map.Entry)iter.next();
+                                        urlKeywordMap.put(entry.getValue(),entry.getKey());
+                                    }
+                                    for (Iterator iter = urlKeywordMap.keySet().iterator(); iter.hasNext();) {
                                         String url = (String)iter.next();
                                         int n = url.indexOf('#');
                                         if (n > 1) {
                                             String htmlFile = url.substring(0, n).toLowerCase();
                                             if (!processedFiles.contains(htmlFile)) {
                                                 processedFiles.add(htmlFile);
-                                                NSISHelpFileParserCallback callback = new NSISHelpFileParserCallback(mNSISHtmlHelpFile,htmlFile + "#", keywords, urls, urlContentsMap); //$NON-NLS-1$
+                                                NSISHelpFileParserCallback callback = new NSISHelpFileParserCallback(mNSISHtmlHelpFile,htmlFile + "#", keywords, urlKeywordMap, urlContentsMap); //$NON-NLS-1$
                                                 HTML_PARSER.parse(new FileReader(new File(tocFile.getParentFile(), htmlFile)), callback, false);
                                             }
                                         }
@@ -494,12 +498,12 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                 }
                 mStartPage = mCachedStartPage = mCHMStartPage = IOUtility.getFileURLString(mNoHelpFile);
             }
-            
+
             INSISHelpURLListener[] listeners = (INSISHelpURLListener[])mListeners.toArray(new INSISHelpURLListener[mListeners.size()]);
             for (int i = 0; i < listeners.length; i++) {
                 listeners[i].helpURLsChanged();
             }
-        }        
+        }
     }
 
     public String getKeywordHelp(String keyword)
@@ -519,13 +523,13 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         checkHelpFile();
         return mCachedStartPage;
     }
-    
+
     public NSISHelpTOC getCachedHelpTOC()
     {
         checkHelpFile();
         return mTOC;
     }
-    
+
     public NSISHelpIndex getCachedHelpIndex()
     {
         checkHelpFile();
@@ -550,7 +554,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             loadHelpURLs();
         }
     }
-    
+
     public String convertHelpURLToCHMHelpURL(String helpURL)
     {
         String chmHelpURL = null;
@@ -600,7 +604,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         }
         return url;
     }
-    
+
     public File translateCachedFile(File file)
     {
         if(file != null && !file.exists()) {
@@ -626,7 +630,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             }
             else {
                 if(NSISHTMLHelp.showHelp(convertHelpURLToCachedURL(url))) {
-                    return; 
+                    return;
                 }
             }
         }
@@ -668,7 +672,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             openCHMHelpURL(url);
             return true;
         }
-        
+
         return false;
     }
 
@@ -685,7 +689,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
             Display.getDefault().asyncExec(new Runnable() {
                 public void run()
                 {
-                    Common.openError(Display.getCurrent().getActiveShell(), 
+                    Common.openError(Display.getCurrent().getActiveShell(),
                             EclipseNSISPlugin.getResourceString("missing.help.file.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
                 }
             });

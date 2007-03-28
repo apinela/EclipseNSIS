@@ -20,7 +20,6 @@ import net.sf.eclipsensis.editor.codeassist.NSISInformationUtility;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.help.*;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
 import net.sf.eclipsensis.util.*;
 
@@ -63,7 +62,6 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
 
     private IPreferenceStore mPreferenceStore = null;
     private NSISAutoIndentStrategy mAutoIndentStrategy = null;
-    private NSISTabConversionStrategy mTabConversionStrategy = null;
     private ILineTracker mLineTracker = null;
     private String[] mConfiguredContentTypes = null;
     private Set mPropertyQueue = new HashSet();
@@ -183,12 +181,9 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             mPreferenceStore.addPropertyChangeListener(this);
             if(configuration instanceof NSISEditorSourceViewerConfiguration) {
                 mAutoIndentStrategy = new NSISAutoIndentStrategy(mPreferenceStore);
-                mTabConversionStrategy = new NSISTabConversionStrategy(mPreferenceStore);
                 mAutoIndentStrategy.updateFromPreferences();
-                mTabConversionStrategy.updateFromPreferences();
                 for(int i=0; i<mConfiguredContentTypes.length; i++) {
                     prependAutoEditStrategy(mAutoIndentStrategy,mConfiguredContentTypes[i]);
-                    prependAutoEditStrategy(mTabConversionStrategy,mConfiguredContentTypes[i]);
                 }
                 mInsertTemplateAssistant = ((NSISEditorSourceViewerConfiguration)configuration).getInsertTemplateAssistant(this);
                 if(mInsertTemplateAssistant != null) {
@@ -256,7 +251,6 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         }
 
         mAutoIndentStrategy = null;
-        mTabConversionStrategy = null;
         if(mPreferenceStore != null) {
             mPreferenceStore.removePropertyChangeListener(this);
             mPreferenceStore = null;
@@ -273,7 +267,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     {
         String property = event.getProperty();
         if(property.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH)||
-           property.equals(INSISPreferenceConstants.USE_SPACES_FOR_TABS)) {
+           property.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS)) {
             for(Iterator iter=fIndentChars.keySet().iterator(); iter.hasNext(); ) {
                 setIndentPrefixes(calculatePrefixes(),(String)iter.next());
             }
@@ -311,7 +305,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         // prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
 
         int tabWidth= mPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
-        boolean useSpaces= mPreferenceStore.getBoolean(INSISPreferenceConstants.USE_SPACES_FOR_TABS);
+        boolean useSpaces= mPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS);
 
         for (int i= 0; i <= tabWidth; i++) {
             StringBuffer prefix= new StringBuffer();
@@ -809,28 +803,5 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
         }
         return text;
-    }
-
-    protected class NSISTabConversionStrategy extends NSISAutoIndentStrategy
-    {
-        /**
-         * @param preferenceStore
-         */
-        public NSISTabConversionStrategy(IPreferenceStore preferenceStore)
-        {
-            super(preferenceStore);
-        }
-
-        /* (non-Javadoc)
-         * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.DocumentCommand)
-         */
-        public void customizeDocumentCommand(IDocument doc, DocumentCommand cmd)
-        {
-            if(mUseSpacesForTabs) {
-                if (cmd.text != null) {
-                    cmd.text = convertTabsToSpaces(doc, cmd.offset, cmd.text, mTabWidth);
-                }
-            }
-        }
     }
 }

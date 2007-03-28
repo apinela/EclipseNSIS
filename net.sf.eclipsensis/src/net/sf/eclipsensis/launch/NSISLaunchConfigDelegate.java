@@ -62,7 +62,7 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
             useConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
             output = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
             append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
-            encoding = configuration.getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
+            encoding = configuration.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
 
             monitor.worked(10);
 

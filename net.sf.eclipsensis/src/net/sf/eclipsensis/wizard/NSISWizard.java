@@ -52,7 +52,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
 		super();
         setTitleBarColor(ColorManager.WHITE);
 	}
-	
+
     void initSettings()
     {
         setSettings(new NSISWizardSettings());
@@ -145,7 +145,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         IWizardPage[] pages = getPages();
         if(!Common.isEmptyArray(pages)) {
             for (int i = 0; i < pages.length; i++) {
-                ((AbstractNSISWizardPage)pages[i]).validatePage(0xFFFF);
+                ((AbstractNSISWizardPage)pages[i]).validatePage(VALIDATE_ALL);
             }
             getContainer().updateButtons();
         }

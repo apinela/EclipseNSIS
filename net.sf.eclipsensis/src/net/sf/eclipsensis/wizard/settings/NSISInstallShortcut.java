@@ -45,11 +45,21 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
 
     public void setCreateInStartMenuGroup(boolean createInStartMenuGroup)
     {
-        mCreateInStartMenuGroup = createInStartMenuGroup;
-        if(mCreateInStartMenuGroup) {
-            mLocation = ""; //$NON-NLS-1$
+        setLocationAndCreateInStartMenuGroup((createInStartMenuGroup?"":mLocation), createInStartMenuGroup); //$NON-NLS-1$
+    }
+
+    private void setLocationAndCreateInStartMenuGroup(String location, boolean createInStartMenuGroup)
+    {
+        if(mCreateInStartMenuGroup != createInStartMenuGroup) {
+            setDirty();
+            mCreateInStartMenuGroup = createInStartMenuGroup;
+        }
+        if(!Common.stringsAreEqual(mLocation, location)) {
+            setDirty();
+            mLocation = location;
         }
     }
+
     /**
      * @return Returns the path.
      */
@@ -62,7 +72,10 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
      */
     public void setPath(String path)
     {
-        mPath = path;
+        if(!Common.stringsAreEqual(mPath, path)) {
+            setDirty();
+            mPath = path;
+        }
     }
     /**
      * @return Returns the location.
@@ -82,12 +95,10 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     public void setLocation(String location)
     {
         if(location.startsWith(STARTMENUGROUP_SHORTCUT_LOCATION)) {
-            mCreateInStartMenuGroup = true;
-            mLocation = ""; //$NON-NLS-1$
+            setLocationAndCreateInStartMenuGroup("", true); //$NON-NLS-1$
         }
         else {
-            mCreateInStartMenuGroup = false;
-            mLocation = location;
+            setLocationAndCreateInStartMenuGroup(location, false); //$NON-NLS-1$
         }
     }
     /**
@@ -102,7 +113,10 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
      */
     public void setUrl(String url)
     {
-        mUrl = url;
+        if(!Common.stringsAreEqual(mUrl, url)) {
+            setDirty();
+            mUrl = url;
+        }
     }
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
@@ -154,7 +168,10 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
      */
     public void setName(String name)
     {
-        mName = name;
+        if(!Common.stringsAreEqual(mName, name)) {
+            setDirty();
+            mName = name;
+        }
     }
 
     /**
@@ -170,7 +187,10 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
      */
     public void setShortcutType(int shortcutType)
     {
-        mShortcutType = shortcutType;
+        if(mShortcutType != shortcutType) {
+            setDirty();
+            mShortcutType = shortcutType;
+        }
     }
 
     /* (non-Javadoc)
@@ -180,10 +200,10 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     {
         super.setSettings(settings);
         if(settings != null && !Common.isEmpty(getSettings().getStartMenuGroup()) && Common.isEmpty(mLocation)) {
-            mCreateInStartMenuGroup = true;
+            setLocationAndCreateInStartMenuGroup(mLocation, true);
         }
     }
-    public String validate(boolean recursive)
+    public String doValidate()
     {
         if(isCreateInStartMenuGroup()) {
             if(!getSettings().isCreateStartMenuGroup()) {
@@ -204,7 +224,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.url.error"); //$NON-NLS-1$
         }
         else {
-            return super.validate(recursive);
+            return super.doValidate();
         }
     }
 

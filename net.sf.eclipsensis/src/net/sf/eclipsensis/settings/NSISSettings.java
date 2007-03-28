@@ -19,9 +19,9 @@ import net.sf.eclipsensis.util.Version;
 
 public abstract class NSISSettings implements INSISSettingsConstants
 {
-    protected static File cPluginStateLocation = EclipseNSISPlugin.getPluginStateLocation();
+    protected static final File PLUGIN_STATE_LOCATION = EclipseNSISPlugin.getPluginStateLocation();
 
-    protected static Version cPluginVersion0_9_5_1 = new Version("0.9.5.1"); //$NON-NLS-1$
+    protected static final Version PLUGIN_VERSION_0_9_5_1 = new Version("0.9.5.1"); //$NON-NLS-1$
 
     private boolean mHdrInfo = false;
     private boolean mLicense = false;
@@ -46,19 +46,22 @@ public abstract class NSISSettings implements INSISSettingsConstants
         setSolidCompression(getBoolean(SOLID_COMPRESSION));
         setInstructions((ArrayList)loadObject(INSTRUCTIONS));
         setSymbols((LinkedHashMap)loadObject(SYMBOLS));
-        migrate();
+        if(migrate(new Version(getString(PLUGIN_VERSION)))) {
+            store();
+        }
     }
 
-    protected void migrate()
+    protected boolean migrate(Version settingsVersion)
     {
-        Version settingsVersion = new Version(getString(PLUGIN_VERSION));
         if(EclipseNSISPlugin.getDefault().getVersion().compareTo(settingsVersion) > 0) {
-            if(cPluginVersion0_9_5_1.compareTo(settingsVersion) > 0) {
+            if(PLUGIN_VERSION_0_9_5_1.compareTo(settingsVersion) > 0) {
                 if(getVerbosity() == INSISSettingsConstants.VERBOSITY_ALL) {
                     setVerbosity(getDefaultVerbosity());
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     public void store()

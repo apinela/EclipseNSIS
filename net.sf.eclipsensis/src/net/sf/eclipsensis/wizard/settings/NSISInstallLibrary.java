@@ -11,6 +11,7 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallLibraryDialog;
@@ -71,7 +72,10 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     public void setRemoveOnUninstall(boolean removeOnUninstall)
     {
-        mRemoveOnUninstall = removeOnUninstall;
+        if(mRemoveOnUninstall != removeOnUninstall) {
+            setDirty();
+            mRemoveOnUninstall = removeOnUninstall;
+        }
     }
 
     public boolean isRefreshShell()
@@ -81,7 +85,10 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     public void setRefreshShell(boolean refreshShell)
     {
-        mRefreshShell = refreshShell;
+        if(mRefreshShell != refreshShell) {
+            setDirty();
+            mRefreshShell = refreshShell;
+        }
     }
 
     public boolean isUnloadLibraries()
@@ -91,7 +98,10 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     public void setUnloadLibraries(boolean unloadLibraries)
     {
-        mUnloadLibraries = unloadLibraries;
+        if(mUnloadLibraries != unloadLibraries) {
+            setDirty();
+            mUnloadLibraries = unloadLibraries;
+        }
     }
 
     public String getName()
@@ -101,7 +111,10 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     public void setName(String name)
     {
-        mName = name;
+        if(!Common.stringsAreEqual(mName, name)) {
+            setDirty();
+            mName = name;
+        }
     }
 
     public String getDestination()
@@ -111,7 +124,10 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     public void setDestination(String destination)
     {
-        mDestination = destination;
+        if(!Common.stringsAreEqual(mDestination, destination)) {
+            setDirty();
+            mDestination = destination;
+        }
     }
 
     public boolean isProtected()
@@ -121,7 +137,10 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     public void setProtected(boolean protected1)
     {
-        mProtected = protected1;
+        if(mProtected != protected1) {
+            setDirty();
+            mProtected = protected1;
+        }
     }
 
     public boolean isReboot()
@@ -131,7 +150,10 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     public void setReboot(boolean reboot)
     {
-        mReboot = reboot;
+        if(mReboot != reboot) {
+            setDirty();
+            mReboot = reboot;
+        }
     }
 
     public int getLibType()
@@ -146,12 +168,14 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
             case LIBTYPE_REGDLL:
             case LIBTYPE_TLB:
             case LIBTYPE_REGDLLTLB:
-                mLibType = libType;
                 break;
             default:
-                mLibType = LIBTYPE_DLL;
+                libType = LIBTYPE_DLL;
         }
-        mLibType = libType;
+        if(mLibType != libType) {
+            setDirty();
+            mLibType = libType;
+        }
     }
 
     public boolean isShared()
@@ -161,10 +185,13 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     public void setShared(boolean shared)
     {
-        mShared = shared;
+        if(mShared != shared) {
+            setDirty();
+            mShared = shared;
+        }
     }
 
-    public String validate(boolean recursive)
+    public String doValidate()
     {
         if(!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
@@ -173,7 +200,7 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.destination.error"); //$NON-NLS-1$
         }
         else {
-            return super.validate(recursive);
+            return super.doValidate();
         }
     }
 

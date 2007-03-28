@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -24,6 +24,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 
 public class NSISHelpSearcher implements INSISHelpSearchConstants
 {
@@ -44,14 +45,14 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
     {
         mIndexer.getScheduler().scheduleJob(JOB_FAMILY, EclipseNSISPlugin.getResourceString("nsis.help.searcher.job.title"), new NSISHelpSearcherJob(field, requester)); //$NON-NLS-1$
     }
-    
+
     private class NSISHelpSearcherJob implements IJobStatusRunnable
     {
         private INSISHelpSearchRequester mRequester;
         private String mField = null;
         private IndexSearcher mSearcher = null;
         private List mHits = null;
-        
+
         public NSISHelpSearcherJob(String field, INSISHelpSearchRequester requester)
         {
             mField = field;
@@ -68,7 +69,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
                     mIndexer.indexHelp();
                 }
                 try {
-                    Platform.getJobManager().join(mIndexer.JOB_FAMILY, monitor);
+                    Job.getJobManager().join(mIndexer.JOB_FAMILY, monitor);
                 }
                 catch (OperationCanceledException e) {
                     return Status.CANCEL_STATUS;
@@ -87,7 +88,8 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
                     if(checkCanceled(monitor)) {
                         return Status.CANCEL_STATUS;
                     }
-                    query = QueryParser.parse(mRequester.getSearchText(), mField==null?INDEX_FIELD_CONTENTS:mField, mIndexer.getAnalyzer());
+                    QueryParser parser = new QueryParser(mField==null?INDEX_FIELD_CONTENTS:mField, mIndexer.getAnalyzer());
+                    query = parser.parse(mRequester.getSearchText());
                     if(checkCanceled(monitor)) {
                         return Status.CANCEL_STATUS;
                     }
@@ -166,7 +168,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
                 mRequester.searchCompleted((NSISHelpSearchResult[])results.toArray(new NSISHelpSearchResult[results.size()]), highlightTerms);
             }
         }
-        
+
         private boolean checkCanceled(IProgressMonitor monitor)
         {
             if(monitor.isCanceled()) {
@@ -184,8 +186,8 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
     {
         float score;
         int id;
-        
-        public HitDoc(float s, int i) 
+
+        public HitDoc(float s, int i)
         {
             score = s;
             id = i;

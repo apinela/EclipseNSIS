@@ -111,6 +111,28 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         }
         validateOS();
         validateVM();
+        startEclipseNSIS();
+//        mJobScheduler.scheduleJob("parse", new IJobStatusRunnable() {
+//
+//            public IStatus run(IProgressMonitor monitor)
+//            {
+//                try {
+//                    NSISParser.getInstance().processScript(new File("c:\\temp\\dummy.nsi"));
+//                }
+//                catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                return Status.OK_STATUS;
+//            }
+//
+//        });
+	}
+
+    /**
+     *
+     */
+    private void startEclipseNSIS()
+    {
         if(!isConfigured()) {
             // First try autoconfigure
             NSISPreferences.INSTANCE.setNSISHome(WinAPI.RegQueryStrValue(INSISConstants.NSIS_REG_ROOTKEY,INSISConstants.NSIS_REG_SUBKEY,INSISConstants.NSIS_REG_VALUE));
@@ -183,21 +205,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         startServices();
         mJobScheduler.start();
         mConsole = new NSISConsole();
-//        mJobScheduler.scheduleJob("parse", new IJobStatusRunnable() {
-//
-//            public IStatus run(IProgressMonitor monitor)
-//            {
-//                try {
-//                    NSISParser.getInstance().processScript(new File("c:\\temp\\dummy.nsi"));
-//                }
-//                catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                return Status.OK_STATUS;
-//            }
-//
-//        });
-	}
+    }
 
     private void startServices()
     {
@@ -281,27 +289,9 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     useWorkbenchWindow = false;
                 }
                 if(!useWorkbenchWindow) {
-                    OutputStream os = null;
                     if(mBundleContext != null && mBundleContext.getBundle().getState() == Bundle.STARTING) {
-                        try {
-                            ServiceReference[] ref = mBundleContext.getServiceReferences(OutputStream.class.getName(), null);
-                            for (int i = 0; i < ref.length; i++) {
-                                String name = (String) ref[i].getProperty("name"); //$NON-NLS-1$
-                                if (name != null && name.equals("splashstream")) {  //$NON-NLS-1$
-                                    Object result = mBundleContext.getService(ref[i]);
-                                    mBundleContext.ungetService(ref[i]);
-                                    os = (OutputStream) result;
-                                    break;
-                                }
-                            }
-                        }
-                        catch (InvalidSyntaxException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if(os != null) {
                         //Startup in progress- overlay the splash screen
-                        String splashFile = System.getProperty("osgi.splashLocation"); //$NON-NLS-1$
+                        String splashFile = System.getProperty("org.eclipse.equinox.launcher.splash.location"); //$NON-NLS-1$
                         if(!Common.isEmpty(splashFile)) {
                             File file = new File(splashFile);
                             if(IOUtility.isValidFile(file)) {

@@ -104,7 +104,10 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
      */
     public void setDestination(String destination)
     {
-        mDestination = destination;
+        if(!Common.stringsAreEqual(mDestination,destination)) {
+            setDirty();
+            mDestination = destination;
+        }
     }
 
     /**
@@ -134,6 +137,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
             FileItem item = (FileItem)iter.next();
             if(!newFiles.contains(item.getName())) {
                 iter.remove();
+                setDirty();
             }
             else {
                 newFiles.remove(item.getName());
@@ -143,6 +147,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
             FileItem fi = new FileItem();
             fi.setName((String)iter.next());
             addChild(fi);
+            setDirty();
         }
     }
 
@@ -159,16 +164,19 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
      */
     public void setOverwriteMode(int overwriteMode)
     {
-        mOverwriteMode = overwriteMode;
+        if(mOverwriteMode != overwriteMode) {
+            setDirty();
+            mOverwriteMode = overwriteMode;
+        }
     }
 
-    public String validate(boolean recursive)
+    public String doValidate()
     {
         if(!IOUtility.isValidNSISPathName(getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset.destination.error"); //$NON-NLS-1$
         }
         else {
-            return super.validate(recursive);
+            return super.doValidate();
         }
     }
 
@@ -251,7 +259,10 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
          */
         public void setName(String name)
         {
-            mName = name;
+            if(!Common.stringsAreEqual(mName, name)) {
+                setDirty();
+                mName = name;
+            }
         }
 
         /* (non-Javadoc)
@@ -317,13 +328,13 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
             return true;
         }
 
-        public String validate(boolean recursive)
+        public String doValidate()
         {
             if(!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
                 return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
             }
             else {
-                return super.validate(recursive);
+                return super.doValidate();
             }
         }
     }

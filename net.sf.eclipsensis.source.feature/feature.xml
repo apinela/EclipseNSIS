@@ -13,7 +13,7 @@
 <feature
       id="net.sf.eclipsensis.source"
       label="%feature.name"
-      version="0.9.5.1"
+      version="0.9.6"
       provider-name="%provider.name"
       image="%splash.image">
 
@@ -35,13 +35,13 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.pde.core" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.pde.core" version="3.3.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
          id="net.sf.eclipsensis.source"
          download-size="1198"
          install-size="1348"
-         version="0.9.5.1"/>
+         version="0.9.6"/>
 
 </feature>

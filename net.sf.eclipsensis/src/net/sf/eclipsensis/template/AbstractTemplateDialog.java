@@ -100,7 +100,7 @@ public abstract class AbstractTemplateDialog extends TrayDialog
         });
 
         Label l = NSISWizardDialogUtil.createLabel(composite,"template.dialog.description.label",true,null,false); //$NON-NLS-1$
-        GridData data = (GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData();
+        GridData data = (GridData)l.getLayoutData();
         data.horizontalSpan=2;
 
         mTemplateDescription = NSISWizardDialogUtil.createText(composite,(mTemplate==null?"":mTemplate.getDescription()),SWT.BORDER|SWT.MULTI|SWT.WRAP,2,true,null); //$NON-NLS-1$

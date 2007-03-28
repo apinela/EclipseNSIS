@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -29,9 +29,9 @@ public class NSISHelpFileParserCallback extends ParserCallback
 
     private static final Set HEADINGS = new HashSet();
     private static final Pattern cOnClickPattern = Pattern.compile("parser\\(['\"]\\.\\./([\\.\\\\/a-z0-9_\\-\\s]+)['\"]\\)",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
-    
+
     private Set mKeywords;
-    private Set mURLs;
+    private Map mURLKeywordsMap;
     private Map mURLContentsMap;
     private String mPrefix;
     private StringBuffer mBuffer = new StringBuffer(""); //$NON-NLS-1$
@@ -40,7 +40,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
     private String mHref = null;
     private String mAnchor;
     private File mHelpFile;
-    
+
     static {
         HEADINGS.add(Tag.H1);
         HEADINGS.add(Tag.H2);
@@ -49,14 +49,14 @@ public class NSISHelpFileParserCallback extends ParserCallback
         HEADINGS.add(Tag.H5);
         HEADINGS.add(Tag.H6);
     }
-    
-    public NSISHelpFileParserCallback(File helpFile, String prefix, Set keywords, Set urls, Map urlContentsMap)
+
+    public NSISHelpFileParserCallback(File helpFile, String prefix, Set keywords, Map urlKeywordsMap, Map urlContentsMap)
     {
         super();
         mHelpFile = helpFile;
         mPrefix = prefix;
         mKeywords = keywords;
-        mURLs = urls;
+        mURLKeywordsMap = urlKeywordsMap;
         mURLContentsMap = urlContentsMap;
     }
 
@@ -155,7 +155,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
                     saveBuffer();
                 }
                 mAnchor = mPrefix+a.getAttribute(Attribute.NAME);
-                if(mURLs.contains(mAnchor)) {
+                if(mURLKeywordsMap.containsKey(mAnchor)) {
                     mHref = null;
                     mCollecting = true;
                     mBuffer.append(NSISHelpURLProvider.KEYWORD_HELP_HTML_PREFIX);
@@ -172,7 +172,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
     public void handleText(char[] data, int pos)
     {
         if(mCollecting) {
-            boolean isNewLine = false; //For some reason CR is being converted to NL by the parser. 
+            boolean isNewLine = false; //For some reason CR is being converted to NL by the parser.
                                        //So one needs to be dropped.
             boolean found = false;
             StringBuffer buf = new StringBuffer();
@@ -195,6 +195,9 @@ public class NSISHelpFileParserCallback extends ParserCallback
                 if(mKeywords.contains(text)) {
                     mHref=NSISHelpURLProvider.KEYWORD_URI_SCHEME+text;
                 }
+                else if(mURLKeywordsMap.containsKey(mHref)) {
+                    mHref=NSISHelpURLProvider.KEYWORD_URI_SCHEME+mURLKeywordsMap.get(mHref);
+                }
                 else {
                     if(mHref.regionMatches(true,0, JAVASCRIPT_URI_SCHEME, 0, JAVASCRIPT_URI_SCHEME.length())) {
                         mHref = null;
@@ -209,7 +212,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
                         mHref = NSISHelpURLProvider.HELP_URI_SCHEME+mHref;
                     }
                 }
-                
+
                 if(mHref != null) {
                     mBuffer.append("<a href=\"").append(mHref).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$
                 }

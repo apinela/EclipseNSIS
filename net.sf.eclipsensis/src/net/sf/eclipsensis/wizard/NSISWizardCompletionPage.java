@@ -36,10 +36,9 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
     private static final String[] FILTER_EXTENSIONS = new String[] {"*."+INSISConstants.NSI_EXTENSION}; //$NON-NLS-1$
     private static final String[] FILTER_NAMES = new String[] {EclipseNSISPlugin.getResourceString("nsis.script.filtername")}; //$NON-NLS-1$
-    private static final int PROGRAM_FILE_CHECK=1;
-    private static final int README_FILE_CHECK=2;
-    private static final int SAVE_PATH_CHECK=4;
-    private static final int ALL_CHECK=PROGRAM_FILE_CHECK|README_FILE_CHECK|SAVE_PATH_CHECK;
+    private static final int PROGRAM_FILE_CHECK=0x1;
+    private static final int README_FILE_CHECK=0x10;
+    private static final int SAVE_PATH_CHECK=0x100;
 
     /**
      * @param pageName
@@ -59,7 +58,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     private boolean validateField(int flag)
     {
         if(validatePage(flag)) {
-            return validatePage(ALL_CHECK & ~flag);
+            return validatePage(VALIDATE_ALL & ~flag);
         }
         else {
             return false;
@@ -141,7 +140,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         createMiscUninstallerSettingsGroup(composite);
         createScriptSaveSettingsGroup(composite);
 
-        validatePage(ALL_CHECK);
+        validatePage(VALIDATE_ALL);
 
         return composite;
     }
@@ -251,7 +250,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
         Label l = (Label)t.getData(NSISWizardDialogUtil.LABEL);
         if(l != null) {
-            ((GridData)NSISWizardDialogUtil.getLayoutControl(l).getLayoutData()).horizontalIndent=8;
+            ((GridData)l.getLayoutData()).horizontalIndent=8;
         }
 
         c1.addModifyListener(new ModifyListener() {
@@ -261,7 +260,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 boolean b = validatePage(PROGRAM_FILE_CHECK);
                 t.setEnabled(b);
                 if(b) {
-                    validatePage(ALL_CHECK & ~PROGRAM_FILE_CHECK);
+                    validatePage(VALIDATE_ALL & ~PROGRAM_FILE_CHECK);
                 }
             }
         });

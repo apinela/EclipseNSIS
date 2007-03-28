@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class NSISTemplateVariableProposal implements ICompletionProposal
 {
+    private static final String PERCENT_VARIABLE_LITERAL = new StringBuffer().append(INSISTemplateConstants.IDENTIFIER_BOUNDARY).append(INSISTemplateConstants.IDENTIFIER_BOUNDARY).toString();
     private TemplateVariableResolver mResolver;
     private int mOffset;
     private int mLength;
@@ -50,7 +51,7 @@ public class NSISTemplateVariableProposal implements ICompletionProposal
     public void apply(IDocument document) {
 
         try {
-            String variable= mResolver.getType().equals("percent") ? "%%" : "%" + mResolver.getType() + '%'; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            String variable= mResolver.getType().equals("percent") ? PERCENT_VARIABLE_LITERAL : new StringBuffer().append(INSISTemplateConstants.IDENTIFIER_BOUNDARY).append(mResolver.getType()).append(INSISTemplateConstants.IDENTIFIER_BOUNDARY).toString(); //$NON-NLS-1$
             document.replace(mOffset, mLength, variable);
             mSelection= new Point(mOffset + variable.length(), 0);
 

@@ -13,7 +13,7 @@
 <feature
       id="net.sf.eclipsensis.installoptions"
       label="%feature.name"
-      version="0.9.5.1"
+      version="0.9.6"
       provider-name="%provider.name"
       os="win32"
       ws="win32"
@@ -39,18 +39,18 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.gef" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.ide" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.editors" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="net.sf.eclipsensis" version="0.9.5" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.3.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gef" version="3.2.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views" version="3.2.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsensis" version="0.9.6" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.2.100" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -60,7 +60,7 @@
          arch="x86"
          download-size="1724"
          install-size="1724"
-         version="0.9.5.1"
+         version="0.9.6"
          unpack="false"/>
 
 </feature>
