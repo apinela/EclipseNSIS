@@ -12,7 +12,11 @@ package net.sf.eclipsensis.editor.template;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.templates.*;
 import org.eclipse.swt.graphics.Image;
-
+/**
+ * @deprecated
+ * @author Sunil.Kamath
+ *
+ */
 public class NSISTemplateProposal extends TemplateProposal
 {
     private int mRelevance = 0;
