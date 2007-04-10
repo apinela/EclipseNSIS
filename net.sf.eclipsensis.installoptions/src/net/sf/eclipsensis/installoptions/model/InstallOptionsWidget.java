@@ -736,11 +736,22 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             layout.marginWidth = 0;
             composite2.setLayout(layout);
 
-            mTable = new Table(composite2,SWT.CHECK| SWT.BORDER | SWT.MULTI | SWT.HIDE_SELECTION | SWT.V_SCROLL);
+            mTable = new Table(composite2,SWT.CHECK| SWT.BORDER | SWT.SINGLE | SWT.HIDE_SELECTION | SWT.V_SCROLL);
             mTable.addListener(SWT.EraseItem, new Listener() {
                 public void handleEvent(Event event) {
-                    event.detail &= ~SWT.SELECTED;
+                    event.detail &= ~(SWT.SELECTED|SWT.FOCUSED);
                 }
+            });
+            mTable.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    int selectedIndex = mTable.getSelectionIndex();
+                    if(selectedIndex != -1) {
+                        mTable.deselect(selectedIndex);
+                        TableItem item = mTable.getItem(selectedIndex);
+                        item.setChecked(!item.getChecked());
+                    }
+               }
             });
             initializeDialogUnits(mTable);
             GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);

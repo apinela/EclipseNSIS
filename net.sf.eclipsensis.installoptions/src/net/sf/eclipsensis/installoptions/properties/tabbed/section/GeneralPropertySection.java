@@ -87,7 +87,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
 
         final boolean[] nonUserChange = {false};
 
-        final Table table = factory.createTable(group,SWT.FLAT|SWT.CHECK|SWT.HIDE_SELECTION);
+        final Table table = factory.createTable(group,SWT.FLAT|SWT.CHECK|SWT.SINGLE|SWT.HIDE_SELECTION);
         GC gc = new GC(table);
         gc.setFont(JFaceResources.getDialogFont());
         FontMetrics fontMetrics = gc.getFontMetrics();
@@ -117,7 +117,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         });
         table.addListener(SWT.EraseItem, new Listener() {
             public void handleEvent(Event event) {
-                event.detail &= ~SWT.SELECTED;
+                event.detail &= ~(SWT.SELECTED|SWT.FOCUSED);
             }
         });
         final List flags = new ArrayList(widget.getFlags());
@@ -158,6 +158,24 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                     flags.remove(flag);
                 }
                 runnable.run();
+            }
+        });
+        viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+                if(!event.getSelection().isEmpty()) {
+                    String flag = (String)((IStructuredSelection)event.getSelection()).getFirstElement();
+                    viewer.setSelection(StructuredSelection.EMPTY);
+                    boolean checked = viewer.getChecked(flag);
+                    viewer.setChecked(flag,!checked);
+                    if(!checked) {
+                        flags.add(flag);
+                    }
+                    else {
+                        flags.remove(flag);
+                    }
+                    runnable.run();
+                }
             }
         });
 
