@@ -77,7 +77,7 @@ public class JobScheduler
     public void scheduleUIJob(Object family, String name, ISchedulingRule rule, final IJobStatusRunnable runnable, long delay)
     {
         final Object jobFamily = (family == null?this:family);
-
+        mJobFamilies.add(jobFamily);
         UIJob job = new UIJob(name) {
             public IStatus runInUIThread(IProgressMonitor monitor)
             {
@@ -135,6 +135,7 @@ public class JobScheduler
     public void scheduleJob(Object family, String name, ISchedulingRule rule, final IJobStatusRunnable runnable, long delay)
     {
         final Object jobFamily = (family == null?this:family);
+        mJobFamilies.add(jobFamily);
 
         Job job = new Job(name) {
             public IStatus run(IProgressMonitor monitor)

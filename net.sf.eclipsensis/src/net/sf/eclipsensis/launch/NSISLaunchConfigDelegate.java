@@ -21,8 +21,7 @@ import net.sf.eclipsensis.makensis.MakeNSISResults;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.settings.NSISSettings;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.NestedProgressMonitor;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -70,7 +69,18 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                 throw new CoreException(new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,EclipseNSISPlugin.getResourceString("launch.missing.script.error"),null)); //$NON-NLS-1$
             }
             IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
-            IPath path = new Path(stringVariableManager.performStringSubstitution(script));
+            IPath path = null;
+            if(!Common.isEmpty(script)) {
+                script = stringVariableManager.performStringSubstitution(script);
+                File file = new File(script);
+                if(INSISConstants.NSI_EXTENSION.equalsIgnoreCase(IOUtility.getFileExtension(file)) &&
+                   IOUtility.isValidFile(file) && file.isAbsolute()) {
+                    path = new Path(file.getAbsolutePath());
+                }
+            }
+            if(path == null) {
+                throw new CoreException(new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,EclipseNSISPlugin.getFormattedString("launch.invalid.script.error", script),null)); //$NON-NLS-1$
+            }
             IFile ifile = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
             if(ifile != null) {
                 path = ifile.getFullPath();

@@ -62,6 +62,20 @@ public class NSISScript extends AbstractNSISScriptElementContainer
         writeElements(writer);
     }
 
+    public void compact()
+    {
+        INSISScriptElement previous = null;
+        for (Iterator iter = mElements.iterator(); iter.hasNext();) {
+            INSISScriptElement element = (INSISScriptElement)iter.next();
+            if(previous instanceof NSISScriptBlankLine && element instanceof NSISScriptBlankLine) {
+                iter.remove();
+            }
+            else {
+                previous = element;
+            }
+        }
+    }
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.script.AbstractNSISScriptElementContainer#validateElement(net.sf.eclipsensis.script.INSISScriptElement)
      */

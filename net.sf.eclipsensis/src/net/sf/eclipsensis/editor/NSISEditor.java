@@ -444,10 +444,12 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                     event.doit= offset > mSelection.x && offset < mSelection.y;
 
                     ISelection selection= selectionProvider.getSelection();
-                    if (selection instanceof ITextSelection)
+                    if (selection instanceof ITextSelection) {
                         mSelectedText= ((ITextSelection)selection).getText();
-                    else // fallback to widget
+                    }
+                    else {
                         mSelectedText= st.getSelectionText();
+                    }
                 } catch (IllegalArgumentException ex) {
                     event.doit= false;
                 }
@@ -466,15 +468,17 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                         Point newSelection= st.getSelection();
                         int length= mSelection.y - mSelection.x;
                         int delta= 0;
-                        if (newSelection.x < mSelection.x)
+                        if (newSelection.x < mSelection.x) {
                             delta= length;
+                        }
                         st.replaceTextRange(mSelection.x + delta, length, ""); //$NON-NLS-1$
 
                         if (mTextDragAndDropToken == null) {
                             // Move in same editor - end compound change
                             IRewriteTarget target= (IRewriteTarget)getAdapter(IRewriteTarget.class);
-                            if (target != null)
+                            if (target != null) {
                                 target.endCompoundChange();
+                            }
                         }
 
                     }

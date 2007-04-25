@@ -205,6 +205,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                         final String newNSISHome = WinAPI.RegQueryStrValue(INSISConstants.NSIS_REG_ROOTKEY, INSISConstants.NSIS_REG_SUBKEY, INSISConstants.NSIS_REG_VALUE);
                         if (!Common.isEmpty(newNSISHome)) {
                             if (nsisHome == null || !newNSISHome.equalsIgnoreCase(nsisHome)) {
+                                monitor.setTaskName(EclipseNSISUpdatePlugin.getResourceString("configuring.eclipsensis.task.name")); //$NON-NLS-1$
                                 Display.getDefault().syncExec(new Runnable() {
                                     public void run()
                                     {

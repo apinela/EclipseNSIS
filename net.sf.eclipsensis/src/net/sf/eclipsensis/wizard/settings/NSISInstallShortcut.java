@@ -98,7 +98,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
             setLocationAndCreateInStartMenuGroup("", true); //$NON-NLS-1$
         }
         else {
-            setLocationAndCreateInStartMenuGroup(location, false); //$NON-NLS-1$
+            setLocationAndCreateInStartMenuGroup(location, false); 
         }
     }
     /**

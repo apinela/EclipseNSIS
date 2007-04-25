@@ -15,6 +15,7 @@ import java.util.List;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.wizard.INSISWizardConstants;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.NSISSection;
 import net.sf.eclipsensis.wizard.util.MasterSlaveController;
@@ -99,34 +100,36 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
                 validate();
             }
         });
-        Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.description.label",true,null,false); //$NON-NLS-1$
-        ((GridData)l.getLayoutData()).horizontalSpan = 2;
-        final Text t2 = NSISWizardDialogUtil.createText(composite,mStore.getString("description"),SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL,1,true,null); //$NON-NLS-1$
-        Dialog.applyDialogFont(t2);
-        GridData gd = (GridData)t2.getLayoutData();
-        gd.horizontalSpan = 2;
-        gd.verticalSpan = 4;
-        gd.verticalAlignment = GridData.FILL;
-        gd.grabExcessVerticalSpace = true;
-        gd.heightHint = convertHeightInCharsToPixels(5);
-        t2.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e)
-            {
-                mStore.setValue("description",t2.getText().trim()); //$NON-NLS-1$
-                validate();
+        if(mWizard.getSettings().getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_MUI) {
+            Label l = NSISWizardDialogUtil.createLabel(composite,"wizard.description.label",true,null,false); //$NON-NLS-1$
+            ((GridData)l.getLayoutData()).horizontalSpan = 2;
+            final Text t2 = NSISWizardDialogUtil.createText(composite,mStore.getString("description"),SWT.MULTI|SWT.BORDER|SWT.WRAP|SWT.V_SCROLL,1,true,null); //$NON-NLS-1$
+            Dialog.applyDialogFont(t2);
+            GridData gd = (GridData)t2.getLayoutData();
+            gd.horizontalSpan = 2;
+            gd.verticalSpan = 4;
+            gd.verticalAlignment = GridData.FILL;
+            gd.grabExcessVerticalSpace = true;
+            gd.heightHint = convertHeightInCharsToPixels(5);
+            t2.addModifyListener(new ModifyListener() {
+                public void modifyText(ModifyEvent e)
+                {
+                    mStore.setValue("description",t2.getText().trim()); //$NON-NLS-1$
+                    validate();
+                }
+            });
+            int textLimit;
+            try {
+                textLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefaultSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
             }
-        });
-        int textLimit;
-        try {
-            textLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefaultSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+            catch(Exception ex){
+                textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
+            }
+            t2.setTextLimit(textLimit);
         }
-        catch(Exception ex){
-            textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
-        }
-        t2.setTextLimit(textLimit);
 
         Composite composite2 = new Composite(parent, SWT.NONE);
-        gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, false, false);
         gd.horizontalSpan = 2;
         composite2.setLayoutData(gd);
 

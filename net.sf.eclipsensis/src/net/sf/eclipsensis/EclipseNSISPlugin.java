@@ -510,6 +510,15 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     }
 
     /**
+     * Returns the string from the plugin's resource bundle,
+     * or 'key' if not found.
+     */
+    public static String getFormattedString(String key, Object arg)
+    {
+        return getFormattedString(key,new Object[] {arg});
+    }
+
+    /**
      * Returns the string from the plugin bundle's resource bundle,
      * or 'key' if not found.
      */

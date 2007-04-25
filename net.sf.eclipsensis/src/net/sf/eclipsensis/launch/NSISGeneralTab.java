@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.launch;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -37,6 +38,7 @@ import org.eclipse.ui.PlatformUI;
 
 class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
 {
+    private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{[^\\r\\n]+\\}"); //$NON-NLS-1$
     private static final String[] FILTER_EXTENSIONS = new String[] {"*."+INSISConstants.NSI_EXTENSION}; //$NON-NLS-1$
     private static final String[] FILTER_NAMES = new String[] {EclipseNSISPlugin.getResourceString("nsis.script.filtername")}; //$NON-NLS-1$
 
@@ -141,7 +143,14 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
         boolean validateScript(String script)
         {
             try {
-                return checkExternalFile(mStringVariableManager.performStringSubstitution(script)) != null;
+                boolean valid = checkExternalFile(mStringVariableManager.performStringSubstitution(script)) != null;
+                if(!valid) {
+                    //Check for variables
+                    if(VARIABLE_PATTERN.matcher(script).find()) {
+                        return true;
+                    }
+                }
+                return valid;
             }
             catch (Exception e) {
                 EclipseNSISPlugin.getDefault().log(e);

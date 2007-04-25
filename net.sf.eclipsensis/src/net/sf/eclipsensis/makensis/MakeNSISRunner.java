@@ -10,7 +10,6 @@
 package net.sf.eclipsensis.makensis;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -21,6 +20,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.script.NSISScriptProblem;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
@@ -65,6 +65,8 @@ public class MakeNSISRunner implements INSISConstants
     public static final int COMPRESSOR_BEST;
     public static final String[] COMPRESSOR_DISPLAY_ARRAY;
     public static final String[] COMPRESSOR_NAME_ARRAY;
+
+    private static final Object cJobFamily = new Object();
 
     private static final MessageFormat cCompilationTimeFormat;
     private static final MessageFormat cTotalCompilationTimeFormat;
@@ -153,75 +155,91 @@ public class MakeNSISRunner implements INSISConstants
         }
     }
 
-    private static void updateMarkers(final IFile file, final INSISConsole console, final MakeNSISResults results)
+    private static void updateMarkers(final IFile file, final MakeNSISResults results)
     {
         if (!results.isCanceled()) {
-            WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
-            {
-                protected void execute(IProgressMonitor monitor)
-                {
-                    try {
-                        List problems = results.getProblems();
-                        monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.problem.markers.task.name"),1+(problems==null?0:problems.size())); //$NON-NLS-1$
-                        IPath path = file.getFullPath();
-                        IPath loc = file.getLocation();
-                        if (loc == null) {
-                            throw new CoreException(new Status(IStatus.ERROR, INSISConstants.PLUGIN_ID, IStatus.ERROR, EclipseNSISPlugin.getResourceString("local.filesystem.error"), null)); //$NON-NLS-1$
-                        }
-                        IDocument document = new FileDocument(loc.toFile());
+            EclipseNSISPlugin.getDefault().getJobScheduler().scheduleJob(cJobFamily,EclipseNSISPlugin.getResourceString("updating.markers.job.name"),file, //$NON-NLS-1$
+                new IJobStatusRunnable() {
+                    public IStatus run(IProgressMonitor monitor)
+                    {
+                        final Exception[] ex = {null};
+                        WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
+                        {
+                            protected void execute(IProgressMonitor monitor)
+                            {
+                                try {
+                                    List problems = results.getProblems();
+                                    monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.problem.markers.task.name"),1+(problems==null?0:problems.size())); //$NON-NLS-1$
+                                    IPath path = file.getFullPath();
+                                    IPath loc = file.getLocation();
+                                    if (loc == null) {
+                                        throw new CoreException(new Status(IStatus.ERROR, INSISConstants.PLUGIN_ID, IStatus.ERROR, EclipseNSISPlugin.getResourceString("local.filesystem.error"), null)); //$NON-NLS-1$
+                                    }
+                                    IDocument document = new FileDocument(loc.toFile());
 
-                        file.deleteMarkers(PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
-                        monitor.worked(1);
-                        if (!Common.isEmptyCollection(problems)) {
-                            for(Iterator iter = problems.iterator(); iter.hasNext(); ) {
-                                NSISScriptProblem problem = (NSISScriptProblem)iter.next();
-                                IPath p = (IPath)problem.getPath();
-                                if (p!= null && p.equals(path)) {
-                                    IMarker marker = file.createMarker(PROBLEM_MARKER_ID);
-                                    switch (problem.getType())
-                                    {
-                                        case NSISScriptProblem.TYPE_ERROR:
-                                            marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-                                            break;
-                                        case NSISScriptProblem.TYPE_WARNING:
-                                            marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-                                            break;
+                                    file.deleteMarkers(PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
+                                    if(monitor.isCanceled()) {
+                                        return;
                                     }
-                                    marker.setAttribute(IMarker.MESSAGE, problem.getText());
-                                    int line = problem.getLine();
-                                    marker.setAttribute(IMarker.LINE_NUMBER, line > 0?line:1);
-                                    if (line > 0) {
-                                        try {
-                                            IRegion region = document.getLineInformation(line - 1);
-                                            marker.setAttribute(IMarker.CHAR_START, region.getOffset());
-                                            marker.setAttribute(IMarker.CHAR_END, region.getOffset() + region.getLength());
-                                        }
-                                        catch (BadLocationException e) {
+                                    monitor.worked(1);
+                                    if (!Common.isEmptyCollection(problems)) {
+                                        for(Iterator iter = problems.iterator(); iter.hasNext(); ) {
+                                            if(monitor.isCanceled()) {
+                                                return;
+                                            }
+                                            NSISScriptProblem problem = (NSISScriptProblem)iter.next();
+                                            IPath p = (IPath)problem.getPath();
+                                            if (p!= null && p.equals(path)) {
+                                                IMarker marker = file.createMarker(PROBLEM_MARKER_ID);
+                                                if(monitor.isCanceled()) {
+                                                    return;
+                                                }
+
+                                                switch (problem.getType())
+                                                {
+                                                    case NSISScriptProblem.TYPE_ERROR:
+                                                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+                                                        break;
+                                                    case NSISScriptProblem.TYPE_WARNING:
+                                                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+                                                        break;
+                                                }
+                                                marker.setAttribute(IMarker.MESSAGE, problem.getText());
+                                                int line = problem.getLine();
+                                                marker.setAttribute(IMarker.LINE_NUMBER, line > 0?line:1);
+                                                if (line > 0) {
+                                                    try {
+                                                        IRegion region = document.getLineInformation(line - 1);
+                                                        marker.setAttribute(IMarker.CHAR_START, region.getOffset());
+                                                        marker.setAttribute(IMarker.CHAR_END, region.getOffset() + region.getLength());
+                                                    }
+                                                    catch (BadLocationException e) {
+                                                    }
+                                                }
+                                                problem.setMarker(marker);
+                                            }
+                                            monitor.worked(1);
                                         }
                                     }
-                                    problem.setMarker(marker);
                                 }
-                                monitor.worked(1);
+                                catch (CoreException e) {
+                                    ex[0] = e;
+                                }
+                                finally {
+                                    monitor.done();
+                                }
                             }
+                        };
+                        try {
+                            op.run(monitor);
                         }
-                    }
-                    catch (CoreException ex) {
-                        console.appendLine(NSISConsoleLine.error(ex.getLocalizedMessage()));
-                    }
-                    finally {
-                        monitor.done();
+                        catch (Exception e) {
+                            ex[0]= e;
+                        }
+                        return monitor.isCanceled()?Status.CANCEL_STATUS:(ex[0]==null?Status.OK_STATUS:new Status(IStatus.ERROR,PLUGIN_ID,ex[0].getMessage(),ex[0]));
                     }
                 }
-            };
-            try {
-                op.run(new NullProgressMonitor());
-            }
-            catch (InvocationTargetException e) {
-                console.appendLine(NSISConsoleLine.error(e.getLocalizedMessage()));
-            }
-            catch (InterruptedException e) {
-                console.appendLine(NSISConsoleLine.error(e.getLocalizedMessage()));
-            }
+            );
         }
     }
 
@@ -604,7 +622,7 @@ public class MakeNSISRunner implements INSISConstants
                                         ifile.setPersistentProperty(NSIS_EXE_TIMESTAMP, null);
 
                                     }
-                                    updateMarkers(ifile, console, results);
+                                    updateMarkers(ifile, results);
                                 }
                                 catch (CoreException cex) {
                                     EclipseNSISPlugin.getDefault().log(cex);
@@ -621,12 +639,33 @@ public class MakeNSISRunner implements INSISConstants
                 }
             }
             finally {
-                if(results != null && ifile != null) {
+                if(results != null && results.getReturnCode() == MakeNSISResults.RETURN_SUCCESS) {
                     try {
-                        ifile.getProject().refreshLocal(IResource.DEPTH_INFINITE,null);
+                        final IFile[] outputFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(results.getOutputFileName()));
+                        if(!Common.isEmptyArray(outputFiles)) {
+                            EclipseNSISPlugin.getDefault().getJobScheduler().scheduleJob(cJobFamily,EclipseNSISPlugin.getResourceString("refreshing.makensis.results.job.name"), //$NON-NLS-1$
+                                    new IJobStatusRunnable() {
+                                        public IStatus run(IProgressMonitor monitor)
+                                        {
+                                            for (int i = 0; i < outputFiles.length; i++) {
+                                                if(monitor.isCanceled()) {
+                                                    return Status.CANCEL_STATUS;
+                                                }
+                                                try {
+                                                    outputFiles[i].refreshLocal(IResource.DEPTH_ZERO,null);
+                                                }
+                                                catch (CoreException e) {
+                                                    return new Status(IStatus.ERROR,PLUGIN_ID,e.getMessage(),e);
+                                                }
+                                            }
+                                            return Status.OK_STATUS;
+                                        }
+                                    }
+                            );
+                        }
                     }
-                    catch(CoreException cex) {
-                        EclipseNSISPlugin.getDefault().log(cex);
+                    catch(Exception ex) {
+                        EclipseNSISPlugin.getDefault().log(ex);
                     }
                 }
             }

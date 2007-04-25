@@ -64,7 +64,7 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
         mAssociatedScriptLabel.setText(EclipseNSISPlugin.getResourceString("associated.script.label")); //$NON-NLS-1$
         mAssociatedScriptLabel.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
 
-        mNSISScriptName = new Text(composite, SWT.BORDER); //$NON-NLS-1$
+        mNSISScriptName = new Text(composite, SWT.BORDER); 
         IFile file = mHeaderAssociationManager.getAssociatedScript((IFile)getElement());
         mNSISScriptName.setText(file==null?"":file.getFullPath().toString()); //$NON-NLS-1$
         mNSISScriptName.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
@@ -94,7 +94,7 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
                         if(!validateScript(dialog.getFile())) {
                             continue;
                         }
-                        mNSISScriptName.setText(dialog.getFile().getFullPath().toString()); //$NON-NLS-1$
+                        mNSISScriptName.setText(dialog.getFile().getFullPath().toString()); 
                     }
                     break;
                 }

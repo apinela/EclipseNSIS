@@ -708,7 +708,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 }
             }
 
-            unPostSection = new NSISScriptSection("un.post",false,false,false); //$NON-NLS-1$
+            unPostSection = new NSISScriptSection("un.post",false,true,false); //$NON-NLS-1$
             mScript.insertAfterElement(mSectionsPlaceHolder,new NSISScriptBlankLine());
             NSISScriptMacro macro = (NSISScriptMacro)mScript.insertAfterElement(mSectionsPlaceHolder,new NSISScriptMacro("SELECT_UNSECTION",new String[]{"SECTION_NAME","UNSECTION_ID"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             macro.addElement(new NSISScriptInstruction("Push",getKeyword("$R0"))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -865,12 +865,13 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         INSISInstallElement[] contents =  mSettings.getInstaller().getChildren();
         mSectionCounter = 0;
         mSectionGroupCounter = 0;
+        Map secDescMap = (mIsMUI?new LinkedHashMap():null);
         for (int i = 0; i < contents.length; i++) {
             if(contents[i] instanceof NSISSection) {
-                mScript.insertElement(mSectionsPlaceHolder, buildSection((NSISSection)contents[i]));
+                mScript.insertElement(mSectionsPlaceHolder, buildSection((NSISSection)contents[i], secDescMap));
             }
             else if(contents[i] instanceof NSISSectionGroup) {
-                mScript.insertElement(mSectionsPlaceHolder, buildSectionGroup((NSISSectionGroup)contents[i]));
+                mScript.insertElement(mSectionsPlaceHolder, buildSectionGroup((NSISSectionGroup)contents[i], secDescMap));
             }
             mScript.insertElement(mSectionsPlaceHolder, new NSISScriptBlankLine());
         }
@@ -890,6 +891,21 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             mScript.insertElement(mUnsectionsPlaceHolder,unPostSection);
         }
 
+        if(secDescMap != null && secDescMap.size() > 0) {
+            mScript.addElement(new NSISScriptBlankLine());
+            mScript.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.section.desc.comment"))); //$NON-NLS-1$
+            mScript.addElement(new NSISScriptInsertMacro("MUI_FUNCTION_DESCRIPTION_BEGIN")); //$NON-NLS-1$
+            for (Iterator iter = secDescMap.keySet().iterator(); iter.hasNext();) {
+                String id = (String)iter.next();
+                mScript.addElement(new NSISScriptInsertMacro("MUI_DESCRIPTION_TEXT", //$NON-NLS-1$
+                        new String[] {new StringBuffer("${").append(id).append("}").toString(), //$NON-NLS-1$ //$NON-NLS-2$
+                        mSettings.isEnableLanguageSupport()?
+                                new StringBuffer("$(").append(id).append("_DESC)").toString(): //$NON-NLS-1$ //$NON-NLS-2$
+                                    ((String)secDescMap.get(id))}));
+            }
+            mScript.addElement(new NSISScriptInsertMacro("MUI_FUNCTION_DESCRIPTION_END")); //$NON-NLS-1$
+        }
+
         if(mSettings.isEnableLanguageSupport()) {
             Locale defaultLocale = NSISLanguageManager.getInstance().getDefaultLocale();
             ResourceBundle defaultBundle = EclipseNSISPlugin.getDefault().getResourceBundle(defaultLocale);
@@ -897,6 +913,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             NSISScriptlet smTextScriptlet = new NSISScriptlet();
             NSISScriptlet unlinkScriptlet = new NSISScriptlet();
             NSISScriptlet disableSMScriptlet = new NSISScriptlet();
+            NSISScriptlet secDescScriptlet = new NSISScriptlet();
             for (Iterator iter = languages.iterator(); iter.hasNext();) {
                 NSISLanguage language = (NSISLanguage) iter.next();
                 Locale locale = NSISLanguageManager.getInstance().getLocaleForLangId(language.getLangId());
@@ -928,8 +945,20 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                                bundle.getString("scriptgen.disable.start.menu.shortcuts.text")})); //$NON-NLS-1$
                     }
                 }
+                if(secDescMap != null && secDescMap.size() > 0) {
+                    if(secDescScriptlet.size() > 0) {
+                        secDescScriptlet.addElement(new NSISScriptBlankLine());
+                    }
+                    for (Iterator iter2 = secDescMap.keySet().iterator(); iter2.hasNext();) {
+                        String id = (String)iter2.next();
+                        secDescScriptlet.addElement(new NSISScriptAttribute("LangString", //$NON-NLS-1$
+                                new String[]{id+"_DESC",language.getLangDef(), //$NON-NLS-1$
+                                ((String)secDescMap.get(id))}));
+                    }
+                }
             }
-            if(smTitleScriptlet.size() > 0 || unlinkScriptlet.size() > 0 || smTextScriptlet.size() > 0 || disableSMScriptlet.size() > 0) {
+            if(smTitleScriptlet.size() > 0 || unlinkScriptlet.size() > 0 || smTextScriptlet.size() > 0
+                    || disableSMScriptlet.size() > 0 || secDescScriptlet.size() > 0) {
                 mScript.addElement(new NSISScriptBlankLine());
                 mScript.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.langstring.comment1"))); //$NON-NLS-1$
                 mScript.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getFormattedString("scriptgen.langstring.comment2",new Object[]{defaultTaskTag}).trim())); //$NON-NLS-1$
@@ -948,6 +977,10 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 if(unlinkScriptlet.size() > 0) {
                     mScript.addElement(new NSISScriptBlankLine());
                     mScript.append(unlinkScriptlet);
+                }
+                if(secDescScriptlet.size() > 0) {
+                    mScript.addElement(new NSISScriptBlankLine());
+                    mScript.append(secDescScriptlet);
                 }
             }
         }
@@ -988,6 +1021,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         else {
             mScript.remove(varsPlaceHolder);
         }
+        mScript.compact();
 
         mWriter.print(NSISScriptSingleLineComment.PREFIX_HASH+" "); //$NON-NLS-1$
         mWriter.println(EclipseNSISPlugin.getResourceString("scriptgen.header.comment")); //$NON-NLS-1$
@@ -1017,20 +1051,23 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         return new NSISScriptAttribute("VIAddVersionKey",args); //$NON-NLS-1$
     }
 
-    private NSISScriptSectionGroup buildSectionGroup(NSISSectionGroup subsec)
+    private NSISScriptSectionGroup buildSectionGroup(NSISSectionGroup secGrp, Map sectionDescMap)
     {
-        NSISScriptSectionGroup scriptSecgrp = new NSISScriptSectionGroup(subsec.getCaption(),subsec.isDefaultExpanded(),subsec.isBold(),
-                                                                MessageFormat.format("SECGRP{0,number,0000}",new Object[]{new Integer(mSectionGroupCounter++)})); //$NON-NLS-1$
-        INSISInstallElement[] children = subsec.getChildren();
+        String secGrpId = MessageFormat.format("SECGRP{0,number,0000}",new Object[]{new Integer(mSectionGroupCounter++)}); //$NON-NLS-1$
+        NSISScriptSectionGroup scriptSecgrp = new NSISScriptSectionGroup(secGrp.getCaption(),secGrp.isDefaultExpanded(),secGrp.isBold(),
+                                                                secGrpId); 
+        if(sectionDescMap != null && mIsMUI && !Common.isEmpty(secGrp.getDescription())) {
+            sectionDescMap.put(secGrpId, secGrp.getDescription());
+        }
+        INSISInstallElement[] children = secGrp.getChildren();
         if(!Common.isEmptyArray(children)) {
-            scriptSecgrp.addElement((children[0] instanceof NSISSectionGroup?
-                                        (INSISScriptElement)buildSectionGroup((NSISSectionGroup)children[0]):
-                                        (INSISScriptElement)buildSection((NSISSection)children[0])));
-            for (int i = 1; i < children.length; i++) {
-                scriptSecgrp.addElement(new NSISScriptBlankLine());
+            for (int i = 0; i < children.length; i++) {
+                if(i > 0) {
+                    scriptSecgrp.addElement(new NSISScriptBlankLine());
+                }
                 scriptSecgrp.addElement((children[i] instanceof NSISSectionGroup?
-                        (INSISScriptElement)buildSectionGroup((NSISSectionGroup)children[i]):
-                        (INSISScriptElement)buildSection((NSISSection)children[i])));
+                        (INSISScriptElement)buildSectionGroup((NSISSectionGroup)children[i], sectionDescMap):
+                        (INSISScriptElement)buildSection((NSISSection)children[i], sectionDescMap)));
             }
         }
 
@@ -1089,10 +1126,14 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         }
     }
 
-    private NSISScriptSection buildSection(NSISSection sec)
+    private NSISScriptSection buildSection(NSISSection sec, Map sectionDescMap)
     {
         String sectionId = MessageFormat.format("SEC{0,number,0000}",new Object[]{new Integer(mSectionCounter++)}); //$NON-NLS-1$
         String unSectionId = "UN"+sectionId; //$NON-NLS-1$
+        if(sectionDescMap != null && mIsMUI && !sec.isHidden() && !Common.isEmpty(sec.getDescription())) {
+            sectionDescMap.put(sectionId, sec.getDescription());
+        }
+
         NSISScriptSection section = new NSISScriptSection(sec.getName(),sec.isBold(), sec.isHidden(), sec.isDefaultUnselected(),
                 sectionId);
         NSISScriptSection unSection = null;
@@ -1101,7 +1142,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             mUnOnInitFunction.addElement(new NSISScriptInsertMacro("SELECT_UNSECTION",new String[]{sec.getName(),new StringBuffer("${").append( //$NON-NLS-1$ //$NON-NLS-2$
                     unSectionId).append("}").toString()})); //$NON-NLS-1$
 
-            unSection = new NSISScriptSection("un."+sec.getName(),false, false, true,  //$NON-NLS-1$
+            unSection = new NSISScriptSection("un."+sec.getName(),false, true, true,  //$NON-NLS-1$
                                               unSectionId);
             mUnSectionList.add(unSection);
         }
