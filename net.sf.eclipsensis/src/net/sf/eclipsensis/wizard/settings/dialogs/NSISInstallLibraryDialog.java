@@ -12,9 +12,9 @@ package net.sf.eclipsensis.wizard.settings.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.*;
@@ -42,6 +42,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         cProperties.add("refreshShell"); //$NON-NLS-1$
         cProperties.add("unloadLibraries"); //$NON-NLS-1$
         cProperties.add("removeOnUninstall"); //$NON-NLS-1$
+        cProperties.add("ignoreVersion"); //$NON-NLS-1$
+        cProperties.add("x64"); //$NON-NLS-1$
     }
 
     public NSISInstallLibraryDialog(NSISWizard wizard, NSISInstallLibrary item)
@@ -54,6 +56,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         mStore.setDefault("refreshShell",false); //$NON-NLS-1$
         mStore.setDefault("unloadLibraries",false); //$NON-NLS-1$
         mStore.setDefault("removeOnUninstall",true); //$NON-NLS-1$
+        mStore.setDefault("ignoreVersion",false); //$NON-NLS-1$
+        mStore.setDefault("x64",false); //$NON-NLS-1$
     }
 
     protected String getHelpContextId()
@@ -154,30 +158,54 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
             }
         });
 
-        final Button cb4 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.refresh.shell.label", mStore.getBoolean("refreshShell"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
-        cb4.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
-            {
-                mStore.setValue("refreshShell",cb4.getSelection()); //$NON-NLS-1$
-                validate();
-            }
-        });
+        boolean flag = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
 
-        final Button cb5 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.unload.libraries.label", mStore.getBoolean("unloadLibraries"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
+        if(flag) {
+            final Button cb4 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.x64.library.label", mStore.getBoolean("x64"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
+            cb4.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mStore.setValue("x64",cb4.getSelection()); //$NON-NLS-1$
+                    validate();
+                }
+            });
+        }
+
+        final Button cb5 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.refresh.shell.label", mStore.getBoolean("refreshShell"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb5.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                mStore.setValue("unloadLibraries",cb5.getSelection()); //$NON-NLS-1$
+                mStore.setValue("refreshShell",cb5.getSelection()); //$NON-NLS-1$
                 validate();
             }
         });
 
-        if(mWizard.getSettings().isCreateUninstaller()) {
-            final Button cb6 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.remove.on.uninstall.label", mStore.getBoolean("removeOnUninstall"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
-            cb6.addSelectionListener(new SelectionAdapter() {
+        final Button cb6 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.unload.libraries.label", mStore.getBoolean("unloadLibraries"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
+        cb6.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                mStore.setValue("unloadLibraries",cb6.getSelection()); //$NON-NLS-1$
+                validate();
+            }
+        });
+
+        if(flag) {
+            final Button cb7 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.ignore.version.label", mStore.getBoolean("x64"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
+            cb7.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
                 {
-                    mStore.setValue("removeOnUninstall",cb6.getSelection()); //$NON-NLS-1$
+                    mStore.setValue("ignoreVersion",cb7.getSelection()); //$NON-NLS-1$
+                    validate();
+                }
+            });
+        }
+
+        if(mWizard.getSettings().isCreateUninstaller()) {
+            final Button cb8 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.remove.on.uninstall.label", mStore.getBoolean("removeOnUninstall"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
+            cb8.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mStore.setValue("removeOnUninstall",cb8.getSelection()); //$NON-NLS-1$
                     validate();
                 }
             });

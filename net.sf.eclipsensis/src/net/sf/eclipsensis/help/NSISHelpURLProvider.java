@@ -230,7 +230,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     v = new Version(tokens[1]);
                 }
                 else {
-                    v = NSISValidator.MINIMUM_NSIS_VERSION;
+                    v = INSISVersions.MINIMUM_VERSION;
                 }
                 temp.put(v, key);
                 list.add(v);

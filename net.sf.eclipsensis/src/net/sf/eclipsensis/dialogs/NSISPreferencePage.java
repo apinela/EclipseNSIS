@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISVersions;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.job.JobScheduler;
 import net.sf.eclipsensis.settings.*;
@@ -189,7 +190,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
 
             protected boolean isSolidCompressionSupported()
             {
-                if(mNSISVersion.compareTo(NSISPreferences.NSIS_VERSION_2_07) >= 0) {
+                if(mNSISVersion.compareTo(INSISVersions.VERSION_2_07) >= 0) {
                     if(IOUtility.isValidFile(mNSISExe)) {
                         long[] data = (long[])cSolidCompressionMap.get(mNSISExe);
                         if(data != null) {
@@ -216,7 +217,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
 
             protected boolean isProcessPrioritySupported()
             {
-                if(mNSISVersion.compareTo(NSISPreferences.VERSION_2_24) >= 0) {
+                if(mNSISVersion.compareTo(INSISVersions.VERSION_2_24) >= 0) {
                     if(IOUtility.isValidFile(mNSISExe)) {
                         long[] data = (long[])cProcessPriorityMap.get(mNSISExe);
                         if(data != null) {

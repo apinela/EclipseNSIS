@@ -14,6 +14,7 @@ import java.util.List;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.actions.*;
 import net.sf.eclipsensis.installoptions.edit.*;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPartViewer;
@@ -74,9 +75,11 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
                     else {
                         label = InstallOptionsPlugin.getResourceString("direct.edit.label"); //$NON-NLS-1$
                     }
-                    action.setText(label);
-                    action.setToolTipText(label);
-                    manager.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
+                    if(!Common.isEmpty(label)) {
+                        action.setText(label);
+                        action.setToolTipText(label);
+                        manager.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
+                    }
                 }
 
                 action = getActionRegistry().getAction(ExtendedEditAction.ID);
@@ -89,9 +92,11 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
                     else {
                         label = InstallOptionsPlugin.getResourceString("extended.edit.label"); //$NON-NLS-1$
                     }
-                    action.setText(label);
-                    action.setToolTipText(label);
-                    manager.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
+                    if (!Common.isEmpty(label)) {
+                        action.setText(label);
+                        action.setToolTipText(label);
+                        manager.appendToGroup(GEFActionConstants.GROUP_EDIT, action);
+                    }
                 }
             }
         }

@@ -639,7 +639,7 @@ public class MakeNSISRunner implements INSISConstants
                 }
             }
             finally {
-                if(results != null && results.getReturnCode() == MakeNSISResults.RETURN_SUCCESS) {
+                if(results != null && results.getReturnCode() == MakeNSISResults.RETURN_SUCCESS && results.getOutputFileName() != null) {
                     try {
                         final IFile[] outputFiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(results.getOutputFileName()));
                         if(!Common.isEmptyArray(outputFiles)) {

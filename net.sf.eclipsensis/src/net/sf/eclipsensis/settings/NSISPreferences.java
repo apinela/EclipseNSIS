@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
 import net.sf.eclipsensis.dialogs.NSISPreferencePage;
 import net.sf.eclipsensis.editor.NSISTaskTag;
@@ -56,12 +56,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
 
     public static final NSISPreferences INSTANCE;
 
-    protected static final Version PLUGIN_VERSION_0_9_6 = new Version("0.9.6"); //$NON-NLS-1$
-
-    public static final Version NSIS_VERSION_2_07 = new Version("2.07"); //$NON-NLS-1$
     public static final String NSIS_CONFIG_COMPRESSION_SUPPORT="NSIS_CONFIG_COMPRESSION_SUPPORT"; //$NON-NLS-1$
-
-    public static final Version VERSION_2_24 = new Version("2.24"); //$NON-NLS-1$
 
     private IPreferenceStore mPreferenceStore = null;
     private File mNSISExe = null;
@@ -232,7 +227,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         boolean b = super.migrate(settingsVersion);
         if(EclipseNSISPlugin.getDefault().getVersion().compareTo(settingsVersion) > 0) {
-            if(PLUGIN_VERSION_0_9_6.compareTo(settingsVersion) > 0) {
+            if(IPluginVersions.VERSION_0_9_6.compareTo(settingsVersion) > 0) {
                 mPreferenceStore.setDefault(USE_SPACES_FOR_TABS,true);
                 EditorsUI.getPreferenceStore().setValue(
                         AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS,
@@ -406,8 +401,8 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             mNSISVersion = NSISValidator.getNSISVersion(mNSISExe);
             mNSISDefaultSymbols = NSISValidator.loadNSISDefaultSymbols(mNSISExe);
             FileMonitor.INSTANCE.register(mNSISExe,this);
-            mSolidCompressionSupported = (mNSISVersion.compareTo(NSIS_VERSION_2_07) >=0 && mNSISDefaultSymbols.containsKey(NSIS_CONFIG_COMPRESSION_SUPPORT));
-            mProcessPrioritySupported = mNSISVersion.compareTo(VERSION_2_24) >=0;
+            mSolidCompressionSupported = (mNSISVersion.compareTo(INSISVersions.VERSION_2_07) >=0 && mNSISDefaultSymbols.containsKey(NSIS_CONFIG_COMPRESSION_SUPPORT));
+            mProcessPrioritySupported = mNSISVersion.compareTo(INSISVersions.VERSION_2_24) >=0;
         }
         else {
             mNSISHome = ""; //$NON-NLS-1$

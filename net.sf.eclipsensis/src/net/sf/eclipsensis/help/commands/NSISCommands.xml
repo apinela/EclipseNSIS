@@ -11,6 +11,25 @@
 ###############################################################################
 -->
 <commands>
+  <version name="2.26">
+    <add>
+      <command name="GetDLLVersionLocal" category="general.purpose.instructions.category">
+        <param name="filename" type="localfile" acceptVar="false">
+          <filter name="dll.files.filter.name" value="*.dll"/>
+          <filter name="vxd.files.filter.name" value="*.vxd"/>
+          <filter name="all.files.filter.name" value="*.*"/>
+        </param>
+        <param name="user_var(high dword output)" type="var"/>
+        <param name="user_var(low dword output)" type="var"/>
+      </command>
+      <command name="SetRegView" category="misc.instructions.category">
+        <param type="choice" default="0">
+          <choice value="32"/>
+          <choice value="64"/>
+        </param>
+      </command>
+    </add>
+  </version>
   <version name="2.25">
     <add>
       <command name="!define" category="conditional.compilation.category">

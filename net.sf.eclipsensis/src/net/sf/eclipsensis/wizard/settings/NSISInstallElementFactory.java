@@ -12,8 +12,7 @@ package net.sf.eclipsensis.wizard.settings;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISService;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.INSISHomeListener;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
@@ -129,7 +128,7 @@ public class NSISInstallElementFactory
                 String key = (String)e.nextElement();
                 if(key.startsWith(VALID_TYPES)) {
                     int n = key.indexOf('#');
-                    Version version = (n >= 0?new Version(key.substring(n+1)):NSISValidator.MINIMUM_NSIS_VERSION);
+                    Version version = (n >= 0?new Version(key.substring(n+1)):INSISVersions.MINIMUM_VERSION);
                     if(nsisVersion.compareTo(version) >= 0) {
                         if(maxVersion == null || version.compareTo(maxVersion) > 0) {
                             maxVersion = version;

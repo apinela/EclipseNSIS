@@ -68,9 +68,11 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                     c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
                 }
             }
-            c = createFlagsSection(widget, parent, commandHelper);
-            data = new GridData(SWT.FILL,SWT.FILL,false,true);
-            c.setLayoutData(data);
+            if(widget.getTypeDef().getFlags().size() > 0 || widget.getFlags().size() > 0) {
+                c = createFlagsSection(widget, parent, commandHelper);
+                data = new GridData(SWT.FILL,SWT.FILL,false,true);
+                c.setLayoutData(data);
+            }
             return parent;
         }
         return null;

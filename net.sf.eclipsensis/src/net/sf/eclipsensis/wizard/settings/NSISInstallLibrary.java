@@ -35,6 +35,8 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
     private boolean mRemoveOnUninstall = true;
     private boolean mRefreshShell = false;
     private boolean mUnloadLibraries = false;
+    private boolean mIgnoreVersion = false;
+    private boolean mX64 = false;
 
     static {
         NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.library.type.name"), IMAGE, NSISInstallLibrary.class); //$NON-NLS-1$
@@ -188,6 +190,32 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
         if(mShared != shared) {
             setDirty();
             mShared = shared;
+        }
+    }
+
+    public boolean isIgnoreVersion()
+    {
+        return mIgnoreVersion;
+    }
+
+    public void setIgnoreVersion(boolean ignoreVersion)
+    {
+        if(mIgnoreVersion != ignoreVersion) {
+            setDirty();
+            mIgnoreVersion = ignoreVersion;
+        }
+    }
+
+    public boolean isX64()
+    {
+        return mX64;
+    }
+
+    public void setX64(boolean x64)
+    {
+        if(mX64 != x64) {
+            setDirty();
+            mX64 = x64;
         }
     }
 

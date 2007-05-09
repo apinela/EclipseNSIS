@@ -1,6 +1,16 @@
 Revision History
 ================
 
+0.9.6 (xx/xx/2007)
+    * Added support for changes in NSIS 2.26:
+        o New variables and constants ($EXEPATH, $EXEFILE, $PROGRAMFILES64,
+          $PROGRAMFILES32, $COMMONFILES64, $COMMONFILES32
+        o New InstallLib options (LIBRARY_IGNORE_VERSION and LIBRARY_X64).
+        o New and changed commands (SetRegView, GetDLLVersionLocal, MessageBox
+          and File)
+    * Bug Fixes
+        o 1714373
+
 0.9.5.1 (03/15/2007)
     * Added support for new predefines.
     * Added support for /P compiler option.

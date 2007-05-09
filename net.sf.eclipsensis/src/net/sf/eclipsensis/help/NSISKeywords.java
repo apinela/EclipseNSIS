@@ -167,7 +167,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                     else {
                         int n = key.indexOf('#');
                         String name = (n >= 0?key.substring(0,n):key);
-                        Version version = (n >= 0?new Version(key.substring(n+1)):NSISValidator.MINIMUM_NSIS_VERSION);
+                        Version version = (n >= 0?new Version(key.substring(n+1)):INSISVersions.MINIMUM_VERSION);
                         if(nsisVersion.compareTo(version) >= 0) {
                             ArrayList list = (ArrayList)versionMap.get(version);
                             if(list == null) {

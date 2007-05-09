@@ -16,13 +16,11 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
 public class NSISValidator implements INSISConstants
 {
-    public static final Version MINIMUM_NSIS_VERSION = new Version(EclipseNSISPlugin.getResourceString("minimum.nsis.version")); //$NON-NLS-1$
     private static final Pattern cVersionPattern = Pattern.compile("v?(\\d+(?:\\.\\d+)?(?:[A-Za-z]+\\d*)?)"); //$NON-NLS-1$
     private static final Pattern cCVSVersionPattern = Pattern.compile("v?([0-3][0-9]-[a-zA-Z]{3}-20[0-9]{2})\\.cvs"); //$NON-NLS-1$
     private static final SimpleDateFormat cCVSDateFormat;
@@ -91,7 +89,7 @@ public class NSISValidator implements INSISConstants
             File file = new File(nsisHome,MAKENSIS_EXE);
             if(IOUtility.isValidFile(file)) {
                 Version version = getNSISVersion(file);
-                if(version.compareTo(MINIMUM_NSIS_VERSION) >= 0) {
+                if(version.compareTo(INSISVersions.MINIMUM_VERSION) >= 0) {
                     return file;
                 }
             }

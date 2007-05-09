@@ -14,14 +14,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.IPluginVersions;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.Version;
 
 public abstract class NSISSettings implements INSISSettingsConstants
 {
     protected static final File PLUGIN_STATE_LOCATION = EclipseNSISPlugin.getPluginStateLocation();
-
-    protected static final Version PLUGIN_VERSION_0_9_5_1 = new Version("0.9.5.1"); //$NON-NLS-1$
 
     private boolean mHdrInfo = false;
     private boolean mLicense = false;
@@ -54,7 +53,7 @@ public abstract class NSISSettings implements INSISSettingsConstants
     protected boolean migrate(Version settingsVersion)
     {
         if(EclipseNSISPlugin.getDefault().getVersion().compareTo(settingsVersion) > 0) {
-            if(PLUGIN_VERSION_0_9_5_1.compareTo(settingsVersion) > 0) {
+            if(IPluginVersions.VERSION_0_9_5_1.compareTo(settingsVersion) > 0) {
                 if(getVerbosity() == INSISSettingsConstants.VERBOSITY_ALL) {
                     setVerbosity(getDefaultVerbosity());
                     return true;

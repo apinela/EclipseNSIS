@@ -126,29 +126,30 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                             int[] validTypes) throws BadLocationException, BadPositionCategoryException
     {
         if(!Common.isEmptyArray(validTypes)) {
-            while(current.getType() != ROOT) {
-                boolean found = false;
+            List elementsToClose = new ArrayList();
+            boolean found = false;
+            NSISOutlineElement el = current;
+            while(el.getType() != ROOT && !found) {
+                elementsToClose.add(el);
                 for (int i = 0; i < validTypes.length; i++) {
-                    if(mResources.getTypeIndex(current.getType()) == validTypes[i]) {
+                    if(mResources.getTypeIndex(el.getType()) == validTypes[i]) {
                         found = true;
+                        current = el.getParent();
+                        for (Iterator iter = elementsToClose.iterator(); iter.hasNext();) {
+                            el = (NSISOutlineElement)iter.next();
+                            el.merge(element.getPosition());
+                            document.addPosition(NSIS_OUTLINE,el.getPosition());
+                            document.addPosition(NSIS_OUTLINE_SELECT,el.getSelectPosition());
+                            if(mAnnotationModel != null) {
+                                mAnnotationModel.addAnnotation(new ProjectionAnnotation(), el.getPosition());
+                            }
+                        }
                         break;
                     }
                 }
-                NSISOutlineElement parent = current.getParent();
-                if(found) {
-                    current.merge(element.getPosition());
-                    document.addPosition(NSIS_OUTLINE,current.getPosition());
-                    document.addPosition(NSIS_OUTLINE_SELECT,current.getSelectPosition());
-                    if(mAnnotationModel != null) {
-                        mAnnotationModel.addAnnotation(new ProjectionAnnotation(), current.getPosition());
-                    }
-                }
-                else {
-                    parent.removeChild(current);
-                }
-                current = parent;
-                if(found) {
-                    break;
+
+                if(!found) {
+                    el = el.getParent();
                 }
             }
         }
@@ -371,6 +372,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                         String text = document.get(linePosition.getOffset(),linePosition.getLength());
                         String text2 = text.trim();
                         element.setSelectPosition(new Position(linePosition.getOffset()+text.indexOf(text2),text2.length()));
+                        int currentType = mResources.getTypeIndex(current.getType());
                         switch(type) {
                             case DEFINE:
                                 addLine(document, current, element);
@@ -417,7 +419,9 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                             case PAGE:
                             case INCLUDE:
                             case VAR:
-                                if(current.getType() == ROOT) {
+                                if(current.getType() == ROOT || currentType == MACRO ||
+                                   currentType == IFDEF || currentType == IFNDEF ||
+                                   currentType == IFMACRODEF || currentType == IFNMACRODEF) {
                                     addLine(document, current, element);
                                 }
                                 break;

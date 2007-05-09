@@ -13,8 +13,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
@@ -41,6 +40,8 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String TYPE_DROPLIST = "DropList"; //$NON-NLS-1$
     public static final String TYPE_LISTBOX = "Listbox"; //$NON-NLS-1$
     public static final String TYPE_UNKNOWN = "Unknown"; //$NON-NLS-1$
+    public static final String TYPE_HLINE = "HLine"; //$NON-NLS-1$
+    public static final String TYPE_VLINE = "VLine"; //$NON-NLS-1$
 
     public static final String SECTION_SETTINGS = "Settings"; //$NON-NLS-1$
     public static final String SECTION_FIELD_PREFIX = "Field"; //$NON-NLS-1$
@@ -271,6 +272,11 @@ public class InstallOptionsModel implements IPropertyChangeListener
             typeDef.setFlags((List)controlFlags.get(type));
         }
 
+        InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)mControlTypes.remove(TYPE_UNKNOWN);
+        if(typeDef != null) {
+            mControlTypes.put(typeDef.getType(),typeDef);
+        }
+
         try {
             mMaxLength = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefaultSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
@@ -288,7 +294,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
             nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
         }
         else {
-            nsisVersion = NSISValidator.MINIMUM_NSIS_VERSION;
+            nsisVersion = INSISVersions.MINIMUM_VERSION;
         }
         return nsisVersion;
     }

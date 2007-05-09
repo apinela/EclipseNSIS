@@ -15,8 +15,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.help.NSISUsageProvider;
@@ -1055,7 +1054,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     {
         String secGrpId = MessageFormat.format("SECGRP{0,number,0000}",new Object[]{new Integer(mSectionGroupCounter++)}); //$NON-NLS-1$
         NSISScriptSectionGroup scriptSecgrp = new NSISScriptSectionGroup(secGrp.getCaption(),secGrp.isDefaultExpanded(),secGrp.isBold(),
-                                                                secGrpId); 
+                                                                secGrpId);
         if(sectionDescMap != null && mIsMUI && !Common.isEmpty(secGrp.getDescription())) {
             sectionDescMap.put(secGrpId, secGrp.getDescription());
         }
@@ -1405,6 +1404,15 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         if(library.isUnloadLibraries()) {
                             section.addElement(new NSISScriptDefine("LIBRARY_COM")); //$NON-NLS-1$
                         }
+                        boolean flag = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
+                        if(flag) {
+                            if(library.isX64()) {
+                                section.addElement(new NSISScriptDefine("LIBRARY_X64")); //$NON-NLS-1$
+                            }
+                            if(library.isIgnoreVersion()) {
+                                section.addElement(new NSISScriptDefine("LIBRARY_IGNORE_VERSION")); //$NON-NLS-1$
+                            }
+                        }
                         section.addElement(new NSISScriptInsertMacro("InstallLib", //$NON-NLS-1$
                                 new String[]{libType,(library.isShared()?"$LibInstall":"NOTSHARED"), //$NON-NLS-1$ //$NON-NLS-2$
                                 installType,file,destination,getKeyword("$INSTDIR")})); //$NON-NLS-1$
@@ -1413,6 +1421,14 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         }
                         if(library.isUnloadLibraries()) {
                             section.addElement(new NSISScriptUndef("LIBRARY_COM")); //$NON-NLS-1$
+                        }
+                        if(flag) {
+                            if(library.isX64()) {
+                                section.addElement(new NSISScriptUndef("LIBRARY_X64")); //$NON-NLS-1$
+                            }
+                            if(library.isIgnoreVersion()) {
+                                section.addElement(new NSISScriptUndef("LIBRARY_IGNORE_VERSION")); //$NON-NLS-1$
+                            }
                         }
                         section.addElement(new NSISScriptBlankLine());
                         if(unSection != null) {
