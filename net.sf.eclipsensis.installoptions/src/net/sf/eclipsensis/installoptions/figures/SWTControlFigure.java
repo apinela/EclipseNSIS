@@ -32,7 +32,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public abstract class SWTControlFigure extends ScrollBarsFigure
 {
     private static final int PRINT_BITS = WinAPI.PRF_NONCLIENT | WinAPI.PRF_CLIENT | WinAPI.PRF_ERASEBKGND | WinAPI.PRF_CHILDREN;
-    private static final int TRANSPARENCY_TOLERANCE = 2;
+    protected static final int TRANSPARENCY_TOLERANCE = 2;
 
     private Composite mParent;
     private Image mImage;
@@ -192,7 +192,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
                 else {
                     insets = new Insets(0,0,0,0);
                 }
-                control.setBounds(bounds.x + p1.x + insets.left, bounds.y + p1.y + insets.right,
+                setControlBounds(control, bounds.x + p1.x + insets.left, bounds.y + p1.y + insets.right,
                                    bounds.width - (insets.left+insets.right),
                                    bounds.height - (insets.top+insets.bottom));
                 control.addPaintListener(mSWTPaintListener);
@@ -205,6 +205,11 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
             }
         }
         super.layout();
+    }
+
+    protected void setControlBounds(Control control, int x, int y, int width, int height)
+    {
+        control.setBounds(x, y, width, height);
     }
 
     protected boolean isTransparentAt(int x, int y)
@@ -257,11 +262,6 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         mVScroll = scroll;
     }
 
-    public boolean isClickThrough()
-    {
-        return false;
-    }
-
     protected void createScrollBars(Control control)
     {
         int style;
@@ -306,20 +306,22 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
             GC gc = new GC (mImage);
             WinAPI.SendMessage (control.handle, WinAPI.WM_PRINT, gc.handle, PRINT_BITS);
             gc.dispose ();
-            if(isClickThrough()) {
-                ImageData id = mImage.getImageData();
-                mImage.dispose();
-                id.transparentPixel=id.getPixel(0,0);
-                mImage = new Image(control.getDisplay(), id);
-            }
         }
         mImageData = mImage.getImageData();
+        handleClickThrough(control);
+        repaint();
+    }
+
+    /**
+     * @param control
+     */
+    protected void handleClickThrough(Control control)
+    {
         if(isClickThrough()) {
             mImage.dispose();
             mImageData.transparentPixel=mImageData.getPixel(0,0);
             mImage = new Image(control.getDisplay(), mImageData);
         }
-        repaint();
     }
 
     protected abstract Control createSWTControl(Composite parent, int style);
