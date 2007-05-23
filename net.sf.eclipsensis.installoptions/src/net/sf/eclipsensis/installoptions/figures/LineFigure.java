@@ -37,7 +37,6 @@ public class LineFigure extends SWTControlFigure
 
     protected boolean isTransparentAt(int x, int y)
     {
-        // TODO Auto-generated method stub
         if( (getStyle() & SWT.HORIZONTAL) > 0) {
             return y > TRANSPARENCY_TOLERANCE + 2;
         }

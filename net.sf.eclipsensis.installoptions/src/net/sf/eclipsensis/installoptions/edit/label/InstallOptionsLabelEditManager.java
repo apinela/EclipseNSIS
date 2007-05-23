@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.edit.label;
 
 import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditManager;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsUneditableElement;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.gef.GraphicalEditPart;
@@ -31,11 +30,21 @@ public class InstallOptionsLabelEditManager extends InstallOptionsUneditableElem
      */
     protected String getInitialText(InstallOptionsWidget control)
     {
-        return TypeConverter.ESCAPED_STRING_CONVERTER.asString(((InstallOptionsUneditableElement)control).getText());
+        if(((InstallOptionsLabel)control).isMultiLine()) {
+            return TypeConverter.ESCAPED_STRING_CONVERTER.asString(((InstallOptionsUneditableElement)control).getText());
+        }
+        else {
+            return super.getInitialText(control);
+        }
     }
 
     protected int getCellEditorStyle()
     {
-        return SWT.MULTI|SWT.LEFT|SWT.WRAP|SWT.V_SCROLL;
+        if(((InstallOptionsLabel)((InstallOptionsLabelEditPart)getEditPart()).getModel()).isMultiLine()) {
+            return SWT.MULTI|SWT.LEFT|SWT.WRAP|SWT.V_SCROLL;
+        }
+        else {
+            return SWT.LEFT;
+        }
     }
 }

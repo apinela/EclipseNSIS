@@ -1224,4 +1224,14 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     {
         return InstallOptionsModel.SECTION_SETTINGS;
     }
+
+    public void modelChanged()
+    {
+        super.modelChanged();
+        if(!Common.isEmptyCollection(mChildren)) {
+            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+                ((InstallOptionsWidget)iter.next()).modelChanged();
+            }
+        }
+    }
 }

@@ -11,13 +11,17 @@ package net.sf.eclipsensis.installoptions.model;
 
 import java.util.List;
 
+import net.sf.eclipsensis.INSISVersions;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomColorPropertyDescriptor;
+import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.tabbed.section.LinkPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.util.Version;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -25,7 +29,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
-public class InstallOptionsLink extends InstallOptionsUneditableElement
+public class InstallOptionsLink extends InstallOptionsLabel
 {
     public static final RGB DEFAULT_TXTCOLOR = new RGB(0,0,255);
     private static ILabelProvider cLabelProvider = new LabelProvider(){
@@ -51,6 +55,7 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
 
     private String mState;
     private RGB mTxtColor;
+    private boolean mMultiLine;
 
     protected InstallOptionsLink(INISection section)
     {
@@ -66,6 +71,7 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
     {
         super.init();
         mState = ""; //$NON-NLS-1$
+        mMultiLine = checkMultiLine();
     }
 
     /**
@@ -151,6 +157,11 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
             descriptor.setLabelProvider(cLabelProvider);
             return descriptor;
         }
+        else if(name.equals(InstallOptionsModel.PROPERTY_TEXT)) {
+            MultiLineTextPropertyDescriptor descriptor = (MultiLineTextPropertyDescriptor)super.createPropertyDescriptor(name);
+            addPropertyChangeListener(descriptor);
+            return descriptor;
+        }
         else {
             return super.createPropertyDescriptor(name);
         }
@@ -193,5 +204,35 @@ public class InstallOptionsLink extends InstallOptionsUneditableElement
     protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new LinkPropertySectionCreator(this);
+    }
+
+    public boolean isMultiLine()
+    {
+        return mMultiLine;
+    }
+
+    private void setMultiLine(boolean multiLine)
+    {
+        if(mMultiLine != multiLine) {
+            mMultiLine = multiLine;
+            firePropertyChange(InstallOptionsModel.PROPERTY_MULTILINE,
+                    multiLine?Boolean.FALSE:Boolean.TRUE,
+                    multiLine?Boolean.TRUE:Boolean.FALSE);
+        }
+    }
+
+    public void modelChanged()
+    {
+        super.modelChanged();
+        setMultiLine(checkMultiLine());
+    }
+
+    /**
+     * @return
+     */
+    private boolean checkMultiLine()
+    {
+        Version version = NSISPreferences.INSTANCE.getNSISVersion();
+        return (version != null && version.compareTo(INSISVersions.VERSION_2_26) >= 0 );
     }
 }

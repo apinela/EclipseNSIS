@@ -16,10 +16,11 @@ import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabe
 import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.tabbed.section.LabelPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISEscapedStringLengthValidator;
+import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
+import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class InstallOptionsLabel extends InstallOptionsUneditableElement
 {
@@ -35,7 +36,7 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
 
     protected ILabelProvider getDisplayLabelProvider()
     {
-        return MultiLineLabelProvider.INSTANCE;
+        return (isMultiLine()?MultiLineLabelProvider.INSTANCE:super.getDisplayLabelProvider());
     }
 
     /**
@@ -54,12 +55,34 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
         return new Position(0,0,19,9);
     }
 
+    public Object getPropertyValue(Object propName)
+    {
+        if(InstallOptionsModel.PROPERTY_MULTILINE.equals(propName)) {
+            return (isMultiLine()?Boolean.TRUE:Boolean.FALSE);
+        }
+        return super.getPropertyValue(propName);
+    }
+
     protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_TEXT)) {
             String propertyName = InstallOptionsPlugin.getResourceString("text.property.name"); //$NON-NLS-1$;
-            TextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(this, InstallOptionsModel.PROPERTY_TEXT, propertyName);
-            descriptor.setValidator(new NSISEscapedStringLengthValidator(propertyName));
+            MultiLineTextPropertyDescriptor descriptor = new MultiLineTextPropertyDescriptor(this, InstallOptionsModel.PROPERTY_TEXT, propertyName);
+            descriptor.setValidator(new ICellEditorValidator() {
+                ICellEditorValidator mSingleLineValidator = new NSISStringLengthValidator(InstallOptionsModel.PROPERTY_STATE);
+                ICellEditorValidator mMultiLineValidator = new NSISEscapedStringLengthValidator(InstallOptionsModel.PROPERTY_STATE);
+                public String isValid(Object value)
+                {
+                    if(InstallOptionsLabel.this.isMultiLine()) {
+                        return mMultiLineValidator.isValid(value);
+                    }
+                    else {
+                        return mSingleLineValidator.isValid(value);
+                    }
+                }
+
+            });
+            descriptor.setMultiLine(isMultiLine());
             return descriptor;
         }
         else {
@@ -70,5 +93,10 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
     protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new LabelPropertySectionCreator(this);
+    }
+
+    public boolean isMultiLine()
+    {
+        return true;
     }
 }

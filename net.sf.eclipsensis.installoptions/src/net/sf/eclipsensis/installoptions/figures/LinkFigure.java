@@ -25,6 +25,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public class LinkFigure extends LabelFigure implements ILinkFigure
 {
     private RGB mTxtColor;
+    private IPropertySource mSource;
 
     public LinkFigure(Composite parent, IPropertySource propertySource, int style)
     {
@@ -38,13 +39,14 @@ public class LinkFigure extends LabelFigure implements ILinkFigure
 
     protected void init(IPropertySource propertySource)
     {
+        mSource = propertySource;
         setTxtColor((RGB)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR));
         super.init(propertySource);
     }
 
     public boolean isMultiLine()
     {
-        return false;
+        return Boolean.TRUE.equals(mSource.getPropertyValue(InstallOptionsModel.PROPERTY_MULTILINE));
     }
 
     public RGB getTxtColor()

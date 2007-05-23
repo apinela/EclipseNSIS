@@ -53,6 +53,9 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             setMultiLine(newFlags.contains(InstallOptionsModel.FLAGS_MULTILINE));
             setOnlyNumbers(newFlags.contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS));
         }
+        else if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_MULTILINE)) {
+            setMultiLine(((Boolean)evt.getNewValue()).booleanValue());
+        }
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener)
@@ -75,7 +78,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         if(mMultiLine != multiLine) {
             boolean oldMultiLine = mMultiLine;
             mMultiLine = multiLine;
-            mPropertyChangeSupport.firePropertyChange(InstallOptionsModel.FLAGS_MULTILINE,oldMultiLine,mMultiLine);
+            mPropertyChangeSupport.firePropertyChange(InstallOptionsModel.PROPERTY_MULTILINE,oldMultiLine,mMultiLine);
         }
     }
 
@@ -106,7 +109,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         final PropertyChangeListener listener = new PropertyChangeListener(){
             public void propertyChange(PropertyChangeEvent evt)
             {
-                if(evt.getPropertyName().equals(InstallOptionsModel.FLAGS_MULTILINE)) {
+                if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_MULTILINE)) {
                     editor.setStyle(((Boolean)evt.getNewValue()).booleanValue()?1:0);
                     editor.create();
                 }
@@ -227,9 +230,12 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
 
         protected void createInnerEditor(Composite parent, boolean multiLine)
         {
+            Object value = null;
+
             if(mDelegate != null) {
                 mDelegate.dispose();
                 mDelegate = null;
+                value = getValue();
             }
             if(multiLine) {
                 mDelegate = new MultiLineTextCellEditor(parent);
@@ -254,7 +260,6 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                     mDelegate.addPropertyChangeListener((IPropertyChangeListener)listeners[i]);
                 }
             }
-            Object value = getValue();
             mDelegate.setValue(value==null?"":value); //$NON-NLS-1$
         }
 

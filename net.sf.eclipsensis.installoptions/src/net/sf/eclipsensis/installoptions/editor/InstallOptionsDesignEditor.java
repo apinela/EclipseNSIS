@@ -120,6 +120,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
                 viewer.setSelection(sel);
             }
             InstallOptionsDialog dialog = getInstallOptionsDialog();
+            dialog.modelChanged();
             if(dialog != null && dialog.canUpdateINIFile()) {
                 dialog.updateINIFile();
             }

@@ -1,6 +1,10 @@
 Revision History
 ================
 
+0.9.6 (xx/xx/2007)
+    * Added support for new HLine and VLine controls.
+    * Added support for line-breaks in Link controls.
+
 0.9.5.1 (03/15/2007)
     * Added support for new FOCUS flag.
     * Added visual indication of bitmap and icon locations in preview.

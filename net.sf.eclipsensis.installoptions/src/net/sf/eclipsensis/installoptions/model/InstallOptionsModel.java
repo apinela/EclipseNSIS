@@ -76,6 +76,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
     public static final String PROPERTY_ROOT = "Root"; //$NON-NLS-1$;
     public static final String PROPERTY_TXTCOLOR = "TxtColor"; //$NON-NLS-1$;
     public static final String PROPERTY_LISTITEMS = "ListItems"; //$NON-NLS-1$;
+    public static final String PROPERTY_MULTILINE = "MultiLine"; //$NON-NLS-1$;
 
     public static final String FLAGS_DISABLED = "DISABLED"; //$NON-NLS-1$
     public static final String FLAGS_RIGHT = "RIGHT"; //$NON-NLS-1$

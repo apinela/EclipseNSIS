@@ -382,6 +382,11 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         return doGetPropertyNames();
     }
 
+    public void modelChanged()
+    {
+
+    }
+
     protected abstract Collection doGetPropertyNames();
     protected abstract IPropertyDescriptor createPropertyDescriptor(String name);
     public abstract String getType();

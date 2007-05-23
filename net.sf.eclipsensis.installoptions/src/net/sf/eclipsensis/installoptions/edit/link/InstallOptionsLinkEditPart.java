@@ -107,6 +107,9 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
             figure2.setTxtColor((RGB)evt.getNewValue());
             setNeedsRefresh(true);
         }
+        else if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_MULTILINE)) {
+            setNeedsRefresh(true);
+        }
         else {
             super.doPropertyChange(evt);
         }
@@ -136,6 +139,7 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
     protected class NTLinkFigure extends NTLabelFigure implements ILinkFigure
     {
         private RGB mTxtColor;
+        private IPropertySource mSource;
 
         public NTLinkFigure(IPropertySource propertySource)
         {
@@ -145,12 +149,13 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         protected void init(IPropertySource propertySource)
         {
             super.init(propertySource);
+            mSource = propertySource;
             setTxtColor((RGB)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR));
         }
 
         public boolean isMultiLine()
         {
-            return false;
+            return Boolean.TRUE.equals(mSource.getPropertyValue(InstallOptionsModel.PROPERTY_MULTILINE));
         }
 
         public RGB getTxtColor()

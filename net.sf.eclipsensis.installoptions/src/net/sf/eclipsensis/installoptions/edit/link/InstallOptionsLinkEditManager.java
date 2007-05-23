@@ -9,21 +9,15 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.link;
 
-import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditManager;
+import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditManager;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.swt.SWT;
 
-public class InstallOptionsLinkEditManager extends InstallOptionsUneditableElementEditManager
+public class InstallOptionsLinkEditManager extends InstallOptionsLabelEditManager
 {
     public InstallOptionsLinkEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
     {
         super(source, editorType, locator);
-    }
-
-    protected int getCellEditorStyle()
-    {
-        return SWT.LEFT;
     }
 }
