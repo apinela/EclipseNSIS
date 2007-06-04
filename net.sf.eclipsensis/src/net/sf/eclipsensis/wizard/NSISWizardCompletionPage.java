@@ -16,8 +16,7 @@ import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
-import net.sf.eclipsensis.wizard.util.MasterSlaveController;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
+import net.sf.eclipsensis.wizard.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
@@ -455,7 +454,6 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
         final Group group = NSISWizardDialogUtil.createGroup(parent, 2, "miscellaneous.uninstaller.settings.group.label",null,false); //$NON-NLS-1$
         ((GridLayout)group.getLayout()).makeColumnsEqualWidth = true;
-        group.setEnabled(settings.isCreateUninstaller());
 
         final Button b = NSISWizardDialogUtil.createCheckBox(group, "silent.uninstaller", //$NON-NLS-1$
                 settings.isSilentUninstaller(),true, null, false);
@@ -465,7 +463,16 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 mWizard.getSettings().setSilentUninstaller(((Button)e.widget).getSelection());
             }
         });
+        b.setEnabled(settings.isCreateUninstaller());
         final MasterSlaveController m = new MasterSlaveController(b,true);
+        MasterSlaveEnabler enabler = new MasterSlaveEnabler() {
+            public boolean canEnable(Control control)
+            {
+                return mWizard.getSettings().isCreateUninstaller();
+            }
+
+            public void enabled(Control control, boolean flag) { }
+        };
 
         final Button b1 = NSISWizardDialogUtil.createCheckBox(group, "show.uninstaller.details.label", //$NON-NLS-1$
                               settings.isShowUninstDetails(),true, m, false);
@@ -492,12 +499,16 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 mWizard.getSettings().setAutoCloseUninstaller(((Button)e.widget).getSelection());
             }
         });
+        m.setEnabler(b1, enabler);
+        m.setEnabler(b2, enabler);
         m.updateSlaves();
 
         addPageChangedRunnable(new Runnable() {
             public void run()
             {
-                group.setEnabled(mWizard.getSettings().isCreateUninstaller());
+                NSISWizardSettings settings = mWizard.getSettings();
+                b.setEnabled(settings.isCreateUninstaller());
+                m.updateSlaves();
             }
         });
 
@@ -505,7 +516,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             public void settingsChanged()
             {
                 NSISWizardSettings settings = mWizard.getSettings();
-                group.setEnabled(settings.isCreateUninstaller());
+                b.setEnabled(settings.isCreateUninstaller());
                 b.setSelection(settings.isSilentUninstaller());
                 b1.setSelection(settings.isShowUninstDetails());
                 b2.setSelection(settings.isAutoCloseUninstaller());

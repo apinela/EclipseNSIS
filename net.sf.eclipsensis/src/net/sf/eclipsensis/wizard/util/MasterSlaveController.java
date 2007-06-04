@@ -64,7 +64,7 @@ public class MasterSlaveController extends SelectionAdapter
 
     public void updateSlaves()
     {
-        updateSlaves(mMaster.getSelection());
+        updateSlavesInternal(mMaster.getSelection());
     }
 
     public void updateSlaves(boolean hint)
