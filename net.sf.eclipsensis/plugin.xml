@@ -1003,7 +1003,7 @@
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
             class="net.sf.eclipsensis.console.NSISConsoleFactory"
-            icon="%console.icon"
+            icon="icons/nsis.gif"
             label="%console.name"/>
    </extension>
    <extension point="org.eclipse.core.expressions.propertyTesters">

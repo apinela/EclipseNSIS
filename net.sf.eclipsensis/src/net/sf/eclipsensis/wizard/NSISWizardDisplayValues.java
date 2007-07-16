@@ -22,6 +22,8 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
     public static final String[] OVERWRITE_MODE_NAMES = new String[OVERWRITE_IFDIFF+1];
     public static final String[] REG_VALUE_TYPES = new String[REG_BIN+1];
     public static final String[] LIBTYPES = new String[LIBTYPE_REGDLLTLB+1];
+    public static final String[] EXECUTION_LEVELS = new String[EXECUTION_LEVEL_HIGHEST+1];
+    public static final String[] PROCESSOR_TYPES = new String[PROCESSOR_TYPE_X64+1];
 
     static {
         INSTALLER_TYPE_NAMES[INSTALLER_TYPE_SILENT] = EclipseNSISPlugin.getResourceString("installer.type.silent"); //$NON-NLS-1$
@@ -54,6 +56,11 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
         LIBTYPES[LIBTYPE_TLB] = EclipseNSISPlugin.getResourceString("lib.type.tlb"); //$NON-NLS-1$;
         LIBTYPES[LIBTYPE_REGDLLTLB] = EclipseNSISPlugin.getResourceString("lib.type.regdlltlb"); //$NON-NLS-1$;
 
+        EXECUTION_LEVELS[EXECUTION_LEVEL_NONE] = EclipseNSISPlugin.getResourceString("execution.level.none"); //$NON-NLS-1$;
+        EXECUTION_LEVELS[EXECUTION_LEVEL_USER] = EclipseNSISPlugin.getResourceString("execution.level.user"); //$NON-NLS-1$;
+        EXECUTION_LEVELS[EXECUTION_LEVEL_ADMIN] = EclipseNSISPlugin.getResourceString("execution.level.admin"); //$NON-NLS-1$;
+        EXECUTION_LEVELS[EXECUTION_LEVEL_HIGHEST] = EclipseNSISPlugin.getResourceString("execution.level.highest"); //$NON-NLS-1$;
+
         HKEY_NAMES[HKCR] = "HKEY_CLASSES_ROOT"; //$NON-NLS-1$
         HKEY_NAMES[HKLM] = "HKEY_LOCAL_MACHINE"; //$NON-NLS-1$
         HKEY_NAMES[HKCU] = "HKEY_CURRENT_USER"; //$NON-NLS-1$
@@ -61,6 +68,10 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
         HKEY_NAMES[HKCC] = "HKEY_CURRENT_CONFIG"; //$NON-NLS-1$
         HKEY_NAMES[HKDD] = "HKEY_DYN_DATA"; //$NON-NLS-1$
         HKEY_NAMES[HKPD] = "HKEY_PERFORMANCE_DATA"; //$NON-NLS-1$
+
+        PROCESSOR_TYPES[PROCESSOR_TYPE_EITHER] = EclipseNSISPlugin.getResourceString("processor.type.either"); //$NON-NLS-1$;
+        PROCESSOR_TYPES[PROCESSOR_TYPE_X86] = EclipseNSISPlugin.getResourceString("processor.type.x86"); //$NON-NLS-1$;
+        PROCESSOR_TYPES[PROCESSOR_TYPE_X64] = EclipseNSISPlugin.getResourceString("processor.type.x64"); //$NON-NLS-1$;
     }
 
     public static int getHKeyIndex(String rootKey)

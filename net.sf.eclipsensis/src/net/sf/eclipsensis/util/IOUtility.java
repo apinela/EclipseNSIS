@@ -15,6 +15,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
@@ -36,6 +37,8 @@ public class IOUtility
 {
     public static final IOUtility INSTANCE = new IOUtility();
 
+    private static final Map cPathMappingx86tox64;
+    private static final Map cPathMappingx64tox86;
     private static final String cPathSeparator = System.getProperty("file.separator"); //$NON-NLS-1$
     private static final String cOnePathLevelUp = ".." + cPathSeparator; //$NON-NLS-1$
     private static Pattern cValidUNCName = Pattern.compile("\\\\{0,2}((((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
@@ -52,6 +55,39 @@ public class IOUtility
 
     private IOUtility()
     {
+    }
+
+    static {
+        cPathMappingx86tox64 = new CaseInsensitiveMap(Common.loadMapProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"path.mapping.x86.to.x64")); //$NON-NLS-1$
+        cPathMappingx64tox86 = new CaseInsensitiveMap(Common.loadMapProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"path.mapping.x64.to.x86")); //$NON-NLS-1$
+    }
+
+    public static String convertPathTo64bit(String path)
+    {
+        if(!Common.isEmpty(path)) {
+            String[] p = Common.tokenize(path,cPathSeparator.charAt(0));
+            if(p.length > 0) {
+                if(cPathMappingx86tox64.containsKey(p[0])) {
+                    p[0] = (String)cPathMappingx86tox64.get(p[0]);
+                    return Common.flatten(p,cPathSeparator.charAt(0));
+                }
+            }
+        }
+        return path;
+    }
+
+    public static String convertPathTo32bit(String path)
+    {
+        if(!Common.isEmpty(path)) {
+            String[] p = Common.tokenize(path,cPathSeparator.charAt(0));
+            if(p.length > 0) {
+                if(cPathMappingx64tox86.containsKey(p[0])) {
+                    p[0] = (String)cPathMappingx64tox86.get(p[0]);
+                    return Common.flatten(p,cPathSeparator.charAt(0));
+                }
+            }
+        }
+        return path;
     }
 
     public static String resolveFileName(String fileName, NSISEditor editor)

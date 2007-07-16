@@ -78,6 +78,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private boolean mSilentUninstaller = false;
     private boolean mSelectComponents = false;
 
+    private int mProcessorType = PROCESSOR_TYPE_EITHER;
+    private int mExecutionLevel = EXECUTION_LEVEL_NONE;
+
     private boolean mCreateUninstaller = true;
     private String mUninstallIcon = ""; //$NON-NLS-1$
     private String mUninstallFile = EclipseNSISPlugin.getResourceString("wizard.default.uninstaller",""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -955,6 +958,25 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         mSelectComponents = selectComponents;
     }
 
+    public int getProcessorType()
+    {
+        return mProcessorType;
+    }
+
+    public void setProcessorType(int processorType)
+    {
+        mProcessorType = processorType;
+    }
+
+    public int getExecutionLevel()
+    {
+        return mExecutionLevel;
+    }
+
+    public void setExecutionLevel(int executionLevel)
+    {
+        mExecutionLevel = executionLevel;
+    }
 
     protected Object getNodeValue(Node node, String name, Class clasz)
     {
@@ -1108,6 +1130,8 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         result = PRIME * result + ((mUninstallIcon == null)?0:mUninstallIcon.hashCode());
         result = PRIME * result + ((mUrl == null)?0:mUrl.hashCode());
         result = PRIME * result + ((mVersion == null)?0:mVersion.hashCode());
+        result = PRIME * result + mProcessorType;
+        result = PRIME * result + mExecutionLevel;
         return result;
     }
 
@@ -1281,6 +1305,12 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
             return false;
         }
         if (!Common.objectsAreEqual(mVersion,other.mVersion)) {
+            return false;
+        }
+        if(mProcessorType != other.mProcessorType) {
+            return false;
+        }
+        if(mExecutionLevel != other.mExecutionLevel) {
             return false;
         }
         return true;

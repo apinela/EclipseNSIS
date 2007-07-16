@@ -48,4 +48,13 @@ public interface INSISWizardConstants
 
     public static final int VALIDATE_ALL=0xFFFF;
     public static final String WIZARD_TEMPLATE_EXTENSION=".xml"; //$NON-NLS-1$
+
+    public static final int EXECUTION_LEVEL_NONE = 0;
+    public static final int EXECUTION_LEVEL_USER = 1;
+    public static final int EXECUTION_LEVEL_ADMIN = 2;
+    public static final int EXECUTION_LEVEL_HIGHEST = 3;
+
+    public static final int PROCESSOR_TYPE_EITHER = 0;
+    public static final int PROCESSOR_TYPE_X86 = 1;
+    public static final int PROCESSOR_TYPE_X64 = 2;
 }

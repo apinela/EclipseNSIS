@@ -8,8 +8,11 @@ Revision History
         o New InstallLib options (LIBRARY_IGNORE_VERSION and LIBRARY_X64).
         o New and changed commands (SetRegView, GetDLLVersionLocal, MessageBox
           and File)
+        o Fixed support for Windows Vista
     * Bug Fixes
         o 1714373
+        o 1733997
+        o 1745754
 
 0.9.5.1 (03/15/2007)
     * Added support for new predefines.

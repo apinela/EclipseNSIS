@@ -11,10 +11,10 @@ package net.sf.eclipsensis.wizard;
 
 import java.util.ResourceBundle;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
@@ -162,6 +162,23 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
            }
         });
 
+        final Button cb2;
+
+        if(INSISVersions.VERSION_2_26.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) <= 0) {
+            cb2 = NSISWizardDialogUtil.createCheckBox(group,"x64.label",
+                    settings.getProcessorType(), true, null,false); //$NON-NLS-1$
+            cb2.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                mWizard.getSettings().setProcessorType(((Button)e.widget).getSelection());
+            }
+            });
+        }
+        else {
+            cb2 = null;
+            settings.setProcessorType(false);
+        }
+
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged()
             {
@@ -170,6 +187,12 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                 t2.setText(settings.getVersion());
                 t3.setText(settings.getCompany());
                 t4.setText(settings.getUrl());
+                if(cb2 != null) {
+                    cb2.setSelection(settings.getProcessorType());
+                }
+                else {
+                    settings.setProcessorType(false);
+                }
             }});
     }
 
@@ -254,6 +277,27 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         else {
             cb = null;
         }
+
+        final Combo c2;
+        if(INSISVersions.VERSION_2_21.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) <= 0) {
+            String[] execLevels = NSISWizardDisplayValues.EXECUTION_LEVELS;
+            if(INSISVersions.VERSION_2_22.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) > 0) {
+                execLevels = (String[])Common.subArray(execLevels,0,execLevels.length - 1);
+            }
+
+            c2 = NSISWizardDialogUtil.createCombo(group,execLevels,settings.getExecutionLevel(),
+                        true, "execution.level.label", true, null, false);  //$NON-NLS-1$
+            c2.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mWizard.getSettings().setExecutionLevel(c2.getSelectionIndex());
+                }
+            });
+        }
+        else {
+            c2 = null;
+            settings.setExecutionLevel(EXECUTION_LEVEL_NONE);
+        }
         c.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
@@ -289,6 +333,13 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                     cb.setSelection(settings.isSolidCompression());
                     int index = c.getSelectionIndex();
                     cb.setEnabled(index >= 0 && index != MakeNSISRunner.COMPRESSOR_DEFAULT);
+                }
+
+                if(c2 != null && settings.getExecutionLevel() < c2.getItemCount()) {
+                    c2.select(settings.getExecutionLevel());
+                }
+                else {
+                    settings.setExecutionLevel(EXECUTION_LEVEL_NONE);
                 }
             }
         });

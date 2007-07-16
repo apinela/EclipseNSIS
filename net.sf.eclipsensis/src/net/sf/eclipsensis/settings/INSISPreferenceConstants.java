@@ -32,7 +32,7 @@ public interface INSISPreferenceConstants extends INSISSettingsConstants
     public static final String COMMANDS_STYLE = "commandsStyle"; //$NON-NLS-1$
     public static final String INSTRUCTIONS_STYLE = "instructionsStyle"; //$NON-NLS-1$
     public static final String INSTRUCTION_PARAMETERS_STYLE = "instructionParametersStyle"; //$NON-NLS-1$
-    public static final String INSTRUCTION_OPTIONS_STYLE = "instructionOptionsStyle";; //$NON-NLS-1$
+    public static final String INSTRUCTION_OPTIONS_STYLE = "instructionOptionsStyle"; //$NON-NLS-1$
     public static final String PREDEFINED_VARIABLES_STYLE = "predefinedVariablesStyle"; //$NON-NLS-1$
     public static final String USERDEFINED_VARIABLES_STYLE = "userdefinedVariablesStyle"; //$NON-NLS-1$
     public static final String SYMBOLS_STYLE = "symbolsStyle"; //$NON-NLS-1$

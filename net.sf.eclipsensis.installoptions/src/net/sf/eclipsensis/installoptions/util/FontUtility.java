@@ -13,6 +13,7 @@ import java.io.*;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISVersions;
 import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.lang.NSISLanguage;
@@ -195,6 +196,9 @@ public class FontUtility
                 }
                 LinkedHashMap symbols = cNSISSettings.getSymbols();
 
+                if(EclipseNSISPlugin.getDefault().isWinVista() && NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_21) >= 0) {
+                    symbols.put("WINDOWS_VISTA","");
+                }
                 symbols.put("LANGUAGE", lang.getName()); //$NON-NLS-1$
                 symbols.put("PROPERTIES_FILE", cPropertiesFile.getAbsolutePath()); //$NON-NLS-1$
                 cNSISSettings.setSymbols(symbols);

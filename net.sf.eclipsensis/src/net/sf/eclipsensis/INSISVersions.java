@@ -15,7 +15,9 @@ public interface INSISVersions
 {
     public static final Version MINIMUM_VERSION = new Version(EclipseNSISPlugin.getResourceString("minimum.nsis.version","2.0")); //$NON-NLS-1$ //$NON-NLS-2$
     public static final Version VERSION_2_07 = new Version("2.07"); //$NON-NLS-1$
+    public static final Version VERSION_2_13 = new Version("2.13"); //$NON-NLS-1$
+    public static final Version VERSION_2_21 = new Version("2.21"); //$NON-NLS-1$
+    public static final Version VERSION_2_22 = new Version("2.22"); //$NON-NLS-1$
     public static final Version VERSION_2_24 = new Version("2.24"); //$NON-NLS-1$
     public static final Version VERSION_2_26 = new Version("2.26"); //$NON-NLS-1$
-    public static final Version VERSION_2_13 = new Version("2.13"); //$NON-NLS-1$
 }

@@ -427,6 +427,26 @@ public class NSISWizardDialogUtil
         return c;
     }
 
+    public static Combo createCombo(Composite parent, int horizontalSpan, String[] items, int selectedIndex, boolean isReadOnly, boolean enabled, MasterSlaveController masterSlaveController)
+    {
+        Combo c = new Combo(parent, SWT.DROP_DOWN | (isReadOnly?SWT.READ_ONLY:SWT.NONE));
+        if(!Common.isEmptyArray(items)) {
+            for (int i = 0; i < items.length; i++) {
+                c.add(items[i]);
+            }
+        }
+        if(selectedIndex >= 0 && selectedIndex < items.length) {
+            c.select(selectedIndex);
+        }
+
+        GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+        data.horizontalSpan = horizontalSpan;
+        c.setLayoutData(data);
+        c.setEnabled(enabled);
+        addSlave(masterSlaveController, c);
+        return c;
+    }
+
     public static ColorEditor createColorEditor(Composite parent, RGB value, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
         parent = checkParentLayoutColumns(parent, 2);

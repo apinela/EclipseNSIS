@@ -15,8 +15,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.help.NSISKeywords;

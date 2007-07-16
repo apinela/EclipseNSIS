@@ -1,6 +1,9 @@
 !include "WinMessages.nsh"
 Name GetFont
 OutFile getfont.exe
+!ifdef WINDOWS_VISTA
+RequestExecutionLevel user
+!endif
 
 LoadLanguageFile "${NSISDIR}\Contrib\Language Files\${LANGUAGE}.nlf"
 

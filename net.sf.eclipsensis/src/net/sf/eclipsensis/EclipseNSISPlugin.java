@@ -66,6 +66,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private ImageManager mImageManager;
     private boolean mIsNT = false;
     private boolean mIs2K = false;
+    private boolean mIsVista = false;
     private String mJavaVendor;
     private Version mJavaVersion;
     private Stack mServices = new Stack();
@@ -150,7 +151,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                         }
                     }
                 };
-                if(wwindow.getShell().isVisible()) {
+                if(wwindow != null && wwindow.getShell().isVisible()) {
                     configOp.run();
                 }
                 else {
@@ -361,16 +362,23 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         return mIs2K;
     }
 
+    public boolean isWinVista()
+    {
+        return mIsVista;
+    }
+
     private void validateOS() throws CoreException
     {
         String[] supportedOS = Common.loadArrayProperty(getResourceBundle(),"supported.os"); //$NON-NLS-1$
         List winNTOS = Common.loadListProperty(getResourceBundle(),"nt.os"); //$NON-NLS-1$
         List win2KOS = Common.loadListProperty(getResourceBundle(),"2K.os"); //$NON-NLS-1$
+        List winVistaOS = Common.loadListProperty(getResourceBundle(),"vista.os"); //$NON-NLS-1$
         if(!Common.isEmptyArray(supportedOS)) {
             String osName = System.getProperty("os.name"); //$NON-NLS-1$
             String osVersion = System.getProperty("os.version"); //$NON-NLS-1$
             mIsNT = winNTOS.contains(osName);
             mIs2K = win2KOS.contains(osName);
+            mIsVista = winVistaOS.contains(osName);
             for(int i=0; i<supportedOS.length; i++) {
                 String[] tokens = Common.tokenize(supportedOS[i],'#');
                 String os = tokens[0];
