@@ -389,5 +389,15 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         return true;
     }
 
-    public abstract void setChildTypes();
+    public void setTargetPlatform(int targetPlatform)
+    {
+        if(hasChildren()) {
+            INSISInstallElement[] children = getChildren();
+            for (int i = 0; i < children.length; i++) {
+                children[i].setTargetPlatform(targetPlatform);
+            }
+        }
+	}
+
+	public abstract void setChildTypes();
 }

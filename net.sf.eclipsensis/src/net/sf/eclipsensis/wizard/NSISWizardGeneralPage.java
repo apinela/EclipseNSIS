@@ -162,21 +162,20 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
            }
         });
 
-        final Button cb2;
-
+        final Combo c2;
         if(INSISVersions.VERSION_2_26.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) <= 0) {
-            cb2 = NSISWizardDialogUtil.createCheckBox(group,"x64.label",
-                    settings.getProcessorType(), true, null,false); //$NON-NLS-1$
-            cb2.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
-            {
-                mWizard.getSettings().setProcessorType(((Button)e.widget).getSelection());
-            }
+            c2 = NSISWizardDialogUtil.createCombo(group,NSISWizardDisplayValues.TARGET_PLATFORMS,
+            			settings.getTargetPlatform(), true, "target.platform.label", true, null, false);  //$NON-NLS-1$
+            c2.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    mWizard.getSettings().setTargetPlatform(c2.getSelectionIndex());
+                }
             });
         }
         else {
-            cb2 = null;
-            settings.setProcessorType(false);
+            c2 = null;
+            settings.setTargetPlatform(TARGET_PLATFORM_ANY);
         }
 
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
@@ -187,11 +186,13 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                 t2.setText(settings.getVersion());
                 t3.setText(settings.getCompany());
                 t4.setText(settings.getUrl());
-                if(cb2 != null) {
-                    cb2.setSelection(settings.getProcessorType());
+
+
+                if(c2 != null && settings.getTargetPlatform() < c2.getItemCount()) {
+                    c2.select(settings.getTargetPlatform());
                 }
                 else {
-                    settings.setProcessorType(false);
+                    settings.setTargetPlatform(TARGET_PLATFORM_ANY);
                 }
             }});
     }

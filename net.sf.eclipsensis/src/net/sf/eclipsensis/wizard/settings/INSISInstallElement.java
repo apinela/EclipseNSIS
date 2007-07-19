@@ -50,4 +50,5 @@ public interface INSISInstallElement extends INSISWizardConstants, Serializable,
     public Object clone() throws CloneNotSupportedException;
     public String validate(Collection changedElements);
     public String getError();
+    public void setTargetPlatform(int targetPlatform);
 }

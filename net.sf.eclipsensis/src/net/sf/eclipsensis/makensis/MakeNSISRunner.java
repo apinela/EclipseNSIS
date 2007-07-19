@@ -235,7 +235,7 @@ public class MakeNSISRunner implements INSISConstants
                         catch (Exception e) {
                             ex[0]= e;
                         }
-                        return monitor.isCanceled()?Status.CANCEL_STATUS:(ex[0]==null?Status.OK_STATUS:new Status(IStatus.ERROR,PLUGIN_ID,ex[0].getMessage(),ex[0]));
+                        return monitor.isCanceled()?Status.CANCEL_STATUS:(ex[0]==null?Status.OK_STATUS:new Status(IStatus.ERROR,PLUGIN_ID,IStatus.OK,ex[0].getMessage(),ex[0]));
                     }
                 }
             );
@@ -654,7 +654,7 @@ public class MakeNSISRunner implements INSISConstants
                                                     outputFiles[i].refreshLocal(IResource.DEPTH_ZERO,null);
                                                 }
                                                 catch (CoreException e) {
-                                                    return new Status(IStatus.ERROR,PLUGIN_ID,e.getMessage(),e);
+                                                    return new Status(IStatus.ERROR,PLUGIN_ID,IStatus.OK,e.getMessage(),e);
                                                 }
                                             }
                                             return Status.OK_STATUS;

@@ -15,6 +15,7 @@ import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallDirectoryDialog;
+import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
@@ -208,5 +209,11 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
             return false;
         }
         return true;
+    }
+
+    public void setTargetPlatform(int targetPlatform)
+    {
+        super.setTargetPlatform(targetPlatform);
+        setDestination(NSISWizardUtil.convertPath(targetPlatform,getDestination()));
     }
 }

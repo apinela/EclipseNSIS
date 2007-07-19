@@ -78,7 +78,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private boolean mSilentUninstaller = false;
     private boolean mSelectComponents = false;
 
-    private int mProcessorType = PROCESSOR_TYPE_EITHER;
+    private int mTargetPlatform = TARGET_PLATFORM_ANY;
     private int mExecutionLevel = EXECUTION_LEVEL_NONE;
 
     private boolean mCreateUninstaller = true;
@@ -958,14 +958,14 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         mSelectComponents = selectComponents;
     }
 
-    public int getProcessorType()
+    public int getTargetPlatform()
     {
-        return mProcessorType;
+        return mTargetPlatform;
     }
 
-    public void setProcessorType(int processorType)
+    public void setTargetPlatform(int targetPlatform)
     {
-        mProcessorType = processorType;
+        mTargetPlatform = targetPlatform;
     }
 
     public int getExecutionLevel()
@@ -1130,7 +1130,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         result = PRIME * result + ((mUninstallIcon == null)?0:mUninstallIcon.hashCode());
         result = PRIME * result + ((mUrl == null)?0:mUrl.hashCode());
         result = PRIME * result + ((mVersion == null)?0:mVersion.hashCode());
-        result = PRIME * result + mProcessorType;
+        result = PRIME * result + mTargetPlatform;
         result = PRIME * result + mExecutionLevel;
         return result;
     }
@@ -1307,7 +1307,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         if (!Common.objectsAreEqual(mVersion,other.mVersion)) {
             return false;
         }
-        if(mProcessorType != other.mProcessorType) {
+        if(mTargetPlatform != other.mTargetPlatform) {
             return false;
         }
         if(mExecutionLevel != other.mExecutionLevel) {

@@ -23,7 +23,7 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
     public static final String[] REG_VALUE_TYPES = new String[REG_BIN+1];
     public static final String[] LIBTYPES = new String[LIBTYPE_REGDLLTLB+1];
     public static final String[] EXECUTION_LEVELS = new String[EXECUTION_LEVEL_HIGHEST+1];
-    public static final String[] PROCESSOR_TYPES = new String[PROCESSOR_TYPE_X64+1];
+    public static final String[] TARGET_PLATFORMS = new String[TARGET_PLATFORM_X64+1];
 
     static {
         INSTALLER_TYPE_NAMES[INSTALLER_TYPE_SILENT] = EclipseNSISPlugin.getResourceString("installer.type.silent"); //$NON-NLS-1$
@@ -69,9 +69,9 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
         HKEY_NAMES[HKDD] = "HKEY_DYN_DATA"; //$NON-NLS-1$
         HKEY_NAMES[HKPD] = "HKEY_PERFORMANCE_DATA"; //$NON-NLS-1$
 
-        PROCESSOR_TYPES[PROCESSOR_TYPE_EITHER] = EclipseNSISPlugin.getResourceString("processor.type.either"); //$NON-NLS-1$;
-        PROCESSOR_TYPES[PROCESSOR_TYPE_X86] = EclipseNSISPlugin.getResourceString("processor.type.x86"); //$NON-NLS-1$;
-        PROCESSOR_TYPES[PROCESSOR_TYPE_X64] = EclipseNSISPlugin.getResourceString("processor.type.x64"); //$NON-NLS-1$;
+        TARGET_PLATFORMS[TARGET_PLATFORM_ANY] = EclipseNSISPlugin.getResourceString("target.platform.any"); //$NON-NLS-1$;
+        TARGET_PLATFORMS[TARGET_PLATFORM_X86] = EclipseNSISPlugin.getResourceString("target.platform.x86"); //$NON-NLS-1$;
+        TARGET_PLATFORMS[TARGET_PLATFORM_X64] = EclipseNSISPlugin.getResourceString("target.platform.x64"); //$NON-NLS-1$;
     }
 
     public static int getHKeyIndex(String rootKey)

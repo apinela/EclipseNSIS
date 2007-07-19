@@ -95,4 +95,8 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
     {
         return false;
     }
+
+    public void setTargetPlatform(int targetPlatform)
+    {
+    }
 }
