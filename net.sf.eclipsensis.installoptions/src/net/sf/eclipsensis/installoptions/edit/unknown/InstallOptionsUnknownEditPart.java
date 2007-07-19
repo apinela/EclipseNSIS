@@ -82,7 +82,6 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
         if(cIsNT) {
             //This is a hack because Windows NT Labels don't seem to respond to the
             //WM_PRINT message (see SWTControl.getImage(Control)
-            //XXX Remove once the cause (and fix) is known.
             return new NTUnknownFigure(getInstallOptionsWidget());
         }
         else {
@@ -121,7 +120,6 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
 
     //This is a hack because Windows NT Labels don't seem to respond to the
     //WM_PRINT message (see SWTControl.getImage(Control)
-    //XXX Remove once the cause (and fix) is known.
     private static class NTUnknownFigure extends NTFigure implements IUnknownFigure
     {
         private String mType;

@@ -30,7 +30,6 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
         if(cIsNT) {
             //This is a hack because Windows NT Labels don't seem to respond to the
             //WM_PRINT message (see SWTControl.getImage(Control)
-            //XXX Remove once the cause (and fix) is known.
              return new NTPictureFigure(getInstallOptionsWidget());
         }
         else {
@@ -55,7 +54,6 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
 
     //This is a hack because Windows NT Labels don't seem to respond to the
     //WM_PRINT message (see SWTControl.getImage(Control)
-    //XXX Remove once the cause (and fix) is known.
     private class NTPictureFigure extends NTFigure
     {
         protected ImageFigure mImageFigure;

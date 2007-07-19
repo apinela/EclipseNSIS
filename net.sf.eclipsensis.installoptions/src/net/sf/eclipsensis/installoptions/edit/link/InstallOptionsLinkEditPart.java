@@ -92,7 +92,6 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         if(cIsNT) {
             //This is a hack because Windows NT Labels don't seem to respond to the
             //WM_PRINT message (see SWTControl.getImage(Control)
-            //XXX Remove once the cause (and fix) is known.
             return new NTLinkFigure(getInstallOptionsWidget());
         }
         else {
@@ -135,7 +134,6 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
 
     //This is a hack because Windows NT Labels don't seem to respond to the
     //WM_PRINT message (see SWTControl.getImage(Control)
-    //XXX Remove once the cause (and fix) is known.
     protected class NTLinkFigure extends NTLabelFigure implements ILinkFigure
     {
         private RGB mTxtColor;

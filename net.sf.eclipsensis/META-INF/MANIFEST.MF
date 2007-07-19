@@ -16,10 +16,9 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.3.100",
  org.eclipse.help.base;bundle-version="3.3.0",
  org.eclipse.debug.ui;bundle-version="3.3.0",
  org.eclipse.ui.console;bundle-version="3.2.0",
- org.eclipse.core.variables;bundle-version="3.1.100",
+ org.eclipse.core.variables;bundle-version="3.2.0",
  org.eclipse.ui.externaltools;bundle-version="3.1.200",
- net.sf.eclipsensis.startup;bundle-version="0.9.6",
- org.eclipse.equinox.launcher
+ net.sf.eclipsensis.startup;bundle-version="0.9.6"
 Eclipse-LazyStart: true
 Export-Package: net.sf.eclipsensis,
  net.sf.eclipsensis.actions,
