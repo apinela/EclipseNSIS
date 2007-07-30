@@ -14,17 +14,15 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.lang.NSISLanguage;
-import net.sf.eclipsensis.lang.NSISLanguageManager;
+import net.sf.eclipsensis.lang.*;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.*;
-import net.sf.eclipsensis.wizard.INSISWizardConstants;
-import net.sf.eclipsensis.wizard.NSISWizard;
+import net.sf.eclipsensis.wizard.*;
+import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
 
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.RGB;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 public class NSISWizardSettings extends AbstractNodeConvertible implements INSISWizardConstants, Serializable, Cloneable
 {
@@ -966,6 +964,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public void setTargetPlatform(int targetPlatform)
     {
         mTargetPlatform = targetPlatform;
+        setInstallDir(NSISWizardUtil.convertPath(targetPlatform, getInstallDir()));
+        setRunProgramAfterInstall(NSISWizardUtil.convertPath(targetPlatform, getRunProgramAfterInstall()));
+        setOpenReadmeAfterInstall(NSISWizardUtil.convertPath(targetPlatform, getOpenReadmeAfterInstall()));
     }
 
     public int getExecutionLevel()

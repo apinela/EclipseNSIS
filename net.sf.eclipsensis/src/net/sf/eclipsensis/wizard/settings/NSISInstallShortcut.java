@@ -10,10 +10,10 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallShortcutDialog;
+import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
@@ -98,7 +98,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
             setLocationAndCreateInStartMenuGroup("", true); //$NON-NLS-1$
         }
         else {
-            setLocationAndCreateInStartMenuGroup(location, false); 
+            setLocationAndCreateInStartMenuGroup(location, false);
         }
     }
     /**
@@ -226,6 +226,13 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
         else {
             return super.doValidate();
         }
+    }
+
+    public void setTargetPlatform(int targetPlatform)
+    {
+        super.setTargetPlatform(targetPlatform);
+        setLocation(NSISWizardUtil.convertPath(targetPlatform, getLocation()));
+        setPath(NSISWizardUtil.convertPath(targetPlatform, getPath()));
     }
 
     public int hashCode()

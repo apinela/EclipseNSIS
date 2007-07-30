@@ -9,40 +9,25 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
+import net.sf.eclipsensis.wizard.INSISWizardConstants;
 
 public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
 {
-	private static final long serialVersionUID = 7704420240201206452L;
+    private static final long serialVersionUID = 7704420240201206452L;
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#hasChildren()
-     */
-    public final boolean hasChildren()
+    private int mTargetPlatform = INSISWizardConstants.TARGET_PLATFORM_ANY;
+
+    public final boolean acceptsChildType(String type)
     {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildren()
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#addChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
      */
-    public final INSISInstallElement[] getChildren()
-    {
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildTypes()
-     */
-    public final String[] getChildTypes()
-    {
-        return null;
-    }
-
-    public final void setChildren(INSISInstallElement[] children)
-    {
-    }
-
-    public final boolean canAddChild(INSISInstallElement child)
+    public final boolean addChild(INSISInstallElement child)
     {
         return false;
     }
@@ -52,12 +37,7 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
         return false;
     }
 
-    public final int indexOf(INSISInstallElement child)
-    {
-        return -1;
-    }
-
-    public final boolean removeChild(int index)
+    public final boolean canAddChild(INSISInstallElement child)
     {
         return false;
     }
@@ -67,28 +47,49 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
         return 0;
     }
 
-    public final boolean acceptsChildType(String type)
-    {
-        return false;
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#addChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildren()
      */
-    public final boolean addChild(INSISInstallElement child)
+    public final INSISInstallElement[] getChildren()
     {
-        return false;
+        return null;
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildTypes()
      */
-    public final boolean removeChild(INSISInstallElement child)
+    public final String[] getChildTypes()
+    {
+        return null;
+    }
+
+    public int getTargetPlatform()
+    {
+        return mTargetPlatform;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#hasChildren()
+     */
+    public final boolean hasChildren()
     {
         return false;
     }
 
-    /* (non-Javadoc)
+    public final int indexOf(INSISInstallElement child)
+    {
+        return -1;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeAllChildren()
      */
     public final boolean removeAllChildren()
@@ -96,7 +97,27 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
         return false;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
+     */
+    public final boolean removeChild(INSISInstallElement child)
+    {
+        return false;
+    }
+
+    public final boolean removeChild(int index)
+    {
+        return false;
+    }
+
+    public final void setChildren(INSISInstallElement[] children)
+    {
+    }
+
     public void setTargetPlatform(int targetPlatform)
     {
+        mTargetPlatform = targetPlatform;
     }
 }

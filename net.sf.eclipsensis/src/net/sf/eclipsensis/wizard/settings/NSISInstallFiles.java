@@ -16,6 +16,7 @@ import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFilesDialog;
+import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -24,20 +25,162 @@ import org.eclipse.swt.widgets.FileDialog;
 
 public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISInstallFileSystemObject
 {
-	private static final long serialVersionUID = 1293912008528238512L;
+    public static class FileItem extends AbstractNSISInstallItem
+    {
+        private static final long serialVersionUID = 3744853352840436396L;
+
+        public static final String TYPE = "File Item"; //$NON-NLS-1$
+
+        private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
+
+        static {
+            NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.fileitem.type.name"), IMAGE, FileItem.class); //$NON-NLS-1$
+        }
+
+        private String mName = null;
+
+        public String doValidate()
+        {
+            if (!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
+                return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
+            }
+            else {
+                return super.doValidate();
+            }
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#edit(org.eclipse.swt.widgets.Composite)
+         */
+        public boolean edit(NSISWizard wizard)
+        {
+            FileDialog dialog = new FileDialog(wizard.getShell(), SWT.OPEN | SWT.PRIMARY_MODAL);
+            ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
+            dialog.setText(EclipseNSISPlugin.getResourceString("wizard.fileitem.dialog.title")); //$NON-NLS-1$
+            dialog.setFilterNames(Common.loadArrayProperty(bundle, "wizard.source.file.filternames")); //$NON-NLS-1$
+            dialog.setFilterExtensions(Common.loadArrayProperty(bundle, "wizard.source.file.filters")); //$NON-NLS-1$
+            if (!Common.isEmpty(mName)) {
+                dialog.setFileName(mName);
+            }
+            String newFilename = dialog.open();
+            if (newFilename != null && !newFilename.equalsIgnoreCase(mName)) {
+                if (getParent() != null) {
+                    FileItem fi = new FileItem();
+                    fi.setName(newFilename);
+                    if (!getParent().canAddChild(fi)) {
+                        Common.openError(wizard.getShell(), EclipseNSISPlugin.getFormattedString("duplicate.child.error", new Object[]{getParent().getDisplayName(), fi.getDisplayName()}), //$NON-NLS-1$
+                                EclipseNSISPlugin.getShellImage());
+                        return false;
+                    }
+                }
+                mName = newFilename;
+                return true;
+            }
+            return false;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        public boolean equals(Object obj)
+        {
+            if (obj instanceof FileItem) {
+                return ((FileItem)obj).mName.equalsIgnoreCase(mName);
+            }
+            return false;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
+         */
+        public String getDisplayName()
+        {
+            return getName();
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
+         */
+        public Image getImage()
+        {
+            return IMAGE;
+        }
+
+        /**
+         * @return Returns the name.
+         */
+        public String getName()
+        {
+            return mName;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
+         */
+        public String getType()
+        {
+            return TYPE;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#hashCode()
+         */
+        public int hashCode()
+        {
+            return mName.hashCode();
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
+         */
+        public boolean isEditable()
+        {
+            return true;
+        }
+
+        /**
+         * @param name
+         *            The name to set.
+         */
+        public void setName(String name)
+        {
+            if (!Common.stringsAreEqual(mName, name)) {
+                setDirty();
+                mName = name;
+            }
+        }
+    }
+
+    private static final long serialVersionUID = 1293912008528238512L;
 
     public static final String TYPE = "File Set"; //$NON-NLS-1$
+
     private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.files.icon")); //$NON-NLS-1$
+
     public static final char SEPARATOR = '\0';
-
-    private String mDestination = NSISKeywords.getInstance().getKeyword("$INSTDIR"); //$NON-NLS-1$
-    private int mOverwriteMode = OVERWRITE_ON;
-
     static {
         NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.files.type.name"), IMAGE, NSISInstallFiles.class); //$NON-NLS-1$
-        //Let's register File Item as well
+        // Let's register File Item as well
         FileItem.class.getName();
     }
+
+    private String mDestination = NSISKeywords.getInstance().getKeyword("$INSTDIR"); //$NON-NLS-1$
+
+    private int mOverwriteMode = OVERWRITE_ON;
 
     protected void addSkippedProperties(Collection skippedProperties)
     {
@@ -45,134 +188,9 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         skippedProperties.add("files"); //$NON-NLS-1$
     }
 
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
-     */
-    public void setChildTypes()
-    {
-        clearChildTypes();
-        addChildType(FileItem.TYPE);
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
-     */
-    public String getType()
-    {
-        return TYPE;
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
-     */
-    public String getDisplayName()
-    {
-        return TYPE;
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
-     */
-    public boolean isEditable()
-    {
-        return true;
-    }
-
-    public boolean edit(NSISWizard wizard)
-    {
-        return new NSISInstallFilesDialog(wizard,this).open() == Window.OK;
-    }
-
-    /* (non-Javadoc)
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
-     */
-    public Image getImage()
-    {
-        return IMAGE;
-    }
-
-    /**
-     * @return Returns the destination.
-     */
-    public String getDestination()
-    {
-        return mDestination;
-    }
-
-    /**
-     * @param destination The destination to set.
-     */
-    public void setDestination(String destination)
-    {
-        if(!Common.stringsAreEqual(mDestination,destination)) {
-            setDirty();
-            mDestination = destination;
-        }
-    }
-
-    /**
-     * @return Returns the filenames.
-     */
-    public String getFiles()
-    {
-        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-        if(getChildren().length > 0) {
-            Iterator iter = getChildrenIterator();
-            buf.append(((FileItem)iter.next()).getName());
-            while(iter.hasNext()) {
-                buf.append(SEPARATOR).append(((FileItem)iter.next()).getName());
-            }
-        }
-        return buf.toString();
-    }
-
-    /**
-     * @param filenames The filenames to set.
-     */
-    public void setFiles(String filenames)
-    {
-        String[] files = Common.tokenize(filenames,SEPARATOR);
-        CaseInsensitiveSet newFiles = new CaseInsensitiveSet(Arrays.asList(files));
-        for(Iterator iter=getChildrenIterator(); iter.hasNext(); ) {
-            FileItem item = (FileItem)iter.next();
-            if(!newFiles.contains(item.getName())) {
-                iter.remove();
-                setDirty();
-            }
-            else {
-                newFiles.remove(item.getName());
-            }
-        }
-        for(Iterator iter=newFiles.iterator(); iter.hasNext(); ) {
-            FileItem fi = new FileItem();
-            fi.setName((String)iter.next());
-            addChild(fi);
-            setDirty();
-        }
-    }
-
-    /**
-     * @return Returns the overwriteMode.
-     */
-    public int getOverwriteMode()
-    {
-        return mOverwriteMode;
-    }
-
-    /**
-     * @param overwriteMode The overwriteMode to set.
-     */
-    public void setOverwriteMode(int overwriteMode)
-    {
-        if(mOverwriteMode != overwriteMode) {
-            setDirty();
-            mOverwriteMode = overwriteMode;
-        }
-    }
-
     public String doValidate()
     {
-        if(!IOUtility.isValidNSISPathName(getDestination())) {
+        if (!IOUtility.isValidNSISPathName(getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset.destination.error"); //$NON-NLS-1$
         }
         else {
@@ -180,13 +198,9 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         }
     }
 
-    public int hashCode()
+    public boolean edit(NSISWizard wizard)
     {
-        final int PRIME = 31;
-        int result = super.hashCode();
-        result = PRIME * result + ((mDestination == null)?0:mDestination.hashCode());
-        result = PRIME * result + mOverwriteMode;
-        return result;
+        return new NSISInstallFilesDialog(wizard, this).open() == Window.OK;
     }
 
     public boolean equals(Object obj)
@@ -215,128 +229,152 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         return true;
     }
 
-    public static class FileItem extends AbstractNSISInstallItem
+    /**
+     * @return Returns the destination.
+     */
+    public String getDestination()
     {
-        private static final long serialVersionUID = 3744853352840436396L;
-        public static final String TYPE = "File Item"; //$NON-NLS-1$
-        private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
+        return mDestination;
+    }
 
-        private String mName = null;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
+     */
+    public String getDisplayName()
+    {
+        return TYPE;
+    }
 
-        static {
-            NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.fileitem.type.name"), IMAGE, FileItem.class); //$NON-NLS-1$
-        }
-
-        /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        public boolean equals(Object obj)
-        {
-            if(obj instanceof FileItem) {
-                return ((FileItem)obj).mName.equalsIgnoreCase(mName);
+    /**
+     * @return Returns the filenames.
+     */
+    public String getFiles()
+    {
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+        if (getChildren().length > 0) {
+            Iterator iter = getChildrenIterator();
+            buf.append(((FileItem)iter.next()).getName());
+            while (iter.hasNext()) {
+                buf.append(SEPARATOR).append(((FileItem)iter.next()).getName());
             }
-            return false;
         }
+        return buf.toString();
+    }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
-        public int hashCode()
-        {
-            return mName.hashCode();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
+     */
+    public Image getImage()
+    {
+        return IMAGE;
+    }
+
+    /**
+     * @return Returns the overwriteMode.
+     */
+    public int getOverwriteMode()
+    {
+        return mOverwriteMode;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
+     */
+    public String getType()
+    {
+        return TYPE;
+    }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = super.hashCode();
+        result = PRIME * result + ((mDestination == null)?0:mDestination.hashCode());
+        result = PRIME * result + mOverwriteMode;
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
+     */
+    public boolean isEditable()
+    {
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
+     */
+    public void setChildTypes()
+    {
+        clearChildTypes();
+        addChildType(FileItem.TYPE);
+    }
+
+    /**
+     * @param destination
+     *            The destination to set.
+     */
+    public void setDestination(String destination)
+    {
+        if (!Common.stringsAreEqual(mDestination, destination)) {
+            setDirty();
+            mDestination = destination;
         }
+    }
 
-        /**
-         * @return Returns the name.
-         */
-        public String getName()
-        {
-            return mName;
-        }
-
-        /**
-         * @param name The name to set.
-         */
-        public void setName(String name)
-        {
-            if(!Common.stringsAreEqual(mName, name)) {
+    /**
+     * @param filenames
+     *            The filenames to set.
+     */
+    public void setFiles(String filenames)
+    {
+        String[] files = Common.tokenize(filenames, SEPARATOR);
+        CaseInsensitiveSet newFiles = new CaseInsensitiveSet(Arrays.asList(files));
+        for (Iterator iter = getChildrenIterator(); iter.hasNext();) {
+            FileItem item = (FileItem)iter.next();
+            if (!newFiles.contains(item.getName())) {
+                iter.remove();
                 setDirty();
-                mName = name;
-            }
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#edit(org.eclipse.swt.widgets.Composite)
-         */
-        public boolean edit(NSISWizard wizard)
-        {
-            FileDialog dialog = new FileDialog(wizard.getShell(),SWT.OPEN|SWT.PRIMARY_MODAL);
-            ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
-            dialog.setText(EclipseNSISPlugin.getResourceString("wizard.fileitem.dialog.title")); //$NON-NLS-1$
-            dialog.setFilterNames(Common.loadArrayProperty(bundle,"wizard.source.file.filternames")); //$NON-NLS-1$
-            dialog.setFilterExtensions(Common.loadArrayProperty(bundle,"wizard.source.file.filters")); //$NON-NLS-1$
-            if(!Common.isEmpty(mName)) {
-                dialog.setFileName(mName);
-            }
-            String newFilename = dialog.open();
-            if(newFilename != null && !newFilename.equalsIgnoreCase(mName)) {
-                if(getParent() != null) {
-                    FileItem fi = new FileItem();
-                    fi.setName(newFilename);
-                    if(!getParent().canAddChild(fi)) {
-                        Common.openError(wizard.getShell(),
-                                EclipseNSISPlugin.getFormattedString("duplicate.child.error", new Object[] {getParent().getDisplayName(),fi.getDisplayName()}),  //$NON-NLS-1$
-                                EclipseNSISPlugin.getShellImage());
-                        return false;
-                    }
-                }
-                mName = newFilename;
-                return true;
-            }
-            return false;
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
-         */
-        public String getDisplayName()
-        {
-            return getName();
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
-         */
-        public Image getImage()
-        {
-            return IMAGE;
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
-         */
-        public String getType()
-        {
-            return TYPE;
-        }
-
-        /* (non-Javadoc)
-         * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
-         */
-        public boolean isEditable()
-        {
-            return true;
-        }
-
-        public String doValidate()
-        {
-            if(!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
-                return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
             }
             else {
-                return super.doValidate();
+                newFiles.remove(item.getName());
             }
         }
+        for (Iterator iter = newFiles.iterator(); iter.hasNext();) {
+            FileItem fi = new FileItem();
+            fi.setName((String)iter.next());
+            addChild(fi);
+            setDirty();
+        }
+    }
+
+    /**
+     * @param overwriteMode
+     *            The overwriteMode to set.
+     */
+    public void setOverwriteMode(int overwriteMode)
+    {
+        if (mOverwriteMode != overwriteMode) {
+            setDirty();
+            mOverwriteMode = overwriteMode;
+        }
+    }
+
+    public void setTargetPlatform(int targetPlatform)
+    {
+        super.setTargetPlatform(targetPlatform);
+        setDestination(NSISWizardUtil.convertPath(targetPlatform, getDestination()));
     }
 
 }

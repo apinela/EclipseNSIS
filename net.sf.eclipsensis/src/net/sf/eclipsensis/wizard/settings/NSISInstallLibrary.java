@@ -11,10 +11,10 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
-import net.sf.eclipsensis.wizard.NSISWizard;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallLibraryDialog;
+import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
@@ -24,207 +24,41 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
     private static final long serialVersionUID = -3834188758921066360L;
 
     public static final String TYPE = "Library"; //$NON-NLS-1$
-    private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.library.icon")); //$NON-NLS-1$
 
-    private String mName;
-    private boolean mShared = true;
-    private String mDestination = NSISKeywords.getInstance().getKeyword("$INSTDIR"); //$NON-NLS-1$
-    private int mLibType = LIBTYPE_DLL;
-    private boolean mProtected = true;
-    private boolean mReboot = true;
-    private boolean mRemoveOnUninstall = true;
-    private boolean mRefreshShell = false;
-    private boolean mUnloadLibraries = false;
-    private boolean mIgnoreVersion = false;
-    private boolean mX64 = false;
+    private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.library.icon")); //$NON-NLS-1$
 
     static {
         NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.library.type.name"), IMAGE, NSISInstallLibrary.class); //$NON-NLS-1$
     }
 
-    public boolean edit(NSISWizard wizard)
-    {
-        return new NSISInstallLibraryDialog(wizard,this).open() == Window.OK;
-    }
+    private String mName;
 
-    public String getDisplayName()
-    {
-        return mName;
-    }
+    private boolean mShared = true;
 
-    public Image getImage()
-    {
-        return IMAGE;
-    }
+    private String mDestination = NSISKeywords.getInstance().getKeyword("$INSTDIR"); //$NON-NLS-1$
 
-    public String getType()
-    {
-        return TYPE;
-    }
+    private int mLibType = LIBTYPE_DLL;
 
-    public boolean isEditable()
-    {
-        return true;
-    }
+    private boolean mProtected = true;
 
-    public boolean isRemoveOnUninstall()
-    {
-        return mRemoveOnUninstall;
-    }
+    private boolean mReboot = true;
 
-    public void setRemoveOnUninstall(boolean removeOnUninstall)
-    {
-        if(mRemoveOnUninstall != removeOnUninstall) {
-            setDirty();
-            mRemoveOnUninstall = removeOnUninstall;
-        }
-    }
+    private boolean mRemoveOnUninstall = true;
 
-    public boolean isRefreshShell()
-    {
-        return mRefreshShell;
-    }
+    private boolean mRefreshShell = false;
 
-    public void setRefreshShell(boolean refreshShell)
-    {
-        if(mRefreshShell != refreshShell) {
-            setDirty();
-            mRefreshShell = refreshShell;
-        }
-    }
+    private boolean mUnloadLibraries = false;
 
-    public boolean isUnloadLibraries()
-    {
-        return mUnloadLibraries;
-    }
+    private boolean mIgnoreVersion = false;
 
-    public void setUnloadLibraries(boolean unloadLibraries)
-    {
-        if(mUnloadLibraries != unloadLibraries) {
-            setDirty();
-            mUnloadLibraries = unloadLibraries;
-        }
-    }
-
-    public String getName()
-    {
-        return mName;
-    }
-
-    public void setName(String name)
-    {
-        if(!Common.stringsAreEqual(mName, name)) {
-            setDirty();
-            mName = name;
-        }
-    }
-
-    public String getDestination()
-    {
-        return mDestination;
-    }
-
-    public void setDestination(String destination)
-    {
-        if(!Common.stringsAreEqual(mDestination, destination)) {
-            setDirty();
-            mDestination = destination;
-        }
-    }
-
-    public boolean isProtected()
-    {
-        return mProtected;
-    }
-
-    public void setProtected(boolean protected1)
-    {
-        if(mProtected != protected1) {
-            setDirty();
-            mProtected = protected1;
-        }
-    }
-
-    public boolean isReboot()
-    {
-        return mReboot;
-    }
-
-    public void setReboot(boolean reboot)
-    {
-        if(mReboot != reboot) {
-            setDirty();
-            mReboot = reboot;
-        }
-    }
-
-    public int getLibType()
-    {
-        return mLibType;
-    }
-
-    public void setLibType(int libType)
-    {
-        switch(libType) {
-            case LIBTYPE_DLL:
-            case LIBTYPE_REGDLL:
-            case LIBTYPE_TLB:
-            case LIBTYPE_REGDLLTLB:
-                break;
-            default:
-                libType = LIBTYPE_DLL;
-        }
-        if(mLibType != libType) {
-            setDirty();
-            mLibType = libType;
-        }
-    }
-
-    public boolean isShared()
-    {
-        return mShared;
-    }
-
-    public void setShared(boolean shared)
-    {
-        if(mShared != shared) {
-            setDirty();
-            mShared = shared;
-        }
-    }
-
-    public boolean isIgnoreVersion()
-    {
-        return mIgnoreVersion;
-    }
-
-    public void setIgnoreVersion(boolean ignoreVersion)
-    {
-        if(mIgnoreVersion != ignoreVersion) {
-            setDirty();
-            mIgnoreVersion = ignoreVersion;
-        }
-    }
-
-    public boolean isX64()
-    {
-        return mX64;
-    }
-
-    public void setX64(boolean x64)
-    {
-        if(mX64 != x64) {
-            setDirty();
-            mX64 = x64;
-        }
-    }
+    private boolean mX64 = false;
 
     public String doValidate()
     {
-        if(!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
+        if (!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
         }
-        else if(!IOUtility.isValidNSISPathName(getDestination())) {
+        else if (!IOUtility.isValidNSISPathName(getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.destination.error"); //$NON-NLS-1$
         }
         else {
@@ -232,20 +66,9 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
         }
     }
 
-    public int hashCode()
+    public boolean edit(NSISWizard wizard)
     {
-        final int PRIME = 31;
-        int result = 1;
-        result = PRIME * result + ((mDestination == null)?0:mDestination.hashCode());
-        result = PRIME * result + mLibType;
-        result = PRIME * result + ((mName == null)?0:mName.hashCode());
-        result = PRIME * result + (mProtected?1231:1237);
-        result = PRIME * result + (mReboot?1231:1237);
-        result = PRIME * result + (mRefreshShell?1231:1237);
-        result = PRIME * result + (mRemoveOnUninstall?1231:1237);
-        result = PRIME * result + (mShared?1231:1237);
-        result = PRIME * result + (mUnloadLibraries?1231:1237);
-        return result;
+        return new NSISInstallLibraryDialog(wizard, this).open() == Window.OK;
     }
 
     public boolean equals(Object obj)
@@ -298,5 +121,209 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
             return false;
         }
         return true;
+    }
+
+    public String getDestination()
+    {
+        return mDestination;
+    }
+
+    public String getDisplayName()
+    {
+        return mName;
+    }
+
+    public Image getImage()
+    {
+        return IMAGE;
+    }
+
+    public int getLibType()
+    {
+        return mLibType;
+    }
+
+    public String getName()
+    {
+        return mName;
+    }
+
+    public String getType()
+    {
+        return TYPE;
+    }
+
+    public int hashCode()
+    {
+        final int PRIME = 31;
+        int result = 1;
+        result = PRIME * result + ((mDestination == null)?0:mDestination.hashCode());
+        result = PRIME * result + mLibType;
+        result = PRIME * result + ((mName == null)?0:mName.hashCode());
+        result = PRIME * result + (mProtected?1231:1237);
+        result = PRIME * result + (mReboot?1231:1237);
+        result = PRIME * result + (mRefreshShell?1231:1237);
+        result = PRIME * result + (mRemoveOnUninstall?1231:1237);
+        result = PRIME * result + (mShared?1231:1237);
+        result = PRIME * result + (mUnloadLibraries?1231:1237);
+        return result;
+    }
+
+    public boolean isEditable()
+    {
+        return true;
+    }
+
+    public boolean isIgnoreVersion()
+    {
+        return mIgnoreVersion;
+    }
+
+    public boolean isProtected()
+    {
+        return mProtected;
+    }
+
+    public boolean isReboot()
+    {
+        return mReboot;
+    }
+
+    public boolean isRefreshShell()
+    {
+        return mRefreshShell;
+    }
+
+    public boolean isRemoveOnUninstall()
+    {
+        return mRemoveOnUninstall;
+    }
+
+    public boolean isShared()
+    {
+        return mShared;
+    }
+
+    public boolean isUnloadLibraries()
+    {
+        return mUnloadLibraries;
+    }
+
+    public boolean isX64()
+    {
+        return mX64;
+    }
+
+    public void setDestination(String destination)
+    {
+        if (!Common.stringsAreEqual(mDestination, destination)) {
+            setDirty();
+            mDestination = destination;
+        }
+    }
+
+    public void setIgnoreVersion(boolean ignoreVersion)
+    {
+        if (mIgnoreVersion != ignoreVersion) {
+            setDirty();
+            mIgnoreVersion = ignoreVersion;
+        }
+    }
+
+    public void setLibType(int libType)
+    {
+        switch (libType)
+        {
+            case LIBTYPE_DLL:
+            case LIBTYPE_REGDLL:
+            case LIBTYPE_TLB:
+            case LIBTYPE_REGDLLTLB:
+                break;
+            default:
+                libType = LIBTYPE_DLL;
+        }
+        if (mLibType != libType) {
+            setDirty();
+            mLibType = libType;
+        }
+    }
+
+    public void setName(String name)
+    {
+        if (!Common.stringsAreEqual(mName, name)) {
+            setDirty();
+            mName = name;
+        }
+    }
+
+    public void setProtected(boolean protected1)
+    {
+        if (mProtected != protected1) {
+            setDirty();
+            mProtected = protected1;
+        }
+    }
+
+    public void setReboot(boolean reboot)
+    {
+        if (mReboot != reboot) {
+            setDirty();
+            mReboot = reboot;
+        }
+    }
+
+    public void setRefreshShell(boolean refreshShell)
+    {
+        if (mRefreshShell != refreshShell) {
+            setDirty();
+            mRefreshShell = refreshShell;
+        }
+    }
+
+    public void setRemoveOnUninstall(boolean removeOnUninstall)
+    {
+        if (mRemoveOnUninstall != removeOnUninstall) {
+            setDirty();
+            mRemoveOnUninstall = removeOnUninstall;
+        }
+    }
+
+    public void setShared(boolean shared)
+    {
+        if (mShared != shared) {
+            setDirty();
+            mShared = shared;
+        }
+    }
+
+    public void setTargetPlatform(int targetPlatform)
+    {
+        super.setTargetPlatform(targetPlatform);
+        setDestination(NSISWizardUtil.convertPath(targetPlatform, getDestination()));
+        switch (targetPlatform)
+        {
+            case INSISWizardConstants.TARGET_PLATFORM_X64:
+                setX64(true);
+                break;
+            case INSISWizardConstants.TARGET_PLATFORM_X86:
+                setX64(false);
+                break;
+        }
+    }
+
+    public void setUnloadLibraries(boolean unloadLibraries)
+    {
+        if (mUnloadLibraries != unloadLibraries) {
+            setDirty();
+            mUnloadLibraries = unloadLibraries;
+        }
+    }
+
+    public void setX64(boolean x64)
+    {
+        if (mX64 != x64) {
+            setDirty();
+            mX64 = x64;
+        }
     }
 }
