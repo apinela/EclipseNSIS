@@ -11,7 +11,9 @@ package net.sf.eclipsensis.wizard;
 
 import java.util.EventListener;
 
+import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
+
 public interface INSISWizardSettingsListener extends EventListener
 {
-    public void settingsChanged();
+    public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings);
 }

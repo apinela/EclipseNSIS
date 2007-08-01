@@ -12,23 +12,19 @@ package net.sf.eclipsensis.wizard.settings.dialogs;
 import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.TableResizer;
-import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.*;
-import net.sf.eclipsensis.wizard.NSISWizard;
-import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
+import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallFiles;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
+import net.sf.eclipsensis.wizard.util.*;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
@@ -228,7 +224,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         table.addControlListener(new TableResizer());
 
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,
-                                                         NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
+                                                         NSISWizardUtil.getPathConstantsAndVariables(mWizard.getSettings().getTargetPlatform()),
                                                          mStore.getString("destination"), //$NON-NLS-1$
                                                          false,"wizard.destination.label",true,null,true); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {

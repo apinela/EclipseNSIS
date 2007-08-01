@@ -10,27 +10,20 @@
 package net.sf.eclipsensis.wizard.settings.dialogs;
 
 import java.text.Collator;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
-import net.sf.eclipsensis.viewer.CollectionContentProvider;
-import net.sf.eclipsensis.viewer.CollectionLabelProvider;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.viewer.*;
 import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallShortcut;
-import net.sf.eclipsensis.wizard.util.MasterSlaveController;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
+import net.sf.eclipsensis.wizard.util.*;
 
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog implements INSISWizardConstants
@@ -116,7 +109,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
                     false,"wizard.location.label",true,null,true); //$NON-NLS-1$
         }
         ((GridData)c1.getLayoutData()).horizontalAlignment = GridData.FILL;
-        ArrayList input = Common.makeList(NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES));
+        ArrayList input = Common.makeList(NSISWizardUtil.getPathConstantsAndVariables(mWizard.getSettings().getTargetPlatform()));
         ComboViewer cv = new ComboViewer(c1);
         cv.setContentProvider(new CollectionContentProvider());
         cv.setLabelProvider(new CollectionLabelProvider());
@@ -175,7 +168,8 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
             }
         });
 
-        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(composite, "wizard.path.label", mStore.getString("path"), mWizard, true, m2, true); //$NON-NLS-1$ //$NON-NLS-2$
+        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(composite, "wizard.path.label", mStore.getString("path"),//$NON-NLS-1$ //$NON-NLS-2$
+                NSISWizardUtil.getPathConstantsAndVariables(mWizard.getSettings().getTargetPlatform()), mWizard, true, m2, true);
 
         c2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)

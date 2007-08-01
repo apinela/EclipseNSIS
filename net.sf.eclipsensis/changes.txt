@@ -9,6 +9,7 @@ Revision History
         o New and changed commands (SetRegView, GetDLLVersionLocal, MessageBox
           and File)
         o Fixed support for Windows Vista
+        o Wizard now supports 32-bit or 64-bit target platforms.
     * Bug Fixes
         o 1714373
         o 1733997

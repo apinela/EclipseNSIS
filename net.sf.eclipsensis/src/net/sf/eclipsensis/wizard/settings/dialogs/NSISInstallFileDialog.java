@@ -9,23 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings.dialogs;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
-import net.sf.eclipsensis.wizard.NSISWizard;
-import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallFile;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
+import net.sf.eclipsensis.wizard.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
@@ -80,7 +75,7 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
             }
         });
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,
-                                                         NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
+                                                         NSISWizardUtil.getPathConstantsAndVariables(mWizard.getSettings().getTargetPlatform()),
                                                          mStore.getString("destination"), //$NON-NLS-1$
                                                          false,"wizard.destination.label",true,null,true); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {

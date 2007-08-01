@@ -391,10 +391,14 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
 
     public void setTargetPlatform(int targetPlatform)
     {
-        if(hasChildren()) {
-            INSISInstallElement[] children = getChildren();
-            for (int i = 0; i < children.length; i++) {
-                children[i].setTargetPlatform(targetPlatform);
+        int oldTargetPlatform = getTargetPlatform();
+        super.setTargetPlatform(targetPlatform);
+        if(oldTargetPlatform != targetPlatform) {
+            if(hasChildren()) {
+                INSISInstallElement[] children = getChildren();
+                for (int i = 0; i < children.length; i++) {
+                    children[i].setTargetPlatform(targetPlatform);
+                }
             }
         }
 	}

@@ -14,9 +14,7 @@ import java.net.URL;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.ColorEditor;
-import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISContentBrowserDialog;
@@ -26,8 +24,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NSISWizardDialogUtil
@@ -412,12 +409,7 @@ public class NSISWizardDialogUtil
     public static Combo createCombo(Composite parent, int horizontalSpan, String[] items, String selectedItem, boolean isReadOnly, boolean enabled, MasterSlaveController masterSlaveController)
     {
         Combo c = new Combo(parent, SWT.DROP_DOWN | (isReadOnly?SWT.READ_ONLY:SWT.NONE));
-        if(!Common.isEmptyArray(items)) {
-            for (int i = 0; i < items.length; i++) {
-                c.add(items[i]);
-            }
-        }
-        c.setText(selectedItem);
+        populateCombo(c, items, selectedItem);
 
         GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         data.horizontalSpan = horizontalSpan;
@@ -427,17 +419,21 @@ public class NSISWizardDialogUtil
         return c;
     }
 
+    public static void populateCombo(Combo combo, String[] items, String selectedItem)
+    {
+        combo.removeAll();
+        if(!Common.isEmptyArray(items)) {
+            for (int i = 0; i < items.length; i++) {
+                combo.add(items[i]);
+            }
+        }
+        combo.setText(selectedItem);
+    }
+
     public static Combo createCombo(Composite parent, int horizontalSpan, String[] items, int selectedIndex, boolean isReadOnly, boolean enabled, MasterSlaveController masterSlaveController)
     {
         Combo c = new Combo(parent, SWT.DROP_DOWN | (isReadOnly?SWT.READ_ONLY:SWT.NONE));
-        if(!Common.isEmptyArray(items)) {
-            for (int i = 0; i < items.length; i++) {
-                c.add(items[i]);
-            }
-        }
-        if(selectedIndex >= 0 && selectedIndex < items.length) {
-            c.select(selectedIndex);
-        }
+        populateCombo(c, items, (selectedIndex >= 0 && selectedIndex < items.length?items[selectedIndex]:""));
 
         GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         data.horizontalSpan = horizontalSpan;
@@ -550,7 +546,7 @@ public class NSISWizardDialogUtil
      * @param isRequired
      * @return
      */
-    public static Combo createContentBrowser(Composite parent, String labelResource, String value, final NSISWizard wizard, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
+    public static Combo createContentBrowser(Composite parent, String labelResource, String value, String[] items, final NSISWizard wizard, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
         parent = checkParentLayoutColumns(parent,3);
         int numColumns = ((GridLayout)parent.getLayout()).numColumns;
@@ -565,9 +561,7 @@ public class NSISWizardDialogUtil
         layout.marginWidth = 0;
         composite.setLayout(layout);
 
-        final Combo c2 = createCombo(composite,1,
-                NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
-                value,false,enabled,masterSlaveController);
+        final Combo c2 = createCombo(composite,1, items, value,false,enabled,masterSlaveController);
         gd = (GridData)c2.getLayoutData();
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = GridData.FILL;

@@ -9,13 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.util.ColorManager;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
 
@@ -25,8 +23,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.*;
 
 public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizard, INSISWizardConstants
 {
@@ -136,11 +133,15 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
 
     protected void setSettings(NSISWizardSettings settings)
     {
+        NSISWizardSettings oldSettings = mSettings;
+        if(oldSettings != null) {
+            oldSettings.setWizard(null);
+        }
         mSettings = settings;
         mSettings.setWizard(this);
         INSISWizardSettingsListener[] listeners = (INSISWizardSettingsListener[])mSettingsListeners.toArray(new INSISWizardSettingsListener[mSettingsListeners.size()]);
         for (int i = 0; i < listeners.length; i++) {
-            listeners[i].settingsChanged();
+            listeners[i].settingsChanged(oldSettings, mSettings);
         }
         IWizardPage[] pages = getPages();
         if(!Common.isEmptyArray(pages)) {

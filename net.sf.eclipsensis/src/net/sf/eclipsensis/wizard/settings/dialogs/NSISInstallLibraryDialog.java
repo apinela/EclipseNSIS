@@ -13,12 +13,11 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallLibrary;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
+import net.sf.eclipsensis.wizard.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -89,7 +88,9 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
                 Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), "wizard.library.filternames"), //$NON-NLS-1$
                 Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), "wizard.library.filters"), //$NON-NLS-1$
                 "wizard.library.label", true, null, true); //$NON-NLS-1$
-        final Combo c1 = NSISWizardDialogUtil.createCombo(composite, NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES), mStore.getString("destination"), //$NON-NLS-1$
+        final Combo c1 = NSISWizardDialogUtil.createCombo(composite,
+                NSISWizardUtil.getPathConstantsAndVariables(mWizard.getSettings().getTargetPlatform()),
+                mStore.getString("destination"), //$NON-NLS-1$
                 false, "wizard.destination.label", true, null, true); //$NON-NLS-1$
         c1.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
@@ -218,7 +219,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
     protected List getProperties()

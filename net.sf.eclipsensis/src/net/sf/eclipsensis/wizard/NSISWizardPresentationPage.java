@@ -12,8 +12,7 @@ package net.sf.eclipsensis.wizard;
 import java.io.File;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.ColorEditor;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
@@ -251,15 +250,14 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         m.updateSlaves();
 
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                b.setSelection(settings.isShowBackground());
-                t.setText(settings.getBackgroundBMP());
-                t2.setText(settings.getBackgroundWAV());
-                ce[0].setRGB(settings.getBGTopColor());
-                ce[1].setRGB(settings.getBGBottomColor());
-                ce[2].setRGB(settings.getBGTextColor());
+                b.setSelection(newSettings.isShowBackground());
+                t.setText(newSettings.getBackgroundBMP());
+                t2.setText(newSettings.getBackgroundWAV());
+                ce[0].setRGB(newSettings.getBGTopColor());
+                ce[1].setRGB(newSettings.getBGBottomColor());
+                ce[2].setRGB(newSettings.getBGTextColor());
                 m.updateSlaves();
             }});
     }
@@ -342,12 +340,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         m.updateSlaves();
 
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                b.setSelection(settings.isShowLicense());
-                t.setText(settings.getLicenseData());
-                int n = settings.getLicenseButtonType();
+                b.setSelection(newSettings.isShowLicense());
+                t.setText(newSettings.getLicenseData());
+                int n = newSettings.getLicenseButtonType();
                 if(n >= 0 && n < NSISWizardDisplayValues.LICENSE_BUTTON_TYPE_NAMES.length) {
                     c.setText(NSISWizardDisplayValues.LICENSE_BUTTON_TYPE_NAMES[n]);
                 }
@@ -355,7 +352,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     c.clearSelection();
                     c.setText(""); //$NON-NLS-1$
                 }
-                c.setEnabled(settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isShowLicense());
+                c.setEnabled(newSettings.getInstallerType() != INSTALLER_TYPE_SILENT && newSettings.isShowLicense());
 
                 m.updateSlaves();
             }});
@@ -519,15 +516,14 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         m.updateSlaves();
 
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                b.setSelection(settings.isShowSplash());
-                t.setText(settings.getSplashBMP());
-                t2.setText(settings.getSplashWAV());
-                t3[0].setText(makeStringFromInt(settings.getSplashDelay()));
-                t3[1].setText(makeStringFromInt(settings.getSplashDelay()));
-                t3[2].setText(makeStringFromInt(settings.getSplashDelay()));
+                b.setSelection(newSettings.isShowSplash());
+                t.setText(newSettings.getSplashBMP());
+                t2.setText(newSettings.getSplashWAV());
+                t3[0].setText(makeStringFromInt(newSettings.getSplashDelay()));
+                t3[1].setText(makeStringFromInt(newSettings.getFadeInDelay()));
+                t3[2].setText(makeStringFromInt(newSettings.getFadeOutDelay()));
                 m.updateSlaves();
             }});
     }

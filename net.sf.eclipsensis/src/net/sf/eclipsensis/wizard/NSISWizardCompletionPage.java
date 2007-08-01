@@ -9,23 +9,20 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
+import java.beans.*;
 import java.io.File;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 
@@ -215,17 +212,16 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         });
 
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                b1.setSelection(settings.isShowInstDetails());
-                b1.setEnabled(settings.getInstallerType() != INSTALLER_TYPE_SILENT);
-                b2.setSelection(settings.isAutoCloseInstaller());
-                b2.setEnabled(settings.getInstallerType() != INSTALLER_TYPE_SILENT);
-                b3.setSelection(settings.isCreateUninstallerStartMenuShortcut());
-                b3.setEnabled(settings.isCreateUninstaller());
-                b4.setSelection(settings.isCreateUninstallerControlPanelEntry());
-                b4.setEnabled(settings.isCreateUninstaller());
+                b1.setSelection(newSettings.isShowInstDetails());
+                b1.setEnabled(newSettings.getInstallerType() != INSTALLER_TYPE_SILENT);
+                b2.setSelection(newSettings.isAutoCloseInstaller());
+                b2.setEnabled(newSettings.getInstallerType() != INSTALLER_TYPE_SILENT);
+                b3.setSelection(newSettings.isCreateUninstallerStartMenuShortcut());
+                b3.setEnabled(newSettings.isCreateUninstaller());
+                b4.setSelection(newSettings.isCreateUninstallerControlPanelEntry());
+                b4.setEnabled(newSettings.isCreateUninstaller());
             }});
     }
 
@@ -237,7 +233,10 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         final Group group = NSISWizardDialogUtil.createGroup(parent, 3, "post.installation.actions.group.label",null,false); //$NON-NLS-1$
         NSISWizardSettings settings = mWizard.getSettings();
 
-        final Combo c1 = NSISWizardDialogUtil.createContentBrowser(group, "run.program.label", settings.getRunProgramAfterInstall(), mWizard, true, null, false); //$NON-NLS-1$
+        String[] pathConstantsAndVariables = NSISWizardUtil.getPathConstantsAndVariables(settings.getTargetPlatform());
+
+        final Combo c1 = NSISWizardDialogUtil.createContentBrowser(group, "run.program.label", settings.getRunProgramAfterInstall(), //$NON-NLS-1$
+                                                                   pathConstantsAndVariables, mWizard, true, null, false);
         final Text t = NSISWizardDialogUtil.createText(group,settings.getRunProgramAfterInstallParams(),"run.params.label",true,null,false); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
@@ -264,7 +263,8 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         });
 
-        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(group, "open.readme.label", settings.getOpenReadmeAfterInstall(), mWizard, true, null, false); //$NON-NLS-1$
+        final Combo c2 = NSISWizardDialogUtil.createContentBrowser(group, "open.readme.label", settings.getOpenReadmeAfterInstall(), //$NON-NLS-1$
+                                                                   pathConstantsAndVariables, mWizard, true, null, false);
         c2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -273,14 +273,39 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         });
 
-
-        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+        addPageChangedRunnable(new Runnable() {
+            public void run()
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                c1.setText(settings.getRunProgramAfterInstall());
-                t.setText(settings.getRunProgramAfterInstallParams());
-                c2.setText(settings.getOpenReadmeAfterInstall());
+                if(isCurrentPage()) {
+                    NSISWizardSettings settings = mWizard.getSettings();
+                    c1.setText(settings.getRunProgramAfterInstall());
+                    c2.setText(settings.getOpenReadmeAfterInstall());
+                }
+            }
+        });
+
+        final PropertyChangeListener propertyListener = new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt)
+            {
+                if(NSISWizardSettings.TARGET_PLATFORM.equals(evt.getPropertyName())) {
+                    NSISWizardSettings settings = (NSISWizardSettings)evt.getSource();
+                    String[] pathConstantsAndVariables = NSISWizardUtil.getPathConstantsAndVariables(((Integer)evt.getNewValue()).intValue());
+                    NSISWizardDialogUtil.populateCombo(c1,pathConstantsAndVariables,settings.getRunProgramAfterInstall());
+                    NSISWizardDialogUtil.populateCombo(c2,pathConstantsAndVariables,settings.getOpenReadmeAfterInstall());
+                }
+            }
+        };
+        settings.addPropertyChangeListener(propertyListener);
+        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
+            {
+                if(oldSettings != null) {
+                    oldSettings.removePropertyChangeListener(propertyListener);
+                }
+                c1.setText(newSettings.getRunProgramAfterInstall());
+                t.setText(newSettings.getRunProgramAfterInstallParams());
+                c2.setText(newSettings.getOpenReadmeAfterInstall());
+                newSettings.addPropertyChangeListener(propertyListener);
             }});
     }
 
@@ -422,7 +447,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 }
             });
             scriptWizard.addSettingsListener(new INSISWizardSettingsListener() {
-                public void settingsChanged()
+                public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
                 {
                     scriptWizard.setSaveAsTemplate(false);
                     button.setSelection(false);
@@ -431,16 +456,14 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         }
 
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-
-                t.setText(settings.getSavePath().toString());
-                radioButtons[0].setSelection(!settings.isSaveExternal());
-                radioButtons[1].setSelection(settings.isSaveExternal());
-                b2.setSelection(settings.isMakePathsRelative());
-                b3.setSelection(settings.isCompileScript());
-                b4.setSelection(settings.isTestScript());
+                t.setText(newSettings.getSavePath().toString());
+                radioButtons[0].setSelection(!newSettings.isSaveExternal());
+                radioButtons[1].setSelection(newSettings.isSaveExternal());
+                b2.setSelection(newSettings.isMakePathsRelative());
+                b3.setSelection(newSettings.isCompileScript());
+                b4.setSelection(newSettings.isTestScript());
             }
        });
     }
@@ -513,13 +536,12 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         });
 
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                b.setEnabled(settings.isCreateUninstaller());
-                b.setSelection(settings.isSilentUninstaller());
-                b1.setSelection(settings.isShowUninstDetails());
-                b2.setSelection(settings.isAutoCloseUninstaller());
+                b.setEnabled(newSettings.isCreateUninstaller());
+                b.setSelection(newSettings.isSilentUninstaller());
+                b1.setSelection(newSettings.isShowUninstDetails());
+                b2.setSelection(newSettings.isAutoCloseUninstaller());
                 m.updateSlaves();
             }});
     }

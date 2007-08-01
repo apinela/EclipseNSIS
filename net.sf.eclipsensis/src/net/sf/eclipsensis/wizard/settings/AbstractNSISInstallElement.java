@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard.settings;
 import java.util.Collection;
 
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.wizard.INSISWizardConstants;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -24,6 +25,8 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
     private INSISInstallElement mParent = null;
     private transient String mError = null;
     private transient boolean mDirty = true;
+
+    protected int mTargetPlatform = INSISWizardConstants.TARGET_PLATFORM_ANY;
 
     protected final void setDirty()
     {
@@ -122,5 +125,15 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
     protected String doValidate()
     {
         return null;
+    }
+
+    public void setTargetPlatform(int targetPlatform)
+    {
+        mTargetPlatform = targetPlatform;
+    }
+
+    public int getTargetPlatform()
+    {
+        return mTargetPlatform;
     }
 }

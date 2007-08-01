@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
+import java.beans.*;
 import java.io.Serializable;
 import java.util.*;
 
@@ -29,7 +30,68 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public static final String NODE = "settings"; //$NON-NLS-1$
     public static final String CHILD_NODE = "attribute"; //$NON-NLS-1$
 
+    public static final String NAME = "NAME";
+    public static final String COMPANY = "COMPANY";
+    public static final String VERSION = "VERSION";
+    public static final String URL = "URL";
+    public static final String OUT_FILE = "OUTFILE";
+    public static final String COMPRESSOR_TYPE = "COMPRESSOR_TYPE";
+    public static final String SOLID_COMPRESSION = "SOLID_COMPRESSION";
+    public static final String INSTALLER_TYPE = "INSTALLER_TYPE";
+    public static final String ICON = "ICON";
+    public static final String SHOW_SPLASH = "SHOW_SPLASH";
+    public static final String SPLASH_BMP = "SPLASH_BMP"; //$NON-NLS-1$
+    public static final String SPLASH_WAV = "SPLASH_WAV"; //$NON-NLS-1$
+    public static final String SPLASH_DELAY = "SPLASH_DELAY";
+    public static final String FADE_IN_DELAY = "FADE_IN_DELAY";
+    public static final String FADE_OUT_DELAY = "FADE_OUT_DELAY";
+    public static final String SHOW_BACKGROUND = "SHOW_BACKGROUND";
+    public static final String BG_TOP_COLOR = "BG_TOP_COLOR";
+    public static final String BG_BOTTOM_COLOR = "BG_BOTTOM_COLOR";
+    public static final String BG_TEXT_COLOR = "BG_TEXT_COLOR";
+    public static final String BACKGROUND_BMP = "BACKGROUND_BMP"; //$NON-NLS-1$
+    public static final String BACKGROUND_WAV = "BACKGROUND_WAV"; //$NON-NLS-1$
+    public static final String SHOW_LICENSE = "SHOW_LICENSE";
+    public static final String LICENSE_DATA = "LICENSE_DATA"; //$NON-NLS-1$
+    public static final String LICENSE_BUTTON_TYPE = "LICENSE_BUTTON_TYPE";
+    public static final String ENABLE_LANGUAGE_SUPPORT = "ENABLE_LANGUAGE_SUPPORT";
+    public static final String LANGUAGES = "LANGUAGES";
+    public static final String SELECT_LANGUAGE = "SELECT_LANGUAGE";
+    public static final String INSTALL_DIR = "INSTALL_DIR";
+    public static final String CHANGE_INSTALL_DIR = "CHANGE_INSTALL_DIR";
+    public static final String CREATE_START_MENU_GROUP = "CREATE_START_MENU_GROUP";
+    public static final String START_MENU_GROUP = "START_MENU_GROUP";
+    public static final String CHANGE_START_MENU_GROUP = "CHANGE_START_MENU_GROUP";
+    public static final String DISABLE_START_MENU_SHORTCUTS = "DISABLE_START_MENU_SHORTCUTS";
+    public static final String SHOW_INST_DETAILS = "SHOW_INST_DETAILS";
+    public static final String RUN_PROGRAM_AFTER_INSTALL = "RUN_PROGRAM_AFTER_INSTALL"; //$NON-NLS-1$
+    public static final String RUN_PROGRAM_AFTER_INSTALL_PARAMS = "RUN_PROGRAM_AFTER_INSTALL_PARAMS"; //$NON-NLS-1$
+    public static final String OPEN_README_AFTER_INSTALL = "OPEN_README_AFTER_INSTALL"; //$NON-NLS-1$
+    public static final String AUTO_CLOSE_INSTALLER = "AUTO_CLOSE_INSTALLER";
+    public static final String SHOW_UNINST_DETAILS = "SHOW_UNINST_DETAILS";
+    public static final String AUTO_CLOSE_UNINSTALLER = "AUTO_CLOSE_UNINSTALLER";
+    public static final String CREATE_UNINSTALLER_START_MENU_SHORTCUT = "CREATE_UNINSTALLER_START_MENU_SHORTCUT";
+    public static final String CREATE_UNINSTALLER_CONTROL_PANEL_ENTRY = "CREATE_UNINSTALLER_CONTROL_PANEL_ENTRY";
+    public static final String SILENT_UNINSTALLER = "SILENT_UNINSTALLER";
+    public static final String SELECT_COMPONENTS = "SELECT_COMPONENTS";
+
+    public static final String TARGET_PLATFORM = "TARGET_PLATFORM";
+    public static final String EXECUTION_LEVEL = "EXECUTION_LEVEL";
+
+    public static final String CREATE_UNINSTALLER = "CREATE_UNINSTALLER";
+    public static final String UNINSTALL_ICON = "UNINSTALL_ICON"; //$NON-NLS-1$
+    public static final String UNINSTALL_FILE = "UNINSTALL_FILE"; //$NON-NLS-1$
+    public static final String SAVE_EXTERNAL = "SAVE_EXTERNAL";
+    public static final String SAVE_PATH = "SAVE_PATH";
+    public static final String MAKE_PATHS_RELATIVE = "MAKE_PATHS_RELATIVE";
+    public static final String COMPILE_SCRIPT = "COMPILE_SCRIPT";
+    public static final String TEST_SCRIPT = "TEST_SCRIPT";
+
+    public static final String INSTALLER = "INSTALLER";
+
     private static final long serialVersionUID = -3872062583870145866L;
+
+    private transient PropertyChangeSupport mListeners;
 
     private String mName = EclipseNSISPlugin.getResourceString("wizard.default.name",""); //$NON-NLS-1$ //$NON-NLS-2$
     private String mCompany = ""; //$NON-NLS-1$
@@ -114,6 +176,42 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         }
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener)
+    {
+        if(mListeners == null) {
+            mListeners = new PropertyChangeSupport(this);
+        }
+        mListeners.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener)
+    {
+        if(mListeners != null) {
+            mListeners.removePropertyChangeListener(listener);
+        }
+    }
+
+    private void firePropertyChanged(String name, Object oldValue, Object newValue)
+    {
+        if(mListeners != null) {
+            mListeners.firePropertyChange(name, oldValue, newValue);
+        }
+    }
+
+    private void firePropertyChanged(String name, boolean oldValue, boolean newValue)
+    {
+        if(mListeners != null) {
+            mListeners.firePropertyChange(name, oldValue, newValue);
+        }
+    }
+
+    private void firePropertyChanged(String name, int oldValue, int newValue)
+    {
+        if(mListeners != null) {
+            mListeners.firePropertyChange(name, oldValue, newValue);
+        }
+    }
+
     /**
      * @return Returns the wizard.
      */
@@ -121,6 +219,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         return mWizard;
     }
+
     /**
      * @param wizard The wizard to set.
      */
@@ -128,6 +227,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         mWizard = wizard;
     }
+
     /**
      * @return Returns the autoCloseInstaller.
      */
@@ -141,7 +241,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setAutoCloseInstaller(boolean autoCloseInstaller)
     {
+        boolean oldValue = mAutoCloseInstaller;
         mAutoCloseInstaller = autoCloseInstaller;
+        firePropertyChanged(AUTO_CLOSE_INSTALLER, oldValue, autoCloseInstaller);
     }
 
     /**
@@ -157,11 +259,13 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setBGBottomColor(RGB bottomColor)
     {
+        RGB oldValue = mBGBottomColor;
         mBGBottomColor = bottomColor;
+        firePropertyChanged(BG_BOTTOM_COLOR, oldValue, bottomColor);
     }
 
     /**
-     * @return Returns the bGGradient.
+     * @return Returns the showBackground.
      */
     public boolean isShowBackground()
     {
@@ -169,11 +273,13 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     }
 
     /**
-     * @param gradient The bGGradient to set.
+     * @param showBackground The showBackground to set.
      */
-    public void setShowBackground(boolean gradient)
+    public void setShowBackground(boolean showBackground)
     {
-        mShowBackground = gradient;
+        boolean oldValue = mShowBackground;
+        mShowBackground = showBackground;
+        firePropertyChanged(SHOW_BACKGROUND, oldValue, showBackground);
     }
 
     /**
@@ -189,7 +295,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setBackgroundBMP(String backgroundBMP)
     {
+        String oldValue = mBackgroundBMP;
         mBackgroundBMP = backgroundBMP;
+        firePropertyChanged(BACKGROUND_BMP, oldValue, backgroundBMP);
     }
 
     /**
@@ -205,7 +313,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setBackgroundWAV(String backgroundWAV)
     {
+        String oldValue = mBackgroundWAV;
         mBackgroundWAV = backgroundWAV;
+        firePropertyChanged(BACKGROUND_WAV, oldValue, backgroundWAV);
     }
     /**
      * @return Returns the bGTextColor.
@@ -220,7 +330,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setBGTextColor(RGB textColor)
     {
+        RGB oldValue = mBGTextColor;
         mBGTextColor = textColor;
+        firePropertyChanged(BG_TEXT_COLOR, oldValue, textColor);
     }
 
     /**
@@ -236,7 +348,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setBGTopColor(RGB topColor)
     {
+        RGB oldValue = mBGTopColor;
         mBGTopColor = topColor;
+        firePropertyChanged(BG_TOP_COLOR, oldValue, topColor);
     }
 
     /**
@@ -252,7 +366,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setChangeInstallDir(boolean changeInstallDir)
     {
+        boolean oldValue = mChangeInstallDir;
         mChangeInstallDir = changeInstallDir;
+        firePropertyChanged(CHANGE_INSTALL_DIR, oldValue, changeInstallDir);
     }
 
     /**
@@ -268,7 +384,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setChangeStartMenuGroup(boolean changeStartMenuGroup)
     {
+        boolean oldValue = mChangeStartMenuGroup;
         mChangeStartMenuGroup = changeStartMenuGroup;
+        firePropertyChanged(CHANGE_START_MENU_GROUP, oldValue, changeStartMenuGroup);
     }
 
     public boolean isDisableStartMenuShortcuts()
@@ -278,7 +396,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 
     public void setDisableStartMenuShortcuts(boolean disableStartMenuShortcuts)
     {
+        boolean oldValue = mDisableStartMenuShortcuts;
         mDisableStartMenuShortcuts = disableStartMenuShortcuts;
+        firePropertyChanged(DISABLE_START_MENU_SHORTCUTS, oldValue, disableStartMenuShortcuts);
     }
 
     /**
@@ -294,7 +414,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setCompany(String company)
     {
+        String oldValue = mCompany;
         mCompany = company;
+        firePropertyChanged(COMPANY, oldValue, company);
     }
 
     /**
@@ -310,7 +432,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setCreateStartMenuGroup(boolean createStartMenuGroup)
     {
+        boolean oldValue = mCreateStartMenuGroup;
         mCreateStartMenuGroup = createStartMenuGroup;
+        firePropertyChanged(CREATE_START_MENU_GROUP, oldValue, createStartMenuGroup);
     }
 
     /**
@@ -326,7 +450,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setCreateUninstaller(boolean createUninstaller)
     {
+        boolean oldValue = mCreateUninstaller;
         mCreateUninstaller = createUninstaller;
+        firePropertyChanged(CREATE_UNINSTALLER, oldValue, createUninstaller);
     }
 
     /**
@@ -342,7 +468,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setFadeInDelay(int fadeInDelay)
     {
+        int oldValue = mFadeInDelay;
         mFadeInDelay = fadeInDelay;
+        firePropertyChanged(FADE_IN_DELAY, oldValue, fadeInDelay);
     }
 
     /**
@@ -358,7 +486,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setFadeOutDelay(int fadeOutDelay)
     {
+        int oldValue = mFadeOutDelay;
         mFadeOutDelay = fadeOutDelay;
+        firePropertyChanged(FADE_OUT_DELAY, oldValue, fadeOutDelay);
     }
 
     /**
@@ -374,7 +504,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setInstallDir(String installDir)
     {
+        String oldValue = mInstallDir;
         mInstallDir = installDir;
+        firePropertyChanged(INSTALL_DIR, oldValue, installDir);
     }
 
     /**
@@ -390,7 +522,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setIcon(String icon)
     {
+        String oldValue = mIcon;
         mIcon = icon;
+        firePropertyChanged(ICON, oldValue, icon);
     }
 
     /**
@@ -406,7 +540,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setInstallerType(int installerType)
     {
+        int oldValue = mInstallerType;
         mInstallerType = installerType;
+        firePropertyChanged(INSTALLER_TYPE, oldValue, installerType);
     }
 
     /**
@@ -422,7 +558,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setLicenseButtonType(int licenseButtonType)
     {
+        int oldValue = mLicenseButtonType;
         mLicenseButtonType = licenseButtonType;
+        firePropertyChanged(LICENSE_BUTTON_TYPE, oldValue, licenseButtonType);
     }
 
     /**
@@ -438,7 +576,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setLicenseData(String licenseData)
     {
+        String oldValue = mLicenseData;
         mLicenseData = licenseData;
+        firePropertyChanged(LICENSE_DATA, oldValue, licenseData);
     }
 
     /**
@@ -454,7 +594,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setName(String name)
     {
+        String oldValue = mName;
         mName = name;
+        firePropertyChanged(NAME, oldValue, name);
     }
 
     /**
@@ -470,7 +612,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setOutFile(String outFile)
     {
+        String oldValue = mOutFile;
         mOutFile = outFile;
+        firePropertyChanged(OUT_FILE, oldValue, outFile);
     }
 
     /**
@@ -486,7 +630,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setStartMenuGroup(String startMenuGroup)
     {
+        String oldValue = mStartMenuGroup;
         mStartMenuGroup = startMenuGroup;
+        firePropertyChanged(START_MENU_GROUP, oldValue, startMenuGroup);
     }
 
     /**
@@ -502,7 +648,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setRunProgramAfterInstall(String runProgramAfterInstall)
     {
+        String oldValue = mRunProgramAfterInstall;
         mRunProgramAfterInstall = runProgramAfterInstall;
+        firePropertyChanged(RUN_PROGRAM_AFTER_INSTALL, oldValue, runProgramAfterInstall);
     }
 
     /**
@@ -518,7 +666,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setShowInstDetails(boolean showInstDetails)
     {
+        boolean oldValue = mShowInstDetails;
         mShowInstDetails = showInstDetails;
+        firePropertyChanged(SHOW_INST_DETAILS, oldValue, showInstDetails);
     }
 
     /**
@@ -534,7 +684,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setShowLicense(boolean showLicense)
     {
+        boolean oldValue = mShowLicense;
         mShowLicense = showLicense;
+        firePropertyChanged(SHOW_LICENSE, oldValue, showLicense);
     }
 
     /**
@@ -550,7 +702,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setSplashBMP(String splashBMP)
     {
+        String oldValue = mSplashBMP;
         mSplashBMP = splashBMP;
+        firePropertyChanged(SPLASH_BMP, oldValue, splashBMP);
     }
 
     /**
@@ -566,7 +720,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setSplashDelay(int splashDelay)
     {
+        int oldValue = mSplashDelay;
         mSplashDelay = splashDelay;
+        firePropertyChanged(SPLASH_DELAY, oldValue, splashDelay);
     }
 
     /**
@@ -582,7 +738,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setSplashWAV(String splashWAV)
     {
+        String oldValue = mSplashWAV;
         mSplashWAV = splashWAV;
+        firePropertyChanged(SPLASH_WAV, oldValue, splashWAV);
     }
 
     /**
@@ -598,7 +756,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setUninstallFile(String uninstallFile)
     {
+        String oldValue = mUninstallFile;
         mUninstallFile = uninstallFile;
+        firePropertyChanged(UNINSTALL_FILE, oldValue, uninstallFile);
     }
 
     /**
@@ -614,7 +774,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setUninstallIcon(String uninstallIcon)
     {
+        String oldValue = mUninstallIcon;
         mUninstallIcon = uninstallIcon;
+        firePropertyChanged(UNINSTALL_ICON, oldValue, uninstallIcon);
     }
 
     /**
@@ -630,7 +792,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setUrl(String url)
     {
+        String oldValue = mUrl;
         mUrl = url;
+        firePropertyChanged(URL, oldValue, url);
     }
 
     /**
@@ -646,7 +810,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setVersion(String version)
     {
+        String oldValue = mVersion;
         mVersion = version;
+        firePropertyChanged(VERSION, oldValue, version);
     }
 
     /**
@@ -662,7 +828,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setEnableLanguageSupport(boolean enableLanguageSupport)
     {
+        boolean oldValue = mEnableLanguageSupport;
         mEnableLanguageSupport = enableLanguageSupport;
+        firePropertyChanged(ENABLE_LANGUAGE_SUPPORT, oldValue, enableLanguageSupport);
     }
 
     /**
@@ -678,7 +846,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setSelectLanguage(boolean selectLanguage)
     {
+        boolean oldValue = mSelectLanguage;
         mSelectLanguage = selectLanguage;
+        firePropertyChanged(SELECT_LANGUAGE, oldValue, selectLanguage);
     }
 
     /**
@@ -698,6 +868,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
             mLanguages.clear();
             mLanguages.addAll(languages);
         }
+        firePropertyChanged(LANGUAGES, mLanguages, languages);
     }
 
     /**
@@ -713,7 +884,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setShowSplash(boolean showSplash)
     {
+        boolean oldValue = mShowSplash;
         mShowSplash = showSplash;
+        firePropertyChanged(SHOW_SPLASH, oldValue, showSplash);
     }
 
     /**
@@ -729,7 +902,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setCompileScript(boolean compileScript)
     {
+        boolean oldValue = mCompileScript;
         mCompileScript = compileScript;
+        firePropertyChanged(COMPILE_SCRIPT, oldValue, compileScript);
     }
 
     /**
@@ -745,7 +920,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setTestScript(boolean testScript)
     {
+        boolean oldValue = mTestScript;
         mTestScript = testScript;
+        firePropertyChanged(TEST_SCRIPT, oldValue, testScript);
     }
 
     /**
@@ -761,7 +938,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setMakePathsRelative(boolean makePathsRelative)
     {
+        boolean oldValue = mMakePathsRelative;
         mMakePathsRelative = makePathsRelative;
+        firePropertyChanged(MAKE_PATHS_RELATIVE, oldValue, makePathsRelative);
     }
 
     public boolean isSaveExternal()
@@ -771,7 +950,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 
     public void setSaveExternal(boolean saveExternal)
     {
+        boolean oldValue = mSaveExternal;
         mSaveExternal = saveExternal;
+        firePropertyChanged(SAVE_EXTERNAL, oldValue, saveExternal);
     }
 
     /**
@@ -787,7 +968,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setSavePath(String savePath)
     {
+        String oldValue = mSavePath;
         mSavePath = savePath;
+        firePropertyChanged(SAVE_PATH, oldValue, savePath);
     }
     /**
      * @return Returns the compressorType.
@@ -802,7 +985,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setCompressorType(int compressorType)
     {
+        int oldValue = mCompressorType;
         mCompressorType = compressorType;
+        firePropertyChanged(COMPRESSOR_TYPE, oldValue, compressorType);
     }
 
     public boolean isSolidCompression()
@@ -812,7 +997,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 
     public void setSolidCompression(boolean solidCompression)
     {
+        boolean oldValue = mSolidCompression;
         mSolidCompression = solidCompression;
+        firePropertyChanged(SOLID_COMPRESSION, oldValue, solidCompression);
     }
 
     public INSISInstallElement getInstaller()
@@ -822,7 +1009,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 
     public void setInstaller(INSISInstallElement installer)
     {
+        INSISInstallElement oldValue = mInstaller;
         mInstaller = installer;
+        firePropertyChanged(INSTALLER, oldValue, installer);
     }
 
     /**
@@ -838,7 +1027,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setAutoCloseUninstaller(boolean autoCloseUninstaller)
     {
+        boolean oldValue = mAutoCloseUninstaller;
         mAutoCloseUninstaller = autoCloseUninstaller;
+        firePropertyChanged(AUTO_CLOSE_UNINSTALLER, oldValue, autoCloseUninstaller);
     }
 
     /**
@@ -854,7 +1045,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setOpenReadmeAfterInstall(String openReadmeAfterInstall)
     {
+        String oldValue = mOpenReadmeAfterInstall;
         mOpenReadmeAfterInstall = openReadmeAfterInstall;
+        firePropertyChanged(OPEN_README_AFTER_INSTALL, oldValue, openReadmeAfterInstall);
     }
 
     /**
@@ -868,10 +1061,11 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     /**
      * @param runProgramAfterInstallParams The runProgramAfterInstallParams to set.
      */
-    public void setRunProgramAfterInstallParams(
-            String runProgramAfterInstallParams)
+    public void setRunProgramAfterInstallParams(String runProgramAfterInstallParams)
     {
+        String oldValue = mRunProgramAfterInstallParams;
         mRunProgramAfterInstallParams = runProgramAfterInstallParams;
+        firePropertyChanged(RUN_PROGRAM_AFTER_INSTALL_PARAMS, oldValue, runProgramAfterInstallParams);
     }
 
     /**
@@ -887,7 +1081,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setShowUninstDetails(boolean showUninstDetails)
     {
+        boolean oldValue = mShowUninstDetails;
         mShowUninstDetails = showUninstDetails;
+        firePropertyChanged(SHOW_UNINST_DETAILS, oldValue, showUninstDetails);
     }
 
     /**
@@ -904,7 +1100,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public void setCreateUninstallerControlPanelEntry(
             boolean createUninstallerControlPanelEntry)
     {
+        boolean oldValue = mCreateUninstallerControlPanelEntry;
         mCreateUninstallerControlPanelEntry = createUninstallerControlPanelEntry;
+        firePropertyChanged(CREATE_UNINSTALLER_CONTROL_PANEL_ENTRY, oldValue, createUninstallerControlPanelEntry);
     }
 
     /**
@@ -921,7 +1119,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public void setCreateUninstallerStartMenuShortcut(
             boolean createUninstallerStartMenuShortcut)
     {
+        boolean oldValue = mCreateUninstallerStartMenuShortcut;
         mCreateUninstallerStartMenuShortcut = createUninstallerStartMenuShortcut;
+        firePropertyChanged(CREATE_UNINSTALLER_START_MENU_SHORTCUT, oldValue, createUninstallerStartMenuShortcut);
     }
 
     /**
@@ -937,7 +1137,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setSilentUninstaller(boolean silentUninstaller)
     {
+        boolean oldValue = mSilentUninstaller;
         mSilentUninstaller = silentUninstaller;
+        firePropertyChanged(SILENT_UNINSTALLER, oldValue, silentUninstaller);
     }
 
     /**
@@ -953,7 +1155,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
      */
     public void setSelectComponents(boolean selectComponents)
     {
+        boolean oldValue = mSelectComponents;
         mSelectComponents = selectComponents;
+        firePropertyChanged(SELECT_COMPONENTS, oldValue, selectComponents);
     }
 
     public int getTargetPlatform()
@@ -963,10 +1167,17 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 
     public void setTargetPlatform(int targetPlatform)
     {
-        mTargetPlatform = targetPlatform;
-        setInstallDir(NSISWizardUtil.convertPath(targetPlatform, getInstallDir()));
-        setRunProgramAfterInstall(NSISWizardUtil.convertPath(targetPlatform, getRunProgramAfterInstall()));
-        setOpenReadmeAfterInstall(NSISWizardUtil.convertPath(targetPlatform, getOpenReadmeAfterInstall()));
+        int oldValue = mTargetPlatform;
+        if(mTargetPlatform != targetPlatform) {
+            mTargetPlatform = targetPlatform;
+            setInstallDir(NSISWizardUtil.convertPath(targetPlatform, getInstallDir()));
+            setRunProgramAfterInstall(NSISWizardUtil.convertPath(targetPlatform, getRunProgramAfterInstall()));
+            setOpenReadmeAfterInstall(NSISWizardUtil.convertPath(targetPlatform, getOpenReadmeAfterInstall()));
+            if(mInstaller != null) {
+                mInstaller.setTargetPlatform(targetPlatform);
+            }
+        }
+        firePropertyChanged(TARGET_PLATFORM, oldValue, targetPlatform);
     }
 
     public int getExecutionLevel()
@@ -976,7 +1187,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 
     public void setExecutionLevel(int executionLevel)
     {
+        int oldValue = mExecutionLevel;
         mExecutionLevel = executionLevel;
+        firePropertyChanged(EXECUTION_LEVEL, oldValue, executionLevel);
     }
 
     protected Object getNodeValue(Node node, String name, Class clasz)

@@ -9,12 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
+import java.beans.*;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.StructuredViewerUpDownMover;
 import net.sf.eclipsensis.wizard.settings.*;
@@ -27,8 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NSISWizardContentsPage extends AbstractNSISWizardPage implements INSISConstants
@@ -136,90 +135,6 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         mTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         mTreeViewer.setInput(settings);
         ColumnViewerToolTipSupport.enableFor(mTreeViewer);
-
-//        final Listener labelListener = new Listener () {
-//            public void handleEvent (Event event) {
-//                Label label = (Label)event.widget;
-//                Shell shell = label.getShell ();
-//                switch (event.type) {
-//                    case SWT.MouseDown:
-//                        mTreeViewer.setSelection (new StructuredSelection(label.getData ("_INSTALLITEM"))); //$NON-NLS-1$
-//                        // fall through
-//                    case SWT.MouseExit:
-//                        shell.dispose ();
-//                        break;
-//                }
-//            }
-//        };
-//
-//        Listener treeListener = new Listener () {
-//            Shell tip = null;
-//            Label label = null;
-//            public void handleEvent (Event event) {
-//                switch (event.type) {
-//                    case SWT.MouseMove: {
-//                        if(tip == null) {
-//                            break;
-//                        }
-//                        TreeItem item = tree.getItem (new Point (event.x, event.y));
-//                        if (item != null) {
-//                            Object data = item.getData();
-//                            if(data == label.getData("_INSTALLITEM")) { //$NON-NLS-1$
-//                                break;
-//                            }
-//                        }
-//                    }
-//                    case SWT.FocusOut:
-//                    case SWT.Dispose:
-//                    case SWT.KeyDown: {
-//                        if (tip == null) {
-//                            break;
-//                        }
-//                        tip.dispose ();
-//                        tip = null;
-//                        label = null;
-//                        break;
-//                    }
-//                    case SWT.MouseHover: {
-//                        TreeItem item = tree.getItem (new Point (event.x, event.y));
-//                        if (item != null) {
-//                            if (tip != null  && !tip.isDisposed ()) {
-//                                tip.dispose ();
-//                            }
-//                            Object data = item.getData();
-//                            if(data instanceof INSISInstallElement) {
-//                                String tooltip = ((INSISInstallElement)data).validate(false);
-//                                if(tooltip != null) {
-//                                    tip = new Shell(tree.getShell(), SWT.ON_TOP | SWT.TOOL);
-//                                    FillLayout fillLayout = new FillLayout ();
-//                                    fillLayout.marginHeight = 1;
-//                                    fillLayout.marginWidth = 2;
-//                                    tip.setLayout (fillLayout);
-//                                    tip.setBackground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
-//                                    label = new Label (tip, SWT.NONE);
-//                                    label.setForeground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_FOREGROUND));
-//                                    label.setBackground (tip.getDisplay().getSystemColor (SWT.COLOR_INFO_BACKGROUND));
-//                                    label.setData ("_INSTALLITEM", data); //$NON-NLS-1$
-//                                    label.setText (EclipseNSISPlugin.getFormattedString("wizard.error.message.format",new String[]{tooltip})); //$NON-NLS-1$
-//                                    label.addListener (SWT.MouseExit, labelListener);
-//                                    label.addListener (SWT.MouseDown, labelListener);
-//                                    Point size = tip.computeSize (SWT.DEFAULT, SWT.DEFAULT);
-//                                    Point pt = tree.toDisplay(event.x,event.y);
-//                                    tip.setBounds (pt.x, pt.y+26, size.x, size.y);
-//                                    tip.setVisible (true);
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        };
-//        tree.setToolTipText(""); //$NON-NLS-1$
-//        tree.addListener (SWT.FocusOut, treeListener);
-//        tree.addListener (SWT.Dispose, treeListener);
-//        tree.addListener (SWT.KeyDown, treeListener);
-//        tree.addListener (SWT.MouseMove, treeListener);
-//        tree.addListener (SWT.MouseHover, treeListener);
 
         final StructuredViewerUpDownMover mover = new StructuredViewerUpDownMover() {
             private TreeViewer mTreeViewer = null;
@@ -351,14 +266,6 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         });
 
         configureDND(mTreeViewer);
-
-        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
-            {
-                NSISWizardSettings settings2 = mWizard.getSettings();
-                mTreeViewer.setInput(settings2);
-                mTreeViewer.expandToLevel(settings2.getInstaller(), AbstractTreeViewer.ALL_LEVELS);
-            }});
 
         SelectionAdapter editSelectionAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
@@ -514,6 +421,27 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                 checkUnselectedSections();
             }
         });
+
+        final PropertyChangeListener propertyListener = new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt)
+            {
+                if(NSISWizardSettings.TARGET_PLATFORM.equals(evt.getPropertyName())) {
+                    mTreeViewer.refresh(true);
+                }
+            }
+        };
+        settings.addPropertyChangeListener(propertyListener);
+        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
+            {
+                if(oldSettings != null) {
+                    oldSettings.removePropertyChangeListener(propertyListener);
+                }
+                mTreeViewer.setInput(newSettings);
+                mTreeViewer.expandToLevel(newSettings.getInstaller(), AbstractTreeViewer.ALL_LEVELS);
+                newSettings.addPropertyChangeListener(propertyListener);
+            }}
+        );
 
         setPageComplete(validatePage(VALIDATE_ALL));
 

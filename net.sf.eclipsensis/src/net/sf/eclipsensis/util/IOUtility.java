@@ -12,14 +12,10 @@ package net.sf.eclipsensis.util;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.nio.channels.*;
+import java.util.*;
+import java.util.jar.*;
+import java.util.regex.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.NSISEditor;
@@ -28,8 +24,7 @@ import net.sf.eclipsensis.settings.NSISPreferences;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.osgi.framework.Bundle;
 
@@ -60,6 +55,28 @@ public class IOUtility
     static {
         cPathMappingx86tox64 = new CaseInsensitiveMap(Common.loadMapProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"path.mapping.x86.to.x64")); //$NON-NLS-1$
         cPathMappingx64tox86 = new CaseInsensitiveMap(Common.loadMapProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"path.mapping.x64.to.x86")); //$NON-NLS-1$
+    }
+
+    public static boolean is64BitPath(String path)
+    {
+        if(!Common.isEmpty(path)) {
+            String[] p = Common.tokenize(path,cPathSeparator.charAt(0));
+            if(p.length > 0) {
+                return cPathMappingx64tox86.containsKey(p[0]);
+            }
+        }
+        return false;
+    }
+
+    public static boolean is32BitPath(String path)
+    {
+        if(!Common.isEmpty(path)) {
+            String[] p = Common.tokenize(path,cPathSeparator.charAt(0));
+            if(p.length > 0) {
+                return cPathMappingx86tox64.containsKey(p[0]);
+            }
+        }
+        return false;
     }
 
     public static String convertPathTo64bit(String path)

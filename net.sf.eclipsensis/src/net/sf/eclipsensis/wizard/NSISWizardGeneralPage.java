@@ -15,17 +15,14 @@ import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
-import net.sf.eclipsensis.wizard.util.MasterSlaveController;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
+import net.sf.eclipsensis.wizard.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NSISWizardGeneralPage extends AbstractNSISWizardPage
@@ -179,20 +176,19 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         }
 
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                t.setText(settings.getName());
-                t2.setText(settings.getVersion());
-                t3.setText(settings.getCompany());
-                t4.setText(settings.getUrl());
+                t.setText(newSettings.getName());
+                t2.setText(newSettings.getVersion());
+                t3.setText(newSettings.getCompany());
+                t4.setText(newSettings.getUrl());
 
 
-                if(c2 != null && settings.getTargetPlatform() < c2.getItemCount()) {
-                    c2.select(settings.getTargetPlatform());
+                if(c2 != null && newSettings.getTargetPlatform() < c2.getItemCount()) {
+                    c2.select(newSettings.getTargetPlatform());
                 }
                 else {
-                    settings.setTargetPlatform(TARGET_PLATFORM_ANY);
+                    newSettings.setTargetPlatform(TARGET_PLATFORM_ANY);
                 }
             }});
     }
@@ -311,18 +307,17 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         });
 
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                t.setText(settings.getOutFile());
-                t2.setText(settings.getIcon());
-                int n = settings.getInstallerType();
+                t.setText(newSettings.getOutFile());
+                t2.setText(newSettings.getIcon());
+                int n = newSettings.getInstallerType();
                 if(!Common.isEmptyArray(radio)) {
                     for (int i = 0; i < radio.length; i++) {
                         radio[i].setSelection((i == n));
                     }
                 }
-                n = settings.getCompressorType();
+                n = newSettings.getCompressorType();
                 if(n >= 0 && n < NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES.length) {
                     c.setText(NSISWizardDisplayValues.COMPRESSOR_TYPE_NAMES[n]);
                 }
@@ -331,16 +326,16 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                     c.setText(""); //$NON-NLS-1$
                 }
                 if(cb != null) {
-                    cb.setSelection(settings.isSolidCompression());
+                    cb.setSelection(newSettings.isSolidCompression());
                     int index = c.getSelectionIndex();
                     cb.setEnabled(index >= 0 && index != MakeNSISRunner.COMPRESSOR_DEFAULT);
                 }
 
-                if(c2 != null && settings.getExecutionLevel() < c2.getItemCount()) {
-                    c2.select(settings.getExecutionLevel());
+                if(c2 != null && newSettings.getExecutionLevel() < c2.getItemCount()) {
+                    c2.select(newSettings.getExecutionLevel());
                 }
                 else {
-                    settings.setExecutionLevel(EXECUTION_LEVEL_NONE);
+                    newSettings.setExecutionLevel(EXECUTION_LEVEL_NONE);
                 }
             }
         });
@@ -391,12 +386,11 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         m.updateSlaves();
 
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                b.setSelection(settings.isCreateUninstaller());
-                t.setText(settings.getUninstallFile());
-                t2.setText(settings.getUninstallIcon());
+                b.setSelection(newSettings.isCreateUninstaller());
+                t.setText(newSettings.getUninstallFile());
+                t2.setText(newSettings.getUninstallIcon());
                 m.updateSlaves();
             }});
     }

@@ -9,6 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.util;
 
+import java.util.*;
+
+import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.INSISWizardConstants;
 
@@ -29,5 +32,26 @@ public class NSISWizardUtil
                 break;
         }
         return path;
+    }
+
+    public static String[] getPathConstantsAndVariables(int targetPlatform)
+    {
+        List list = new ArrayList();
+        String[] array = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES);
+        for (int i = 0; i < array.length; i++) {
+            boolean exclude = false;
+            switch(targetPlatform) {
+                case INSISWizardConstants.TARGET_PLATFORM_X64:
+                    exclude = IOUtility.is32BitPath(array[i]);
+                    break;
+                case INSISWizardConstants.TARGET_PLATFORM_X86:
+                    exclude = IOUtility.is64BitPath(array[i]);
+                    break;
+            }
+            if(!exclude) {
+                list.add(array[i]);
+            }
+        }
+        return (String[])list.toArray(new String[list.size()]);
     }
 }

@@ -9,13 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
-import net.sf.eclipsensis.wizard.INSISWizardConstants;
 
 public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
 {
     private static final long serialVersionUID = 7704420240201206452L;
-
-    private int mTargetPlatform = INSISWizardConstants.TARGET_PLATFORM_ANY;
 
     public final boolean acceptsChildType(String type)
     {
@@ -67,11 +64,6 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
         return null;
     }
 
-    public int getTargetPlatform()
-    {
-        return mTargetPlatform;
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -114,10 +106,5 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
 
     public final void setChildren(INSISInstallElement[] children)
     {
-    }
-
-    public void setTargetPlatform(int targetPlatform)
-    {
-        mTargetPlatform = targetPlatform;
     }
 }

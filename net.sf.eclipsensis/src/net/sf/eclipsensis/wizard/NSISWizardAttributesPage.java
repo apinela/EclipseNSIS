@@ -9,19 +9,15 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
+import java.beans.*;
 import java.io.File;
 import java.text.Collator;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.lang.NSISLanguage;
-import net.sf.eclipsensis.lang.NSISLanguageManager;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
-import net.sf.eclipsensis.viewer.CollectionContentProvider;
-import net.sf.eclipsensis.viewer.ListViewerUpDownMover;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.lang.*;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.viewer.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.util.*;
 
@@ -30,8 +26,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.List;
 
@@ -352,14 +347,6 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         m.setEnabler(downButton, mse);
         m.setEnabler(b2,mse);
 
-        addPageChangedRunnable(new Runnable() {
-            public void run()
-            {
-                if(isCurrentPage()) {
-                    b2.setEnabled(mse.canEnable(b2));
-                }
-            }
-        });
         final Runnable langRunnable = new Runnable() {
             public void run()
             {
@@ -490,14 +477,22 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
           }
         });
 
-        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+        addPageChangedRunnable(new Runnable() {
+            public void run()
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                b.setSelection(settings.isEnableLanguageSupport());
+                if(isCurrentPage()) {
+                    b2.setEnabled(mse.canEnable(b2));
+                }
+            }
+        });
+
+        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
+            {
+                b.setSelection(newSettings.isEnableLanguageSupport());
                 m.updateSlaves();
-                b2.setSelection(settings.isSelectLanguage());
-                java.util.List selectedLanguages = settings.getLanguages();
+                b2.setSelection(newSettings.isSelectLanguage());
+                java.util.List selectedLanguages = newSettings.getLanguages();
                 java.util.List availableLanguages = NSISLanguageManager.getInstance().getLanguages();
                 if(selectedLanguages.isEmpty()) {
                     NSISWizardWelcomePage welcomePage = (NSISWizardWelcomePage)mWizard.getPage(NSISWizardWelcomePage.NAME);
@@ -537,7 +532,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         NSISWizardSettings settings = mWizard.getSettings();
 
         final Combo c = NSISWizardDialogUtil.createCombo(group,
-                                            NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES),
+                                            NSISWizardUtil.getPathConstantsAndVariables(settings.getTargetPlatform()),
                                             settings.getInstallDir(), false, "installation.directory.label", //$NON-NLS-1$
                                             true, null, isScriptWizard());
         GridData gd = (GridData)c.getLayoutData();
@@ -573,14 +568,29 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
             }
         });
 
-        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+        final PropertyChangeListener propertyListener = new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                c.setText(settings.getInstallDir());
-                b2.setSelection(settings.isChangeInstallDir());
-                b2.setEnabled(settings.getInstallerType() != INSTALLER_TYPE_SILENT);
-            }});
+                if(NSISWizardSettings.TARGET_PLATFORM.equals(evt.getPropertyName())) {
+                    NSISWizardDialogUtil.populateCombo(c,
+                            NSISWizardUtil.getPathConstantsAndVariables(((Integer)evt.getNewValue()).intValue()),
+                            ((NSISWizardSettings)evt.getSource()).getInstallDir());
+                }
+            }
+        };
+        settings.addPropertyChangeListener(propertyListener);
+        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
+            {
+                if(oldSettings != null) {
+                    oldSettings.removePropertyChangeListener(propertyListener);
+                }
+                c.setText(newSettings.getInstallDir());
+                b2.setSelection(newSettings.isChangeInstallDir());
+                b2.setEnabled(newSettings.getInstallerType() != INSTALLER_TYPE_SILENT);
+                newSettings.addPropertyChangeListener(propertyListener);
+            }}
+        );
     }
 
     /**
@@ -660,6 +670,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         m.setEnabler(b2,mse);
         m.updateSlaves();
+
         addPageChangedRunnable(new Runnable() {
             public void run()
             {
@@ -670,14 +681,13 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         });
 
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged()
+            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
-                b.setSelection(settings.isCreateStartMenuGroup());
-                t.setText(settings.getStartMenuGroup());
-                b2.setSelection(settings.isChangeStartMenuGroup());
-                b2.setEnabled(settings.getInstallerType() != INSTALLER_TYPE_SILENT);
-                b3.setSelection(settings.isDisableStartMenuShortcuts());
+                b.setSelection(newSettings.isCreateStartMenuGroup());
+                t.setText(newSettings.getStartMenuGroup());
+                b2.setSelection(newSettings.isChangeStartMenuGroup());
+                b2.setEnabled(newSettings.getInstallerType() != INSTALLER_TYPE_SILENT);
+                b3.setSelection(newSettings.isDisableStartMenuShortcuts());
                 b3.setEnabled(b2.isEnabled());
 
                 m.updateSlaves();
