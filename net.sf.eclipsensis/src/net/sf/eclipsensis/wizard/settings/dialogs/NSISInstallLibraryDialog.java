@@ -73,7 +73,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     protected Control createControlContents(Composite parent)
@@ -156,9 +156,9 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
             }
         });
 
-        boolean flag = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 && mWizard.getSettings().getTargetPlatform() != INSISWizardConstants.TARGET_PLATFORM_ANY;
+        boolean flag = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
 
-        if (flag) {
+        if (flag && mWizard.getSettings().getTargetPlatform() != INSISWizardConstants.TARGET_PLATFORM_X86) {
             final Button cb4 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.x64.library.label", mStore.getBoolean("x64"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
             cb4.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
