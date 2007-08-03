@@ -158,7 +158,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
 
         boolean flag = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
 
-        if (flag && mWizard.getSettings().getTargetPlatform() != INSISWizardConstants.TARGET_PLATFORM_X86) {
+        if (flag && mWizard.getSettings().getTargetPlatform() == INSISWizardConstants.TARGET_PLATFORM_ANY) {
             final Button cb4 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.x64.library.label", mStore.getBoolean("x64"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
             cb4.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
