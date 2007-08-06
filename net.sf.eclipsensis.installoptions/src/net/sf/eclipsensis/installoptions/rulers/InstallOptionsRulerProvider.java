@@ -9,18 +9,15 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.rulers;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.beans.*;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
 import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.rulers.RulerChangeListener;
-import org.eclipse.gef.rulers.RulerProvider;
+import org.eclipse.gef.rulers.*;
 import org.eclipse.swt.graphics.Font;
 
 public class InstallOptionsRulerProvider extends RulerProvider

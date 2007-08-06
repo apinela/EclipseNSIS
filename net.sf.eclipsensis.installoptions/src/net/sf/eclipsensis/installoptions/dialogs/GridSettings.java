@@ -11,18 +11,14 @@ package net.sf.eclipsensis.installoptions.dialogs;
 
 import java.util.Map;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.NumberVerifyListener;
+import net.sf.eclipsensis.installoptions.*;
+import net.sf.eclipsensis.util.*;
 
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class GridSettings extends Composite implements IInstallOptionsConstants

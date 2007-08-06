@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor.text;
 
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.*;
 
 public class ExclusiveEndSequenceRule extends BeginningOfLineRule
 {

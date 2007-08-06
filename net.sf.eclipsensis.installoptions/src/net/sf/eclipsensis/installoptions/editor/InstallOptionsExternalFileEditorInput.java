@@ -17,8 +17,7 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.*;
-import org.eclipse.ui.editors.text.ILocationProvider;
-import org.eclipse.ui.editors.text.TextFileDocumentProvider;
+import org.eclipse.ui.editors.text.*;
 
 public class InstallOptionsExternalFileEditorInput implements IInstallOptionsEditorInput, ILocationProvider
 {

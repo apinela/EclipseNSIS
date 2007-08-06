@@ -12,13 +12,11 @@ package net.sf.eclipsensis.editor;
 import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog;
 import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog.RegistryValue;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationUtility;
-import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
-import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.help.*;
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
 import net.sf.eclipsensis.util.*;
@@ -30,18 +28,14 @@ import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 

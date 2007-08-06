@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -17,11 +17,9 @@ import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHel
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
-import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
+import org.eclipse.ui.views.properties.tabbed.*;
 
 public class DialogPropertySection extends InstallOptionsElementPropertySection
 {
@@ -52,7 +50,7 @@ public class DialogPropertySection extends InstallOptionsElementPropertySection
                 map.put(InstallOptionsDialog.OPTION_DATA[i],InstallOptionsDialog.OPTION_DISPLAY[i]);
             }
             Integer defaultValue = InstallOptionsDialog.OPTION_DATA[InstallOptionsDialog.DEFAULT_OPTION];
-            
+
             createComboSection(group, InstallOptionsModel.PROPERTY_CANCEL_ENABLED, map, defaultValue, widgetFactory, commandHelper);
             createComboSection(group, InstallOptionsModel.PROPERTY_CANCEL_SHOW, map, defaultValue, widgetFactory, commandHelper);
             createComboSection(group, InstallOptionsModel.PROPERTY_BACK_ENABLED, map, defaultValue, widgetFactory, commandHelper);

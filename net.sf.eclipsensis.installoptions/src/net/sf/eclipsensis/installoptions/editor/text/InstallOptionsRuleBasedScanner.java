@@ -11,8 +11,7 @@ package net.sf.eclipsensis.installoptions.editor.text;
 
 import java.util.ArrayList;
 
-import net.sf.eclipsensis.editor.text.NSISHexNumberRule;
-import net.sf.eclipsensis.editor.text.NSISWhitespaceDetector;
+import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 
 import org.eclipse.jface.text.rules.*;

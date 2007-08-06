@@ -22,12 +22,12 @@ public class ColorEditor {
     private Color mColor;
     private Button mButton;
 
-    public ColorEditor(Composite parent) 
+    public ColorEditor(Composite parent)
     {
         this(parent,SWT.NONE);
     }
 
-    public ColorEditor(Composite parent, int style) 
+    public ColorEditor(Composite parent, int style)
     {
         mButton= new Button(parent, style|SWT.PUSH);
         mRect= calculateSize(parent);

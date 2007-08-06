@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -12,8 +12,7 @@ package net.sf.eclipsensis.installoptions.properties.labelproviders;
 import java.util.Iterator;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.tabbed.InstallOptionsElementTypeMapper;
 
 import org.eclipse.gef.EditPart;
@@ -28,7 +27,7 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
     /**
      * constructor.
      */
-    public InstallOptionsElementLabelProvider() 
+    public InstallOptionsElementLabelProvider()
     {
         typeMapper = new InstallOptionsElementTypeMapper();
     }
@@ -36,7 +35,7 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
     /**
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
-    public Image getImage(Object objects) 
+    public Image getImage(Object objects)
     {
         if (objects == null || objects.equals(StructuredSelection.EMPTY)) {
             return null;
@@ -45,7 +44,7 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
         Object object = getObject(objects, multiple);
         if (object == null) {
             return InstallOptionsDialog.INSTALLOPTIONS_ICON;
-        } 
+        }
         else {
             InstallOptionsElement element = getInstallOptionsElement(object);
             if(element != null) {
@@ -60,7 +59,7 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
     /**
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
-    public String getText(Object objects) 
+    public String getText(Object objects)
     {
         if (objects == null || objects.equals(StructuredSelection.EMPTY)) {
             return InstallOptionsPlugin.getResourceString("no.items.selected.message"); //$NON-NLS-1$
@@ -69,7 +68,7 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
         final Object object = getObject(objects, multiple);
         if (object == null || ((IStructuredSelection) objects).size() > 1) {
             return InstallOptionsPlugin.getFormattedString("multiple.items.selected.message", new Object[] {new Integer(((IStructuredSelection) objects).size())}); //$NON-NLS-1$
-        } 
+        }
         else {
             InstallOptionsElement element = getInstallOptionsElement(object);
             if(element != null) {
@@ -92,7 +91,7 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
         return null;
     }
 
-    private Object getObject(Object objects, boolean multiple[]) 
+    private Object getObject(Object objects, boolean multiple[])
     {
         Object object = null;
         if (objects instanceof IStructuredSelection) {
@@ -119,7 +118,7 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
                     }
                 }
             }
-        } 
+        }
         else {
             multiple[0] = false;
             object = objects;

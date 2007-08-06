@@ -13,8 +13,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
-import net.sf.eclipsensis.installoptions.model.Position;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
 

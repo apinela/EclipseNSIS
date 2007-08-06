@@ -9,19 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public abstract class StatusMessageDialog extends TrayDialog implements IDialogConstants
@@ -48,7 +43,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
     }
 
-    protected Control createMessageArea(Composite composite) 
+    protected Control createMessageArea(Composite composite)
     {
         Image image = getImage();
         if (image != null) {
@@ -154,7 +149,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         initializeDialogUnits(composite);
         // create the dialog area and button bar
         dialogArea = createDialogArea(composite);
-        
+
         Composite composite2 = new Composite(composite, SWT.NONE);
         composite2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         layout = new GridLayout(1,false);
@@ -232,7 +227,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
             updateMessageLabelToolTip();
         }
     }
-    
+
     private void updateMessageLabelToolTip()
     {
         boolean ok = true;
@@ -286,7 +281,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     protected class DialogStatus extends Status
     {
         private Image mImage;
-        
+
         public DialogStatus(int severity, String message)
         {
             this(severity,message,null);
@@ -299,7 +294,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
             refreshStatus();
         }
 
-        protected void setMessage(String message) 
+        protected void setMessage(String message)
         {
             if(message==null) {
                 message = ""; //$NON-NLS-1$

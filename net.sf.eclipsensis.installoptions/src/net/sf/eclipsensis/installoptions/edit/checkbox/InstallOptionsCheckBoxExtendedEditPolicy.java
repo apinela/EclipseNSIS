@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.edit.checkbox;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsCheckBox;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.ToggleStateCommand;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 

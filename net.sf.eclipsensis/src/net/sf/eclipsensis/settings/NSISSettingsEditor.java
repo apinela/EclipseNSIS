@@ -15,8 +15,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 
 public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListener

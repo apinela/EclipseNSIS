@@ -10,15 +10,13 @@
 package net.sf.eclipsensis.update.actions;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
-import net.sf.eclipsensis.update.wizard.NSISUpdateWizard;
-import net.sf.eclipsensis.update.wizard.NSISUpdateWizardDialog;
+import net.sf.eclipsensis.update.wizard.*;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.*;
 
 public class NSISUpdateWizardAction implements IWorkbenchWindowActionDelegate
 {

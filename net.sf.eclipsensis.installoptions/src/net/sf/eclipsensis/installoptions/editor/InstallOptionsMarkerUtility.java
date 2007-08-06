@@ -11,8 +11,7 @@ package net.sf.eclipsensis.installoptions.editor;
 
 import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;

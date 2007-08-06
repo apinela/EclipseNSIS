@@ -10,11 +10,9 @@
 package net.sf.eclipsensis.installoptions.model;
 
 import net.sf.eclipsensis.installoptions.ini.INISection;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.PicturePropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.*;
 
 public abstract class InstallOptionsPicture extends InstallOptionsUneditableElement
 {

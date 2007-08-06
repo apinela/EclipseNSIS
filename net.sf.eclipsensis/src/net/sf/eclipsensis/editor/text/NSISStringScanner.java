@@ -14,8 +14,7 @@ import java.util.List;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.*;
 
 public class NSISStringScanner extends NSISRuleBasedScanner
 {

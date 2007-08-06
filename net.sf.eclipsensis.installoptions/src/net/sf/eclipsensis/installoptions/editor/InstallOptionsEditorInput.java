@@ -11,12 +11,10 @@ package net.sf.eclipsensis.installoptions.editor;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 import org.eclipse.ui.part.FileEditorInput;
 

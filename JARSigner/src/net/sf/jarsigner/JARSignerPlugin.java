@@ -12,8 +12,7 @@ package net.sf.jarsigner;
 import java.io.*;
 import java.security.KeyStore;
 import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import net.sf.eclipsensis.utilities.util.Common;
 
@@ -28,7 +27,7 @@ public class JARSignerPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static JARSignerPlugin cPlugin;
     private ResourceBundle mResourceBundle;
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -74,7 +73,7 @@ public class JARSignerPlugin extends AbstractUIPlugin {
     {
         ResourceBundle bundle = getDefault().getResourceBundle();
         try {
-            return (bundle != null) ? bundle.getString(key) : key;
+            return bundle != null ? bundle.getString(key) : key;
         } catch (MissingResourceException e) {
             return key;
         }

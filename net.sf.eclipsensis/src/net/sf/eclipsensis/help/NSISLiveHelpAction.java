@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Display;
 public class NSISLiveHelpAction implements ILiveHelpAction
 {
     private String mData = null;
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.help.ILiveHelpAction#setInitializationString(java.lang.String)
      */

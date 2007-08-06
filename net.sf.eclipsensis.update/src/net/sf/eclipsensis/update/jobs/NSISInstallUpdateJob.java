@@ -12,8 +12,7 @@ package net.sf.eclipsensis.update.jobs;
 import java.io.*;
 import java.nio.channels.FileLock;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.filemon.FileMonitor;

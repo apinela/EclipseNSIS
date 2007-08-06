@@ -9,24 +9,21 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
-import net.sf.eclipsensis.makensis.MakeNSISResults;
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
-import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.makensis.*;
+import net.sf.eclipsensis.settings.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 public class NSISCompileTestUtility

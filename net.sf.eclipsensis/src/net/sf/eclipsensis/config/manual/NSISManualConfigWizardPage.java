@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -11,8 +11,7 @@ package net.sf.eclipsensis.config.manual;
 
 import java.io.File;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
@@ -20,8 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
@@ -29,9 +27,9 @@ public class NSISManualConfigWizardPage extends WizardPage
 {
     public static final String ID = "nsisManualConfigWizardPage"; //$NON-NLS-1$
     private static ImageDescriptor cImage = EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("manual.config.wizard.title.image")); //$NON-NLS-1$
-    
+
     private Text mNSISHomeText;
-    
+
     public NSISManualConfigWizardPage()
     {
         super(ID, EclipseNSISPlugin.getResourceString("manual.config.wizard.name"), cImage); //$NON-NLS-1$
@@ -79,7 +77,7 @@ public class NSISManualConfigWizardPage extends WizardPage
         setControl(composite);
         validate();
     }
-    
+
     public void setErrorMessage(String message)
     {
         super.setMessage(message,ERROR);

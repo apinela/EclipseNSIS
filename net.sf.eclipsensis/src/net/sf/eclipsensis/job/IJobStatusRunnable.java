@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.job;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 
 public interface IJobStatusRunnable
 {

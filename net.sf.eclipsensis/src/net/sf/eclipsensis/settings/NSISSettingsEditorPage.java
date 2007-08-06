@@ -9,24 +9,21 @@
  *******************************************************************************/
 package net.sf.eclipsensis.settings;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.TableResizer;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.CommonImages;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.TableViewerUpDownMover;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.model.*;
 
 public abstract class NSISSettingsEditorPage implements DisposeListener
 {

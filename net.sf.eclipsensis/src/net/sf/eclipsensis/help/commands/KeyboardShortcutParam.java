@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -15,18 +15,17 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Node;
 
 public class KeyboardShortcutParam extends PrefixableParam
 {
     public static final String SETTING_KEY = "key"; //$NON-NLS-1$
-    
+
     private static final String[] cModifiers = {"CTRL","ALT","SHIFT","EXT"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     private static final String[] cKeys;
-    
+
     static {
         ArrayList list = new ArrayList();
         for(char c = 'A'; c <= 'Z'; c++) {
@@ -40,7 +39,7 @@ public class KeyboardShortcutParam extends PrefixableParam
         }
         cKeys = (String[])list.toArray(new String[list.size()]);
     }
-    
+
     public KeyboardShortcutParam(Node node)
     {
         super(node);
@@ -192,6 +191,6 @@ public class KeyboardShortcutParam extends PrefixableParam
             }
             return parent;
         }
-        
+
     }
 }

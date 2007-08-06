@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -13,8 +13,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Node;
 
@@ -34,7 +33,7 @@ public class MultiChoiceParam extends ChoiceParam
     {
         public static final String DATA_CHOICE = "CHOICE"; //$NON-NLS-1$
         protected Button[] mChoiceButtons = null;
-        
+
         public MultiChoiceParamEditor(INSISParamEditor parentEditor)
         {
             super(parentEditor);

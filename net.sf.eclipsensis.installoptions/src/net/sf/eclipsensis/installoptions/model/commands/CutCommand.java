@@ -12,8 +12,7 @@ package net.sf.eclipsensis.installoptions.model.commands;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 
 public class CutCommand extends CopyCommand

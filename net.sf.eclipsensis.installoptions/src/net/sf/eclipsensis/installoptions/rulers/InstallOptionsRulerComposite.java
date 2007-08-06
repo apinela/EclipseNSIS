@@ -9,20 +9,19 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.rulers;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 import java.util.ArrayList;
 
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsGraphicalViewer;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.gef.*;
 import org.eclipse.gef.internal.ui.rulers.*;
 import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.KeyEvent;

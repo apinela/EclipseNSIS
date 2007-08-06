@@ -9,29 +9,23 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.dnd.InstallOptionsTemplateTransfer;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.WinAPI;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.*;
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.*;
 import org.eclipse.gef.dnd.TemplateTransfer;
 import org.eclipse.gef.ui.parts.GraphicalViewerImpl;
 import org.eclipse.jface.util.TransferDropTargetListener;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
 
 public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
 {
@@ -94,7 +88,7 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
                         }
                         catch (Throwable t) {
                             InstallOptionsPlugin.getDefault().log(t);
-                        }                        
+                        }
                         getRootFigure().repaint();
                     }
                     else if(property.equals(DialogSizeManager.PROPERTY_DIALOGSIZES)) {

@@ -11,8 +11,7 @@ package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
@@ -37,6 +36,6 @@ public abstract class AbstractNSISWizardDialog extends WizardDialog
             PlatformUI.getWorkbench().getHelpSystem().setHelp(getContents(),helpContextId);
         }
     }
-    
+
     protected abstract String getHelpContextId();
 }

@@ -13,8 +13,7 @@ import java.io.File;
 import java.util.*;
 
 import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.settings.INSISHomeListener;
-import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;

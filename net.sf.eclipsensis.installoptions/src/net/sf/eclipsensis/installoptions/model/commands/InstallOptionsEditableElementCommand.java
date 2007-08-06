@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.model.commands;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsEditableElement;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
 
 public class InstallOptionsEditableElementCommand extends InstallOptionsDirectEditCommand
 {

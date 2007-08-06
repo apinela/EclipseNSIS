@@ -10,34 +10,29 @@
 package net.sf.eclipsensis.help;
 
 import java.io.*;
+import java.io.InputStream;
 import java.net.*;
 import java.text.MessageFormat;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
-import net.sf.eclipsensis.dialogs.TableResizer;
-import net.sf.eclipsensis.help.NSISHelpIndex.NSISHelpIndexEntry;
-import net.sf.eclipsensis.help.NSISHelpIndex.NSISHelpIndexURL;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.dialogs.*;
+import net.sf.eclipsensis.help.NSISHelpIndex.*;
 import net.sf.eclipsensis.help.NSISHelpTOC.NSISHelpTOCNode;
 import net.sf.eclipsensis.help.search.*;
 import net.sf.eclipsensis.help.search.parser.NSISHelpSearchQueryParser;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
-import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
-import net.sf.eclipsensis.viewer.CollectionLabelProvider;
-import net.sf.eclipsensis.viewer.EmptyContentProvider;
+import net.sf.eclipsensis.viewer.*;
 
 import org.apache.lucene.search.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTError;
+import org.eclipse.swt.*;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.*;

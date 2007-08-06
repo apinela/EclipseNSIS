@@ -12,8 +12,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.console;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 

@@ -15,13 +15,12 @@ import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
 public class NSISConfigWizardAction extends Action
 {
     public static final String ID = NSISConfigWizardAction.class.getName();
-    
+
     public NSISConfigWizardAction()
     {
         super(EclipseNSISPlugin.getResourceString("nsis.config.wizard.action.name")); //$NON-NLS-1$
@@ -43,7 +42,7 @@ public class NSISConfigWizardAction extends Action
                 catch (Exception e) {
                     wizardDialog[0] = null;
                     EclipseNSISPlugin.getDefault().log(e);
-                }                
+                }
             }
         });
         if(wizardDialog[0] != null) {

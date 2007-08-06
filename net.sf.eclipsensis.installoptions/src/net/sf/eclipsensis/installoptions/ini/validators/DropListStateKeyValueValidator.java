@@ -9,15 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.ini.validators;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.util.CaseInsensitiveSet;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 
 public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidator
 {
@@ -62,7 +59,7 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
                 validValues = ""; //$NON-NLS-1$
             }
             if((fixFlag & INILine.VALIDATE_FIX_ERRORS) > 0) {
-                keyValue.setValue(validValues); 
+                keyValue.setValue(validValues);
             }
             else {
                 INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("valid.selection.error", //$NON-NLS-1$

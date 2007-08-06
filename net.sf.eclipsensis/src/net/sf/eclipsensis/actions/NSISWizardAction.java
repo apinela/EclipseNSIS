@@ -16,8 +16,7 @@ import net.sf.eclipsensis.wizard.NSISScriptWizard;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
 public class NSISWizardAction extends NSISAction
 {
@@ -39,7 +38,7 @@ public class NSISWizardAction extends NSISAction
                 catch (Exception e) {
                     wizardDialog[0] = null;
                     EclipseNSISPlugin.getDefault().log(e);
-                }                
+                }
             }
         });
         if(wizardDialog[0] != null) {

@@ -3,20 +3,18 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Node;
 
@@ -27,7 +25,7 @@ public abstract class ComboParam extends PrefixableParam
     protected static final ComboEntry[] EMPTY_COMBO_ENTRIES = new ComboEntry[0];
 
     private int mDefaultIndex;
-    
+
     public ComboParam(Node node)
     {
         super(node);
@@ -43,12 +41,12 @@ public abstract class ComboParam extends PrefixableParam
     {
         return new ComboParamEditor(parentEditor);
     }
-    
+
     protected boolean isUserEditable()
     {
         return false;
     }
-    
+
     protected String validateUserValue(String value)
     {
         return null;
@@ -65,9 +63,9 @@ public abstract class ComboParam extends PrefixableParam
         }
         return ""; //$NON-NLS-1$
     }
-    
+
     protected abstract ComboEntry[] getComboEntries();
-    
+
     protected class ComboEntry
     {
         private String mValue=""; //$NON-NLS-1$
@@ -203,7 +201,7 @@ public abstract class ComboParam extends PrefixableParam
             GridLayout layout = new GridLayout(1,false);
             layout.marginHeight = layout.marginWidth = 0;
             container.setLayout(layout);
-            
+
             int style = SWT.DROP_DOWN;
             if(!isUserEditable ()) {
                 style |= SWT.READ_ONLY;

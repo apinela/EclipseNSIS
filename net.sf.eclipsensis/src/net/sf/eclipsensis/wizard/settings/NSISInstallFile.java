@@ -99,7 +99,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
      */
     public String getDisplayName()
@@ -109,7 +109,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
      */
     public Image getImage()
@@ -135,7 +135,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
      */
     public String getType()
@@ -155,7 +155,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
      */
     public boolean isEditable()

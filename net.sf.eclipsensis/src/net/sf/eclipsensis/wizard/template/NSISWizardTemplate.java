@@ -10,17 +10,13 @@
 package net.sf.eclipsensis.wizard.template;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.ListIterator;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.lang.NSISLanguage;
-import net.sf.eclipsensis.lang.NSISLanguageManager;
-import net.sf.eclipsensis.template.AbstractTemplate;
-import net.sf.eclipsensis.template.InvalidTemplateException;
+import net.sf.eclipsensis.lang.*;
+import net.sf.eclipsensis.template.*;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup;
-import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
+import net.sf.eclipsensis.wizard.settings.*;
 
 public class NSISWizardTemplate extends AbstractTemplate
 {

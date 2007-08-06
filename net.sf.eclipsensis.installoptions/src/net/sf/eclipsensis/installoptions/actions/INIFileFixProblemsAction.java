@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -11,11 +11,9 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor;
-import net.sf.eclipsensis.installoptions.ini.INIFile;
-import net.sf.eclipsensis.installoptions.ini.INILine;
+import net.sf.eclipsensis.installoptions.ini.*;
 
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRewriteTarget;
+import org.eclipse.jface.text.*;
 
 public class INIFileFixProblemsAction extends INIFileAction
 {
@@ -24,7 +22,7 @@ public class INIFileFixProblemsAction extends INIFileAction
     public static final String FIX_WARNINGS_ID = "net.sf.eclipsensis.installoptions.fix_warnings"; //$NON-NLS-1$
 
     private int mFixFlag;
-    
+
     public INIFileFixProblemsAction(InstallOptionsSourceEditor editor, String id)
     {
         super(editor);
@@ -43,7 +41,7 @@ public class INIFileFixProblemsAction extends INIFileAction
             prefix="fix.errors"; //$NON-NLS-1$
         }
         setId(id);
-        
+
         setText(InstallOptionsPlugin.getResourceString(prefix+".action.name")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString(prefix+".action.tooltip")); //$NON-NLS-1$
         setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString(prefix+".action.icon"))); //$NON-NLS-1$

@@ -3,25 +3,22 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.launch;
 
-import java.text.DateFormat;
-import java.text.MessageFormat;
+import java.text.*;
 import java.util.Date;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IStreamsProxy;
+import org.eclipse.debug.core.model.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -46,13 +43,13 @@ class NSISLaunchProcess implements IProcess, IMakeNSISRunListener, IWorkbenchAda
         mLabel = MessageFormat.format("{0} ({1})",new Object[]{NSISPreferences.INSTANCE.getNSISExe(), //$NON-NLS-1$
                                             cDateFormat.format(new Date(System.currentTimeMillis()))}).trim();
     }
-    
-    protected void fireCreationEvent() 
+
+    protected void fireCreationEvent()
     {
         fireEvent(new DebugEvent(this, DebugEvent.CREATE));
     }
 
-    protected void fireEvent(DebugEvent event) 
+    protected void fireEvent(DebugEvent event)
     {
         DebugPlugin manager= DebugPlugin.getDefault();
         if (manager != null) {
@@ -60,12 +57,12 @@ class NSISLaunchProcess implements IProcess, IMakeNSISRunListener, IWorkbenchAda
         }
     }
 
-    protected void fireTerminateEvent() 
+    protected void fireTerminateEvent()
     {
         fireEvent(new DebugEvent(this, DebugEvent.TERMINATE));
     }
 
-    protected void fireChangeEvent() 
+    protected void fireChangeEvent()
     {
         fireEvent(new DebugEvent(this, DebugEvent.CHANGE));
     }
@@ -156,7 +153,7 @@ class NSISLaunchProcess implements IProcess, IMakeNSISRunListener, IWorkbenchAda
             fireTerminateEvent();
         }
     }
-    
+
     public void eventOccurred(MakeNSISRunEvent event)
     {
         if(event.getScript() == mScript) {

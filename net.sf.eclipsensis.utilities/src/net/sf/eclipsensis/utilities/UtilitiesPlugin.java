@@ -11,8 +11,7 @@ package net.sf.eclipsensis.utilities;
 
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import net.sf.eclipsensis.utilities.job.JobScheduler;
 
@@ -31,7 +30,7 @@ public class UtilitiesPlugin extends AbstractUIPlugin
     private ResourceBundle mResourceBundle;
     private Image mShellImage;
     private JobScheduler mJobScheduler = new JobScheduler();
-	
+
 	/**
 	 * The constructor.
 	 */

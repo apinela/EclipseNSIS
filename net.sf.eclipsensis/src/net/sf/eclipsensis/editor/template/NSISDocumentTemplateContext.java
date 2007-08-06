@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.template;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.templates.*;
 
 public class NSISDocumentTemplateContext extends DocumentTemplateContext

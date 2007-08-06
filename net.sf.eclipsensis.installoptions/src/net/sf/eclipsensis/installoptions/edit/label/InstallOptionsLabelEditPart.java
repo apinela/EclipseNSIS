@@ -11,24 +11,19 @@ package net.sf.eclipsensis.installoptions.edit.label;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
-import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart;
-import net.sf.eclipsensis.installoptions.edit.uneditable.UneditableElementDirectEditPolicy;
+import net.sf.eclipsensis.installoptions.edit.uneditable.*;
 import net.sf.eclipsensis.installoptions.figures.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.util.FontUtility;
-import net.sf.eclipsensis.installoptions.util.TypeConverter;
+import net.sf.eclipsensis.installoptions.util.*;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.draw2d.text.FlowPage;
-import org.eclipse.draw2d.text.TextFlow;
+import org.eclipse.draw2d.text.*;
 import org.eclipse.gef.requests.DirectEditRequest;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElementEditPart

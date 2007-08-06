@@ -9,10 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.rulers;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.List;
+import java.beans.*;
+import java.util.*;
 
 import org.eclipse.gef.rulers.RulerProvider;
 

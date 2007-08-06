@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.requests;
 
 import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.draw2d.geometry.PrecisionRectangle;
-import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 
 public class DistributionRequest extends ChangeBoundsRequest

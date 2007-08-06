@@ -11,12 +11,10 @@ package net.sf.eclipsensis.installoptions.edit.dialog;
 
 import java.util.List;
 
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsTreeContainerEditPolicy;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsTreeEditPart;
+import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 
-import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.RootEditPart;
+import org.eclipse.gef.*;
 import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
 
 public class InstallOptionsDialogTreeEditPart extends InstallOptionsTreeEditPart

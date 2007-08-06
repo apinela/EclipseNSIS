@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -17,8 +17,7 @@ import net.sf.eclipsensis.update.scheduler.SchedulerConstants;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.WizardShellImageChanger;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.*;
@@ -67,7 +66,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
         catch (Exception e) {
             mAction = SchedulerConstants.DEFAULT_ACTION;
         }
-        
+
         if(dialogSettings.get(IUpdatePreferenceConstants.IGNORE_PREVIEW) == null) {
             mIgnorePreview = SchedulerConstants.DEFAULT_IGNORE_PREVIEW;
         }
@@ -145,7 +144,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
             settings.put(IUpdatePreferenceConstants.UPDATE_ACTION,mAction);
             settings.put(IUpdatePreferenceConstants.IGNORE_PREVIEW,mIgnorePreview);
         }
-        
+
         NSISUpdateJobSettings settings = new NSISUpdateJobSettings(false,mAction, mIgnorePreview);
         NextUpdateJobRunner jobRunner = new NextUpdateJobRunner();
         NSISCheckUpdateJob job = new NSISCheckUpdateJob(settings, jobRunner);
@@ -155,7 +154,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
         }
         return true;
     }
-    
+
     private class NextUpdateJobRunner implements INSISUpdateJobRunner
     {
         private void setPageError(final IWizardPage page, final String error)
@@ -165,7 +164,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
                 {
                     if(error != null) {
                         if(page instanceof WizardPage) {
-                            ((WizardPage)page).setMessage(error, WizardPage.ERROR);
+                            ((WizardPage)page).setMessage(error, IMessageProvider.ERROR);
                         }
                         else {
                             Common.openError(getShell(),error,EclipseNSISUpdatePlugin.getShellImage());
@@ -173,7 +172,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
                     }
                     else {
                         if(page instanceof WizardPage) {
-                            ((WizardPage)page).setMessage(null, WizardPage.ERROR);
+                            ((WizardPage)page).setMessage(null, IMessageProvider.ERROR);
                         }
                     }
                 }
@@ -203,7 +202,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
                 mError = true;
                 setPageError(page, e.getMessage());
                 EclipseNSISUpdatePlugin.getDefault().log(e);
-            }            
+            }
         }
     }
 }

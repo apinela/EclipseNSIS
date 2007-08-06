@@ -10,18 +10,14 @@
 package net.sf.eclipsensis.installoptions.edit;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ICellEditorValidator;
+import org.eclipse.gef.tools.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.PropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
 
 public abstract class InstallOptionsDirectEditManager extends DirectEditManager
 {
@@ -65,7 +61,7 @@ public abstract class InstallOptionsDirectEditManager extends DirectEditManager
             }
             catch (Throwable t) {
                 InstallOptionsPlugin.getDefault().log(t);
-            }            
+            }
         }
         String initialText = getInitialText(control);
         getCellEditor().setValue(initialText);

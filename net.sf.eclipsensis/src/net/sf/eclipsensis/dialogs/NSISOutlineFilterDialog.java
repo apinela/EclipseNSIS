@@ -15,17 +15,13 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.outline.NSISOutlineContentResources;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.viewer.CollectionContentProvider;
-import net.sf.eclipsensis.viewer.CollectionLabelProvider;
+import net.sf.eclipsensis.viewer.*;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NSISOutlineFilterDialog extends StatusMessageDialog

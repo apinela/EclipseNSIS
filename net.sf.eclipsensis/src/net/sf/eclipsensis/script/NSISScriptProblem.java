@@ -12,8 +12,7 @@ package net.sf.eclipsensis.script;
 import java.io.*;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 
 public class NSISScriptProblem implements Serializable
 {

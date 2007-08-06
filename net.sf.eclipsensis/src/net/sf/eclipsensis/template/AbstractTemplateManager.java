@@ -14,11 +14,9 @@ import java.net.URL;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
 
 public abstract class AbstractTemplateManager

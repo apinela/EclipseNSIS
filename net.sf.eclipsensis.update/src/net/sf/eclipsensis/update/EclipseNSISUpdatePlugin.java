@@ -11,8 +11,7 @@ package net.sf.eclipsensis.update;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
 import net.sf.eclipsensis.update.scheduler.Scheduler;

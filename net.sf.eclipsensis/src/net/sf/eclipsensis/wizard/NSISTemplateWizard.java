@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
 

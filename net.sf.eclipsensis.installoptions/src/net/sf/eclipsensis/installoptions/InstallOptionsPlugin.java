@@ -13,8 +13,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.*;
 
-import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
-import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.installoptions.builder.InstallOptionsBuilder;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.job.JobScheduler;
@@ -24,13 +23,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.gef.ui.palette.PaletteViewerPreferences;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
+import org.osgi.framework.*;
 
 public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOptionsConstants
 {

@@ -10,11 +10,9 @@
 package net.sf.eclipsensis.settings;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IPluginVersions;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.Version;
 

@@ -9,16 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISService;
+import net.sf.eclipsensis.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 
 public class NSISHeaderAssociationManager implements IEclipseNSISService/*, IResourceChangeListener*/
 {

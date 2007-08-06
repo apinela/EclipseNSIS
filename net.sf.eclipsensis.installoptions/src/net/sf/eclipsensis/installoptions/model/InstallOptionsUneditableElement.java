@@ -13,12 +13,10 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.UneditableElementPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
 
 public abstract class InstallOptionsUneditableElement extends InstallOptionsWidget
 {

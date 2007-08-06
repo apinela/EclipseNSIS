@@ -15,17 +15,14 @@ import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
-import org.eclipse.jface.text.information.IInformationPresenter;
-import org.eclipse.jface.text.information.InformationPresenter;
-import org.eclipse.jface.text.source.IAnnotationHover;
-import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.contentassist.*;
+import org.eclipse.jface.text.information.*;
+import org.eclipse.jface.text.source.*;
 
 public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfiguration
 {
     private static final String[] ANNOTATION_TYPES = new String[]{PROBLEM_MARKER_ID,TASK_MARKER_ID,ERROR_ANNOTATION_NAME,WARNING_ANNOTATION_NAME};
-    
+
     protected InformationPresenter mInformationPresenter = null;
     protected NSISTextHover mTextHover = null;
     protected NSISAnnotationHover mAnnotationHover = null;

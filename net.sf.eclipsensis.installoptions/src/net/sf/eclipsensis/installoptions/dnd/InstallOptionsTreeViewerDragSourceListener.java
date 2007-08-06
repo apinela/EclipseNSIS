@@ -9,11 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.dnd;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.EditPartViewer;
+import org.eclipse.gef.*;
 import org.eclipse.gef.dnd.AbstractTransferDragSourceListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.dnd.DragSourceEvent;

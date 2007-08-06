@@ -14,11 +14,9 @@ import java.util.Arrays;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.*;
 
 public class TableResizer extends ControlAdapter
 {
@@ -51,7 +49,7 @@ public class TableResizer extends ControlAdapter
         if(!Common.isEmptyArray(columns)) {
             int n = columns.length-1;
             width -= n*lineWidth;
-            
+
             int[] minWidths = null;
             final boolean headerVisible = table.getHeaderVisible();
             if(headerVisible) {

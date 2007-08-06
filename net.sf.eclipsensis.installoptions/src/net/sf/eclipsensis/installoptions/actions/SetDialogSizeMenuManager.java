@@ -12,13 +12,11 @@ package net.sf.eclipsensis.installoptions.actions;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.DialogSize;
-import net.sf.eclipsensis.installoptions.model.DialogSizeManager;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.*;
 import org.eclipse.ui.IEditorPart;
 
 public class SetDialogSizeMenuManager extends MenuManager implements IPropertyChangeListener

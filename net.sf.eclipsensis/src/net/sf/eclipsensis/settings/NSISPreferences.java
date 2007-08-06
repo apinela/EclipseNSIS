@@ -9,30 +9,26 @@
  *******************************************************************************/
 package net.sf.eclipsensis.settings;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.List;
 
 import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
-import net.sf.eclipsensis.dialogs.NSISPreferencePage;
+import net.sf.eclipsensis.dialogs.*;
 import net.sf.eclipsensis.editor.NSISTaskTag;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
-import net.sf.eclipsensis.filemon.FileMonitor;
-import net.sf.eclipsensis.filemon.IFileChangeListener;
+import net.sf.eclipsensis.filemon.*;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;

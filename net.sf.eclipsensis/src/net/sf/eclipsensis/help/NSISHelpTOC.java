@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -20,11 +20,11 @@ public class NSISHelpTOC implements Serializable
 
     private Map mNodeMap = null;
     private List mChildren = null;
-    
+
     NSISHelpTOC()
     {
     }
-    
+
     NSISHelpTOCNode createNode(String name, String url)
     {
         return new NSISHelpTOCNode(name, url);
@@ -63,7 +63,7 @@ public class NSISHelpTOC implements Serializable
             }
         }
     }
-    
+
     public NSISHelpTOCNode getNode(String urlOrName)
     {
         return (NSISHelpTOCNode)mNodeMap.get(urlOrName);
@@ -109,7 +109,7 @@ public class NSISHelpTOC implements Serializable
             mapNode(node);
             node.setParent(this);
         }
-        
+
         public NSISHelpTOC getOwner()
         {
             return NSISHelpTOC.this;

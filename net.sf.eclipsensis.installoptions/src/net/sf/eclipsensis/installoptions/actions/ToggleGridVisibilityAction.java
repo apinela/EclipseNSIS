@@ -11,8 +11,7 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
-import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.gef.SnapToGrid;
+import org.eclipse.gef.*;
 import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.jface.action.Action;
 

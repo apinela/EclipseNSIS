@@ -11,14 +11,11 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 
 import org.eclipse.draw2d.geometry.*;
-import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.gef.RequestConstants;
-import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.commands.CompoundCommand;
+import org.eclipse.gef.*;
+import org.eclipse.gef.commands.*;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.jface.resource.ImageDescriptor;

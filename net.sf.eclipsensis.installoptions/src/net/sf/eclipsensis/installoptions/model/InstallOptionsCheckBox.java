@@ -14,8 +14,7 @@ import java.util.List;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPropertyDescriptor;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.CheckBoxPropertySectionCreator;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
@@ -41,7 +40,7 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
     protected void init()
     {
         super.init();
-        mState = null; 
+        mState = null;
     }
 
     public Object clone()
@@ -151,8 +150,8 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
     {
         return new CheckBoxPropertySectionCreator(this);
     }
-	
-    protected TypeConverter loadTypeConverter(String property, Object value) 
+
+    protected TypeConverter loadTypeConverter(String property, Object value)
 	{
         if (InstallOptionsModel.PROPERTY_STATE.equals(property)) {
             if(value instanceof String) {

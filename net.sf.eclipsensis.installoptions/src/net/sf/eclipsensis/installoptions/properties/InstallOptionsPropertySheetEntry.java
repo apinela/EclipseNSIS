@@ -3,22 +3,20 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.commands.*;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.PropertySheetEntry;
+import org.eclipse.ui.views.properties.*;
 
 public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
 {
@@ -26,12 +24,12 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
     private InstallOptionsCommandHelper mHelper;
 
     private CommandStack mStack;
-    
+
     private InstallOptionsPropertySheetEntry()
     {
     }
 
-    public InstallOptionsPropertySheetEntry(CommandStack stack) 
+    public InstallOptionsPropertySheetEntry(CommandStack stack)
     {
         setCommandStack(stack);
     }
@@ -39,7 +37,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
     /**
      * @see org.eclipse.ui.views.properties.PropertySheetEntry#createChildEntry()
      */
-    protected PropertySheetEntry createChildEntry() 
+    protected PropertySheetEntry createChildEntry()
     {
         return new InstallOptionsPropertySheetEntry();
     }
@@ -47,7 +45,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
     /**
      * @see org.eclipse.ui.views.properties.IPropertySheetEntry#dispose()
      */
-    public void dispose() 
+    public void dispose()
     {
         if(mHelper != null) {
             mHelper.dispose();
@@ -55,7 +53,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
         }
         super.dispose();
     }
-    
+
     private InstallOptionsCommandHelper getHelper()
     {
         if(mHelper == null) {
@@ -78,7 +76,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
         return helpContextIds;
     }
 
-    private CommandStack getCommandStack() 
+    private CommandStack getCommandStack()
     {
         //only the root has, and is listening too, the command stack
         if (getParent() != null) {
@@ -90,7 +88,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
     /**
      * @see org.eclipse.ui.views.properties.IPropertySheetEntry#resetPropertyValue()
      */
-    public void resetPropertyValue() 
+    public void resetPropertyValue()
     {
         if (getParent() == null) {
             // root does not have a default value
@@ -106,14 +104,14 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
                 sources.add(source);
             }
         }
-        
+
         if(!Common.isEmptyCollection(sources)) {
             InstallOptionsCommandHelper helper = getHelper();
             helper.resetPropertyValue((String)getDescriptor().getId(), (IPropertySource[])sources.toArray(new IPropertySource[sources.size()]));
         }
     }
 
-    private void setCommandStack(CommandStack stack) 
+    private void setCommandStack(CommandStack stack)
     {
         mStack = stack;
     }
@@ -121,12 +119,12 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
     /**
      * @see PropertySheetEntry#valueChanged(PropertySheetEntry)
      */
-    protected void valueChanged(PropertySheetEntry child) 
+    protected void valueChanged(PropertySheetEntry child)
     {
         valueChanged((InstallOptionsPropertySheetEntry)child, new ForwardUndoCompoundCommand());
     }
 
-    void valueChanged(InstallOptionsPropertySheetEntry child, CompoundCommand command) 
+    void valueChanged(InstallOptionsPropertySheetEntry child, CompoundCommand command)
     {
         List sources = new ArrayList();
         List newValues = new ArrayList();
@@ -139,10 +137,10 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
         }
 
         if(!Common.isEmptyCollection(sources)) {
-            getHelper().valueChanged((String)child.getDescriptor().getId(), 
-                    child.getDisplayName(), 
-                    (IPropertySource[])sources.toArray(new IPropertySource[sources.size()]), 
-                    newValues.toArray(new Object[newValues.size()]), 
+            getHelper().valueChanged((String)child.getDescriptor().getId(),
+                    child.getDisplayName(),
+                    (IPropertySource[])sources.toArray(new IPropertySource[sources.size()]),
+                    newValues.toArray(new Object[newValues.size()]),
                     command);
         }
 

@@ -11,11 +11,9 @@ package net.sf.eclipsensis.installoptions.ini.validators;
 
 import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.ini.*;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.Common;
 
 public class FlagsKeyValueValidator implements IINIKeyValueValidator

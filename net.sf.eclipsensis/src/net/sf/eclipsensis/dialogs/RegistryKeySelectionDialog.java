@@ -12,10 +12,8 @@ package net.sf.eclipsensis.dialogs;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class RegistryKeySelectionDialog extends StatusMessageDialog

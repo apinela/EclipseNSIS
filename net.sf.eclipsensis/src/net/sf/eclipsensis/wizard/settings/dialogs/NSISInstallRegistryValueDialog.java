@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings.dialogs;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog;
 import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog.RegistryValue;
 import net.sf.eclipsensis.util.*;
@@ -18,8 +17,7 @@ import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryValue;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;

@@ -12,8 +12,7 @@ package net.sf.eclipsensis.installoptions.actions;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.*;
 
 public class PreviewSubMenuManager extends MenuManager
 {

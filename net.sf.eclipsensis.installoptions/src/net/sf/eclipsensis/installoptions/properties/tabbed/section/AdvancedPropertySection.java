@@ -3,25 +3,22 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
-import net.sf.eclipsensis.installoptions.properties.CustomPropertySheetPage;
-import net.sf.eclipsensis.installoptions.properties.InstallOptionsPropertySheetEntry;
+import net.sf.eclipsensis.installoptions.properties.*;
 import net.sf.eclipsensis.installoptions.properties.tabbed.CustomTabbedPropertySheetPage;
 
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.views.properties.PropertySheetPage;
-import org.eclipse.ui.views.properties.tabbed.AbstractPropertySection;
-import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.*;
 
 public class AdvancedPropertySection extends AbstractPropertySection
 {
@@ -31,7 +28,7 @@ public class AdvancedPropertySection extends AbstractPropertySection
      * @see org.eclipse.ui.views.properties.tabbed.ISection#createControls(org.eclipse.swt.widgets.Composite,
      *      org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage)
      */
-    public void createControls(Composite parent, TabbedPropertySheetPage page) 
+    public void createControls(Composite parent, TabbedPropertySheetPage page)
     {
         super.createControls(parent, page);
         Composite composite = getWidgetFactory().createFlatFormComposite(parent);
@@ -46,7 +43,7 @@ public class AdvancedPropertySection extends AbstractPropertySection
         else {
             mPage = new PropertySheetPage();
         }
- 
+
         mPage.createControl(composite);
         FormData data = new FormData();
         data.left = new FormAttachment(0, 0);
@@ -62,7 +59,7 @@ public class AdvancedPropertySection extends AbstractPropertySection
      * @see org.eclipse.ui.views.properties.tabbed.ISection#setInput(org.eclipse.ui.IWorkbenchPart,
      *      org.eclipse.jface.viewers.ISelection)
      */
-    public void setInput(IWorkbenchPart part, ISelection selection) 
+    public void setInput(IWorkbenchPart part, ISelection selection)
     {
         super.setInput(part, selection);
         mPage.selectionChanged(part, selection);
@@ -71,7 +68,7 @@ public class AdvancedPropertySection extends AbstractPropertySection
     /**
      * @see org.eclipse.ui.views.properties.tabbed.ISection#dispose()
      */
-    public void dispose() 
+    public void dispose()
     {
         super.dispose();
 
@@ -84,7 +81,7 @@ public class AdvancedPropertySection extends AbstractPropertySection
     /**
      * @see org.eclipse.ui.views.properties.tabbed.ISection#refresh()
      */
-    public void refresh() 
+    public void refresh()
     {
         mPage.refresh();
     }
@@ -92,7 +89,7 @@ public class AdvancedPropertySection extends AbstractPropertySection
     /**
      * @see org.eclipse.ui.views.properties.tabbed.ISection#shouldUseExtraSpace()
      */
-    public boolean shouldUseExtraSpace() 
+    public boolean shouldUseExtraSpace()
     {
         return true;
     }

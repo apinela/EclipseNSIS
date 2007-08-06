@@ -3,50 +3,43 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
- *     
+ *
  * Based upon org.eclipse.jdt.internal.ui.text.hover.BrowserInformationControl
  * Copyright (c) 2000-2007 IBM Corporation and others.
- *     
+ *
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Stack;
+import java.io.*;
+import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.NSISExternalFileEditorInput;
 import net.sf.eclipsensis.help.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
-public class NSISBrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, IInformationControlExtension3,  DisposeListener 
+public class NSISBrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, IInformationControlExtension3,  DisposeListener
 {
     private static final int BORDER= 1;
 
@@ -64,14 +57,14 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
     private ToolItem mForward = null;
     private Stack mBackKeywords = null;
     private Stack mForwardKeywords = null;
-    
+
     private INSISBrowserFileURLHandler mFileURLHandler = new INSISBrowserFileURLHandler() {
         public void handleFile(File file)
         {
             NSISBrowserInformationControl.this.handleFile(file);
         }
     };
-    
+
     private INSISBrowserKeywordURLHandler mKeywordURLHandler = new INSISBrowserKeywordURLHandler() {
         public void handleKeyword(String keyword)
         {
@@ -80,7 +73,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         }
     };
 
-    public NSISBrowserInformationControl(final Shell parent, int shellStyle, int style) 
+    public NSISBrowserInformationControl(final Shell parent, int shellStyle, int style)
     {
         GridLayout layout;
 
@@ -120,7 +113,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         hookLocationListener();
         // Replace browser's built-in context menu with none
         mBrowser.setMenu(new Menu(mShell, SWT.NONE));
-        
+
         if (NSISHelpURLProvider.getInstance().isNSISHelpAvailable()) {
             ParameterizedCommand command = NSISInformationUtility.getCommand(INSISConstants.GOTO_HELP_COMMAND_ID);
             ArrayList list = new ArrayList();
@@ -195,7 +188,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         }
         addDisposeListener(this);
     }
-    
+
     public Shell getShell()
     {
         return mShell;
@@ -208,8 +201,8 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
 
     private void createToolBar(Composite displayArea)
     {
-        if(isValid(NSISBrowserUtility.BACK_IMAGE) && isValid(NSISBrowserUtility.DISABLED_BACK_IMAGE) && 
-           isValid(NSISBrowserUtility.FORWARD_IMAGE) && isValid(NSISBrowserUtility.DISABLED_FORWARD_IMAGE) && 
+        if(isValid(NSISBrowserUtility.BACK_IMAGE) && isValid(NSISBrowserUtility.DISABLED_BACK_IMAGE) &&
+           isValid(NSISBrowserUtility.FORWARD_IMAGE) && isValid(NSISBrowserUtility.DISABLED_FORWARD_IMAGE) &&
            isValid(NSISBrowserUtility.HOME_IMAGE)) {
             mToolBar =  new ToolBar(displayArea, SWT.FLAT);
             GridData data = new GridData(SWT.RIGHT,SWT.FILL,true,false);
@@ -220,13 +213,13 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
             final ToolItem home = new ToolItem(mToolBar, SWT.NONE);
             home.setImage(NSISBrowserUtility.HOME_IMAGE);
             home.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.home.text")); //$NON-NLS-1$
-    
+
             // Add a button to navigate backwards through previously visited pages
             mBack = new ToolItem(mToolBar, SWT.NONE);
             mBack.setImage(NSISBrowserUtility.BACK_IMAGE);
             mBack.setDisabledImage(NSISBrowserUtility.DISABLED_BACK_IMAGE);
             mBack.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.back.text")); //$NON-NLS-1$
-    
+
             // Add a button to navigate forward through previously visited pages
             mForward = new ToolItem(mToolBar, SWT.NONE);
             mForward.setImage(NSISBrowserUtility.FORWARD_IMAGE);
@@ -274,13 +267,13 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
             home.addListener(SWT.Selection, listener);
             mBack.addListener(SWT.Selection, listener);
             mForward.addListener(SWT.Selection, listener);
-            
+
             mBackKeywords = new Stack();
             mForwardKeywords = new Stack();
             updateToolbarButtons();
         }
     }
-    
+
     private void gotoKeyword(String keyword)
     {
         String oldKeyword = mKeyword;
@@ -322,7 +315,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
             mBrowser.addKeyListener(listener);
         }
     }
-    
+
     public void removeKeyListener(KeyListener listener)
     {
         if(mBrowser != null) {
@@ -342,7 +335,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         }
     }
 
-    public void setInformation(String content) 
+    public void setInformation(String content)
     {
         mKeyword = null;
         mBrowserHasContent= content != null && content.length() > 0;
@@ -373,7 +366,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         mBrowser.setSize(Math.min(200, mMaxWidth), Math.min(mMaxHeight, 50));
     }
 
-    private void insertStyles(StringBuffer buffer, String[] styles) 
+    private void insertStyles(StringBuffer buffer, String[] styles)
     {
         if (Common.isEmptyArray(styles)) {
             return;
@@ -397,12 +390,12 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         buffer.insert(index+5, styleBuf);
     }
 
-    public void setVisible(boolean visible) 
+    public void setVisible(boolean visible)
     {
         mShell.setVisible(visible);
     }
 
-    public void dispose() 
+    public void dispose()
     {
         if (mShell != null && !mShell.isDisposed()) {
             mShell.dispose();
@@ -412,19 +405,19 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         }
     }
 
-    public void widgetDisposed(DisposeEvent event) 
+    public void widgetDisposed(DisposeEvent event)
     {
         mShell= null;
         mBrowser= null;
         mKeyword = null;
     }
 
-    public void setSize(int width, int height) 
+    public void setSize(int width, int height)
     {
         mShell.setSize(Math.min(width, mMaxWidth), Math.min(height, mMaxHeight));
     }
 
-    public void setLocation(Point location) 
+    public void setLocation(Point location)
     {
         Rectangle trim= mShell.computeTrim(0, 0, 0, 0);
         Point browserLoc = mBrowser.getLocation();
@@ -434,69 +427,69 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         mShell.setLocation(location);
     }
 
-    public void setSizeConstraints(int maxWidth, int maxHeight) 
+    public void setSizeConstraints(int maxWidth, int maxHeight)
     {
         mMaxWidth= maxWidth;
         mMaxHeight= maxHeight;
     }
 
-    public Point computeSizeHint() 
+    public Point computeSizeHint()
     {
         return mShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
     }
 
-    public Rectangle computeTrim() 
+    public Rectangle computeTrim()
     {
         return mShell.computeTrim(0, 0, 0, 0);
     }
 
-    public Rectangle getBounds() 
+    public Rectangle getBounds()
     {
         return mShell.getBounds();
     }
 
-    public boolean restoresLocation() 
+    public boolean restoresLocation()
     {
         return false;
     }
 
-    public boolean restoresSize() 
+    public boolean restoresSize()
     {
         return false;
     }
 
-    public void addDisposeListener(DisposeListener listener) 
+    public void addDisposeListener(DisposeListener listener)
     {
         mShell.addDisposeListener(listener);
     }
 
-    public void removeDisposeListener(DisposeListener listener) 
+    public void removeDisposeListener(DisposeListener listener)
     {
         mShell.removeDisposeListener(listener);
     }
 
-    public void setForegroundColor(Color foreground) 
+    public void setForegroundColor(Color foreground)
     {
         mBrowser.setForeground(foreground);
     }
 
-    public void setBackgroundColor(Color background) 
+    public void setBackgroundColor(Color background)
     {
         mBrowser.setBackground(background);
     }
 
-    public boolean isFocusControl() 
+    public boolean isFocusControl()
     {
         return mBrowser.isFocusControl();
     }
 
-    public void setFocus() 
+    public void setFocus()
     {
         mShell.forceFocus();
         mBrowser.setFocus();
     }
 
-    public void addFocusListener(final FocusListener listener) 
+    public void addFocusListener(final FocusListener listener)
     {
         mBrowser.addFocusListener(listener);
 
@@ -514,7 +507,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         mFocusListeners.add(listener);
     }
 
-    public void removeFocusListener(FocusListener listener) 
+    public void removeFocusListener(FocusListener listener)
     {
         mBrowser.removeFocusListener(listener);
 
@@ -525,11 +518,11 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         }
     }
 
-    public boolean hasContents() 
+    public boolean hasContents()
     {
         return mBrowserHasContent;
     }
-    
+
     private void hookLocationListener()
     {
         if(mBrowser != null && !mBrowser.isDisposed()) {
@@ -548,7 +541,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
             });
         }
     }
-    
+
     private void handleFile(File f)
     {
         if (!HelpBrowserLocalFileHandler.INSTANCE.handle(f)) {
@@ -579,18 +572,18 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                     }
                     catch (Exception e) {
                         EclipseNSISPlugin.getDefault().log(e);
-                    }                                                
+                    }
                 }
                 try {
                     Common.openExternalBrowser(IOUtility.getFileURLString(f));
                 }
                 catch (Exception e) {
                     EclipseNSISPlugin.getDefault().log(e);
-                }                
+                }
             }
         }
     }
-    
+
     private boolean openInEditor(File file)
     {
         IEditorInput editorInput;
@@ -611,7 +604,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         }
         if (descriptor != null) {
             try {
-                IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), 
+                IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
                         editorInput, descriptor.getId());
                 return true;
             }

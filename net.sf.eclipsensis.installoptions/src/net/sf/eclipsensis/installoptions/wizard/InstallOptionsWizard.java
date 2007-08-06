@@ -14,14 +14,11 @@ import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplate;
 import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.wizard.WizardShellImageChanger;
 
-import org.eclipse.jface.dialogs.IPageChangeProvider;
-import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardContainer;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.*;
 
 public class InstallOptionsWizard extends Wizard implements INewWizard
 {

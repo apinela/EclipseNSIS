@@ -18,15 +18,12 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.*;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPage
@@ -160,12 +157,12 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
             {
                 if (isProcessPrioritySupported()) {
                     if (isWarnProcessPriority()) {
-                        if (mProcessPriority.getSelectionIndex() > INSISPreferenceConstants.PROCESS_PRIORITY_HIGH && mProcessPriorityIndex <= INSISPreferenceConstants.PROCESS_PRIORITY_HIGH) {
+                        if (mProcessPriority.getSelectionIndex() > INSISSettingsConstants.PROCESS_PRIORITY_HIGH && mProcessPriorityIndex <= INSISSettingsConstants.PROCESS_PRIORITY_HIGH) {
                             MessageDialogWithToggle dialog = new MessageDialogWithToggle(mProcessPriority.getShell(),
                                     EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
                                     EclipseNSISPlugin.getShellImage(),
                                     EclipseNSISPlugin.getResourceString("process.priority.question"), //$NON-NLS-1$
-                                    MessageDialogWithToggle.WARNING,
+                                    MessageDialog.WARNING,
                                     new String[] { IDialogConstants.YES_LABEL,
                                                    IDialogConstants.NO_LABEL }, 1,
                                     EclipseNSISPlugin.getResourceString("process.priority.toggle"), //$NON-NLS-1$

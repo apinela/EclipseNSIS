@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.ini;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator;
-import net.sf.eclipsensis.installoptions.ini.validators.INIKeyValueValidatorRegistry;
+import net.sf.eclipsensis.installoptions.ini.validators.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.util.Common;
 

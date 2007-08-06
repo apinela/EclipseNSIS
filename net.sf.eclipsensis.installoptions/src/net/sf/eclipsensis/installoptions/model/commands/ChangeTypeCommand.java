@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ import net.sf.eclipsensis.installoptions.model.*;
 public class ChangeTypeCommand extends DeleteCommand
 {
     private InstallOptionsWidget mNewChild;
-    
+
     public ChangeTypeCommand(InstallOptionsDialog parent, InstallOptionsWidget oldChild, InstallOptionsWidget newChild)
     {
         super(parent, oldChild);

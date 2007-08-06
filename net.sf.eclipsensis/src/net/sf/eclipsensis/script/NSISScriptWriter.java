@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
-import java.io.PrintWriter;
-import java.io.Writer;
+import java.io.*;
 
 public class NSISScriptWriter extends PrintWriter
 {

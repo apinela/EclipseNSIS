@@ -11,14 +11,12 @@ package net.sf.eclipsensis.actions;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.makensis.*;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.NSISCompileTestUtility;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
 
 public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRunListener

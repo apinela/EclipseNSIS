@@ -14,8 +14,7 @@ import java.io.File;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.text.source.AnnotationModel;
-import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory;
 
 public class NSISAnnotationModelFactory extends ResourceMarkerAnnotationModelFactory

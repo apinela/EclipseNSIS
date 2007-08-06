@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -11,8 +11,7 @@ package net.sf.eclipsensis.config;
 
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.dynamichelpers.*;
@@ -23,9 +22,9 @@ public class NSISConfigWizardRegistry implements IExtensionChangeHandler
 {
     private static final String EXTENSION_POINT = "nsisConfigWizard"; //$NON-NLS-1$
     private static final String WIZARD = "wizard"; //$NON-NLS-1$
-    
+
     public static final NSISConfigWizardRegistry INSTANCE = new NSISConfigWizardRegistry();
-    
+
     private Map mExtensions = new LinkedHashMap();
     private Object mLock = new Object();
 
@@ -77,7 +76,7 @@ public class NSISConfigWizardRegistry implements IExtensionChangeHandler
                 }
                 mExtensions.put(extension.getUniqueIdentifier(), wizards);
             }
-        }        
+        }
     }
 
     public void removeExtension(IExtension extension, Object[] objects)
@@ -87,7 +86,7 @@ public class NSISConfigWizardRegistry implements IExtensionChangeHandler
                 mExtensions.remove(extension.getUniqueIdentifier());
                 PlatformUI.getWorkbench().getExtensionTracker().unregisterObject(extension);
             }
-        }        
+        }
     }
 
     private IExtensionPoint getExtensionPointFilter()
@@ -110,6 +109,6 @@ public class NSISConfigWizardRegistry implements IExtensionChangeHandler
                 }
             }
             return (NSISConfigWizardDescriptor[])descriptors.toArray(new NSISConfigWizardDescriptor[descriptors.size()]);
-        }        
+        }
     }
 }

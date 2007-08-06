@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public class NSISConfigWizardDescriptor implements IAdaptable, IPluginContributi
     private IConfigurationElement mConfigurationElement;
     private String mId;
     private ImageDescriptor mIcon;
-    
+
     public NSISConfigWizardDescriptor(IConfigurationElement configurationElement)
     {
         mConfigurationElement = configurationElement;
@@ -58,8 +58,8 @@ public class NSISConfigWizardDescriptor implements IAdaptable, IPluginContributi
     {
         return mId;
     }
-    
-    public String getName() 
+
+    public String getName()
     {
         return mConfigurationElement.getAttribute(WIZARD_NAME);
     }
@@ -69,12 +69,12 @@ public class NSISConfigWizardDescriptor implements IAdaptable, IPluginContributi
         return (NSISConfigWizard)mConfigurationElement.createExecutableExtension(WIZARD_CLASS);
     }
 
-    public IConfigurationElement getConfigurationElement() 
+    public IConfigurationElement getConfigurationElement()
     {
         return mConfigurationElement;
     }
 
-    public String getDescription() 
+    public String getDescription()
     {
         IConfigurationElement[] children = mConfigurationElement.getChildren(WIZARD_DESCRIPTION);
         if (children.length > 0) {
@@ -82,20 +82,20 @@ public class NSISConfigWizardDescriptor implements IAdaptable, IPluginContributi
         }
         return "";//$NON-NLS-1$
     }
-    
+
     public boolean canFinishEarly()
     {
         return Boolean.valueOf(mConfigurationElement.getAttribute(WIZARD_CAN_FINISH_EARLY)).booleanValue();
     }
 
-    public ImageDescriptor getIcon() 
+    public ImageDescriptor getIcon()
     {
         if (mIcon == null) {
             String iconName = mConfigurationElement.getAttribute(WIZARD_ICON);
             if (iconName == null) {
                 return null;
             }
-            mIcon = AbstractUIPlugin.imageDescriptorFromPlugin(mConfigurationElement.getContributor().getName(), iconName);    
+            mIcon = AbstractUIPlugin.imageDescriptorFromPlugin(mConfigurationElement.getContributor().getName(), iconName);
         }
         return mIcon;
     }

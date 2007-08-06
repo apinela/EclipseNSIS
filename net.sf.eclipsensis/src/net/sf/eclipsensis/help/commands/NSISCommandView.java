@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -12,8 +12,7 @@ package net.sf.eclipsensis.help.commands;
 import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.NSISEditor;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
@@ -25,12 +24,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.ViewPart;
 
 public class NSISCommandView extends ViewPart implements INSISHomeListener
@@ -55,7 +52,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     private IAction mHierarchicalLayoutAction;
     private IAction mCollapseAllAction;
     private IAction mExpandAllAction;
-    
+
     private boolean mFlatMode = false;
 
     static {
@@ -108,7 +105,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         mFlatLayoutAction.setChecked(mFlatMode);
         tbm.add(mFlatLayoutAction);
         menu.add(mFlatLayoutAction);
-        
+
         mExpandAllAction = new Action() {
             public void run()
             {
@@ -121,7 +118,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         mExpandAllAction.setDisabledImageDescriptor(ImageDescriptor.createFromImage(CommonImages.EXPANDALL_DISABLED_ICON));
         mExpandAllAction.setEnabled(!mFlatMode);
         tbm.add(mExpandAllAction);
-        
+
         mCollapseAllAction = new Action() {
             public void run()
             {
@@ -139,11 +136,11 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     public void createPartControl(Composite parent)
     {
         mFlatMode = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_COMMAND_VIEW_FLAT_MODE);
-        
+
         Tree tree = new Tree(parent,SWT.BORDER|SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.HIDE_SELECTION);
         tree.setLinesVisible(false);
         mViewer = new TreeViewer(tree);
-        mViewer.setAutoExpandLevel(TreeViewer.ALL_LEVELS);
+        mViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         mViewer.setContentProvider(new TreeContentProvider());
         mViewer.setLabelProvider(new LabelProvider() {
             public String getText(Object element)
@@ -197,7 +194,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         });
 
         NSISPreferences.INSTANCE.addListener(this);
-        mViewer.addDragSupport(DND.DROP_COPY, 
+        mViewer.addDragSupport(DND.DROP_COPY,
             new Transfer[]{NSISCommandTransfer.INSTANCE},
             new DragSourceAdapter() {
                 public void dragStart(DragSourceEvent e)
@@ -207,16 +204,16 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                         e.doit = false;
                     }
                     IStructuredSelection sel = (IStructuredSelection)mViewer.getSelection();
-                    if(sel == null || sel.isEmpty() || !(sel.getFirstElement() instanceof TreeNode) || 
+                    if(sel == null || sel.isEmpty() || !(sel.getFirstElement() instanceof TreeNode) ||
                             ((TreeNode)sel.getFirstElement()).getCommand() == null) {
                         e.doit = false;
                     }
                 }
-    
+
                 public void dragSetData(DragSourceEvent e)
                 {
                     IStructuredSelection sel = (IStructuredSelection)mViewer.getSelection();
-                    if(sel != null && !sel.isEmpty() && sel.getFirstElement() instanceof TreeNode && 
+                    if(sel != null && !sel.isEmpty() && sel.getFirstElement() instanceof TreeNode &&
                             ((TreeNode)sel.getFirstElement()).getCommand() != null) {
                         e.data = ((TreeNode)sel.getFirstElement()).getCommand();
                     }
@@ -243,7 +240,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                         if (element instanceof TreeNode) {
                             TreeNode node = (TreeNode)element;
                             mViewer.setExpandedState(node, !mViewer.getExpandedState(node));
-                        }                            
+                        }
                     }
                 }
             }
@@ -297,10 +294,10 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                 TreeNode rootNode = (mFlatMode?mFlatRootNode:mHierarchicalRootNode);
                 for (int i = 0; i < commands.length; i++) {
                     TreeNode parent = rootNode;
-                    
+
                     if(!mFlatMode) {
                         parent = findParent(parent, commands[i]);
-                    }                    
+                    }
                     parent.addChild(new TreeNode(commands[i].getName(),commands[i]));
                 }
                 rootNode.sort();
@@ -337,7 +334,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
             mViewer.getTree().showItem(mViewer.getTree().getItem(0));
         }
     }
-    
+
     private void setFlatMode(boolean flatMode)
     {
         if(mFlatMode != flatMode) {
@@ -357,7 +354,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                 }
                 if (isNew) {
                     mHierarchicalRootNode.sort();
-                }            
+                }
                 rootNode = mHierarchicalRootNode;
             }
             else {
@@ -377,7 +374,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
             updateInput(rootNode);
         }
     }
-    
+
     private boolean moveCommandChild(TreeNode target, TreeNode source)
     {
         if(source.getChildren().size() > 0) {
@@ -441,9 +438,9 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         }
         return false;
     }
-    
+
     /**
-     * 
+     *
      */
     private void expandAll(boolean flag)
     {
@@ -475,18 +472,18 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         private String mName;
         private NSISCommand mCommand;
         private List mChildren;
-        
+
         public TreeNode(String name)
         {
             this(name, null);
         }
-        
+
         public TreeNode(String name, NSISCommand data)
         {
             mName = name;
             mCommand = data;
         }
-        
+
         public List getChildren()
         {
             return (mChildren==null?Collections.EMPTY_LIST:mChildren);
@@ -519,7 +516,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                 mParent.addChild(this);
             }
         }
-        
+
         public void addChild(TreeNode child)
         {
             if(mChildren == null) {
@@ -530,14 +527,14 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                 child.setParent(this);
             }
         }
-        
+
         public void removeChild(TreeNode child)
         {
             if(mChildren != null && mChildren.remove(child)) {
                 child.setParent(null);
             }
         }
-        
+
         public void sort()
         {
             if(mChildren != null) {

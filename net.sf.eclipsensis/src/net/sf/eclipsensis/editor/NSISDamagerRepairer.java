@@ -9,15 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
-import net.sf.eclipsensis.editor.text.NSISRuleBasedScanner;
-import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.settings.IPropertyAdaptable;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
-import org.eclipse.jface.text.rules.ITokenScanner;
+import org.eclipse.jface.text.rules.*;
 
 public class NSISDamagerRepairer extends DefaultDamagerRepairer implements IPropertyAdaptable
 {

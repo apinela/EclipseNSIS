@@ -3,19 +3,16 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.search;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -26,7 +23,7 @@ public class NSISHelpSearchManager implements INSISHelpSearchConstants
     private NSISHelpIndexer mStandardIndexer = null;
     private NSISHelpIndexer mStemmedIndexer = null;
     private String mSearchSyntaxURL;
-    
+
     public NSISHelpSearchManager(File documentRoot)
     {
         File helpLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),INSISConstants.PLUGIN_HELP_LOCATION_PREFIX);
@@ -85,7 +82,7 @@ public class NSISHelpSearchManager implements INSISHelpSearchConstants
         mStandardIndexer.stopIndexing();
         mStemmedIndexer.stopIndexing();
     }
- 
+
     public void indexHelp()
     {
         mStandardIndexer.indexHelp();

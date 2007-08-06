@@ -11,8 +11,7 @@ package net.sf.eclipsensis.editor;
 
 import java.text.MessageFormat;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.help.NSISKeywords.ShellConstant;
 import net.sf.eclipsensis.settings.NSISPreferences;

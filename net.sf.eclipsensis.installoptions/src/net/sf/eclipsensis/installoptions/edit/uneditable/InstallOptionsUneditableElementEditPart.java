@@ -13,8 +13,7 @@ import java.beans.PropertyChangeEvent;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.figures.IUneditableElementFigure;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsUneditableElement;
+import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.gef.EditPolicy;
 

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -12,8 +12,7 @@ package net.sf.eclipsensis.installoptions.model.commands;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.IPropertySource2;
+import org.eclipse.ui.views.properties.*;
 
 public class ResetValueCommand extends Command
 {
@@ -28,7 +27,7 @@ public class ResetValueCommand extends Command
      * Default Constructor: Sets the label for the Command
      * @since 3.1
      */
-    public ResetValueCommand() 
+    public ResetValueCommand()
     {
         super(InstallOptionsPlugin.getResourceString("reset.value.command.name")); //$NON-NLS-1$
     }
@@ -40,7 +39,7 @@ public class ResetValueCommand extends Command
      * 3) the value set for that property is not the default
      * @see org.eclipse.gef.commands.Command#canExecute()
      */
-    public boolean canExecute() 
+    public boolean canExecute()
     {
         boolean answer = false;
         if (target != null && propertyName != null) {
@@ -56,7 +55,7 @@ public class ResetValueCommand extends Command
      * Caches the undo value and invokes redo()
      * @see org.eclipse.gef.commands.Command#execute()
      */
-    public void execute() 
+    public void execute()
     {
         undoValue = target.getPropertyValue(propertyName);
         if (undoValue instanceof IPropertySource) {
@@ -69,7 +68,7 @@ public class ResetValueCommand extends Command
      * Sets the IPropertySource.
      * @param propSource the IPropertySource whose property has to be reset
      */
-    public void setTarget(IPropertySource propSource) 
+    public void setTarget(IPropertySource propSource)
     {
         target = propSource;
     }
@@ -78,7 +77,7 @@ public class ResetValueCommand extends Command
      * Resets the specified property on the specified IPropertySource
      * @see org.eclipse.gef.commands.Command#redo()
      */
-    public void redo() 
+    public void redo()
     {
         target.resetPropertyValue(propertyName);
     }
@@ -87,16 +86,16 @@ public class ResetValueCommand extends Command
      * Sets the property that is to be reset.
      * @param pName the property to be reset
      */
-    public void setPropertyId(Object pName) 
+    public void setPropertyId(Object pName)
     {
         propertyName = pName;
     }
 
     /**
-     * Restores the non-default value that was reset. 
+     * Restores the non-default value that was reset.
      * @see org.eclipse.gef.commands.Command#undo()
      */
-    public void undo() 
+    public void undo()
     {
         target.setPropertyValue(propertyName, undoValue);
     }

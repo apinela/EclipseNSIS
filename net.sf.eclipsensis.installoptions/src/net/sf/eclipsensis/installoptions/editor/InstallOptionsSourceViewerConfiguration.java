@@ -12,24 +12,19 @@ package net.sf.eclipsensis.installoptions.editor;
 import java.util.*;
 
 import net.sf.eclipsensis.editor.codeassist.NSISAnnotationHover;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.editor.annotation.INIProblemAnnotation;
 import net.sf.eclipsensis.installoptions.editor.text.*;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.contentassist.*;
+import org.eclipse.jface.text.presentation.*;
 import org.eclipse.jface.text.quickassist.*;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.source.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.*;
 
 public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfiguration

@@ -10,11 +10,9 @@
 package net.sf.eclipsensis.util;
 
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
@@ -70,7 +68,7 @@ public class NSISValidator implements INSISConstants
     private NSISValidator()
     {
     }
-    
+
     public static boolean isCVSVersion(Version v)
     {
         try {

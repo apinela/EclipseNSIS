@@ -13,8 +13,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.settings.INSISHomeListener;
-import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -26,7 +25,7 @@ public class NSISInstallElementFactory
     private static final String TYPE_ALIASES = "type.aliases"; //$NON-NLS-1$
     private static final String PRELOAD_INSTALLELEMENTS = "preload.installelements"; //$NON-NLS-1$
     private static final String VALID_TYPES = "valid.types"; //$NON-NLS-1$
-    
+
     private static final ResourceBundle cBundle;
     private static final Map cTypeAliases = new HashMap();
     private static final Set cValidTypes = new HashSet();
@@ -44,7 +43,7 @@ public class NSISInstallElementFactory
         ResourceBundle bundle;
         try {
             bundle = ResourceBundle.getBundle(NSISInstallElementFactory.class.getName());
-        } 
+        }
         catch (MissingResourceException x) {
             bundle = null;
         }
@@ -70,7 +69,7 @@ public class NSISInstallElementFactory
         }
         EclipseNSISPlugin.getDefault().registerService(new IEclipseNSISService() {
             private boolean mStarted = false;
-            
+
             public void start(IProgressMonitor monitor)
             {
                 loadTypes(monitor);
@@ -111,12 +110,12 @@ public class NSISInstallElementFactory
             }
         }
     }
-    
+
     public static String getAlias(String type)
     {
         return (String)cTypeAliases.get(type);
     }
-    
+
     private static void loadTypes(IProgressMonitor monitor)
     {
         Version nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();

@@ -15,18 +15,13 @@ package net.sf.eclipsensis.console;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.actions.NSISCancelAction;
 import net.sf.eclipsensis.makensis.*;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.jface.text.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.*;
 

@@ -10,21 +10,19 @@
 package net.sf.eclipsensis.editor.outline;
 
 import java.util.*;
+import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.NSISOutlineFilterDialog;
 import net.sf.eclipsensis.editor.NSISEditor;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.CommonImages;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;

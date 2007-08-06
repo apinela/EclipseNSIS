@@ -11,8 +11,7 @@ package net.sf.eclipsensis.installoptions.figures;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class UneditableElementFigure extends SWTControlFigure implements IUneditableElementFigure

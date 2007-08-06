@@ -13,8 +13,7 @@ package net.sf.eclipsensis.installoptions.edit;
 import net.sf.eclipsensis.installoptions.edit.dialog.InstallOptionsDialogEditPart;
 import net.sf.eclipsensis.installoptions.model.*;
 
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.EditPartFactory;
+import org.eclipse.gef.*;
 
 public class GraphicalPartFactory implements EditPartFactory
 {

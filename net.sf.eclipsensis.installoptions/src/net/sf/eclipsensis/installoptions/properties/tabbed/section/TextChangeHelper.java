@@ -14,8 +14,7 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 
 public abstract class TextChangeHelper

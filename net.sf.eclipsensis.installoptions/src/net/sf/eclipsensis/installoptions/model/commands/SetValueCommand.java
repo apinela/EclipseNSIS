@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -14,8 +14,7 @@ import java.text.MessageFormat;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.IPropertySource2;
+import org.eclipse.ui.views.properties.*;
 
 public class SetValueCommand extends Command
 {
@@ -25,22 +24,22 @@ public class SetValueCommand extends Command
     protected boolean mResetOnUndo;
     protected IPropertySource mTarget;
 
-    public SetValueCommand() 
+    public SetValueCommand()
     {
         super(""); //$NON-NLS-1$
     }
 
-    public SetValueCommand(String propLabel) 
+    public SetValueCommand(String propLabel)
     {
         super(MessageFormat.format(InstallOptionsPlugin.getResourceString("set.value.command.name"), new Object[]{propLabel}).trim()); //$NON-NLS-1$
     }
 
-    public boolean canExecute() 
+    public boolean canExecute()
     {
         return true;
     }
 
-    public void execute() 
+    public void execute()
     {
         boolean wasPropertySet = getTarget().isPropertySet(mPropertyName);
         mUndoValue = getTarget().getPropertyValue(mPropertyName);
@@ -62,32 +61,32 @@ public class SetValueCommand extends Command
         }
     }
 
-    public IPropertySource getTarget() 
+    public IPropertySource getTarget()
     {
         return mTarget;
     }
 
-    public void setTarget(IPropertySource target) 
+    public void setTarget(IPropertySource target)
     {
         mTarget = target;
     }
 
-    public void redo() 
+    public void redo()
     {
         execute();
     }
 
-    public void setPropertyId(Object pName) 
+    public void setPropertyId(Object pName)
     {
         mPropertyName = pName;
     }
 
-    public void setPropertyValue(Object val) 
+    public void setPropertyValue(Object val)
     {
         mPropertyValue = val;
     }
 
-    public void undo() 
+    public void undo()
     {
         if (mResetOnUndo) {
             getTarget().resetPropertyValue(mPropertyName);

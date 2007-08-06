@@ -15,15 +15,12 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabelProvider;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.TextPropertySectionCreator;
-import net.sf.eclipsensis.installoptions.properties.validators.NSISEscapedStringLengthValidator;
-import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
+import net.sf.eclipsensis.installoptions.properties.validators.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.jface.viewers.ICellEditorValidator;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
@@ -41,7 +38,7 @@ public class InstallOptionsText extends InstallOptionsEditableElement
 
     protected ILabelProvider getDisplayLabelProvider()
     {
-        if(getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) && 
+        if(getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) &&
            getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE)) {
             return MultiLineLabelProvider.INSTANCE;
         }
@@ -117,7 +114,7 @@ public class InstallOptionsText extends InstallOptionsEditableElement
                 ICellEditorValidator mMultiLineValidator = new NSISEscapedStringLengthValidator(InstallOptionsModel.PROPERTY_STATE);
                 public String isValid(Object value)
                 {
-                    if(getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) && 
+                    if(getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) &&
                        getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE)) {
                         return mMultiLineValidator.isValid(value);
                     }
@@ -125,7 +122,7 @@ public class InstallOptionsText extends InstallOptionsEditableElement
                         return mSingleLineValidator.isValid(value);
                     }
                 }
-                
+
             });
             if(getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE)) {
                 descriptor.setMultiLine(getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE));

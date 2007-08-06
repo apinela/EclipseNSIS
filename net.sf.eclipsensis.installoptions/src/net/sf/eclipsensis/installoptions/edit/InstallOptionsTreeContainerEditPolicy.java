@@ -11,18 +11,14 @@ package net.sf.eclipsensis.installoptions.edit;
 
 import java.util.List;
 
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
-import net.sf.eclipsensis.installoptions.model.commands.CreateCommand;
-import net.sf.eclipsensis.installoptions.model.commands.ReorderPartCommand;
+import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.commands.*;
 
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.*;
 import org.eclipse.gef.editpolicies.TreeContainerEditPolicy;
-import org.eclipse.gef.requests.ChangeBoundsRequest;
-import org.eclipse.gef.requests.CreateRequest;
+import org.eclipse.gef.requests.*;
 
 public class InstallOptionsTreeContainerEditPolicy extends TreeContainerEditPolicy
 {

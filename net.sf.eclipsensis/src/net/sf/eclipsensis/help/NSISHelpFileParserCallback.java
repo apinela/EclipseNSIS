@@ -11,12 +11,10 @@ package net.sf.eclipsensis.help;
 
 import java.io.File;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.html.HTML.Attribute;
-import javax.swing.text.html.HTML.Tag;
+import javax.swing.text.html.HTML.*;
 import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 
 import net.sf.eclipsensis.util.IOUtility;

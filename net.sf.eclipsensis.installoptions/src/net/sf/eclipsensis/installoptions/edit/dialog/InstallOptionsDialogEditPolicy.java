@@ -12,15 +12,12 @@ package net.sf.eclipsensis.installoptions.edit.dialog;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.ReorderPartCommand;
 import net.sf.eclipsensis.installoptions.requests.ReorderPartRequest;
 
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.Request;
-import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.commands.UnexecutableCommand;
+import org.eclipse.gef.*;
+import org.eclipse.gef.commands.*;
 import org.eclipse.gef.editpolicies.ContainerEditPolicy;
 import org.eclipse.gef.requests.CreateRequest;
 

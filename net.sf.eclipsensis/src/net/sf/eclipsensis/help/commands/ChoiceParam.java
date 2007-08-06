@@ -3,14 +3,13 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.XMLUtil;
@@ -22,7 +21,7 @@ public class ChoiceParam extends ComboParam
     public static final String ATTR_DISPLAY = "display"; //$NON-NLS-1$
     public static final String TAG_CHOICE = "choice"; //$NON-NLS-1$
     protected ComboEntry[] mChoices;
-    
+
     public ChoiceParam(Node node)
     {
         super(node);

@@ -13,13 +13,10 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.MultiLineLabelProvider;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.LabelPropertySectionCreator;
-import net.sf.eclipsensis.installoptions.properties.validators.NSISEscapedStringLengthValidator;
-import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
+import net.sf.eclipsensis.installoptions.properties.validators.*;
 
-import org.eclipse.jface.viewers.ICellEditorValidator;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsLabel extends InstallOptionsUneditableElement

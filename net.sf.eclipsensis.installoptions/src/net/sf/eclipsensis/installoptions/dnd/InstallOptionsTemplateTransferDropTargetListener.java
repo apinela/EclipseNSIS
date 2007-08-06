@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.dnd;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElementFactory;
@@ -18,8 +17,7 @@ import net.sf.eclipsensis.installoptions.template.*;
 
 import org.eclipse.gef.*;
 import org.eclipse.gef.dnd.TemplateTransferDropTargetListener;
-import org.eclipse.gef.requests.CreateRequest;
-import org.eclipse.gef.requests.CreationFactory;
+import org.eclipse.gef.requests.*;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTransferDropTargetListener

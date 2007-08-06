@@ -10,16 +10,12 @@
 package net.sf.eclipsensis.installoptions.figures;
 
 import net.sf.eclipsensis.installoptions.edit.link.InstallOptionsLinkEditPart.ILinkFigure;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class LinkFigure extends LabelFigure implements ILinkFigure

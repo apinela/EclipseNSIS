@@ -13,10 +13,8 @@ import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.*;
-import org.eclipse.jface.text.presentation.IPresentationReconciler;
-import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
-import org.eclipse.jface.text.rules.ITokenScanner;
+import org.eclipse.jface.text.presentation.*;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;

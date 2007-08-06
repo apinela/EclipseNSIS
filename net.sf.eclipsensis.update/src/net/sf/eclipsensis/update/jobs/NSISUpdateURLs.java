@@ -12,8 +12,7 @@ package net.sf.eclipsensis.update.jobs;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 

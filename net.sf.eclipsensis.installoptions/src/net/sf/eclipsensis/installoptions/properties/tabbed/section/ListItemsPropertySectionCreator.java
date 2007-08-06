@@ -3,38 +3,31 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsListItems;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.*;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.CommonImages;
-import net.sf.eclipsensis.viewer.CollectionContentProvider;
-import net.sf.eclipsensis.viewer.TableViewerUpDownMover;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.viewer.*;
 
-import org.eclipse.gef.commands.CompoundCommand;
-import org.eclipse.gef.commands.ForwardUndoCompoundCommand;
+import org.eclipse.gef.commands.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
@@ -45,7 +38,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
     {
         super(element);
     }
-    
+
     protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
         parent = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
@@ -74,7 +67,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
             gridLayout.marginHeight = 0;
             gridLayout.marginTop = 2;
             parent.setLayout(gridLayout);
-            
+
             final Table table = widgetFactory.createTable(parent,SWT.FLAT|SWT.CHECK|SWT.MULTI);
             GC gc = new GC(table);
             gc.setFont(JFaceResources.getDialogFont());
@@ -107,7 +100,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                     }
                     return 0;
                 }
-                
+
             });
             final InstallOptionsListItems widget = (InstallOptionsListItems)getWidget();
             final List listItems = new ArrayList(widget.getListItems());
@@ -131,7 +124,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                         if(!Common.stringsAreEqual(oldState, newState, true)) {
                             String error = stateValidator.isValid(newState);
                             if(Common.isEmpty(error)) {
-                                commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_STATE, 
+                                commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_STATE,
                                         stateDescriptor.getDisplayName(), getWidget(), newState);
                             }
                             else {
@@ -170,7 +163,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                     }
                     finally {
                         nonUserChange[0]=false;
-                    }                    
+                    }
                 }
             };
             widget.addPropertyChangeListener(listener);
@@ -180,14 +173,14 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                     widget.removePropertyChangeListener(listener);
                 }
             });
-            
+
             Composite buttons = widgetFactory.createComposite(parent);
             buttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
             GridLayout layout = new GridLayout(2, true);
             layout.marginHeight = layout.marginWidth = 0;
             buttons.setLayout(layout);
             createListAndStateButtons(buttons, viewer, widgetFactory, commandHelper);
-            
+
             CLabel l = widgetFactory.createCLabel(parent, InstallOptionsPlugin.getResourceString("listitems.state.checked.items.message"), SWT.FLAT); //$NON-NLS-1$
             FontData[] fd = l.getFont().getFontData();
             for (int i = 0; i < fd.length; i++) {
@@ -210,14 +203,14 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         }
         return null;
     }
-    
+
     protected void createListAndStateButtons(Composite buttons, final CheckboxTableViewer viewer, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
         final IPropertyDescriptor listItemsDescriptor = getWidget().getPropertyDescriptor(InstallOptionsModel.PROPERTY_LISTITEMS);
         final ICellEditorValidator listItemsValidator = (ICellEditorValidator)Common.getObjectFieldValue(listItemsDescriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
         final IPropertyDescriptor stateDescriptor = getWidget().getPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE);
         final ICellEditorValidator stateValidator = (ICellEditorValidator)Common.getObjectFieldValue(listItemsDescriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
-        
+
         final TextCellEditor textEditor = new TextCellEditor(viewer.getTable());
         ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
             public void verifyText(VerifyEvent e) {
@@ -259,7 +252,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                     }
                     String error = listItemsValidator.isValid(list);
                     if(Common.isEmpty(error)) {
-                        CompoundCommand command = commandHelper.createPropertyChangedCommand(InstallOptionsModel.PROPERTY_LISTITEMS, 
+                        CompoundCommand command = commandHelper.createPropertyChangedCommand(InstallOptionsModel.PROPERTY_LISTITEMS,
                                     listItemsDescriptor.getDisplayName(), getWidget(), list);
                         List oldState = Common.tokenizeToList(((InstallOptionsListItems)getWidget()).getState(), IInstallOptionsConstants.LIST_SEPARATOR);
                         if(Common.collectionContainsIgnoreCase(oldState, oldValue)) {
@@ -272,7 +265,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                                         error = stateValidator.isValid(newState);
                                         if(Common.isEmpty(error)) {
                                             CompoundCommand cmd = new ForwardUndoCompoundCommand(command.getLabel());
-                                            cmd.add(commandHelper.createPropertyChangedCommand(InstallOptionsModel.PROPERTY_STATE, 
+                                            cmd.add(commandHelper.createPropertyChangedCommand(InstallOptionsModel.PROPERTY_STATE,
                                                         stateDescriptor.getDisplayName(), getWidget(), newState));
                                             cmd.add(command);
                                             command = cmd;
@@ -283,7 +276,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                                         break;
                                     }
                                 }
-                                
+
                             }
                         }
                         if(command != null && command.size() > 0) {
@@ -321,7 +314,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                     list.add(item);
                     String error = listItemsValidator.isValid(list);
                     if(Common.isEmpty(error)) {
-                        commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS, 
+                        commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS,
                                 listItemsDescriptor.getDisplayName(), getWidget(), list);
                         viewer.refresh(false);
                         viewer.setSelection(new StructuredSelection(item));
@@ -352,7 +345,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                         }
                         String error = listItemsValidator.isValid(list);
                         if(Common.isEmpty(error)) {
-                            commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS, 
+                            commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS,
                                     listItemsDescriptor.getDisplayName(), getWidget(), list);
                             viewer.refresh(false);
                         }
@@ -378,7 +371,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
             {
                 String error = listItemsValidator.isValid(elements);
                 if(Common.isEmpty(error)) {
-                    commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS, 
+                    commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS,
                             listItemsDescriptor.getDisplayName(), getWidget(), elements);
                 }
                 else {

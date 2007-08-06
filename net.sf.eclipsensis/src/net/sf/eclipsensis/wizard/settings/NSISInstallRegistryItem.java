@@ -11,8 +11,7 @@ package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.wizard.INSISWizardConstants;
-import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
+import net.sf.eclipsensis.wizard.*;
 
 public abstract class NSISInstallRegistryItem extends AbstractNSISInstallItem
 {
@@ -88,8 +87,8 @@ public abstract class NSISInstallRegistryItem extends AbstractNSISInstallItem
             return super.doValidate();
         }
     }
-    
-    //Stupid hacks because serialization doesn't like it when a super class gets abstracted out 
+
+    //Stupid hacks because serialization doesn't like it when a super class gets abstracted out
     //from an existing class.
     protected abstract int getRootKeyInternal();
     protected abstract void setRootKeyInternal(int rootKey);

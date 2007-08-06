@@ -13,10 +13,8 @@ import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 public class NSISConsoleLineProcessor implements INSISConsoleLineProcessor
 {

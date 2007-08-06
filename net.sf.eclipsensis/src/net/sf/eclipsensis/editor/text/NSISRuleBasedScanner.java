@@ -16,8 +16,7 @@ import net.sf.eclipsensis.settings.IPropertyAdaptable;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.*;
 
 public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner implements NSISScanner, IPropertyAdaptable

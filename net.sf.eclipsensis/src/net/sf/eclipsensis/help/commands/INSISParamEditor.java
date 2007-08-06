@@ -9,11 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 
 public interface INSISParamEditor
 {

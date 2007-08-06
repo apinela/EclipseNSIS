@@ -9,12 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.template;
 
-import net.sf.eclipsensis.template.AbstractTemplate;
-import net.sf.eclipsensis.template.AbstractTemplateReaderWriter;
+import net.sf.eclipsensis.template.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 public class NSISWizardTemplateReaderWriter extends AbstractTemplateReaderWriter
 {

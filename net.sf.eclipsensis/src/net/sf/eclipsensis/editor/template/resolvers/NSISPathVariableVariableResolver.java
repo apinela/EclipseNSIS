@@ -11,8 +11,7 @@ package net.sf.eclipsensis.editor.template.resolvers;
 
 import net.sf.eclipsensis.help.NSISKeywords;
 
-import org.eclipse.jface.text.templates.TemplateContext;
-import org.eclipse.jface.text.templates.TemplateVariableResolver;
+import org.eclipse.jface.text.templates.*;
 
 public class NSISPathVariableVariableResolver extends TemplateVariableResolver
 {

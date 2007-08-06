@@ -12,8 +12,7 @@ package net.sf.eclipsensis.makensis;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;

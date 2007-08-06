@@ -10,11 +10,9 @@
 package net.sf.eclipsensis.update.jobs;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.text.MessageFormat;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.net.*;

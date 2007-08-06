@@ -149,7 +149,7 @@ public class JARSigner extends AbstractJARUtil
             if(!Common.isEmptyArray(files)) {
                 for (int i = 0; i < files.length; i++) {
                     try {
-                        (files[i]).refreshLocal(IResource.DEPTH_ONE,null);
+                        files[i].refreshLocal(IResource.DEPTH_ONE,null);
                     }
                     catch (CoreException e) {
                         e.printStackTrace();

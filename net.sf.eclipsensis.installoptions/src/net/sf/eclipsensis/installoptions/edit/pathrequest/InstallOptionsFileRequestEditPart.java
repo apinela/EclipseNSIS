@@ -12,10 +12,8 @@ package net.sf.eclipsensis.installoptions.edit.pathrequest;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.IExtendedEditSupport;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsFileRequest;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.edit.*;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.ModifyFilterCommand;
 import net.sf.eclipsensis.installoptions.properties.dialogs.FileFilterDialog;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;

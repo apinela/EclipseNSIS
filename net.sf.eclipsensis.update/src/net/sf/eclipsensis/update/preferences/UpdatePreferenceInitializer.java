@@ -21,7 +21,7 @@ public class UpdatePreferenceInitializer extends AbstractPreferenceInitializer i
     {
         IEclipsePreferences prefs = new DefaultScope().getNode(EclipseNSISUpdatePlugin.getDefault().getPluginId());
 
-        prefs.putInt(PLUGIN_PREFERENCES_VERSION, 0); 
+        prefs.putInt(PLUGIN_PREFERENCES_VERSION, 0);
 
         prefs.putBoolean(USE_HTTP_PROXY, false);
         prefs.put(HTTP_PROXY_HOST, ""); //$NON-NLS-1$

@@ -12,8 +12,7 @@ package net.sf.eclipsensis.dialogs;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISSettingsEditor;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyPage;
 

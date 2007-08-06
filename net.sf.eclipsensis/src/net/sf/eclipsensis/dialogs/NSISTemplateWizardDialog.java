@@ -11,8 +11,7 @@ package net.sf.eclipsensis.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 
 public class NSISTemplateWizardDialog extends NSISWizardDialog
 {

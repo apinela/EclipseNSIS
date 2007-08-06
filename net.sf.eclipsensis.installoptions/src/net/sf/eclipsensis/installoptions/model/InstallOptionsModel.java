@@ -14,12 +14,10 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
-import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.*;
 
 public class InstallOptionsModel implements IPropertyChangeListener
 {

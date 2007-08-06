@@ -11,10 +11,8 @@ package net.sf.eclipsensis.installoptions.editor.text;
 
 import java.util.Map;
 
-import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
-import net.sf.eclipsensis.editor.text.NSISTextUtility;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.editor.text.*;
+import net.sf.eclipsensis.installoptions.*;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.*;

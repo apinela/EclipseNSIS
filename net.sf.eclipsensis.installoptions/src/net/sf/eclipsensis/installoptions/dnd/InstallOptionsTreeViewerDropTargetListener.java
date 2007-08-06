@@ -15,8 +15,7 @@ import org.eclipse.gef.*;
 import org.eclipse.gef.commands.*;
 import org.eclipse.gef.dnd.AbstractTransferDropTargetListener;
 import org.eclipse.gef.requests.ChangeBoundsRequest;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.*;
 
 public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransferDropTargetListener
 {

@@ -9,15 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.dialogs;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsGridLayer;
 
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.gef.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;

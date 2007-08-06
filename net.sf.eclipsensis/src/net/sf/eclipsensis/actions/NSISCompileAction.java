@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
-import net.sf.eclipsensis.makensis.MakeNSISResults;
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.NSISCompileTestUtility;
 

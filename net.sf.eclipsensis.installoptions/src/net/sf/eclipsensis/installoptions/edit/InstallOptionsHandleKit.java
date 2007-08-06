@@ -18,8 +18,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.*;
 import org.eclipse.gef.handles.*;
 import org.eclipse.gef.tools.DragEditPartsTracker;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 
 public class InstallOptionsHandleKit
 {

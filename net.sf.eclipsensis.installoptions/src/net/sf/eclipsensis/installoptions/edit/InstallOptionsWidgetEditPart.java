@@ -12,25 +12,20 @@ package net.sf.eclipsensis.installoptions.edit;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.figures.*;
 import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
-import net.sf.eclipsensis.installoptions.requests.ReorderPartRequest;
+import net.sf.eclipsensis.installoptions.requests.*;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.gef.*;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.tools.*;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.swt.accessibility.AccessibleControlEvent;
-import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.accessibility.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPart implements IDirectEditLabelProvider, IExtendedEditLabelProvider

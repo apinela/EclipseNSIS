@@ -10,12 +10,10 @@
 package net.sf.eclipsensis.installoptions.edit.line;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
-import net.sf.eclipsensis.installoptions.figures.LineFigure;
+import net.sf.eclipsensis.installoptions.figures.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsLine;
 
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
@@ -23,7 +21,7 @@ public abstract class InstallOptionsLineEditPart extends InstallOptionsWidgetEdi
 {
     protected String getDirectEditLabelProperty()
     {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 
     protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
@@ -44,6 +42,6 @@ public abstract class InstallOptionsLineEditPart extends InstallOptionsWidgetEdi
 
     protected String getAccessibleControlEventResult()
     {
-        return "";
+        return ""; //$NON-NLS-1$
     }
 }

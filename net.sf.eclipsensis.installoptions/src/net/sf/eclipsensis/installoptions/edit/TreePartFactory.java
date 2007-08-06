@@ -12,8 +12,7 @@ package net.sf.eclipsensis.installoptions.edit;
 import net.sf.eclipsensis.installoptions.edit.dialog.InstallOptionsDialogTreeEditPart;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
 
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.EditPartFactory;
+import org.eclipse.gef.*;
 
 public class TreePartFactory implements EditPartFactory
 {

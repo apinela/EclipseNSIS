@@ -9,18 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.NSISDocumentSetupParticipant;
-import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewer;
-import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewerConfiguration;
+import net.sf.eclipsensis.editor.template.*;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -100,7 +96,7 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
 
         return ok;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
      */

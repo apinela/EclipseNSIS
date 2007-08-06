@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.script;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 public abstract class AbstractNSISScriptElementContainer extends AbstractNSISScriptElement
 {
@@ -82,7 +81,7 @@ public abstract class AbstractNSISScriptElementContainer extends AbstractNSISScr
     {
         return mElements.size();
     }
-    
+
     public INSISScriptElement get(int n)
     {
         return (INSISScriptElement)mElements.get(n);

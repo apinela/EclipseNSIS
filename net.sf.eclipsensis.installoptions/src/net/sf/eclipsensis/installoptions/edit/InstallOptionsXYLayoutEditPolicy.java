@@ -9,11 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;

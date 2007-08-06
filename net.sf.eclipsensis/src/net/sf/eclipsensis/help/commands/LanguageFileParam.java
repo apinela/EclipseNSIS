@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -12,8 +12,7 @@ package net.sf.eclipsensis.help.commands;
 import java.util.*;
 
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.lang.NSISLanguage;
-import net.sf.eclipsensis.lang.NSISLanguageManager;
+import net.sf.eclipsensis.lang.*;
 import net.sf.eclipsensis.util.Common;
 
 import org.w3c.dom.Node;

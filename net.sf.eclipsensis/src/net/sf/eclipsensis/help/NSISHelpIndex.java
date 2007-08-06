@@ -3,35 +3,33 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.util.*;
 
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.util.*;
 
 public class NSISHelpIndex implements Serializable
 {
     private static final long serialVersionUID = 7257547506234414246L;
-    
+
     private static final Comparator cIndexIndexComparator = new Comparator() {
         public int compare(Object o1, Object o2)
         {
             int[] a = (int[])o1;
             int[] b = (int[])o2;
-            
+
             return a[0]-b[0];
         }
     };
@@ -40,7 +38,7 @@ public class NSISHelpIndex implements Serializable
         {
             return getString(o1).compareTo(getString(o2));
         }
-        
+
         private String getString(Object o)
         {
             if(o instanceof String) {
@@ -52,9 +50,9 @@ public class NSISHelpIndex implements Serializable
             return null;
         }
     };
-    
+
     private List mEntries = null;
-    
+
     private transient Map mEntryMap = new CaseInsensitiveMap();
     private transient Map mTitlemap = new CaseInsensitiveMap();
     private int[][] mIndexIndex = null;
@@ -93,11 +91,11 @@ public class NSISHelpIndex implements Serializable
         }
         return title;
     }
-    
+
     NSISHelpIndex()
     {
     }
-    
+
     void addEntry(String name, String url)
     {
         NSISHelpIndexEntry entry = (NSISHelpIndexEntry)mEntryMap.get(name);
@@ -139,7 +137,7 @@ public class NSISHelpIndex implements Serializable
                     }
                     entry = (NSISHelpIndexEntry)mEntries.get(m);
                 }
-                return entry; 
+                return entry;
             }
             return (NSISHelpIndexEntry)mEntries.get(mIndexIndex[n][1]+m);
         }
@@ -225,7 +223,7 @@ public class NSISHelpIndex implements Serializable
         {
             return mSortKey.compareTo(((NSISHelpIndexEntry)o).mSortKey);
         }
-        
+
         private void sort()
         {
             Collections.sort(mURLs);
@@ -240,7 +238,7 @@ public class NSISHelpIndex implements Serializable
         {
             return mName;
         }
-        
+
         public boolean equals(Object other)
         {
             if(other != this) {
@@ -252,7 +250,7 @@ public class NSISHelpIndex implements Serializable
             return true;
         }
     }
-    
+
     public class NSISHelpIndexURL implements Serializable, Comparable
     {
         private static final long serialVersionUID = -3957228848764619499L;
@@ -300,7 +298,7 @@ public class NSISHelpIndex implements Serializable
         private StringBuffer mTitle = new StringBuffer(""); //$NON-NLS-1$
         private boolean mInTitle = false;
         private Reader mReader;
-        
+
         private HTMLTitleParserCallback(Reader reader)
         {
             mReader = reader;

@@ -11,21 +11,17 @@ package net.sf.eclipsensis.installoptions.editor;
 
 import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.template.*;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.palette.*;
-import org.eclipse.gef.tools.AbstractTool;
-import org.eclipse.gef.tools.CreationTool;
+import org.eclipse.gef.tools.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.jface.util.*;
+import org.eclipse.swt.events.*;
 
 public class InstallOptionsPaletteProvider
 {

@@ -116,13 +116,15 @@ public class ParseException extends Exception {
     String retval = "Encountered \""; //$NON-NLS-1$
     Token tok = currentToken.next;
     for (int i = 0; i < maxSize; i++) {
-      if (i != 0) retval += " "; //$NON-NLS-1$
+      if (i != 0) {
+        retval += " "; //$NON-NLS-1$
+    }
       if (tok.kind == 0) {
         retval += tokenImage[0];
         break;
       }
       retval += add_escapes(tok.image);
-      tok = tok.next; 
+      tok = tok.next;
     }
     retval += "\" at line " + currentToken.next.beginLine + ", column " + currentToken.next.beginColumn; //$NON-NLS-1$ //$NON-NLS-2$
     retval += "." + eol; //$NON-NLS-1$
@@ -139,7 +141,7 @@ public class ParseException extends Exception {
    * The end of line string for this machine.
    */
   protected String eol = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
- 
+
   /**
    * Used to convert raw characters to their escaped version
    * when these raw version cannot be used as part of an ASCII

@@ -11,6 +11,7 @@ package net.sf.eclipsensis.wizard;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.*;
@@ -18,14 +19,11 @@ import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.VerifyListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractNSISWizardPage extends WizardPage implements INSISWizardConstants, IPageChangedListener

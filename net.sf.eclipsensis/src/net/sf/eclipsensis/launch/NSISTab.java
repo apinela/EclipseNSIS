@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -12,30 +12,27 @@ package net.sf.eclipsensis.launch;
 
 import net.sf.eclipsensis.settings.*;
 
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 abstract class NSISTab extends AbstractLaunchConfigurationTab implements INSISSettingsEditorPageListener
 {
     protected NSISSettingsEditorPage mPage;
     protected NSISLaunchSettings mSettings;
-    
+
     public NSISTab()
     {
         mSettings = new NSISLaunchSettings(NSISPreferences.INSTANCE,null,createSettingsFilter());
         mPage = createPage();
     }
-    
+
     public void createControl(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
@@ -44,7 +41,7 @@ abstract class NSISTab extends AbstractLaunchConfigurationTab implements INSISSe
 
         Control control = mPage.create(composite);
         control.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-        
+
         setControl(composite);
         mPage.addListener(this);
         Dialog.applyDialogFont(parent);
@@ -105,7 +102,7 @@ abstract class NSISTab extends AbstractLaunchConfigurationTab implements INSISSe
                         table.removeControlListener(this);
                         final Point p = table.getSize();
                         table.getShell().getDisplay().asyncExec(new Runnable() {
-                            public void run() 
+                            public void run()
                             {
                                 if(!table.isDisposed()) {
                                     p.x -= 19;
@@ -119,10 +116,10 @@ abstract class NSISTab extends AbstractLaunchConfigurationTab implements INSISSe
                         ok = true;
                     }
                 }
-            }  
+            }
         };
     }
-    
+
     protected abstract IFilter createSettingsFilter();
     protected abstract NSISSettingsEditorPage createPage();
 }

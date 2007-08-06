@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -18,11 +18,11 @@ import org.eclipse.swt.widgets.Canvas;
 class NSISConsoleAnnotation extends Annotation implements IAnnotationPresentation
 {
     public static final String TYPE = "net.sf.eclipsensis.console.nsisConsoleAnnotation"; //$NON-NLS-1$
-    
+
     private Image mImage;
     private Position mPosition;
     private NSISConsoleLine mLine;
-    
+
     public NSISConsoleAnnotation(Image image, Position pos, NSISConsoleLine line)
     {
         super();

@@ -11,11 +11,9 @@ package net.sf.eclipsensis.installoptions.edit.pathrequest;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditPart;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
-import net.sf.eclipsensis.installoptions.figures.PathRequestFigure;
+import net.sf.eclipsensis.installoptions.figures.*;
 
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.*;
 import org.eclipse.swt.widgets.Composite;
 
 public abstract class InstallOptionsPathRequestEditPart extends InstallOptionsEditableElementEditPart

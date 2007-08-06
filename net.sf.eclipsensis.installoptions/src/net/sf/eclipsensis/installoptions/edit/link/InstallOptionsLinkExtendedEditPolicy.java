@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.edit.link;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.ModifyTxtColorCommand;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
 

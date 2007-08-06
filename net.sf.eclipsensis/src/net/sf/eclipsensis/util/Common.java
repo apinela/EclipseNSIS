@@ -12,22 +12,20 @@
 package net.sf.eclipsensis.util;
 
 import java.beans.*;
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.net.URL;
 import java.rmi.dgc.VMID;
 import java.text.BreakIterator;
 import java.util.*;
+import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 

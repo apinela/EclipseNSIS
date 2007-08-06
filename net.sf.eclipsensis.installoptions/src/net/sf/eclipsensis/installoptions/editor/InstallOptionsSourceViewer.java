@@ -11,14 +11,11 @@ package net.sf.eclipsensis.installoptions.editor;
 
 import net.sf.eclipsensis.editor.NSISScrollTipHelper;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 
 import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.jface.util.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsSourceViewer extends InstallOptionsSourcePreviewer

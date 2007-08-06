@@ -3,14 +3,13 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.config;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.ImageManager;
@@ -18,22 +17,18 @@ import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.WizardSelectionPage;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NSISConfigSelectionPage extends WizardSelectionPage
 {
     public static final String ID = "nsisConfigSelectionPage"; //$NON-NLS-1$
     private static ImageDescriptor cImage = EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("wizard.title.image")); //$NON-NLS-1$
-    
+
     public NSISConfigSelectionPage()
     {
         super(ID);
@@ -51,7 +46,7 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
         Label l = new Label(parent,SWT.NONE);
         l.setFont(wizardFont);
         l.setText(EclipseNSISPlugin.getResourceString("config.wizard.welcome.message")); //$NON-NLS-1$
-        
+
         Group g = new Group(parent,SWT.NONE);
         g.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         g.setLayout(new GridLayout(1,false));
@@ -59,13 +54,13 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
         l.setText(EclipseNSISPlugin.getResourceString("available.config.wizards.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         l.setFont(wizardFont);
-        
+
         Table table = new Table(g,SWT.SINGLE|SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
         table.setFont(wizardFont);
         table.setLinesVisible(false);
         table.setHeaderVisible(false);
         table.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-        
+
         TableViewer viewer = new TableViewer(table);
         viewer.setContentProvider(new CollectionContentProvider());
         viewer.setLabelProvider(new LabelProvider() {
@@ -93,7 +88,7 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
                 }
                 return super.getText(element);
             }
-            
+
         });
         viewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event)
@@ -131,7 +126,7 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
         }
         setControl(parent);
     }
-    
+
     public boolean canFinishEarly()
     {
         NSISConfigWizardNode node = (NSISConfigWizardNode)getSelectedNode();

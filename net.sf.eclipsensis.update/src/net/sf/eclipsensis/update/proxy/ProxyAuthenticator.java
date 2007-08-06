@@ -3,20 +3,18 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.update.proxy;
 
 import java.net.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 
 public class ProxyAuthenticator extends Authenticator
 {
@@ -29,7 +27,7 @@ public class ProxyAuthenticator extends Authenticator
     private boolean mUseSaved = true;
     private boolean mNeedsSave = false;
     private AuthorizationInfo mAuthorizationInfo = new AuthorizationInfo();
-    
+
     public ProxyAuthenticator(String proxyHost, int proxyPort)
     {
         mProxyHost = proxyHost;
@@ -53,10 +51,10 @@ public class ProxyAuthenticator extends Authenticator
                 mNeedsSave = false;
             }
             mUseSaved = true;
-        }        
+        }
     }
 
-    protected PasswordAuthentication getPasswordAuthentication() 
+    protected PasswordAuthentication getPasswordAuthentication()
     {
         String host = getRequestingHost();
         int port = getRequestingPort();
@@ -81,7 +79,7 @@ public class ProxyAuthenticator extends Authenticator
                 buf.append(":").append(port); //$NON-NLS-1$
             }
         }
-        
+
         if (realm == null) {
             realm = ""; //$NON-NLS-1$
         }
@@ -93,7 +91,7 @@ public class ProxyAuthenticator extends Authenticator
         URL url;
         try {
             url = new URL(protocol, host, port,""); //$NON-NLS-1$
-            
+
             PasswordAuthentication authentication = null;
             if(mProxyHost.equalsIgnoreCase(host) && mProxyPort == port) {
                 if(mUseSaved) { //Use the saved only once. If it fails, we request the user again.
@@ -110,7 +108,7 @@ public class ProxyAuthenticator extends Authenticator
                         catch (Exception e) {
                             user = ""; //$NON-NLS-1$
                         }
-                        
+
                         char[] password;
                         try {
                             password = (char[])map.get(PASSWORD);
@@ -121,7 +119,7 @@ public class ProxyAuthenticator extends Authenticator
                         catch (Exception e) {
                             password = NULL_PASSWORD;
                         }
-                        
+
                         authentication = new PasswordAuthentication(user, password);
                     }
                 }
@@ -146,7 +144,7 @@ public class ProxyAuthenticator extends Authenticator
             return null;
         }
     }
-    
+
     private class AuthorizationInfo
     {
         URL url;

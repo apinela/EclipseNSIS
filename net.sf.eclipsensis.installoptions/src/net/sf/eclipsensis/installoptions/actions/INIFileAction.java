@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
 public abstract class INIFileAction extends Action
 {
     protected InstallOptionsSourceEditor mEditor;
-    
+
     public INIFileAction(InstallOptionsSourceEditor editor)
     {
         mEditor = editor;
@@ -61,13 +61,13 @@ public abstract class INIFileAction extends Action
         }
         if (dirtyList.size() > 0) {
             Collections.sort(dirtyList, new Comparator() {
-    
+
                 private Position getPosition(INISection section)
                 {
                     Position p = section.getPosition();
                     return (p == null?IInstallOptionsConstants.MAX_POSITION:p);
                 }
-    
+
                 public int compare(Object o1, Object o2)
                 {
                     Position p1 = getPosition((INISection)o1);
@@ -112,7 +112,7 @@ public abstract class INIFileAction extends Action
                     Position p = sections[0].getPosition();
                     mEditor.getSelectionProvider().setSelection(new TextSelection(p.getOffset(), p.getLength()));
                 }
-            }                
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
     {
         this(id, displayName, data, data, default1);
     }
-    
+
     public CustomComboBoxPropertyDescriptor(String id, String displayName, Object[] data, Object[] display, int default1)
     {
         super(id, displayName, new String[0]);
@@ -66,7 +66,7 @@ public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
                 Integer i = (Integer)super.doGetValue();
                 return mData[i.intValue()];
             }
-    
+
             protected void doSetValue(Object value)
             {
                 int val = mDefault;

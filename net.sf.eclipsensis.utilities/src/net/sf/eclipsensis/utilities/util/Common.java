@@ -47,7 +47,7 @@ public class Common
         }
         return true;
     }
-    
+
     public static boolean isValidFile(File file)
     {
         return (file != null && file.exists() && file.isFile());

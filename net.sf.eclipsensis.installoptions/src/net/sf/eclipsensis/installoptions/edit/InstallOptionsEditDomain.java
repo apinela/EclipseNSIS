@@ -13,15 +13,12 @@ import java.io.File;
 import java.util.Stack;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.commands.IModelCommandListener;
-import net.sf.eclipsensis.installoptions.model.commands.ModelCommandEvent;
+import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.gef.DefaultEditDomain;
-import org.eclipse.gef.Tool;
+import org.eclipse.gef.*;
 import org.eclipse.gef.commands.*;
 import org.eclipse.gef.tools.SelectionTool;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -65,9 +62,9 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
                         IWorkbenchWindow window = page.getWorkbenchWindow();
                         if (window != null) {
                             mShell = window.getShell();
-                        }                        
-                    }                    
-                }                
+                        }
+                    }
+                }
             }
         }
         return mShell;

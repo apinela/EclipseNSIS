@@ -3,14 +3,13 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
-import net.sf.eclipsensis.installoptions.model.InstallOptionsCombobox;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
 
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -47,7 +46,7 @@ public class ComboboxPropertySectionCreator extends ListItemsPropertySectionCrea
 //                    list.add(item);
 //                    String error = listItemsValidator.isValid(list);
 //                    if(Common.isEmpty(error)) {
-//                        commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS, 
+//                        commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS,
 //                                listItemsDescriptor.getDisplayName(), getWidget(), list);
 //                        viewer.refresh(false);
 //                        viewer.setSelection(new StructuredSelection(item));

@@ -9,16 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.builder;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.ini.*;
-import net.sf.eclipsensis.installoptions.model.IModelListener;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.job.JobScheduler;
+import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.job.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 

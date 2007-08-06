@@ -9,21 +9,17 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.TableResizer;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.ini.INISection;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.ListboxPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
-import net.sf.eclipsensis.util.CaseInsensitiveSet;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -31,10 +27,9 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class InstallOptionsListbox extends InstallOptionsListItems
@@ -95,10 +90,10 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             fireModelCommand(createSetPropertyCommand(InstallOptionsModel.PROPERTY_STATE, newState));
         }
     }
-    
+
     public boolean isMultiSelect()
     {
-        return hasFlag(InstallOptionsModel.FLAGS_MULTISELECT) || 
+        return hasFlag(InstallOptionsModel.FLAGS_MULTISELECT) ||
                hasFlag(InstallOptionsModel.FLAGS_EXTENDEDSELECT);
     }
 

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -13,11 +13,10 @@ import java.net.PasswordAuthentication;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class AuthenticationDialog extends Dialog
@@ -29,10 +28,10 @@ public class AuthenticationDialog extends Dialog
     protected String mRealm;
     protected PasswordAuthentication mAuthentication = null;
 
-    public static PasswordAuthentication getAuthentication(final String host, final String realm) 
+    public static PasswordAuthentication getAuthentication(final String host, final String realm)
     {
         final PasswordAuthentication[] authentication = new PasswordAuthentication[1];
-        
+
         Runnable r = new Runnable() {
             public void run() {
                 authentication[0] = AuthenticationDialog.askForAuthentication(host, realm);
@@ -47,14 +46,14 @@ public class AuthenticationDialog extends Dialog
         return authentication[0];
     }
 
-    protected static PasswordAuthentication askForAuthentication(String host, String message) 
+    protected static PasswordAuthentication askForAuthentication(String host, String message)
     {
         AuthenticationDialog ui = new AuthenticationDialog(null, host, message);
         ui.open();
         return ui.getAuthentication();
     }
 
-    protected AuthenticationDialog(Shell parentShell, String host, String message) 
+    protected AuthenticationDialog(Shell parentShell, String host, String message)
     {
         super(parentShell);
         this.mHost = host;
@@ -68,14 +67,14 @@ public class AuthenticationDialog extends Dialog
         newShell.setText(EclipseNSISUpdatePlugin.getResourceString("authentication.dialog.title")); //$NON-NLS-1$
     }
 
-    public void create() 
+    public void create()
     {
         super.create();
         mUserName.selectAll();
         mUserName.setFocus();
     }
 
-    protected Control createDialogArea(Composite parent) 
+    protected Control createDialogArea(Composite parent)
     {
         Composite main = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -120,7 +119,7 @@ public class AuthenticationDialog extends Dialog
         return mAuthentication;
     }
 
-    protected void okPressed() 
+    protected void okPressed()
     {
         mAuthentication = new PasswordAuthentication(mUserName.getText(), mPassword.getText().toCharArray());
         super.okPressed();

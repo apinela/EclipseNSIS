@@ -11,11 +11,9 @@ package net.sf.eclipsensis.installoptions.properties.editors;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
-import org.eclipse.jface.viewers.DialogCellEditor;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 

@@ -9,10 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.makensis;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class MakeNSISResults implements Serializable
 {

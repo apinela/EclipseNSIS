@@ -9,14 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.*;
 
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ICellEditorValidator;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.*;
 
@@ -28,7 +26,7 @@ public class PositionPropertySource implements IPropertySource
     public static final String ID_BOTTOM = InstallOptionsModel.PROPERTY_BOTTOM;
 
     private static Map cValidators = new HashMap();
-    
+
     static {
         cValidators.put(ID_LEFT, new IntegerCellEditorValidator(InstallOptionsPlugin.getResourceString("left.property.name"))); //$NON-NLS-1$
         cValidators.put(ID_TOP, new IntegerCellEditorValidator(InstallOptionsPlugin.getResourceString("top.property.name"))); //$NON-NLS-1$
@@ -47,11 +45,11 @@ public class PositionPropertySource implements IPropertySource
         validator = (IntegerCellEditorValidator)cValidators.get(ID_TOP);
         PropertyDescriptor topProp = new CustomTextPropertyDescriptor(ID_TOP, validator.getPropertyName());
         topProp.setValidator(validator);
-        
+
         validator = (IntegerCellEditorValidator)cValidators.get(ID_RIGHT);
         PropertyDescriptor rightProp = new CustomTextPropertyDescriptor(ID_RIGHT, validator.getPropertyName());
         rightProp.setValidator(validator);
-        
+
         validator = (IntegerCellEditorValidator)cValidators.get(ID_BOTTOM);
         PropertyDescriptor bottomProp = new CustomTextPropertyDescriptor(ID_BOTTOM, validator.getPropertyName());
         bottomProp.setValidator(validator);
@@ -151,7 +149,7 @@ public class PositionPropertySource implements IPropertySource
     private static class IntegerCellEditorValidator implements ICellEditorValidator
     {
         private String mPropertyName;
-        
+
         public IntegerCellEditorValidator(String propertyName)
         {
             super();

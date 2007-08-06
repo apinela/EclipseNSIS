@@ -12,13 +12,10 @@ package net.sf.eclipsensis.help.search;
 import java.io.IOException;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.help.search.parser.NSISHelpSearchQueryParser;
-import net.sf.eclipsensis.help.search.parser.ParseException;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.help.search.parser.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.QueryParser;

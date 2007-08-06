@@ -40,7 +40,7 @@ public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements
             }
         }
 	}
-	
+
 	/**
 	 * Select the word at the current selection. Return true if successful,
 	 * false otherwise.
@@ -81,7 +81,7 @@ public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements
 
 		return false;
 	}
-	
+
 	/**
 	 * Select the area between the selected bracket and the closing bracket. Return
 	 * true if successful.
@@ -101,7 +101,7 @@ public class NSISDoubleClickSelector extends NSISCharacterPairMatcher implements
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Select the word at the current selection.
 	 */

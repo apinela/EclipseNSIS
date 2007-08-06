@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.launch;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.*;
 
 import org.eclipse.jface.viewers.IFilter;

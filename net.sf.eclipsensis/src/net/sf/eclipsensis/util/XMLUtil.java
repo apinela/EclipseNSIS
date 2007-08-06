@@ -19,8 +19,7 @@ import javax.xml.transform.stream.StreamResult;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
 import org.w3c.dom.*;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.xml.sax.*;
 
 public class XMLUtil
 {

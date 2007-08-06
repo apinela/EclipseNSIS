@@ -12,8 +12,7 @@ package net.sf.eclipsensis.installoptions.properties.descriptors;
 import java.beans.*;
 import java.util.List;
 
-import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.editors.MultiLineTextCellEditor;
 import net.sf.eclipsensis.util.NumberVerifyListener;
 

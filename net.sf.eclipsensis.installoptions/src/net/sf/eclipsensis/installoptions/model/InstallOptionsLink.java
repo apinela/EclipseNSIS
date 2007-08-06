@@ -14,20 +14,16 @@ import java.util.List;
 import net.sf.eclipsensis.INSISVersions;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
-import net.sf.eclipsensis.installoptions.properties.descriptors.CustomColorPropertyDescriptor;
-import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
-import net.sf.eclipsensis.installoptions.properties.tabbed.section.LinkPropertySectionCreator;
+import net.sf.eclipsensis.installoptions.properties.descriptors.*;
+import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Version;
 
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
 
 public class InstallOptionsLink extends InstallOptionsLabel
 {

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -11,10 +11,8 @@ package net.sf.eclipsensis.editor.codeassist;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.jface.text.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 
 public class WrappingInformationPresenter implements DefaultInformationControl.IInformationPresenter
@@ -22,7 +20,7 @@ public class WrappingInformationPresenter implements DefaultInformationControl.I
     static final String BREAK_CHARS = ",;|-.?!:"; //$NON-NLS-1$
 
     private String mIndent=""; //$NON-NLS-1$
-    
+
     public WrappingInformationPresenter()
     {
         this("  "); //$NON-NLS-1$
@@ -57,7 +55,7 @@ public class WrappingInformationPresenter implements DefaultInformationControl.I
                         boolean previousWasWhitespace = false;
                         boolean init = false;
                         int index;
-                        
+
                         for (int i = 0; i < chars.length; i++) {
                             if (Character.isWhitespace(chars[i])) {
                                 previousWasWhitespace = true;
@@ -112,7 +110,7 @@ public class WrappingInformationPresenter implements DefaultInformationControl.I
         }
         finally {
             gc.dispose();
-        }            
+        }
         return hoverInfo;
     }
 }

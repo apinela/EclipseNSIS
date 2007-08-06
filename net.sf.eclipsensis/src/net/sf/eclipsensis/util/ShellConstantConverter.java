@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.help.NSISKeywords.ShellConstant;

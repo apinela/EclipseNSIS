@@ -13,10 +13,8 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.job.JobScheduler;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.job.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 

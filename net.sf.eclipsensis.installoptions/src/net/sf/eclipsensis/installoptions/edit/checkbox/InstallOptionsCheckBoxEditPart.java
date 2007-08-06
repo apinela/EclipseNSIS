@@ -14,14 +14,11 @@ import java.beans.PropertyChangeEvent;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.edit.button.InstallOptionsButtonEditPart;
-import net.sf.eclipsensis.installoptions.figures.CheckBoxFigure;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsCheckBox;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.figures.*;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.*;
 import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart

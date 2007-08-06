@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.wizard.template;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.template.AbstractTemplate;
-import net.sf.eclipsensis.template.AbstractTemplateDialog;
+import net.sf.eclipsensis.template.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
 import org.eclipse.swt.graphics.Image;

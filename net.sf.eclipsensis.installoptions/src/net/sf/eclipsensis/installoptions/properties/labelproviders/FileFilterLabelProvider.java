@@ -11,8 +11,7 @@ package net.sf.eclipsensis.installoptions.properties.labelproviders;
 
 import net.sf.eclipsensis.installoptions.util.FileFilter;
 
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 
 public class FileFilterLabelProvider extends LabelProvider implements ITableLabelProvider

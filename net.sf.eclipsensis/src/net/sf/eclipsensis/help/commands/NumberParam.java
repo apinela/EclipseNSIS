@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,9 +19,9 @@ public class NumberParam extends RegexpParam
     public static final String ATTR_DOMAIN = "domain"; //$NON-NLS-1$
     public static final String DOMAIN_POSITIVE="positive"; //$NON-NLS-1$
     public static final String DOMAIN_NATURAL="natural"; //$NON-NLS-1$
-    
+
     private String mDomain;
-    
+
     public NumberParam(Node node)
     {
         super(node);
@@ -84,7 +84,7 @@ public class NumberParam extends RegexpParam
     public boolean verifyText(String text)
     {
         if(text != null && text.length() > 0) {
-            return ((isAcceptSymbol() || isAcceptVar()) && text.charAt(0)=='$') || mPattern.matcher(text).matches() || (mDomain == null && "-".equals(text)); //$NON-NLS-1$ 
+            return ((isAcceptSymbol() || isAcceptVar()) && text.charAt(0)=='$') || mPattern.matcher(text).matches() || (mDomain == null && "-".equals(text)); //$NON-NLS-1$
         }
         return super.verifyText(text);
     }

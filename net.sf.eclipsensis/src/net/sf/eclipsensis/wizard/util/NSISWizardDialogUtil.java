@@ -433,7 +433,7 @@ public class NSISWizardDialogUtil
     public static Combo createCombo(Composite parent, int horizontalSpan, String[] items, int selectedIndex, boolean isReadOnly, boolean enabled, MasterSlaveController masterSlaveController)
     {
         Combo c = new Combo(parent, SWT.DROP_DOWN | (isReadOnly?SWT.READ_ONLY:SWT.NONE));
-        populateCombo(c, items, (selectedIndex >= 0 && selectedIndex < items.length?items[selectedIndex]:""));
+        populateCombo(c, items, (selectedIndex >= 0 && selectedIndex < items.length?items[selectedIndex]:"")); //$NON-NLS-1$
 
         GridData data = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         data.horizontalSpan = horizontalSpan;

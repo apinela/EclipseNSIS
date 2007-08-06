@@ -14,10 +14,8 @@ import java.util.Map;
 import net.sf.eclipsensis.installoptions.editor.text.InstallOptionsPartitionScanner;
 
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.presentation.IPresentationDamager;
-import org.eclipse.jface.text.presentation.IPresentationRepairer;
-import org.eclipse.jface.text.source.IOverviewRuler;
-import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.presentation.*;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.swt.widgets.Composite;
 

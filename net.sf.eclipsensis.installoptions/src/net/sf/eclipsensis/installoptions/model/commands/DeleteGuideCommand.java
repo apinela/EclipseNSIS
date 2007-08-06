@@ -13,8 +13,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
-import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
-import net.sf.eclipsensis.installoptions.rulers.InstallOptionsRuler;
+import net.sf.eclipsensis.installoptions.rulers.*;
 
 import org.eclipse.gef.commands.Command;
 

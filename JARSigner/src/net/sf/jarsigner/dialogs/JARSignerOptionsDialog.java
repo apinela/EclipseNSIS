@@ -10,8 +10,7 @@
 package net.sf.jarsigner.dialogs;
 
 import java.io.File;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
+import java.security.*;
 import java.util.*;
 import java.util.List;
 
@@ -21,10 +20,8 @@ import net.sf.jarsigner.JARSignerPlugin;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
@@ -257,7 +254,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
 
     public String getSignedJar()
     {
-        return (getSelection().size()>1?"":(String)getValues().get(SIGNED_JAR)); //$NON-NLS-1$
+        return getSelection().size()>1?"":(String)getValues().get(SIGNED_JAR); //$NON-NLS-1$
     }
 
     public String getStorePass()

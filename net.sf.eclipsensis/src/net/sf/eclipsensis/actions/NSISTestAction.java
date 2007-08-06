@@ -15,8 +15,7 @@ import net.sf.eclipsensis.util.NSISCompileTestUtility;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.IElementStateListener;
+import org.eclipse.ui.texteditor.*;
 
 public class NSISTestAction extends NSISScriptAction implements IElementStateListener
 {

@@ -11,14 +11,13 @@ package net.sf.eclipsensis.editor;
 
 import java.io.File;
 import java.util.*;
+import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.NSISConsoleLine;
 import net.sf.eclipsensis.editor.codeassist.*;
 import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
-import net.sf.eclipsensis.makensis.MakeNSISResults;
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.script.NSISScriptProblem;
 import net.sf.eclipsensis.util.*;
 
@@ -30,13 +29,11 @@ import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class NSISEditorUtilities

@@ -10,17 +10,14 @@
 package net.sf.eclipsensis.wizard;
 
 import java.io.*;
-import java.text.DateFormat;
-import java.text.MessageFormat;
+import java.text.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.*;
-import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.help.NSISUsageProvider;
-import net.sf.eclipsensis.lang.NSISLanguage;
-import net.sf.eclipsensis.lang.NSISLanguageManager;
+import net.sf.eclipsensis.help.*;
+import net.sf.eclipsensis.lang.*;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.script.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
@@ -29,8 +26,8 @@ import net.sf.eclipsensis.wizard.settings.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.commands.ICommandService;

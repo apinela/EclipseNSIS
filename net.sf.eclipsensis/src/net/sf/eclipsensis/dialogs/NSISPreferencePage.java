@@ -9,26 +9,21 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISVersions;
-import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.job.JobScheduler;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.job.*;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
-import net.sf.eclipsensis.viewer.CollectionContentProvider;
-import net.sf.eclipsensis.viewer.CollectionLabelProvider;
+import net.sf.eclipsensis.viewer.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;

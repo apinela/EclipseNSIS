@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.editor.text;
 
 
-import net.sf.eclipsensis.util.ColorManager;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.text.TextAttribute;

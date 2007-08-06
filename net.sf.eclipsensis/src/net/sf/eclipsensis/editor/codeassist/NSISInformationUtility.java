@@ -12,20 +12,16 @@ package net.sf.eclipsensis.editor.codeassist;
 import java.text.MessageFormat;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.text.*;
-import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.help.NSISPluginManager;
+import net.sf.eclipsensis.help.*;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.*;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.contentassist.CompletionProposal;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;

@@ -110,7 +110,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
       break;
     default:
       jj_la1[1] = jj_gen;
-      
+
     }
   }
 
@@ -137,7 +137,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
       break;
     default:
       jj_la1[3] = jj_gen;
-      
+
     }
   }
 
@@ -159,7 +159,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
       case RANGEIN_START:
       case RANGEEX_START:
       case NUMBER:
-        
+
         break;
       default:
         jj_la1[4] = jj_gen;
@@ -176,7 +176,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
       jj_consume_token(TERM);
       jj_consume_token(COLON);
     } else {
-      
+
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case QUOTED:
@@ -198,7 +198,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[5] = jj_gen;
-        
+
       }
       break;
     default:
@@ -237,7 +237,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[8] = jj_gen;
-        
+
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CARAT:
@@ -249,12 +249,12 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
           break;
         default:
           jj_la1[9] = jj_gen;
-          
+
         }
         break;
       default:
         jj_la1[10] = jj_gen;
-        
+
       }
              String termImage=discardEscapeChar(term.image);
              if (wildcard) {
@@ -295,7 +295,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[12] = jj_gen;
-        
+
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case RANGEIN_GOOP:
@@ -317,7 +317,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[14] = jj_gen;
-        
+
       }
                 if (goop1.kind == RANGEIN_QUOTED) {
                     goop1.image = goop1.image.substring(1, goop1.image.length()-1);
@@ -354,7 +354,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[16] = jj_gen;
-        
+
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case RANGEEX_GOOP:
@@ -376,7 +376,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[18] = jj_gen;
-        
+
       }
                 if (goop1.kind == RANGEEX_QUOTED) {
                     goop1.image = goop1.image.substring(1, goop1.image.length()-1);
@@ -401,7 +401,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[19] = jj_gen;
-        
+
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CARAT:
@@ -410,7 +410,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[20] = jj_gen;
-        
+
       }
             result.add(term.image.substring(1, term.image.length()-1));
       break;
@@ -429,8 +429,12 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
   }
 
   final private boolean jj_3_1() {
-    if (jj_scan_token(TERM)) return true;
-    if (jj_scan_token(COLON)) return true;
+    if (jj_scan_token(TERM)) {
+        return true;
+    }
+    if (jj_scan_token(COLON)) {
+        return true;
+    }
     return false;
   }
 
@@ -468,8 +472,12 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 22; i++) {
+        jj_la1[i] = -1;
+    }
+    for (int i = 0; i < jj_2_rtns.length; i++) {
+        jj_2_rtns[i] = new JJCalls();
+    }
   }
 
   public void ReInit(java.io.InputStream stream) {
@@ -481,8 +489,12 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 22; i++) {
+        jj_la1[i] = -1;
+    }
+    for (int i = 0; i < jj_2_rtns.length; i++) {
+        jj_2_rtns[i] = new JJCalls();
+    }
   }
 
   public NSISHelpSearchQueryParser(java.io.Reader stream) {
@@ -491,8 +503,12 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 22; i++) {
+        jj_la1[i] = -1;
+    }
+    for (int i = 0; i < jj_2_rtns.length; i++) {
+        jj_2_rtns[i] = new JJCalls();
+    }
   }
 
   public void ReInit(java.io.Reader stream) {
@@ -501,8 +517,12 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 22; i++) {
+        jj_la1[i] = -1;
+    }
+    for (int i = 0; i < jj_2_rtns.length; i++) {
+        jj_2_rtns[i] = new JJCalls();
+    }
   }
 
   public NSISHelpSearchQueryParser(NSISHelpSearchQueryParserTokenManager tm) {
@@ -510,8 +530,12 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 22; i++) {
+        jj_la1[i] = -1;
+    }
+    for (int i = 0; i < jj_2_rtns.length; i++) {
+        jj_2_rtns[i] = new JJCalls();
+    }
   }
 
   public void ReInit(NSISHelpSearchQueryParserTokenManager tm) {
@@ -519,14 +543,22 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
-    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
+    for (int i = 0; i < 22; i++) {
+        jj_la1[i] = -1;
+    }
+    for (int i = 0; i < jj_2_rtns.length; i++) {
+        jj_2_rtns[i] = new JJCalls();
+    }
   }
 
   final private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
-    if ((oldToken = token).next != null) token = token.next;
-    else token = token.next = token_source.getNextToken();
+    if ((oldToken = token).next != null) {
+        token = token.next;
+    }
+    else {
+        token = token.next = token_source.getNextToken();
+    }
     jj_ntk = -1;
     if (token.kind == kind) {
       jj_gen++;
@@ -535,7 +567,9 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         for (int i = 0; i < jj_2_rtns.length; i++) {
           JJCalls c = jj_2_rtns[i];
           while (c != null) {
-            if (c.gen < jj_gen) c.first = null;
+            if (c.gen < jj_gen) {
+                c.first = null;
+            }
             c = c.next;
           }
         }
@@ -550,7 +584,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
   static private final class LookaheadSuccess extends java.lang.Error {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5134906006293461125L; }
   final private LookaheadSuccess jj_ls = new LookaheadSuccess();
@@ -568,16 +602,26 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     if (jj_rescan) {
       int i = 0; Token tok = token;
       while (tok != null && tok != jj_scanpos) { i++; tok = tok.next; }
-      if (tok != null) jj_add_error_token(kind, i);
+      if (tok != null) {
+        jj_add_error_token(kind, i);
     }
-    if (jj_scanpos.kind != kind) return true;
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
+    }
+    if (jj_scanpos.kind != kind) {
+        return true;
+    }
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) {
+        throw jj_ls;
+    }
     return false;
   }
 
   final public Token getNextToken() {
-    if (token.next != null) token = token.next;
-    else token = token.next = token_source.getNextToken();
+    if (token.next != null) {
+        token = token.next;
+    }
+    else {
+        token = token.next = token_source.getNextToken();
+    }
     jj_ntk = -1;
     jj_gen++;
     return token;
@@ -586,17 +630,23 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
   final public Token getToken(int index) {
     Token t = lookingAhead ? jj_scanpos : token;
     for (int i = 0; i < index; i++) {
-      if (t.next != null) t = t.next;
-      else t = t.next = token_source.getNextToken();
+      if (t.next != null) {
+        t = t.next;
+    }
+    else {
+        t = t.next = token_source.getNextToken();
+    }
     }
     return t;
   }
 
   final private int jj_ntk() {
-    if ((jj_nt=token.next) == null)
-      return (jj_ntk = (token.next=token_source.getNextToken()).kind);
-    else
-      return (jj_ntk = jj_nt.kind);
+    if ((jj_nt=token.next) == null) {
+        return (jj_ntk = (token.next=token_source.getNextToken()).kind);
+    }
+    else {
+        return (jj_ntk = jj_nt.kind);
+    }
   }
 
   private java.util.Vector jj_expentries = new java.util.Vector();
@@ -606,7 +656,9 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
   private int jj_endpos;
 
   private void jj_add_error_token(int kind, int pos) {
-    if (pos >= 100) return;
+    if (pos >= 100) {
+        return;
+    }
     if (pos == jj_endpos + 1) {
       jj_lasttokens[jj_endpos++] = kind;
     } else if (jj_endpos != 0) {
@@ -625,11 +677,17 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
               break;
             }
           }
-          if (exists) break;
+          if (exists) {
+            break;
+        }
         }
       }
-      if (!exists) jj_expentries.addElement(jj_expentry);
-      if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
+      if (!exists) {
+        jj_expentries.addElement(jj_expentry);
+    }
+      if (pos != 0) {
+        jj_lasttokens[(jj_endpos = pos) - 1] = kind;
+    }
     }
   }
 

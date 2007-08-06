@@ -12,24 +12,19 @@ package net.sf.eclipsensis.installoptions.util;
 import java.io.*;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISVersions;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.lang.NSISLanguage;
-import net.sf.eclipsensis.lang.NSISLanguageManager;
-import net.sf.eclipsensis.makensis.MakeNSISResults;
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.lang.*;
+import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.IOUtility;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.resource.DeviceResourceException;
-import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.resource.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 
 public class FontUtility
@@ -197,7 +192,7 @@ public class FontUtility
                 LinkedHashMap symbols = cNSISSettings.getSymbols();
 
                 if(EclipseNSISPlugin.getDefault().isWinVista() && NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_21) >= 0) {
-                    symbols.put("WINDOWS_VISTA","");
+                    symbols.put("WINDOWS_VISTA",""); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 symbols.put("LANGUAGE", lang.getName()); //$NON-NLS-1$
                 symbols.put("PROPERTIES_FILE", cPropertiesFile.getAbsolutePath()); //$NON-NLS-1$

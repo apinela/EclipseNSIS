@@ -3,16 +3,14 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import org.eclipse.jface.dialogs.IPageChangedListener;
-import org.eclipse.jface.dialogs.PageChangedEvent;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
@@ -20,7 +18,7 @@ public class WizardShellImageChanger implements IPageChangedListener
 {
     private IWizard mWizard;
     private Image mImage;
-    
+
     private Image mOldImage;
     private Image[] mOldImages;
 

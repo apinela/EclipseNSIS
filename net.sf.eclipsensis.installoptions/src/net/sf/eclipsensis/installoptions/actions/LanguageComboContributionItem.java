@@ -9,16 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.editor.IInstallOptionsEditor;
-import net.sf.eclipsensis.lang.NSISLanguage;
-import net.sf.eclipsensis.lang.NSISLanguageManager;
+import net.sf.eclipsensis.lang.*;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
 import org.eclipse.jface.action.ContributionItem;

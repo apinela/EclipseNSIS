@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -13,8 +13,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Node;
@@ -22,7 +21,7 @@ import org.w3c.dom.Node;
 public class StringParam extends SubstitutableParam
 {
     public static final String SETTING_TEXT = "text"; //$NON-NLS-1$
-    
+
     public StringParam(Node node)
     {
         super(node);
@@ -32,7 +31,7 @@ public class StringParam extends SubstitutableParam
     {
         return new StringParamEditor(parentEditor);
     }
-    
+
     protected String validateText(String text)
     {
         if(isAllowBlank() || (text != null && text.length() > 0)) {
@@ -49,7 +48,7 @@ public class StringParam extends SubstitutableParam
     protected class StringParamEditor extends PrefixableParamEditor
     {
         protected Text mText = null;
-        
+
         public StringParamEditor(INSISParamEditor parentEditor)
         {
             super(parentEditor);

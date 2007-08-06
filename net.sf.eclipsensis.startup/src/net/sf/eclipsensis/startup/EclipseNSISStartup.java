@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.startup;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

@@ -9,12 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.dialog;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 import java.util.*;
+import java.util.List;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 import net.sf.eclipsensis.installoptions.model.*;
@@ -22,16 +21,13 @@ import net.sf.eclipsensis.installoptions.model.*;
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.*;
-import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
-import org.eclipse.gef.editpolicies.SnapFeedbackPolicy;
+import org.eclipse.gef.editpolicies.*;
 import org.eclipse.gef.requests.SelectionRequest;
 import org.eclipse.gef.rulers.RulerProvider;
-import org.eclipse.gef.tools.DeselectAllTracker;
-import org.eclipse.gef.tools.MarqueeDragTracker;
+import org.eclipse.gef.tools.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.*;
 
 public class InstallOptionsDialogEditPart extends InstallOptionsEditPart implements LayerConstants, IInstallOptionsConstants
 {

@@ -9,14 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor.annotation;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.editor.NSISEditorUtilities;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.editor.IInstallOptionsEditor;
-import net.sf.eclipsensis.installoptions.editor.InstallOptionsEditorInput;
+import net.sf.eclipsensis.installoptions.*;
+import net.sf.eclipsensis.installoptions.editor.*;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.util.Common;
 

@@ -9,20 +9,16 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.StatusMessageDialog;
 import net.sf.eclipsensis.editor.codeassist.*;
-import net.sf.eclipsensis.help.NSISHTMLHelp;
-import net.sf.eclipsensis.help.NSISHelpURLProvider;
-import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.job.JobScheduler;
+import net.sf.eclipsensis.help.*;
+import net.sf.eclipsensis.job.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
 import org.eclipse.core.runtime.*;
@@ -31,8 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;

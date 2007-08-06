@@ -12,8 +12,7 @@ package net.sf.eclipsensis.installoptions.help;
 import java.io.File;
 
 import net.sf.eclipsensis.help.NSISLocalFileHandler;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;

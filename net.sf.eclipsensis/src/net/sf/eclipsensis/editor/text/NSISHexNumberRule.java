@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.text;
 
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.*;
 
 public class NSISHexNumberRule extends NSISWordPatternRule
 {

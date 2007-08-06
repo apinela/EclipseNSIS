@@ -34,7 +34,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     /**
      * The wizard dialog height
      */
-    private static final int SIZING_WIZARD_HEIGHT = 450;
+    private static final int SIZING_WIZARD_HEIGHT = 460;
 
     private NSISWizardSettings mSettings = null;
     private List mSettingsListeners = new ArrayList();

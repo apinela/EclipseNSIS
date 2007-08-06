@@ -3,15 +3,14 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.update.jobs;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.settings.NSISPreferences;
@@ -31,7 +30,7 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
 
     protected static final MessageFormat RELEASE_UPDATE_MESSAGEFORMAT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("release.update.message")); //$NON-NLS-1$
     protected static final MessageFormat PREVIEW_UPDATE_MESSAGEFORMAT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("preview.update.message")); //$NON-NLS-1$
-    
+
     public NSISCheckUpdateJob()
     {
         this(new NSISUpdateJobSettings());
@@ -39,7 +38,7 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
 
     public NSISCheckUpdateJob(NSISUpdateJobSettings settings)
     {
-        this(settings, null); 
+        this(settings, null);
     }
 
     public NSISCheckUpdateJob(NSISUpdateJobSettings settings, INSISUpdateJobRunner jobRunner)
@@ -130,7 +129,7 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
             monitor.done();
         }
     }
-    
+
     protected IStatus handleDownload(final String type, final String version)
     {
         if((RELEASE_UPDATE.equals(type) || (PREVIEW_UPDATE.equals(type) && !getSettings().isIgnorePreview()))) {
@@ -152,8 +151,8 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
                     boolean download = ((settings.getAction() & SchedulerConstants.UPDATE_DOWNLOAD) == SchedulerConstants.UPDATE_DOWNLOAD);
                     if(!download) {
                         automated = false;
-                        download = Common.openQuestion(Display.getCurrent().getActiveShell(), 
-                                            mf.format(new String[] {version}), 
+                        download = Common.openQuestion(Display.getCurrent().getActiveShell(),
+                                            mf.format(new String[] {version}),
                                             EclipseNSISUpdatePlugin.getShellImage());
                     }
                     if(download) {

@@ -11,18 +11,15 @@ package net.sf.eclipsensis.editor;
 
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.NestedProgressMonitor;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.part.FileEditorInput;

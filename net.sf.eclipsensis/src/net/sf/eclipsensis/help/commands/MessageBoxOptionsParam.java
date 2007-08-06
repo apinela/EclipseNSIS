@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -14,8 +14,7 @@ import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Node;
 
@@ -24,7 +23,7 @@ public class MessageBoxOptionsParam extends NSISParam
     public static final String SETTING_BUTTONS = "buttons"; //$NON-NLS-1$
     public static final String SETTING_ICON = "icon"; //$NON-NLS-1$
     public static final String SETTING_DEFAULT = "default"; //$NON-NLS-1$
-    
+
     public MessageBoxOptionsParam(Node node)
     {
         super(node);
@@ -61,7 +60,7 @@ public class MessageBoxOptionsParam extends NSISParam
             }
             super.clear();
         }
-        
+
         private void resetCombo(Combo combo)
         {
             if(Common.isValid(combo)) {
@@ -171,7 +170,7 @@ public class MessageBoxOptionsParam extends NSISParam
         }
 
         /**
-         * 
+         *
          */
         private void initCombo(Combo combo, String setting)
         {

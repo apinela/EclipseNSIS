@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.actions;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.makensis.MakeNSISResults;
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.makensis.*;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;

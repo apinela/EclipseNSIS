@@ -14,12 +14,11 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.template.*;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.swt.graphics.*;
 
 public class NSISWizardTemplateManager extends AbstractTemplateManager
 {

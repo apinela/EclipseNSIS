@@ -3,32 +3,25 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.Set;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.help.NSISHTMLHelp;
-import net.sf.eclipsensis.help.NSISHelpURLProvider;
+import net.sf.eclipsensis.help.*;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.Path;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTError;
+import org.eclipse.swt.*;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 public class NSISBrowserUtility
 {
@@ -39,20 +32,20 @@ public class NSISBrowserUtility
     public static final Image FORWARD_IMAGE;
     public static final Image DISABLED_FORWARD_IMAGE;
     public static final Set HTML_EXTENSIONS;
-    
+
     private static RGB cBrowserHelpBackground = null;
     private static RGB cBrowserHelpForeground = null;
 
     private static boolean cIsAvailable= false;
     private static boolean cAvailabilityChecked= false;
-    
+
     static {
         BACK_IMAGE = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.back.icon")); //$NON-NLS-1$
         DISABLED_BACK_IMAGE = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.disabled.back.icon")); //$NON-NLS-1$
         FORWARD_IMAGE = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.forward.icon")); //$NON-NLS-1$
         DISABLED_FORWARD_IMAGE = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.disabled.forward.icon")); //$NON-NLS-1$
         HOME_IMAGE = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.home.icon")); //$NON-NLS-1$
-        HTML_EXTENSIONS = Collections.unmodifiableSet(new CaseInsensitiveSet(Common.loadListProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), 
+        HTML_EXTENSIONS = Collections.unmodifiableSet(new CaseInsensitiveSet(Common.loadListProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),
                                                         "hoverhelp.html.extensions"))); //$NON-NLS-1$
 
         File f = null;
@@ -62,25 +55,25 @@ public class NSISBrowserUtility
             EclipseNSISPlugin.getDefault().log(e);
             f = null;
         }
-        
+
         COLORS_CSS_FILE = f;
     }
 
-    public static boolean isBrowserAvailable(Composite parent) 
+    public static boolean isBrowserAvailable(Composite parent)
     {
         if (!cAvailabilityChecked) {
             try {
                 Browser browser= new Browser(parent, SWT.NONE);
                 browser.dispose();
                 cIsAvailable= true;
-            } 
+            }
             catch (SWTError er) {
                 cIsAvailable= false;
-            } 
+            }
             finally {
                 cAvailabilityChecked= true;
             }
-            
+
         }
 
         return cIsAvailable;
@@ -91,7 +84,7 @@ public class NSISBrowserUtility
         Image image = null;
         File f = null;
         try {
-            f = IOUtility.ensureLatest(EclipseNSISPlugin.getDefault().getBundle(), 
+            f = IOUtility.ensureLatest(EclipseNSISPlugin.getDefault().getBundle(),
                                        new Path(file),
                                        new File(EclipseNSISPlugin.getPluginStateLocation(),EclipseNSISPlugin.getResourceString("hoverhelp.state.location"))); //$NON-NLS-1$
             image = new Image(Display.getCurrent(),f.getAbsolutePath());
@@ -102,7 +95,7 @@ public class NSISBrowserUtility
         }
         return image;
     }
-    
+
     public static void updateColorStyles()
     {
         if(Display.getCurrent() != null && COLORS_CSS_FILE != null) {
@@ -125,7 +118,7 @@ public class NSISBrowserUtility
                     buf.append("a:hover { background-color: #").append( //$NON-NLS-1$
                             ColorManager.rgbToHex(bg2)).append("}\n"); //$NON-NLS-1$
                     IOUtility.writeContentToFile(COLORS_CSS_FILE, buf.toString().getBytes());
-                    
+
                     cBrowserHelpBackground = bg;
                     cBrowserHelpForeground = fg;
                 }
@@ -135,7 +128,7 @@ public class NSISBrowserUtility
             }
         }
     }
-    
+
     public static void handleURL(String url, INSISBrowserKeywordURLHandler keywordURLHandler, INSISBrowserFileURLHandler fileURLHandler)
     {
         if (url.regionMatches(true, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME.length())) {

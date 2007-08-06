@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -13,6 +13,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -25,7 +26,7 @@ public class NSISConfigWizardNode implements IWizardNode, IPluginContribution
     private NSISConfigSelectionPage mParentPage;
     private NSISConfigWizardDescriptor mDescriptor;
     protected NSISConfigWizard mWizard;
-    
+
     public NSISConfigWizardNode(NSISConfigSelectionPage parentPage, NSISConfigWizardDescriptor descriptor)
     {
         super();
@@ -73,7 +74,7 @@ public class NSISConfigWizardNode implements IWizardNode, IPluginContribution
                 });
 
         if (statuses[0] != null) {
-            mParentPage.setMessage(statuses[0].getMessage(), WizardPage.ERROR);
+            mParentPage.setMessage(statuses[0].getMessage(), IMessageProvider.ERROR);
             Common.openError(shell, statuses[0].getMessage(), EclipseNSISPlugin.getShellImage());
             return null;
         }

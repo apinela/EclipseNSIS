@@ -14,8 +14,7 @@ import java.beans.PropertyChangeListener;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
 import net.sf.eclipsensis.installoptions.model.commands.IModelCommandListener;
 
-import org.eclipse.gef.AccessibleEditPart;
-import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.*;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 
 public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart implements PropertyChangeListener

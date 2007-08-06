@@ -271,7 +271,7 @@ public class RegistryKeyBrowser extends Composite
         RegistryKey oldRegKey = mRegistryKey;
 
         mRegistryKey = (RegistryKey)item.getData();
-        mSelection = null; 
+        mSelection = null;
         if(mRegistryKey != null) {
             mSelection = mRegistryKey.toString();
         }

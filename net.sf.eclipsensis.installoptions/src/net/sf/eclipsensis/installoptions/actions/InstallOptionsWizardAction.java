@@ -17,14 +17,13 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
 public class InstallOptionsWizardAction extends Action
 {
     public InstallOptionsWizardAction()
     {
-        super("");//$NON-NLS-1$ 
+        super("");//$NON-NLS-1$
         setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("wizard.icon"))); //$NON-NLS-1$
         setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("wizard.disabled.icon"))); //$NON-NLS-1$
         setText(InstallOptionsPlugin.getResourceString("wizard.action.label")); //$NON-NLS-1$

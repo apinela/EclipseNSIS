@@ -12,8 +12,7 @@ package net.sf.eclipsensis.lang;
 import java.io.*;
 import java.util.Map;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 

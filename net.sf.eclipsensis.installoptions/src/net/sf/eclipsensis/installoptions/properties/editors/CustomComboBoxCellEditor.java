@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.properties.editors;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.List;
 
 import net.sf.eclipsensis.util.Common;
 
@@ -20,8 +21,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 
 public class CustomComboBoxCellEditor extends CellEditor
 {
@@ -29,7 +29,7 @@ public class CustomComboBoxCellEditor extends CellEditor
     private List mItems = new ArrayList();
     private String mSelection;
     private CCombo mCombo;
-    private boolean mCaseInsensitive = false; 
+    private boolean mCaseInsensitive = false;
 
     public CustomComboBoxCellEditor(Composite parent, List items) {
         this(parent, items, DEFAULT_STYLE);

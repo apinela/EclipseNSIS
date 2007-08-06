@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -13,8 +13,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.wizard.WizardShellImageChanger;
 
-import org.eclipse.jface.dialogs.IPageChangeProvider;
-import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -25,7 +24,7 @@ public class NSISConfigSelectionWizard extends Wizard
     private static final Image cShellImage = EclipseNSISPlugin.getShellImage();
 
     private IPageChangedListener mPageChangedListener;
-    
+
     private NSISConfigSelectionPage mMainPage;
     /**
      * The wizard dialog width
@@ -35,7 +34,7 @@ public class NSISConfigSelectionWizard extends Wizard
      * The wizard dialog height
      */
     private static final int SIZING_WIZARD_HEIGHT = 200;
-    
+
     public NSISConfigSelectionWizard()
     {
         super();
@@ -68,7 +67,7 @@ public class NSISConfigSelectionWizard extends Wizard
         }
     }
 
-    public void addPages() 
+    public void addPages()
     {
         mMainPage = new NSISConfigSelectionPage();
         addPage(mMainPage);
@@ -86,7 +85,7 @@ public class NSISConfigSelectionWizard extends Wizard
         return true;
     }
 
-    public boolean canFinish() 
+    public boolean canFinish()
     {
         if (getContainer().getCurrentPage() == mMainPage) {
             if (mMainPage.canFinishEarly()) {

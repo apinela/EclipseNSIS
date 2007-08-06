@@ -9,28 +9,22 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings.dialogs;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.RegistryKeySelectionDialog;
 import net.sf.eclipsensis.help.NSISKeywords.ShellConstant;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.ShellConstantConverter;
-import net.sf.eclipsensis.wizard.NSISWizard;
-import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
-import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryItem;
-import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryKey;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.wizard.*;
+import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog

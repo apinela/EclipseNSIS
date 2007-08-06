@@ -11,27 +11,22 @@ package net.sf.eclipsensis.util;
 
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
-import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.text.source.projection.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IPathEditorInput;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.editors.text.IStorageDocumentProvider;
+import org.eclipse.ui.editors.text.*;
 import org.eclipse.ui.texteditor.*;
 
 public class HTMLExporter

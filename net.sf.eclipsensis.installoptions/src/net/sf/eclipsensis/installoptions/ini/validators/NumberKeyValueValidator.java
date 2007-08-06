@@ -39,7 +39,7 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
                                     return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(-i,radix,prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                                 }
                             });
-                            keyValue.addProblem(problem); 
+                            keyValue.addProblem(problem);
                         }
                         return false;
                     }

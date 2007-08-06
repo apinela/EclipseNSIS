@@ -9,17 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.dialogs;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 import java.util.Collection;
 
 import net.sf.eclipsensis.dialogs.StatusMessageDialog;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.installoptions.model.commands.IModelCommandListener;
-import net.sf.eclipsensis.installoptions.model.commands.ModelCommandEvent;
+import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
 import net.sf.eclipsensis.installoptions.properties.tabbed.CustomTabbedPropertySheetPage;
 import net.sf.eclipsensis.util.Common;
@@ -28,17 +25,15 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.part.IPageSite;
-import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.*;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
 
 public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implements PropertyChangeListener, IModelCommandListener, IPropertySourceProvider, ITabbedPropertySheetPageContributor

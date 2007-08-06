@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.viewer;
 
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.*;
 
 public abstract class ListViewerUpDownMover extends StructuredViewerUpDownMover
 {

@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 public interface INodeConvertible
 {

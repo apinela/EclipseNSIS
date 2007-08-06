@@ -10,16 +10,12 @@
 package net.sf.eclipsensis.installoptions.util;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.util.ColorManager;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.installoptions.*;
+import net.sf.eclipsensis.util.*;
 
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.swt.graphics.RGB;
 
 public abstract class TypeConverter
@@ -317,7 +313,7 @@ public abstract class TypeConverter
 					d.width = Integer.parseInt(s.substring(0, n));
 					d.height = Integer.parseInt(s.substring(n + 1));
 				}
-			}            
+			}
 			return d;
         }
 

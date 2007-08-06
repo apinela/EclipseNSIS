@@ -10,17 +10,14 @@
 package net.sf.eclipsensis.help;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.HTML.Attribute;
-import javax.swing.text.html.HTML.Tag;
+import javax.swing.text.html.HTML.*;
 
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
 public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
 {
@@ -63,7 +60,7 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
                 else if(NSISKeywords.getInstance().isValidKeyword(mName)) {
                     mKeywordHelpMap.put(mName,mLocal);
                 }
-                
+
                 String url;
                 try {
                     url = new URL(mLocal).toString();

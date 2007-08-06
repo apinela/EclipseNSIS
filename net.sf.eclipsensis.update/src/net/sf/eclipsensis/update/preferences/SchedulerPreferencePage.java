@@ -12,14 +12,11 @@ package net.sf.eclipsensis.update.preferences;
 import java.text.DateFormatSymbols;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
-import net.sf.eclipsensis.update.scheduler.Scheduler;
-import net.sf.eclipsensis.update.scheduler.SchedulerConstants;
+import net.sf.eclipsensis.update.scheduler.*;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 

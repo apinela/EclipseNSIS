@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ public abstract class InstallOptionsCommandHelper
             stack.addCommandStackListener(mCommandStackListener);
         }
     }
-    
+
     public CommandStack getCommandStack()
     {
         return mStack;
@@ -139,7 +139,7 @@ public abstract class InstallOptionsCommandHelper
         return createSetValueCommand(target, displayName, propertyId, value);
     }
 
-    public void resetPropertyValue(String id, IPropertySource[] sources) 
+    public void resetPropertyValue(String id, IPropertySource[] sources)
     {
         CompoundCommand cc = new CompoundCommand();
         ResetValueCommand restoreCmd;
@@ -151,7 +151,7 @@ public abstract class InstallOptionsCommandHelper
                 restoreCmd = new ResetValueCommand();
                 restoreCmd.setTarget(source);
                 restoreCmd.setPropertyId(id);
-                cc.add(restoreCmd);         
+                cc.add(restoreCmd);
             }
         }
         if (cc.size() > 0) {
@@ -169,7 +169,7 @@ public abstract class InstallOptionsCommandHelper
         return setCommand;
     }
 
-    public void propertyChanged(String propertyId, String name, IPropertySource target, Object newValue) 
+    public void propertyChanged(String propertyId, String name, IPropertySource target, Object newValue)
     {
         CompoundCommand command = createPropertyChangedCommand(propertyId, name, target, newValue);
         if(command.size() > 0) {
@@ -205,7 +205,7 @@ public abstract class InstallOptionsCommandHelper
         return command;
     }
 
-    public void valueChanged(String propertyId, String name, IPropertySource[] targets, Object[] newValues, CompoundCommand command) 
+    public void valueChanged(String propertyId, String name, IPropertySource[] targets, Object[] newValues, CompoundCommand command)
     {
         CompoundCommand cc = new CompoundCommand();
         command.add(cc);

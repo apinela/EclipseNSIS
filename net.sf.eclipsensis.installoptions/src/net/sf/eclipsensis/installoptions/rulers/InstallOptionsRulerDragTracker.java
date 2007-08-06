@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.rulers;
 
 import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.gef.internal.ui.rulers.RulerDragTracker;
-import org.eclipse.gef.internal.ui.rulers.RulerEditPart;
+import org.eclipse.gef.internal.ui.rulers.*;
 
 public class InstallOptionsRulerDragTracker extends RulerDragTracker
 {

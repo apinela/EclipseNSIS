@@ -16,8 +16,7 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.*;
-import org.eclipse.jface.text.templates.TemplateContextType;
-import org.eclipse.jface.text.templates.TemplateVariableResolver;
+import org.eclipse.jface.text.templates.*;
 import org.eclipse.swt.graphics.Point;
 
 public class NSISTemplateVariableProcessor extends NSISCompletionProcessor implements INSISTemplateConstants

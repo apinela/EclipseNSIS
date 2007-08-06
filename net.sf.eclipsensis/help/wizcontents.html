@@ -89,7 +89,7 @@ be installed as well.</p>
 <a name="library"></a><h3 style="text-decoration: underline;">Library</h3>
 <p>This consists of a library file on the filesystem which is to be installed on the installation
 system. This option is only available in NSIS 2.01 or better, which include the <a href="javascript:redirectNSIS('AppendixB.html');">DLL/TLB Library Setup</a> system.</p>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 418px; height: 381px;" usemap="#librarydlg" ismap="ismap" alt="Add/Edit Library" src="images/librarydlg.gif"></p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 418px; height: 424px;" usemap="#librarydlg" ismap="ismap" alt="Add/Edit Library" src="images/librarydlg.gif"></p>
 <a name="a_lib"></a><dl id="id_lib">
   <dt>Library</dt>
   <dd>The library that is to be installed. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
@@ -118,6 +118,11 @@ system. This option is only available in NSIS 2.01 or better, which include the 
   it will not be installed. If the option is not selected, the installer will install the library- however if it is protected, then Windows File Protection
   will replace it with a cached copy. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
 </dl>
+<a name="a_x64"></a>
+<dl id="id_x64">
+  <dt>Windows x64 Library</dt>
+  <dd>Indicates that the library is a 64-bit (x64) library. This option is only available in NSIS 2.26 or higher and is only available if the <a href="wizgeneral.html#a_target_platform">target platform</a> for the installer is specified to be <span style="font-weight: bold">Any</span>. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
 <a name="a_refresh"></a>
 <dl id="id_refresh">
   <dt>Refresh the Shell</dt>
@@ -129,6 +134,12 @@ system. This option is only available in NSIS 2.01 or better, which include the 
   <dt>Unload all Unnecessary Libraries from Memory</dt>
   <dd>If this option is selected, the installer calls <a href="http://msdn.microsoft.com/library/en-us/com/html/188e9a3b-39cc-454e-af65-4ac797e275d4.asp">CoFreeUnusedLibraries</a> after library registration. This option should be used to unload all unnecessary
   libraries from memory when installing COM libraries. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
+</dl>
+<a name="a_alwaysinstall" id="a_alwaysinstall"></a>
+<dl id="id_alwaysinstall">
+  <dt>Ignore Installed Version (Always Install) </dt>
+  <dd>If this option is selected, the installer installs the library without checking if the library is already installed. This may result in a newer version
+  of the library being overwritten by the installer. This option is only available in NSIS 2.26 or higher. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd>
 </dl>
 <a name="a_remove"></a>
 <dl id="id_remove">
@@ -207,74 +218,76 @@ is a useful way to attract the user's attention to a particular SectionGroup.
 <hr><a href="wizpresentation.html">Previous</a> | <a href="overview.html#contents">Contents</a> | <a href="wizcomplete.html">Next</a>
 <p><strong><small>Copyright &copy; 2004-2007 Sunil Kamath (IcemanK).</small></strong></p>
 <map name="wizardcontents">
-  <area id="down" shape="RECT" href="#a_down" alt="Move Down" onclick="highlightDef('id_down');" coords="454,347,482,373">
-  <area id="up" shape="RECT" href="#a_up" alt="Move Up" onclick="highlightDef('id_up');" coords="454,316,481,343">
-  <area id="collapseall" shape="RECT" href="#a_collapseall" alt="Collapse All" onclick="highlightDef('id_collapseall');" coords="124,138,147,160">
-  <area id="expandall" shape="RECT" href="#a_expandall" alt="Expand All" onclick="highlightDef('id_expandall');" coords="100,138,123,160">
-  <area id="delete" shape="RECT" href="#a_delete" alt="Delete" onclick="highlightDef('id_delete');" coords="76,138,99,160">
-  <area id="edit" shape="RECT" href="#a_edit" alt="Edit" onclick="highlightDef('id_edit');" coords="52,138,75,160">
-  <area id="add" shape="RECT" href="#a_add" alt="Add" onclick="highlightDef('id_add');" coords="19,138,51,160">
-  <area id="contents" shape="RECT" href="#a_contents" alt="Installer Contents" onclick="highlightDef('id_contents');" coords="22,170,442,519">
+  <area id="down" shape="RECT" href="#a_down" alt="Move Down" onClick="highlightDef('id_down');" coords="454,347,482,373">
+  <area id="up" shape="RECT" href="#a_up" alt="Move Up" onClick="highlightDef('id_up');" coords="454,316,481,343">
+  <area id="collapseall" shape="RECT" href="#a_collapseall" alt="Collapse All" onClick="highlightDef('id_collapseall');" coords="124,138,147,160">
+  <area id="expandall" shape="RECT" href="#a_expandall" alt="Expand All" onClick="highlightDef('id_expandall');" coords="100,138,123,160">
+  <area id="delete" shape="RECT" href="#a_delete" alt="Delete" onClick="highlightDef('id_delete');" coords="76,138,99,160">
+  <area id="edit" shape="RECT" href="#a_edit" alt="Edit" onClick="highlightDef('id_edit');" coords="52,138,75,160">
+  <area id="add" shape="RECT" href="#a_add" alt="Add" onClick="highlightDef('id_add');" coords="19,138,51,160">
+  <area id="contents" shape="RECT" href="#a_contents" alt="Installer Contents" onClick="highlightDef('id_contents');" coords="22,170,442,519">
 </map>
 <map name="sectiondlg">
-  <area id="unselected" shape="RECT" href="#a_unselected" alt="Unselected by Default" onclick="highlightDef('id_unselected');" coords="201,174,323,188">
-  <area id="name" shape="RECT" href="#a_name" alt="Name" onclick="highlightDef('id_name');" coords="22,54,395,76">
-  <area id="description" shape="RECT" href="#a_description" alt="Description" onclick="highlightDef('id_description');" coords="23,81,395,171">
-  <area id="hidden" shape="RECT" href="#a_hidden" alt="Hidden" onclick="highlightDef('id_hidden');" coords="23,174,74,188">
-  <area id="bold" shape="RECT" href="#a_bold" alt="Display in Bold Text" onclick="highlightDef('id_bold');" coords="82,174,193,188">
+  <area id="unselected" shape="RECT" href="#a_unselected" alt="Unselected by Default" onClick="highlightDef('id_unselected');" coords="201,174,323,188">
+  <area id="name" shape="RECT" href="#a_name" alt="Name" onClick="highlightDef('id_name');" coords="22,54,395,76">
+  <area id="description" shape="RECT" href="#a_description" alt="Description" onClick="highlightDef('id_description');" coords="23,81,395,171">
+  <area id="hidden" shape="RECT" href="#a_hidden" alt="Hidden" onClick="highlightDef('id_hidden');" coords="23,174,74,188">
+  <area id="bold" shape="RECT" href="#a_bold" alt="Display in Bold Text" onClick="highlightDef('id_bold');" coords="82,174,193,188">
 </map>
 <map name="sectiongrpdlg">
-  <area id="caption" shape="RECT" href="#a_caption" alt="Caption" onclick="highlightDef('id_caption');" coords="22,54,395,77"><area id="description2" shape="RECT" href="#a_description2" alt="Description" onclick="highlightDef('id_description2');" coords="22,80,397,171"><area id="bold2" shape="RECT" href="#a_bold2" alt="Display in Bold Text" onclick="highlightDef('id_bold2');" coords="22,173,137,190">
-  <area id="expanded" shape="RECT" href="#a_expanded" alt="Expanded by Default" onclick="highlightDef('id_expanded');" coords="141,173,262,190">
+  <area id="caption" shape="RECT" href="#a_caption" alt="Caption" onClick="highlightDef('id_caption');" coords="22,54,395,77"><area id="description2" shape="RECT" href="#a_description2" alt="Description" onClick="highlightDef('id_description2');" coords="22,80,397,171"><area id="bold2" shape="RECT" href="#a_bold2" alt="Display in Bold Text" onClick="highlightDef('id_bold2');" coords="22,173,137,190">
+  <area id="expanded" shape="RECT" href="#a_expanded" alt="Expanded by Default" onClick="highlightDef('id_expanded');" coords="141,173,262,190">
 </map>
 <map name="filedlg">
-  <area id="source" shape="RECT" href="#a_source" alt="Source File" onclick="highlightDef('id_source');" coords="22,57,395,78"><area id="destination" shape="RECT" href="#a_destination" alt="Destination" onclick="highlightDef('id_destination');" coords="22,83,396,107"><area id="overwrite" shape="RECT" href="#a_overwrite" alt="Overwrite" onclick="highlightDef('id_overwrite');" coords="21,109,177,131">
+  <area id="source" shape="RECT" href="#a_source" alt="Source File" onClick="highlightDef('id_source');" coords="22,57,395,78"><area id="destination" shape="RECT" href="#a_destination" alt="Destination" onClick="highlightDef('id_destination');" coords="22,83,396,107"><area id="overwrite" shape="RECT" href="#a_overwrite" alt="Overwrite" onClick="highlightDef('id_overwrite');" coords="21,109,177,131">
 </map>
 <map name="filesetdlg">
-  <area id="source2" shape="RECT" href="#a_source2" alt="Source Files" onclick="highlightDef('id_source2');" coords="21,54,362,205">
-  <area id="delete2" shape="RECT" href="#a_delete2" alt="Delete" onclick="highlightDef('id_delete2');" coords="367,105,395,131">
-  <area id="add2" shape="RECT" href="#a_add2" alt="Add" onclick="highlightDef('id_add2');" coords="367,74,395,100">
-  <area id="up2" shape="RECT" href="#a_up2" alt="Up" onclick="highlightDef('id_up2');" coords="367,136,395,162">
-  <area id="down2" shape="RECT" href="#a_down2" alt="Down" onclick="highlightDef('id_down2');" coords="367,167,395,193">
-  <area id="destination2" shape="RECT" href="#a_destination2" alt="Destination" onclick="highlightDef('id_destination2');" coords="21,208,395,231">
-  <area id="overwrite2" shape="RECT" href="#a_overwrite2" alt="Overwrite" onclick="highlightDef('id_overwrite2');" coords="21,235,178,256">
+  <area id="source2" shape="RECT" href="#a_source2" alt="Source Files" onClick="highlightDef('id_source2');" coords="21,54,362,205">
+  <area id="delete2" shape="RECT" href="#a_delete2" alt="Delete" onClick="highlightDef('id_delete2');" coords="367,105,395,131">
+  <area id="add2" shape="RECT" href="#a_add2" alt="Add" onClick="highlightDef('id_add2');" coords="367,74,395,100">
+  <area id="up2" shape="RECT" href="#a_up2" alt="Up" onClick="highlightDef('id_up2');" coords="367,136,395,162">
+  <area id="down2" shape="RECT" href="#a_down2" alt="Down" onClick="highlightDef('id_down2');" coords="367,167,395,193">
+  <area id="destination2" shape="RECT" href="#a_destination2" alt="Destination" onClick="highlightDef('id_destination2');" coords="21,208,395,231">
+  <area id="overwrite2" shape="RECT" href="#a_overwrite2" alt="Overwrite" onClick="highlightDef('id_overwrite2');" coords="21,235,178,256">
 </map>
 <map name="folderdlg">
-  <area id="source3" shape="RECT" href="#a_source3" alt="Source Folder" onclick="highlightDef('id_source3');" coords="22,57,396,79">
-  <area id="destination3" shape="RECT" href="#a_destination3" alt="Destination" onclick="highlightDef('id_destination3');" coords="22,83,395,106">
-  <area id="overwrite3" shape="RECT" href="#a_overwrite3" alt="Overwrite" onclick="highlightDef('id_overwrite3');" coords="22,110,191,131">
-  <area id="includesub" shape="RECT" href="#a_includesub" alt="Include All Sub-Folders and Files" onclick="highlightDef('id_includesub');" coords="22,136,196,152">
+  <area id="source3" shape="RECT" href="#a_source3" alt="Source Folder" onClick="highlightDef('id_source3');" coords="22,57,396,79">
+  <area id="destination3" shape="RECT" href="#a_destination3" alt="Destination" onClick="highlightDef('id_destination3');" coords="22,83,395,106">
+  <area id="overwrite3" shape="RECT" href="#a_overwrite3" alt="Overwrite" onClick="highlightDef('id_overwrite3');" coords="22,110,191,131">
+  <area id="includesub" shape="RECT" href="#a_includesub" alt="Include All Sub-Folders and Files" onClick="highlightDef('id_includesub');" coords="22,136,196,152">
 </map>
 <map name="librarydlg">
-<area id="remove" shape="rect" coords="23,242,136,255" href="#a_remove" alt="Remove on Uninstall" onclick="highlightDef('id_remove');">
-<area id="unload" shape="rect" coords="23,221,255,234" href="#a_unload" alt="Unload Unnecessary Libraries" onclick="highlightDef('id_unload');">
-<area id="refresh" shape="rect" coords="23,200,122,213" href="#a_refresh" alt="Refresh the Shell" onclick="highlightDef('id_refresh');">
-<area id="protected" shape="rect" coords="23,179,304,192" href="#a_protected" alt="Check for Windows File Protection" onclick="highlightDef('id_protected');">
-<area id="reboot" shape="rect" href="#a_reboot" alt="Upgrade on Reboot" coords="23,158,243,171" onclick="highlightDef('id_reboot');">
-<area id="shared" shape="rect" href="#a_shared" alt="Shared Library" coords="23,137,233,150" onclick="highlightDef('id_shared');">
-<area id="destination4" shape="RECT" href="#a_destination4" alt="Destination" onclick="highlightDef('id_destination4');" coords="23,84,395,105">
-<area id="libtype" shape="rect" href="#a_libtype" alt="Type" coords="23,110,395,132" onclick="highlightDef('id_libtype');">
-<area id="lib" shape="RECT" href="#a_lib" alt="Library" onclick="highlightDef('id_lib');" coords="23,57,395,79">
+<area id="remove" shape="rect" coords="23,284,136,297" href="#a_remove" alt="Remove on Uninstall" onClick="highlightDef('id_remove');">
+<area id="unload" shape="rect" coords="23,242,244,255" href="#a_unload" alt="Unload Unnecessary Libraries" onClick="highlightDef('id_unload');">
+<area id="refresh" shape="rect" coords="23,221,200,234" href="#a_refresh" alt="Refresh the Shell" onClick="highlightDef('id_refresh');">
+<area id="protected" shape="rect" coords="23,179,304,192" href="#a_protected" alt="Check for Windows File Protection" onClick="highlightDef('id_protected');">
+<area id="reboot" shape="rect" href="#a_reboot" alt="Upgrade on Reboot" coords="23,158,243,171" onClick="highlightDef('id_reboot');">
+<area id="shared" shape="rect" href="#a_shared" alt="Shared Library" coords="23,137,233,150" onClick="highlightDef('id_shared');">
+<area id="destination4" shape="RECT" href="#a_destination4" alt="Destination" onClick="highlightDef('id_destination4');" coords="23,84,395,105">
+<area id="libtype" shape="rect" href="#a_libtype" alt="Type" coords="23,110,395,132" onClick="highlightDef('id_libtype');">
+<area id="lib" shape="RECT" href="#a_lib" alt="Library" onClick="highlightDef('id_lib');" coords="23,57,395,79">
+<area id="x64" shape="rect" coords="23,200,136,213" href="#a_x64" alt="Windows x64 Library" onClick="highlightDef('id_x64');">
+<area id="alwaysinstall" shape="rect" coords="23,263,259,276" href="#a_alwaysinstall" alt="Always Install" onClick="highlightDef('id_alwaysinstall');">
 </map>
 <map name="shortcutdlg">
-  <area id="path" shape="RECT" href="#a_path" alt="Path" onclick="highlightDef('id_path');" coords="19,198,393,220">
-  <area id="url" shape="RECT" href="#a_url" alt="URL" onclick="highlightDef('id_url');" coords="20,173,396,195">
-  <area id="shortcut_type" shape="RECT" href="#a_shortcut_type" alt="Shortcut Type" onclick="highlightDef('id_shortcut_type');" coords="20,152,269,168">
-  <area id="name2" shape="RECT" href="#a_name2" alt="Name" onclick="highlightDef('id_name2');" coords="20,127,395,147">
-  <area id="location" shape="RECT" href="#a_location" alt="Location" onclick="highlightDef('id_location');" coords="20,56,396,126">
+  <area id="path" shape="RECT" href="#a_path" alt="Path" onClick="highlightDef('id_path');" coords="19,198,393,220">
+  <area id="url" shape="RECT" href="#a_url" alt="URL" onClick="highlightDef('id_url');" coords="20,173,396,195">
+  <area id="shortcut_type" shape="RECT" href="#a_shortcut_type" alt="Shortcut Type" onClick="highlightDef('id_shortcut_type');" coords="20,152,269,168">
+  <area id="name2" shape="RECT" href="#a_name2" alt="Name" onClick="highlightDef('id_name2');" coords="20,127,395,147">
+  <area id="location" shape="RECT" href="#a_location" alt="Location" onClick="highlightDef('id_location');" coords="20,56,396,126">
 </map>
 <map name="regkeydlg">
-  <area id="rootkey" shape="RECT" href="#a_rootkey" alt="Root Key" onclick="highlightDef('id_rootkey');" coords="23,56,247,78">
-  <area id="subkey" shape="RECT" href="#a_subkey" alt="Sub Key" onclick="highlightDef('id_subkey');" coords="23,81,396,102">
+  <area id="rootkey" shape="RECT" href="#a_rootkey" alt="Root Key" onClick="highlightDef('id_rootkey');" coords="23,56,247,78">
+  <area id="subkey" shape="RECT" href="#a_subkey" alt="Sub Key" onClick="highlightDef('id_subkey');" coords="23,81,396,102">
   <area id="browseregkey" shape="RECT" coords="293,106,394,128" href="#a_browseregkey" alt="Browse Registry" onClick="highlightDef('id_browseregkey');">
 </map>
 <map name="regvaldlg">
-  <area id="rootkey2" shape="RECT" href="#a_rootkey2" alt="Root Key" onclick="highlightDef('id_rootkey2');" coords="22,55,249,79">
-  <area id="subkey2" shape="RECT" href="#a_subkey2" alt="Sub Key" onclick="highlightDef('id_subkey2');" coords="23,81,395,101">
-  <area id="value" shape="RECT" href="#a_value" alt="Value" onclick="highlightDef('id_value');" coords="23,104,396,127">
-  <area id="type" shape="RECT" href="#a_type" alt="Type" onclick="highlightDef('id_type');" coords="23,130,197,152">
-  <area id="data" shape="RECT" href="#a_data" alt="Data" onclick="highlightDef('id_data');" coords="23,155,394,175">
-  <area id="browseregval" shape="RECT" coords="292,181,396,204" href="#a_browseregval" alt="Browse Registry" onclick="highlightDef('id_browseregval');">
+  <area id="rootkey2" shape="RECT" href="#a_rootkey2" alt="Root Key" onClick="highlightDef('id_rootkey2');" coords="22,55,249,79">
+  <area id="subkey2" shape="RECT" href="#a_subkey2" alt="Sub Key" onClick="highlightDef('id_subkey2');" coords="23,81,395,101">
+  <area id="value" shape="RECT" href="#a_value" alt="Value" onClick="highlightDef('id_value');" coords="23,104,396,127">
+  <area id="type" shape="RECT" href="#a_type" alt="Type" onClick="highlightDef('id_type');" coords="23,130,197,152">
+  <area id="data" shape="RECT" href="#a_data" alt="Data" onClick="highlightDef('id_data');" coords="23,155,394,175">
+  <area id="browseregval" shape="RECT" coords="292,181,396,204" href="#a_browseregval" alt="Browse Registry" onClick="highlightDef('id_browseregval');">
 </map>
 </div>
 

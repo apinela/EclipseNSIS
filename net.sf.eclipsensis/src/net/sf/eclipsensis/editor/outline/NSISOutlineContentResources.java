@@ -9,14 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.outline;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISService;
-import net.sf.eclipsensis.help.INSISKeywordsListener;
-import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.help.*;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;

@@ -12,8 +12,7 @@ package net.sf.eclipsensis.installoptions.actions;
 
 import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor;
 import net.sf.eclipsensis.util.CommonImages;
 
@@ -50,52 +49,52 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
     {
         mWizardAction = new InstallOptionsWizardAction();
         mHelpAction = new InstallOptionsHelpAction();
-        
+
         mInstallOptionsMenu = new MenuManager(InstallOptionsPlugin.getResourceString("installoptions.menu.name")); //$NON-NLS-1$
-        
+
         mSwitchEditorAction = new SwitchEditorRetargetAction(InstallOptionsPlugin.getResourceString("switch.design.editor.action.name")); //$NON-NLS-1$);
         registerRetargetAction(mSwitchEditorAction);
 
         mExportHTMLAction = new RetargetAction(InstallOptionsSourceEditor.EXPORT_HTML_ACTION,InstallOptionsPlugin.getResourceString("export.html.action.name")); //$NON-NLS-1$
         mExportHTMLAction.setToolTipText(InstallOptionsPlugin.getResourceString("export.html.action.tooltip")); //$NON-NLS-1$
         mExportHTMLAction.setImageDescriptor(ImageDescriptor.createFromImage(CommonImages.EXPORT_HTML_ICON));
-        mExportHTMLAction.setDisabledImageDescriptor(ImageDescriptor.createFromImage(CommonImages.EXPORT_HTML_DISABLED_ICON));        
+        mExportHTMLAction.setDisabledImageDescriptor(ImageDescriptor.createFromImage(CommonImages.EXPORT_HTML_DISABLED_ICON));
         registerRetargetAction(mExportHTMLAction);
-        
+
         mReorderAction = new RetargetAction(InstallOptionsSourceEditor.REORDER_ACTION,InstallOptionsPlugin.getResourceString("reorder.action.name")); //$NON-NLS-1$
         mReorderAction.setToolTipText(InstallOptionsPlugin.getResourceString("reorder.action.tooltip")); //$NON-NLS-1$
         mReorderAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("reorder.action.icon"))); //$NON-NLS-1$
-        mReorderAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("reorder.action.disabled.icon"))); //$NON-NLS-1$        
+        mReorderAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("reorder.action.disabled.icon"))); //$NON-NLS-1$
         registerRetargetAction(mReorderAction);
-        
+
         mCreateControlAction = new RetargetAction(InstallOptionsSourceEditor.CREATE_CONTROL_ACTION,InstallOptionsPlugin.getResourceString("create.control.action.name")); //$NON-NLS-1$
         mCreateControlAction.setToolTipText(InstallOptionsPlugin.getResourceString("create.control.action.tooltip")); //$NON-NLS-1$
         mCreateControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.control.icon"))); //$NON-NLS-1$
         mCreateControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.control.disabled.icon"))); //$NON-NLS-1$
         mCreateControlAction.setActionDefinitionId(CREATE_CONTROL_COMMAND_ID);
         registerRetargetAction(mCreateControlAction);
-        
+
         mEditControlAction = new RetargetAction(InstallOptionsSourceEditor.EDIT_CONTROL_ACTION,InstallOptionsPlugin.getResourceString("edit.control.action.name")); //$NON-NLS-1$
         mEditControlAction.setToolTipText(InstallOptionsPlugin.getResourceString("edit.control.action.tooltip")); //$NON-NLS-1$
         mEditControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("edit.control.icon"))); //$NON-NLS-1$
         mEditControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("edit.control.disabled.icon"))); //$NON-NLS-1$
         mEditControlAction.setActionDefinitionId(EDIT_CONTROL_COMMAND_ID);
         registerRetargetAction(mEditControlAction);
-        
+
         mDeleteControlAction = new RetargetAction(InstallOptionsSourceEditor.DELETE_CONTROL_ACTION,InstallOptionsPlugin.getResourceString("delete.control.action.name")); //$NON-NLS-1$
         mDeleteControlAction.setToolTipText(InstallOptionsPlugin.getResourceString("delete.control.action.tooltip")); //$NON-NLS-1$
         mDeleteControlAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.icon"))); //$NON-NLS-1$
         mDeleteControlAction.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.disabled.icon"))); //$NON-NLS-1$
         mDeleteControlAction.setActionDefinitionId(DELETE_CONTROL_COMMAND_ID);
         registerRetargetAction(mDeleteControlAction);
-        
+
         mDeleteControlAction2 = new RetargetAction(InstallOptionsSourceEditor.DELETE_CONTROL_ACTION2,InstallOptionsPlugin.getResourceString("delete.control.action.name")); //$NON-NLS-1$
         mDeleteControlAction2.setToolTipText(InstallOptionsPlugin.getResourceString("delete.control.action.tooltip")); //$NON-NLS-1$
         mDeleteControlAction2.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.icon"))); //$NON-NLS-1$
         mDeleteControlAction2.setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.disabled.icon"))); //$NON-NLS-1$
         mDeleteControlAction2.setActionDefinitionId(DELETE_CONTROL_COMMAND_ID2);
         registerRetargetAction(mDeleteControlAction2);
-        
+
         mPreviewClassicAction = new PreviewRetargetAction(IInstallOptionsConstants.PREVIEW_CLASSIC);
         registerRetargetAction(mPreviewClassicAction);
         mPreviewMUIAction = new PreviewRetargetAction(IInstallOptionsConstants.PREVIEW_MUI);
@@ -154,7 +153,7 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
     }
 
     /**
-     * 
+     *
      */
     private void registerRetargetAction(RetargetAction action)
     {

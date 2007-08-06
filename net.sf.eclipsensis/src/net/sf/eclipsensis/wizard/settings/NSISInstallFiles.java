@@ -51,7 +51,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#edit(org.eclipse.swt.widgets.Composite)
          */
         public boolean edit(NSISWizard wizard)
@@ -83,7 +83,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#equals(java.lang.Object)
          */
         public boolean equals(Object obj)
@@ -96,7 +96,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
          */
         public String getDisplayName()
@@ -106,7 +106,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
          */
         public Image getImage()
@@ -124,7 +124,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
          */
         public String getType()
@@ -134,7 +134,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#hashCode()
          */
         public int hashCode()
@@ -144,7 +144,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
          */
         public boolean isEditable()
@@ -239,7 +239,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
      */
     public String getDisplayName()
@@ -265,7 +265,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
      */
     public Image getImage()
@@ -283,7 +283,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
      */
     public String getType()
@@ -302,7 +302,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
      */
     public boolean isEditable()
@@ -312,7 +312,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
      */
     public void setChildTypes()

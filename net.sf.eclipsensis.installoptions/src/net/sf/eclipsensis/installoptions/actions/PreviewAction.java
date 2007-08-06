@@ -9,27 +9,22 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.editor.IInstallOptionsEditor;
 import net.sf.eclipsensis.installoptions.figures.DashedLineBorder;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.installoptions.util.DummyNSISSettings;
-import net.sf.eclipsensis.installoptions.util.FontUtility;
-import net.sf.eclipsensis.lang.NSISLanguage;
-import net.sf.eclipsensis.lang.NSISLanguageManager;
+import net.sf.eclipsensis.installoptions.util.*;
+import net.sf.eclipsensis.lang.*;
 import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.script.NSISScriptProblem;
 import net.sf.eclipsensis.settings.*;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
@@ -38,8 +33,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.operation.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -343,7 +337,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                 }
                                 symbols.put("PREVIEW_NAME",InstallOptionsPlugin.getResourceString(locale,"preview.setup.name")); //$NON-NLS-1$ //$NON-NLS-2$
                                 if(EclipseNSISPlugin.getDefault().isWinVista() && NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_21) >= 0) {
-                                    symbols.put("WINDOWS_VISTA","");
+                                    symbols.put("WINDOWS_VISTA",""); //$NON-NLS-1$ //$NON-NLS-2$
                                 }
 
                                 mSettings.setSymbols(symbols);

@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.util;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Version implements Comparable, Serializable
 {

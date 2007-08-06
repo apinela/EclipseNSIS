@@ -3,14 +3,13 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ProgressMonitorWrapper;
+import org.eclipse.core.runtime.*;
 
 public class NestedProgressMonitor extends ProgressMonitorWrapper
 {
@@ -21,12 +20,12 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
     private boolean mHasSubTask = false;
     private String mParentTaskName;
     private String mPrefix;
-    
+
     public NestedProgressMonitor(IProgressMonitor monitor, String parentTaskName, int ticks)
     {
         this(monitor, parentTaskName, parentTaskName, ticks);
     }
-    
+
     public NestedProgressMonitor(IProgressMonitor monitor, String parentTaskName, String prefix, int ticks)
     {
         super(monitor);
@@ -51,7 +50,7 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
         mPrefix = buf.toString();
     }
 
-    public void beginTask(String name, int totalWork) 
+    public void beginTask(String name, int totalWork)
     {
         mScale = totalWork <= 0 ? 0 : (double) mTicks / (double) totalWork;
         setTaskName(name);
@@ -69,7 +68,7 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
         }
     }
 
-    public void done() 
+    public void done()
     {
         double remaining = mTicks - mUsed;
         if (remaining > 0) {
@@ -83,7 +82,7 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
         setTaskName(mParentTaskName);
     }
 
-    public void internalWorked(double work) 
+    public void internalWorked(double work)
     {
         if (mCompleted) {
             return;
@@ -97,7 +96,7 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
         }
     }
 
-    public void subTask(String name) 
+    public void subTask(String name)
     {
         mHasSubTask = true;
         super.subTask(name);

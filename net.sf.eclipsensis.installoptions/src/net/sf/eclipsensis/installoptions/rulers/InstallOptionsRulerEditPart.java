@@ -11,8 +11,7 @@ package net.sf.eclipsensis.installoptions.rulers;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.*;
-import org.eclipse.gef.internal.ui.rulers.RulerEditPart;
-import org.eclipse.gef.internal.ui.rulers.RulerFigure;
+import org.eclipse.gef.internal.ui.rulers.*;
 import org.eclipse.gef.requests.SelectionRequest;
 
 public class InstallOptionsRulerEditPart extends RulerEditPart

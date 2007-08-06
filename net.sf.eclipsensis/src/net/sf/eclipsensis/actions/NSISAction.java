@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.actions;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.NSISEditor;
 
 import org.eclipse.jface.action.IAction;

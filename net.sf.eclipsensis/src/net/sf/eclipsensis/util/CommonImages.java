@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ public class CommonImages
     public static final Image DOWN_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("down.icon")); //$NON-NLS-1$
     public static final Image EXPORT_HTML_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("export.html.icon")); //$NON-NLS-1$
     public static final Image EXPORT_HTML_DISABLED_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("export.html.disabled.icon")); //$NON-NLS-1$
-    
+
     public static final Image BROWSER_SYNCED_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.synced.icon")); //$NON-NLS-1$
     public static final Image BROWSER_SHOWNAV_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.shownav.icon")); //$NON-NLS-1$
     public static final Image BROWSER_HIDENAV_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.hidenav.icon")); //$NON-NLS-1$
@@ -42,9 +42,9 @@ public class CommonImages
     public static final Image BROWSER_REFRESH_ICON = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.browser.refresh.icon")); //$NON-NLS-1$
     public static final Image REG_SZ_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regstr.icon")); //$NON-NLS-1$
     public static final Image REG_DWORD_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.regdword.icon")); //$NON-NLS-1$
-    
+
     private CommonImages()
     {
-        
+
     }
 }

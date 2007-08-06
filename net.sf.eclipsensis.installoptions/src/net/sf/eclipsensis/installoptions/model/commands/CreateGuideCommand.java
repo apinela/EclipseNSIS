@@ -11,8 +11,7 @@ package net.sf.eclipsensis.installoptions.model.commands;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
-import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
-import net.sf.eclipsensis.installoptions.rulers.InstallOptionsRuler;
+import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
 
 import org.eclipse.gef.commands.Command;

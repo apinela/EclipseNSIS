@@ -12,8 +12,7 @@ package net.sf.eclipsensis.installoptions.actions;
 import java.io.IOException;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplate;
-import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplateManager;
+import net.sf.eclipsensis.installoptions.template.*;
 
 import org.eclipse.jface.action.Action;
 

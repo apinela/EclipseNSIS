@@ -9,29 +9,25 @@
  *******************************************************************************/
 package net.sf.eclipsensis.utilities.dialogs;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.security.KeyStoreException;
 import java.util.*;
 import java.util.List;
 import java.util.jar.JarFile;
-import java.util.regex.Matcher;
+import java.util.regex.*;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 
 import net.sf.eclipsensis.utilities.UtilitiesPlugin;
 import net.sf.eclipsensis.utilities.util.Common;
 
-import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstall2;
+import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Version;

@@ -11,10 +11,8 @@ package net.sf.eclipsensis.settings;
 
 import java.util.*;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.util.*;
 
 public class PreferenceStoreWrapper implements IPreferenceStore
 {

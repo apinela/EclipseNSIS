@@ -3,19 +3,17 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
-import net.sf.eclipsensis.installoptions.model.InstallOptionsEditableElement;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
 
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
@@ -34,7 +32,7 @@ public class EditableElementPropertySectionCreator extends WidgetPropertySection
         if(text != null) {
             text.addVerifyListener(getNumberVerifyListener());
         }
-        
+
         text = createTextSection(parent, InstallOptionsModel.PROPERTY_MAXLEN, widgetFactory, commandHelper);
         if(text != null) {
             text.addVerifyListener(getNumberVerifyListener());

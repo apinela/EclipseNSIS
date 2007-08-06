@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -12,14 +12,12 @@ package net.sf.eclipsensis.help.commands;
 import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 public class GroupParam extends NSISParam
 {
@@ -27,7 +25,7 @@ public class GroupParam extends NSISParam
     public static final String SETTING_CHILD_SETTINGS = "childSettings"; //$NON-NLS-1$
     protected NSISParam[] mChildParams;
     protected Map mDependencies;
-    
+
     public GroupParam(Node node)
     {
         super(node);
@@ -97,7 +95,7 @@ public class GroupParam extends NSISParam
         }
         mChildParams = (NSISParam[])params.toArray(new NSISParam[params.size()]);
     }
-    
+
     protected class GroupParamEditor extends NSISParamEditor
     {
         protected List mParamEditors;
@@ -124,7 +122,7 @@ public class GroupParam extends NSISParam
                         }
                         parentEditor.setDependents(list);
                     }
-                }                
+                }
             }
         }
 
@@ -245,7 +243,7 @@ public class GroupParam extends NSISParam
                 layout.marginHeight = layout.marginWidth = 2;
                 composite.setLayout(layout);
                 layout.numColumns = getLayoutNumColumns();
-                
+
                 for (Iterator iter = mParamEditors.iterator(); iter.hasNext();) {
                     INSISParamEditor editor = (INSISParamEditor)iter.next();
                     createChildParamControl(composite, editor);
@@ -263,7 +261,7 @@ public class GroupParam extends NSISParam
                 }
             }
         }
-        
+
         protected int getLayoutNumColumns()
         {
             boolean isOptional = false;

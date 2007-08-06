@@ -9,15 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Map;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISService;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.settings.INSISHomeListener;
-import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -89,20 +86,20 @@ public class NSISUsageProvider implements IEclipseNSISService
             File exeFile = NSISPreferences.INSTANCE.getNSISExeFile();
             if(exeFile != null && exeFile.exists()) {
                 long exeTimeStamp = exeFile.lastModified();
-    
+
                 File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
                 File cacheFile = new File(stateLocation,NSISUsageProvider.class.getName()+".Usages.ser"); //$NON-NLS-1$
                 long cacheTimeStamp = 0;
                 if(cacheFile.exists()) {
                     cacheTimeStamp = cacheFile.lastModified();
                 }
-    
+
                 if(exeTimeStamp != cacheTimeStamp) {
                     String[] output = MakeNSISRunner.runProcessWithOutput(exeFile.getAbsolutePath(),new String[]{
                                                                           MakeNSISRunner.MAKENSIS_VERBOSITY_OPTION+"1", //$NON-NLS-1$
                                                                           MakeNSISRunner.MAKENSIS_CMDHELP_OPTION},
                                                                           null,1);
-    
+
                     if(!Common.isEmptyArray(output)) {
                         StringBuffer buf = null;
                         for (int i = 0; i < output.length; i++) {

@@ -3,24 +3,22 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Text;
 import org.w3c.dom.*;
@@ -29,10 +27,10 @@ public class LocalFileParam extends LocalFilesystemObjectParam
 {
     public static final String ATTR_FILTER = "filter"; //$NON-NLS-1$
     public static final String SETTING_FILE = "file"; //$NON-NLS-1$
-    
+
     protected String[] mFilterNames;
     protected String[] mFilters;
-    
+
     public LocalFileParam(Node node)
     {
         super(node);
@@ -93,7 +91,7 @@ public class LocalFileParam extends LocalFilesystemObjectParam
         {
             if(Common.isValid(mFileText)) {
                 String file = IOUtility.decodePath(mFileText.getText());
-                if(file.length() == 0 ) { 
+                if(file.length() == 0 ) {
                     if(isAllowBlank()) {
                         return null;
                     }
@@ -181,7 +179,7 @@ public class LocalFileParam extends LocalFilesystemObjectParam
             mFileText.setData(DATA_BUTTON,b);
             return parent;
         }
-        
+
         protected boolean isSave()
         {
             return false;

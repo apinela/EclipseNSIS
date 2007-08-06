@@ -9,24 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.NSISHeaderAssociationManager;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPropertyPage
@@ -64,7 +58,7 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
         mAssociatedScriptLabel.setText(EclipseNSISPlugin.getResourceString("associated.script.label")); //$NON-NLS-1$
         mAssociatedScriptLabel.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
 
-        mNSISScriptName = new Text(composite, SWT.BORDER); 
+        mNSISScriptName = new Text(composite, SWT.BORDER);
         IFile file = mHeaderAssociationManager.getAssociatedScript((IFile)getElement());
         mNSISScriptName.setText(file==null?"":file.getFullPath().toString()); //$NON-NLS-1$
         mNSISScriptName.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
@@ -94,7 +88,7 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
                         if(!validateScript(dialog.getFile())) {
                             continue;
                         }
-                        mNSISScriptName.setText(dialog.getFile().getFullPath().toString()); 
+                        mNSISScriptName.setText(dialog.getFile().getFullPath().toString());
                     }
                     break;
                 }

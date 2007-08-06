@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -13,16 +13,13 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.XMLUtil;
-import net.sf.eclipsensis.viewer.MapContentProvider;
-import net.sf.eclipsensis.viewer.MapLabelProvider;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.viewer.*;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.w3c.dom.*;
 
@@ -31,14 +28,14 @@ public class SubCommandParam extends NSISParam
     public static final String ATTR_COMMAND = "command"; //$NON-NLS-1$
     public static final String TAG_SUBCOMMAND = "subcommand"; //$NON-NLS-1$
     public static final String SETTING_SUBCOMMAND = "subcommand"; //$NON-NLS-1$
-    
+
     protected Map mSubCommands;
-    
+
     public SubCommandParam(Node node)
     {
         super(node);
     }
-    
+
     protected void init(Node node)
     {
         super.init(node);
@@ -62,7 +59,7 @@ public class SubCommandParam extends NSISParam
             }
         }
     }
-    
+
     protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
     {
         return new SubCommandParamEditor(parentEditor);
@@ -72,7 +69,7 @@ public class SubCommandParam extends NSISParam
     {
         private INSISParamEditor mCommandEditor = null;
         private ComboViewer mComboViewer;
-        
+
         public SubCommandParamEditor(INSISParamEditor parentEditor)
         {
             super(parentEditor);
@@ -109,7 +106,7 @@ public class SubCommandParam extends NSISParam
             }
             return null;
         }
-        
+
         protected Map.Entry getCurrentCommand()
         {
             Map.Entry command = null;
@@ -194,14 +191,14 @@ public class SubCommandParam extends NSISParam
                 GridLayout layout = new GridLayout(1,false);
                 layout.marginHeight = layout.marginWidth = 0;
                 container.setLayout(layout);
-                
+
                 Combo combo = new Combo(container,SWT.READ_ONLY|SWT.DROP_DOWN);
                 combo.setLayoutData(new GridData(SWT.LEFT,SWT.CENTER,false,false));
-                
+
                 mComboViewer = new ComboViewer(combo);
                 mComboViewer.setContentProvider(new MapContentProvider());
                 mComboViewer.setLabelProvider(new MapLabelProvider());
-                
+
                 mComboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
                     public void selectionChanged(SelectionChangedEvent event)
                     {
@@ -225,10 +222,10 @@ public class SubCommandParam extends NSISParam
                             Shell shell = container.getShell();
                             Point size = shell.getSize();
                             shell.setSize(size.x, shell.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-                        }                    
+                        }
                     }
                 });
-                
+
                 mComboViewer.setInput(mSubCommands);
                 return container;
             }

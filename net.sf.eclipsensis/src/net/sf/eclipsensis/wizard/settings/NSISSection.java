@@ -12,8 +12,7 @@ package net.sf.eclipsensis.wizard.settings;
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.help.INSISKeywordsListener;
-import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.help.*;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionDialog;

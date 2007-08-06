@@ -9,27 +9,24 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 import java.util.*;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPropertyDescriptor;
-import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
-import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
+import net.sf.eclipsensis.installoptions.properties.validators.*;
 import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.UpDownMover;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class InstallOptionsDialog extends InstallOptionsElement implements IInstallOptionsConstants
 {

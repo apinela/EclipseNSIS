@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.update.net;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.text.MessageFormat;
@@ -25,8 +24,7 @@ import net.sf.eclipsensis.update.jobs.NSISUpdateURLs;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 
 public class NetworkUtil

@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -19,8 +19,8 @@ public class NSISConsoleFactory implements IConsoleFactory
     {
         showConsole();
     }
-    
-    public static void showConsole() 
+
+    public static void showConsole()
     {
         NSISConsole console = EclipseNSISPlugin.getDefault().getConsole();
         if (console != null) {
@@ -38,8 +38,8 @@ public class NSISConsoleFactory implements IConsoleFactory
             manager.showConsoleView(console);
         }
     }
-    
-    public static void closeConsole() 
+
+    public static void closeConsole()
     {
         IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
         NSISConsole console = EclipseNSISPlugin.getDefault().getConsole();

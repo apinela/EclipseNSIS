@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -15,19 +15,16 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Node;
 
 public class LocalPathParam extends LocalFileParam
 {
     public static final String SETTING_PATH = "path"; //$NON-NLS-1$
-    
+
     public LocalPathParam(Node node)
     {
         super(node);
@@ -37,7 +34,7 @@ public class LocalPathParam extends LocalFileParam
     {
         return new LocalPathParamEditor(parentEditor);
     }
-    
+
     protected class LocalPathParamEditor extends LocalFilesystemObjectParamEditor
     {
         protected Text mPathText = null;
@@ -80,7 +77,7 @@ public class LocalPathParam extends LocalFileParam
         {
             if(Common.isValid(mPathText)) {
                 String path = IOUtility.decodePath(mPathText.getText());
-                if(path.length() == 0 ) { 
+                if(path.length() == 0 ) {
                     if(isAllowBlank()) {
                         return null;
                     }
@@ -140,7 +137,7 @@ public class LocalPathParam extends LocalFileParam
             mPathText = new Text(parent,SWT.BORDER);
             setToolTip(mPathText);
             mPathText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
-            
+
             final Button b = new Button(parent,SWT.ARROW|SWT.DOWN);
             b.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
 
@@ -189,7 +186,7 @@ public class LocalPathParam extends LocalFileParam
                     }
                 }
             });
-            
+
             b.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e)
                 {
@@ -205,7 +202,7 @@ public class LocalPathParam extends LocalFileParam
                     }
                 }
             });
-            
+
             mPathText.setData(DATA_BUTTON, b);
             return parent;
         }

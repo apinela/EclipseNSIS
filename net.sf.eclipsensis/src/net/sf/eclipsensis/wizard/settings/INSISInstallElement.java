@@ -13,8 +13,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import net.sf.eclipsensis.util.INodeConvertible;
-import net.sf.eclipsensis.wizard.INSISWizardConstants;
-import net.sf.eclipsensis.wizard.NSISWizard;
+import net.sf.eclipsensis.wizard.*;
 
 import org.eclipse.swt.graphics.Image;
 

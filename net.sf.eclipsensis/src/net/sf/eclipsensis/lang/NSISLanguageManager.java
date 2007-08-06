@@ -9,15 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.lang;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.beans.*;
 import java.io.*;
 import java.util.*;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.settings.INSISHomeListener;
-import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;

@@ -17,8 +17,7 @@ import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.TextAttribute;
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.*;
 
 public class NSISTemplateCodeScanner extends NSISCodeScanner
 {

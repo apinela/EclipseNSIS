@@ -18,13 +18,10 @@ import net.sf.eclipsensis.viewer.EmptyContentProvider;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
+import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.source.projection.*;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.*;
 
 
 /**

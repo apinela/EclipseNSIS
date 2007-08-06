@@ -9,24 +9,19 @@
  *******************************************************************************/
 package net.sf.eclipsensis.launch;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.io.*;
 import java.text.MessageFormat;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
 import net.sf.eclipsensis.editor.NSISExternalFileEditorInput;
-import net.sf.eclipsensis.makensis.MakeNSISResults;
-import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.settings.NSISSettings;
+import net.sf.eclipsensis.makensis.*;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.core.variables.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.ui.IDebugUIConstants;

@@ -14,8 +14,7 @@ import java.util.Collection;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.INSISWizardConstants;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible implements INSISInstallElement
 {

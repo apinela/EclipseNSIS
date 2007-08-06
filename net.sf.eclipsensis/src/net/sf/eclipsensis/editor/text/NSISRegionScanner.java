@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.text;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 
 import net.sf.eclipsensis.util.Common;
 

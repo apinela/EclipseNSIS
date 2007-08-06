@@ -17,8 +17,7 @@ import net.sf.eclipsensis.installoptions.properties.editors.EditableComboBoxCell
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.editpolicies.SelectionEditPolicy;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.*;
 import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditPart
@@ -41,7 +40,7 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditP
             {
                 setShowDropdown(true);
             }
-            
+
             private void setShowDropdown(boolean flag)
             {
                 IFigure figure = getFigure();

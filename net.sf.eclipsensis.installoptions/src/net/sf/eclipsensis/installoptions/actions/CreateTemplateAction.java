@@ -18,8 +18,7 @@ import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplateDialog;
 
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 
 public class CreateTemplateAction extends SelectionAction
 {

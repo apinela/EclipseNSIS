@@ -20,8 +20,7 @@ import net.sf.eclipsensis.viewer.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 
 public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage

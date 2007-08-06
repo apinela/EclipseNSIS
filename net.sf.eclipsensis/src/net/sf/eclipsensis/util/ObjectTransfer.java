@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import org.eclipse.swt.dnd.ByteArrayTransfer;
-import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.*;
 
 public abstract class ObjectTransfer extends ByteArrayTransfer
 {

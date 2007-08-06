@@ -16,15 +16,12 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.console.NSISConsole;
-import net.sf.eclipsensis.dialogs.MinimalProgressMonitorDialog;
-import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
+import net.sf.eclipsensis.dialogs.*;
 import net.sf.eclipsensis.editor.template.NSISTemplateContextType;
 import net.sf.eclipsensis.filemon.FileMonitor;
-import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.job.JobScheduler;
+import net.sf.eclipsensis.job.*;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
-import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.util.Version;
 
@@ -34,14 +31,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.jface.util.Geometry;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.branding.IProductConstants;
-import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
-import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
+import org.eclipse.ui.editors.text.templates.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.*;
 

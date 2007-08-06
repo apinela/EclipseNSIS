@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor;
 
-import org.eclipse.ui.IPathEditorInput;
-import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.TextFileDocumentProvider;
 
 public interface IInstallOptionsEditorInput extends IPathEditorInput, IStorageEditorInput

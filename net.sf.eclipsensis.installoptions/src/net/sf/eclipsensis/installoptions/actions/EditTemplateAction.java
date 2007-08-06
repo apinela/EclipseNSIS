@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.actions;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplate;
-import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplateDialog;
+import net.sf.eclipsensis.installoptions.template.*;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.PlatformUI;

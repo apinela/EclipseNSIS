@@ -11,13 +11,10 @@ package net.sf.eclipsensis.wizard;
 
 import java.text.Collator;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.viewer.CollectionContentProvider;
-import net.sf.eclipsensis.viewer.CollectionLabelProvider;
-import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
-import net.sf.eclipsensis.wizard.template.NSISWizardTemplateManager;
+import net.sf.eclipsensis.viewer.*;
+import net.sf.eclipsensis.wizard.template.*;
 import net.sf.eclipsensis.wizard.util.*;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -25,13 +22,10 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage

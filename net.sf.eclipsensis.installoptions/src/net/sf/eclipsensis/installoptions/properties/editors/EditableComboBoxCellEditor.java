@@ -13,8 +13,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;

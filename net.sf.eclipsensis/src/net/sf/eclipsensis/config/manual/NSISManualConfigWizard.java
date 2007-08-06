@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -13,8 +13,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.config.NSISConfigWizard;
 import net.sf.eclipsensis.wizard.WizardShellImageChanger;
 
-import org.eclipse.jface.dialogs.IPageChangeProvider;
-import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;

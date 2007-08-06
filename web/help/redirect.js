@@ -13,6 +13,7 @@ var numberRegExp = /^[1-9][0-9]*$/
 var keywordURLs = new Object();
 keywordURLs["!macro"] = "Chapter5.html#5.4.11";
 keywordURLs["file"] = "Chapter4.html#4.9.1.5";
+keywordURLS["requestexecutionlevel"] = "Chapter4.html#4.8.1.32";
 
 function prependSlash(url)
 {

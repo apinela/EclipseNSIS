@@ -142,28 +142,28 @@ public class NSISExternalFileEditorInput implements IPathEditorInput, ILocationP
                                                            1,e.getMessage(),e));
                     }
                 }
-    
+
                 public IPath getFullPath()
                 {
                     return getPath();
                 }
-    
+
                 public String getName()
                 {
                     return NSISExternalFileEditorInput.this.getName();
                 }
-    
+
                 public boolean isReadOnly()
                 {
                     return (mFile != null && mFile.exists() && !mFile.canWrite());
                 }
-    
+
                 public Object getAdapter(Class adapter)
                 {
                     return NSISExternalFileEditorInput.this.getAdapter(adapter);
                 }
             };
-            
+
         }
         return mStorage;
     }

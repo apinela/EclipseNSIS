@@ -12,12 +12,9 @@ package net.sf.eclipsensis.dialogs;
 import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.editor.INSISEditorConstants;
-import net.sf.eclipsensis.editor.NSISDocumentSetupParticipant;
-import net.sf.eclipsensis.editor.template.NSISTemplateEditorSourceViewerConfiguration;
-import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewer;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.editor.*;
+import net.sf.eclipsensis.editor.template.*;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
@@ -28,14 +25,11 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.templates.*;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -386,7 +380,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
 
         action= new TextViewerAction(mPatternEditor, ISourceViewer.CONTENTASSIST_PROPOSALS);
         action.setText(EclipseNSISPlugin.getResourceString("content.assist.proposal.label")); //$NON-NLS-1$
-        mGlobalActions.put(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL, action); 
+        mGlobalActions.put(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL, action);
 
         action= new TextViewerAction(mPatternEditor, NSISTemplateSourceViewer.INSERT_TEMPLATE_VARIABLE);
         action.setText(EclipseNSISPlugin.getResourceString("insert.template.variable.proposal.label")); //$NON-NLS-1$
@@ -420,7 +414,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.COPY));
         menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.PASTE));
         menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
-        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL)); 
+        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL));
 
         menu.add(new Separator("templates")); //$NON-NLS-1$
         menu.appendToGroup("templates", (IAction) mGlobalActions.get("InsertTemplateVariableProposal")); //$NON-NLS-1$ //$NON-NLS-2$

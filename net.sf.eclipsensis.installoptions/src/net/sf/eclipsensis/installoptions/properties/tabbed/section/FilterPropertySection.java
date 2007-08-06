@@ -3,41 +3,34 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.TableResizer;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.FileFilterLabelProvider;
-import net.sf.eclipsensis.installoptions.util.FileFilter;
-import net.sf.eclipsensis.installoptions.util.FilePattern;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.CommonImages;
-import net.sf.eclipsensis.viewer.CollectionContentProvider;
-import net.sf.eclipsensis.viewer.TableViewerUpDownMover;
+import net.sf.eclipsensis.installoptions.util.*;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.viewer.*;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
-import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
+import org.eclipse.ui.views.properties.tabbed.*;
 
 public class FilterPropertySection extends InstallOptionsElementPropertySection
 {
@@ -48,10 +41,10 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             final boolean[] nonUserChange = { false };
             final IPropertyDescriptor descriptor = element.getPropertyDescriptor(InstallOptionsModel.PROPERTY_FILTER);
             final ICellEditorValidator validator = (ICellEditorValidator)Common.getObjectFieldValue(descriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
-            
+
             final TabbedPropertySheetWidgetFactory widgetFactory = getWidgetFactory();
 
-            parent = createSectionComposite(parent); 
+            parent = createSectionComposite(parent);
             GridLayout layout = new GridLayout(2, false);
             layout.marginHeight = layout.marginWidth = 0;
             parent.setLayout(layout);
@@ -243,7 +236,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                             Common.openError(summaryViewer.getTable().getShell(), error, InstallOptionsPlugin.getShellImage());
                             current[0].setDescription(oldDescription);
                         }
-                    }                    
+                    }
                 }
             };
             helper.connect(descriptionText);
@@ -515,7 +508,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             });
 
             summaryViewer.setInput(InstallOptionsFileRequest.FILEFILTER_LIST_CONVERTER.makeCopy(((InstallOptionsFileRequest)element).getFilter()));
-            
+
             final PropertyChangeListener listener = new PropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent evt)
                 {
@@ -537,7 +530,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                         }
                     }
                 }
-                
+
             };
             element.addPropertyChangeListener(listener);
             parent.addDisposeListener(new DisposeListener() {

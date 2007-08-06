@@ -12,11 +12,9 @@ package net.sf.eclipsensis.actions;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.NSISHeaderAssociationManager;
+import net.sf.eclipsensis.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IWorkbenchPage;

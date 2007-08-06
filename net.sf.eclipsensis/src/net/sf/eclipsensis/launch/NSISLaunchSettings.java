@@ -16,12 +16,10 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.settings.NSISSettings;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.*;
 import org.eclipse.jface.viewers.IFilter;
 
 public class NSISLaunchSettings extends NSISSettings
@@ -241,7 +239,7 @@ public class NSISLaunchSettings extends NSISSettings
     {
         remove(name);
     }
-    
+
     private List storeSymbols(Map map)
     {
         List list = new ArrayList();
@@ -265,7 +263,7 @@ public class NSISLaunchSettings extends NSISSettings
         }
         return list;
     }
-    
+
     private LinkedHashMap loadSymbols(List list)
     {
         LinkedHashMap map = new LinkedHashMap();

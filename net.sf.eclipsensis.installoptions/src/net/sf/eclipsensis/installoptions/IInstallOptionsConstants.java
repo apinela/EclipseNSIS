@@ -13,8 +13,7 @@ import net.sf.eclipsensis.installoptions.model.DialogSize;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.jface.text.Position;
 import org.eclipse.swt.graphics.Color;
 

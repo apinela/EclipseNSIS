@@ -15,12 +15,10 @@ import net.sf.jarsigner.JARSignerPlugin;
 import net.sf.jarsigner.dialogs.JARVerifierOptionsDialog;
 import net.sf.jarsigner.util.JARVerifier;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
@@ -50,7 +48,7 @@ public class JARVerifierAction implements IObjectActionDelegate
 	 */
 	public void run(IAction action)
     {
-        if (mSelection != null && !mSelection.isEmpty() && mSelection instanceof IStructuredSelection) {
+        if ((mSelection != null) && !mSelection.isEmpty() && (mSelection instanceof IStructuredSelection)) {
             IStructuredSelection sel = (IStructuredSelection)mSelection;
             try {
                 JARVerifierOptionsDialog dialog = new JARVerifierOptionsDialog(Display.getDefault().getActiveShell(),sel.toList());

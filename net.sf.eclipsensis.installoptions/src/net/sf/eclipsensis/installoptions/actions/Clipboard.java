@@ -10,8 +10,7 @@
 package net.sf.eclipsensis.installoptions.actions;
 
 import java.beans.*;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.util.ObjectTransfer;
@@ -65,7 +64,7 @@ public class Clipboard
 					Display.getDefault().asyncExec(runnable);
 				} catch (Exception e) {
 					InstallOptionsPlugin.getDefault().log(e);
-				}                
+				}
             }
         },0,10);
         Display.getDefault().disposeExec(new Runnable() {

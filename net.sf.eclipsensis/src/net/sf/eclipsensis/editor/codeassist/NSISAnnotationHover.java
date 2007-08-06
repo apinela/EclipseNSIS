@@ -11,8 +11,7 @@ package net.sf.eclipsensis.editor.codeassist;
 
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.CoreException;
@@ -168,7 +167,7 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
             try {
                 ISourceViewer sourceViewer = (ISourceViewer)textViewer;
                 IAnnotationModel model = sourceViewer.getAnnotationModel();
-    
+
                 if (model != null) {
                     for(Iterator e= model.getAnnotationIterator(); e.hasNext(); ) {
                         Annotation a= (Annotation) e.next();

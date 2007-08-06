@@ -11,8 +11,7 @@ package net.sf.eclipsensis.installoptions.requests;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.Request;
+import org.eclipse.gef.*;
 
 public class ReorderPartRequest extends Request implements IInstallOptionsConstants
 {

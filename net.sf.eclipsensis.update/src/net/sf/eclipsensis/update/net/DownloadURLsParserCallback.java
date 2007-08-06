@@ -13,16 +13,14 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.html.HTML.Attribute;
-import javax.swing.text.html.HTML.Tag;
+import javax.swing.text.html.HTML.*;
 import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.jobs.NSISUpdateURLs;
 import net.sf.eclipsensis.util.IOUtility;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 
 class DownloadURLsParserCallback extends ParserCallback
 {

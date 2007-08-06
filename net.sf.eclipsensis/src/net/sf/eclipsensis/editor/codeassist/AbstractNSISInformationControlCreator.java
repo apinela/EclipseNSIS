@@ -31,7 +31,7 @@ public class AbstractNSISInformationControlCreator implements IInformationContro
     {
         return new DefaultInformationControl(parent,mStyle,mInformationPresenter);
     }
-    
+
     protected DefaultInformationControl.IInformationPresenter createInformationPresenter()
     {
         return null;

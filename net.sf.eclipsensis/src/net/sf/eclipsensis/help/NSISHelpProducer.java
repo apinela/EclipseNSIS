@@ -11,17 +11,13 @@ package net.sf.eclipsensis.help;
 
 import java.io.*;
 import java.text.MessageFormat;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpContentProducer;
 import org.eclipse.swt.program.Program;
 
@@ -29,7 +25,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
 {
     public static final String STYLE = EclipseNSISPlugin.getResourceString("help.style",""); //$NON-NLS-1$ //$NON-NLS-2$
     public static final String CONFIGURE = "configure"; //$NON-NLS-1$
-    
+
     private static final String NSIS_CONTRIB_PATH="help/NSIS/$CONTRIB$"; //$NON-NLS-1$
     private static final byte[] NSIS_CONTRIB_JS=new StringBuffer("<!--").append(LINE_SEPARATOR).append( //$NON-NLS-1$
         "var nsisContribPath=\"/").append(PLUGIN_ID).append("/").append(NSIS_CONTRIB_PATH).append( //$NON-NLS-1$ //$NON-NLS-2$
@@ -41,7 +37,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
     private boolean mJavascriptOnly = false;
     private String[] mHelpURLPrefixes = {PLUGIN_ID, NSIS_PLATFORM_HELP_PREFIX};
     private MessageFormat mLocationReplaceFormat = new MessageFormat("<html><head><script language=\"javascript\">\n<!--\nif(window.location.replace) '{'window.location.replace(\"{0}\");'}' else '{'window.location.href=\"{0}\";'}'\n//-->\n</script></head><body></body></html>"); //$NON-NLS-1$
-    
+
     private String stripPrefixes(String href)
     {
         for (int i = 0; i < mHelpURLPrefixes.length; i++) {

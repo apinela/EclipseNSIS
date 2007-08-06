@@ -12,8 +12,7 @@ package net.sf.eclipsensis.help;
 import java.io.File;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -29,7 +28,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
     private static final String HANDLER_NAME = "name"; //$NON-NLS-1$
     private static final String HANDLER_EXTENSIONS = "extensions"; //$NON-NLS-1$
     private static final String HANDLER_CLASS = "class"; //$NON-NLS-1$
-    
+
     private static final IHelpBrowserLocalFileHandler NULL_HANDLER = new IHelpBrowserLocalFileHandler() {
         public boolean handle(File file)
         {
@@ -40,7 +39,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
     public static final HelpBrowserLocalFileHandler INSTANCE = new HelpBrowserLocalFileHandler();
 
     private Map mExtensions = new LinkedHashMap();
-    
+
     private Object mLock = new Object();
 
     private HelpBrowserLocalFileHandler()
@@ -90,7 +89,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
                 }
             }
             return false;
-        }        
+        }
     }
 
     private IExtensionPoint getExtensionPointFilter()
@@ -129,7 +128,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
                 }
                 mExtensions.put(extension.getUniqueIdentifier(), handlers);
             }
-        }        
+        }
     }
 
     public void removeExtension(IExtension extension, Object[] objects)
@@ -138,13 +137,13 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
             if (mExtensions.containsKey(extension.getUniqueIdentifier())) {
                 mExtensions.remove(extension.getUniqueIdentifier());
             }
-        }        
+        }
     }
 
     private class HandlerDescriptor
     {
         private IConfigurationElement mElement;
-        
+
         private String mId = ""; //$NON-NLS-1$
         private String mName = ""; //$NON-NLS-1$
         private Set mExtensions = new CaseInsensitiveSet();

@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.*;
 public class NSISInstallElementLabelProvider extends CellLabelProvider
 {
     private static Image cErrorImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("error.decoration.icon")); //$NON-NLS-1$
-    private static ImageData cErrorImageData = cErrorImage.getImageData(); 
+    private static ImageData cErrorImageData = cErrorImage.getImageData();
 
     public NSISInstallElementLabelProvider()
     {

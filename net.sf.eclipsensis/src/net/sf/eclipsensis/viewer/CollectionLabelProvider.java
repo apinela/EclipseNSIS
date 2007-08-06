@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.viewer;
 
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 
 

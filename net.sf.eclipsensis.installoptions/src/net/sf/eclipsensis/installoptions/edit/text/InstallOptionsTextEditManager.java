@@ -11,18 +11,15 @@ package net.sf.eclipsensis.installoptions.edit.text;
 
 import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditManager;
 import net.sf.eclipsensis.installoptions.figures.TextFigure;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.NumberVerifyListener;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 public class InstallOptionsTextEditManager extends InstallOptionsEditableElementEditManager
 {

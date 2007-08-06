@@ -11,11 +11,9 @@ package net.sf.eclipsensis.viewer;
 
 import java.util.List;
 
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.UpDownMover;
+import net.sf.eclipsensis.util.*;
 
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.*;
 
 public abstract class StructuredViewerUpDownMover extends UpDownMover
 {

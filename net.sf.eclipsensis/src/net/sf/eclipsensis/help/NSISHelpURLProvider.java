@@ -12,20 +12,17 @@ package net.sf.eclipsensis.help;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
 import javax.swing.text.html.parser.ParserDelegator;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.codeassist.NSISBrowserUtility;
-import net.sf.eclipsensis.help.search.INSISHelpSearchConstants;
-import net.sf.eclipsensis.help.search.NSISHelpSearchManager;
+import net.sf.eclipsensis.help.search.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 

@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.template;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.Collator;
 import java.util.*;
 import java.util.List;
@@ -18,8 +17,7 @@ import java.util.List;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.viewer.CollectionLabelProvider;
-import net.sf.eclipsensis.viewer.EmptyContentProvider;
+import net.sf.eclipsensis.viewer.*;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -28,8 +26,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public abstract class AbstractTemplateSettings extends Composite

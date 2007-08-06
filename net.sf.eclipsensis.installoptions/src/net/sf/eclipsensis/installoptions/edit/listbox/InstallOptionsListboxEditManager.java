@@ -12,8 +12,7 @@ package net.sf.eclipsensis.installoptions.edit.listbox;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditManager;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsListbox;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.editors.ListCellEditor;
 
 import org.eclipse.gef.GraphicalEditPart;

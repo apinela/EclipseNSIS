@@ -21,7 +21,7 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#addChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
      */
     public final boolean addChild(INSISInstallElement child)
@@ -46,7 +46,7 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildren()
      */
     public final INSISInstallElement[] getChildren()
@@ -56,7 +56,7 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getChildTypes()
      */
     public final String[] getChildTypes()
@@ -66,7 +66,7 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#hasChildren()
      */
     public final boolean hasChildren()
@@ -81,7 +81,7 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeAllChildren()
      */
     public final boolean removeAllChildren()
@@ -91,7 +91,7 @@ public abstract class AbstractNSISInstallItem extends AbstractNSISInstallElement
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#removeChild(net.sf.eclipsensis.wizard.settings.INSISInstallElement)
      */
     public final boolean removeChild(INSISInstallElement child)

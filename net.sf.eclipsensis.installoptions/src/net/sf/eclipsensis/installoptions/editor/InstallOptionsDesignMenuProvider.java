@@ -13,13 +13,12 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.actions.*;
+import net.sf.eclipsensis.installoptions.actions.MatchSizeAction;
 import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.EditPartViewer;
-import org.eclipse.gef.ui.actions.ActionRegistry;
-import org.eclipse.gef.ui.actions.GEFActionConstants;
+import org.eclipse.gef.*;
+import org.eclipse.gef.ui.actions.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.actions.ActionFactory;
 

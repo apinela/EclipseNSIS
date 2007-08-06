@@ -12,11 +12,9 @@ package net.sf.eclipsensis.installoptions.edit.button;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart;
-import net.sf.eclipsensis.installoptions.figures.ButtonFigure;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
+import net.sf.eclipsensis.installoptions.figures.*;
 
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.*;
 import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsButtonEditPart extends InstallOptionsUneditableElementEditPart

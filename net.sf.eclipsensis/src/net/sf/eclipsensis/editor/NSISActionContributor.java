@@ -11,8 +11,7 @@ package net.sf.eclipsensis.editor;
 
 import java.util.ResourceBundle;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.actions.NSISConfigWizardAction;
 import net.sf.eclipsensis.util.Common;
 

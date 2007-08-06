@@ -11,8 +11,7 @@ package net.sf.eclipsensis.viewer;
 
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 
 public class EmptyContentProvider implements ITreeContentProvider
 {

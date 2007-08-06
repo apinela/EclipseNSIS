@@ -9,12 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.update.preferences;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 
 class Enabler
 {

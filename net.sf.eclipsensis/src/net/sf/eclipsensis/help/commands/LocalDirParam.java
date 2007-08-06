@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -12,21 +12,18 @@ package net.sf.eclipsensis.help.commands;
 import java.io.File;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Node;
 
 public class LocalDirParam extends LocalFilesystemObjectParam
 {
     public static final String SETTING_DIR = "dir"; //$NON-NLS-1$
-    
+
     public LocalDirParam(Node node)
     {
         super(node);
@@ -40,7 +37,7 @@ public class LocalDirParam extends LocalFilesystemObjectParam
     protected class LocalDirParamEditor extends LocalFilesystemObjectParamEditor
     {
         protected Text mDirText = null;
-        
+
         public LocalDirParamEditor(INSISParamEditor parentEditor)
         {
             super(parentEditor);
@@ -58,7 +55,7 @@ public class LocalDirParam extends LocalFilesystemObjectParam
         {
             if(Common.isValid(mDirText)) {
                 String dir = IOUtility.decodePath(mDirText.getText());
-                if(dir.length() == 0 ) { 
+                if(dir.length() == 0 ) {
                     if(isAllowBlank()) {
                         return null;
                     }

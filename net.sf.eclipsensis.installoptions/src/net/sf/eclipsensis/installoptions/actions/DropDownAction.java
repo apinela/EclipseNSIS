@@ -12,20 +12,17 @@ package net.sf.eclipsensis.installoptions.actions;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.job.JobScheduler;
+import net.sf.eclipsensis.job.*;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.actions.PartEventAction;
-import org.eclipse.ui.actions.RetargetAction;
+import org.eclipse.ui.actions.*;
 
 public class DropDownAction extends PartEventAction implements IPropertyChangeListener
 {

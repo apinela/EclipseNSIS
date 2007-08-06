@@ -11,8 +11,7 @@ package net.sf.eclipsensis.editor.template;
 
 import net.sf.eclipsensis.editor.NSISSourceViewer;
 
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.widgets.Composite;

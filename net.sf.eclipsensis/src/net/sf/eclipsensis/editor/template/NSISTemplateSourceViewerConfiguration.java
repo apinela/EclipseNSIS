@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.template;
 
-import net.sf.eclipsensis.editor.NSISSourceViewerConfiguration;
-import net.sf.eclipsensis.editor.NSISSourceViewerConfigurationTools;
+import net.sf.eclipsensis.editor.*;
 import net.sf.eclipsensis.editor.text.*;
 
 import org.eclipse.jface.preference.IPreferenceStore;

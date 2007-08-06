@@ -11,8 +11,7 @@ package net.sf.eclipsensis.installoptions.edit.radiobutton;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.checkbox.InstallOptionsCheckBoxEditPart;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
-import net.sf.eclipsensis.installoptions.figures.RadioButtonFigure;
+import net.sf.eclipsensis.installoptions.figures.*;
 
 import org.eclipse.swt.widgets.Composite;
 

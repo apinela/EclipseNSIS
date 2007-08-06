@@ -12,12 +12,9 @@ package net.sf.eclipsensis.installoptions.template;
 import java.io.StringReader;
 
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.installoptions.ini.INIFile;
-import net.sf.eclipsensis.installoptions.ini.INISection;
-import net.sf.eclipsensis.template.AbstractTemplate;
-import net.sf.eclipsensis.template.AbstractTemplateReaderWriter;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.installoptions.ini.*;
+import net.sf.eclipsensis.template.*;
+import net.sf.eclipsensis.util.*;
 
 import org.w3c.dom.*;
 

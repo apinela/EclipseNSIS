@@ -11,8 +11,7 @@ package net.sf.eclipsensis.installoptions.edit.password;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.text.InstallOptionsTextEditPart;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
-import net.sf.eclipsensis.installoptions.figures.PasswordFigure;
+import net.sf.eclipsensis.installoptions.figures.*;
 
 import org.eclipse.swt.widgets.Composite;
 

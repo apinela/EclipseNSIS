@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
-import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
-import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.editor.text.*;
 
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
