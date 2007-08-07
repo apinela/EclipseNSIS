@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.9.6 (xx/xx/2007)
+0.9.6 (08/07/2007)
     * Added support for changes in NSIS 2.26:
         o New variables and constants ($EXEPATH, $EXEFILE, $PROGRAMFILES64,
           $PROGRAMFILES32, $COMMONFILES64, $COMMONFILES32
@@ -14,6 +14,7 @@ Revision History
         o 1714373
         o 1733997
         o 1745754
+        o 1760927
 
 0.9.5.1 (03/15/2007)
     * Added support for new predefines.

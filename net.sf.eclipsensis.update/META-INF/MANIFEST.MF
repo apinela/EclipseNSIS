@@ -11,4 +11,10 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.3.0",
  net.sf.eclipsensis;bundle-version="0.9.6"
 Eclipse-LazyStart: true
 Export-Package: net.sf.eclipsensis.update,
- net.sf.eclipsensis.update.jobs
+ net.sf.eclipsensis.update.actions,
+ net.sf.eclipsensis.update.jobs,
+ net.sf.eclipsensis.update.net,
+ net.sf.eclipsensis.update.preferences,
+ net.sf.eclipsensis.update.proxy,
+ net.sf.eclipsensis.update.scheduler,
+ net.sf.eclipsensis.update.wizard

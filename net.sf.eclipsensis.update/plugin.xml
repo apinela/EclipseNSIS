@@ -6,7 +6,7 @@
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-# 
+#
 # Contributors:
 #     Sunil Kamath (IcemanK) - initial API and implementation
 ###############################################################################
@@ -66,16 +66,16 @@
       </actionSet>
    </extension>
    <extension point="net.sf.eclipsensis.nsisConfigWizard"
-       id="nsisUpdateConfigWizards"> 
-      <wizard 
-         id="net.sf.eclipsensis.update.wizard.NSISUpdateWizard" 
-         name="%update.wizard.name" 
-         icon="icons/update.gif" 
+       id="nsisUpdateConfigWizards">
+      <wizard
+         id="net.sf.eclipsensis.update.wizard.NSISUpdateWizard"
+         name="%update.wizard.name"
+         icon="icons/update.gif"
          canFinishEarly="true"
-         class="net.sf.eclipsensis.update.wizard.NSISUpdateWizard"> 
+         class="net.sf.eclipsensis.update.wizard.NSISUpdateWizard">
          <description>
              %update.wizard.description
-         </description> 
-     </wizard> 
+         </description>
+     </wizard>
    </extension>
 </plugin>

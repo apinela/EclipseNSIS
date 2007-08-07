@@ -34,10 +34,6 @@
       <discovery label="%update.site.name" url="http://eclipsensis.sf.net/update/"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.pde.core" version="3.3.0" match="greaterOrEqual"/>
-   </requires>
-
    <plugin
          id="net.sf.eclipsensis.source"
          download-size="1198"

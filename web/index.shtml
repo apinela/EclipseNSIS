@@ -29,7 +29,7 @@ editing, compiling and testing Nullsoft Installer (NSIS) scripts. The
 EclipseNSIS InstallOptions Editor plugin is an add-on to EclipseNSIS
 which enables editing of InstallOptions scripts.</p>
 <a name="features"></a><h2>Features</h2><h3>EclipseNSIS</h3>
-<ul><li>Requires <a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.2-200606291905/index.php">Eclipse 3.2</a> or better.</li><li>Requires
+<ul><li>Requires <a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.3-200706251500/index.php">Eclipse 3.3</a>.</li><li>Requires
 Windows NT 4.0, Windows 2000, Windows XP, Windows Server 2003, or
 Windows Vista.</li><li>Syntax highlighting editor.</li>
 <li>Outline view for quick navigation.</li>
@@ -41,7 +41,7 @@ Windows Vista.</li><li>Syntax highlighting editor.</li>
 <li>Integrated NSIS help.</li>
 <li>NSIS Update Wizard.</li>
 </ul><h3>EclipseNSIS InstallOptions Editor</h3>
-<ul><li>Requires <a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.2-200606291905/index.php">Eclipse 3.2</a> or better, EclipseNSIS and <a href="http://download.eclipse.org/tools/gef/downloads/drops/R-3.2-200606270816/index.php">Eclipse GEF 3.2</a> or better.</li>
+<ul><li>Requires <a href="http://download.eclipse.org/eclipse/downloads/drops/R-3.3-200706251500/index.php">Eclipse 3.3</a> or better, EclipseNSIS and <a href="http://download.eclipse.org/tools/gef/downloads/drops/R-3.3-200706281000/index.php">Eclipse GEF 3.3</a>.</li>
 <li>Requires
 Windows NT 4.0, Windows 2000, Windows XP, Windows Server 2003, or
 Windows Vista.</li>
