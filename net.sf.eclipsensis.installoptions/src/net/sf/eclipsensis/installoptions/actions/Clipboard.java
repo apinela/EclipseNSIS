@@ -53,13 +53,13 @@ public class Clipboard
             Runnable runnable = new Runnable() {
                 public void run()
                 {
-                    Thread.currentThread().setName(InstallOptionsPlugin.getResourceString("clipboard.monitor.thread.name")); //$NON-NLS-1$
                     fireContentsAvailable();
                 }
             };
 
             public void run()
             {
+                Thread.currentThread().setName(InstallOptionsPlugin.getResourceString("clipboard.monitor.thread.name")); //$NON-NLS-1$
 				try {
 					Display.getDefault().asyncExec(runnable);
 				} catch (Exception e) {
