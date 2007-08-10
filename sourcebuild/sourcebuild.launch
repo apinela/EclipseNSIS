@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launchConfiguration type="org.eclipse.ant.AntLaunchConfigurationType">
 <booleanAttribute key="org.eclipse.ant.ui.DEFAULT_VM_INSTALL" value="true"/>
+<stringAttribute key="org.eclipse.debug.core.ATTR_REFRESH_SCOPE" value="${working_set:&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#13;&#10;&lt;launchConfigurationWorkingSet editPageId=&quot;org.eclipse.ui.resourceWorkingSetPage&quot; factoryID=&quot;org.eclipse.ui.internal.WorkingSetFactory&quot; label=&quot;working set&quot; name=&quot;working set&quot;&gt;&#13;&#10;&lt;item factoryID=&quot;org.eclipse.ui.internal.model.ResourceFactory&quot; path=&quot;/net.sf.eclipsensis.site&quot; type=&quot;4&quot;/&gt;&#13;&#10;&lt;/launchConfigurationWorkingSet&gt;}"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/sourcebuild/build.xml"/>
 </listAttribute>
@@ -13,6 +14,15 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.ant.internal.ui.antsupport.InternalAntRunner"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="sourcebuild"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.ant.ui.AntClasspathProvider"/>
+<mapAttribute key="org.eclipse.ui.externaltools.ATTR_ANT_PROPERTIES">
+<mapEntry key="eclipse.pdebuild.scripts" value="/C:/eclipse33/plugins/org.eclipse.pde.build_3.3.0.v20070612/scripts/"/>
+<mapEntry key="eclipse.pdebuild.home" value="/C:/eclipse33/plugins/org.eclipse.pde.build_3.3.0.v20070612/./"/>
+<mapEntry key="storepass" value="potrzebie"/>
+<mapEntry key="eclipse.pdebuild.templates" value="/C:/eclipse33/plugins/org.eclipse.pde.build_3.3.0.v20070612/templates/"/>
+<mapEntry key="alias" value="icemank"/>
+<mapEntry key="keystore" value="../keystore"/>
+</mapAttribute>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:/sourcebuild/build.xml}"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/sourcebuild}"/>
 <stringAttribute key="process_factory_id" value="org.eclipse.ant.ui.remoteAntProcessFactory"/>
 </launchConfiguration>

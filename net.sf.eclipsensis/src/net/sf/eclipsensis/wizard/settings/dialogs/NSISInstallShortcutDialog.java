@@ -197,14 +197,14 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
                 return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.no.smgroup.error"); //$NON-NLS-1$
             }
         }
-        else if(!IOUtility.isValidNSISPathName(mStore.getString("location"))) { //$NON-NLS-1$
+        else if(!NSISWizardUtil.isValidNSISPathName(mWizard.getSettings().getTargetPlatform(), mStore.getString("location"))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.location"); //$NON-NLS-1$
         }
         if(!IOUtility.isValidFileName(mStore.getString("name"))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.name"); //$NON-NLS-1$
         }
         int n = mStore.getInt("shortcutType"); //$NON-NLS-1$
-        if((n == SHORTCUT_INSTALLELEMENT && !IOUtility.isValidNSISPathName(mStore.getString("path")))) { //$NON-NLS-1$
+        if((n == SHORTCUT_INSTALLELEMENT && !NSISWizardUtil.isValidNSISPathName(mWizard.getSettings().getTargetPlatform(), mStore.getString("path")))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.file"); //$NON-NLS-1$
         }
         else if((n == SHORTCUT_URL && !IOUtility.isValidURL(mStore.getString("url")))) { //$NON-NLS-1$

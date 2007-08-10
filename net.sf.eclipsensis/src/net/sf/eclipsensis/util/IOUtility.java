@@ -38,9 +38,7 @@ public class IOUtility
     private static final String cOnePathLevelUp = ".." + cPathSeparator; //$NON-NLS-1$
     private static Pattern cValidUNCName = Pattern.compile("\\\\{0,2}((((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
     private static Pattern cValidPathName = Pattern.compile("([A-Za-z]:)?\\\\?((((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
-    private static Pattern cValidNSISPrefixedPathNameSuffix = Pattern.compile("\\\\((((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
     private static Pattern cValidPathSpec = Pattern.compile("([A-Za-z]:)?\\\\?((((\\.?[A-Za-z0-9\\*\\?\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\*\\?\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
-    private static Pattern cValidNSISPrefixedPathSpecSuffix = Pattern.compile("\\\\((((\\.?[A-Za-z0-9\\*\\?\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\*\\?\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
     private static Pattern cValidFileName = Pattern.compile("(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+"); //$NON-NLS-1$
     private static Pattern cValidURL = Pattern.compile("(?:(?:ftp|https?):\\/\\/)?(?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\\.)+(?:com|edu|biz|org|gov|int|info|mil|net|name|museum|coop|aero|[a-z][a-z])\\b(?:\\d+)?(?:\\/[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]*(?:[.,?]+[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]+)*)?"); //$NON-NLS-1$
 
@@ -335,16 +333,6 @@ public class IOUtility
         }
     }
 
-    public static boolean isValidNSISPathName(String pathName)
-    {
-        return isValidNSISPathNameOrSpec(pathName, cValidNSISPrefixedPathNameSuffix, cValidPathName);
-    }
-
-    public static boolean isValidNSISPathSpec(String pathName)
-    {
-        return isValidNSISPathNameOrSpec(pathName, cValidNSISPrefixedPathSpecSuffix, cValidPathSpec);
-    }
-
     public static boolean isValidPathName(String pathName)
     {
         return isValidPathNameOrSpec(pathName, cValidPathName);
@@ -353,35 +341,6 @@ public class IOUtility
     public static boolean isValidPathSpec(String pathName)
     {
         return isValidPathNameOrSpec(pathName, cValidPathSpec);
-    }
-
-    private static boolean isValidNSISPathNameOrSpec(String pathName, Pattern nsisPath, Pattern path)
-    {
-        if(pathName != null && pathName.length() > 0) {
-            int n = pathName.indexOf('\\');
-            String suffix = null;
-            String prefix = null;
-            if(n >= 1) {
-                suffix = pathName.substring(n);
-                prefix = pathName.substring(0,n);
-            }
-            else {
-                prefix = pathName;
-            }
-            if(!Common.isEmpty(prefix)) {
-                String[] array = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES);
-                for(int i=0; i<array.length; i++) {
-                    if(array[i].equalsIgnoreCase(prefix)) {
-                        if(!Common.isEmpty(suffix)) {
-                            Matcher matcher = nsisPath.matcher(suffix);
-                            return matcher.matches();
-                        }
-                        return true;
-                    }
-                }
-            }
-        }
-        return isValidPathNameOrSpec(pathName, path);
     }
 
     private static boolean isValidPathNameOrSpec(String pathName, Pattern path)

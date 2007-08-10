@@ -10,13 +10,16 @@
 package net.sf.eclipsensis.wizard.util;
 
 import java.util.*;
+import java.util.regex.*;
 
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.INSISWizardConstants;
 
 public class NSISWizardUtil
 {
+    private static Pattern cValidNSISPrefixedPathNameSuffix = Pattern.compile("\\\\((((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
+
     private NSISWizardUtil()
     {
     }
@@ -53,5 +56,35 @@ public class NSISWizardUtil
             }
         }
         return (String[])list.toArray(new String[list.size()]);
+    }
+
+    public static boolean isValidNSISPathName(int targetPlatform, String pathName)
+    {
+        if(pathName != null && pathName.length() > 0) {
+            int n = pathName.indexOf('\\');
+            String suffix = null;
+            String prefix = null;
+            if(n >= 1) {
+                suffix = pathName.substring(n);
+                prefix = pathName.substring(0,n);
+            }
+            else {
+                prefix = pathName;
+            }
+            if(!Common.isEmpty(prefix) && prefix.startsWith("$")) {
+                String[] array = getPathConstantsAndVariables(targetPlatform);
+                for(int i=0; i<array.length; i++) {
+                    if(array[i].equalsIgnoreCase(prefix)) {
+                        if(!Common.isEmpty(suffix)) {
+                            Matcher matcher = NSISWizardUtil.cValidNSISPrefixedPathNameSuffix.matcher(suffix);
+                            return matcher.matches();
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        return IOUtility.isValidPathName(pathName);
     }
 }

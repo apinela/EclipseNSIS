@@ -154,7 +154,7 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
         if(!IOUtility.isValidPath(IOUtility.decodePath(getName()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.name.error"); //$NON-NLS-1$
         }
-        else if(!IOUtility.isValidNSISPathName(getDestination())) {
+        else if(!NSISWizardUtil.isValidNSISPathName(getSettings().getTargetPlatform(),getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.destination.error"); //$NON-NLS-1$
         }
         else {

@@ -605,14 +605,14 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             String langId=(mSettings.isEnableLanguageSupport()?new StringBuffer(getKeyword("/LANG")).append("=").append(defaultLanguage.getLangDef()).toString():null); //$NON-NLS-1$ //$NON-NLS-2$
             mScript.insertElement(attributesPlaceHolder,new NSISScriptAttribute("VIProductVersion",buf.toString())); //$NON-NLS-1$
             mScript.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"ProductName",mSettings.getName()})); //$NON-NLS-1$
-            mScript.insertElement(attributesPlaceHolder,createVersionInfoKey("ProductVersion",new String[]{Common.quote("${VERSION}")})); //$NON-NLS-1$ //$NON-NLS-2$
+            mScript.insertElement(attributesPlaceHolder,createVersionInfoKey(langId,new String[]{"ProductVersion",Common.quote("${VERSION}")})); //$NON-NLS-1$ //$NON-NLS-2$
             if(!Common.isEmpty(mSettings.getCompany())) {
                 mScript.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"CompanyName",Common.quote("${COMPANY}")})); //$NON-NLS-1$ //$NON-NLS-2$
             }
             if(!Common.isEmpty(mSettings.getUrl())) {
                 mScript.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"CompanyWebsite",Common.quote("${URL}")})); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            mScript.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"FileVersion",""})); //$NON-NLS-1$ //$NON-NLS-2$
+            mScript.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"FileVersion",Common.quote("${VERSION}")})); //$NON-NLS-1$ //$NON-NLS-2$
             mScript.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"FileDescription",""})); //$NON-NLS-1$ //$NON-NLS-2$
             mScript.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"LegalCopyright",""})); //$NON-NLS-1$ //$NON-NLS-2$
         }

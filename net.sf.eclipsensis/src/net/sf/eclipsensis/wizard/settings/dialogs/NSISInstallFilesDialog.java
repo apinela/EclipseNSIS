@@ -274,7 +274,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         if(mFiles.size() == 0) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset"); //$NON-NLS-1$
         }
-        else if(!IOUtility.isValidNSISPathName(mStore.getString("destination"))) { //$NON-NLS-1$
+        else if(!NSISWizardUtil.isValidNSISPathName(mWizard.getSettings().getTargetPlatform(), mStore.getString("destination"))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset.destination"); //$NON-NLS-1$
         }
         else {

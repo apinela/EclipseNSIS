@@ -93,7 +93,7 @@ public class NSISWizardDialogUtil
     {
         if(c != null && !c.isDisposed()) {
             c.setEnabled(enabled);
-            updateDecoration(c);
+            updateDecoration(c, enabled);
         }
     }
 
@@ -112,11 +112,11 @@ public class NSISWizardDialogUtil
      * @param c
      * @param enabled
      */
-    private static void updateDecoration(Control c)
+    private static void updateDecoration(Control c, boolean enabled)
     {
         ControlDecoration decoration = (ControlDecoration)c.getData(CONTROL_DECORATION);
         if(decoration != null) {
-            FieldDecoration d = (c.isEnabled()?REQ_FIELD_DECORATION:DISABLED_REQ_FIELD_DECORATION);
+            FieldDecoration d = (enabled?REQ_FIELD_DECORATION:DISABLED_REQ_FIELD_DECORATION);
             decoration.setImage(d.getImage());
             decoration.setDescriptionText(d.getDescription());
         }
@@ -147,16 +147,16 @@ public class NSISWizardDialogUtil
     }
 
     /**
-     * @param controll
+     * @param control
      */
-    public static void decorate(Control controll)
+    public static void decorate(Control control)
     {
         ControlDecoration controlDecoration;
-        controlDecoration = new ControlDecoration(controll,SWT.LEFT|SWT.TOP,null);
-        controll.setData(CONTROL_DECORATION, controlDecoration);
-        updateDecoration(controll);
+        controlDecoration = new ControlDecoration(control,SWT.LEFT|SWT.TOP,null);
+        control.setData(CONTROL_DECORATION, controlDecoration);
+        updateDecoration(control, control.isEnabled());
         if(controlDecoration.getImage() != null) {
-            ((GridData)controll.getLayoutData()).horizontalIndent += controlDecoration.getImage().getBounds().width;
+            ((GridData)control.getLayoutData()).horizontalIndent += controlDecoration.getImage().getBounds().width;
         }
     }
 

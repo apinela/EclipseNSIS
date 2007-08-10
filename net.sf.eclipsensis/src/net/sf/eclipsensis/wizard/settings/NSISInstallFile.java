@@ -42,7 +42,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
         if (!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
         }
-        else if (!IOUtility.isValidNSISPathName(getDestination())) {
+        else if (!NSISWizardUtil.isValidNSISPathName(getSettings().getTargetPlatform(), getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.destination.error"); //$NON-NLS-1$
         }
         else {

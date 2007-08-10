@@ -15,6 +15,7 @@ Revision History
         o 1733997
         o 1745754
         o 1760927
+        o 1770860
 
 0.9.5.1 (03/15/2007)
     * Added support for new predefines.

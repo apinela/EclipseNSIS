@@ -15,7 +15,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.*;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
+import net.sf.eclipsensis.wizard.util.*;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -84,7 +84,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
             setErrorMessage(getArrayStringResource(messageResources,0,"empty.pathname.error")); //$NON-NLS-1$
             return false;
         }
-        else if(!IOUtility.isValidNSISPathName(pathname)) {
+        else if(!NSISWizardUtil.isValidNSISPathName(mWizard.getSettings().getTargetPlatform(),pathname)) {
             setErrorMessage(getFormattedArrayStringResource(messageResources,1,"invalid.nsis.pathname.error",new String[]{pathname})); //$NON-NLS-1$
             return false;
         }

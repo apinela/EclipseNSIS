@@ -190,7 +190,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     public String doValidate()
     {
-        if (!IOUtility.isValidNSISPathName(getDestination())) {
+        if (!NSISWizardUtil.isValidNSISPathName(getSettings().getTargetPlatform(), getDestination())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.fileset.destination.error"); //$NON-NLS-1$
         }
         else {

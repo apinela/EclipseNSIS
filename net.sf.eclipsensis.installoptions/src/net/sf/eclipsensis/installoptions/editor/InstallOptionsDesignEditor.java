@@ -244,9 +244,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
                         viewer.setContents(null);
                         viewer.setContents(editPart);
                     }
-                  if(mRulerComposite != null && !mRulerComposite.isDisposed()) {
-                      mRulerComposite.setGraphicalViewer((InstallOptionsGraphicalViewer)viewer);
-                  }
+                    if(mRulerComposite != null && !mRulerComposite.isDisposed()) {
+                        mRulerComposite.setGraphicalViewer((InstallOptionsGraphicalViewer)viewer);
+                    }
                 }
                 return Status.OK_STATUS;
             }

@@ -112,7 +112,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
      */
     private boolean validateNSISPath(String pathname)
     {
-        boolean b = Common.isEmpty(pathname) || IOUtility.isValidNSISPathName(pathname);
+        boolean b = Common.isEmpty(pathname) || NSISWizardUtil.isValidNSISPathName(mWizard.getSettings().getTargetPlatform(),pathname);
         if(!b) {
             setErrorMessage(EclipseNSISPlugin.getFormattedString("invalid.nsis.pathname.error",new String[]{pathname})); //$NON-NLS-1$
         }

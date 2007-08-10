@@ -210,14 +210,14 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
                 return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.no.smgroup.error"); //$NON-NLS-1$
             }
         }
-        else if(!IOUtility.isValidNSISPathName(getLocation())) {
+        else if(!NSISWizardUtil.isValidNSISPathName(getSettings().getTargetPlatform(), getLocation())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.location.error"); //$NON-NLS-1$
         }
         if(!IOUtility.isValidFileName(getName())) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.name.error"); //$NON-NLS-1$
         }
         int n = getShortcutType();
-        if((n == SHORTCUT_INSTALLELEMENT && !IOUtility.isValidNSISPathName(getPath()))) {
+        if((n == SHORTCUT_INSTALLELEMENT && !NSISWizardUtil.isValidNSISPathName(getSettings().getTargetPlatform(), getPath()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.shortcut.file.error"); //$NON-NLS-1$
         }
         else if((n == SHORTCUT_URL && !IOUtility.isValidURL(getUrl()))) {
