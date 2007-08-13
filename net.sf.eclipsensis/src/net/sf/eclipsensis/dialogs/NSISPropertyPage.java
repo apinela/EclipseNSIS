@@ -13,6 +13,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.settings.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
@@ -28,13 +29,24 @@ public class NSISPropertyPage extends NSISSettingsPage
         return PLUGIN_CONTEXT_PREFIX + "nsis_properties_context"; //$NON-NLS-1$
     }
 
+    private IResource getResource()
+    {
+        IAdaptable adaptable = getElement();
+        if(adaptable instanceof IResource) {
+            return (IResource)adaptable;
+        }
+        else {
+            return (IResource)adaptable.getAdapter(IResource.class);
+        }
+    }
+
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#getPageDescription()
      */
     protected String getPageDescription()
     {
         String label = null;
-        IResource resource = (IResource)getElement();
+        IResource resource = getResource();
         if(resource instanceof IFile) {
             label = "file.properties.header.text"; //$NON-NLS-1$
         }
@@ -57,7 +69,7 @@ public class NSISPropertyPage extends NSISSettingsPage
         protected void addPages(TabFolder folder)
         {
             super.addPages(folder);
-            if(getElement() instanceof IFile) {
+            if(getResource() instanceof IFile) {
                 addPage(folder, "associated.headers.tab.text","associated.headers.tab.tooltip",new NSISAssociatedHeadersPropertyPage(getSettings())); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
@@ -74,7 +86,7 @@ public class NSISPropertyPage extends NSISSettingsPage
 
         protected NSISSettings loadSettings()
         {
-            return NSISProperties.getProperties((IResource)getElement());
+            return NSISProperties.getProperties(getResource());
         }
 
         private class PropertiesEditorSymbolsPage extends NSISSettingsEditorSymbolsPage
@@ -154,7 +166,7 @@ public class NSISPropertyPage extends NSISSettingsPage
                 composite.setLayout(layout);
                 String label = null;
                 String tooltip = null;
-                IResource resource = (IResource)getElement();
+                IResource resource = getResource();
                 if(resource instanceof IFile) {
                     label = "folder.options.label"; //$NON-NLS-1$
                     tooltip = "folder.options.tooltip"; //$NON-NLS-1$
