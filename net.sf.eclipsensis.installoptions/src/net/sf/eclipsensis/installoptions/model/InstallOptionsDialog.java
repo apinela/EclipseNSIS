@@ -1226,8 +1226,51 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     {
         super.modelChanged();
         if(!Common.isEmptyCollection(mChildren)) {
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                ((InstallOptionsWidget)iter.next()).modelChanged();
+            for (ListIterator iter = mChildren.listIterator(); iter.hasNext();) {
+                InstallOptionsWidget child = (InstallOptionsWidget)iter.next();
+                InstallOptionsWidget newChild = null;
+                InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(child.getType());
+                boolean isDirty = isDirty();
+                boolean childIsDirty = child.isDirty();
+                if((child instanceof InstallOptionsUnknown && !InstallOptionsModel.TYPE_UNKNOWN.equals(typeDef.getType())) ||
+                   (!(child instanceof InstallOptionsUnknown) && InstallOptionsModel.TYPE_UNKNOWN.equals(typeDef.getType()))) {
+                    if(childIsDirty) {
+                        child.updateSection();
+                    }
+                    newChild = (InstallOptionsWidget)typeDef.createModel(child.getSection());
+                    InstallOptionsGuide verticalGuide = child.getVerticalGuide();
+                    int verticalAlign = 0;
+                    InstallOptionsGuide horizontalGuide = child.getHorizontalGuide();
+                    int horizontalAlign = 0;
+
+                    if (verticalGuide != null) {
+                        verticalAlign = verticalGuide.getAlignment(child);
+                        verticalGuide.detachWidget(child);
+                    }
+                    if (horizontalGuide != null) {
+                        horizontalAlign = horizontalGuide.getAlignment(child);
+                        horizontalGuide.detachWidget(child);
+                    }
+
+                    child.setParent(null);
+                    newChild.setIndex(child.getIndex());
+                    iter.set(newChild);
+                    newChild.setParent(this);
+                    mINISectionMap.put(newChild.getSection(),newChild);
+                    newChild.setDirty(childIsDirty);
+                    setDirty(isDirty);
+                    fireChildReplaced(InstallOptionsModel.PROPERTY_CHILDREN, child, newChild);
+
+                    if (verticalGuide != null) {
+                        verticalGuide.attachWidget(newChild, verticalAlign);
+                    }
+                    if (horizontalGuide != null) {
+                        horizontalGuide.attachWidget(newChild, horizontalAlign);
+                    }
+                }
+                else {
+                    child.modelChanged();
+                }
             }
         }
     }

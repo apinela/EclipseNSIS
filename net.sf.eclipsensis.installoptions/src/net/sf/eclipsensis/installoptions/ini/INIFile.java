@@ -272,7 +272,10 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
         if(mDocument != null) {
             try {
                 mUpdatingDocument = true;
-                mDocument.set(toString());
+                String content = toString();
+                if(!Common.stringsAreEqual(content,mDocument.get())) {
+                    mDocument.set(content);
+                }
             }
             finally {
                 mUpdatingDocument = false;

@@ -843,6 +843,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             super.createControl(parent);
 
             TreeViewer viewer = getTreeViewer();
+            WinAPI.SetWindowLong(viewer.getControl().handle, WinAPI.GWL_STYLE, WinAPI.GetWindowLong(viewer.getControl().handle, WinAPI.GWL_STYLE) ^ (WinAPI.TVS_HASLINES  | WinAPI.TVS_HASBUTTONS));
             viewer.setContentProvider(new EmptyContentProvider(){
                 public Object[] getChildren(Object parentElement)
                 {

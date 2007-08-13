@@ -52,6 +52,7 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
         mType = type;
         if(!Common.stringsAreEqual(oldType, mType)) {
             firePropertyChange(InstallOptionsModel.PROPERTY_TYPE, oldType, mType);
+            setDirty(true);
         }
     }
 

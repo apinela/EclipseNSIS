@@ -33,7 +33,7 @@ import net.sf.eclipsensis.job.*;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.startup.FileAssociationChecker;
 import net.sf.eclipsensis.template.*;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -111,6 +111,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             dialog.modelChanged();
             if(dialog != null && dialog.canUpdateINIFile()) {
                 dialog.updateINIFile();
+                mINIFile.updateDocument();
             }
             mINIFile.validate(true);
             if(mINIFile.hasErrors()) {
@@ -1774,6 +1775,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         {
             mPageBook = new PageBook(parent, SWT.NONE);
             mOutline = getViewer().createControl(mPageBook);
+            if(mOutline instanceof Tree) {
+                WinAPI.SetWindowLong(mOutline.handle, WinAPI.GWL_STYLE, WinAPI.GetWindowLong(mOutline.handle, WinAPI.GWL_STYLE) ^ (WinAPI.TVS_HASLINES  | WinAPI.TVS_HASBUTTONS));
+           }
             mOverview = new Canvas(mPageBook, SWT.NONE);
             mPageBook.showPage(mOutline);
             configureOutlineViewer();
