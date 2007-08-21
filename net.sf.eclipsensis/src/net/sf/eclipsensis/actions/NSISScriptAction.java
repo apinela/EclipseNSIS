@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.actions;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.util.*;
 
@@ -74,13 +75,13 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
     {
         IPath input = null;
         if(mEditor != null) {
-            IEditorInput editorInput = mEditor.getEditorInput();
+            IPathEditorInput editorInput = NSISEditorUtilities.getPathEditorInput(mEditor);
             if(editorInput !=null) {
                 if(editorInput instanceof IFileEditorInput) {
                     input = ((IFileEditorInput)editorInput).getFile().getFullPath();
                 }
-                else if(editorInput instanceof IPathEditorInput) {
-                    input = ((IPathEditorInput)editorInput).getPath();
+                else {
+                    input = editorInput.getPath();
                 }
             }
         }

@@ -10,15 +10,22 @@
 package net.sf.eclipsensis.util;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.ui.IPathEditorInput;
 
 public class PathEditorInputTester extends PropertyTester
 {
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue)
     {
-        if(receiver instanceof IPathEditorInput && "pathExtensionEquals".equals(property)) { //$NON-NLS-1$
-            IPath path = ((IPathEditorInput)receiver).getPath();
+        IPathEditorInput input = null;
+        if(receiver instanceof IPathEditorInput) {
+            input = (IPathEditorInput)receiver;
+        }
+        else if(receiver instanceof IAdaptable) {
+            input = (IPathEditorInput)((IAdaptable)receiver).getAdapter(IPathEditorInput.class);
+        }
+        if(input != null && "pathExtensionEquals".equals(property)) { //$NON-NLS-1$
+            IPath path = input.getPath();
             if(path != null) {
                 String extension = path.getFileExtension();
                 if(Common.isEmpty(extension)) {

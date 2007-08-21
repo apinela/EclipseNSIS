@@ -1,6 +1,10 @@
 Revision History
 ================
 
+0.9.6.1 (08/21/2007)
+    * Bug Fixes
+        o 1777778
+
 0.9.6 (08/13/2007)
     * Added support for changes in NSIS 2.26:
         o New variables and constants ($EXEPATH, $EXEFILE, $PROGRAMFILES64,

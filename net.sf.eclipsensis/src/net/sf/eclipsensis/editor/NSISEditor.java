@@ -1151,9 +1151,9 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
 
     private void updateAnnotations()
     {
-        IEditorInput input = getEditorInput();
-        if(input instanceof IPathEditorInput && !(input instanceof IFileEditorInput)){
-            File file = new File(((IPathEditorInput)input).getPath().toOSString());
+        IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(this);
+        if(!(input instanceof IFileEditorInput)){
+            File file = new File((input).getPath().toOSString());
             if(IOUtility.isValidFile(file)) {
                 MakeNSISResults results = NSISCompileTestUtility.INSTANCE.getCachedResults(file);
                 if(results != null) {
@@ -1174,9 +1174,10 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
     public void exportHTML()
     {
         if(isDirty()) {
+            IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(this);
             if(!Common.openConfirm(getSourceViewer().getTextWidget().getShell(),
-                    EclipseNSISPlugin.getFormattedString("export.html.save.confirmation", //$NON-NLS-1$
-                    new Object[] {((IPathEditorInput)getEditorInput()).getPath().lastSegment()}),
+                    EclipseNSISPlugin.getFormattedString("export.html.save.confirmation",
+                    new Object[] {input.getPath().lastSegment()}),
                     EclipseNSISPlugin.getShellImage())) {
                 return;
             }

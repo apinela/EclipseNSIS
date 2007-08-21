@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
 
@@ -54,12 +55,12 @@ public class NSISLaunchShortcut implements ILaunchShortcut
     public void launch(final IEditorPart editor, String mode)
     {
         if(mode.equals(ILaunchManager.RUN_MODE) && editor != null) {
-            IEditorInput input = editor.getEditorInput();
+            IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(editor);
             if(input instanceof IFileEditorInput) {
                 launch(((IFileEditorInput)input).getFile().getFullPath(), mode);
             }
-            else if(input instanceof IPathEditorInput) {
-                launch(((IPathEditorInput)input).getPath(), mode);
+            else {
+                launch((input).getPath(), mode);
             }
         }
     }

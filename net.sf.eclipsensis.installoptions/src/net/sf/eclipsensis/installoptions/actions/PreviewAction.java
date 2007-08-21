@@ -14,6 +14,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
+import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.editor.IInstallOptionsEditor;
 import net.sf.eclipsensis.installoptions.figures.DashedLineBorder;
@@ -161,7 +162,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                         InstallOptionsPlugin.getShellImage());
             }
             else {
-                IEditorInput editorInput = mEditor.getEditorInput();
+                IPathEditorInput editorInput = NSISEditorUtilities.getPathEditorInput(mEditor);
                 if(editorInput instanceof IFileEditorInput) {
                     IFile file = ((IFileEditorInput)editorInput).getFile();
                     if(file.exists()) {
@@ -175,8 +176,8 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                         }
                     }
                 }
-                else if(editorInput instanceof IPathEditorInput) {
-                    doPreview(iniFile, new File(((IPathEditorInput)editorInput).getPath().toOSString()));
+                else if(editorInput != null) {
+                    doPreview(iniFile, new File(editorInput.getPath().toOSString()));
                 }
             }
         }

@@ -14,6 +14,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.editor.NSISEditorUtilities;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -25,7 +26,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.editors.text.*;
 import org.eclipse.ui.texteditor.*;
 
@@ -60,7 +60,7 @@ public class HTMLExporter
             public void run(IProgressMonitor monitor)
             {
                 try {
-                    IPath path = ((IPathEditorInput)mEditor.getEditorInput()).getPath();
+                    IPath path = NSISEditorUtilities.getPathEditorInput(mEditor).getPath();
                     mTaskName = EclipseNSISPlugin.getFormattedString("export.html.task.name", //$NON-NLS-1$
                                                 new Object[] {path.toOSString()});
                     monitor.beginTask(mTaskName,100);
@@ -364,7 +364,7 @@ public class HTMLExporter
         mWriter.println("<html>"); //$NON-NLS-1$
         mWriter.println("<head>"); //$NON-NLS-1$
         mWriter.print("<title>"); //$NON-NLS-1$
-        mWriter.print(((IPathEditorInput)mEditor.getEditorInput()).getPath().toOSString());
+        mWriter.print(NSISEditorUtilities.getPathEditorInput(mEditor).getPath().toOSString());
         mWriter.println("</title>"); //$NON-NLS-1$
         mWriter.print("<meta http-equiv=\"Content-Type\" content=\"text/html");  //$NON-NLS-1$
         if(charset != null) {

@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.*;
+import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.settings.*;
 
@@ -160,7 +161,7 @@ public class NSISCompileTestUtility
                 for (int j = 0; j < pages.length; j++) {
                     IEditorPart[] editors = pages[j].getDirtyEditors();
                     for (int k = 0; k < editors.length; k++) {
-                        IEditorInput input = editors[k].getEditorInput();
+                        IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(editors[k]);
                         switch(beforeCompileSave) {
                             case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ASSOCIATED_CONFIRM:
                             case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ASSOCIATED_AUTO:
@@ -182,8 +183,8 @@ public class NSISCompileTestUtility
                                         continue;
                                     }
                                 }
-                                else if (script.getDevice() != null && input instanceof IPathEditorInput) {
-                                    if(!script.equals(((IPathEditorInput)input).getPath())) {
+                                else if (script.getDevice() != null && input != null) {
+                                    if(!script.equals(input.getPath())) {
                                         continue;
                                     }
                                 }
@@ -198,8 +199,8 @@ public class NSISCompileTestUtility
                                 if(input instanceof IFileEditorInput) {
                                     ext = ((IFileEditorInput)input).getFile().getFullPath().getFileExtension();
                                 }
-                                else if (input instanceof IPathEditorInput) {
-                                    ext = ((IPathEditorInput)input).getPath().getFileExtension();
+                                else if (input != null) {
+                                    ext = input.getPath().getFileExtension();
                                 }
                                 else {
                                     continue;
@@ -242,8 +243,8 @@ public class NSISCompileTestUtility
                     if(editors.size() > 1) {
                         editors = editors.subList(0,1);
                     }
-                    IEditorInput input = editor.getEditorInput();
-                    IPath path = (input instanceof IFileEditorInput?((IFileEditorInput)input).getFile().getFullPath():((IPathEditorInput)input).getPath());
+                    IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(editor);
+                    IPath path = (input instanceof IFileEditorInput?((IFileEditorInput)input).getFile().getFullPath():input.getPath());
                     message = EclipseNSISPlugin.getFormattedString("compile.save.current.confirmation", //$NON-NLS-1$
                                                                    new String[]{path.toString()});
                     break;

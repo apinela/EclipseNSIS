@@ -74,7 +74,12 @@ public class InstallOptionsExternalFileEditorInput implements IInstallOptionsEdi
             IPathEditorInput input= (IPathEditorInput)o;
             return getPath().equals(input.getPath());
         }
-
+        if(o instanceof IAdaptable) {
+            IPathEditorInput input= (IPathEditorInput)((IAdaptable)o).getAdapter(IPathEditorInput.class);
+            if (input != null) {
+                return getPath().equals(input.getPath());
+            }
+        }
         return false;
     }
 

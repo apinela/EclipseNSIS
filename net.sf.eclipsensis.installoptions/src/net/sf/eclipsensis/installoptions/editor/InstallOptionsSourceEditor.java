@@ -439,6 +439,9 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 else if (input instanceof IPathEditorInput){
                     input = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input);
                 }
+                else {
+                    input = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input.getAdapter(IPathEditorInput.class));
+                }
                 setDocumentProvider(((IInstallOptionsEditorInput)input).getDocumentProvider());
                 super.doSetInput(input);
             }

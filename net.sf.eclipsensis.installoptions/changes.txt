@@ -1,6 +1,10 @@
 Revision History
 ================
 
+0.9.6.1 (08/21/2007)
+    * Bug fixes:
+        o 1777784
+
 0.9.6 (08/13/2007)
     * Added support for new HLine and VLine controls.
     * Added support for line-breaks in Link controls.

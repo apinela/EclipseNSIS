@@ -347,8 +347,8 @@ public class NSISEditorUtilities
                 for (int k = 0; k < editorRefs.length; k++) {
                     IEditorPart editor = editorRefs[k].getEditor(false);
                     if(editor != null) {
-                        IEditorInput input = editor.getEditorInput();
-                        if(input instanceof IPathEditorInput && path.equals(((IPathEditorInput)input).getPath())) {
+                        IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(editor);
+                        if(input != null && path.equals(input.getPath())) {
                             editors.add(editor);
                         }
                     }
@@ -369,9 +369,9 @@ public class NSISEditorUtilities
                     if(INSISConstants.EDITOR_ID.equals(editorRefs[k].getId())) {
                         NSISEditor editor = (NSISEditor)editorRefs[k].getEditor(false);
                         if(editor != null) {
-                            IEditorInput input = editor.getEditorInput();
-                            if(!(input instanceof IFileEditorInput) && input instanceof IPathEditorInput) {
-                                if(script.getAbsolutePath().equalsIgnoreCase(((IPathEditorInput)input).getPath().toOSString())) {
+                            IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(editor);
+                            if(!(input instanceof IFileEditorInput)) {
+                                if(script.getAbsolutePath().equalsIgnoreCase(input.getPath().toOSString())) {
                                     updateAnnotations(editor, results);
                                     editor.updateActionsState();
                                 }
@@ -447,6 +447,17 @@ public class NSISEditorUtilities
             else {
                 Display.getDefault().asyncExec(r);
             }
+        }
+    }
+
+    public static IPathEditorInput getPathEditorInput(IEditorPart editor)
+    {
+        IEditorInput input = editor.getEditorInput();
+        if(input instanceof IPathEditorInput) {
+            return (IPathEditorInput)input;
+        }
+        else {
+            return (IPathEditorInput)input.getAdapter(IPathEditorInput.class);
         }
     }
 

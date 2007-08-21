@@ -13,7 +13,7 @@
 <feature
       id="net.sf.eclipsensis.source"
       label="%feature.name"
-      version="0.9.6"
+      version="0.9.6.1"
       provider-name="%provider.name"
       image="%splash.image">
 
@@ -36,8 +36,8 @@
 
    <plugin
          id="net.sf.eclipsensis.source"
-         download-size="1198"
-         install-size="1348"
-         version="0.9.6"/>
+         download-size="1206"
+         install-size="1358"
+         version="0.9.6.1"/>
 
 </feature>

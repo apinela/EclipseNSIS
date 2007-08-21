@@ -1325,7 +1325,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             dialog.setOriginalFile(original);
         }
         else {
-            dialog.setOriginalName(((IPathEditorInput)input).getPath().lastSegment());
+            dialog.setOriginalName(input.getPath().lastSegment());
         }
         dialog.create();
 
@@ -1544,6 +1544,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
                     }
                     else if (input instanceof IPathEditorInput){
                         input = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input);
+                    }
+                    else {
+                        input = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input.getAdapter(IPathEditorInput.class));
                     }
                     ((IInstallOptionsEditorInput)input).getDocumentProvider().connect(input);
                 }
