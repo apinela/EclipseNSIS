@@ -30,6 +30,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 {
     private static final Version HELP_URL_PROVIDER_VERSION = new Version("1.2"); //$NON-NLS-1$
 
+    private static final String STATE_LOCATION = "stateLocation"; //$NON-NLS-1$
     private static final String VERSION = "version"; //$NON-NLS-1$
     private static final String INDEX = "index"; //$NON-NLS-1$
     private static final String TOC = "toc"; //$NON-NLS-1$
@@ -287,13 +288,16 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                             Map map = (Map)obj;
                             Version version = (Version)map.get(VERSION);
                             if(version != null && HELP_URL_PROVIDER_VERSION.equals(version)) {
-                                mTOC = (NSISHelpTOC)map.get(TOC);
-                                mIndex = (NSISHelpIndex)map.get(INDEX);
-                                mHelpURLs = (Map)map.get(HELP_URLS);
-                                mCHMHelpURLs = (Map)map.get(CHM_HELP_URLS);
-                                mKeywordHelp = (Map)map.get(KEYWORD_HELP);
-                                mNSISHelpAvailable = true;
-                                return;
+                                String stateLocation = (String)map.get(STATE_LOCATION);
+                                if(!Common.isEmpty(stateLocation) && mStateLocation.getAbsolutePath().equalsIgnoreCase(stateLocation)) {
+                                    mTOC = (NSISHelpTOC)map.get(TOC);
+                                    mIndex = (NSISHelpIndex)map.get(INDEX);
+                                    mHelpURLs = (Map)map.get(HELP_URLS);
+                                    mCHMHelpURLs = (Map)map.get(CHM_HELP_URLS);
+                                    mKeywordHelp = (Map)map.get(KEYWORD_HELP);
+                                    mNSISHelpAvailable = true;
+                                    return;
+                                }
                             }
                         }
                     }
@@ -305,7 +309,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
                     Map topicMap = new CaseInsensitiveMap();
 
-                    String[] mappedHelpTopics = Common.loadArrayProperty(mBundle, "mapped.help.topics"); //$NON-NLS-1$
+                    String[] mappedHelpTopics = Common.loadArrayProperty(mBundle, "mapped.help.topics");
                     if (!Common.isEmptyArray(mappedHelpTopics)) {
                         for (int i = 0; i < mappedHelpTopics.length; i++) {
                             String[] keywords = Common.loadArrayProperty(mBundle, mappedHelpTopics[i]);
@@ -378,7 +382,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                             String htmlFile = url.substring(0, n).toLowerCase();
                                             if (!processedFiles.contains(htmlFile)) {
                                                 processedFiles.add(htmlFile);
-                                                NSISHelpFileParserCallback callback = new NSISHelpFileParserCallback(mNSISHtmlHelpFile,htmlFile + "#", keywords, urlKeywordMap, urlContentsMap); //$NON-NLS-1$
+                                                NSISHelpFileParserCallback callback = new NSISHelpFileParserCallback(mNSISHtmlHelpFile,htmlFile + "#", keywords, urlKeywordMap, urlContentsMap);
                                                 HTML_PARSER.parse(new FileReader(new File(tocFile.getParentFile(), htmlFile)), callback, false);
                                             }
                                         }
@@ -412,6 +416,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                 }
 
                                 Map map = new HashMap();
+                                map.put(STATE_LOCATION, mStateLocation.getAbsolutePath());
                                 map.put(VERSION, HELP_URL_PROVIDER_VERSION);
                                 map.put(TOC, mTOC);
                                 map.put(INDEX, mIndex);
@@ -489,8 +494,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                         }
                         parent.mkdirs();
                     }
-                    String text = EclipseNSISPlugin.getFormattedString("missing.chm.format",  //$NON-NLS-1$
-                            new String[] {EclipseNSISPlugin.getResourceString("help.style")}); //$NON-NLS-1$
+                    String text = EclipseNSISPlugin.getFormattedString("missing.chm.format",
+                            new String[] {EclipseNSISPlugin.getResourceString("help.style")});
                     IOUtility.writeContentToFile(mNoHelpFile, text.getBytes());
                 }
                 mStartPage = mCachedStartPage = mCHMStartPage = IOUtility.getFileURLString(mNoHelpFile);
