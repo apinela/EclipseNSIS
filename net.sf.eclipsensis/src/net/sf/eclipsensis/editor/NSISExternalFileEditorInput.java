@@ -120,16 +120,9 @@ public class NSISExternalFileEditorInput implements IPathEditorInput, ILocationP
             return mFile.equals(input.mFile);
         }
 
-        if (o instanceof IPathEditorInput) {
-            IPathEditorInput input= (IPathEditorInput)o;
+        IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(o);
+        if (input != null) {
             return getPath().equals(input.getPath());
-        }
-
-        if (o instanceof IAdaptable) {
-            IPathEditorInput input= (IPathEditorInput)((IAdaptable)o).getAdapter(IPathEditorInput.class);
-            if (input != null) {
-                return getPath().equals(input.getPath());
-            }
         }
 
         return false;

@@ -1,6 +1,10 @@
 Revision History
 ================
 
+0.9.6.2 (xx/xx/2007)
+    * Bug Fixes
+        o 1787858
+
 0.9.6.1 (08/21/2007)
     * Bug Fixes
         o 1777778

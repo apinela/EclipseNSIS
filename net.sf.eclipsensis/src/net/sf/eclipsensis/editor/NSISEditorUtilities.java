@@ -171,19 +171,28 @@ public class NSISEditorUtilities
                                             IGotoMarker igm = (IGotoMarker)editor.getAdapter(IGotoMarker.class);
                                             if(igm != null) {
                                                 igm.gotoMarker(marker);
+                                                return;
                                             }
                                         }
                                         else {
                                             setEditorSelection(editor, null, lineNum);
+                                            return;
                                         }
                                     }
                                 }
                                 else if(path.getDevice() != null) {
-                                    Position pos = null;
-                                    if(marker instanceof PositionMarker) {
-                                        pos = ((PositionMarker)marker).getPosition();
+                                    IPathEditorInput input2 = getPathEditorInput(input);
+                                    if(input2 != null) {
+                                        if(path.equals(input2.getPath())) {
+                                            Position pos = null;
+                                            if(marker instanceof PositionMarker) {
+                                                pos = ((PositionMarker)marker).getPosition();
+                                            }
+                                            page.activate(editor);
+                                            setEditorSelection(editor, pos, lineNum);
+                                            return;
+                                        }
                                     }
-                                    setEditorSelection(editor, pos, lineNum);
                                 }
                             }
                         }
@@ -453,11 +462,19 @@ public class NSISEditorUtilities
     public static IPathEditorInput getPathEditorInput(IEditorPart editor)
     {
         IEditorInput input = editor.getEditorInput();
+        return getPathEditorInput(input);
+    }
+
+    public static IPathEditorInput getPathEditorInput(Object input)
+    {
         if(input instanceof IPathEditorInput) {
             return (IPathEditorInput)input;
         }
+        else if (input instanceof IAdaptable){
+            return (IPathEditorInput)((IAdaptable)input).getAdapter(IPathEditorInput.class);
+        }
         else {
-            return (IPathEditorInput)input.getAdapter(IPathEditorInput.class);
+            return null;
         }
     }
 
