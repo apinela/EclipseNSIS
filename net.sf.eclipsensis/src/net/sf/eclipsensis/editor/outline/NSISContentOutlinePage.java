@@ -152,7 +152,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
             if(contentProvider != null) {
                 TreeViewer viewer = getTreeViewer();
                 viewer.setContentProvider(contentProvider);
-                viewer.setLabelProvider(new NSISOutlineLabelProvider());
+                viewer.setLabelProvider(new NSISOutlineLabelProvider(mEditor));
                 viewer.addSelectionChangedListener(mEditor);
                 if (mInput != null) {
                     viewer.setInput(mInput);

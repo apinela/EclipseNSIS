@@ -9,23 +9,112 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.outline;
 
+import java.util.Iterator;
+
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.editor.*;
+import net.sf.eclipsensis.util.Common;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 
 
 public class NSISOutlineLabelProvider extends LabelProvider
 {
+    private static ImageData cErrorImageData = EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("error.decoration.icon")).getImageData(); //$NON-NLS-1$
+    private static ImageData cWarningImageData = EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("warning.decoration.icon")).getImageData(); //$NON-NLS-1$
+    private NSISEditor mEditor;
+
+    public NSISOutlineLabelProvider(NSISEditor editor)
+    {
+        mEditor = editor;
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
     public Image getImage(Object element)
     {
         if(element instanceof NSISOutlineElement) {
-            return ((NSISOutlineElement)element).getIcon();
+            return decorateImage((NSISOutlineElement)element);
         }
         else {
             return super.getImage(element);
         }
+    }
+
+    private int getElementSeverity(NSISOutlineElement element)
+    {
+        if(element.hasChildren()) {
+            int severity = IMarker.SEVERITY_INFO;
+            for(Iterator iter = element.getChildren().iterator(); iter.hasNext(); ) {
+                int s = getElementSeverity((NSISOutlineElement)iter.next());
+                if(s > severity) {
+                    severity = s;
+                }
+                if(severity == IMarker.SEVERITY_ERROR) {
+                    break;
+                }
+            }
+            return severity;
+        }
+        else {
+            IMarker[] markers = NSISEditorUtilities.getMarkers(mEditor, new org.eclipse.jface.text.Region(element.getPosition().getOffset(),element.getPosition().getLength()));
+            if(!Common.isEmptyArray(markers)) {
+                int severity = IMarker.SEVERITY_INFO;
+                for (int i = 0; i < markers.length; i++) {
+                    int s = markers[i].getAttribute(IMarker.SEVERITY,IMarker.SEVERITY_INFO);
+                    if(s > severity) {
+                        severity = s;
+                    }
+                    if(severity == IMarker.SEVERITY_ERROR) {
+                        break;
+                    }
+                }
+                return severity;
+            }
+        }
+        return 0;
+    }
+
+    private Image decorateImage(NSISOutlineElement element)
+    {
+        final Image image = element.getIcon();
+        final ImageData data;
+        String hashCode;
+        int severity = getElementSeverity(element);
+        switch(severity) {
+            case IMarker.SEVERITY_ERROR:
+                hashCode = image.hashCode() + "$error"; //$NON-NLS-1$
+                data = cErrorImageData;
+                break;
+            case IMarker.SEVERITY_WARNING:
+                hashCode = image.hashCode() + "$warning"; //$NON-NLS-1$
+                data = cWarningImageData;
+                break;
+            default:
+                return image;
+        }
+        Image image2 = EclipseNSISPlugin.getImageManager().getImage(hashCode);
+        if(image2 == null) {
+            EclipseNSISPlugin.getImageManager().putImageDescriptor(hashCode,
+                    new CompositeImageDescriptor(){
+                        protected void drawCompositeImage(int width, int height)
+                        {
+                            drawImage(image.getImageData(),0,0);
+                            drawImage(data,0,getSize().y-data.height);
+                        }
+
+                        protected Point getSize()
+                        {
+                            return new Point(image.getBounds().width,image.getBounds().height);
+                        }
+                    });
+            image2 = EclipseNSISPlugin.getImageManager().getImage(hashCode);
+        }
+        return image2;
     }
 
     /* (non-Javadoc)

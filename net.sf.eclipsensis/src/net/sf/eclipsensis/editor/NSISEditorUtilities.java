@@ -16,7 +16,7 @@ import java.util.List;
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.console.NSISConsoleLine;
 import net.sf.eclipsensis.editor.codeassist.*;
-import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
+import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.makensis.*;
 import net.sf.eclipsensis.script.NSISScriptProblem;
 import net.sf.eclipsensis.util.*;
@@ -277,11 +277,14 @@ public class NSISEditorUtilities
                         if (line >= 0) {
                             try {
                                 String name;
+                                int severity;
                                 if (problem.getType() == NSISScriptProblem.TYPE_ERROR) {
                                     name = INSISConstants.ERROR_ANNOTATION_NAME;
+                                    severity = IMarker.SEVERITY_ERROR;
                                 }
                                 else if (problem.getType() == NSISScriptProblem.TYPE_WARNING) {
                                     name = INSISConstants.WARNING_ANNOTATION_NAME;
+                                    severity = IMarker.SEVERITY_WARNING;
                                 }
                                 else {
                                     continue;
@@ -289,7 +292,7 @@ public class NSISEditorUtilities
                                 IRegion region = doc.getLineInformation(line > 0?line - 1:1);
 
                                 Position position = new Position(region.getOffset(), (line > 0?region.getLength():0));
-                                problem.setMarker(new PositionMarker(file,position));
+                                problem.setMarker(new PositionMarker(file,severity,problem.getText(),position));
                                 annotationModel.addAnnotation(new Annotation(name, false, problem.getText()), position);
                             }
                             catch (BadLocationException e) {
@@ -478,12 +481,81 @@ public class NSISEditorUtilities
         }
     }
 
+    public static IMarker[] getMarkers(NSISEditor editor, IRegion region)
+    {
+        IEditorInput input = editor.getEditorInput();
+        IPath path = null;
+        if(input instanceof IFileEditorInput) {
+            path = ((IFileEditorInput)input).getFile().getFullPath();
+        }
+        else {
+            IPathEditorInput input2 = getPathEditorInput(input);
+            if(input2 != null) {
+                path = input2.getPath();
+            }
+        }
+        if(path != null && (!MakeNSISRunner.isCompiling() || !path.equals(MakeNSISRunner.getScript()))) {
+            if(path.getDevice() == null) {
+                IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+                if(file.exists()) {
+                    try {
+                        IMarker[] markers = file.findMarkers(INSISConstants.PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
+                        if(!Common.isEmptyArray(markers)) {
+                            List list = new ArrayList();
+                            for (int i = 0; i < markers.length; i++) {
+                                int start = markers[i].getAttribute(IMarker.CHAR_START,-1);
+                                int end = markers[i].getAttribute(IMarker.CHAR_END,-1);
+                                if(start >= 0 && end >= start) {
+                                    IRegion region2 = NSISTextUtility.intersection(region,new Region(start,end-start+1));
+                                    if(region2 != null && region2.getLength() > 0) {
+                                        list.add(markers[i]);
+                                    }
+                                }
+                            }
+                            return (IMarker[])list.toArray(new IMarker[list.size()]);
+                        }
+                    }
+                    catch (CoreException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            else {
+                MakeNSISResults results = NSISCompileTestUtility.INSTANCE.getCachedResults(new File(path.toOSString()));
+                if(results != null) {
+                    List problems = results.getProblems();
+                    if(!Common.isEmptyCollection(problems)) {
+                        List list = new ArrayList();
+                        for (Iterator iterator = problems.iterator(); iterator.hasNext();) {
+                            NSISScriptProblem problem = (NSISScriptProblem)iterator.next();
+                            IMarker marker = problem.getMarker();
+                            if(marker != null) {
+                                int start = marker.getAttribute(IMarker.CHAR_START,-1);
+                                int end = marker.getAttribute(IMarker.CHAR_END,-1);
+                                if(start >= 0 && end >= start) {
+                                    IRegion region2 = NSISTextUtility.intersection(region,new Region(start,end-start+1));
+                                    if(region2 != null && region2.getLength() > 0) {
+                                        list.add(marker);
+                                    }
+                                }
+                            }
+                        }
+                        return (IMarker[])list.toArray(new IMarker[list.size()]);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public static class PositionMarker implements IMarker
     {
         private IResource mResource = null;
         private Position mPosition = null;
+        private int mSeverity;
+        private String mMessage;
 
-        public PositionMarker(IResource resource, Position position)
+        public PositionMarker(IResource resource, int severity, String message, Position position)
         {
             mResource = resource;
             mPosition = position;
@@ -528,6 +600,9 @@ public class NSISEditorUtilities
             else if(attributeName.equals(IMarker.CHAR_END)) {
                 return (mPosition==null?defaultValue:mPosition.getOffset()+mPosition.getLength());
             }
+            else if(attributeName.equals(IMarker.SEVERITY)) {
+                return mSeverity;
+            }
             else {
                 return defaultValue;
             }
@@ -538,7 +613,12 @@ public class NSISEditorUtilities
          */
         public String getAttribute(String attributeName, String defaultValue)
         {
-            return defaultValue;
+            if(attributeName.equals(IMarker.MESSAGE)) {
+                return mMessage;
+            }
+            else {
+                return defaultValue;
+            }
         }
 
         /* (non-Javadoc)
@@ -551,6 +631,12 @@ public class NSISEditorUtilities
             }
             else if(attributeName.equals(IMarker.CHAR_END)) {
                 return (mPosition==null?null:new Integer(mPosition.getOffset()+mPosition.getLength()));
+            }
+            else if(attributeName.equals(IMarker.SEVERITY)) {
+                return new Integer(mSeverity);
+            }
+            else if(attributeName.equals(IMarker.MESSAGE)) {
+                return mMessage;
             }
             else {
                 return null;
