@@ -11,6 +11,7 @@ package net.sf.eclipsensis.editor.outline;
 
 import java.util.ArrayList;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.text.Position;
@@ -21,6 +22,8 @@ import org.eclipse.swt.graphics.Image;
  */
 public class NSISOutlineElement
 {
+    static final String ROOT = "ROOT"; //$NON-NLS-1$
+
     private String mType;
     private String mName;
     private Position mSelectPosition;
@@ -47,12 +50,27 @@ public class NSISOutlineElement
 
     public String toString()
     {
-        if(!Common.isEmpty(mName)) {
-            return new StringBuffer(getTypeName()).append(" ").append(mName).toString(); //$NON-NLS-1$
+        if(isRoot()) {
+            if(!Common.isEmpty(mName)) {
+                return mName;
+            }
+            else {
+                return EclipseNSISPlugin.getResourceString("outline.root.label"); //$NON-NLS-1$
+            }
         }
         else {
-            return getTypeName();
+            if(!Common.isEmpty(mName)) {
+                return new StringBuffer(getTypeName()).append(" ").append(mName).toString();
+            }
+            else {
+                return getTypeName();
+            }
         }
+    }
+
+    public boolean isRoot()
+    {
+        return mParent == null && ROOT.equals(mType);
     }
 
     public boolean hasChildren()

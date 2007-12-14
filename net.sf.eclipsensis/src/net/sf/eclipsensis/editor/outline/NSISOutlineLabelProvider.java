@@ -23,6 +23,7 @@ import org.eclipse.swt.graphics.*;
 
 public class NSISOutlineLabelProvider extends LabelProvider
 {
+    private static Image cRootImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.icon")); //$NON-NLS-1$
     private static ImageData cErrorImageData = EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("error.decoration.icon")).getImageData(); //$NON-NLS-1$
     private static ImageData cWarningImageData = EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("warning.decoration.icon")).getImageData(); //$NON-NLS-1$
     private NSISEditor mEditor;
@@ -81,17 +82,17 @@ public class NSISOutlineLabelProvider extends LabelProvider
 
     private Image decorateImage(NSISOutlineElement element)
     {
-        final Image image = element.getIcon();
+        final Image image = (element.isRoot()?cRootImage:element.getIcon());
         final ImageData data;
         String hashCode;
         int severity = getElementSeverity(element);
         switch(severity) {
             case IMarker.SEVERITY_ERROR:
-                hashCode = image.hashCode() + "$error"; //$NON-NLS-1$
+                hashCode = image.hashCode() + "$error";
                 data = cErrorImageData;
                 break;
             case IMarker.SEVERITY_WARNING:
-                hashCode = image.hashCode() + "$warning"; //$NON-NLS-1$
+                hashCode = image.hashCode() + "$warning";
                 data = cWarningImageData;
                 break;
             default:
