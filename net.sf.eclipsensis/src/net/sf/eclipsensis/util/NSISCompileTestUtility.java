@@ -31,6 +31,8 @@ public class NSISCompileTestUtility
 {
     public static final NSISCompileTestUtility INSTANCE = new NSISCompileTestUtility();
 
+    private static final long cEclipseStartTime = Long.parseLong(System.getProperty("eclipse.startTime",String.valueOf(System.currentTimeMillis())));
+
     private NSISHeaderAssociationManager mHeaderAssociationManager = NSISHeaderAssociationManager.getInstance();
     private Map mResultsMap;
     private Pattern mNSISExtPattern = Pattern.compile(INSISConstants.NSI_WILDCARD_EXTENSION,Pattern.CASE_INSENSITIVE);
@@ -121,8 +123,10 @@ public class NSISCompileTestUtility
                 MakeNSISResults results = (MakeNSISResults)mResultsMap.get(script);
                 if(results != null) {
                     if(script.lastModified() > results.getCompileTimestamp()) {
-                        results = null;
-                        mResultsMap.remove(script);
+                        if(script.lastModified() < cEclipseStartTime) {
+                            results = null;
+                            mResultsMap.remove(script);
+                        }
                     }
                 }
                 return results;

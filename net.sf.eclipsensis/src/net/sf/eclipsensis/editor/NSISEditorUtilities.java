@@ -98,6 +98,7 @@ public class NSISEditorUtilities
                     };
                     try {
                         op.run(null);
+                        NSISEditorUtilities.refreshEditorOutlines(file);
                     }
                     catch (Exception ex) {
                         EclipseNSISPlugin.getDefault().log(ex);
@@ -112,6 +113,7 @@ public class NSISEditorUtilities
                         public void run()
                         {
                             updateAnnotations(file, null);
+                            refreshEditorOutlines(path);
                         }
                     });
                 }
@@ -256,7 +258,7 @@ public class NSISEditorUtilities
         }
     }
 
-    public static void updateAnnotations(NSISEditor editor, MakeNSISResults results)
+    public static void updateAnnotations(final NSISEditor editor, MakeNSISResults results)
     {
         IAnnotationModel model = editor.getAnnotationModel();
         if(model instanceof AnnotationModel) {
@@ -302,6 +304,42 @@ public class NSISEditorUtilities
                     }
                 }
             }
+        }
+        refreshOutline(editor);
+    }
+
+    public static void refreshEditorOutlines(IFile file)
+    {
+        List editors = NSISEditorUtilities.findEditors(file);
+        if(!Common.isEmptyCollection(editors)) {
+            for (Iterator iterator = editors.iterator(); iterator.hasNext();) {
+                NSISEditorUtilities.refreshOutline((NSISEditor)iterator.next());
+            }
+        }
+    }
+
+    public static void refreshEditorOutlines(IPath path)
+    {
+        List editors = NSISEditorUtilities.findEditors(path);
+        if(!Common.isEmptyCollection(editors)) {
+            for (Iterator iterator = editors.iterator(); iterator.hasNext();) {
+                NSISEditorUtilities.refreshOutline((NSISEditor)iterator.next());
+            }
+        }
+    }
+
+    public static void refreshOutline(final NSISEditor editor)
+    {
+        if(Display.getCurrent() != null) {
+            editor.refreshOutline();
+        }
+        else {
+            Display.getDefault().asyncExec(new Runnable() {
+                public void run()
+                {
+                    editor.refreshOutline();
+                }
+            });
         }
     }
 
@@ -361,6 +399,28 @@ public class NSISEditorUtilities
                     if(editor != null) {
                         IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(editor);
                         if(input != null && path.equals(input.getPath())) {
+                            editors.add(editor);
+                        }
+                    }
+                }
+            }
+        }
+        return editors;
+    }
+
+    public static List findEditors(IFile file)
+    {
+        List editors = new ArrayList();
+        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+        for (int i = 0; i < windows.length; i++) {
+            IWorkbenchPage[] pages = windows[i].getPages();
+            for (int j = 0; j < pages.length; j++) {
+                IEditorReference[] editorRefs = pages[j].getEditorReferences();
+                for (int k = 0; k < editorRefs.length; k++) {
+                    IEditorPart editor = editorRefs[k].getEditor(false);
+                    if(editor != null) {
+                        IFileEditorInput input = NSISEditorUtilities.getFileEditorInput(editor);
+                        if(input != null && file.equals(input.getFile())) {
                             editors.add(editor);
                         }
                     }
@@ -481,6 +541,25 @@ public class NSISEditorUtilities
         }
     }
 
+    public static IFileEditorInput getFileEditorInput(IEditorPart editor)
+    {
+        IEditorInput input = editor.getEditorInput();
+        return getFileEditorInput(input);
+    }
+
+    public static IFileEditorInput getFileEditorInput(Object input)
+    {
+        if(input instanceof IFileEditorInput) {
+            return (IFileEditorInput)input;
+        }
+        else if (input instanceof IAdaptable){
+            return (IFileEditorInput)((IAdaptable)input).getAdapter(IFileEditorInput.class);
+        }
+        else {
+            return null;
+        }
+    }
+
     public static IMarker[] getMarkers(NSISEditor editor, IRegion region)
     {
         IEditorInput input = editor.getEditorInput();
@@ -500,6 +579,9 @@ public class NSISEditorUtilities
                 if(file.exists()) {
                     try {
                         IMarker[] markers = file.findMarkers(INSISConstants.PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
+                        if(region == null) {
+                            return markers;
+                        }
                         if(!Common.isEmptyArray(markers)) {
                             List list = new ArrayList();
                             for (int i = 0; i < markers.length; i++) {
@@ -525,17 +607,23 @@ public class NSISEditorUtilities
                 if(results != null) {
                     List problems = results.getProblems();
                     if(!Common.isEmptyCollection(problems)) {
-                        List list = new ArrayList();
+                        List list;
+                        list = new ArrayList();
                         for (Iterator iterator = problems.iterator(); iterator.hasNext();) {
                             NSISScriptProblem problem = (NSISScriptProblem)iterator.next();
                             IMarker marker = problem.getMarker();
                             if(marker != null) {
-                                int start = marker.getAttribute(IMarker.CHAR_START,-1);
-                                int end = marker.getAttribute(IMarker.CHAR_END,-1);
-                                if(start >= 0 && end >= start) {
-                                    IRegion region2 = NSISTextUtility.intersection(region,new Region(start,end-start+1));
-                                    if(region2 != null && region2.getLength() > 0) {
-                                        list.add(marker);
+                                if(region == null) {
+                                    list.add(marker);
+                                }
+                                else {
+                                    int start = marker.getAttribute(IMarker.CHAR_START,-1);
+                                    int end = marker.getAttribute(IMarker.CHAR_END,-1);
+                                    if(start >= 0 && end >= start) {
+                                        IRegion region2 = NSISTextUtility.intersection(region,new Region(start,end-start+1));
+                                        if(region2 != null && region2.getLength() > 0) {
+                                            list.add(marker);
+                                        }
                                     }
                                 }
                             }
@@ -559,6 +647,8 @@ public class NSISEditorUtilities
         {
             mResource = resource;
             mPosition = position;
+            mSeverity = severity;
+            mMessage = message;
         }
 
         public Position getPosition()

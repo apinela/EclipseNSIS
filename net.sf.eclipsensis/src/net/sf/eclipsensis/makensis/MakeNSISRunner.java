@@ -230,6 +230,7 @@ public class MakeNSISRunner implements INSISConstants
                         };
                         try {
                             op.run(monitor);
+                            NSISEditorUtilities.refreshEditorOutlines(file);
                         }
                         catch (Exception e) {
                             ex[0]= e;

@@ -48,7 +48,11 @@ public class NSISOutlineLabelProvider extends LabelProvider
 
     private int getElementSeverity(NSISOutlineElement element)
     {
-        if(element.hasChildren()) {
+        IMarker[] markers = null;
+        if(element.isRoot()) {
+            markers = NSISEditorUtilities.getMarkers(mEditor, null);
+        }
+        else if(element.hasChildren()) {
             int severity = IMarker.SEVERITY_INFO;
             for(Iterator iter = element.getChildren().iterator(); iter.hasNext(); ) {
                 int s = getElementSeverity((NSISOutlineElement)iter.next());
@@ -62,20 +66,20 @@ public class NSISOutlineLabelProvider extends LabelProvider
             return severity;
         }
         else {
-            IMarker[] markers = NSISEditorUtilities.getMarkers(mEditor, new org.eclipse.jface.text.Region(element.getPosition().getOffset(),element.getPosition().getLength()));
-            if(!Common.isEmptyArray(markers)) {
-                int severity = IMarker.SEVERITY_INFO;
-                for (int i = 0; i < markers.length; i++) {
-                    int s = markers[i].getAttribute(IMarker.SEVERITY,IMarker.SEVERITY_INFO);
-                    if(s > severity) {
-                        severity = s;
-                    }
-                    if(severity == IMarker.SEVERITY_ERROR) {
-                        break;
-                    }
+            markers = NSISEditorUtilities.getMarkers(mEditor, new org.eclipse.jface.text.Region(element.getPosition().getOffset(),element.getPosition().getLength()));
+        }
+        if(!Common.isEmptyArray(markers)) {
+            int severity = IMarker.SEVERITY_INFO;
+            for (int i = 0; i < markers.length; i++) {
+                int s = markers[i].getAttribute(IMarker.SEVERITY,IMarker.SEVERITY_INFO);
+                if(s > severity) {
+                    severity = s;
                 }
-                return severity;
+                if(severity == IMarker.SEVERITY_ERROR) {
+                    break;
+                }
             }
+            return severity;
         }
         return 0;
     }

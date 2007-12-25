@@ -64,8 +64,6 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     private IPositionUpdater mSelectPositionUpdater = new DefaultPositionUpdater(NSIS_OUTLINE_SELECT);
 
     private NSISOutlineElement[] mRootElement = null;
-//    private NSISOutlineElement[] mOutlineElements = null;
-//    private NSISOutlineElement[] mFilteredElements = null;
     private NSISOutlineContentResources mResources;
 
     private List mFilteredTypes;
@@ -92,7 +90,6 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         mFilteredTypes.clear();
         mFilteredTypes.addAll(types);
         mResources.setFilteredTypes(mFilteredTypes);
-//        mFilteredElements = getFilteredElements();
     }
 
     private boolean isFiltered(String type)
@@ -188,7 +185,6 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         ITypedRegion[][] nsisLines = NSISTextUtility.getNSISLines(document, partitions);
         NSISOutlineElement rootElement = new NSISOutlineElement(NSISOutlineElement.ROOT,null);
         rootElement.setPosition(new Position(0,document.getLength()));
-        rootElement.setPosition(new Position(0,0));
         try {
             document.addPosition(NSIS_OUTLINE,rootElement.getPosition());
             document.addPosition(NSIS_OUTLINE_SELECT,rootElement.getSelectPosition());
@@ -447,8 +443,6 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         }
 
         mRootElement = new NSISOutlineElement[] {rootElement};
-//        mOutlineElements = (NSISOutlineElement[])getChildren(rootElement, false);
-//        mFilteredElements = getFilteredElements();
     }
 
     public void inputChanged(Object oldInput, Object newInput)
@@ -479,8 +473,6 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
             }
 
             mRootElement = null;
-//            mOutlineElements = null;
-//            mFilteredElements = null;
 
             if (newInput != null) {
                 mAnnotationModel = (IAnnotationModel) mEditor.getAdapter(ProjectionAnnotationModel.class);
@@ -518,10 +510,6 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         if(mRootElement != null) {
             mRootElement = null;
         }
-//        if (mOutlineElements != null) {
-//            mOutlineElements = null;
-//            mFilteredElements = null;
-//        }
     }
 
     /*
@@ -538,29 +526,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     public Object[] getElements(Object element)
     {
         return mRootElement;
-//        return mFilteredElements;
     }
-
-    /**
-     * @return
-     */
-//    private NSISOutlineElement[] getFilteredElements()
-//    {
-//        NSISOutlineElement[] elements = EMPTY_CHILDREN;
-//        if(!Common.isEmptyArray(mOutlineElements)) {
-//            List list = new ArrayList();
-//            for (int i = 0; i < mOutlineElements.length; i++) {
-//                if(isFiltered(mOutlineElements[i].getType())) {
-//                    addChildren(mOutlineElements[i],list, true);
-//                }
-//                else {
-//                    list.add(mOutlineElements[i]);
-//                }
-//            }
-//            elements = (NSISOutlineElement[])list.toArray(elements);
-//        }
-//        return elements;
-//    }
 
     /*
      * @see ITreeContentProvider#hasChildren(Object)
@@ -640,7 +606,6 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     public NSISOutlineElement findElement(int offset, int length)
     {
         return findElement(mRootElement, offset, length);
-//        return findElement(mFilteredElements, offset, length);
     }
 
     private NSISOutlineElement findElement(Object[] elements, int offset, int length)

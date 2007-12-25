@@ -1135,6 +1135,12 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         }
     }
 
+    public void refreshOutline()
+    {
+        if(mOutlinePage != null) {
+            mOutlinePage.refreshLabels();
+        }
+    }
     /**
      *
      */

@@ -43,6 +43,14 @@ public class NSISContentOutlinePage extends ContentOutlinePage
         mEditor = editor;
     }
 
+    public void refreshLabels()
+    {
+        TreeViewer viewer = getTreeViewer();
+        if(viewer != null) {
+            viewer.refresh(true);
+        }
+    }
+
     void refresh()
     {
         TreeViewer viewer = getTreeViewer();
@@ -216,7 +224,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
                 control.setRedraw(false);
                 viewer.setInput(null);
                 viewer.setInput(mInput);
-//                viewer.expandAll();
+                viewer.expandAll();
                 control.setRedraw(true);
             }
         }
