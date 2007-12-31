@@ -1163,7 +1163,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
             if(IOUtility.isValidFile(file)) {
                 MakeNSISResults results = NSISCompileTestUtility.INSTANCE.getCachedResults(file);
                 if(results != null) {
-                    NSISEditorUtilities.updateAnnotations(this, results);
+                    NSISEditorUtilities.getMarkerAssistant(file).updateMarkers(this, results);
                 }
             }
         }

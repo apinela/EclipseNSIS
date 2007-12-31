@@ -25,9 +25,7 @@ import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.text.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class MakeNSISRunner implements INSISConstants
 {
@@ -150,95 +148,6 @@ public class MakeNSISRunner implements INSISConstants
         synchronized(cCompileLock) {
             cScript = script;
             cCompileProcess = process;
-        }
-    }
-
-    private static void updateMarkers(final IFile file, final MakeNSISResults results)
-    {
-        if (!results.isCanceled()) {
-            EclipseNSISPlugin.getDefault().getJobScheduler().scheduleJob(cJobFamily,EclipseNSISPlugin.getResourceString("updating.markers.job.name"),file, //$NON-NLS-1$
-                new IJobStatusRunnable() {
-                    public IStatus run(IProgressMonitor monitor)
-                    {
-                        final Exception[] ex = {null};
-                        WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
-                        {
-                            protected void execute(IProgressMonitor monitor)
-                            {
-                                try {
-                                    List problems = results.getProblems();
-                                    monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.problem.markers.task.name"),1+(problems==null?0:problems.size())); //$NON-NLS-1$
-                                    IPath path = file.getFullPath();
-                                    IPath loc = file.getLocation();
-                                    if (loc == null) {
-                                        throw new CoreException(new Status(IStatus.ERROR, INSISConstants.PLUGIN_ID, IStatus.ERROR, EclipseNSISPlugin.getResourceString("local.filesystem.error"), null)); //$NON-NLS-1$
-                                    }
-                                    IDocument document = new FileDocument(loc.toFile());
-
-                                    file.deleteMarkers(PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
-                                    if(monitor.isCanceled()) {
-                                        return;
-                                    }
-                                    monitor.worked(1);
-                                    if (!Common.isEmptyCollection(problems)) {
-                                        for(Iterator iter = problems.iterator(); iter.hasNext(); ) {
-                                            if(monitor.isCanceled()) {
-                                                return;
-                                            }
-                                            NSISScriptProblem problem = (NSISScriptProblem)iter.next();
-                                            IPath p = (IPath)problem.getPath();
-                                            if (p!= null && p.equals(path)) {
-                                                IMarker marker = file.createMarker(PROBLEM_MARKER_ID);
-                                                if(monitor.isCanceled()) {
-                                                    return;
-                                                }
-
-                                                switch (problem.getType())
-                                                {
-                                                    case NSISScriptProblem.TYPE_ERROR:
-                                                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-                                                        break;
-                                                    case NSISScriptProblem.TYPE_WARNING:
-                                                        marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
-                                                        break;
-                                                }
-                                                marker.setAttribute(IMarker.MESSAGE, problem.getText());
-                                                int line = problem.getLine();
-                                                marker.setAttribute(IMarker.LINE_NUMBER, line > 0?line:1);
-                                                if (line > 0) {
-                                                    try {
-                                                        IRegion region = document.getLineInformation(line - 1);
-                                                        marker.setAttribute(IMarker.CHAR_START, region.getOffset());
-                                                        marker.setAttribute(IMarker.CHAR_END, region.getOffset() + region.getLength());
-                                                    }
-                                                    catch (BadLocationException e) {
-                                                    }
-                                                }
-                                                problem.setMarker(marker);
-                                            }
-                                            monitor.worked(1);
-                                        }
-                                    }
-                                }
-                                catch (CoreException e) {
-                                    ex[0] = e;
-                                }
-                                finally {
-                                    monitor.done();
-                                }
-                            }
-                        };
-                        try {
-                            op.run(monitor);
-                            NSISEditorUtilities.refreshEditorOutlines(file);
-                        }
-                        catch (Exception e) {
-                            ex[0]= e;
-                        }
-                        return monitor.isCanceled()?Status.CANCEL_STATUS:(ex[0]==null?Status.OK_STATUS:new Status(IStatus.ERROR,PLUGIN_ID,IStatus.OK,ex[0].getMessage(),ex[0]));
-                    }
-                }
-            );
         }
     }
 
@@ -621,14 +530,14 @@ public class MakeNSISRunner implements INSISConstants
                                         ifile.setPersistentProperty(NSIS_EXE_TIMESTAMP, null);
 
                                     }
-                                    updateMarkers(ifile, results);
+                                    NSISEditorUtilities.getMarkerAssistant(ifile).updateMarkers(results);
                                 }
                                 catch (CoreException cex) {
                                     EclipseNSISPlugin.getDefault().log(cex);
                                 }
                             }
                             else {
-                                NSISEditorUtilities.updateAnnotations(results);
+                                NSISEditorUtilities.getMarkerAssistant(results.getScriptFile()).updateMarkers(results);
                             }
                         }
                     }

@@ -26,18 +26,18 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.information.InformationPresenter;
-import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.*;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class NSISEditorUtilities
 {
+    private static Map mMarkerAssistants = new MRUMap(10);
+
     private NSISEditorUtilities()
     {
     }
@@ -78,45 +78,42 @@ public class NSISEditorUtilities
         return informationPresenter;
     }
 
+    public static INSISMarkerAssistant getMarkerAssistant(IFile file)
+    {
+        INSISMarkerAssistant assistant = (INSISMarkerAssistant)mMarkerAssistants.get(file);
+        if(assistant == null) {
+            assistant = new NSISFileMarkerAssistant(file);
+            mMarkerAssistants.put(file, assistant);
+        }
+        return assistant;
+    }
+
+    public static INSISMarkerAssistant getMarkerAssistant(File file)
+    {
+        INSISMarkerAssistant assistant = (INSISMarkerAssistant)mMarkerAssistants.get(file);
+        if(assistant == null) {
+            assistant = new NSISExternalFileMarkerAssistant(file);
+            mMarkerAssistants.put(file, assistant);
+        }
+        return assistant;
+    }
+
+    public static INSISMarkerAssistant getMarkerAssistant(IPath path)
+    {
+        if(path.getDevice() == null) {
+            return getMarkerAssistant(ResourcesPlugin.getWorkspace().getRoot().getFile(path));
+        }
+        else {
+            return getMarkerAssistant(new File(path.toOSString()));
+        }
+    }
+
     public static void clearMarkers(final IPath path)
     {
         if(path != null && (!MakeNSISRunner.isCompiling() || !path.equals(MakeNSISRunner.getScript()))) {
-            if(path.getDevice() == null) {
-                final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-                if(file.exists()) {
-                    WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
-                    {
-                        protected void execute(IProgressMonitor monitor)
-                        {
-                            try {
-                                file.deleteMarkers(INSISConstants.PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
-                            }
-                            catch (CoreException ex) {
-                                EclipseNSISPlugin.getDefault().log(ex);
-                            }
-                        }
-                    };
-                    try {
-                        op.run(null);
-                        NSISEditorUtilities.refreshEditorOutlines(file);
-                    }
-                    catch (Exception ex) {
-                        EclipseNSISPlugin.getDefault().log(ex);
-                    }
-                }
-            }
-            else {
-                final File file = new File(path.toOSString());
-                if(IOUtility.isValidFile(file)) {
-                    NSISCompileTestUtility.INSTANCE.removeCachedResults(file);
-                    Display.getDefault().asyncExec(new Runnable() {
-                        public void run()
-                        {
-                            updateAnnotations(file, null);
-                            refreshEditorOutlines(path);
-                        }
-                    });
-                }
+            INSISMarkerAssistant assistant = getMarkerAssistant(path);
+            if(assistant != null) {
+                assistant.clearMarkers();
             }
         }
     }
@@ -124,23 +121,9 @@ public class NSISEditorUtilities
     public static boolean hasMarkers(IPath path)
     {
         if(path != null && (!MakeNSISRunner.isCompiling() || !path.equals(MakeNSISRunner.getScript()))) {
-            if(path.getDevice() == null) {
-                IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-                if(file.exists()) {
-                    try {
-                        IMarker[] markers = file.findMarkers(INSISConstants.PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
-                        return !Common.isEmptyArray(markers);
-                    }
-                    catch (CoreException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            else {
-                MakeNSISResults results = NSISCompileTestUtility.INSTANCE.getCachedResults(new File(path.toOSString()));
-                if(results != null) {
-                    return results.getProblems().size() > 0;
-                }
+            INSISMarkerAssistant assistant = getMarkerAssistant(path);
+            if(assistant != null) {
+                return assistant.hasMarkers();
             }
         }
         return false;
@@ -258,56 +241,6 @@ public class NSISEditorUtilities
         }
     }
 
-    public static void updateAnnotations(final NSISEditor editor, MakeNSISResults results)
-    {
-        IAnnotationModel model = editor.getAnnotationModel();
-        if(model instanceof AnnotationModel) {
-            AnnotationModel annotationModel = (AnnotationModel)model;
-            annotationModel.removeAllAnnotations();
-            if (results != null) {
-                List problems = results.getProblems();
-                if (!Common.isEmptyCollection(problems)) {
-                    IEditorInput editorInput = editor.getEditorInput();
-                    IFile file = null;
-                    if(editorInput instanceof IFileEditorInput) {
-                        file = ((IFileEditorInput)editorInput).getFile();
-                    }
-                    IDocument doc = editor.getDocumentProvider().getDocument(editorInput);
-                    for (Iterator iter = problems.iterator(); iter.hasNext();) {
-                        NSISScriptProblem problem = (NSISScriptProblem)iter.next();
-                        int line = problem.getLine();
-                        if (line >= 0) {
-                            try {
-                                String name;
-                                int severity;
-                                if (problem.getType() == NSISScriptProblem.TYPE_ERROR) {
-                                    name = INSISConstants.ERROR_ANNOTATION_NAME;
-                                    severity = IMarker.SEVERITY_ERROR;
-                                }
-                                else if (problem.getType() == NSISScriptProblem.TYPE_WARNING) {
-                                    name = INSISConstants.WARNING_ANNOTATION_NAME;
-                                    severity = IMarker.SEVERITY_WARNING;
-                                }
-                                else {
-                                    continue;
-                                }
-                                IRegion region = doc.getLineInformation(line > 0?line - 1:1);
-
-                                Position position = new Position(region.getOffset(), (line > 0?region.getLength():0));
-                                problem.setMarker(new PositionMarker(file,severity,problem.getText(),position));
-                                annotationModel.addAnnotation(new Annotation(name, false, problem.getText()), position);
-                            }
-                            catch (BadLocationException e) {
-                                EclipseNSISPlugin.getDefault().log(e);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        refreshOutline(editor);
-    }
-
     public static void refreshEditorOutlines(IFile file)
     {
         List editors = NSISEditorUtilities.findEditors(file);
@@ -381,11 +314,6 @@ public class NSISEditorUtilities
         }
     }
 
-    public static void updateAnnotations(MakeNSISResults results)
-    {
-        updateAnnotations(results.getScriptFile(), results);
-    }
-
     public static List findEditors(IPath path)
     {
         List editors = new ArrayList();
@@ -428,31 +356,6 @@ public class NSISEditorUtilities
             }
         }
         return editors;
-    }
-
-    private static void updateAnnotations(File script, MakeNSISResults results)
-    {
-        IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-        for (int i = 0; i < windows.length; i++) {
-            IWorkbenchPage[] pages = windows[i].getPages();
-            for (int j = 0; j < pages.length; j++) {
-                IEditorReference[] editorRefs = pages[j].getEditorReferences();
-                for (int k = 0; k < editorRefs.length; k++) {
-                    if(INSISConstants.EDITOR_ID.equals(editorRefs[k].getId())) {
-                        NSISEditor editor = (NSISEditor)editorRefs[k].getEditor(false);
-                        if(editor != null) {
-                            IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(editor);
-                            if(!(input instanceof IFileEditorInput)) {
-                                if(script.getAbsolutePath().equalsIgnoreCase(input.getPath().toOSString())) {
-                                    updateAnnotations(editor, results);
-                                    editor.updateActionsState();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     public static void openAssociatedFiles(final IWorkbenchPage page, final IFile file)

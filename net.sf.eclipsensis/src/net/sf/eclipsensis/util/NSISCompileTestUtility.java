@@ -39,7 +39,6 @@ public class NSISCompileTestUtility
 
     private NSISCompileTestUtility()
     {
-        super();
         File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
         final File resultsCacheFile = new File(stateLocation, getClass().getName() + ".ResultsCache.ser"); //$NON-NLS-1$
         EclipseNSISPlugin.getDefault().registerService(new IEclipseNSISService() {
@@ -438,37 +437,6 @@ public class NSISCompileTestUtility
     private IFile getFile(IPath path)
     {
         return path != null?ResourcesPlugin.getWorkspace().getRoot().getFile(path):null;
-    }
-
-    private static final class MRUMap extends LinkedHashMap
-    {
-        private static final long serialVersionUID = -4303663274693162132L;
-
-        private final int mMaxSize;
-
-        public MRUMap(int maxSize)
-        {
-            super(15,0.75f,true);
-            mMaxSize= maxSize;
-        }
-
-        public MRUMap(int maxSize, Map map)
-        {
-            this(maxSize);
-            putAll(map);
-        }
-
-        public Object put(Object key, Object value)
-        {
-            Object object= remove(key);
-            super.put(key, value);
-            return object;
-        }
-
-        protected boolean removeEldestEntry(Map.Entry eldest)
-        {
-            return (mMaxSize > 0 && size() > mMaxSize);
-        }
     }
 
     private class NSISCompileRunnable implements Runnable, INSISConsoleLineProcessor
