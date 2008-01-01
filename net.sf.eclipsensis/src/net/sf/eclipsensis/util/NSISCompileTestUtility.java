@@ -115,6 +115,16 @@ public class NSISCompileTestUtility
         mHeaderAssociationManager.addAssociatedHeader(script, header);
     }
 
+    public void cacheResults(File script, MakeNSISResults results)
+    {
+        if(results != null) {
+            mResultsMap.put(script, results);
+        }
+        else {
+            removeCachedResults(script);
+        }
+    }
+
     public MakeNSISResults getCachedResults(File script)
     {
         if(IOUtility.isValidFile(script)) {
@@ -465,9 +475,6 @@ public class NSISCompileTestUtility
                     File file = new File(mScript.toOSString());
                     results = MakeNSISRunner.compile(file, NSISPreferences.INSTANCE,
                                                      EclipseNSISPlugin.getDefault().getConsole(),this);
-                    if(results != null) {
-                        mResultsMap.put(file, results);
-                    }
                 }
                 if(results != null) {
                     mOutputExeName = results.getOutputFileName();

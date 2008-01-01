@@ -537,6 +537,7 @@ public class MakeNSISRunner implements INSISConstants
                                 }
                             }
                             else {
+                                NSISCompileTestUtility.INSTANCE.cacheResults(results.getScriptFile(), results);
                                 NSISEditorUtilities.getMarkerAssistant(results.getScriptFile()).updateMarkers(results);
                             }
                         }

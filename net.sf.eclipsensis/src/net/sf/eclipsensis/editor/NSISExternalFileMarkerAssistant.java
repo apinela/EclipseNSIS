@@ -29,7 +29,7 @@ public class NSISExternalFileMarkerAssistant implements INSISMarkerAssistant
 {
     private File mFile;
 
-    public NSISExternalFileMarkerAssistant(File file)
+    NSISExternalFileMarkerAssistant(File file)
     {
         super();
         mFile = file;

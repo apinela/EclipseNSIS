@@ -28,7 +28,7 @@ public class NSISFileMarkerAssistant implements INSISMarkerAssistant, INSISConst
 
     private IFile mFile;
 
-    public NSISFileMarkerAssistant(IFile file)
+    NSISFileMarkerAssistant(IFile file)
     {
         super();
         mFile = file;
