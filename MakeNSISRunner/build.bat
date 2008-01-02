@@ -1,10 +1,10 @@
 @echo off
 rem *******************************************************************************
-rem * Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
+rem * Copyright (c) 2004-2008 Sunil Kamath (IcemanK).
 rem * All rights reserved.
 rem * This program is made available under the terms of the Common Public License
 rem * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
-rem * 
+rem *
 rem * Contributors:
 rem *     Sunil Kamath (IcemanK) - initial API and implementation
 rem *******************************************************************************

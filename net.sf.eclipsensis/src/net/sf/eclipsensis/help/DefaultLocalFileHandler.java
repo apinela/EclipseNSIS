@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
+ * Copyright (c) 2004-2008 Sunil Kamath (IcemanK).
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html

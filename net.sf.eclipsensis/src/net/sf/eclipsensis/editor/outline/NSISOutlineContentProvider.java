@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
+ * Copyright (c) 2004-2008 Sunil Kamath (IcemanK).
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
@@ -292,60 +292,62 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                                 }
                                             }
                                             if(temp != null) {
-                                                if(type == SECTION) {
-                                                    if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
-                                                        if(temp.equalsIgnoreCase("/o")) { //$NON-NLS-1$
-                                                            continue;
+                                                switch(type) {
+                                                    case SECTION:
+                                                        if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+                                                            if(temp.equalsIgnoreCase("/o")) { //$NON-NLS-1$
+                                                                continue;
+                                                            }
                                                         }
-                                                    }
-                                                    else {
-                                                        if(temp.substring(1,temp.length()-1).equalsIgnoreCase("/o")) { //$NON-NLS-1$
-                                                            continue;
+                                                        else {
+                                                            if(temp.substring(1,temp.length()-1).equalsIgnoreCase("/o")) { //$NON-NLS-1$
+                                                                continue;
+                                                            }
                                                         }
-                                                    }
-                                                    if(temp.startsWith("-") || temp.startsWith("!")) { //$NON-NLS-1$ //$NON-NLS-2$
-                                                        temp = temp.substring(1);
-                                                    }
-                                                    if(temp.length() > 0) {
+                                                        if(temp.startsWith("-") || temp.startsWith("!")) { //$NON-NLS-1$ //$NON-NLS-2$
+                                                            temp = temp.substring(1);
+                                                        }
+                                                        if(temp.length() > 0) {
+                                                            name.append(temp);
+                                                            break outer;
+                                                        }
+                                                        break;
+                                                    case SECTIONGROUP:
+                                                    case SUBSECTION:
+                                                        if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+                                                            if(temp.equalsIgnoreCase("/e")) { //$NON-NLS-1$
+                                                                continue;
+                                                            }
+                                                        }
+                                                        else {
+                                                            if(temp.substring(1,temp.length()-1).equalsIgnoreCase("/e")) { //$NON-NLS-1$
+                                                                continue;
+                                                            }
+                                                        }
+                                                        if(temp.startsWith("!")) { //$NON-NLS-1$
+                                                            temp = temp.substring(1);
+                                                        }
+                                                        if(temp.length() > 0) {
+                                                            name.append(temp);
+                                                            break outer;
+                                                        }
+                                                        break;
+                                                    case PAGE:
+                                                        if( (regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && temp.equalsIgnoreCase("custom"))|| //$NON-NLS-1$
+                                                            temp.substring(1,temp.length()-1).equalsIgnoreCase("custom")) { //$NON-NLS-1$
+                                                           name.append(temp);
+                                                        }
+                                                        else {
+                                                            if(name.length() > 0) {
+                                                                name.append(" "); //$NON-NLS-1$
+                                                            }
+                                                            name.append(temp);
+                                                            break outer;
+                                                        }
+                                                        break;
+                                                    default:
                                                         name.append(temp);
                                                         break outer;
-                                                    }
-                                                }
-                                                if(type == SECTIONGROUP || type == SUBSECTION) {
-                                                    if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
-                                                        if(temp.equalsIgnoreCase("/e")) { //$NON-NLS-1$
-                                                            continue;
-                                                        }
-                                                    }
-                                                    else {
-                                                        if(temp.substring(1,temp.length()-1).equalsIgnoreCase("/e")) { //$NON-NLS-1$
-                                                            continue;
-                                                        }
-                                                    }
-                                                    if(temp.startsWith("!")) { //$NON-NLS-1$
-                                                        temp = temp.substring(1);
-                                                    }
-                                                    if(temp.length() > 0) {
-                                                        name.append(temp);
-                                                        break outer;
-                                                    }
-                                                }
-                                                else if(type == PAGE) {
-                                                    if( (regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && temp.equalsIgnoreCase("custom"))|| //$NON-NLS-1$
-                                                         temp.substring(1,temp.length()-1).equalsIgnoreCase("custom")) { //$NON-NLS-1$
-                                                        name.append(temp);
-                                                    }
-                                                    else {
-                                                        if(name.length() > 0) {
-                                                            name.append(" "); //$NON-NLS-1$
-                                                        }
-                                                        name.append(temp);
-                                                        break outer;
-                                                    }
-                                                }
-                                                else {
-                                                    name.append(temp);
-                                                    break outer;
                                                 }
                                             }
                                             ITypedRegion region3 = data.getRegion();
@@ -368,72 +370,81 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                             default:
                                 break;
                         }
-                        NSISOutlineElement element = new NSISOutlineElement(nsisToken.getType(), name.toString(), position);
                         Position linePosition = getLinePosition(nsisLines[i]);
-                        element.setPosition(linePosition);
                         String text = document.get(linePosition.getOffset(),linePosition.getLength());
                         String text2 = text.trim();
-                        element.setSelectPosition(new Position(linePosition.getOffset()+text.indexOf(text2),text2.length()));
-                        int currentType = mResources.getTypeIndex(current.getType());
-                        switch(type) {
-                            case DEFINE:
-                                addLine(document, current, element);
-                                break;
-                            case IF:
-                            case IFDEF:
-                            case IFNDEF:
-                            case IFMACRODEF:
-                            case IFNMACRODEF:
-                            case MACRO:
-                                current = openElement(current, element, null);
-                                break;
-                            case ENDIF:
-                                current = closeElement(document, current, element,
-                                                     new int[]{IF, IFDEF, IFNDEF, IFMACRODEF, IFNMACRODEF});
-                                break;
-                            case MACROEND:
-                                current = closeElement(document, current, element,
-                                                     new int[]{MACRO});
-                                break;
-                            case FUNCTION:
-                                current = openElement(current, element, new int[]{SECTION,SUBSECTION,SECTIONGROUP,FUNCTION});
-                                break;
-                            case FUNCTIONEND:
-                                current = closeElement(document, current, element,
-                                                     new int[]{FUNCTION});
-                                break;
-                            case SECTION:
-                                current = openElement(current, element, new int[]{SECTION,FUNCTION});
-                                break;
-                            case SECTIONEND:
-                                current = closeElement(document, current, element,
-                                                     new int[]{SECTION});
-                                break;
-                            case SUBSECTION:
-                            case SECTIONGROUP:
-                                current = openElement(current, element, new int[]{SECTION,FUNCTION});
-                                break;
-                            case SUBSECTIONEND:
-                            case SECTIONGROUPEND:
-                                current = closeElement(document, current, element,
-                                                     new int[]{SECTIONGROUP,SUBSECTION});
-                                break;
-                            case PAGE:
-                            case INCLUDE:
-                            case VAR:
-                                if(current.getType() == NSISOutlineElement.ROOT || currentType == MACRO ||
-                                   currentType == IFDEF || currentType == IFNDEF ||
-                                   currentType == IFMACRODEF || currentType == IFNMACRODEF) {
+                        if(type == NAME) {
+                            String name2 = Common.maybeUnquote(name.toString());
+                            if(name2.length() > 0) {
+                                rootElement.setName(name2);
+                                rootElement.setSelectPosition(new Position(linePosition.getOffset()+text.indexOf(text2),text2.length()));
+                            }
+                        }
+                        else {
+                            NSISOutlineElement element = new NSISOutlineElement(nsisToken.getType(), name.toString(), position);
+                            element.setPosition(linePosition);
+                            element.setSelectPosition(new Position(linePosition.getOffset()+text.indexOf(text2),text2.length()));
+                            int currentType = mResources.getTypeIndex(current.getType());
+                            switch(type) {
+                                case DEFINE:
                                     addLine(document, current, element);
-                                }
-                                break;
-                            case PAGEEX:
-                                current = openElement(current, element, new int[]{SECTION,SUBSECTION,SECTIONGROUP,FUNCTION});
-                                break;
-                            case PAGEEXEND:
-                                current = closeElement(document, current, element,
-                                                       new int[]{PAGEEX});
-                                break;
+                                    break;
+                                case IF:
+                                case IFDEF:
+                                case IFNDEF:
+                                case IFMACRODEF:
+                                case IFNMACRODEF:
+                                case MACRO:
+                                    current = openElement(current, element, null);
+                                    break;
+                                case ENDIF:
+                                    current = closeElement(document, current, element,
+                                                         new int[]{IF, IFDEF, IFNDEF, IFMACRODEF, IFNMACRODEF});
+                                    break;
+                                case MACROEND:
+                                    current = closeElement(document, current, element,
+                                                         new int[]{MACRO});
+                                    break;
+                                case FUNCTION:
+                                    current = openElement(current, element, new int[]{SECTION,SUBSECTION,SECTIONGROUP,FUNCTION});
+                                    break;
+                                case FUNCTIONEND:
+                                    current = closeElement(document, current, element,
+                                                         new int[]{FUNCTION});
+                                    break;
+                                case SECTION:
+                                    current = openElement(current, element, new int[]{SECTION,FUNCTION});
+                                    break;
+                                case SECTIONEND:
+                                    current = closeElement(document, current, element,
+                                                         new int[]{SECTION});
+                                    break;
+                                case SUBSECTION:
+                                case SECTIONGROUP:
+                                    current = openElement(current, element, new int[]{SECTION,FUNCTION});
+                                    break;
+                                case SUBSECTIONEND:
+                                case SECTIONGROUPEND:
+                                    current = closeElement(document, current, element,
+                                                         new int[]{SECTIONGROUP,SUBSECTION});
+                                    break;
+                                case PAGE:
+                                case INCLUDE:
+                                case VAR:
+                                    if(current.getType() == NSISOutlineElement.ROOT || currentType == MACRO ||
+                                       currentType == IFDEF || currentType == IFNDEF ||
+                                       currentType == IFMACRODEF || currentType == IFNMACRODEF) {
+                                        addLine(document, current, element);
+                                    }
+                                    break;
+                                case PAGEEX:
+                                    current = openElement(current, element, new int[]{SECTION,SUBSECTION,SECTIONGROUP,FUNCTION});
+                                    break;
+                                case PAGEEXEND:
+                                    current = closeElement(document, current, element,
+                                                           new int[]{PAGEEX});
+                                    break;
+                            }
                         }
                     }
                 }

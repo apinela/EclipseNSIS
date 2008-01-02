@@ -3,7 +3,7 @@
 <head>
 <!--
 ###############################################################################
-# Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
+# Copyright (c) 2004-2008 Sunil Kamath (IcemanK).
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
@@ -35,10 +35,10 @@
   image_closed_over.src = "images/closed_over.gif";
 
   var latest = new Array();
-  latest["eclipsensis"] = "eclipsensis0961";
-  latest["installoptions"] = "installoptions0961";
-  latest["utilities"] = "utilities092";
-  latest["sources"] = "sources0961";
+  latest["eclipsensis"] = "eclipsensis0962";
+  latest["installoptions"] = "installoptions0962";
+  latest["utilities"] = "utilities0921";
+  latest["sources"] = "sources0962";
 
   function rollover(image)
   {
@@ -133,6 +133,20 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 <li><a href="#sources">EclipseNSIS Sources</a></li>
 </ul>
 <a name="eclipsensis"></a><h3>EclipseNSIS</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis0962"
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis0962', 'toggle_eclipsensis0962'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.6.2.zip?download">0.9.6.2</a> (01/02/2008)
+<div id="toggle_eclipsensis0962" class="toggle">
+<ul>
+  <li>Updated copyright notice.</li>
+  <li>Bug Fixes</li>
+  <ul>
+    <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=1787858&group_id=116143&atid=673849">1787858</a></li>
+  </ul>
+</ul>
+</div>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis0961"
 src="images/closed.gif" onClick="toggle('trigger_eclipsensis0961', 'toggle_eclipsensis0961'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
@@ -409,6 +423,18 @@ scripts.</li>
 //-->
 </script>
 <a name="installoptions"></a><h3>EclipseNSIS InstallOptions Editor</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions0962"
+src="images/closed.gif" onClick="toggle('trigger_installoptions0962', 'toggle_installoptions0962'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.6.2.zip?download">0.9.6.2</a>
+(01/02/2008)
+<div id="toggle_installoptions0962" class="toggle">
+<ul>
+  <li>Updated copyright notice.</li>
+</ul>
+</div>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions0961"
 src="images/closed.gif" onClick="toggle('trigger_installoptions0961', 'toggle_installoptions0961'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
@@ -580,6 +606,18 @@ help.</li>
 //-->
 </script>
 <a name="utilities"></a><h3>EclipseNSIS Utilities</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_utilities0921"
+src="images/closed.gif" onClick="toggle('trigger_utilities0921', 'toggle_utilities0921'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.utilities_0.9.2.1.zip?download">0.9.2.1</a>
+(01/02/2008)
+<div id="toggle_utilities0921" class="toggle">
+<ul>
+  <li>Updated copyright notice.</li>
+</ul>
+</div>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_utilities092"
 src="images/closed.gif" onClick="toggle('trigger_utilities092', 'toggle_utilities092'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
@@ -671,6 +709,27 @@ Eclipse 3.0</li>
 //-->
 </script>
 <a name="sources"></a><h3>EclipseNSIS Sources</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_sources0962"
+src="images/closed.gif" onClick="toggle('trigger_sources0962', 'toggle_sources0962'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.source_0.9.6.2.zip?download">0.9.6.2</a>
+(01/02/2008)
+<div id="toggle_sources0962" class="toggle">
+<ul>
+  <li>This bundles source code for the following EclipseNSIS plugins into a single plugin:</li>
+      <ul>
+      <li>EclipseNSIS 0.9.6.2</li>
+      <li>EclipseNSIS Startup 0.9.6.1</li>
+      <li>EclipseNSIS Update 0.9.6.1</li>
+      <li>EclipseNSIS InstallOptions Editor 0.9.6.2</li>
+      <li>EclipseNSIS Utilities 0.9.2.1</li>
+      <li>JAR Signer 0.9.2.1</li>
+      <li>JNI Generator 0.9.2.1</li>
+      </ul>
+</ul>
+</div>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_sources0961"
 src="images/closed.gif" onClick="toggle('trigger_sources0961', 'toggle_sources0961'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
@@ -807,7 +866,7 @@ onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <input type="hidden" name="req" value="addrating">
 <input type="submit" value="Vote!">
 </form></td><td style="width: 20%; text-align: center;"><strong><small>Copyright
-&copy; 2004-2007 Sunil Kamath (IcemanK).</small></strong></td>
+&copy; 2004-2008 Sunil Kamath (IcemanK).</small></strong></td>
 <td style="width: 40%; text-align: right;">
 <!--#include virtual="counter.shtml" -->
 </td></tr></tbody></table>

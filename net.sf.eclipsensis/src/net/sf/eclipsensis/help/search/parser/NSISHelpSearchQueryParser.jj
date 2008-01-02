@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2004-2006 Sunil Kamath (IcemanK).
+ * Copyright (c) 2004-2008 Sunil Kamath (IcemanK).
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************
@@ -48,23 +48,23 @@ import org.apache.lucene.analysis.Analyzer;
 
 import net.sf.eclipsensis.util.CaseInsensitiveSet;
 
-public class NSISHelpSearchQueryParser 
+public class NSISHelpSearchQueryParser
 {
     public static final String REGEX_PREFIX = "re:";
 
     private String mField;
     private Analyzer mAnalyzer;
-    
+
     /** Parses a query string, returning a collection of search terms.
      *  @param query  the query string to be parsed.
      *  @throws ParseException if the parsing fails
      */
-    public static Collection parse(String field, Analyzer analyzer, String query) throws ParseException 
+    public static Collection parse(String field, Analyzer analyzer, String query) throws ParseException
     {
         NSISHelpSearchQueryParser parser = new NSISHelpSearchQueryParser(field, analyzer);
         return parser.parseQuery(query);
     }
-    
+
     public NSISHelpSearchQueryParser(String field, Analyzer analyzer)
     {
         this(new StringReader(""));
@@ -76,7 +76,7 @@ public class NSISHelpSearchQueryParser
      *  @param query  the query string to be parsed.
      *  @throws ParseException if the parsing fails
      */
-    public Collection parseQuery(String query) throws ParseException 
+    public Collection parseQuery(String query) throws ParseException
     {
         ReInit(new StringReader(query));
         try {
@@ -89,7 +89,7 @@ public class NSISHelpSearchQueryParser
         }
     }
 
-    private String discardEscapeChar(String input) 
+    private String discardEscapeChar(String input)
     {
         char[] caSource = input.toCharArray();
         char[] caDest = new char[caSource.length];
@@ -101,7 +101,7 @@ public class NSISHelpSearchQueryParser
         }
         return new String(caDest, 0, j);
     }
-    
+
     private String wildcardToRegex(String wildcard)
     {
         StringBuffer s = new StringBuffer(wildcard.length());
@@ -236,7 +236,7 @@ PARSER_END(NSISHelpSearchQueryParser)
              String termImage=discardEscapeChar(term.image);
              if (wildcard) {
                  result.add(wildcardToRegex(termImage));
-             } 
+             }
              else {
                  result.add(termImage);
                  Reader reader = new StringReader(termImage);
@@ -247,7 +247,7 @@ PARSER_END(NSISHelpSearchQueryParser)
                          result.add(tok.termText());
                      }
                      reader.close();
-                 } 
+                 }
                  catch (IOException ioe) {
                  }
              }
@@ -259,13 +259,13 @@ PARSER_END(NSISHelpSearchQueryParser)
             {
                 if (goop1.kind == RANGEIN_QUOTED) {
                     goop1.image = goop1.image.substring(1, goop1.image.length()-1);
-                } 
+                }
                 else {
                     goop1.image = discardEscapeChar(goop1.image);
                 }
                 if (goop2.kind == RANGEIN_QUOTED) {
                     goop2.image = goop2.image.substring(1, goop2.image.length()-1);
-                } 
+                }
                 else {
                     goop2.image = discardEscapeChar(goop2.image);
                 }
@@ -279,13 +279,13 @@ PARSER_END(NSISHelpSearchQueryParser)
             {
                 if (goop1.kind == RANGEEX_QUOTED) {
                     goop1.image = goop1.image.substring(1, goop1.image.length()-1);
-                } 
+                }
                 else {
                     goop1.image = discardEscapeChar(goop1.image);
                 }
                 if (goop2.kind == RANGEEX_QUOTED) {
                     goop2.image = goop2.image.substring(1, goop2.image.length()-1);
-                } 
+                }
                 else {
                     goop2.image = discardEscapeChar(goop2.image);
                 }

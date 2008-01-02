@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 ###############################################################################
-# Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
+# Copyright (c) 2004-2008 Sunil Kamath (IcemanK).
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
@@ -57,8 +57,8 @@
          os="win32"
          ws="win32"
          arch="x86"
-         download-size="3226"
-         install-size="3226"
+         download-size="3236"
+         install-size="3236"
          version="0.9.6.2"
          unpack="false"/>
 
@@ -69,7 +69,7 @@
          arch="x86"
          download-size="125"
          install-size="125"
-         version="0.9.6"
+         version="0.9.6.1"
          unpack="false"/>
 
    <plugin
@@ -79,7 +79,7 @@
          arch="x86"
          download-size="18"
          install-size="18"
-         version="0.9.6"
+         version="0.9.6.1"
          unpack="false"/>
 
 </feature>

@@ -1,6 +1,9 @@
 Revision History
 ================
 
+0.9.6.2 (01/02/2008)
+    * Updated copyright notice.
+
 0.9.6.1 (08/21/2007)
     * Bug fixes:
         o 1777784
