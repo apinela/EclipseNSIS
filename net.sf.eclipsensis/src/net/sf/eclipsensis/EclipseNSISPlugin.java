@@ -592,7 +592,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         if (mTemplateStore == null) {
             mTemplateStore= new ContributionTemplateStore(getContextTypeRegistry(),
                             NSISPreferences.INSTANCE.getPreferenceStore(),
-                            INSISPreferenceConstants.CUSTOM_TEMPLATES);
+                            INSISEditorPreferenceConstants.CUSTOM_TEMPLATES);
             try {
                 mTemplateStore.load();
             }

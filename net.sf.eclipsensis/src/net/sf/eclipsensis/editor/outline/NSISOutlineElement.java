@@ -11,7 +11,6 @@ package net.sf.eclipsensis.editor.outline;
 
 import java.util.ArrayList;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.text.Position;
@@ -31,17 +30,12 @@ public class NSISOutlineElement
     private ArrayList mChildren = new ArrayList();
     private NSISOutlineElement mParent = null;
 
-    public NSISOutlineElement(String type, Position position)
-    {
-        this(type,null,position);
-    }
-
     /**
      * @param type
      * @param name
      * @param position
      */
-    public NSISOutlineElement(String type, String name, Position position)
+    NSISOutlineElement(String type, String name, Position position)
     {
         mType = type;
         mName = name;
@@ -60,12 +54,12 @@ public class NSISOutlineElement
                 return mName;
             }
             else {
-                return EclipseNSISPlugin.getResourceString("outline.root.label"); //$NON-NLS-1$
+                return ROOT;
             }
         }
         else {
             if(!Common.isEmpty(mName)) {
-                return new StringBuffer(getTypeName()).append(" ").append(mName).toString();
+                return new StringBuffer(getTypeName()).append(" ").append(mName).toString(); //$NON-NLS-1$
             }
             else {
                 return getTypeName();

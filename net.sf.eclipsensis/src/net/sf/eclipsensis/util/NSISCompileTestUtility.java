@@ -31,7 +31,7 @@ public class NSISCompileTestUtility
 {
     public static final NSISCompileTestUtility INSTANCE = new NSISCompileTestUtility();
 
-    private static final long cEclipseStartTime = Long.parseLong(System.getProperty("eclipse.startTime",String.valueOf(System.currentTimeMillis())));
+    private static final long cEclipseStartTime = Long.parseLong(System.getProperty("eclipse.startTime",String.valueOf(System.currentTimeMillis()))); //$NON-NLS-1$
 
     private NSISHeaderAssociationManager mHeaderAssociationManager = NSISHeaderAssociationManager.getInstance();
     private Map mResultsMap;

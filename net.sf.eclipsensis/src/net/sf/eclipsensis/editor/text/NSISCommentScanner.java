@@ -11,7 +11,7 @@ package net.sf.eclipsensis.editor.text;
 
 import java.util.List;
 
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.settings.INSISEditorPreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -47,7 +47,7 @@ public class NSISCommentScanner extends NSISRuleBasedScanner implements INSISBac
      */
     protected IToken getDefaultToken()
     {
-        return createTokenFromPreference(INSISPreferenceConstants.COMMENTS_STYLE);
+        return createTokenFromPreference(INSISEditorPreferenceConstants.COMMENTS_STYLE);
     }
 
     /* (non-Javadoc)
@@ -63,7 +63,7 @@ public class NSISCommentScanner extends NSISRuleBasedScanner implements INSISBac
      */
     protected void addRules(List rules)
     {
-        mCaseSensitive = getPreferenceStore().getBoolean(INSISPreferenceConstants.CASE_SENSITIVE_TASK_TAGS);
+        mCaseSensitive = getPreferenceStore().getBoolean(INSISEditorPreferenceConstants.CASE_SENSITIVE_TASK_TAGS);
         IRule taskTagsRule = getTaskTagsRule();
         if(taskTagsRule != null) {
             rules.add(taskTagsRule);
@@ -73,7 +73,7 @@ public class NSISCommentScanner extends NSISRuleBasedScanner implements INSISBac
     protected synchronized IRule getTaskTagsRule()
     {
         if(mTaskTagsRule == null) {
-            mTaskTagsRule = new NSISTaskTagRule(createTokenFromPreference(INSISPreferenceConstants.TASK_TAGS_STYLE));
+            mTaskTagsRule = new NSISTaskTagRule(createTokenFromPreference(INSISEditorPreferenceConstants.TASK_TAGS_STYLE));
         }
         return mTaskTagsRule;
     }
@@ -83,10 +83,10 @@ public class NSISCommentScanner extends NSISRuleBasedScanner implements INSISBac
      */
     public boolean canAdaptToProperty(IPreferenceStore store, String property)
     {
-        return property.equals(INSISPreferenceConstants.COMMENTS_STYLE) ||
-               property.equals(INSISPreferenceConstants.TASK_TAGS_STYLE) ||
-               property.equals(INSISPreferenceConstants.TASK_TAGS) ||
-               property.equals(INSISPreferenceConstants.CASE_SENSITIVE_TASK_TAGS);
+        return property.equals(INSISEditorPreferenceConstants.COMMENTS_STYLE) ||
+               property.equals(INSISEditorPreferenceConstants.TASK_TAGS_STYLE) ||
+               property.equals(INSISEditorPreferenceConstants.TASK_TAGS) ||
+               property.equals(INSISEditorPreferenceConstants.CASE_SENSITIVE_TASK_TAGS);
     }
 
     /* (non-Javadoc)
@@ -94,12 +94,12 @@ public class NSISCommentScanner extends NSISRuleBasedScanner implements INSISBac
      */
     public void adaptToProperty(IPreferenceStore store, String property)
     {
-        if(property.equals(INSISPreferenceConstants.TASK_TAGS) ||
-                property.equals(INSISPreferenceConstants.TASK_TAGS_STYLE) ||
-                property.equals(INSISPreferenceConstants.CASE_SENSITIVE_TASK_TAGS)) {
+        if(property.equals(INSISEditorPreferenceConstants.TASK_TAGS) ||
+                property.equals(INSISEditorPreferenceConstants.TASK_TAGS_STYLE) ||
+                property.equals(INSISEditorPreferenceConstants.CASE_SENSITIVE_TASK_TAGS)) {
             mTaskTagsRule = null;
         }
-        else if(!property.equals(INSISPreferenceConstants.COMMENTS_STYLE)) {
+        else if(!property.equals(INSISEditorPreferenceConstants.COMMENTS_STYLE)) {
             return;
         }
         reset();

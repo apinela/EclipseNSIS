@@ -12,7 +12,7 @@ package net.sf.eclipsensis.editor;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.editor.codeassist.NSISDoubleClickSelector;
 import net.sf.eclipsensis.editor.text.*;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.settings.INSISEditorPreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
@@ -21,7 +21,7 @@ import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
-public class NSISSourceViewerConfiguration extends SourceViewerConfiguration implements INSISConstants, INSISPreferenceConstants
+public class NSISSourceViewerConfiguration extends SourceViewerConfiguration implements INSISConstants, INSISEditorPreferenceConstants
 {
     protected IPreferenceStore mPreferenceStore = null;
     protected ITextDoubleClickStrategy mDoubleClickStrategy = null;

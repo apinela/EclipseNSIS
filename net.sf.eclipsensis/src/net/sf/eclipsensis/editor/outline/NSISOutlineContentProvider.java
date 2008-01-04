@@ -11,16 +11,19 @@ package net.sf.eclipsensis.editor.outline;
 
 import java.util.*;
 
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.EmptyContentProvider;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.rules.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.source.projection.*;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.texteditor.*;
 
 
@@ -59,6 +62,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     public static final int NAME = VAR + 1;
 
     private ITextEditor mEditor;
+    private IPath mPath = null;
     private IAnnotationModel mAnnotationModel;
     private IPositionUpdater mPositionUpdater = new DefaultPositionUpdater(NSIS_OUTLINE);
     private IPositionUpdater mSelectPositionUpdater = new DefaultPositionUpdater(NSIS_OUTLINE_SELECT);
@@ -183,7 +187,10 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
             }
         }
         ITypedRegion[][] nsisLines = NSISTextUtility.getNSISLines(document, partitions);
-        NSISOutlineElement rootElement = new NSISOutlineElement(NSISOutlineElement.ROOT,null);
+        boolean isHeader = (mPath != null && NSH_EXTENSION.equalsIgnoreCase(mPath.getFileExtension()));
+        NSISOutlineElement rootElement = new NSISOutlineElement(NSISOutlineElement.ROOT,
+                                                EclipseNSISPlugin.getResourceString(isHeader?"outline.root.header.label":"outline.root.installer.label"), //$NON-NLS-1$ //$NON-NLS-2$
+                                                null);
         rootElement.setPosition(new Position(0,document.getLength()));
         try {
             document.addPosition(NSIS_OUTLINE,rootElement.getPosition());
@@ -374,10 +381,12 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                         String text = document.get(linePosition.getOffset(),linePosition.getLength());
                         String text2 = text.trim();
                         if(type == NAME) {
-                            String name2 = Common.maybeUnquote(name.toString());
-                            if(name2.length() > 0) {
-                                rootElement.setName(name2);
-                                rootElement.setSelectPosition(new Position(linePosition.getOffset()+text.indexOf(text2),text2.length()));
+                            if(!isHeader) {
+                                String name2 = Common.maybeUnquote(name.toString());
+                                if(name2.length() > 0) {
+                                    rootElement.setName(name2);
+                                    rootElement.setSelectPosition(new Position(linePosition.getOffset()+text.indexOf(text2),text2.length()));
+                                }
                             }
                         }
                         else {
@@ -484,8 +493,12 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
             }
 
             mRootElement = null;
-
+            mPath = null;
             if (newInput != null) {
+                IPathEditorInput pathInput = NSISEditorUtilities.getPathEditorInput(newInput);
+                if(pathInput != null) {
+                    mPath = pathInput.getPath();
+                }
                 mAnnotationModel = (IAnnotationModel) mEditor.getAdapter(ProjectionAnnotationModel.class);
                 if (mEditor != null) {
                     IDocumentProvider documentProvider = mEditor.getDocumentProvider();

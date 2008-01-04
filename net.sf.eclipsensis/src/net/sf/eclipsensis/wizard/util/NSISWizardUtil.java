@@ -71,7 +71,7 @@ public class NSISWizardUtil
             else {
                 prefix = pathName;
             }
-            if(!Common.isEmpty(prefix) && prefix.startsWith("$")) {
+            if(!Common.isEmpty(prefix) && prefix.startsWith("$")) { //$NON-NLS-1$
                 String[] array = getPathConstantsAndVariables(targetPlatform);
                 for(int i=0; i<array.length; i++) {
                     if(array[i].equalsIgnoreCase(prefix)) {

@@ -272,7 +272,6 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                             else {
                                 ffilename = filename;
                             }
-                            System.out.println(ffilename);
                             nsisConsole.addPatternMatchListener(new IPatternMatchListener() {
                                 String mPattern = escape(ffilename);
 

@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
-public class NSISPreferences extends NSISSettings implements IFileChangeListener, INSISPreferenceConstants
+public class NSISPreferences extends NSISSettings implements IFileChangeListener, INSISEditorPreferenceConstants
 {
     public static final RGB SYNTAX_COMMENTS = new RGB(0x7f,0x9f,0xbf);
     public static final RGB SYNTAX_ATTRIBUTES = new RGB(0x80,0,0);
@@ -169,7 +169,9 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         initializePreference(MATCHING_DELIMITERS,Boolean.TRUE);
         initializePreference(MATCHING_DELIMITERS_COLOR,StringConverter.asString(new RGB(128,128,128)));
-    }
+
+        initializePreference(DROP_EXTERNAL_FILE_ACTION,new Integer(DROP_EXTERNAL_FILE_DEFAULT));
+}
 
     private void initializeSyntaxPreference(String name, RGB foreground, RGB background, boolean bold,
                                             boolean italic, boolean underline, boolean strikethrough)

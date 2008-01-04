@@ -309,7 +309,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
                     Map topicMap = new CaseInsensitiveMap();
 
-                    String[] mappedHelpTopics = Common.loadArrayProperty(mBundle, "mapped.help.topics");
+                    String[] mappedHelpTopics = Common.loadArrayProperty(mBundle, "mapped.help.topics"); //$NON-NLS-1$
                     if (!Common.isEmptyArray(mappedHelpTopics)) {
                         for (int i = 0; i < mappedHelpTopics.length; i++) {
                             String[] keywords = Common.loadArrayProperty(mBundle, mappedHelpTopics[i]);
@@ -382,7 +382,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                             String htmlFile = url.substring(0, n).toLowerCase();
                                             if (!processedFiles.contains(htmlFile)) {
                                                 processedFiles.add(htmlFile);
-                                                NSISHelpFileParserCallback callback = new NSISHelpFileParserCallback(mNSISHtmlHelpFile,htmlFile + "#", keywords, urlKeywordMap, urlContentsMap);
+                                                NSISHelpFileParserCallback callback = new NSISHelpFileParserCallback(mNSISHtmlHelpFile,htmlFile + "#", keywords, urlKeywordMap, urlContentsMap); //$NON-NLS-1$
                                                 HTML_PARSER.parse(new FileReader(new File(tocFile.getParentFile(), htmlFile)), callback, false);
                                             }
                                         }
@@ -494,8 +494,8 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                         }
                         parent.mkdirs();
                     }
-                    String text = EclipseNSISPlugin.getFormattedString("missing.chm.format",
-                            new String[] {EclipseNSISPlugin.getResourceString("help.style")});
+                    String text = EclipseNSISPlugin.getFormattedString("missing.chm.format", //$NON-NLS-1$
+                            new String[] {EclipseNSISPlugin.getResourceString("help.style")}); //$NON-NLS-1$
                     IOUtility.writeContentToFile(mNoHelpFile, text.getBytes());
                 }
                 mStartPage = mCachedStartPage = mCHMStartPage = IOUtility.getFileURLString(mNoHelpFile);

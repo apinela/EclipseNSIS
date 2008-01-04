@@ -12,7 +12,7 @@ package net.sf.eclipsensis.editor.text;
 import java.util.List;
 
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.settings.INSISEditorPreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.TextAttribute;
@@ -78,7 +78,7 @@ public class NSISCodeScanner extends NSISStringScanner
                     return (Character.isLetter(character) || character == '_') || character == '.';
                 }
             });
-            addWords(mCallbacksRule, INSISPreferenceConstants.CALLBACKS_STYLE, NSISKeywords.CALLBACKS);
+            addWords(mCallbacksRule, INSISEditorPreferenceConstants.CALLBACKS_STYLE, NSISKeywords.CALLBACKS);
         }
         return mCallbacksRule;
     }
@@ -95,7 +95,7 @@ public class NSISCodeScanner extends NSISStringScanner
                     return (character == '/');
                 }
             });
-            addWords(mInstructionOptionsRule, INSISPreferenceConstants.INSTRUCTION_OPTIONS_STYLE, NSISKeywords.INSTRUCTION_OPTIONS);
+            addWords(mInstructionOptionsRule, INSISEditorPreferenceConstants.INSTRUCTION_OPTIONS_STYLE, NSISKeywords.INSTRUCTION_OPTIONS);
         }
         return mInstructionOptionsRule;
     }
@@ -116,7 +116,7 @@ public class NSISCodeScanner extends NSISStringScanner
                 {
                     return Character.isLetter(character);
                 }
-            }, createTokenFromPreference(INSISPreferenceConstants.PLUGINS_STYLE));
+            }, createTokenFromPreference(INSISEditorPreferenceConstants.PLUGINS_STYLE));
         }
         return mPluginsRule;
     }
@@ -133,10 +133,10 @@ public class NSISCodeScanner extends NSISStringScanner
                     return Character.isLetter(character);
                 }
             }, fDefaultReturnToken);
-            addWords(mKeywordsRule, INSISPreferenceConstants.INSTALLER_ATTRIBUTES_STYLE, NSISKeywords.INSTALLER_ATTRIBUTES);
-            addWords(mKeywordsRule, INSISPreferenceConstants.COMMANDS_STYLE, NSISKeywords.COMMANDS);
-            addWords(mKeywordsRule, INSISPreferenceConstants.INSTRUCTIONS_STYLE, NSISKeywords.INSTRUCTIONS);
-            addWords(mKeywordsRule, INSISPreferenceConstants.INSTRUCTION_PARAMETERS_STYLE, NSISKeywords.INSTRUCTION_PARAMETERS);
+            addWords(mKeywordsRule, INSISEditorPreferenceConstants.INSTALLER_ATTRIBUTES_STYLE, NSISKeywords.INSTALLER_ATTRIBUTES);
+            addWords(mKeywordsRule, INSISEditorPreferenceConstants.COMMANDS_STYLE, NSISKeywords.COMMANDS);
+            addWords(mKeywordsRule, INSISEditorPreferenceConstants.INSTRUCTIONS_STYLE, NSISKeywords.INSTRUCTIONS);
+            addWords(mKeywordsRule, INSISEditorPreferenceConstants.INSTRUCTION_PARAMETERS_STYLE, NSISKeywords.INSTRUCTION_PARAMETERS);
         }
         return mKeywordsRule;
     }
@@ -153,8 +153,8 @@ public class NSISCodeScanner extends NSISStringScanner
                     return (character == '!');
                 }
             });
-            addWords(mCompileTimeCommandsRule, INSISPreferenceConstants.COMPILETIME_COMMANDS_STYLE, NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS);
-            addWords(mCompileTimeCommandsRule, INSISPreferenceConstants.COMPILETIME_COMMANDS_STYLE, NSISKeywords.MULTILINE_COMPILETIME_COMMANDS);
+            addWords(mCompileTimeCommandsRule, INSISEditorPreferenceConstants.COMPILETIME_COMMANDS_STYLE, NSISKeywords.SINGLELINE_COMPILETIME_COMMANDS);
+            addWords(mCompileTimeCommandsRule, INSISEditorPreferenceConstants.COMPILETIME_COMMANDS_STYLE, NSISKeywords.MULTILINE_COMPILETIME_COMMANDS);
         }
         return mCompileTimeCommandsRule;
     }
@@ -162,7 +162,7 @@ public class NSISCodeScanner extends NSISStringScanner
     protected synchronized IRule getNumberRule()
     {
         if(mNumberRule == null) {
-            mNumberRule = new NumberRule(createTokenFromPreference(INSISPreferenceConstants.NUMBERS_STYLE));
+            mNumberRule = new NumberRule(createTokenFromPreference(INSISEditorPreferenceConstants.NUMBERS_STYLE));
         }
         return mNumberRule;
     }
@@ -170,7 +170,7 @@ public class NSISCodeScanner extends NSISStringScanner
     protected synchronized IRule getHexNumberRule()
     {
         if(mHexNumberRule == null) {
-            mHexNumberRule = new NSISHexNumberRule(createTokenFromPreference(INSISPreferenceConstants.NUMBERS_STYLE));
+            mHexNumberRule = new NSISHexNumberRule(createTokenFromPreference(INSISEditorPreferenceConstants.NUMBERS_STYLE));
         }
         return mHexNumberRule;
     }
@@ -180,25 +180,25 @@ public class NSISCodeScanner extends NSISStringScanner
      */
     public void adaptToProperty(IPreferenceStore store, String property)
     {
-        if (INSISPreferenceConstants.PLUGINS_STYLE.equals(property)) {
+        if (INSISEditorPreferenceConstants.PLUGINS_STYLE.equals(property)) {
             mPluginsRule = null;
         }
-        else if (INSISPreferenceConstants.CALLBACKS_STYLE.equals(property)) {
+        else if (INSISEditorPreferenceConstants.CALLBACKS_STYLE.equals(property)) {
             mCallbacksRule = null;
         }
-        else if (INSISPreferenceConstants.INSTRUCTION_OPTIONS_STYLE.equals(property)) {
+        else if (INSISEditorPreferenceConstants.INSTRUCTION_OPTIONS_STYLE.equals(property)) {
             mInstructionOptionsRule = null;
         }
-        else if (INSISPreferenceConstants.INSTALLER_ATTRIBUTES_STYLE.equals(property) ||
-                 INSISPreferenceConstants.COMMANDS_STYLE.equals(property) ||
-                 INSISPreferenceConstants.INSTRUCTIONS_STYLE.equals(property) ||
-                 INSISPreferenceConstants.INSTRUCTION_PARAMETERS_STYLE.equals(property)) {
+        else if (INSISEditorPreferenceConstants.INSTALLER_ATTRIBUTES_STYLE.equals(property) ||
+                 INSISEditorPreferenceConstants.COMMANDS_STYLE.equals(property) ||
+                 INSISEditorPreferenceConstants.INSTRUCTIONS_STYLE.equals(property) ||
+                 INSISEditorPreferenceConstants.INSTRUCTION_PARAMETERS_STYLE.equals(property)) {
             mKeywordsRule = null;
         }
-        else if (INSISPreferenceConstants.COMPILETIME_COMMANDS_STYLE.equals(property)) {
+        else if (INSISEditorPreferenceConstants.COMPILETIME_COMMANDS_STYLE.equals(property)) {
             mCompileTimeCommandsRule = null;
         }
-        else if (INSISPreferenceConstants.NUMBERS_STYLE.equals(property)) {
+        else if (INSISEditorPreferenceConstants.NUMBERS_STYLE.equals(property)) {
             mNumberRule = null;
             mHexNumberRule = null;
         }
@@ -231,15 +231,15 @@ public class NSISCodeScanner extends NSISStringScanner
      */
     public boolean canAdaptToProperty(IPreferenceStore store, String property)
     {
-        if(INSISPreferenceConstants.CALLBACKS_STYLE.equals(property) ||
-           INSISPreferenceConstants.PLUGINS_STYLE.equals(property) ||
-           INSISPreferenceConstants.INSTRUCTIONS_STYLE.equals(property) ||
-           INSISPreferenceConstants.INSTRUCTION_OPTIONS_STYLE.equals(property) ||
-           INSISPreferenceConstants.INSTRUCTION_PARAMETERS_STYLE.equals(property) ||
-           INSISPreferenceConstants.INSTALLER_ATTRIBUTES_STYLE.equals(property) ||
-           INSISPreferenceConstants.COMMANDS_STYLE.equals(property) ||
-           INSISPreferenceConstants.COMPILETIME_COMMANDS_STYLE.equals(property) ||
-           INSISPreferenceConstants.NUMBERS_STYLE.equals(property)) {
+        if(INSISEditorPreferenceConstants.CALLBACKS_STYLE.equals(property) ||
+           INSISEditorPreferenceConstants.PLUGINS_STYLE.equals(property) ||
+           INSISEditorPreferenceConstants.INSTRUCTIONS_STYLE.equals(property) ||
+           INSISEditorPreferenceConstants.INSTRUCTION_OPTIONS_STYLE.equals(property) ||
+           INSISEditorPreferenceConstants.INSTRUCTION_PARAMETERS_STYLE.equals(property) ||
+           INSISEditorPreferenceConstants.INSTALLER_ATTRIBUTES_STYLE.equals(property) ||
+           INSISEditorPreferenceConstants.COMMANDS_STYLE.equals(property) ||
+           INSISEditorPreferenceConstants.COMPILETIME_COMMANDS_STYLE.equals(property) ||
+           INSISEditorPreferenceConstants.NUMBERS_STYLE.equals(property)) {
             return true;
         }
         else {

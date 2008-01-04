@@ -11,7 +11,7 @@ package net.sf.eclipsensis.editor.text;
 
 import java.util.List;
 
-import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.settings.INSISEditorPreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.*;
@@ -48,7 +48,7 @@ public class NSISStringScanner extends NSISRuleBasedScanner
     protected synchronized IToken getDefaultToken()
     {
         if(mDefaultToken == null) {
-            mDefaultToken= createTokenFromPreference(INSISPreferenceConstants.STRINGS_STYLE);
+            mDefaultToken= createTokenFromPreference(INSISEditorPreferenceConstants.STRINGS_STYLE);
         }
         return mDefaultToken;
     }
@@ -84,7 +84,7 @@ public class NSISStringScanner extends NSISRuleBasedScanner
                         return false;
                     }
                 }
-            }, "${","}",createTokenFromPreference(INSISPreferenceConstants.SYMBOLS_STYLE)); //$NON-NLS-1$ //$NON-NLS-2$
+            }, "${","}",createTokenFromPreference(INSISEditorPreferenceConstants.SYMBOLS_STYLE)); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mSymbolsRule;
     }
@@ -120,7 +120,7 @@ public class NSISStringScanner extends NSISRuleBasedScanner
                         return false;
                     }
                 }
-            }, "$(",")",createTokenFromPreference(INSISPreferenceConstants.LANGSTRINGS_STYLE)); //$NON-NLS-1$ //$NON-NLS-2$
+            }, "$(",")",createTokenFromPreference(INSISEditorPreferenceConstants.LANGSTRINGS_STYLE)); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mLangstringsRule;
     }
@@ -128,8 +128,8 @@ public class NSISStringScanner extends NSISRuleBasedScanner
     protected synchronized IRule getVariablesRule()
     {
         if(mVariablesWordRule == null) {
-            mVariablesWordRule = new NSISVariablesWordRule(createTokenFromPreference(INSISPreferenceConstants.PREDEFINED_VARIABLES_STYLE),
-                                                           createTokenFromPreference(INSISPreferenceConstants.USERDEFINED_VARIABLES_STYLE));
+            mVariablesWordRule = new NSISVariablesWordRule(createTokenFromPreference(INSISEditorPreferenceConstants.PREDEFINED_VARIABLES_STYLE),
+                                                           createTokenFromPreference(INSISEditorPreferenceConstants.USERDEFINED_VARIABLES_STYLE));
         }
         return mVariablesWordRule;
     }
@@ -139,17 +139,17 @@ public class NSISStringScanner extends NSISRuleBasedScanner
      */
     public void adaptToProperty(IPreferenceStore store, String property)
     {
-        if (INSISPreferenceConstants.STRINGS_STYLE.equals(property)) {
+        if (INSISEditorPreferenceConstants.STRINGS_STYLE.equals(property)) {
             mDefaultToken = null;
         }
-        else if (INSISPreferenceConstants.SYMBOLS_STYLE.equals(property)) {
+        else if (INSISEditorPreferenceConstants.SYMBOLS_STYLE.equals(property)) {
             mSymbolsRule = null;
         }
-        else if (INSISPreferenceConstants.LANGSTRINGS_STYLE.equals(property)) {
+        else if (INSISEditorPreferenceConstants.LANGSTRINGS_STYLE.equals(property)) {
             mLangstringsRule = null;
         }
-        else if (INSISPreferenceConstants.USERDEFINED_VARIABLES_STYLE.equals(property) ||
-                INSISPreferenceConstants.PREDEFINED_VARIABLES_STYLE.equals(property)) {
+        else if (INSISEditorPreferenceConstants.USERDEFINED_VARIABLES_STYLE.equals(property) ||
+                INSISEditorPreferenceConstants.PREDEFINED_VARIABLES_STYLE.equals(property)) {
             mVariablesWordRule = null;
         }
         else {
@@ -177,10 +177,10 @@ public class NSISStringScanner extends NSISRuleBasedScanner
      */
     public boolean canAdaptToProperty(IPreferenceStore store, String property)
     {
-        return (INSISPreferenceConstants.STRINGS_STYLE.equals(property) ||
-                INSISPreferenceConstants.SYMBOLS_STYLE.equals(property) ||
-                INSISPreferenceConstants.LANGSTRINGS_STYLE.equals(property) ||
-                INSISPreferenceConstants.USERDEFINED_VARIABLES_STYLE.equals(property) ||
-                INSISPreferenceConstants.PREDEFINED_VARIABLES_STYLE.equals(property));
+        return (INSISEditorPreferenceConstants.STRINGS_STYLE.equals(property) ||
+                INSISEditorPreferenceConstants.SYMBOLS_STYLE.equals(property) ||
+                INSISEditorPreferenceConstants.LANGSTRINGS_STYLE.equals(property) ||
+                INSISEditorPreferenceConstants.USERDEFINED_VARIABLES_STYLE.equals(property) ||
+                INSISEditorPreferenceConstants.PREDEFINED_VARIABLES_STYLE.equals(property));
     }
 }

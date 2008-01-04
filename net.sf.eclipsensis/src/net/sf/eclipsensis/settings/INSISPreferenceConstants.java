@@ -14,34 +14,9 @@ import net.sf.eclipsensis.console.NSISConsoleLine;
 
 public interface INSISPreferenceConstants extends INSISSettingsConstants
 {
-    public static final String CUSTOM_TEMPLATES = "customTemplates"; //$NON-NLS-1$
     public static final String NSIS_HOME = "nsisHome"; //$NON-NLS-1$
     public static final String NOTIFY_MAKENSIS_CHANGED = "notifyMakeNSISChanged"; //$NON-NLS-1$
     public static final String USE_ECLIPSE_HELP = "useEclipseHelp"; //$NON-NLS-1$
-    public static final String TASK_TAGS = "taskTags"; //$NON-NLS-1$
-    public static final String CASE_SENSITIVE_TASK_TAGS = "caseSensitiveTaskTags"; //$NON-NLS-1$
-
-    public static final String USE_SPACES_FOR_TABS = "useSpacesForTabs"; //$NON-NLS-1$
-
-    public final static String MATCHING_DELIMITERS = "matchingDelimiters"; //$NON-NLS-1$
-    public final static String MATCHING_DELIMITERS_COLOR = "matchingDelimitersColor"; //$NON-NLS-1$
-
-    public static final String COMMENTS_STYLE = "commentsStyle"; //$NON-NLS-1$
-    public static final String COMPILETIME_COMMANDS_STYLE = "compiletimeCommandsStyle"; //$NON-NLS-1$
-    public static final String INSTALLER_ATTRIBUTES_STYLE = "installerAttributesStyle"; //$NON-NLS-1$
-    public static final String COMMANDS_STYLE = "commandsStyle"; //$NON-NLS-1$
-    public static final String INSTRUCTIONS_STYLE = "instructionsStyle"; //$NON-NLS-1$
-    public static final String INSTRUCTION_PARAMETERS_STYLE = "instructionParametersStyle"; //$NON-NLS-1$
-    public static final String INSTRUCTION_OPTIONS_STYLE = "instructionOptionsStyle"; //$NON-NLS-1$
-    public static final String PREDEFINED_VARIABLES_STYLE = "predefinedVariablesStyle"; //$NON-NLS-1$
-    public static final String USERDEFINED_VARIABLES_STYLE = "userdefinedVariablesStyle"; //$NON-NLS-1$
-    public static final String SYMBOLS_STYLE = "symbolsStyle"; //$NON-NLS-1$
-    public static final String CALLBACKS_STYLE = "callbacksStyle"; //$NON-NLS-1$
-    public static final String STRINGS_STYLE = "stringsStyle"; //$NON-NLS-1$
-    public static final String NUMBERS_STYLE = "numbersStyle"; //$NON-NLS-1$
-    public static final String LANGSTRINGS_STYLE = "langstringsStyle"; //$NON-NLS-1$
-    public static final String TASK_TAGS_STYLE = "taskTagsStyle"; //$NON-NLS-1$
-    public static final String PLUGINS_STYLE = "pluginsStyle"; //$NON-NLS-1$
 
     public static final String WARN_PROCESS_PRIORITY = "warnProcessPriority"; //$NON-NLS-1$
     public static final String WARN_REASSOCIATE_HEADER = "warnReassociateHeader"; //$NON-NLS-1$

@@ -34,7 +34,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
-public class NSISEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, INSISConstants, INSISPreferenceConstants
+public class NSISEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, INSISConstants, INSISEditorPreferenceConstants
 {
     private static final String[][] cSyntaxStyleListModel = {
             {EclipseNSISPlugin.getResourceString("comments.label"),COMMENTS_STYLE}, //$NON-NLS-1$
@@ -77,6 +77,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     private Button mStyleUnderline;
     private Button mStyleStrikethrough;
     private Button mFileAssociationButton;
+    private Combo mDropExternalFilesCombo;
 
     private ColorEditor mMatchingDelimsColorEditor;
 
@@ -179,6 +180,32 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         mMasterSlaveController.addSlave(button);
 
         return appearanceComposite;
+    }
+
+    private Composite createOtherGroup(Composite parent)
+    {
+        Composite otherComposite= new Composite(parent, SWT.NONE);
+        GridLayout layout= new GridLayout();
+        layout.numColumns= 2;
+        otherComposite.setLayout(layout);
+
+        Label l = new Label(otherComposite,SWT.NONE);
+        l.setText(EclipseNSISPlugin.getResourceString("drop.external.files.label")); //$NON-NLS-1$
+        l.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
+
+        mDropExternalFilesCombo = new Combo(otherComposite,SWT.DROP_DOWN|SWT.READ_ONLY);
+        mDropExternalFilesCombo.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
+        mDropExternalFilesCombo.add(EclipseNSISPlugin.getResourceString("drop.external.files.insert.label"),DROP_EXTERNAL_FILE_INSERT_AS_NSIS_COMMANDS); //$NON-NLS-1$
+        mDropExternalFilesCombo.add(EclipseNSISPlugin.getResourceString("drop.external.files.edit.label"),DROP_EXTERNAL_FILE_OPEN_IN_EDITORS); //$NON-NLS-1$
+        mDropExternalFilesCombo.add(EclipseNSISPlugin.getResourceString("drop.external.files.ask.label"),DROP_EXTERNAL_FILE_ASK); //$NON-NLS-1$
+
+        mFileAssociationButton = new Button(otherComposite,SWT.CHECK);
+        mFileAssociationButton.setText(EclipseNSISPlugin.getResourceString("check.editor.association.label")); //$NON-NLS-1$
+        GridData data = new GridData(SWT.BEGINNING,SWT.CENTER,false,false);
+        data.horizontalSpan = 2;
+        mFileAssociationButton.setLayoutData(data);
+
+        return otherComposite;
     }
 
     private Button makeStyleButton(Composite parent, String labelResource, final int styleFlag)
@@ -331,32 +358,30 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
         Group group = new Group(parent,SWT.SHADOW_ETCHED_IN);
         group.setText(EclipseNSISPlugin.getResourceString("appearances.group.label")); //$NON-NLS-1$
-        group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         layout = new GridLayout(1,false);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         group.setLayout(layout);
+        group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         Composite c = createAppearanceGroup(group);
         c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
         group = new Group(parent,SWT.SHADOW_ETCHED_IN);
         group.setText(EclipseNSISPlugin.getResourceString("syntax.group.label")); //$NON-NLS-1$
-        group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         layout = new GridLayout(1,false);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         group.setLayout(layout);
+        group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         c = createSyntaxGroup(group);
         c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        mFileAssociationButton = new Button(parent,SWT.CHECK);
-        mFileAssociationButton.setText(EclipseNSISPlugin.getResourceString("check.editor.association.label")); //$NON-NLS-1$
-        mFileAssociationButton.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
 
-        c = new Composite(parent,SWT.NONE);
+        group = new Group(parent,SWT.SHADOW_ETCHED_IN);
+        group.setText(EclipseNSISPlugin.getResourceString("other.group.label")); //$NON-NLS-1$
+        group.setLayout(new GridLayout(1,false));
+        group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        c = createOtherGroup(group);
         c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        layout = new GridLayout(2,false);
-        layout.marginWidth = 0;
-        layout.marginHeight = 0;
-        c.setLayout(layout);
 
         initialize();
         Dialog.applyDialogFont(parent);
@@ -367,6 +392,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
         initializeFields();
         mFileAssociationButton.setSelection(FileAssociationChecker.getFileAssociationChecking(FILE_ASSOCIATION_ID));
+        mDropExternalFilesCombo.select(NSISPreferences.INSTANCE.getPreferenceStore().getInt(DROP_EXTERNAL_FILE_ACTION));
         for (int i= 0; i < cSyntaxStyleListModel.length; i++) {
             mSyntaxStyleList.add(cSyntaxStyleListModel[i][0]);
         }
@@ -399,6 +425,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     public boolean performOk() {
         mPreferenceStore.update();
         NSISEditorUtilities.updatePresentations();
+        NSISPreferences.INSTANCE.getPreferenceStore().setValue(DROP_EXTERNAL_FILE_ACTION,mDropExternalFilesCombo.getSelectionIndex());
         FileAssociationChecker.setFileAssociationChecking(FILE_ASSOCIATION_ID, mFileAssociationButton.getSelection());
         return super.performOk();
     }
@@ -412,6 +439,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
         initializeFields();
         mFileAssociationButton.setSelection(true);
+        mDropExternalFilesCombo.select(DROP_EXTERNAL_FILE_DEFAULT);
         handleSyntaxStyleListSelection();
         if(mPreviewer != null && mPreviewer.mustProcessPropertyQueue()) {
             mPreviewer.processPropertyQueue();

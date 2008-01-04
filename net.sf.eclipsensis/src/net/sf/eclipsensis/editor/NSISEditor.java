@@ -23,8 +23,10 @@ import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.startup.FileAssociationChecker;
 import net.sf.eclipsensis.util.*;
 
+import org.eclipse.core.internal.filesystem.local.LocalFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.information.InformationPresenter;
@@ -40,10 +42,11 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.ide.*;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeListener, ISelectionChangedListener, IProjectionListener
+public class NSISEditor extends TextEditor implements INSISConstants, INSISEditorPreferenceConstants, INSISHomeListener, ISelectionChangedListener, IProjectionListener
 {
     private Set mActions = new HashSet();
     private ProjectionSupport mProjectionSupport;
@@ -377,8 +380,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         // ensure decoration support has been created and configured.
         SourceViewerDecorationSupport decorationSupport = getSourceViewerDecorationSupport(viewer);
         decorationSupport.setCharacterPairMatcher(new NSISCharacterPairMatcher());
-        decorationSupport.setMatchingCharacterPainterPreferenceKeys(INSISPreferenceConstants.MATCHING_DELIMITERS,
-                                                                    INSISPreferenceConstants.MATCHING_DELIMITERS_COLOR);
+        decorationSupport.setMatchingCharacterPainterPreferenceKeys(MATCHING_DELIMITERS,
+                                                                    MATCHING_DELIMITERS_COLOR);
         viewer.addProjectionListener(this);
         ISelectionChangedListener listener = new ISelectionChangedListener(){
             public void selectionChanged(SelectionChangedEvent event)
@@ -587,6 +590,24 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
                     insertCommand((NSISCommand)event.data, false);
                 }
                 else if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+                    int dropNSISFilesAction = NSISPreferences.INSTANCE.getPreferenceStore().getInt(DROP_EXTERNAL_FILE_ACTION);
+                    switch(dropNSISFilesAction) {
+                        case DROP_EXTERNAL_FILE_ASK:
+                            MessageDialog dialog = new MessageDialog(getSite().getShell(),
+                                                    EclipseNSISPlugin.getResourceString("drop.external.files.ask.title"), //$NON-NLS-1$
+                                                    EclipseNSISPlugin.getShellImage(),
+                                                    EclipseNSISPlugin.getResourceString("drop.external.files.ask.message"), //$NON-NLS-1$
+                                                    MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
+                                                    IDialogConstants.CANCEL_LABEL }, 0);
+                            if(dialog.open() != 0) {
+                                break;
+                            }
+                        case DROP_EXTERNAL_FILE_OPEN_IN_EDITORS:
+                            openFiles((String[])event.data);
+                            return;
+                        default:
+                            break;
+                    }
                     insertFiles((String[])event.data);
                 }
                 else {
@@ -768,6 +789,29 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
 //            installTextDragAndDrop(viewer);
 //        }
 //    }
+
+    private void openFiles(String[] files)
+    {
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+        IEditorDescriptor textEditorDescriptor = registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+        IEditorDescriptor externalEditordescriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+        for (int i = 0; i < files.length; i++) {
+            IEditorInput editorInput = new FileStoreEditorInput(new LocalFile(new File(files[i])));
+            IEditorDescriptor descriptor = registry.getDefaultEditor(files[i]);
+            if(descriptor == null) {
+                descriptor = (textEditorDescriptor==null?externalEditordescriptor:textEditorDescriptor);
+            }
+            if (descriptor != null) {
+                try {
+                    IDE.openEditor(page, editorInput, descriptor.getId());
+                }
+                catch (PartInitException e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }
+            }
+        }
+    }
 
     private void insertFiles(String[] files)
     {
@@ -1182,7 +1226,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISHomeL
         if(isDirty()) {
             IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(this);
             if(!Common.openConfirm(getSourceViewer().getTextWidget().getShell(),
-                    EclipseNSISPlugin.getFormattedString("export.html.save.confirmation",
+                    EclipseNSISPlugin.getFormattedString("export.html.save.confirmation", //$NON-NLS-1$
                     new Object[] {input.getPath().lastSegment()}),
                     EclipseNSISPlugin.getShellImage())) {
                 return;

@@ -92,11 +92,11 @@ public class NSISOutlineLabelProvider extends LabelProvider
         int severity = getElementSeverity(element);
         switch(severity) {
             case IMarker.SEVERITY_ERROR:
-                hashCode = image.hashCode() + "$error";
+                hashCode = image.hashCode() + "$error"; //$NON-NLS-1$
                 data = cErrorImageData;
                 break;
             case IMarker.SEVERITY_WARNING:
-                hashCode = image.hashCode() + "$warning";
+                hashCode = image.hashCode() + "$warning"; //$NON-NLS-1$
                 data = cWarningImageData;
                 break;
             default:
