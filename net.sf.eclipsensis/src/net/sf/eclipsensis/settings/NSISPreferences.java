@@ -170,7 +170,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializePreference(MATCHING_DELIMITERS,Boolean.TRUE);
         initializePreference(MATCHING_DELIMITERS_COLOR,StringConverter.asString(new RGB(128,128,128)));
 
-        initializePreference(DROP_EXTERNAL_FILE_ACTION,new Integer(DROP_EXTERNAL_FILE_DEFAULT));
+        initializePreference(DROP_EXTERNAL_FILES_ACTION,new Integer(DROP_EXTERNAL_FILES_DEFAULT));
 }
 
     private void initializeSyntaxPreference(String name, RGB foreground, RGB background, boolean bold,

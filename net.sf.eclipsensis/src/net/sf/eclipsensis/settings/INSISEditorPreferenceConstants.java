@@ -38,11 +38,11 @@ public interface INSISEditorPreferenceConstants extends INSISPreferenceConstants
     public static final String TASK_TAGS_STYLE = "taskTagsStyle"; //$NON-NLS-1$
     public static final String PLUGINS_STYLE = "pluginsStyle"; //$NON-NLS-1$
 
-    public static final String DROP_EXTERNAL_FILE_ACTION = "dropExternalFileAction"; //$NON-NLS-1$
+    public static final String DROP_EXTERNAL_FILES_ACTION = "dropExternalFilesAction"; //$NON-NLS-1$
 
-    public static final int DROP_EXTERNAL_FILE_INSERT_AS_NSIS_COMMANDS = 0;
-    public static final int DROP_EXTERNAL_FILE_OPEN_IN_EDITORS = 1;
-    public static final int DROP_EXTERNAL_FILE_ASK = 2;
+    public static final int DROP_EXTERNAL_FILES_INSERT_AS_NSIS_COMMANDS = 0;
+    public static final int DROP_EXTERNAL_FILES_OPEN_IN_EDITORS = 1;
+    public static final int DROP_EXTERNAL_FILES_ASK = 2;
 
-    public static final int DROP_EXTERNAL_FILE_DEFAULT = DROP_EXTERNAL_FILE_INSERT_AS_NSIS_COMMANDS;
+    public static final int DROP_EXTERNAL_FILES_DEFAULT = DROP_EXTERNAL_FILES_INSERT_AS_NSIS_COMMANDS;
 }

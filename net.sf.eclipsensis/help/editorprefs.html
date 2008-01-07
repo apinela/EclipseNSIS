@@ -34,11 +34,8 @@ Preferences</title>
 <p>These preferences are used to customize the look and feel of the
 EclipseNSIS editor.<br>
 <strong>Please note that the EclipseNSIS editor inherits preferences from the <a href="javascript:redirectEclipse('/org.eclipse.platform.doc.user/reference/ref-texteditorprefs.htm');">Text Editor</a>.</strong></p>
-<p style="text-align: center;"><img
- alt="Editor Preferences" src="images/editorpref.gif"
- ismap="ismap"
- style="border: medium none ; width: 425px; height: 508px;"
- usemap="#editorpref"></p>
+<p style="text-align: center;"><img src="images/editorpref.gif"
+ alt="Editor Preferences" usemap="#editorpref" ismap="ismap" style="border: medium none ; width: 492px; height: 597px;"></p>
   <a name="a_showmatch"></a><dl id="id_showmatch"><dt>Show
 matching delimiters</dt>
   <dd>If enabled, whenever the
@@ -106,6 +103,16 @@ starting with "$".</dd>
   <dd>Displays the preview of NSIS
 source code using the current
 colors and styles. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+  <a name="a_dropextfiles"></a><dl id="id_dropextfiles"><dt>When external files are dropped in editor window</dt>
+  <dd>Specifies the action to take when external files are dropped in the EclipseNSIS editor window, e.g., by dragging from Windows Explorer.
+  The alternatives are to:
+  <ul>
+    <li>insert them in the script as NSIS commands (e.g., File or WriteRegStr).</li>
+    <li>open them in the associated editors.</li>
+    <li>ask the user which action to take.</li>
+  </ul>
+    <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a>
+  </dd></dl>
 <a name="a_check_assoc"></a><dl id="id_check_assoc"><dt>On startup, check EclipseNSIS editor NSIS file association</dt>
 <dd>On startup check if NSIS files are associated by default with the EclipseNSIS editor.
 If it is not, the user is prompted whether to create the association. If the "EclipseNSIS Startup" plugin is activated for startup in
@@ -121,11 +128,11 @@ to Preferences</a><br>
 &copy; 2004-2008 Sunil Kamath
 (IcemanK).</small></strong></p>
 <MAP NAME="editorpref">
-     <AREA ID="syntaxpreview" SHAPE="RECT" HREF="#a_syntaxpreview" ALT="Syntax Preview" OnClick="highlightDef('id_syntaxpreview');" COORDS="19,278,412,424">
-	 <AREA ID="check_assoc" SHAPE="RECT" HREF="#a_check_assoc" ALT="Check NSIS File Association" OnClick="highlightDef('id_check_assoc');" COORDS="12,439,377,452">
-     <AREA ID="syntaxstyles" SHAPE="RECT" HREF="#a_syntaxstyles" ALT="Syntax style options" OnClick="highlightDef('id_syntaxstyles');" COORDS="20,136,343,273">
-     <AREA ID="matchcolor" SHAPE="RECT" HREF="#a_matchcolor" ALT="Matching delimiters highlight" OnClick="highlightDef('id_matchcolor');" COORDS="39,80,223,102">
-     <AREA ID="showmatch" SHAPE="RECT" HREF="#a_showmatch" ALT="Show matching delimiters" OnClick="highlightDef('id_showmatch');" COORDS="20,60,156,73">
+     <AREA ID="syntaxpreview" SHAPE="RECT" HREF="#a_syntaxpreview" ALT="Syntax Preview" OnClick="highlightDef('id_syntaxpreview');" COORDS="12,279,479,473">		     <AREA ID="dropextfiles" SHAPE="RECT" HREF="#a_dropextfiles" ALT="Drop External Files Action" OnClick="highlightDef('id_dropextfiles');" COORDS="18,509,473,530">
+	 <AREA ID="check_assoc" SHAPE="RECT" HREF="#a_check_assoc" ALT="Check NSIS File Association" OnClick="highlightDef('id_check_assoc');" COORDS="18,536,383,549">
+     <AREA ID="syntaxstyles" SHAPE="RECT" HREF="#a_syntaxstyles" ALT="Syntax style options" OnClick="highlightDef('id_syntaxstyles');" COORDS="12,136,373,273">
+     <AREA ID="matchcolor" SHAPE="RECT" HREF="#a_matchcolor" ALT="Matching delimiters highlight" OnClick="highlightDef('id_matchcolor');" COORDS="32,80,216,102">
+     <AREA ID="showmatch" SHAPE="RECT" HREF="#a_showmatch" ALT="Show matching delimiters" OnClick="highlightDef('id_showmatch');" COORDS="13,60,149,73">
 </MAP>
 </div>
 </body>

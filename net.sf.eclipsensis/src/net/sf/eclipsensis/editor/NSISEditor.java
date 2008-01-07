@@ -42,7 +42,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.editors.text.*;
-import org.eclipse.ui.ide.*;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -590,9 +590,9 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                     insertCommand((NSISCommand)event.data, false);
                 }
                 else if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
-                    int dropNSISFilesAction = NSISPreferences.INSTANCE.getPreferenceStore().getInt(DROP_EXTERNAL_FILE_ACTION);
+                    int dropNSISFilesAction = NSISPreferences.INSTANCE.getPreferenceStore().getInt(DROP_EXTERNAL_FILES_ACTION);
                     switch(dropNSISFilesAction) {
-                        case DROP_EXTERNAL_FILE_ASK:
+                        case DROP_EXTERNAL_FILES_ASK:
                             MessageDialog dialog = new MessageDialog(getSite().getShell(),
                                                     EclipseNSISPlugin.getResourceString("drop.external.files.ask.title"), //$NON-NLS-1$
                                                     EclipseNSISPlugin.getShellImage(),
@@ -602,7 +602,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                             if(dialog.open() != 0) {
                                 break;
                             }
-                        case DROP_EXTERNAL_FILE_OPEN_IN_EDITORS:
+                        case DROP_EXTERNAL_FILES_OPEN_IN_EDITORS:
                             openFiles((String[])event.data);
                             return;
                         default:
@@ -793,22 +793,12 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
     private void openFiles(String[] files)
     {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-        IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-        IEditorDescriptor textEditorDescriptor = registry.findEditor("org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
-        IEditorDescriptor externalEditordescriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
         for (int i = 0; i < files.length; i++) {
-            IEditorInput editorInput = new FileStoreEditorInput(new LocalFile(new File(files[i])));
-            IEditorDescriptor descriptor = registry.getDefaultEditor(files[i]);
-            if(descriptor == null) {
-                descriptor = (textEditorDescriptor==null?externalEditordescriptor:textEditorDescriptor);
+            try {
+                IDE.openEditorOnFileStore(page, new LocalFile(new File(files[i])));
             }
-            if (descriptor != null) {
-                try {
-                    IDE.openEditor(page, editorInput, descriptor.getId());
-                }
-                catch (PartInitException e) {
-                    EclipseNSISPlugin.getDefault().log(e);
-                }
+            catch (PartInitException e) {
+                EclipseNSISPlugin.getDefault().log(e);
             }
         }
     }

@@ -195,9 +195,9 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
         mDropExternalFilesCombo = new Combo(otherComposite,SWT.DROP_DOWN|SWT.READ_ONLY);
         mDropExternalFilesCombo.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
-        mDropExternalFilesCombo.add(EclipseNSISPlugin.getResourceString("drop.external.files.insert.label"),DROP_EXTERNAL_FILE_INSERT_AS_NSIS_COMMANDS); //$NON-NLS-1$
-        mDropExternalFilesCombo.add(EclipseNSISPlugin.getResourceString("drop.external.files.edit.label"),DROP_EXTERNAL_FILE_OPEN_IN_EDITORS); //$NON-NLS-1$
-        mDropExternalFilesCombo.add(EclipseNSISPlugin.getResourceString("drop.external.files.ask.label"),DROP_EXTERNAL_FILE_ASK); //$NON-NLS-1$
+        mDropExternalFilesCombo.add(EclipseNSISPlugin.getResourceString("drop.external.files.insert.label"),DROP_EXTERNAL_FILES_INSERT_AS_NSIS_COMMANDS); //$NON-NLS-1$
+        mDropExternalFilesCombo.add(EclipseNSISPlugin.getResourceString("drop.external.files.edit.label"),DROP_EXTERNAL_FILES_OPEN_IN_EDITORS); //$NON-NLS-1$
+        mDropExternalFilesCombo.add(EclipseNSISPlugin.getResourceString("drop.external.files.ask.label"),DROP_EXTERNAL_FILES_ASK); //$NON-NLS-1$
 
         mFileAssociationButton = new Button(otherComposite,SWT.CHECK);
         mFileAssociationButton.setText(EclipseNSISPlugin.getResourceString("check.editor.association.label")); //$NON-NLS-1$
@@ -392,7 +392,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
         initializeFields();
         mFileAssociationButton.setSelection(FileAssociationChecker.getFileAssociationChecking(FILE_ASSOCIATION_ID));
-        mDropExternalFilesCombo.select(NSISPreferences.INSTANCE.getPreferenceStore().getInt(DROP_EXTERNAL_FILE_ACTION));
+        mDropExternalFilesCombo.select(NSISPreferences.INSTANCE.getPreferenceStore().getInt(DROP_EXTERNAL_FILES_ACTION));
         for (int i= 0; i < cSyntaxStyleListModel.length; i++) {
             mSyntaxStyleList.add(cSyntaxStyleListModel[i][0]);
         }
@@ -425,7 +425,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     public boolean performOk() {
         mPreferenceStore.update();
         NSISEditorUtilities.updatePresentations();
-        NSISPreferences.INSTANCE.getPreferenceStore().setValue(DROP_EXTERNAL_FILE_ACTION,mDropExternalFilesCombo.getSelectionIndex());
+        NSISPreferences.INSTANCE.getPreferenceStore().setValue(DROP_EXTERNAL_FILES_ACTION,mDropExternalFilesCombo.getSelectionIndex());
         FileAssociationChecker.setFileAssociationChecking(FILE_ASSOCIATION_ID, mFileAssociationButton.getSelection());
         return super.performOk();
     }
@@ -439,7 +439,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
         initializeFields();
         mFileAssociationButton.setSelection(true);
-        mDropExternalFilesCombo.select(DROP_EXTERNAL_FILE_DEFAULT);
+        mDropExternalFilesCombo.select(DROP_EXTERNAL_FILES_DEFAULT);
         handleSyntaxStyleListSelection();
         if(mPreviewer != null && mPreviewer.mustProcessPropertyQueue()) {
             mPreviewer.processPropertyQueue();
