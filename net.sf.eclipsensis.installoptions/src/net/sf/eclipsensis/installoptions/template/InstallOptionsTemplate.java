@@ -9,16 +9,21 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.template;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.template.*;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
+
+import org.w3c.dom.*;
 
 public class InstallOptionsTemplate extends AbstractTemplate
 {
+    private static final String SECTIONS_NODE= "sections"; //$NON-NLS-1$
+
     private static final long serialVersionUID = -2080053812185962758L;
     private static final Comparator cWidgetsComparator = new Comparator(){
         public int compare(Object o1, Object o2)
@@ -30,6 +35,11 @@ public class InstallOptionsTemplate extends AbstractTemplate
     };
 
     private INISection[] mSections;
+
+    InstallOptionsTemplate()
+    {
+        this(null);
+    }
 
     public InstallOptionsTemplate(String name)
     {
@@ -58,8 +68,47 @@ public class InstallOptionsTemplate extends AbstractTemplate
         setWidgets(widgets);
     }
 
-    protected void afterImport() throws InvalidTemplateException
+    protected void addSkippedProperties(Collection skippedProperties)
     {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("sections"); //$NON-NLS-1$
+        skippedProperties.add("widgets"); //$NON-NLS-1$
+    }
+
+    public Node toNode(Document document)
+    {
+        Node node = super.toNode(document);
+        INISection[] iniSections = getSections();
+        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+        if(!Common.isEmptyArray(iniSections)) {
+            iniSections[0].update();
+            buf.append(iniSections[0]);
+            for (int i = 1; i < iniSections.length; i++) {
+                iniSections[i].trim().update();
+                buf.append(INSISConstants.LINE_SEPARATOR).append(iniSections[i].toString());
+            }
+        }
+        Node sections = document.createElement(SECTIONS_NODE);
+        Text data = document.createTextNode(buf.toString());
+        sections.appendChild(data);
+        node.appendChild(sections);
+        return node;
+    }
+
+    public void fromNode(Node node)
+    {
+        super.fromNode(node);
+        Node[] nodes = XMLUtil.findChildren(node, SECTIONS_NODE);
+        if(!Common.isEmptyArray(nodes)) {
+            String sections = XMLUtil.readTextNode(nodes[0]);
+            INIFile iniFile = INIFile.load(new StringReader(sections));
+            INISection[] iniSections = iniFile.getSections();
+            for (int i = 0; i < iniSections.length; i++) {
+                iniSections[i] = (INISection)iniSections[i].trim().clone();
+                iniSections[i].setParent(null);
+            }
+            setSections(iniSections);
+        }
         if(mSections == null) {
             throw new InvalidTemplateException();
         }

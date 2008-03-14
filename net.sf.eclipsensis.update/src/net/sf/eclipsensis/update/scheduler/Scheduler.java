@@ -140,7 +140,7 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
             r.run();
         }
         else {
-            Display.getDefault().asyncExec(r);
+            Display.getDefault().syncExec(r);
         }
 
         return job[0];

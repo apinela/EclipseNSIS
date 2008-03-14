@@ -9,18 +9,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.template;
 
-import java.io.StringReader;
-
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.template.*;
-import net.sf.eclipsensis.util.*;
-
-import org.w3c.dom.*;
 
 class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter
 {
-    private static final String SECTIONS_NODE= "sections"; //$NON-NLS-1$
     static final InstallOptionsTemplateReaderWriter INSTANCE = new InstallOptionsTemplateReaderWriter();
 
     private InstallOptionsTemplateReaderWriter()
@@ -28,45 +20,8 @@ class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter
         super();
     }
 
-    protected AbstractTemplate createTemplate(String id, String name)
+    protected AbstractTemplate createTemplate()
     {
-        return new InstallOptionsTemplate(id, name);
-    }
-
-    protected Node exportContents(AbstractTemplate template, Document document)
-    {
-        INISection[] iniSections = ((InstallOptionsTemplate)template).getSections();
-        StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-        if(!Common.isEmptyArray(iniSections)) {
-            iniSections[0].update();
-            buf.append(iniSections[0]);
-            for (int i = 1; i < iniSections.length; i++) {
-                iniSections[i].trim().update();
-                buf.append(INSISConstants.LINE_SEPARATOR).append(iniSections[i].toString());
-            }
-        }
-        Element sections = document.createElement(SECTIONS_NODE);
-        Text data = document.createTextNode(buf.toString());
-        sections.appendChild(data);
-        return sections;
-    }
-
-    protected String getContentsNodeName()
-    {
-        return SECTIONS_NODE;
-    }
-
-    protected void importContents(AbstractTemplate template, Node item)
-    {
-        String sections = XMLUtil.readTextNode(item);
-        if(!Common.isEmpty(sections)) {
-            INIFile iniFile = INIFile.load(new StringReader(sections));
-            INISection[] iniSections = iniFile.getSections();
-            for (int i = 0; i < iniSections.length; i++) {
-                iniSections[i] = (INISection)iniSections[i].trim().clone();
-                iniSections[i].setParent(null);
-            }
-            ((InstallOptionsTemplate)template).setSections(iniSections);
-        }
+        return new InstallOptionsTemplate();
     }
 }

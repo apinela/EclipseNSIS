@@ -37,7 +37,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
     private static final int SIZING_WIZARD_HEIGHT = 200;
     private static final Image cShellImage = EclipseNSISUpdatePlugin.getShellImage();
 
-    private IPageChangedListener mPageChangedListener;
+    private IPageChangedListener mPageChangedListener = null;
     private boolean mError = false;
     private int mAction;
     private boolean mIgnorePreview;
@@ -48,7 +48,6 @@ public class NSISUpdateWizard extends NSISConfigWizard
         setNeedsProgressMonitor(true);
         setWindowTitle(EclipseNSISUpdatePlugin.getResourceString("update.config.wizard.title")); //$NON-NLS-1$
         setDefaultPageImageDescriptor(EclipseNSISUpdatePlugin.getImageDescriptor(EclipseNSISUpdatePlugin.getResourceString("wizard.title.image"))); //$NON-NLS-1$
-        mPageChangedListener = new WizardShellImageChanger(this, cShellImage);
         initDialogSettings();
     }
 
@@ -126,10 +125,15 @@ public class NSISUpdateWizard extends NSISConfigWizard
     public void setContainer(IWizardContainer wizardContainer)
     {
         if(getContainer() instanceof IPageChangeProvider) {
-            ((IPageChangeProvider)getContainer()).removePageChangedListener(mPageChangedListener);
+            if(mPageChangedListener != null) {
+                ((IPageChangeProvider)getContainer()).removePageChangedListener(mPageChangedListener);
+            }
         }
         super.setContainer(wizardContainer);
         if(getContainer() instanceof IPageChangeProvider) {
+            if(mPageChangedListener == null) {
+                mPageChangedListener = new WizardShellImageChanger(this, cShellImage);
+            }
             ((IPageChangeProvider)getContainer()).addPageChangedListener(mPageChangedListener);
         }
     }
