@@ -66,8 +66,10 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
                 BusyIndicator.showWhile(getShell().getDisplay(),new Runnable() {
                     public void run()
                     {
-                        wizardDialog[0] = new NSISTemplateWizardDialog(getShell(),new NSISTemplateWizard(wizardTemplate));
+                        NSISTemplateWizard templateWizard = new NSISTemplateWizard();
+                        wizardDialog[0] = new NSISTemplateWizardDialog(getShell(),templateWizard);
                         wizardDialog[0].create();
+                        templateWizard.setTemplate(wizardTemplate);
                     }
                 });
                 return wizardDialog[0];

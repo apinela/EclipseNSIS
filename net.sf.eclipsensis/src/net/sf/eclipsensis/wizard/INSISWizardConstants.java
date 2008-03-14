@@ -14,6 +14,7 @@ public interface INSISWizardConstants
     public static final int INSTALLER_TYPE_SILENT = 0;
     public static final int INSTALLER_TYPE_CLASSIC = 1;
     public static final int INSTALLER_TYPE_MUI = 2;
+    public static final int INSTALLER_TYPE_MUI2 = 3;
 
     public static final int LICENSE_BUTTON_CLASSIC = 0;
     public static final int LICENSE_BUTTON_CHECKED = 1;

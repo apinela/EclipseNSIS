@@ -162,6 +162,9 @@ public abstract class NSISParam
 
         public void reset()
         {
+//            if(mNameLabel != null) {
+//                NSISWizardDialogUtil.undecorate(mNameLabel);
+//            }
         }
 
         public void dispose()

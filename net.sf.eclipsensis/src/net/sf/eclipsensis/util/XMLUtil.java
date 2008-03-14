@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.util;
 
 import java.io.*;
+import java.util.*;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
@@ -152,5 +153,42 @@ public class XMLUtil
     public static Document newDocument() throws ParserConfigurationException
     {
         return cDocumentBuilderFactory.newDocumentBuilder().newDocument();
+    }
+
+    public static Node findFirstChild(Node node)
+    {
+        return findFirstChild(node, null);
+    }
+
+    public static Node findFirstChild(Node node, String name)
+    {
+        NodeList childNodes = node.getChildNodes();
+        int count = childNodes.getLength();
+        for(int i=0; i<count; i++) {
+            Node child = childNodes.item(i);
+            if(child instanceof Element && (name == null || child.getNodeName().equals(name))) {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    public static Node[] findChildren(Node node)
+    {
+        return findChildren(node, null);
+    }
+
+    public static Node[] findChildren(Node node, String name)
+    {
+        List list = new ArrayList();
+        NodeList childNodes = node.getChildNodes();
+        int count = childNodes.getLength();
+        for(int i=0; i<count; i++) {
+            Node child = childNodes.item(i);
+            if(child instanceof Element && (name == null || child.getNodeName().equals(name))) {
+                list.add(child);
+            }
+        }
+        return (Node[])list.toArray(new Node[list.size()]);
     }
 }

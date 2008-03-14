@@ -7,13 +7,13 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsensis.util;
+package net.sf.eclipsensis.wizard;
 
-import org.w3c.dom.*;
+import java.util.EventListener;
 
-public interface INodeConvertible
+import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
+
+public interface INSISWizardTemplateListener extends EventListener
 {
-    public Node toNode(Document document);
-    public void fromNode(Node node);
-    public String getNodeName();
+    public void templateChanged(NSISWizardTemplate oldTemplate, NSISWizardTemplate newTemplate);
 }

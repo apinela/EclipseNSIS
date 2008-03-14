@@ -71,6 +71,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     private INSISScriptElement mUnfunctionsPlaceHolder = null;
     private boolean mIsSilent = false;
     private boolean mIsMUI = false;
+    private String mMUIHeader = null;
 
     static {
         for (int i = 0; i < NSISWizardDisplayValues.HKEY_NAMES.length; i++) {
@@ -238,6 +239,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 break;
             case INSTALLER_TYPE_MUI:
                 mIsMUI = true;
+                mMUIHeader = "MUI.nsh"; //$NON-NLS-1$
+                break;
+            case INSTALLER_TYPE_MUI2:
+                mIsMUI = true;
+                mMUIHeader = "MUI2.nsh"; //$NON-NLS-1$
                 break;
         }
 
@@ -285,7 +291,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
         mIncludes.add("Sections.nsh"); //$NON-NLS-1$
         if(mIsMUI) {
-            mIncludes.add("MUI.nsh"); //$NON-NLS-1$
+            mIncludes.add(mMUIHeader);
         }
 
         mScript.insertElement(attributesPlaceHolder,new NSISScriptAttribute("OutFile",maybeMakeRelative(mSaveFile,mSettings.getOutFile()))); //$NON-NLS-1$
@@ -506,20 +512,18 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 										Integer.toString(bottomColor.green), Integer.toString(bottomColor.blue)}));
                 fn.addElement(new NSISScriptInstruction("Pop","$R1")); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("Strcmp",new String[]{getKeyword("$R1"),"success","0","error"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                if(!Common.isEmpty(backgroundBMP)) {
-                    fn.addElement(new NSISScriptInstruction("File",new String[]{new StringBuffer(getKeyword("/oname")).append( //$NON-NLS-1$ //$NON-NLS-2$
-                                                "=").append(getKeyword("$PLUGINSDIR")).append("\\bgimage.bmp").toString(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                                maybeMakeRelative(mSaveFile,backgroundBMP)}));
-                    fn.addElement(new NSISScriptInstruction("System::call","user32::GetSystemMetrics(i 0)i.R1")); //$NON-NLS-1$ //$NON-NLS-2$
-                    fn.addElement(new NSISScriptInstruction("System::call","user32::GetSystemMetrics(i 1)i.R2")); //$NON-NLS-1$ //$NON-NLS-2$
-                    ImageData imageData = new ImageData(mSettings.getBackgroundBMP());
-                    fn.addElement(new NSISScriptInstruction("IntOp",new String[]{getKeyword("$R1"),getKeyword("$R1"),"-",Integer.toString(imageData.width)})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                    fn.addElement(new NSISScriptInstruction("IntOp",new String[]{getKeyword("$R1"),getKeyword("$R1"),"/","2"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                    fn.addElement(new NSISScriptInstruction("IntOp",new String[]{getKeyword("$R2"),getKeyword("$R2"),"-",Integer.toString(imageData.height)})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                    fn.addElement(new NSISScriptInstruction("IntOp",new String[]{getKeyword("$R2"),getKeyword("$R2"),"/","2"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                    fn.addElement(new NSISScriptInstruction("BGImage::AddImage",new String[]{getKeyword("/NOUNLOAD"), //$NON-NLS-1$ //$NON-NLS-2$
-                                    getKeyword("$PLUGINSDIR")+"\\bgimage.bmp",getKeyword("$R1"),getKeyword("$R2")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                }
+                fn.addElement(new NSISScriptInstruction("File",new String[]{new StringBuffer(getKeyword("/oname")).append( //$NON-NLS-1$ //$NON-NLS-2$
+                                            "=").append(getKeyword("$PLUGINSDIR")).append("\\bgimage.bmp").toString(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                            maybeMakeRelative(mSaveFile,backgroundBMP)}));
+                fn.addElement(new NSISScriptInstruction("System::call","user32::GetSystemMetrics(i 0)i.R1")); //$NON-NLS-1$ //$NON-NLS-2$
+                fn.addElement(new NSISScriptInstruction("System::call","user32::GetSystemMetrics(i 1)i.R2")); //$NON-NLS-1$ //$NON-NLS-2$
+                ImageData imageData = new ImageData(IOUtility.decodePath(backgroundBMP));
+                fn.addElement(new NSISScriptInstruction("IntOp",new String[]{getKeyword("$R1"),getKeyword("$R1"),"-",Integer.toString(imageData.width)})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                fn.addElement(new NSISScriptInstruction("IntOp",new String[]{getKeyword("$R1"),getKeyword("$R1"),"/","2"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                fn.addElement(new NSISScriptInstruction("IntOp",new String[]{getKeyword("$R2"),getKeyword("$R2"),"-",Integer.toString(imageData.height)})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                fn.addElement(new NSISScriptInstruction("IntOp",new String[]{getKeyword("$R2"),getKeyword("$R2"),"/","2"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+                fn.addElement(new NSISScriptInstruction("BGImage::AddImage",new String[]{getKeyword("/NOUNLOAD"), //$NON-NLS-1$ //$NON-NLS-2$
+                                getKeyword("$PLUGINSDIR")+"\\bgimage.bmp",getKeyword("$R1"),getKeyword("$R2")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 fn.addElement(new NSISScriptInstruction("CreateFont",new String[]{getKeyword("$R1"),"Times New Roman","26","700",getKeyword("/ITALIC")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
                 fn.addElement(new NSISScriptInstruction("BGImage::AddText",new String[]{getKeyword("/NOUNLOAD"),Common.quote("$(^SetupCaption)"),getKeyword("$R1"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 								                		Integer.toString(textColor.red), Integer.toString(textColor.green),

@@ -178,8 +178,7 @@ public class NSISValidator implements INSISConstants
                             }
                         }
                         if(version != null) {
-                            version = new Version(version);
-                            version.setDisplayText(output[i].substring(1));
+                            version = new Version(version, output[i].substring(1));
                         }
                     }
                 }

@@ -151,8 +151,7 @@ public class NSISWizardDialogUtil
      */
     public static void decorate(Control control)
     {
-        ControlDecoration controlDecoration;
-        controlDecoration = new ControlDecoration(control,SWT.LEFT|SWT.TOP,null);
+        ControlDecoration controlDecoration = new ControlDecoration(control,SWT.LEFT|SWT.TOP,null);
         control.setData(CONTROL_DECORATION, controlDecoration);
         updateDecoration(control, control.isEnabled());
         if(controlDecoration.getImage() != null) {
@@ -478,11 +477,13 @@ public class NSISWizardDialogUtil
         parent.setLayout(layout);
 
         Button[] buttons = new Button[items.length];
+        int selectedIndex = -1;
         for (int i = 0; i < items.length; i++) {
             buttons[i] = new Button(parent, SWT.RADIO | SWT.LEFT);
             buttons[i].setText(items[i]);
             buttons[i].setData(new Integer(i));
             if(i == selectedItem) {
+                selectedIndex = i;
                 buttons[i].setSelection(true);
             }
             buttons[i].setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
@@ -490,7 +491,9 @@ public class NSISWizardDialogUtil
             addSlave(masterSlaveController, buttons[i]);
             buttons[i].setData(LABEL,l);
         }
-
+        if(selectedIndex < 0 && items.length > 0) {
+            buttons[0].setSelection(true);
+        }
         return buttons;
     }
 

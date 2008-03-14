@@ -224,7 +224,18 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         });
         NSISWizardDialogUtil.loadImage(t2);
 
-        final Button[] radio = NSISWizardDialogUtil.createRadioGroup(group, NSISWizardDisplayValues.INSTALLER_TYPE_NAMES,
+        String[] installerTypeNames;
+        if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_34) >= 0) {
+            installerTypeNames = NSISWizardDisplayValues.INSTALLER_TYPE_NAMES;
+        }
+        else {
+            installerTypeNames = (String[])Common.subArray(NSISWizardDisplayValues.INSTALLER_TYPE_NAMES, 0,
+                                    NSISWizardDisplayValues.INSTALLER_TYPE_NAMES.length-1);
+        }
+        if(settings.getInstallerType() >= installerTypeNames.length ) {
+            settings.setInstallerType(installerTypeNames.length-1);
+        }
+        final Button[] radio = NSISWizardDialogUtil.createRadioGroup(group, installerTypeNames,
                                            settings.getInstallerType(),"installer.type.label", //$NON-NLS-1$
                                            true, null,false);
         SelectionAdapter sa = new SelectionAdapter() {

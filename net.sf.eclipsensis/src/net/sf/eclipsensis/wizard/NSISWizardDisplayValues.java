@@ -14,7 +14,7 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
 public class NSISWizardDisplayValues implements INSISWizardConstants
 {
-    public static final String[] INSTALLER_TYPE_NAMES = new String[INSTALLER_TYPE_MUI+1];
+    public static final String[] INSTALLER_TYPE_NAMES = new String[INSTALLER_TYPE_MUI2+1];
     public static final String[] LICENSE_BUTTON_TYPE_NAMES = new String[LICENSE_BUTTON_RADIO+1];
     public static final String[] COMPRESSOR_TYPE_NAMES = new String[MakeNSISRunner.COMPRESSOR_DISPLAY_ARRAY.length-1];
     public static final String[] HKEY_NAMES = new String[HKPD+1];
@@ -29,6 +29,7 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
         INSTALLER_TYPE_NAMES[INSTALLER_TYPE_SILENT] = EclipseNSISPlugin.getResourceString("installer.type.silent"); //$NON-NLS-1$
         INSTALLER_TYPE_NAMES[INSTALLER_TYPE_CLASSIC] = EclipseNSISPlugin.getResourceString("installer.type.classic"); //$NON-NLS-1$
         INSTALLER_TYPE_NAMES[INSTALLER_TYPE_MUI] = EclipseNSISPlugin.getResourceString("installer.type.mui"); //$NON-NLS-1$
+        INSTALLER_TYPE_NAMES[INSTALLER_TYPE_MUI2] = EclipseNSISPlugin.getResourceString("installer.type.mui2"); //$NON-NLS-1$
 
         LICENSE_BUTTON_TYPE_NAMES[LICENSE_BUTTON_CLASSIC] = EclipseNSISPlugin.getResourceString("license.button.classic"); //$NON-NLS-1$
         LICENSE_BUTTON_TYPE_NAMES[LICENSE_BUTTON_CHECKED] = EclipseNSISPlugin.getResourceString("license.button.checked"); //$NON-NLS-1$

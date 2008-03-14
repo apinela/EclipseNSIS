@@ -10,7 +10,6 @@
 package net.sf.eclipsensis;
 
 import java.io.*;
-import java.lang.reflect.Constructor;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
@@ -217,11 +216,12 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                         for (int i = 0; i < services.length; i++) {
                             NestedProgressMonitor subMonitor = new NestedProgressMonitor(monitor,taskName,1);
                             try {
-                                Class clasz = Class.forName(services[i]);
-                                Constructor constructor = clasz.getConstructor(null);
-                                IEclipseNSISService service = (IEclipseNSISService)constructor.newInstance(null);
-                                service.start(subMonitor);
-                                mServices.push(service);
+                                Object obj = Common.createDefaultObject(services[i]);
+                                if(obj instanceof IEclipseNSISService) {
+                                    IEclipseNSISService service = (IEclipseNSISService)obj;
+                                    service.start(subMonitor);
+                                    mServices.push(service);
+                                }
                             }
                             catch (Exception e) {
                                 log(e);

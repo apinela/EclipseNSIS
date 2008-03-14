@@ -13,7 +13,7 @@ import java.text.MessageFormat;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.*;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISSectionGroupDialog;
 
@@ -164,16 +164,7 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
     protected Object getNodeValue(Node node, String name, Class clasz)
     {
         if(name.equals("description")) { //$NON-NLS-1$
-            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-            NodeList nodeList = node.getChildNodes();
-            int n = nodeList.getLength();
-            for(int i=0; i < n; i++) {
-                Node child = nodeList.item(i);
-                if(child instanceof Text) {
-                    buf.append(((Text)child).getNodeValue());
-                }
-            }
-            return buf.toString();
+            return XMLUtil.readTextNode(node);
         }
         else {
             return super.getNodeValue(node, name, clasz);

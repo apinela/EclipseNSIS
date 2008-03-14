@@ -99,7 +99,8 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
                 }
             }
         });
-        if (mWizard.getSettings().getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_MUI) {
+        if(mWizard.getSettings().getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_MUI ||
+           mWizard.getSettings().getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_MUI2) {
             Label l = NSISWizardDialogUtil.createLabel(composite, "wizard.description.label", true, null, false); //$NON-NLS-1$
             ((GridData)l.getLayoutData()).horizontalSpan = 2;
             final Text t2 = NSISWizardDialogUtil.createText(composite, mStore.getString("description"), SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL, 1, true, null); //$NON-NLS-1$

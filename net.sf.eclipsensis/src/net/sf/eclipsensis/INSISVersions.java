@@ -20,4 +20,5 @@ public interface INSISVersions
     public static final Version VERSION_2_22 = new Version("2.22"); //$NON-NLS-1$
     public static final Version VERSION_2_24 = new Version("2.24"); //$NON-NLS-1$
     public static final Version VERSION_2_26 = new Version("2.26"); //$NON-NLS-1$
+    public static final Version VERSION_2_34 = new Version("2.34"); //$NON-NLS-1$
 }

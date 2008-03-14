@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.*;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -343,86 +344,124 @@ public class NSISCommandDialog extends StatusMessageDialog
         toolbar.setLayoutData(gridData);
         toolbar.setCursor(toolbar.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
 
-        Composite c = new Composite(child,SWT.None);
+        final Composite container = new Composite(child,SWT.NONE);
         GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
         data.horizontalSpan = 2;
-        c.setLayoutData(data);
+        container.setLayoutData(data);
         layout = new GridLayout(1,false);
         layout.marginHeight = layout.marginWidth = 0;
-        c.setLayout(layout);
-        mParamEditorControl = mParamEditor.createControl(c);
+        container.setLayout(layout);
+        mParamEditorControl = mParamEditor.createControl(container);
+        final Group editorGroup;
         if(mParamEditorControl != null) {
-            Group g;
             if(mParamEditorControl instanceof Group) {
-                g = (Group)mParamEditorControl;
-                if(!Common.isEmpty(g.getText())) {
-                    g = wrapParamEditorControl(c);
+                if(!Common.isEmpty(((Group)mParamEditorControl).getText())) {
+                    editorGroup = wrapParamEditorControl(container);
                 }
                 else {
+                    editorGroup = (Group)mParamEditorControl;
                     mParamEditorControl.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-                    ((GridLayout)g.getLayout()).marginTop = 5;
+                    ((GridLayout)editorGroup.getLayout()).marginTop = 5;
                 }
             }
             else {
-                g = wrapParamEditorControl(c);
+                editorGroup = wrapParamEditorControl(container);
             }
 
-            g.setText(EclipseNSISPlugin.getResourceString("nsis.command.parameters.label")); //$NON-NLS-1$
+            editorGroup.setText(EclipseNSISPlugin.getResourceString("nsis.command.parameters.label")); //$NON-NLS-1$
 
             if(mParamEditor.hasRequiredFields()) {
-                c = new Composite(g,SWT.NONE);
+                Composite reqFields = new Composite(editorGroup,SWT.NONE);
                 data = new GridData(SWT.FILL,SWT.FILL,true,false);
-                data.horizontalSpan = ((GridLayout)g.getLayout()).numColumns;
-                c.setLayoutData(data);
+                data.horizontalSpan = ((GridLayout)editorGroup.getLayout()).numColumns;
+                reqFields.setLayoutData(data);
                 layout = new GridLayout(1,false);
                 layout.marginHeight = layout.marginWidth = 0;
-                c.setLayout(layout);
-                NSISWizardDialogUtil.createRequiredFieldsLabel(c);
+                reqFields.setLayout(layout);
+                NSISWizardDialogUtil.createRequiredFieldsLabel(reqFields);
             }
+
+            container.addPaintListener(new PaintListener() {
+                public void paintControl(PaintEvent e)
+                {
+                    Point size = container.getSize();
+                    if(editorGroup.isVisible()) {
+                        e.gc.fillRectangle(0,0,size.x,size.y);
+                    }
+                    else {
+                        Color fg = e.gc.getForeground();
+                        e.gc.setForeground(e.display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+                        String text = EclipseNSISPlugin.getResourceString("revert.message"); //$NON-NLS-1$
+                        Point stringSize = e.gc.stringExtent(text);
+                        e.gc.drawText(text,(size.x-stringSize.x)/2,(size.y-stringSize.y)/2);
+                        e.gc.setForeground(fg);
+                    }
+                }
+
+            });
+        }
+        else {
+            editorGroup = null;
         }
 
-        c = new Composite(child,SWT.NONE);
+        Composite buttonPanel = new Composite(child,SWT.NONE);
         data = new GridData(SWT.FILL,SWT.FILL,true,false);
         data.horizontalSpan = 2;
-        c.setLayoutData(data);
+        buttonPanel.setLayoutData(data);
         layout = new GridLayout(3,false);
         layout.marginHeight = layout.marginWidth = 0;
-        c.setLayout(layout);
-        final Button button = new Button(c,SWT.CHECK);
-        button.setText(EclipseNSISPlugin.getResourceString("nsis.command.wizard.remember.label")); //$NON-NLS-1$
-        button.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        button.setSelection(mRemember);
+        buttonPanel.setLayout(layout);
+        final Button rememberButton = new Button(buttonPanel,SWT.CHECK);
+        rememberButton.setText(EclipseNSISPlugin.getResourceString("nsis.command.wizard.remember.label")); //$NON-NLS-1$
+        rememberButton.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        rememberButton.setSelection(mRemember);
 
-        final Button button2 = new Button(c,SWT.PUSH);
-        button2.setText(EclipseNSISPlugin.getResourceString("revert.label")); //$NON-NLS-1$
-        button2.addSelectionListener(new SelectionAdapter() {
+        final Button revertButton = new Button(buttonPanel,SWT.PUSH);
+        revertButton.setText(EclipseNSISPlugin.getResourceString("revert.label")); //$NON-NLS-1$
+        revertButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                mParamEditor.reset();
-                mParamEditor.initEditor();
+                BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+                    public void run()
+                    {
+                        if(editorGroup != null) {
+                            editorGroup.setVisible(false);
+                        }
+                        mParamEditor.reset();
+                        mParamEditor.initEditor();
+                        if(editorGroup != null) {
+                            editorGroup.setVisible(true);
+                        }
+                    }
+                });
             }
         });
-        setButtonLayoutData(button2);
-        button2.setEnabled(mRemember && !Common.isEmptyMap(mSettings));
+        setButtonLayoutData(revertButton);
+        revertButton.setEnabled(mRemember && !Common.isEmptyMap(mSettings));
 
-        button.addSelectionListener(new SelectionAdapter() {
+        rememberButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                mRemember = button.getSelection();
+                mRemember = rememberButton.getSelection();
                 setParamEditorState();
-                button2.setEnabled(mRemember && !Common.isEmptyMap(mSettings));
+                revertButton.setEnabled(mRemember && !Common.isEmptyMap(mSettings));
             }
         });
 
-        Button button3 = new Button(c,SWT.PUSH);
-        button3.setText(EclipseNSISPlugin.getResourceString("clear.label")); //$NON-NLS-1$
-        button3.addSelectionListener(new SelectionAdapter() {
+        Button clearButton = new Button(buttonPanel,SWT.PUSH);
+        clearButton.setText(EclipseNSISPlugin.getResourceString("clear.label")); //$NON-NLS-1$
+        clearButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                mParamEditor.clear();
+                BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+                    public void run()
+                    {
+                        mParamEditor.clear();
+                    }
+                });
             }
         });
-        setButtonLayoutData(button3);
+        setButtonLayoutData(clearButton);
 
 
         if(NSISBrowserUtility.isBrowserAvailable(parent)) {

@@ -125,7 +125,8 @@ public abstract class AbstractTemplateSettings extends Composite
             public boolean select(Viewer viewer, Object parentElement, Object element)
             {
                 if(element instanceof AbstractTemplate) {
-                    return !((AbstractTemplate)element).isDeleted();
+                    AbstractTemplate template = (AbstractTemplate)element;
+                    return template.isAvailable() && !template.isDeleted();
                 }
                 return true;
             }

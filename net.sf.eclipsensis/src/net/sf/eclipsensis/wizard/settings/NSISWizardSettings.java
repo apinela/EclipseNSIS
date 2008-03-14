@@ -13,15 +13,15 @@ import java.beans.*;
 import java.io.Serializable;
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.lang.*;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
 
-import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.RGB;
 import org.w3c.dom.*;
 
@@ -100,7 +100,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private String mOutFile = EclipseNSISPlugin.getResourceString("wizard.default.installer",""); //$NON-NLS-1$ //$NON-NLS-2$
     private int mCompressorType = MakeNSISRunner.COMPRESSOR_DEFAULT;
     private boolean mSolidCompression = false;
-    private int mInstallerType = INSTALLER_TYPE_MUI;
+    private int mInstallerType;
     private String mIcon = ""; //$NON-NLS-1$
     private boolean mShowSplash = false;
     private String mSplashBMP = ""; //$NON-NLS-1$
@@ -150,6 +150,8 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private boolean mCompileScript = true;
     private boolean mTestScript = false;
 
+    private Version mMinimumNSISVersion = null;
+
     private INSISInstallElement mInstaller;
 
     private transient NSISWizard mWizard = null;
@@ -162,6 +164,9 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public NSISWizardSettings(boolean empty)
     {
         super();
+        setInstallerType(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_34) >= 0 ?
+                            INSTALLER_TYPE_MUI2 :
+                            INSTALLER_TYPE_MUI);
         if(!empty) {
             mInstaller = new NSISInstaller();
             mInstaller.setSettings(this);
@@ -174,6 +179,12 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         else {
             mInstaller = null;
         }
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("wizard"); //$NON-NLS-1$
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener)
@@ -542,6 +553,13 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         int oldValue = mInstallerType;
         mInstallerType = installerType;
+        switch(mInstallerType) {
+            case INSTALLER_TYPE_MUI2:
+                setMinimumNSISVersion(INSISVersions.VERSION_2_34);
+                break;
+            default:
+                setMinimumNSISVersion(null);
+        }
         firePropertyChanged(INSTALLER_TYPE, oldValue, installerType);
     }
 
@@ -1194,27 +1212,36 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 
     protected Object getNodeValue(Node node, String name, Class clasz)
     {
+        Object obj = super.getNodeValue(node, name, clasz);
         if(name.equals("installer")) { //$NON-NLS-1$
-            NodeList nodeList = node.getChildNodes();
-            int n = nodeList.getLength();
-            for(int i=0; i<n; i++) {
-                Node childNode = nodeList.item(i);
-                if(childNode.getNodeName().equals(INSISInstallElement.NODE)) {
-                    NSISInstaller installer = (NSISInstaller)NSISInstallElementFactory.createFromNode(childNode,NSISInstaller.TYPE);
-                    if(installer != null) {
-                        installer.setSettings(this);
+            NSISInstaller installer = (NSISInstaller)obj;
+            if(installer != null) {
+                installer.setSettings(this);
+            }
+        }
+        else if(name.equals("languages")) { //$NON-NLS-1$
+            if(obj instanceof Collection && ((Collection)obj).isEmpty()) {
+                NamedNodeMap attr = node.getAttributes();
+                if(attr != null) {
+                    String langs = XMLUtil.getStringValue(attr, VALUE_ATTRIBUTE);
+                    if(!Common.isEmpty(langs)) {
+                        String[] langNames = Common.tokenize(langs, ',');
+                        ArrayList languages = new ArrayList();
+                        for (int i = 0; i < langNames.length; i++) {
+                            NSISLanguage language = NSISLanguageManager.getInstance().getLanguage(langNames[i]);
+                            if (language != null) {
+                                languages.add(language);
+                            }
+                        }
+                        obj = languages;
                     }
-                    return installer;
                 }
             }
-            return null;
         }
-        else {
-            return super.getNodeValue(node, name, clasz);
-        }
+        return obj;
     }
 
-    protected String getNodeName()
+    public String getNodeName()
     {
         return NODE;
     }
@@ -1224,48 +1251,27 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         return CHILD_NODE;
     }
 
-    protected String convertToString(String name, Object obj)
-    {
-        if(obj instanceof RGB) {
-            return StringConverter.asString((RGB)obj);
-        }
-        else if(obj instanceof NSISLanguage) {
-            return ((NSISLanguage)obj).getName();
-        }
-        else if(obj instanceof Collection && name.equals("languages")) { //$NON-NLS-1$
-            StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-            if(!Common.isEmptyCollection((Collection)obj)) {
-                Iterator iter = ((Collection)obj).iterator();
-                buf.append(convertToString(name, iter.next()));
-                while(iter.hasNext()) {
-                    buf.append(",").append(convertToString(name, iter.next())); //$NON-NLS-1$
-                }
-            }
-            return buf.toString();
-        }
-        return super.convertToString(name, obj);
-    }
-    protected Object convertFromString(String name, String string, Class clasz)
-    {
-        if(clasz.equals(RGB.class)) {
-            return StringConverter.asRGB(string);
-        }
-        else if(name.equals("languages")) { //$NON-NLS-1$
-            String[] langNames = Common.tokenize(string,',');
-            ArrayList languages = new ArrayList();
-            for (int i = 0; i < langNames.length; i++) {
-                NSISLanguage language = NSISLanguageManager.getInstance().getLanguage(langNames[i]);
-                if(language != null) {
-                    languages.add(language);
-                }
-            }
-            return languages;
-        }
-        else {
-            return super.convertFromString(name, string, clasz);
-        }
-    }
-
+//    protected Object convertFromString(String name, String string, Class clasz)
+//    {
+//        if(clasz.equals(RGB.class)) {
+//            return StringConverter.asRGB(string);
+//        }
+//        else if(name.equals("languages")) {
+//            String[] langNames = Common.tokenize(string,',');
+//            ArrayList languages = new ArrayList();
+//            for (int i = 0; i < langNames.length; i++) {
+//                NSISLanguage language = NSISLanguageManager.getInstance().getLanguage(langNames[i]);
+//                if(language != null) {
+//                    languages.add(language);
+//                }
+//            }
+//            return languages;
+//        }
+//        else {
+//            return super.convertFromString(name, string, clasz);
+//        }
+//    }
+//
     public Object clone() throws CloneNotSupportedException
     {
         NSISWizardSettings settings = (NSISWizardSettings)super.clone();
@@ -1528,5 +1534,15 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
             return false;
         }
         return true;
+    }
+
+    public Version getMinimumNSISVersion()
+    {
+        return mMinimumNSISVersion;
+    }
+
+    public void setMinimumNSISVersion(Version minimumNSISVersion)
+    {
+        mMinimumNSISVersion = minimumNSISVersion;
     }
 }

@@ -18,6 +18,7 @@ import net.sf.eclipsensis.viewer.*;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -45,12 +46,10 @@ public class SubCommandParam extends NSISParam
     private void loadSubCommands(Node node)
     {
         mSubCommands = new LinkedHashMap();
-        NodeList childNodes = node.getChildNodes();
-        int count = childNodes.getLength();
-        for(int i=0; i<count; i++) {
-            Node child = childNodes.item(i);
-            if(child.getNodeName().equals(TAG_SUBCOMMAND)) {
-                NamedNodeMap attr = child.getAttributes();
+        Node[] children = XMLUtil.findChildren(node, TAG_SUBCOMMAND);
+        if(!Common.isEmptyArray(children)) {
+            for (int i = 0; i < children.length; i++) {
+                NamedNodeMap attr = children[i].getAttributes();
                 String command = XMLUtil.getStringValue(attr, ATTR_COMMAND);
                 if(!Common.isEmpty(command)) {
                     String name = XMLUtil.getStringValue(attr, ATTR_NAME);
@@ -87,6 +86,7 @@ public class SubCommandParam extends NSISParam
         {
             super.reset();
             if(mCommandEditor != null) {
+                mCommandEditor.reset();
                 mCommandEditor.dispose();
                 mCommandEditor = null;
             }
@@ -200,29 +200,34 @@ public class SubCommandParam extends NSISParam
                 mComboViewer.setLabelProvider(new MapLabelProvider());
 
                 mComboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-                    public void selectionChanged(SelectionChangedEvent event)
+                    public void selectionChanged(final SelectionChangedEvent event)
                     {
-                        boolean changed = false;
-                        if (mCommandEditor != null && Common.isValid(mCommandEditor.getControl())) {
-                            mCommandEditor.dispose();
-                            mCommandEditor = null;
-                            changed = true;
-                        }
-                        IStructuredSelection sel = (IStructuredSelection)event.getSelection();
-                        if(!sel.isEmpty()) {
-                            String commandName = (String)((Map.Entry)sel.getFirstElement()).getKey();
-                            NSISCommand cmd = NSISCommandManager.getCommand(commandName);
-                            if (cmd != null) {
-                                createCommandEditor(container, cmd);
-                                changed = true;
+                        BusyIndicator.showWhile(Display.getCurrent(),new Runnable() {
+                            public void run()
+                            {
+                                boolean changed = false;
+                                if (mCommandEditor != null && Common.isValid(mCommandEditor.getControl())) {
+                                    mCommandEditor.dispose();
+                                    mCommandEditor = null;
+                                    changed = true;
+                                }
+                                IStructuredSelection sel = (IStructuredSelection)event.getSelection();
+                                if(!sel.isEmpty()) {
+                                    String commandName = (String)((Map.Entry)sel.getFirstElement()).getKey();
+                                    NSISCommand cmd = NSISCommandManager.getCommand(commandName);
+                                    if (cmd != null) {
+                                        createCommandEditor(container, cmd);
+                                        changed = true;
+                                    }
+                                }
+                                if (changed) {
+                                    container.layout(true);
+                                    Shell shell = container.getShell();
+                                    Point size = shell.getSize();
+                                    shell.setSize(size.x, shell.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+                                }
                             }
-                        }
-                        if (changed) {
-                            container.layout(true);
-                            Shell shell = container.getShell();
-                            Point size = shell.getSize();
-                            shell.setSize(size.x, shell.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-                        }
+                        });
                     }
                 });
 

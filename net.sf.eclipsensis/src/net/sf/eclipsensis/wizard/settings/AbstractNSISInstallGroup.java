@@ -15,7 +15,6 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.widgets.Display;
-import org.w3c.dom.*;
 
 public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElement
 {
@@ -277,60 +276,6 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
                     }
                 }
             }
-        }
-    }
-
-    protected Node createChildNode(Document document, String name, Object value)
-    {
-        if(name.equals("children")) { //$NON-NLS-1$
-            final Node[] children;
-            if(!Common.isEmptyArray(value)) {
-                INSISInstallElement[] elements = (INSISInstallElement[])value;
-                children = new Node[elements.length];
-                for (int i=0; i<elements.length; i++) {
-                    children[i] = elements[i].toNode(document);
-                }
-            }
-            else {
-                children = new Node[0];
-            }
-            value = new NodeList() {
-                public int getLength()
-                {
-                    return children.length;
-                }
-
-                public Node item(int index)
-                {
-                    return children[index];
-                }
-            };
-        }
-        return super.createChildNode(document, name, value);
-    }
-
-    protected Object getNodeValue(Node node, String name, Class clasz)
-    {
-        if(name.equals("children")) { //$NON-NLS-1$
-            NodeList children = node.getChildNodes();
-            ArrayList elements = new ArrayList();
-            if(children != null) {
-                int n = children.getLength();
-                for(int i=0; i<n; i++) {
-                    Node child = children.item(i);
-                    if(child.getNodeName().equals(getNodeName())) {
-                        INSISInstallElement installElement = NSISInstallElementFactory.createFromNode(child);
-                        if(installElement != null) {
-                            addChild(installElement);
-                            elements.add(installElement);
-                        }
-                    }
-                }
-            }
-            return elements.toArray(new INSISInstallElement[elements.size()]);
-        }
-        else {
-            return super.getNodeValue(node, name, clasz);
         }
     }
 

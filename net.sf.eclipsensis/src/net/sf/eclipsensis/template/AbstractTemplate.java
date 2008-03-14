@@ -10,10 +10,21 @@
 package net.sf.eclipsensis.template;
 
 import java.io.Serializable;
+import java.util.Collection;
 
-public abstract class AbstractTemplate implements Serializable, Cloneable
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.*;
+
+import org.w3c.dom.*;
+
+public abstract class AbstractTemplate extends AbstractNodeConvertible implements Serializable, Cloneable
 {
     private static final long serialVersionUID = -6593538372175606301L;
+
+    public static final String TEMPLATE_ELEMENT = "template"; //$NON-NLS-1$
+    protected static final String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
+    protected static final String NAME_ATTRIBUTE= "name"; //$NON-NLS-1$
+    protected static final String DESCRIPTION_NODE= "description"; //$NON-NLS-1$
 
     public static final int TYPE_DEFAULT = 0;
     public static final int TYPE_CUSTOM = 1;
@@ -28,6 +39,7 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
 
     protected AbstractTemplate()
     {
+        this(null, null);
     }
 
     /**
@@ -44,11 +56,72 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
      */
     public AbstractTemplate(String id, String name, String description)
     {
-        this();
         mId = id;
         mName = name;
         mDescription = (description==null?"":description); //$NON-NLS-1$
         mType = TYPE_USER;
+    }
+
+    public void fromNode(Node node)
+    {
+        super.fromNode(node);
+        NamedNodeMap attributes= node.getAttributes();
+
+        if (attributes != null) {
+            String id= XMLUtil.getStringValue(attributes, ID_ATTRIBUTE);
+            setId(id);
+
+            String name= XMLUtil.getStringValue(attributes, NAME_ATTRIBUTE);
+            if (name == null) {
+                throw new InvalidTemplateException(EclipseNSISPlugin.getFormattedString("template.error.missing.attribute", //$NON-NLS-1$
+                        new Object[]{NAME_ATTRIBUTE}));
+            }
+            setName(name);
+        }
+        Node[] descriptionNode = XMLUtil.findChildren(node,DESCRIPTION_NODE);
+        if(!Common.isEmptyArray(descriptionNode)) {
+            setDescription(XMLUtil.readTextNode(descriptionNode[0]));
+        }
+
+        setDeleted(false);
+        setEnabled(true);
+    }
+
+    protected String getChildNodeName()
+    {
+        return "attribute"; //$NON-NLS-1$
+    }
+
+    public Node toNode(Document document)
+    {
+        Node node = super.toNode(document);
+        if (!Common.isEmpty(getId())) {
+            XMLUtil.addAttribute(document, node, ID_ATTRIBUTE, getId());
+        }
+        XMLUtil.addAttribute(document, node, NAME_ATTRIBUTE, getName());
+        Element description = document.createElement(DESCRIPTION_NODE);
+        Text data= document.createTextNode(getDescription());
+        description.appendChild(data);
+        node.appendChild(description);
+        return node;
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("id"); //$NON-NLS-1$
+        skippedProperties.add("name"); //$NON-NLS-1$
+        skippedProperties.add("type"); //$NON-NLS-1$
+        skippedProperties.add("available"); //$NON-NLS-1$
+        skippedProperties.add("enabled"); //$NON-NLS-1$
+        skippedProperties.add("deleted"); //$NON-NLS-1$
+        skippedProperties.add("description"); //$NON-NLS-1$
+        skippedProperties.add("settings"); //$NON-NLS-1$
+    }
+
+    public final String getNodeName()
+    {
+        return TEMPLATE_ELEMENT;
     }
 
     /**
@@ -107,6 +180,11 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
         return getName();
     }
 
+    public boolean isAvailable()
+    {
+        return true;
+    }
+
     /**
      * @return Returns the deleted.
      */
@@ -147,7 +225,7 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
         mType = type;
     }
 
-    protected Object clone()
+    public Object clone()
     {
         try {
             return super.clone();
@@ -155,13 +233,5 @@ public abstract class AbstractTemplate implements Serializable, Cloneable
         catch (CloneNotSupportedException e) {
             return null;
         }
-    }
-
-    protected void beforeExport()
-    {
-    }
-
-    protected void afterImport() throws InvalidTemplateException
-    {
     }
 }

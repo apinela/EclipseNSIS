@@ -9,19 +9,21 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
+import java.util.*;
+
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
 
 public class NSISTemplateWizard extends NSISWizard
 {
-    public NSISTemplateWizard(NSISWizardTemplate template)
+    private List mTemplateListeners = new ArrayList();
+
+    public NSISTemplateWizard()
     {
         super();
-        setTemplate(template);
         setNeedsProgressMonitor(false);
-        setWindowTitle(EclipseNSISPlugin.getResourceString((Common.isEmpty(mTemplate.getName())?"wizard.new.template.editor.title": //$NON-NLS-1$
-                                                            "wizard.edit.template.editor.title"))); //$NON-NLS-1$
+        setTemplate(null);
     }
 
     public String getHelpContextId()
@@ -41,6 +43,30 @@ public class NSISTemplateWizard extends NSISWizard
         else {
             super.initSettings();
         }
+    }
+
+    public void addTemplateListener(INSISWizardTemplateListener listener)
+    {
+        mTemplateListeners.add(listener);
+    }
+
+    public void removeTemplateListener(INSISWizardTemplateListener listener)
+    {
+        mTemplateListeners.remove(listener);
+    }
+
+    public void setTemplate(NSISWizardTemplate template)
+    {
+        NSISWizardTemplate oldTemplate = getTemplate();
+        super.setTemplate(template);
+        setWindowTitle(EclipseNSISPlugin.getResourceString((Common.isEmpty(mTemplate!=null?mTemplate.getName():"")? //$NON-NLS-1$
+                "wizard.new.template.editor.title": //$NON-NLS-1$
+                "wizard.edit.template.editor.title"))); //$NON-NLS-1$
+        INSISWizardTemplateListener[] listeners = (INSISWizardTemplateListener[])mTemplateListeners.toArray(new INSISWizardTemplateListener[mTemplateListeners.size()]);
+        for (int i = 0; i < listeners.length; i++) {
+            listeners[i].templateChanged(oldTemplate, mTemplate);
+        }
+        initSettings();
     }
 
     /* (non-Javadoc)

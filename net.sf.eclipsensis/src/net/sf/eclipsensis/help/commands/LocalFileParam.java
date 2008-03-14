@@ -46,12 +46,10 @@ public class LocalFileParam extends LocalFilesystemObjectParam
     {
         List filterNames = new ArrayList();
         List filters = new ArrayList();
-        NodeList childNodes = node.getChildNodes();
-        int count = childNodes.getLength();
-        for(int i=0; i<count; i++) {
-            Node child = childNodes.item(i);
-            if(child.getNodeName().equals(ATTR_FILTER)) {
-                NamedNodeMap attr = child.getAttributes();
+        Node[] children = XMLUtil.findChildren(node, ATTR_FILTER);
+        if(!Common.isEmptyArray(children)) {
+            for (int i = 0; i < children.length; i++) {
+                NamedNodeMap attr = children[i].getAttributes();
                 String name = null;
                 String value = XMLUtil.getStringValue(attr, ATTR_VALUE);
                 if(!Common.isEmpty(value)) {

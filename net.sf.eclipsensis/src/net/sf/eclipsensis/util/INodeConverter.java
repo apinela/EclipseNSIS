@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004-2008 Sunil Kamath (IcemanK).
+ * Copyright (c) 2004-2007 Sunil Kamath (IcemanK).
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
@@ -11,9 +11,9 @@ package net.sf.eclipsensis.util;
 
 import org.w3c.dom.*;
 
-public interface INodeConvertible
+public interface INodeConverter
 {
-    public Node toNode(Document document);
-    public void fromNode(Node node);
-    public String getNodeName();
+    public Class[] getSupportedClasses();
+    public Node toNode(Document document, Object object);
+    public Object fromNode(Node node, Class clasz);
 }

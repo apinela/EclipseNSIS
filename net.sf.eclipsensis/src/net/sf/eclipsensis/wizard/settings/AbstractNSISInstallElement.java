@@ -98,7 +98,7 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
         return CHILD_NODE;
     }
 
-    protected String getNodeName()
+    public final String getNodeName()
     {
         return NODE;
     }

@@ -334,11 +334,21 @@ public class Common
 
     public static String flatten(Object[] array, char separator)
     {
+        return flatten((Object)array, separator);
+    }
+
+    public static String flatten(Object array, char separator)
+    {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-        if(!Common.isEmptyArray(array)) {
-            buf.append(array[0]);
-            for (int i = 1; i < array.length; i++) {
-                buf.append(separator).append((array[i]==null?"":array[i])); //$NON-NLS-1$
+        if(array != null && array.getClass().isArray()) {
+            int length = Array.getLength(array);
+            if(length > 0) {
+                Object obj = Array.get(array, 0);
+                buf.append(obj==null?"":obj); //$NON-NLS-1$
+                for (int i = 1; i < length; i++) {
+                    obj = Array.get(array, i);
+                    buf.append(separator).append(obj==null?"":obj); //$NON-NLS-1$
+                }
             }
         }
         return buf.toString();
@@ -997,6 +1007,46 @@ public class Common
         }
         else {
             return object.toString();
+        }
+    }
+
+    public static boolean isWrappedPrimitive(Object obj)
+    {
+        if(obj != null) {
+            Class clasz = obj.getClass();
+            return (Byte.class.equals(clasz) ||
+                Short.class.equals(clasz) ||
+                Integer.class.equals(clasz) ||
+                Long.class.equals(clasz) ||
+                Character.class.equals(clasz) ||
+                Float.class.equals(clasz) ||
+                Double.class.equals(clasz) ||
+                Boolean.class.equals(clasz));
+        }
+        return false;
+    }
+
+    public static Object createDefaultObject(String className)
+    {
+        try {
+            Class clasz = Class.forName(className);
+            return createDefaultObject(clasz);
+        }
+        catch (Exception e) {
+            EclipseNSISPlugin.getDefault().log(e);
+            return null;
+        }
+    }
+
+    public static Object createDefaultObject(Class clasz)
+    {
+        try {
+            Constructor constructor = clasz.getConstructor(null);
+            return constructor.newInstance(null);
+        }
+        catch (Exception e) {
+            EclipseNSISPlugin.getDefault().log(e);
+            return null;
         }
     }
 }

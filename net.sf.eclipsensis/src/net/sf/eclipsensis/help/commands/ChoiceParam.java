@@ -12,7 +12,7 @@ package net.sf.eclipsensis.help.commands;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.util.*;
 
 import org.w3c.dom.*;
 
@@ -36,12 +36,10 @@ public class ChoiceParam extends ComboParam
     private void loadChoices(Node node)
     {
         List list = new ArrayList();
-        NodeList childNodes = node.getChildNodes();
-        int count = childNodes.getLength();
-        for(int i=0; i<count; i++) {
-            Node child = childNodes.item(i);
-            if(child.getNodeName().equals(TAG_CHOICE)) {
-                NamedNodeMap attr = child.getAttributes();
+        Node[] children = XMLUtil.findChildren(node, TAG_CHOICE);
+        if(!Common.isEmptyArray(children)) {
+            for (int i = 0; i < children.length; i++) {
+                NamedNodeMap attr = children[i].getAttributes();
                 String value = XMLUtil.getStringValue(attr, ATTR_VALUE);
                 String display = XMLUtil.getStringValue(attr, ATTR_DISPLAY);
                 list.add(new ComboEntry(value, EclipseNSISPlugin.getResourceString(display==null?value:display)));

@@ -14,9 +14,12 @@ import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.lang.*;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.template.*;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.*;
+
+import org.w3c.dom.*;
 
 public class NSISWizardTemplate extends AbstractTemplate
 {
@@ -26,6 +29,7 @@ public class NSISWizardTemplate extends AbstractTemplate
 
     NSISWizardTemplate()
     {
+        this(null);
     }
 
     /**
@@ -66,16 +70,46 @@ public class NSISWizardTemplate extends AbstractTemplate
         return template;
     }
 
+    public boolean isAvailable()
+    {
+        return (mSettings != null && (mSettings.getMinimumNSISVersion() == null ||
+                NSISPreferences.INSTANCE.getNSISVersion().compareTo(mSettings.getMinimumNSISVersion()) >= 0));
+    }
+
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
     {
         in.defaultReadObject();
-        afterImport();
+        validate();
     }
 
-    /**
-     *
-     */
-    protected void afterImport() throws InvalidTemplateException
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("settings"); //$NON-NLS-1$
+    }
+
+    public Node toNode(Document document)
+    {
+        Node node = super.toNode(document);
+        if(mSettings != null) {
+            node.appendChild(mSettings.toNode(document));
+        }
+        return node;
+    }
+
+    public void fromNode(Node node)
+    {
+        super.fromNode(node);
+        Node[] settingsNode = XMLUtil.findChildren(node,NSISWizardSettings.NODE);
+        if(!Common.isEmptyArray(settingsNode)) {
+            NSISWizardSettings settings = new NSISWizardSettings(true);
+            settings.fromNode(settingsNode[0]);
+            mSettings = settings;
+        }
+        validate();
+    }
+
+    private void validate()
     {
         if(mSettings != null) {
             ArrayList languages = mSettings.getLanguages();

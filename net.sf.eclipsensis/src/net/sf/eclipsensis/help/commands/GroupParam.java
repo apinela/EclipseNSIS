@@ -17,7 +17,7 @@ import net.sf.eclipsensis.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.w3c.dom.*;
+import org.w3c.dom.Node;
 
 public class GroupParam extends NSISParam
 {
@@ -61,34 +61,30 @@ public class GroupParam extends NSISParam
     {
         mDependencies = new HashMap();
         List params = new ArrayList();
-        NodeList paramNodes = node.getChildNodes();
-        if(paramNodes.getLength() > 0) {
-            int count = paramNodes.getLength();
-            for(int k=0; k<count; k++) {
-                Node paramNode = paramNodes.item(k);
-                if(paramNode.getNodeName().equals(TAG_PARAM)) {
-                    NSISParam param = NSISCommandManager.createParam(paramNode);
-                    if(param != null) {
-                        params.add(param);
-                    }
-                    int depends = XMLUtil.getIntValue(paramNode.getAttributes(), ATTR_DEPENDS,-1);
-                    int index = params.size()-1;
-                    if(depends >= 0 && depends != index) {
-                        if(depends < params.size()) {
-                            NSISParam dependsParam = (NSISParam)params.get(depends);
-                            if(dependsParam.isOptional()) {
-                                addDependent(dependsParam, param);
-                            }
-                        }
-                        else {
-                            addDependent(new Integer(depends), param);
+        Node[] children = XMLUtil.findChildren(node, TAG_PARAM);
+        if(!Common.isEmptyArray(children)) {
+            for (int i = 0; i < children.length; i++) {
+                NSISParam param = NSISCommandManager.createParam(children[i]);
+                if(param != null) {
+                    params.add(param);
+                }
+                int depends = XMLUtil.getIntValue(children[i].getAttributes(), ATTR_DEPENDS,-1);
+                int index = params.size()-1;
+                if(depends >= 0 && depends != index) {
+                    if(depends < params.size()) {
+                        NSISParam dependsParam = (NSISParam)params.get(depends);
+                        if(dependsParam.isOptional()) {
+                            addDependent(dependsParam, param);
                         }
                     }
-                    List dependents = (List)mDependencies.remove(new Integer(index));
-                    if(dependents != null) {
-                        if(param.isOptional()) {
-                            mDependencies.put(param, dependents);
-                        }
+                    else {
+                        addDependent(new Integer(depends), param);
+                    }
+                }
+                List dependents = (List)mDependencies.remove(new Integer(index));
+                if(dependents != null) {
+                    if(param.isOptional()) {
+                        mDependencies.put(param, dependents);
                     }
                 }
             }

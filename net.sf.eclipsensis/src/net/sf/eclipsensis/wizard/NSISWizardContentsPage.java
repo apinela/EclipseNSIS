@@ -119,8 +119,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         composite2.setLayoutData(gd);
 
         GridLayout layout2 = new GridLayout(2,false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
+        layout2.marginHeight = 0;
+        layout2.marginWidth = 0;
         composite2.setLayout(layout2);
 
         final Tree tree = new Tree(composite2,SWT.MULTI|SWT.BORDER);
@@ -210,8 +210,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
         composite3.setLayoutData(gd);
 
         layout2 = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
+        layout2.marginHeight = 0;
+        layout2.marginWidth = 0;
         composite3.setLayout(layout2);
 
         final Button upButton = new Button(composite3,SWT.PUSH);

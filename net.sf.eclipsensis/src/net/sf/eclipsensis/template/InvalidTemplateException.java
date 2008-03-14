@@ -19,4 +19,9 @@ public class InvalidTemplateException extends RuntimeException
     {
         super(EclipseNSISPlugin.getResourceString("invalid.template.error")); //$NON-NLS-1$
     }
+
+    public InvalidTemplateException(String message)
+    {
+        super(message);
+    }
 }

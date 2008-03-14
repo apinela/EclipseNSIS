@@ -12,7 +12,9 @@ package net.sf.eclipsensis.util;
 import java.io.Serializable;
 import java.util.*;
 
-public class Version implements Comparable, Serializable
+import org.w3c.dom.*;
+
+public class Version extends AbstractNodeConvertible implements Comparable, Serializable, Cloneable
 {
     private static final long serialVersionUID = -6848535742969237853L;
 
@@ -21,10 +23,21 @@ public class Version implements Comparable, Serializable
     public static final int MICRO = 2;
     public static final int BUILD = 3;
 
+    public static final String NODE = "version"; //$NON-NLS-1$
+    public static final String CHILD_NODE = "attribute"; //$NON-NLS-1$
+    private static final String NUMBERS_ATTRIBUTE = "numbers"; //$NON-NLS-1$
+    private static final String QUALIFIERS_ATTRIBUTE = "qualifiers"; //$NON-NLS-1$
+    private static final String DISPLAY_TEXT_ATTRIBUTE = "displayText"; //$NON-NLS-1$
+
     private int[] mNumbers = null;
     private String[] mQualifiers = null;
     private String mDisplayText = null;
     public static final Version EMPTY_VERSION = new Version("0.0"); //$NON-NLS-1$
+
+    public Version()
+    {
+        this(EMPTY_VERSION);
+    }
 
     public Version(String version)
     {
@@ -34,6 +47,11 @@ public class Version implements Comparable, Serializable
     public Version(String version, String separators)
     {
         mDisplayText = (Common.isEmpty(version)?"0.0":version); //$NON-NLS-1$
+        parse(separators);
+    }
+
+    private void parse(String separators)
+    {
         StringTokenizer st = new StringTokenizer(mDisplayText,separators);
         mNumbers = new int[st.countTokens()];
         mQualifiers = new String[mNumbers.length];
@@ -57,9 +75,29 @@ public class Version implements Comparable, Serializable
 
     public Version(Version version)
     {
+       this(version, null);
+    }
+
+    public Version(Version version, String displayText)
+    {
         mNumbers = (version.mNumbers == null?null:(int[])version.mNumbers.clone());
         mQualifiers = (version.mQualifiers == null?null:(String[])version.mQualifiers.clone());
-        mDisplayText = version.mDisplayText;
+        mDisplayText = (displayText==null?version.mDisplayText:displayText);
+    }
+
+    public Object clone()
+    {
+        return new Version(this);
+    }
+
+    protected String getChildNodeName()
+    {
+        return CHILD_NODE;
+    }
+
+    public String getNodeName()
+    {
+        return NODE;
     }
 
     /* (non-Javadoc)
@@ -175,8 +213,39 @@ public class Version implements Comparable, Serializable
         return (String[])mQualifiers.clone();
     }
 
-    public void setDisplayText(String displayText)
+    public void fromNode(Node node)
     {
-        mDisplayText = displayText;
+        if(node.getNodeName().equals(getNodeName())) {
+            NodeList childNodes = node.getChildNodes();
+            int n = childNodes.getLength();
+            for(int i=0; i<n; i++) {
+                Node childNode = childNodes.item(i);
+                String nodeName = childNode.getNodeName();
+                if(nodeName.equals(getChildNodeName())) {
+                    Node nameNode = childNode.getAttributes().getNamedItem(NAME_ATTRIBUTE);
+                    if (nameNode != null) {
+                        String propertyName = nameNode.getNodeValue();
+                        if(NUMBERS_ATTRIBUTE.equals(propertyName)) {
+                            mNumbers = (int[])readArrayNode(childNode, int[].class);
+                        }
+                        else if(QUALIFIERS_ATTRIBUTE.equals(propertyName)) {
+                            mQualifiers = (String[])readArrayNode(childNode, String[].class);
+                        }
+                        else if(DISPLAY_TEXT_ATTRIBUTE.equals(propertyName)) {
+                            mDisplayText = (String)getNodeValue(childNode, propertyName, String.class);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public Node toNode(Document document)
+    {
+        Node node = document.createElement(getNodeName());
+        node.appendChild(createChildNode(document, NUMBERS_ATTRIBUTE, mNumbers));
+        node.appendChild(createChildNode(document, QUALIFIERS_ATTRIBUTE, mQualifiers));
+        node.appendChild(createChildNode(document, DISPLAY_TEXT_ATTRIBUTE, mDisplayText));
+        return node;
     }
 }

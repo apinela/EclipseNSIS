@@ -17,11 +17,12 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.w3c.dom.*;
+import org.w3c.dom.Node;
 
 public class RepeatableParam extends NSISParam
 {
@@ -47,15 +48,9 @@ public class RepeatableParam extends NSISParam
 
     protected NSISParam loadChildParam(Node node)
     {
-        NodeList paramNodes = node.getChildNodes();
-        if(paramNodes.getLength() > 0) {
-            int count = paramNodes.getLength();
-            for(int k=0; k<count; k++) {
-                Node paramNode = paramNodes.item(k);
-                if(paramNode.getNodeName().equals(TAG_PARAM)) {
-                    return NSISCommandManager.createParam(paramNode);
-                }
-            }
+        Node child = XMLUtil.findFirstChild(node, TAG_PARAM);
+        if(child != null) {
+            return NSISCommandManager.createParam(child);
         }
         return null;
     }
@@ -79,8 +74,8 @@ public class RepeatableParam extends NSISParam
         public void clear()
         {
             int n = mChildParamEditors.size();
-            if(n > 1) {
-                for(int i=1; i<n; i++) {
+            if (n > 1) {
+                for (int i = 1; i < n; i++) {
                     disposeEditor((INSISParamEditor)mChildParamEditors.remove(1));
                 }
                 updateControl((Composite)getControl());
@@ -189,11 +184,14 @@ public class RepeatableParam extends NSISParam
         public void reset()
         {
             super.reset();
-            if(mChildParamEditors.size() > 0) {
+            if (mChildParamEditors.size() > 0) {
                 for (Iterator iter = mChildParamEditors.iterator(); iter.hasNext();) {
-                    disposeEditor((INSISParamEditor)iter.next());
+                    INSISParamEditor editor = (INSISParamEditor)iter.next();
+                    editor.reset();
+                    disposeEditor(editor);
                     iter.remove();
                 }
+                updateControl((Composite)getControl());
             }
         }
 
@@ -290,20 +288,28 @@ public class RepeatableParam extends NSISParam
                 delButton.addSelectionListener(new SelectionAdapter() {
                     public void widgetSelected(SelectionEvent e)
                     {
-                        mChildParamEditors.remove(editor);
-                        editor.dispose();
-                        control.dispose();
-                        updateControl(container);
+                        BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+                            public void run()
+                            {
+                                mChildParamEditors.remove(editor);
+                                editor.dispose();
+                                control.dispose();
+                                updateControl(container);
+                            }
+                        });
                     }
                 });
                 addButton.addSelectionListener(new SelectionAdapter() {
                     public void widgetSelected(SelectionEvent e)
                     {
-                        Control c = addEditor(container,
-                                              createChildParamEditor(mChildParamEditors.indexOf(editor)+1,
-                                                                    getSettings() != null?new HashMap():null));
-                        c.moveBelow(control);
-                        updateControl(container);
+                        BusyIndicator.showWhile(Display.getCurrent(),new Runnable() {
+                            public void run()
+                            {
+                                Control c = addEditor(container, createChildParamEditor(mChildParamEditors.indexOf(editor) + 1, getSettings() != null?new HashMap():null));
+                                c.moveBelow(control);
+                                updateControl(container);
+                            }
+                        });
                     }
                 });
                 c.setData(DATA_BUTTONS,new Button[] {delButton,addButton});

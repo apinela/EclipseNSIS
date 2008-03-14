@@ -15,8 +15,7 @@ import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.XMLUtil;
 
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -48,38 +47,8 @@ public abstract class AbstractTemplateReaderWriter
             int count= elements.getLength();
             for (int i= 0; i != count; i++) {
                 Node node= elements.item(i);
-                NamedNodeMap attributes= node.getAttributes();
-
-                if (attributes == null) {
-                    continue;
-                }
-
-                String id= XMLUtil.getStringValue(attributes, ID_ATTRIBUTE);
-
-                String name= XMLUtil.getStringValue(attributes, NAME_ATTRIBUTE);
-                if (name == null) {
-                    throw new IOException(EclipseNSISPlugin.getFormattedString("template.readerwriter.error.missing.attribute", new Object[]{NAME_ATTRIBUTE})); //$NON-NLS-1$
-                }
-
-                AbstractTemplate template;
-                template = createTemplate((Common.isEmpty(id)?null:id), name);
-
-                template.setDeleted(false);
-                template.setEnabled(true);
-
-                NodeList children = node.getChildNodes();
-                if(children != null) {
-                    for (int j= 0; j != children.getLength(); j++) {
-                        Node item = children.item(j);
-                        if(item.getNodeName().equals(DESCRIPTION_NODE)) {
-                            template.setDescription(XMLUtil.readTextNode(item));
-                        }
-                        else if(item.getNodeName().equals(getContentsNodeName())) {
-                            importContents(template, item);
-                        }
-                    }
-                }
-                template.afterImport();
+                AbstractTemplate template = createTemplate();
+                template.fromNode(node);
                 templates.add(template);
             }
 
@@ -116,21 +85,8 @@ public abstract class AbstractTemplateReaderWriter
 
             for (Iterator iter=templates.iterator(); iter.hasNext(); ) {
                 AbstractTemplate template= (AbstractTemplate)iter.next();
-                template.beforeExport();
-                Node node= document.createElement(TEMPLATE_ELEMENT);
+                Node node= template.toNode(document);
                 root.appendChild(node);
-
-                if (!Common.isEmpty(template.getId())) {
-                    XMLUtil.addAttribute(document, node, ID_ATTRIBUTE, template.getId());
-                }
-                XMLUtil.addAttribute(document, node, NAME_ATTRIBUTE, template.getName());
-
-                Element description = document.createElement(DESCRIPTION_NODE);
-                Text data= document.createTextNode(template.getDescription());
-                description.appendChild(data);
-                node.appendChild(description);
-
-                node.appendChild(exportContents(template, document));
             }
 
             XMLUtil.saveDocument(document, file);
@@ -150,9 +106,5 @@ public abstract class AbstractTemplateReaderWriter
             throw new IOException(e.getMessage());
         }
     }
-
-    protected abstract String getContentsNodeName();
-    protected abstract Node exportContents(AbstractTemplate template, Document doc);
-    protected abstract void importContents(AbstractTemplate template, Node item);
-    protected abstract AbstractTemplate createTemplate(String id, String name);
+    protected abstract AbstractTemplate createTemplate();
 }

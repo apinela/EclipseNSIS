@@ -55,12 +55,14 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
         composite.setLayout(layout);
         ((GridLayout)composite.getLayout()).numColumns=2;
 
-        Text t = NSISWizardDialogUtil.createText(composite,mTemplate.getName(),"template.dialog.name.label",true,null,true); //$NON-NLS-1$
+        final Text t = NSISWizardDialogUtil.createText(composite,mTemplate==null?"":mTemplate.getName(),"template.dialog.name.label",true,null,true); //$NON-NLS-1$ //$NON-NLS-2$
         t.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mTemplate.setName(((Text)e.widget).getText());
-                validatePage(VALIDATE_ALL);
+                if(mTemplate != null) {
+                    mTemplate.setName(((Text)e.widget).getText());
+                    validatePage(VALIDATE_ALL);
+                }
             }
         });
 
@@ -68,30 +70,53 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
         GridData data = (GridData)l.getLayoutData();
         data.horizontalSpan=2;
 
-        t = NSISWizardDialogUtil.createText(composite,mTemplate.getDescription(),SWT.BORDER|SWT.MULTI|SWT.WRAP,2,true,null);
-        Dialog.applyDialogFont(t);
-        data = (GridData)t.getLayoutData();
+        final Text t2 = NSISWizardDialogUtil.createText(composite,mTemplate==null?"":mTemplate.getDescription(),SWT.BORDER|SWT.MULTI|SWT.WRAP,2,true,null); //$NON-NLS-1$
+        Dialog.applyDialogFont(t2);
+        data = (GridData)t2.getLayoutData();
         data.horizontalAlignment=GridData.FILL;
         data.grabExcessHorizontalSpace=true;
-        data.heightHint = Common.calculateControlSize(t,0,10).y;
+        data.heightHint = Common.calculateControlSize(t2,0,10).y;
 
-        t.addModifyListener(new ModifyListener() {
+        t2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                mTemplate.setDescription(((Text)e.widget).getText());
+                if (mTemplate != null) {
+                    mTemplate.setDescription(((Text)e.widget).getText());
+                }
             }
         });
 
-        Button b = NSISWizardDialogUtil.createCheckBox(composite,"template.dialog.enabled.label",true,true,null,false); //$NON-NLS-1$
+        final Button b = NSISWizardDialogUtil.createCheckBox(composite,"template.dialog.enabled.label",mTemplate != null?mTemplate.isEnabled():false,true,null,false); //$NON-NLS-1$
         data = (GridData)b.getLayoutData();
         data.horizontalSpan=2;
         b.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                mTemplate.setEnabled(((Button)e.widget).getSelection());
+                if (mTemplate != null) {
+                    mTemplate.setEnabled(((Button)e.widget).getSelection());
+                }
             }
         });
 
+        if(mWizard instanceof NSISTemplateWizard) {
+            ((NSISTemplateWizard)mWizard).addTemplateListener(new INSISWizardTemplateListener() {
+                public void templateChanged(NSISWizardTemplate oldTemplate, NSISWizardTemplate newTemplate)
+                {
+                    mTemplate = newTemplate;
+                    if(mTemplate != null) {
+                        t.setText(mTemplate.getName());
+                        t2.setText(mTemplate.getDescription());
+                        b.setSelection(mTemplate.isEnabled());
+                    }
+                    else {
+                        t.setText(""); //$NON-NLS-1$
+                        t2.setText(""); //$NON-NLS-1$
+                        b.setSelection(false);
+                    }
+                    validatePage(VALIDATE_ALL);
+                }
+            });
+        }
         validatePage(VALIDATE_ALL);
 
         return composite;
@@ -99,7 +124,7 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
 
     public boolean validatePage(int flag)
     {
-        boolean b = !Common.isEmpty(mTemplate.getName());
+        boolean b = !Common.isEmpty(mTemplate != null?mTemplate.getName():""); //$NON-NLS-1$
         setPageComplete(b);
         if(b) {
             setErrorMessage(null);
@@ -109,5 +134,4 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
         }
         return b;
     }
-
 }
