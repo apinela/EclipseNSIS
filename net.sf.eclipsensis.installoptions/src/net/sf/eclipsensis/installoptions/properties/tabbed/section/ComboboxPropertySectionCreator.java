@@ -23,47 +23,6 @@ public class ComboboxPropertySectionCreator extends ListItemsPropertySectionCrea
         super(element);
     }
 
-//    protected void createListAndStateButtons(Composite buttons, final CheckboxTableViewer viewer, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
-//    {
-//        super.createListAndStateButtons(buttons, viewer, widgetFactory, commandHelper);
-//        final IPropertyDescriptor stateDescriptor = getWidget().getPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE);
-//        final ICellEditorValidator stateValidator = (ICellEditorValidator)Common.getObjectFieldValue(listItemsDescriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
-//        final Button add = widgetFactory.createButton(buttons,"",SWT.PUSH|FLAT_STYLE);
-//        add.setImage(InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("select.all.icon")));
-//        add.setToolTipText(EclipseNSISPlugin.getResourceString("select.all.tooltip")); //$NON-NLS-1$
-//        add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-//        add.addListener(SWT.Selection, new Listener() {
-//            public void handleEvent(Event e) {
-//                List list = (List)viewer.getInput();
-//                if(list != null) {
-//                    List
-//                    int counter = 1;
-//                    String item = InstallOptionsPlugin.getFormattedString("default.listitem.label", new Object[]{new Integer(counter++)}); //$NON-NLS-1$
-//
-//                    while(Common.collectionContainsIgnoreCase(list, item)) {
-//                        item = InstallOptionsPlugin.getFormattedString("default.listitem.label", new Object[]{new Integer(counter++)}); //$NON-NLS-1$
-//                    }
-//                    list.add(item);
-//                    String error = listItemsValidator.isValid(list);
-//                    if(Common.isEmpty(error)) {
-//                        commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS,
-//                                listItemsDescriptor.getDisplayName(), getWidget(), list);
-//                        viewer.refresh(false);
-//                        viewer.setSelection(new StructuredSelection(item));
-//                        viewer.editElement(item,0);
-//                        Text t = (Text)textEditor.getControl();
-//                        t.setSelection(item.length());
-//                    }
-//                    else {
-//                        Common.openError(viewer.getTable().getShell(), error, InstallOptionsPlugin.getShellImage());
-//                        list.remove(item);
-//                    }
-//                }
-//            }
-//        });
-//
-//    }
-
     protected CheckboxTableViewer createListItemsAndStateSection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
         createTextSection(parent, InstallOptionsModel.PROPERTY_STATE, widgetFactory, commandHelper);

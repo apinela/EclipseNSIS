@@ -43,8 +43,6 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     private static final String[] cSplashImageErrors = {"empty.splash.image.error"}; //$NON-NLS-1$
     private static final String[] cSplashDelayErrors = {"zero.splash.delay.error"}; //$NON-NLS-1$
 
-    private Button mSplashPreviewButton = null;
-    private Button mBGPreviewButton = null;
     private FontData mBGPreviewFontData;
     private FontData mBGPreviewEscapeFontData;
     private Point mBGPreviewTextLocation;
@@ -112,82 +110,31 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     {
         NSISWizardSettings settings = mWizard.getSettings();
 
-        final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
-            public void enabled(Control control, boolean flag) { }
+        Group backgroundGroup = NSISWizardDialogUtil.createGroup(parent, 1, "background.group.label", null, false);  //$NON-NLS-1$
 
-            public boolean canEnable(Control control)
-            {
-                NSISWizardSettings settings = mWizard.getSettings();
-
-                if(control == mBGPreviewButton) {
-                    return (settings.isShowBackground() &&
-                            validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundBMP()),null) &&
-                            validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundWAV()),null));
-                }
-                else {
-                    return true;
-                }
-            }
-        };
-
-        Group group = NSISWizardDialogUtil.createGroup(parent, 1, "background.group.label", null, false);  //$NON-NLS-1$
-
-        final Button b = NSISWizardDialogUtil.createCheckBox(group,"show.background.label",settings.isShowBackground(), //$NON-NLS-1$
+        final Button showBackground = NSISWizardDialogUtil.createCheckBox(backgroundGroup,"show.background.label",settings.isShowBackground(), //$NON-NLS-1$
                                          true, null, false);
-        b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
-            {
-                boolean selection = b.getSelection();
-                mWizard.getSettings().setShowBackground(selection);
-                setPageComplete(validateField(BGIMG_CHECK | BGWAV_CHECK));
-                if(mBGPreviewButton != null) {
-                    mBGPreviewButton.setEnabled(mse.canEnable(mBGPreviewButton));
-                }
-            }
-        });
 
-        final MasterSlaveController m = new MasterSlaveController(b);
+        final MasterSlaveController m = new MasterSlaveController(showBackground);
 
-        Composite composite = new Composite(group,SWT.NONE);
+        Composite composite = new Composite(backgroundGroup,SWT.NONE);
         GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         composite.setLayoutData(gd);
         GridLayout layout = new GridLayout(3, false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-        final Text t = NSISWizardDialogUtil.createFileBrowser(composite, settings.getBackgroundBMP(), false,
+        final Text backgroundImage = NSISWizardDialogUtil.createFileBrowser(composite, settings.getBackgroundBMP(), false,
                               Common.loadArrayProperty(bundle,"background.image.filternames"),  //$NON-NLS-1$
                               Common.loadArrayProperty(bundle,"background.image.filters"), "background.image.label", //$NON-NLS-1$ //$NON-NLS-2$
                               true,m, false);
-        t.addModifyListener(new ModifyListener(){
-            public void modifyText(ModifyEvent e)
-            {
-                String text = ((Text)e.widget).getText();
-                mWizard.getSettings().setBackgroundBMP(text);
-                setPageComplete(validateField(BGIMG_CHECK));
-                if(mBGPreviewButton != null) {
-                    mBGPreviewButton.setEnabled(mse.canEnable(mBGPreviewButton));
-                }
-            }
-        });
 
-        final Text t2 = NSISWizardDialogUtil.createFileBrowser(composite, settings.getBackgroundWAV(), false,
+        final Text backgroundSound = NSISWizardDialogUtil.createFileBrowser(composite, settings.getBackgroundWAV(), false,
                               Common.loadArrayProperty(bundle,"background.sound.filternames"),  //$NON-NLS-1$
                               Common.loadArrayProperty(bundle,"background.sound.filters"), "background.sound.label", //$NON-NLS-1$ //$NON-NLS-2$
                               true, m, false);
-        t2.addModifyListener(new ModifyListener(){
-            public void modifyText(ModifyEvent e)
-            {
-                String text = ((Text)e.widget).getText();
-                mWizard.getSettings().setBackgroundWAV(text);
-                setPageComplete(validateField(BGWAV_CHECK));
-                if(mBGPreviewButton != null) {
-                    mBGPreviewButton.setEnabled(mse.canEnable(mBGPreviewButton));
-                }
-            }
-        });
 
-        composite = new Composite(group,SWT.NONE);
+        composite = new Composite(backgroundGroup,SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         composite.setLayoutData(gd);
         layout = new GridLayout(2, false);
@@ -195,13 +142,13 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
 
-        Group group2 = NSISWizardDialogUtil.createGroup(composite, 3, "background.colors.label", m, false); //$NON-NLS-1$
-        ((GridLayout)group2.getLayout()).makeColumnsEqualWidth = true;
-        ((GridData)group2.getLayoutData()).horizontalSpan = 1;
+        Group backgroundColorGroup = NSISWizardDialogUtil.createGroup(composite, 3, "background.colors.label", m, false); //$NON-NLS-1$
+        ((GridLayout)backgroundColorGroup.getLayout()).makeColumnsEqualWidth = true;
+        ((GridData)backgroundColorGroup.getLayoutData()).horizontalSpan = 1;
 
         String[] labels = {"background.topcolor.label","background.bottomcolor.label","background.textcolor.label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         RGB[] values = {settings.getBGTopColor(),settings.getBGBottomColor(),settings.getBGTextColor()};
-        final ColorEditor[] ce = new ColorEditor[labels.length];
+        final ColorEditor[] backgroundColorEditors = new ColorEditor[labels.length];
 
         SelectionAdapter sa = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -209,7 +156,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
                 Button b = (Button)e.widget;
                 int index = ((Integer)b.getData()).intValue();
-                RGB rgb = ce[index].getRGB();
+                RGB rgb = backgroundColorEditors[index].getRGB();
                 switch(index) {
                     case 0:
                         settings.setBGTopColor(rgb);
@@ -225,26 +172,78 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         };
 
         for (int i = 0; i < labels.length; i++) {
-            Composite composite3 = new Composite(group2, SWT.NONE);
+            Composite composite3 = new Composite(backgroundColorGroup, SWT.NONE);
             composite3.setLayoutData(new GridData());
             layout = new GridLayout(2, false);
             layout.marginHeight = 0;
             layout.marginWidth = 0;
             composite3.setLayout(layout);
-            ce[i] = NSISWizardDialogUtil.createColorEditor(composite3, values[i], labels[i], true, null, false);
-            Button b2 = ce[i].getButton();
+            backgroundColorEditors[i] = NSISWizardDialogUtil.createColorEditor(composite3, values[i], labels[i], true, null, false);
+            Button b2 = backgroundColorEditors[i].getButton();
             b2.setData(new Integer(i));
             b2.addSelectionListener(sa);
         }
 
-        mBGPreviewButton = new Button(composite, SWT.PUSH | SWT.CENTER);
-        m.addSlave(mBGPreviewButton, mse);
-        mBGPreviewButton.setText(bundle.getString("preview.label")); //$NON-NLS-1$
-        mBGPreviewButton.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
-        mBGPreviewButton.addSelectionListener(new SelectionAdapter() {
+        final Button preview = new Button(composite, SWT.PUSH | SWT.CENTER);
+        preview.setText(bundle.getString("preview.label")); //$NON-NLS-1$
+        preview.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+        preview.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
                 previewBackground();
+            }
+        });
+
+        final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
+            public void enabled(Control control, boolean flag) { }
+
+            public boolean canEnable(Control control)
+            {
+                NSISWizardSettings settings = mWizard.getSettings();
+
+                if(control == preview) {
+                    return (settings.isShowBackground() &&
+                            validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundBMP()),null) &&
+                            validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundWAV()),null));
+                }
+                else {
+                    return true;
+                }
+            }
+        };
+
+        m.addSlave(preview, mse);
+        showBackground.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                boolean selection = showBackground.getSelection();
+                mWizard.getSettings().setShowBackground(selection);
+                setPageComplete(validateField(BGIMG_CHECK | BGWAV_CHECK));
+                if(preview != null) {
+                    preview.setEnabled(mse.canEnable(preview));
+                }
+            }
+        });
+        backgroundImage.addModifyListener(new ModifyListener(){
+            public void modifyText(ModifyEvent e)
+            {
+                String text = ((Text)e.widget).getText();
+                mWizard.getSettings().setBackgroundBMP(text);
+                setPageComplete(validateField(BGIMG_CHECK));
+                if(preview != null) {
+                    preview.setEnabled(mse.canEnable(preview));
+                }
+            }
+        });
+        backgroundSound.addModifyListener(new ModifyListener(){
+            public void modifyText(ModifyEvent e)
+            {
+                String text = ((Text)e.widget).getText();
+                mWizard.getSettings().setBackgroundWAV(text);
+                setPageComplete(validateField(BGWAV_CHECK));
+                if(preview != null) {
+                    preview.setEnabled(mse.canEnable(preview));
+                }
             }
         });
         m.updateSlaves();
@@ -252,12 +251,12 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                b.setSelection(newSettings.isShowBackground());
-                t.setText(newSettings.getBackgroundBMP());
-                t2.setText(newSettings.getBackgroundWAV());
-                ce[0].setRGB(newSettings.getBGTopColor());
-                ce[1].setRGB(newSettings.getBGBottomColor());
-                ce[2].setRGB(newSettings.getBGTextColor());
+                showBackground.setSelection(newSettings.isShowBackground());
+                backgroundImage.setText(newSettings.getBackgroundBMP());
+                backgroundSound.setText(newSettings.getBackgroundWAV());
+                backgroundColorEditors[0].setRGB(newSettings.getBGTopColor());
+                backgroundColorEditors[1].setRGB(newSettings.getBGBottomColor());
+                backgroundColorEditors[2].setRGB(newSettings.getBGTextColor());
                 m.updateSlaves();
             }});
     }
@@ -270,25 +269,25 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     {
         NSISWizardSettings settings = mWizard.getSettings();
 
-        Group group = NSISWizardDialogUtil.createGroup(parent, 3, "license.group.label", null, false); //$NON-NLS-1$
+        Group licenseGroup = NSISWizardDialogUtil.createGroup(parent, 3, "license.group.label", null, false); //$NON-NLS-1$
 
-        final Button b = NSISWizardDialogUtil.createCheckBox(group,"show.license.label",settings.isShowLicense(),  //$NON-NLS-1$
+        final Button showLicense = NSISWizardDialogUtil.createCheckBox(licenseGroup,"show.license.label",settings.isShowLicense(),  //$NON-NLS-1$
                                         true, null, false);
-        b.addSelectionListener(new SelectionAdapter() {
+        showLicense.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                boolean selection = b.getSelection();
+                boolean selection = showLicense.getSelection();
                 mWizard.getSettings().setShowLicense(selection);
                 setPageComplete(validateField(LICDATA_CHECK));
             }
         });
 
-        final MasterSlaveController m = new MasterSlaveController(b);
-        final Text t = NSISWizardDialogUtil.createFileBrowser(group, settings.getLicenseData(), false,
+        final MasterSlaveController m = new MasterSlaveController(showLicense);
+        final Text licenseFile = NSISWizardDialogUtil.createFileBrowser(licenseGroup, settings.getLicenseData(), false,
                                    Common.loadArrayProperty(bundle,"license.file.filternames"),  //$NON-NLS-1$
                                    Common.loadArrayProperty(bundle,"license.file.filters"), "license.file.label", //$NON-NLS-1$ //$NON-NLS-2$
                                    true, m, isScriptWizard());
-        t.addModifyListener(new ModifyListener(){
+        licenseFile.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
             {
                 String text = ((Text)e.widget).getText();
@@ -297,12 +296,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             }
         });
 
-        final Combo c = NSISWizardDialogUtil.createCombo(group, NSISWizardDisplayValues.LICENSE_BUTTON_TYPE_NAMES,
+        final Combo licenseButtons = NSISWizardDialogUtil.createCombo(licenseGroup, NSISWizardDisplayValues.LICENSE_BUTTON_TYPE_NAMES,
                                     settings.getLicenseButtonType(),true,"license.button.label", //$NON-NLS-1$
                                     (settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isShowLicense()), m, false);
-        final Label l = (Label)c.getData(NSISWizardDialogUtil.LABEL);
 
-        c.addSelectionListener(new SelectionAdapter() {
+        licenseButtons.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setLicenseButtonType(((Combo)e.widget).getSelectionIndex());
@@ -314,27 +312,15 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             public boolean canEnable(Control control)
             {
                 NSISWizardSettings settings = mWizard.getSettings();
-
-                if(c == control || (l != null && l == control)) {
-                    return (settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isShowLicense());
-                }
-                else {
-                    return true;
-                }
+                return (settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isShowLicense());
             }
         };
-        m.setEnabler(c,mse);
-        if(l != null) {
-            m.setEnabler(l,mse);
-        }
+        m.setEnabler(licenseButtons,mse);
 
         addPageChangedRunnable(new Runnable() {
             public void run()
             {
-                c.setEnabled(mse.canEnable(c));
-                if(l != null) {
-                    l.setEnabled(mse.canEnable(l));
-                }
+                m.updateSlaves();
             }
         });
         m.updateSlaves();
@@ -342,20 +328,21 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                b.setSelection(newSettings.isShowLicense());
-                t.setText(newSettings.getLicenseData());
+                showLicense.setSelection(newSettings.isShowLicense());
+                licenseFile.setText(newSettings.getLicenseData());
                 int n = newSettings.getLicenseButtonType();
                 if(n >= 0 && n < NSISWizardDisplayValues.LICENSE_BUTTON_TYPE_NAMES.length) {
-                    c.setText(NSISWizardDisplayValues.LICENSE_BUTTON_TYPE_NAMES[n]);
+                    licenseButtons.setText(NSISWizardDisplayValues.LICENSE_BUTTON_TYPE_NAMES[n]);
                 }
                 else {
-                    c.clearSelection();
-                    c.setText(""); //$NON-NLS-1$
+                    licenseButtons.clearSelection();
+                    licenseButtons.setText(""); //$NON-NLS-1$
                 }
-                c.setEnabled(newSettings.getInstallerType() != INSTALLER_TYPE_SILENT && newSettings.isShowLicense());
+                licenseButtons.setEnabled(newSettings.getInstallerType() != INSTALLER_TYPE_SILENT && newSettings.isShowLicense());
 
                 m.updateSlaves();
-            }});
+            }}
+        );
     }
 
     /**
@@ -366,6 +353,67 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     {
         NSISWizardSettings settings = mWizard.getSettings();
 
+        Group splashGroup = NSISWizardDialogUtil.createGroup(parent, 1, "splash.group.label", null, false); //$NON-NLS-1$
+
+        final Button showSplash = NSISWizardDialogUtil.createCheckBox(splashGroup,"show.splash.label",settings.isShowSplash(), //$NON-NLS-1$
+                                         true, null, false);
+
+        final MasterSlaveController m = new MasterSlaveController(showSplash);
+
+        Composite composite = new Composite(splashGroup,SWT.NONE);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        composite.setLayoutData(gd);
+        GridLayout layout = new GridLayout(3, false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite.setLayout(layout);
+        final Text splashImage = NSISWizardDialogUtil.createFileBrowser(composite, settings.getSplashBMP(), false,
+                              Common.loadArrayProperty(bundle,"splash.image.filternames"),  //$NON-NLS-1$
+                              Common.loadArrayProperty(bundle,"splash.image.filters"), "splash.image.label", //$NON-NLS-1$ //$NON-NLS-2$
+                              true,m, isScriptWizard());
+
+        final Text splashSound = NSISWizardDialogUtil.createFileBrowser(composite, settings.getSplashWAV(), false,
+                              Common.loadArrayProperty(bundle,"splash.sound.filternames"),  //$NON-NLS-1$
+                              Common.loadArrayProperty(bundle,"splash.sound.filters"), "splash.sound.label", //$NON-NLS-1$ //$NON-NLS-2$
+                              true, m, false);
+
+        composite = new Composite(splashGroup,SWT.NONE);
+        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        composite.setLayoutData(gd);
+        layout = new GridLayout(2, false);
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        composite.setLayout(layout);
+
+        Group delayGroup = NSISWizardDialogUtil.createGroup(composite, 3, "splash.delay.label", m, false); //$NON-NLS-1$
+        ((GridData)delayGroup.getLayoutData()).horizontalSpan = 1;
+        String[] labels = {"splash.display.label","splash.fadein.label","splash.fadeout.label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        int[] values = {settings.getSplashDelay(),settings.getFadeInDelay(),settings.getFadeOutDelay()};
+        boolean[] required = {isScriptWizard(), false, false};
+
+        GC gc = new GC(delayGroup);
+        gc.setFont(delayGroup.getFont());
+        FontMetrics fm = gc.getFontMetrics();
+        gc.dispose();
+        int widthHint = fm.getAverageCharWidth()*5;
+        final Text[] delays = new Text[labels.length];
+        for (int i = 0; i < labels.length; i++) {
+            Composite composite2 = new Composite(delayGroup, SWT.NONE);
+            composite2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+            layout = new GridLayout(2, false);
+            layout.marginHeight = 0;
+            layout.marginWidth = 0;
+            composite2.setLayout(layout);
+            delays[i] = NSISWizardDialogUtil.createText(composite2, makeStringFromInt(values[i]), labels[i], true, null, required[i]);
+            delays[i].setData(new Integer(i));
+            delays[i].addVerifyListener(mNumberVerifyListener);
+            ((GridData)delays[i].getLayoutData()).widthHint = widthHint;
+        }
+
+        final Button preview = new Button(composite, SWT.PUSH | SWT.CENTER);
+        preview.setText(bundle.getString("preview.label")); //$NON-NLS-1$
+        preview.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
+
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
             public void enabled(Control control, boolean flag) { }
 
@@ -373,7 +421,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             {
                 NSISWizardSettings settings = mWizard.getSettings();
 
-                if(control == mSplashPreviewButton) {
+                if(control == preview) {
                     return (settings.isShowSplash() &&
                             IOUtility.isValidFile(IOUtility.decodePath(settings.getSplashBMP())) &&
                             validateEmptyOrValidFile(IOUtility.decodePath(settings.getSplashWAV()),null) &&
@@ -384,79 +432,41 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
             }
         };
-
-        Group group = NSISWizardDialogUtil.createGroup(parent, 1, "splash.group.label", null, false); //$NON-NLS-1$
-
-        final Button b = NSISWizardDialogUtil.createCheckBox(group,"show.splash.label",settings.isShowSplash(), //$NON-NLS-1$
-                                         true, null, false);
-        b.addSelectionListener(new SelectionAdapter() {
+        m.addSlave(preview, mse);
+        showSplash.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = ((Button)e.widget).getSelection();
                 mWizard.getSettings().setShowSplash(selection);
                 setPageComplete(validateField(SPLIMG_CHECK | SPLWAV_CHECK | SPLDLY_CHECK));
-                if(mSplashPreviewButton != null) {
-                    mSplashPreviewButton.setEnabled(mse.canEnable(mSplashPreviewButton));
+                if(preview != null) {
+                    preview.setEnabled(mse.canEnable(preview));
                 }
             }
         });
-
-        final MasterSlaveController m = new MasterSlaveController(b);
-
-        Composite composite = new Composite(group,SWT.NONE);
-        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        composite.setLayoutData(gd);
-        GridLayout layout = new GridLayout(3, false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        composite.setLayout(layout);
-        final Text t = NSISWizardDialogUtil.createFileBrowser(composite, settings.getSplashBMP(), false,
-                              Common.loadArrayProperty(bundle,"splash.image.filternames"),  //$NON-NLS-1$
-                              Common.loadArrayProperty(bundle,"splash.image.filters"), "splash.image.label", //$NON-NLS-1$ //$NON-NLS-2$
-                              true,m, isScriptWizard());
-        t.addModifyListener(new ModifyListener(){
+        splashImage.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
             {
                 String text = ((Text)e.widget).getText();
                 mWizard.getSettings().setSplashBMP(text);
                 setPageComplete(validateField(SPLIMG_CHECK));
-                if(mSplashPreviewButton != null) {
-                    mSplashPreviewButton.setEnabled(mse.canEnable(mSplashPreviewButton));
+                if(preview != null) {
+                    preview.setEnabled(mse.canEnable(preview));
                 }
             }
         });
-
-        final Text t2 = NSISWizardDialogUtil.createFileBrowser(composite, settings.getSplashWAV(), false,
-                              Common.loadArrayProperty(bundle,"splash.sound.filternames"),  //$NON-NLS-1$
-                              Common.loadArrayProperty(bundle,"splash.sound.filters"), "splash.sound.label", //$NON-NLS-1$ //$NON-NLS-2$
-                              true, m, false);
-        t2.addModifyListener(new ModifyListener(){
+        splashSound.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
             {
                 String text = ((Text)e.widget).getText();
                 mWizard.getSettings().setSplashWAV(text);
                 setPageComplete(validateField(SPLWAV_CHECK));
-                if(mSplashPreviewButton != null) {
-                    mSplashPreviewButton.setEnabled(mse.canEnable(mSplashPreviewButton));
+                if(preview != null) {
+                    preview.setEnabled(mse.canEnable(preview));
                 }
             }
         });
-
-        composite = new Composite(group,SWT.NONE);
-        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        composite.setLayoutData(gd);
-        layout = new GridLayout(2, false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        composite.setLayout(layout);
-
-        Group group2 = NSISWizardDialogUtil.createGroup(composite, 3, "splash.delay.label", m, false); //$NON-NLS-1$
-        ((GridData)group2.getLayoutData()).horizontalSpan = 1;
-        String[] labels = {"splash.display.label","splash.fadein.label","splash.fadeout.label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        int[] values = {settings.getSplashDelay(),settings.getFadeInDelay(),settings.getFadeOutDelay()};
-        boolean[] required = {isScriptWizard(), false, false};
-
-        ModifyListener ml = new ModifyListener() {
+        ModifyListener delayListener = new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
                 NSISWizardSettings settings = mWizard.getSettings();
@@ -469,8 +479,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     case 0:
                         settings.setSplashDelay(value);
                         setPageComplete(validateField(SPLDLY_CHECK));
-                        if(mSplashPreviewButton != null) {
-                            mSplashPreviewButton.setEnabled(mse.canEnable(mSplashPreviewButton));
+                        if(preview != null) {
+                            preview.setEnabled(mse.canEnable(preview));
                         }
                         break;
                     case 1:
@@ -482,32 +492,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 }
             }
         };
-
-        GC gc = new GC(group2);
-        gc.setFont(group2.getFont());
-        FontMetrics fm = gc.getFontMetrics();
-        gc.dispose();
-        int widthHint = fm.getAverageCharWidth()*5;
-        final Text[] t3 = new Text[labels.length];
-        for (int i = 0; i < labels.length; i++) {
-            Composite composite2 = new Composite(group2, SWT.NONE);
-            composite2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-            layout = new GridLayout(2, false);
-            layout.marginHeight = 0;
-            layout.marginWidth = 0;
-            composite2.setLayout(layout);
-            t3[i] = NSISWizardDialogUtil.createText(composite2, makeStringFromInt(values[i]), labels[i], true, null, required[i]);
-            t3[i].setData(new Integer(i));
-            t3[i].addVerifyListener(mNumberVerifyListener);
-            t3[i].addModifyListener(ml);
-            ((GridData)t3[i].getLayoutData()).widthHint = widthHint;
-
+        for (int i = 0; i < delays.length; i++) {
+            delays[i].addModifyListener(delayListener);
         }
-        mSplashPreviewButton = new Button(composite, SWT.PUSH | SWT.CENTER);
-        m.addSlave(mSplashPreviewButton, mse);
-        mSplashPreviewButton.setText(bundle.getString("preview.label")); //$NON-NLS-1$
-        mSplashPreviewButton.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
-        mSplashPreviewButton.addSelectionListener(new SelectionAdapter() {
+
+        preview.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
                 previewSplash();
@@ -518,14 +507,15 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         mWizard.addSettingsListener(new INSISWizardSettingsListener() {
             public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
-                b.setSelection(newSettings.isShowSplash());
-                t.setText(newSettings.getSplashBMP());
-                t2.setText(newSettings.getSplashWAV());
-                t3[0].setText(makeStringFromInt(newSettings.getSplashDelay()));
-                t3[1].setText(makeStringFromInt(newSettings.getFadeInDelay()));
-                t3[2].setText(makeStringFromInt(newSettings.getFadeOutDelay()));
+                showSplash.setSelection(newSettings.isShowSplash());
+                splashImage.setText(newSettings.getSplashBMP());
+                splashSound.setText(newSettings.getSplashWAV());
+                delays[0].setText(makeStringFromInt(newSettings.getSplashDelay()));
+                delays[1].setText(makeStringFromInt(newSettings.getFadeInDelay()));
+                delays[2].setText(makeStringFromInt(newSettings.getFadeOutDelay()));
                 m.updateSlaves();
-            }});
+            }}
+        );
     }
 
     private String makeStringFromInt(int value)

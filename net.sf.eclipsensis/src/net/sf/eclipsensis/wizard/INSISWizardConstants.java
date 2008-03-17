@@ -58,4 +58,12 @@ public interface INSISWizardConstants
     public static final int TARGET_PLATFORM_ANY = 0;
     public static final int TARGET_PLATFORM_X86 = 1;
     public static final int TARGET_PLATFORM_X64 = 2;
+
+    public static final int MULTIUSER_EXEC_LEVEL_STANDARD = 0;
+    public static final int MULTIUSER_EXEC_LEVEL_POWER = 1;
+    public static final int MULTIUSER_EXEC_LEVEL_ADMIN = 2;
+    public static final int MULTIUSER_EXEC_LEVEL_HIGHEST = 3;
+
+    public static final int MULTIUSER_INSTALL_MODE_MACHINE = 0;
+    public static final int MULTIUSER_INSTALL_MODE_USER = 1;
 }

@@ -11,8 +11,9 @@ package net.sf.eclipsensis.wizard;
 
 import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
@@ -185,7 +186,8 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         if(data instanceof GridData) {
             GridData d = (GridData)data;
             d.widthHint = SIZING_WIZARD_WIDTH;
-            d.heightHint = SIZING_WIZARD_HEIGHT;
+            d.heightHint = SIZING_WIZARD_HEIGHT + //Account for Multi-User group
+                (INSISVersions.VERSION_2_35.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) <= 0?60:0);
         }
     }
 

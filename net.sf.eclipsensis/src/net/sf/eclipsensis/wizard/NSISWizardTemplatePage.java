@@ -55,8 +55,8 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
         composite.setLayout(layout);
         ((GridLayout)composite.getLayout()).numColumns=2;
 
-        final Text t = NSISWizardDialogUtil.createText(composite,mTemplate==null?"":mTemplate.getName(),"template.dialog.name.label",true,null,true); //$NON-NLS-1$ //$NON-NLS-2$
-        t.addModifyListener(new ModifyListener() {
+        final Text templateName = NSISWizardDialogUtil.createText(composite,mTemplate==null?"":mTemplate.getName(),"template.dialog.name.label",true,null,true); //$NON-NLS-1$ //$NON-NLS-2$
+        templateName.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
                 if(mTemplate != null) {
@@ -66,18 +66,17 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
             }
         });
 
-        Label l = NSISWizardDialogUtil.createLabel(composite,"template.dialog.description.label",true,null,false); //$NON-NLS-1$
-        GridData data = (GridData)l.getLayoutData();
-        data.horizontalSpan=2;
+        ((GridData)NSISWizardDialogUtil.createLabel(composite,"template.dialog.description.label", //$NON-NLS-1$
+                true,null,false).getLayoutData()).horizontalSpan=2;
 
-        final Text t2 = NSISWizardDialogUtil.createText(composite,mTemplate==null?"":mTemplate.getDescription(),SWT.BORDER|SWT.MULTI|SWT.WRAP,2,true,null); //$NON-NLS-1$
-        Dialog.applyDialogFont(t2);
-        data = (GridData)t2.getLayoutData();
+        final Text description = NSISWizardDialogUtil.createText(composite,mTemplate==null?"":mTemplate.getDescription(),SWT.BORDER|SWT.MULTI|SWT.WRAP,2,true,null); //$NON-NLS-1$
+        Dialog.applyDialogFont(description);
+        GridData data = (GridData)description.getLayoutData();
         data.horizontalAlignment=GridData.FILL;
         data.grabExcessHorizontalSpace=true;
-        data.heightHint = Common.calculateControlSize(t2,0,10).y;
+        data.heightHint = Common.calculateControlSize(description,0,10).y;
 
-        t2.addModifyListener(new ModifyListener() {
+        description.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
                 if (mTemplate != null) {
@@ -86,10 +85,10 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
             }
         });
 
-        final Button b = NSISWizardDialogUtil.createCheckBox(composite,"template.dialog.enabled.label",mTemplate != null?mTemplate.isEnabled():false,true,null,false); //$NON-NLS-1$
-        data = (GridData)b.getLayoutData();
+        final Button enabled = NSISWizardDialogUtil.createCheckBox(composite,"template.dialog.enabled.label",mTemplate != null?mTemplate.isEnabled():false,true,null,false); //$NON-NLS-1$
+        data = (GridData)enabled.getLayoutData();
         data.horizontalSpan=2;
-        b.addSelectionListener(new SelectionAdapter() {
+        enabled.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
                 if (mTemplate != null) {
@@ -104,14 +103,14 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
                 {
                     mTemplate = newTemplate;
                     if(mTemplate != null) {
-                        t.setText(mTemplate.getName());
-                        t2.setText(mTemplate.getDescription());
-                        b.setSelection(mTemplate.isEnabled());
+                        templateName.setText(mTemplate.getName());
+                        description.setText(mTemplate.getDescription());
+                        enabled.setSelection(mTemplate.isEnabled());
                     }
                     else {
-                        t.setText(""); //$NON-NLS-1$
-                        t2.setText(""); //$NON-NLS-1$
-                        b.setSelection(false);
+                        templateName.setText(""); //$NON-NLS-1$
+                        description.setText(""); //$NON-NLS-1$
+                        enabled.setSelection(false);
                     }
                     validatePage(VALIDATE_ALL);
                 }

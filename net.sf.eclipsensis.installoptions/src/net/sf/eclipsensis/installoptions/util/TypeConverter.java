@@ -92,11 +92,17 @@ public abstract class TypeConverter
     };
 
     public static final TypeConverter RGB_CONVERTER = new TypeConverter() {
+        //There is a bug in InstallOptions where R & B are reversed
+        private RGB flip(RGB rgb)
+        {
+            return new RGB(rgb.blue, rgb.green, rgb.red);
+        }
+
         public String asString(Object o)
         {
         	if(o != null) {
 	            StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
-	            RGB rgb = (RGB)o;
+	            RGB rgb = flip((RGB)o);
 	            buf.append(ColorManager.rgbToHex(rgb));
 	            return buf.toString();
         	}
@@ -110,7 +116,7 @@ public abstract class TypeConverter
                 if( (rgb.red >= 0 && rgb.red <= 255) &&
                     (rgb.green >= 0 && rgb.green <= 255) &&
                     (rgb.blue >= 0 && rgb.blue <= 255)) {
-                    return rgb;
+                    return flip(rgb);
                 }
             }
             return null;

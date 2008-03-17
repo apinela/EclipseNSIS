@@ -85,6 +85,6 @@ public class NSISWizardUtil
                 return false;
             }
         }
-        return IOUtility.isValidPathName(pathName);
+        return IOUtility.isValidAbsolutePathName(pathName);
     }
 }

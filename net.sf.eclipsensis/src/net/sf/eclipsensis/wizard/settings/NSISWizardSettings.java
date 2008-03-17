@@ -87,6 +87,14 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public static final String COMPILE_SCRIPT = "COMPILE_SCRIPT"; //$NON-NLS-1$
     public static final String TEST_SCRIPT = "TEST_SCRIPT"; //$NON-NLS-1$
 
+    public static final String MINIMUM_NSIS_VERSION = "MINIMUM_NSIS_VERSION"; //$NON-NLS-1$
+
+    public static final String MULTIUSER_INSTALLATION = "MULTIUSER_INSTALLATION"; //$NON-NLS-1$
+    public static final String MULTIUSER_EXEC_LEVEL = "MULTIUSER_EXEC_LEVEL"; //$NON-NLS-1$
+    public static final String MULTIUSER_INSTALL_MODE = "MULTIUSER_INSTALL_MODE"; //$NON-NLS-1$
+    public static final String MULTIUSER_INSTALL_MODE_REMEMBER = "MULTIUSER_INSTALL_MODE_REMEMBER"; //$NON-NLS-1$
+    public static final String MULTIUSER_INSTALL_MODE_ASK = "MULTIUSER_INSTALL_MODE_ASK"; //$NON-NLS-1$
+
     public static final String INSTALLER = "INSTALLER"; //$NON-NLS-1$
 
     private static final long serialVersionUID = -3872062583870145866L;
@@ -152,6 +160,12 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 
     private Version mMinimumNSISVersion = null;
 
+    private boolean mMultiUserInstallation = false;
+    private int mMultiUserExecLevel = MULTIUSER_EXEC_LEVEL_STANDARD;
+    private int mMultiUserInstallMode = MULTIUSER_INSTALL_MODE_MACHINE;
+    private boolean mMultiUserInstallModeRemember = false;
+    private boolean mMultiUserInstallModeAsk = false;
+
     private INSISInstallElement mInstaller;
 
     private transient NSISWizard mWizard = null;
@@ -209,7 +223,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         }
     }
 
-    private void firePropertyChanged(String name, boolean oldValue, boolean newValue)
+   private void firePropertyChanged(String name, boolean oldValue, boolean newValue)
     {
         if(mListeners != null) {
             mListeners.firePropertyChange(name, oldValue, newValue);
@@ -553,14 +567,8 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     {
         int oldValue = mInstallerType;
         mInstallerType = installerType;
-        switch(mInstallerType) {
-            case INSTALLER_TYPE_MUI2:
-                setMinimumNSISVersion(INSISVersions.VERSION_2_34);
-                break;
-            default:
-                setMinimumNSISVersion(null);
-        }
         firePropertyChanged(INSTALLER_TYPE, oldValue, installerType);
+        updateMinimumNSISVersion();
     }
 
     /**
@@ -1251,27 +1259,6 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         return CHILD_NODE;
     }
 
-//    protected Object convertFromString(String name, String string, Class clasz)
-//    {
-//        if(clasz.equals(RGB.class)) {
-//            return StringConverter.asRGB(string);
-//        }
-//        else if(name.equals("languages")) {
-//            String[] langNames = Common.tokenize(string,',');
-//            ArrayList languages = new ArrayList();
-//            for (int i = 0; i < langNames.length; i++) {
-//                NSISLanguage language = NSISLanguageManager.getInstance().getLanguage(langNames[i]);
-//                if(language != null) {
-//                    languages.add(language);
-//                }
-//            }
-//            return languages;
-//        }
-//        else {
-//            return super.convertFromString(name, string, clasz);
-//        }
-//    }
-//
     public Object clone() throws CloneNotSupportedException
     {
         NSISWizardSettings settings = (NSISWizardSettings)super.clone();
@@ -1352,6 +1339,12 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         result = PRIME * result + ((mVersion == null)?0:mVersion.hashCode());
         result = PRIME * result + mTargetPlatform;
         result = PRIME * result + mExecutionLevel;
+        result = PRIME * result + ((mMinimumNSISVersion == null)?0:mMinimumNSISVersion.hashCode());
+        result = PRIME * result + (mMultiUserInstallation?1231:1237);
+        result = PRIME * result + mMultiUserExecLevel;
+        result = PRIME * result + mMultiUserInstallMode;
+        result = PRIME * result + (mMultiUserInstallModeRemember?1231:1237);
+        result = PRIME * result + (mMultiUserInstallModeAsk?1231:1237);
         return result;
     }
 
@@ -1533,6 +1526,24 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         if(mExecutionLevel != other.mExecutionLevel) {
             return false;
         }
+        if (!Common.objectsAreEqual(mMinimumNSISVersion,other.mMinimumNSISVersion)) {
+            return false;
+        }
+        if(mMultiUserInstallation != other.mMultiUserInstallation) {
+            return false;
+        }
+        if(mMultiUserExecLevel != other.mMultiUserExecLevel) {
+            return false;
+        }
+        if(mMultiUserInstallMode != other.mMultiUserInstallMode) {
+            return false;
+        }
+        if(mMultiUserInstallModeRemember != other.mMultiUserInstallModeRemember) {
+            return false;
+        }
+        if(mMultiUserInstallModeAsk != other.mMultiUserInstallModeAsk) {
+            return false;
+        }
         return true;
     }
 
@@ -1541,8 +1552,83 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         return mMinimumNSISVersion;
     }
 
+    private void updateMinimumNSISVersion()
+    {
+        Version minimumNSISVersion = null;
+        if(getInstallerType() == INSTALLER_TYPE_MUI2) {
+            minimumNSISVersion = INSISVersions.VERSION_2_34;
+            if(isMultiUserInstallation()) {
+                minimumNSISVersion = INSISVersions.VERSION_2_35;
+            }
+        }
+        setMinimumNSISVersion(minimumNSISVersion);
+    }
+
     public void setMinimumNSISVersion(Version minimumNSISVersion)
     {
+        Version oldValue = mMinimumNSISVersion;
         mMinimumNSISVersion = minimumNSISVersion;
+        firePropertyChanged(MINIMUM_NSIS_VERSION, oldValue, minimumNSISVersion);
+    }
+
+    public boolean isMultiUserInstallation()
+    {
+        return mMultiUserInstallation;
+    }
+
+    public void setMultiUserInstallation(boolean multiUserInstallation)
+    {
+        boolean oldValue = mMultiUserInstallation;
+        mMultiUserInstallation = multiUserInstallation;
+        firePropertyChanged(MULTIUSER_INSTALLATION, oldValue, multiUserInstallation);
+        updateMinimumNSISVersion();
+    }
+
+    public int getMultiUserExecLevel()
+    {
+        return mMultiUserExecLevel;
+    }
+
+    public void setMultiUserExecLevel(int multiUserExecLevel)
+    {
+        int oldValue = mMultiUserExecLevel;
+        mMultiUserExecLevel = multiUserExecLevel;
+        firePropertyChanged(MULTIUSER_EXEC_LEVEL, oldValue, multiUserExecLevel);
+    }
+
+    public int getMultiUserInstallMode()
+    {
+        return mMultiUserInstallMode;
+    }
+
+    public void setMultiUserInstallMode(int multiUserInstallMode)
+    {
+        int oldValue = mMultiUserInstallMode;
+        mMultiUserInstallMode = multiUserInstallMode;
+        firePropertyChanged(MULTIUSER_INSTALL_MODE, oldValue, multiUserInstallMode);
+    }
+
+    public boolean isMultiUserInstallModeRemember()
+    {
+        return mMultiUserInstallModeRemember;
+    }
+
+    public void setMultiUserInstallModeRemember(boolean multiUserInstallModeRemember)
+    {
+        boolean oldValue = mMultiUserInstallModeRemember;
+        mMultiUserInstallModeRemember = multiUserInstallModeRemember;
+        firePropertyChanged(MULTIUSER_INSTALL_MODE_REMEMBER, oldValue, multiUserInstallModeRemember);
+    }
+
+    public boolean isMultiUserInstallModeAsk()
+    {
+        return mMultiUserInstallModeAsk;
+    }
+
+    public void setMultiUserInstallModeAsk(boolean multiUserInstallModeAsk)
+    {
+        boolean oldValue = mMultiUserInstallModeAsk;
+        mMultiUserInstallModeAsk = multiUserInstallModeAsk;
+        firePropertyChanged(MULTIUSER_INSTALL_MODE_ASK, oldValue, multiUserInstallModeAsk);
     }
 }

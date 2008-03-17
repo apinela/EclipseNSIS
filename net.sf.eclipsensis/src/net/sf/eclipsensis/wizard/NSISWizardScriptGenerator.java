@@ -71,6 +71,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     private INSISScriptElement mUnfunctionsPlaceHolder = null;
     private boolean mIsSilent = false;
     private boolean mIsMUI = false;
+    private boolean mIsMultiUser = false;
     private String mMUIHeader = null;
 
     static {
@@ -243,6 +244,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 break;
             case INSTALLER_TYPE_MUI2:
                 mIsMUI = true;
+                if(mSettings.isMultiUserInstallation()) {
+                    mIsMultiUser = true;
+                }
                 mMUIHeader = "MUI2.nsh"; //$NON-NLS-1$
                 break;
         }
@@ -262,8 +266,65 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             mScript.addElement(new NSISScriptAttribute("SetCompressor",args)); //$NON-NLS-1$
             mScript.addElement(new NSISScriptBlankLine());
         }
+        if(!mIsMultiUser && mSettings.getExecutionLevel() != EXECUTION_LEVEL_NONE) {
+            String execLevel;
+            switch(mSettings.getExecutionLevel()) {
+                case EXECUTION_LEVEL_ADMIN:
+                    execLevel = "admin"; //$NON-NLS-1$
+                    break;
+                case EXECUTION_LEVEL_USER:
+                    execLevel = "user"; //$NON-NLS-1$
+                    break;
+                default:
+                    execLevel = "highest"; //$NON-NLS-1$
+            }
+            mScript.addElement(new NSISScriptAttribute("RequestExecutionLevel", execLevel)); //$NON-NLS-1$
+            mScript.addElement(new NSISScriptBlankLine());
+        }
         mScript.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.defines.comment"))); //$NON-NLS-1$
         INSISScriptElement definesPlaceHolder = mScript.addElement(new NSISScriptBlankLine());
+        mScript.insertElement(definesPlaceHolder,new NSISScriptDefine("REGKEY",Common.quote("SOFTWARE\\$(^Name)"))); //$NON-NLS-1$ //$NON-NLS-2$
+
+        if(mIsMultiUser) {
+            mScript.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString(EclipseNSISPlugin.getResourceString("scriptgen.multi.user.defines.comment")))); //$NON-NLS-1$
+
+            String execLevel;
+            switch(mSettings.getMultiUserExecLevel()) {
+                case MULTIUSER_EXEC_LEVEL_ADMIN:
+                    execLevel = "Admin"; //$NON-NLS-1$
+                    break;
+                case MULTIUSER_EXEC_LEVEL_POWER:
+                    execLevel = "Power"; //$NON-NLS-1$
+                    break;
+                case MULTIUSER_EXEC_LEVEL_HIGHEST:
+                    execLevel = "Highest"; //$NON-NLS-1$
+                    break;
+                default:
+                    execLevel = "Standard"; //$NON-NLS-1$
+            }
+            mScript.addElement(new NSISScriptDefine("MULTIUSER_EXECUTIONLEVEL",execLevel)); //$NON-NLS-1$
+            if(!mSettings.isCreateUninstaller()) {
+                mScript.addElement(new NSISScriptDefine("MULTIUSER_NOUNINSTALL")); //$NON-NLS-1$
+            }
+            if(mSettings.getMultiUserExecLevel() > MULTIUSER_EXEC_LEVEL_STANDARD) {
+                if(mSettings.getMultiUserInstallMode() == MULTIUSER_INSTALL_MODE_USER) {
+                    mScript.addElement(new NSISScriptDefine("MULTIUSER_INSTALLMODE_DEFAULT_CURRENTUSER")); //$NON-NLS-1$
+                }
+                if(mSettings.isMultiUserInstallModeAsk()) {
+                    mScript.addElement(new NSISScriptDefine("MULTIUSER_MUI")); //$NON-NLS-1$
+                }
+                if(mSettings.isMultiUserInstallModeRemember()) {
+                    mScript.addElement(new NSISScriptDefine("MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_KEY",Common.quote("${REGKEY}"))); //$NON-NLS-1$ //$NON-NLS-2$
+                    mScript.addElement(new NSISScriptDefine("MULTIUSER_INSTALLMODE_DEFAULT_REGISTRY_VALUENAME","MultiUserInstallMode")); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+            }
+            mScript.addElement(new NSISScriptDefine("MULTIUSER_INSTALLMODE_COMMANDLINE")); //$NON-NLS-1$
+            mScript.addElement(new NSISScriptDefine("MULTIUSER_INSTALLMODE_INSTDIR", mSettings.getInstallDir())); //$NON-NLS-1$
+            mScript.addElement(new NSISScriptDefine("MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY", Common.quote("${REGKEY}"))); //$NON-NLS-1$ //$NON-NLS-2$
+            mScript.addElement(new NSISScriptDefine("MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_VALUE", Common.quote("Path"))); //$NON-NLS-1$ //$NON-NLS-2$
+            mScript.addElement(new NSISScriptBlankLine());
+            mIncludes.add("MultiUser.nsh"); //$NON-NLS-1$
+        }
         INSISScriptElement muiDefsPlaceHolder = null;
         if(mIsMUI) {
             mScript.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.muidefs.comment"))); //$NON-NLS-1$
@@ -295,8 +356,6 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         }
 
         mScript.insertElement(attributesPlaceHolder,new NSISScriptAttribute("OutFile",maybeMakeRelative(mSaveFile,mSettings.getOutFile()))); //$NON-NLS-1$
-
-        mScript.insertElement(definesPlaceHolder,new NSISScriptDefine("REGKEY",Common.quote("SOFTWARE\\$(^Name)"))); //$NON-NLS-1$ //$NON-NLS-2$
 
         mScript.insertElement(attributesPlaceHolder,new NSISScriptAttribute("InstallDir",mSettings.getInstallDir())); //$NON-NLS-1$
         mScript.insertElement(attributesPlaceHolder,new NSISScriptAttribute("CRCCheck",getKeyword("on"))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -347,19 +406,22 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             if(mSettings.isSelectComponents()) {
                 mScript.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_COMPONENTS")); //$NON-NLS-1$
             }
+            if(mIsMultiUser && mSettings.getMultiUserExecLevel() > MULTIUSER_EXEC_LEVEL_STANDARD && mSettings.isMultiUserInstallModeAsk()) {
+                mScript.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MULTIUSER_PAGE_INSTALLMODE")); //$NON-NLS-1$
+            }
             if(mSettings.isChangeInstallDir()) {
                 mScript.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_DIRECTORY")); //$NON-NLS-1$
             }
             if(mSettings.isCreateStartMenuGroup()) {
                 mVars.add("StartMenuGroup"); //$NON-NLS-1$
                 if(mSettings.isChangeStartMenuGroup()) {
-                    mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_ROOT",getKeyword("HKLM")));  //$NON-NLS-1$ //$NON-NLS-2$
+                    mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_ROOT",getKeyword("HKLM"))); //$NON-NLS-1$ //$NON-NLS-2$
                     if(!mSettings.isDisableStartMenuShortcuts()) {
                         mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_NODISABLE")); //$NON-NLS-1$
                     }
-                    mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_KEY","${REGKEY}"));  //$NON-NLS-1$ //$NON-NLS-2$
+                    mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_KEY","${REGKEY}")); //$NON-NLS-1$ //$NON-NLS-2$
                     mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_REGISTRY_VALUENAME","StartMenuGroup")); //$NON-NLS-1$ //$NON-NLS-2$
-                    mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_DEFAULTFOLDER",mSettings.getStartMenuGroup()));  //$NON-NLS-1$
+                    mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_STARTMENUPAGE_DEFAULTFOLDER",mSettings.getStartMenuGroup())); //$NON-NLS-1$
                     mScript.insertElement(pagesPlaceHolder,new NSISScriptInsertMacro("MUI_PAGE_STARTMENU",new String[]{"Application","$StartMenuGroup"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
             }
@@ -687,6 +749,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     mOnInitFunction.addElement(new NSISScriptInstruction("Abort")); //$NON-NLS-1$
                 }
             }
+            if(mIsMultiUser) {
+                mOnInitFunction.addElement(new NSISScriptInsertMacro("MULTIUSER_INIT")); //$NON-NLS-1$
+            }
         }
 
         NSISScriptSection postSection = null;
@@ -696,7 +761,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         if(mSettings.isCreateUninstaller()) {
             postSection = new NSISScriptSection("post",false,true,false); //$NON-NLS-1$
             postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
-                    getKeyword("HKLM"),Common.quote("${REGKEY}"),"Path",getKeyword("$INSTDIR")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                        getKeyword("HKLM"),Common.quote("${REGKEY}"),"Path",getKeyword("$INSTDIR")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             if(!mIsMUI) {
                 if(mSettings.isSelectLanguage() && languages.size() > 1) {
                     postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
@@ -775,8 +840,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
             if(mSettings.isEnableLanguageSupport()&& mIsMUI && mSettings.isSelectLanguage() &&
                     languages.size() > 1) {
-                mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_LANGDLL_REGISTRY_ROOT",getKeyword("HKLM")));  //$NON-NLS-1$ //$NON-NLS-2$
-                mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_LANGDLL_REGISTRY_KEY","${REGKEY}"));  //$NON-NLS-1$ //$NON-NLS-2$
+                mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_LANGDLL_REGISTRY_ROOT",getKeyword("HKLM"))); //$NON-NLS-1$ //$NON-NLS-2$
+                mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_LANGDLL_REGISTRY_KEY","${REGKEY}")); //$NON-NLS-1$ //$NON-NLS-2$
                 mScript.insertElement(muiDefsPlaceHolder,new NSISScriptDefine("MUI_LANGDLL_REGISTRY_VALUENAME","InstallerLanguage")); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
@@ -786,7 +851,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             if(!mSettings.isSilentUninstaller() && mSettings.isAutoCloseUninstaller()) {
                 mUnOnInitFunction.addElement(new NSISScriptInstruction("SetAutoClose",getKeyword("true"))); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            mUnOnInitFunction.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{getKeyword("$INSTDIR"),getKeyword("HKLM"),Common.quote("${REGKEY}"),"Path"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+            if(!mIsMultiUser) {
+                mUnOnInitFunction.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{getKeyword("$INSTDIR"),getKeyword("HKLM"),Common.quote("${REGKEY}"),"Path"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+            }
             if(mSettings.isCreateStartMenuGroup()) {
                 if(mIsSilent || !mSettings.isChangeStartMenuGroup()) {
                     mUnOnInitFunction.addElement(new NSISScriptInstruction("StrCpy",new String[]{"$StartMenuGroup", mSettings.getStartMenuGroup()})); //$NON-NLS-1$ //$NON-NLS-2$
@@ -809,6 +876,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         mUnOnInitFunction.addElement(new NSISScriptInstruction("ReadRegStr", new String[]{getKeyword("$LANGUAGE"),getKeyword("HKLM"),Common.quote("${REGKEY}"),"InstallerLanguage"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                     }
                 }
+            }
+            if(mIsMultiUser) {
+                mUnOnInitFunction.addElement(new NSISScriptInsertMacro("MULTIUSER_UNINIT")); //$NON-NLS-1$
             }
 
             String uninstallFile = new StringBuffer(getKeyword("$INSTDIR")).append("\\").append(mSettings.getUninstallFile()).toString(); //$NON-NLS-1$ //$NON-NLS-2$

@@ -30,10 +30,13 @@ import org.eclipse.swt.widgets.*;
 public class NSISWizardDialogUtil
 {
     public static final String CONTROL_DECORATION = "ControlDecoration"; //$NON-NLS-1$
+
     public static final FieldDecoration REQ_FIELD_DECORATION = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_REQUIRED);
+
     public static final FieldDecoration DISABLED_REQ_FIELD_DECORATION;
 
     public static final String LABEL = "LABEL"; //$NON-NLS-1$
+
     public static final String IMAGE = "IMAGE"; //$NON-NLS-1$
 
     static {
@@ -41,7 +44,7 @@ public class NSISWizardDialogUtil
         Display.getDefault().syncExec(new Runnable() {
             public void run()
             {
-                image[0] = new Image(image[0].getDevice(),image[0],SWT.IMAGE_DISABLE);
+                image[0] = new Image(image[0].getDevice(), image[0], SWT.IMAGE_DISABLE);
             }
         });
         DISABLED_REQ_FIELD_DECORATION = new FieldDecoration(image[0], null);
@@ -53,27 +56,27 @@ public class NSISWizardDialogUtil
 
     private static void addSlave(MasterSlaveController masterSlaveController, Control slave)
     {
-        if(masterSlaveController != null) {
+        if (masterSlaveController != null) {
             masterSlaveController.addSlave(slave);
         }
     }
 
     public static Label createRequiredFieldsLabel(Composite parent)
     {
-        Composite c = new Composite(parent,SWT.NONE);
-        GridLayout layout = new GridLayout(2,false);
+        Composite c = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = layout.marginWidth = layout.horizontalSpacing = 0;
         c.setLayout(layout);
-        c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
-        Label l = new Label(c,SWT.NONE);
+        c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        Label l = new Label(c, SWT.NONE);
         l.setImage(REQ_FIELD_DECORATION.getImage());
-        l.setLayoutData(new GridData(SWT.FILL,SWT.BEGINNING,false,false));
-        l = NSISWizardDialogUtil.createLabel(c,"wizard.required.text",true,null,false); //$NON-NLS-1$
+        l.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, false, false));
+        l = NSISWizardDialogUtil.createLabel(c, "wizard.required.text", true, null, false); //$NON-NLS-1$
         FontData[] fd = l.getFont().getFontData();
         for (int i = 0; i < fd.length; i++) {
             fd[i].height *= 0.9;
         }
-        final Font f = new Font(l.getDisplay(),fd);
+        final Font f = new Font(l.getDisplay(), fd);
         l.setFont(f);
         l.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e)
@@ -86,12 +89,12 @@ public class NSISWizardDialogUtil
 
     public static Label createLabel(Composite parent, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        return createLabel(parent, SWT.LEFT|SWT.WRAP, labelResource, enabled, masterSlaveController, isRequired);
+        return createLabel(parent, SWT.LEFT | SWT.WRAP, labelResource, enabled, masterSlaveController, isRequired);
     }
 
     public static void setEnabled(Control c, boolean enabled)
     {
-        if(c != null && !c.isDisposed()) {
+        if (c != null && !c.isDisposed()) {
             c.setEnabled(enabled);
             updateDecoration(c, enabled);
         }
@@ -115,12 +118,13 @@ public class NSISWizardDialogUtil
     private static void updateDecoration(Control c, boolean enabled)
     {
         ControlDecoration decoration = (ControlDecoration)c.getData(CONTROL_DECORATION);
-        if(decoration != null) {
+        if (decoration != null) {
             FieldDecoration d = (enabled?REQ_FIELD_DECORATION:DISABLED_REQ_FIELD_DECORATION);
             decoration.setImage(d.getImage());
             decoration.setDescriptionText(d.getDescription());
         }
     }
+
     /**
      * @param parent
      * @param style
@@ -132,13 +136,13 @@ public class NSISWizardDialogUtil
      */
     public static Label createLabel(Composite parent, int style, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        Label l = new Label(parent,style);
-        if(labelResource != null) {
+        Label l = new Label(parent, style);
+        if (labelResource != null) {
             l.setText(EclipseNSISPlugin.getResourceString(labelResource));
         }
         l.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
         l.setEnabled(enabled);
-        if(isRequired) {
+        if (isRequired) {
             decorate(l);
         }
 
@@ -151,10 +155,10 @@ public class NSISWizardDialogUtil
      */
     public static void decorate(Control control)
     {
-        ControlDecoration controlDecoration = new ControlDecoration(control,SWT.LEFT|SWT.TOP,null);
+        ControlDecoration controlDecoration = new ControlDecoration(control, SWT.LEFT | SWT.TOP, null);
         control.setData(CONTROL_DECORATION, controlDecoration);
         updateDecoration(control, control.isEnabled());
-        if(controlDecoration.getImage() != null) {
+        if (controlDecoration.getImage() != null) {
             ((GridData)control.getLayoutData()).horizontalIndent += controlDecoration.getImage().getBounds().width;
         }
     }
@@ -162,13 +166,13 @@ public class NSISWizardDialogUtil
     public static Composite checkParentLayoutColumns(Composite parent, int numColumns)
     {
         GridLayout layout = (GridLayout)parent.getLayout();
-        if(layout.numColumns < numColumns) {
+        if (layout.numColumns < numColumns) {
             parent = new Composite(parent, SWT.NONE);
             GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
             data.horizontalSpan = layout.numColumns;
             parent.setLayoutData(data);
 
-            layout = new GridLayout(numColumns,layout.makeColumnsEqualWidth);
+            layout = new GridLayout(numColumns, layout.makeColumnsEqualWidth);
             layout.marginHeight = 0;
             layout.marginWidth = 0;
             parent.setLayout(layout);
@@ -182,7 +186,7 @@ public class NSISWizardDialogUtil
         parent = checkParentLayoutColumns(parent, 2);
         Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
         Text t = createText(parent, value, layout.numColumns - 1, enabled, masterSlaveController);
-        t.setData(LABEL,l);
+        t.setData(LABEL, l);
         return t;
     }
 
@@ -233,7 +237,8 @@ public class NSISWizardDialogUtil
         return t;
     }
 
-    public static Text createFileBrowser(Composite parent, String value, final boolean isSave, final String[] filterNames, final String[] filterExtensions, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
+    public static Text createFileBrowser(Composite parent, String value, final boolean isSave, final String[] filterNames, final String[] filterExtensions, String labelResource, boolean enabled,
+            MasterSlaveController masterSlaveController, boolean isRequired)
     {
         parent = checkParentLayoutColumns(parent, 3);
         GridLayout layout = (GridLayout)parent.getLayout();
@@ -253,7 +258,8 @@ public class NSISWizardDialogUtil
      * @param masterSlaveController
      * @param t
      */
-    public static Button createFileBrowserButton(Composite parent, final boolean isSave, final String[] filterNames, final String[] filterExtensions, final Text t, boolean enabled, MasterSlaveController masterSlaveController)
+    public static Button createFileBrowserButton(Composite parent, final boolean isSave, final String[] filterNames, final String[] filterExtensions, final Text t, boolean enabled,
+            MasterSlaveController masterSlaveController)
     {
         final Button button = new Button(parent, SWT.PUSH | SWT.CENTER);
         button.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
@@ -280,46 +286,47 @@ public class NSISWizardDialogUtil
         return button;
     }
 
-    public static Text createImageBrowser(Composite parent, String value, Point size, final String[] filterNames, final String[] filterExtensions, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
+    public static Text createImageBrowser(Composite parent, String value, Point size, final String[] filterNames, final String[] filterExtensions, String labelResource, boolean enabled,
+            MasterSlaveController masterSlaveController, boolean isRequired)
     {
         parent = checkParentLayoutColumns(parent, 2);
         GridLayout layout = (GridLayout)parent.getLayout();
         Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
-        parent = new Composite(parent,SWT.NONE);
+        parent = new Composite(parent, SWT.NONE);
         GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = layout.numColumns - 1;
         parent.setLayoutData(data);
-        layout = new GridLayout(3,false);
+        layout = new GridLayout(3, false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         parent.setLayout(layout);
         final Text t = createText(parent, value, 1, enabled, masterSlaveController);
-        t.setData(LABEL,l);
+        t.setData(LABEL, l);
 
         createFileBrowserButton(parent, false, filterNames, filterExtensions, t, enabled, masterSlaveController);
 
         final Label l2 = new Label(parent, SWT.BORDER | SWT.SHADOW_IN | SWT.CENTER);
         data = new GridData(SWT.CENTER, SWT.CENTER, false, false);
-        if(size != null) {
-            if(size.x != SWT.DEFAULT) {
+        if (size != null) {
+            if (size.x != SWT.DEFAULT) {
                 data.widthHint = size.x;
             }
-            if(size.y != SWT.DEFAULT) {
+            if (size.y != SWT.DEFAULT) {
                 data.heightHint = size.y;
             }
         }
         l2.setLayoutData(data);
 
         l2.setEnabled(enabled);
-        t.setData(IMAGE,l2);
+        t.setData(IMAGE, l2);
         addSlave(masterSlaveController, l2);
 
-        t.addModifyListener(new ModifyListener(){
+        t.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
                 loadImage((Text)e.widget);
             }
-         });
+        });
 
         return t;
     }
@@ -328,41 +335,40 @@ public class NSISWizardDialogUtil
     {
         String fileName = IOUtility.decodePath(t.getText());
         Label l = (Label)t.getData(IMAGE);
-        if(l != null) {
+        if (l != null) {
             Image image = null;
-            if(!Common.isEmpty(fileName) && IOUtility.isValidFile(fileName)) {
+            if (!Common.isEmpty(fileName) && IOUtility.isValidFile(fileName)) {
                 try {
                     URL url = new File(fileName).toURI().toURL();
-                    if(EclipseNSISPlugin.getImageManager().containsImage(url)) {
+                    if (EclipseNSISPlugin.getImageManager().containsImage(url)) {
                         image = EclipseNSISPlugin.getImageManager().getImage(url);
                     }
                     else {
                         GridData data = (GridData)l.getLayoutData();
-                        Point size = l.computeSize(data.widthHint,data.heightHint);
+                        Point size = l.computeSize(data.widthHint, data.heightHint);
                         ImageData[] imageData = new ImageLoader().load(fileName);
-                        if(!Common.isEmptyArray(imageData)) {
+                        if (!Common.isEmptyArray(imageData)) {
                             ImageData bestData = null;
                             int bestArea = 0;
                             Display display = l.getDisplay();
                             int displayDepth = display.getDepth();
                             for (int i = 0; i < imageData.length; i++) {
-                                if(imageData[i].width <= size.x && imageData[i].height <= size.y && imageData[i].depth <= displayDepth) {
-                                    if(bestData != null) {
-                                        int imageArea = imageData[i].width*imageData[i].height;
-                                        if((imageArea < bestArea) ||
-                                           (imageArea == bestArea && imageData[i].depth < bestData.depth)) {
+                                if (imageData[i].width <= size.x && imageData[i].height <= size.y && imageData[i].depth <= displayDepth) {
+                                    if (bestData != null) {
+                                        int imageArea = imageData[i].width * imageData[i].height;
+                                        if ((imageArea < bestArea) || (imageArea == bestArea && imageData[i].depth < bestData.depth)) {
                                             continue;
                                         }
                                     }
                                     bestData = imageData[i];
-                                    bestArea = bestData.width*bestData.height;
+                                    bestArea = bestData.width * bestData.height;
                                 }
                             }
-                            if(bestData == null) {
+                            if (bestData == null) {
                                 bestData = imageData[0];
                             }
-                            image = new Image(display,bestData);
-                            EclipseNSISPlugin.getImageManager().putImage(url,image);
+                            image = new Image(display, bestData);
+                            EclipseNSISPlugin.getImageManager().putImage(url, image);
                         }
                     }
                 }
@@ -371,26 +377,28 @@ public class NSISWizardDialogUtil
                 }
             }
             l.setImage(image);
-            l.setData((image==null?null:image.getImageData()));
+            l.setData((image == null?null:image.getImageData()));
         }
     }
 
-    public static Combo createCombo(Composite parent, String[] items, int selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
+    public static Combo createCombo(Composite parent, String[] items, int selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController,
+            boolean isRequired)
     {
-        return createCombo(parent, items, (selectedItem >=0 && selectedItem < items.length?items[selectedItem]:""),isReadOnly,labelResource, enabled, masterSlaveController, isRequired); //$NON-NLS-1$
+        return createCombo(parent, items, (selectedItem >= 0 && selectedItem < items.length?items[selectedItem]:""), isReadOnly, labelResource, enabled, masterSlaveController, isRequired); //$NON-NLS-1$
     }
 
-    public static Combo createCombo(Composite parent, String[] items, String selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
+    public static Combo createCombo(Composite parent, String[] items, String selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController,
+            boolean isRequired)
     {
         parent = checkParentLayoutColumns(parent, 2);
         Label l = null;
-        if(labelResource != null) {
+        if (labelResource != null) {
             l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
         }
 
-        Combo c = createCombo(parent, ((GridLayout)parent.getLayout()).numColumns - (l==null?0:1), items, selectedItem, isReadOnly, enabled, masterSlaveController);
-        if(l != null) {
-            c.setData(LABEL,l);
+        Combo c = createCombo(parent, ((GridLayout)parent.getLayout()).numColumns - (l == null?0:1), items, selectedItem, isReadOnly, enabled, masterSlaveController);
+        if (l != null) {
+            c.setData(LABEL, l);
         }
 
         return c;
@@ -421,7 +429,7 @@ public class NSISWizardDialogUtil
     public static void populateCombo(Combo combo, String[] items, String selectedItem)
     {
         combo.removeAll();
-        if(!Common.isEmptyArray(items)) {
+        if (!Common.isEmptyArray(items)) {
             for (int i = 0; i < items.length; i++) {
                 combo.add(items[i]);
             }
@@ -456,22 +464,25 @@ public class NSISWizardDialogUtil
         b.setLayoutData(data);
         b.setEnabled(enabled);
         addSlave(masterSlaveController, b);
-        b.setData(LABEL,l);
+        b.setData(LABEL, l);
 
         return ce;
     }
 
     public static Button[] createRadioGroup(Composite parent, String[] items, int selectedItem, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        parent = checkParentLayoutColumns(parent, 2);
-        Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
+        parent = checkParentLayoutColumns(parent, labelResource != null?2:1);
+        Label l = null;
+        if(labelResource != null) {
+            l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
+        }
 
         GridLayout layout = (GridLayout)parent.getLayout();
-        parent = new Composite(parent,SWT.NONE);
+        parent = new Composite(parent, SWT.NONE);
         GridData gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-        gd.horizontalSpan = layout.numColumns - 1;
+        gd.horizontalSpan = layout.numColumns - (l==null?0:1);
         parent.setLayoutData(gd);
-        layout = new GridLayout(items.length,true);
+        layout = new GridLayout(items.length, true);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         parent.setLayout(layout);
@@ -482,16 +493,18 @@ public class NSISWizardDialogUtil
             buttons[i] = new Button(parent, SWT.RADIO | SWT.LEFT);
             buttons[i].setText(items[i]);
             buttons[i].setData(new Integer(i));
-            if(i == selectedItem) {
+            if (i == selectedItem) {
                 selectedIndex = i;
                 buttons[i].setSelection(true);
             }
             buttons[i].setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
             buttons[i].setEnabled(enabled);
             addSlave(masterSlaveController, buttons[i]);
-            buttons[i].setData(LABEL,l);
+            if(l != null) {
+                buttons[i].setData(LABEL, l);
+            }
         }
-        if(selectedIndex < 0 && items.length > 0) {
+        if (selectedIndex < 0 && items.length > 0) {
             buttons[0].setSelection(true);
         }
         return buttons;
@@ -500,13 +513,13 @@ public class NSISWizardDialogUtil
     public static Group createGroup(Composite parent, int numColumns, String labelResource, MasterSlaveController masterSlaveController, boolean isRequired)
     {
         Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
-        if(!Common.isEmpty(labelResource)) {
+        if (!Common.isEmpty(labelResource)) {
             group.setText(EclipseNSISPlugin.getResourceString(labelResource));
         }
         GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = ((GridLayout)parent.getLayout()).numColumns;
         group.setLayoutData(gd);
-        GridLayout layout = new GridLayout(numColumns,false);
+        GridLayout layout = new GridLayout(numColumns, false);
         group.setLayout(layout);
         addSlave(masterSlaveController, group);
 
@@ -526,7 +539,7 @@ public class NSISWizardDialogUtil
     private static Button createToggleButton(Composite parent, String labelResource, int style, boolean state, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
         Button button = new Button(parent, style | SWT.LEFT);
-        if(labelResource != null) {
+        if (labelResource != null) {
             button.setText(EclipseNSISPlugin.getResourceString(labelResource));
         }
         button.setSelection(state);
@@ -549,22 +562,23 @@ public class NSISWizardDialogUtil
      * @param isRequired
      * @return
      */
-    public static Combo createContentBrowser(Composite parent, String labelResource, String value, String[] items, final NSISWizard wizard, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
+    public static Combo createContentBrowser(Composite parent, String labelResource, String value, String[] items, final NSISWizard wizard, boolean enabled,
+            MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        parent = checkParentLayoutColumns(parent,3);
+        parent = checkParentLayoutColumns(parent, 3);
         int numColumns = ((GridLayout)parent.getLayout()).numColumns;
         GridData gd;
-        Label l = createLabel(parent,labelResource,enabled,masterSlaveController,isRequired);
-        Composite composite = new Composite(parent,SWT.NONE);
+        Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
+        Composite composite = new Composite(parent, SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        gd.horizontalSpan = numColumns-1;
+        gd.horizontalSpan = numColumns - 1;
         composite.setLayoutData(gd);
-        GridLayout layout = new GridLayout(2,false);
+        GridLayout layout = new GridLayout(2, false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
 
-        final Combo c2 = createCombo(composite,1, items, value,false,enabled,masterSlaveController);
+        final Combo c2 = createCombo(composite, 1, items, value, false, enabled, masterSlaveController);
         gd = (GridData)c2.getLayoutData();
         gd.grabExcessHorizontalSpace = true;
         gd.horizontalAlignment = GridData.FILL;
@@ -575,31 +589,32 @@ public class NSISWizardDialogUtil
         gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
         b.setLayoutData(gd);
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                NSISContentBrowserDialog dialog = new NSISContentBrowserDialog(b.getShell(),wizard.getSettings());
-                if(dialog.open() == Window.OK) {
+            public void widgetSelected(SelectionEvent e)
+            {
+                NSISContentBrowserDialog dialog = new NSISContentBrowserDialog(b.getShell(), wizard.getSettings());
+                if (dialog.open() == Window.OK) {
                     INSISInstallElement element = dialog.getSelectedElement();
                     StringBuffer text = new StringBuffer(""); //$NON-NLS-1$
-                    if(element instanceof NSISInstallFiles.FileItem) {
+                    if (element instanceof NSISInstallFiles.FileItem) {
                         String destination = ((NSISInstallFiles)element.getParent()).getDestination();
                         text.append(destination);
-                        if(!destination.endsWith("\\")) { //$NON-NLS-1$
+                        if (!destination.endsWith("\\")) { //$NON-NLS-1$
                             text.append("\\"); //$NON-NLS-1$
                         }
                         text.append(new File(((NSISInstallFiles.FileItem)element).getName()).getName());
                     }
-                    else if(element instanceof NSISInstallFile) {
+                    else if (element instanceof NSISInstallFile) {
                         String destination = ((NSISInstallFile)element).getDestination();
                         text.append(destination);
-                        if(!destination.endsWith("\\")) { //$NON-NLS-1$
+                        if (!destination.endsWith("\\")) { //$NON-NLS-1$
                             text.append("\\"); //$NON-NLS-1$
                         }
                         text.append(new File(((NSISInstallFile)element).getName()).getName());
                     }
-                    else if(element instanceof NSISInstallDirectory) {
+                    else if (element instanceof NSISInstallDirectory) {
                         String destination = ((NSISInstallDirectory)element).getDestination();
                         text.append(destination);
-                        if(!destination.endsWith("\\")) { //$NON-NLS-1$
+                        if (!destination.endsWith("\\")) { //$NON-NLS-1$
                             text.append("\\"); //$NON-NLS-1$
                         }
                         text.append(new File(((NSISInstallDirectory)element).getName()).getName());
@@ -608,7 +623,7 @@ public class NSISWizardDialogUtil
                 }
             }
         });
-        addSlave(masterSlaveController,b);
+        addSlave(masterSlaveController, b);
         return c2;
     }
 }

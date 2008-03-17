@@ -119,6 +119,19 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         return true;
     }
 
+    protected boolean validateFolderName(String foldername, String[] messageResources)
+    {
+        if(Common.isEmpty(foldername)) {
+            setErrorMessage(getArrayStringResource(messageResources,0,"empty.foldername.error")); //$NON-NLS-1$
+            return false;
+        }
+        else if(!IOUtility.isValidFileName(foldername)) {
+            setErrorMessage(getFormattedArrayStringResource(messageResources,1,"invalid.foldername.error",new String[]{foldername})); //$NON-NLS-1$
+            return false;
+        }
+        return true;
+    }
+
     protected boolean validateFile(String filename, String[] messageResources)
     {
         return validateEmptyOrValidFile(filename, false, messageResources);

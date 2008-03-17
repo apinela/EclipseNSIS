@@ -48,12 +48,18 @@ public class MasterSlaveController extends SelectionAdapter
     public void addSlave(Control control, MasterSlaveEnabler enabler)
     {
         mSlaves.put(control, enabler);
+        Label l = (Label)control.getData(NSISWizardDialogUtil.LABEL);
+        if(l != null) {
+            if(mSlaves.get(l) == null) {
+                mSlaves.put(l, enabler);
+            }
+        }
     }
 
     public void setEnabler(Control control, MasterSlaveEnabler enabler)
     {
         if(mSlaves.containsKey(control)) {
-            mSlaves.put(control, enabler);
+            addSlave(control, enabler);
         }
     }
 
@@ -91,6 +97,10 @@ public class MasterSlaveController extends SelectionAdapter
             for (int i = 0; i < children.length; i++) {
                 recursiveSetEnabled(children[i],enabled, enabler);
             }
+        }
+        MasterSlaveEnabler enabler2 = (MasterSlaveEnabler)mSlaves.get(control);
+        if(enabler2 != null) {
+            enabler = enabler2;
         }
         enabled = enabled?(enabler != null?enabler.canEnable(control):enabled):enabled;
         NSISWizardDialogUtil.setEnabled(control,enabled);
