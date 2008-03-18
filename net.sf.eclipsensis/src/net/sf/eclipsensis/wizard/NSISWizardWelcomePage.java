@@ -175,7 +175,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
             {
                 if(element instanceof NSISWizardTemplate) {
                     NSISWizardTemplate template = (NSISWizardTemplate)element;
-                    return template.isEnabled() && !template.isDeleted();
+                    return template.isAvailable() && template.isEnabled() && !template.isDeleted();
                 }
                 return true;
             }

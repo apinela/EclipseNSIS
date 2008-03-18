@@ -16,15 +16,18 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.TableResizer;
+import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.*;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -89,7 +92,7 @@ public abstract class AbstractTemplateSettings extends Composite
         gd.horizontalSpan= 2;
         innerParent.setLayoutData(gd);
 
-        Table table= new Table(innerParent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL);
+        final Table table= new Table(innerParent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.V_SCROLL);
 
         GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
         data.widthHint= fontMetrics.getAverageCharWidth()*3;
@@ -132,6 +135,26 @@ public abstract class AbstractTemplateSettings extends Composite
             }
         };
         mTableViewer.addFilter(filter);
+
+        final INSISHomeListener nsisHomeListener = new INSISHomeListener() {
+            public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+            {
+                Display.getDefault().asyncExec(new Runnable() {
+                    public void run()
+                    {
+                        mTableViewer.refresh();
+                        mTableViewer.setCheckedElements(getEnabledTemplates());
+                    }
+                });
+            }
+        };
+        NSISPreferences.INSTANCE.addListener(nsisHomeListener);
+        table.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                NSISPreferences.INSTANCE.removeListener(nsisHomeListener);
+            }
+        });
 
         mTableViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent e) {
