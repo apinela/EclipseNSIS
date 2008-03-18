@@ -13,12 +13,10 @@ import net.sf.eclipsensis.util.*;
 
 import org.w3c.dom.*;
 
-public class NSISLanguageNodeConverter implements INodeConverter
+public class NSISLanguageNodeConverter extends AbstractNodeConverter
 {
     private static final String NAME_ATTR = "name"; //$NON-NLS-1$
     private static final String LANGUAGE_NODE = "language"; //$NON-NLS-1$
-
-    private static Class[] cSupportedClasses = {NSISLanguage.class};
 
     public Object fromNode(Node node, Class clasz)
     {
@@ -28,11 +26,6 @@ public class NSISLanguageNodeConverter implements INodeConverter
             return NSISLanguageManager.getInstance().getLanguage(langName);
         }
         throw new IllegalArgumentException(clasz.getName());
-    }
-
-    public Class[] getSupportedClasses()
-    {
-        return (Class[])cSupportedClasses.clone();
     }
 
     public Node toNode(Document document, Object object)

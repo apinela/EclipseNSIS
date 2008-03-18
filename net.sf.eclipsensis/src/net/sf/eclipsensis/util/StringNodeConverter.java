@@ -11,11 +11,9 @@ package net.sf.eclipsensis.util;
 
 import org.w3c.dom.*;
 
-public class StringNodeConverter implements INodeConverter
+public class StringNodeConverter extends AbstractNodeConverter
 {
     private static final String STRING_NODE = "string"; //$NON-NLS-1$
-
-    private static Class[] cSupportedClasses = {String.class};
 
     public Object fromNode(Node node, Class clasz)
     {
@@ -23,11 +21,6 @@ public class StringNodeConverter implements INodeConverter
             return XMLUtil.readTextNode(node);
         }
         throw new IllegalArgumentException(clasz.getName());
-    }
-
-    public Class[] getSupportedClasses()
-    {
-        return (Class[])cSupportedClasses.clone();
     }
 
     public Node toNode(Document document, Object object)

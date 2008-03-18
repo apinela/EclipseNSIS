@@ -119,11 +119,11 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                 return str;
             }
         }
-        INodeConverter nodeConverter = NodeConverterFactory.getNodeConverter(clasz);
+        INodeConverter nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz);
         if(nodeConverter != null) {
             Node childNode = XMLUtil.findFirstChild(node);
             if(childNode != null) {
-                return nodeConverter.fromNode(childNode, clasz);
+                return nodeConverter.fromNode(childNode);
             }
         }
         Node attr = node.getAttributes().getNamedItem(VALUE_ATTRIBUTE);
@@ -137,7 +137,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
     {
         if(clasz.isArray()) {
             Class clasz2 = clasz.getComponentType();
-            INodeConverter nodeConverter = NodeConverterFactory.getNodeConverter(clasz2);
+            INodeConverter nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz2);
             Node[] children = XMLUtil.findChildren(node);
             Object array = Array.newInstance(clasz2, children.length);
             for (int i = 0; i < children.length; i++) {
@@ -152,18 +152,12 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
     {
         if(!NULL_NODE.equals(node.getNodeName())) {
             if(nodeConverter != null) {
-                return nodeConverter.fromNode(node,clasz);
+                return nodeConverter.fromNode(node);
             }
             else {
-                Class clasz2 = NodeClassMap.getClassForNode(node);
-                if(clasz2 != null) {
-                    Object obj = Common.createDefaultObject(clasz2);
-                    if(obj != null) {
-                        INodeConverter nodeConverter2 = NodeConverterFactory.getNodeConverter(obj.getClass());
-                        if(nodeConverter2 != null) {
-                            return nodeConverter2.fromNode(node,obj.getClass());
-                        }
-                    }
+                INodeConverter nodeConverter2 = NodeConverterFactory.INSTANCE.getNodeConverter(node.getNodeName());
+                if(nodeConverter2 != null) {
+                    return nodeConverter2.fromNode(node);
                 }
                 throw new IllegalArgumentException(node.getNodeName());
             }
@@ -175,7 +169,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
     {
         if(value.getClass().isArray()) {
             Class clasz = value.getClass().getComponentType();
-            INodeConverter nodeConverter = NodeConverterFactory.getNodeConverter(clasz);
+            INodeConverter nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz);
             if (!Common.isEmptyArray(value)) {
                 int length = Array.getLength(value);
                 for (int i = 0; i < length; i++) {
@@ -226,7 +220,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                 parent.appendChild(nodeConverter.toNode(document, obj));
             }
             else {
-                INodeConverter nodeConverter2 = NodeConverterFactory.getNodeConverter(obj.getClass());
+                INodeConverter nodeConverter2 = NodeConverterFactory.INSTANCE.getNodeConverter(obj.getClass());
                 if(nodeConverter2 != null) {
                     parent.appendChild(nodeConverter2.toNode(document, obj));
                 }
@@ -353,7 +347,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                 }
             }
             else if (!Common.isWrappedPrimitive(value)){
-                nodeConverter = NodeConverterFactory.getNodeConverter(value.getClass());
+                nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(value.getClass());
             }
             if(nodeConverter != null) {
                 childNode.appendChild(nodeConverter.toNode(document, value));

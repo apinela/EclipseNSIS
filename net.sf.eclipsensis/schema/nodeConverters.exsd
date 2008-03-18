@@ -3,17 +3,17 @@
 <schema targetNamespace="net.sf.eclipsensis">
 <annotation>
       <appInfo>
-         <meta.schema plugin="net.sf.eclipsensis" id="helpBrowserLocalFileHandler" name="Help Browser Local File Handler"/>
+         <meta.schema plugin="net.sf.eclipsensis" id="nodeConverters" name="Node Converters"/>
       </appInfo>
       <documentation>
-         This extension is used to plug in handlers for local files referenced in help browser pages.
+         This extension point is used to register node converter extensions. Node converters are used to convert between XML Document Nodes and Java objects.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="handler" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="nodeConverter" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -22,10 +22,10 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string" use="required">
+         <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  An optional identifier of the extension instance.
+                  The identifier of the extension instance.
                </documentation>
             </annotation>
          </attribute>
@@ -42,42 +42,45 @@
       </complexType>
    </element>
 
-   <element name="handler">
+   <element name="nodeConverter">
       <complexType>
-         <attribute name="id" type="string">
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="nameClassMapping"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  An optional identifier of the handler.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  A translatable name that will be used for presenting this handler in the UI.
+                  A fully qualified name of the Java class implementing &lt;samp&gt;net.sf.eclipsensis.util.INodeConverter&lt;/samp&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute translatable="true"/>
+                  <meta.attribute kind="java" basedOn=":net.sf.eclipsensis.util.INodeConverter"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="extensions" type="string" use="required">
+      </complexType>
+   </element>
+
+   <element name="nameClassMapping">
+      <annotation>
+         <documentation>
+            A mapping of a Node name to a Java class.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  A comma-separated list of file extensions supported by this handler.
+                  The name of the Node.
                </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  A fully qualified name of the Java class that implements &lt;samp&gt;net.sf.eclipsensis.help.IHelpBrowserLocalFileHandler&lt;/samp&gt; interface.
+                  The mapped Java class.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="net.sf.eclipsensis.help.IHelpBrowserLocalFileHandler"/>
+                  <meta.attribute kind="java"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -89,7 +92,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         0.9.4
+         0.9.6.3
       </documentation>
    </annotation>
 
@@ -98,16 +101,21 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-   &lt;pre&gt;
-      &lt;extension point=&quot;net.sf.eclipsensis.helpBrowserLocalFileHandler&quot;
-         id=&quot;myLocalFileHandler&quot;&gt;
-         &lt;parser
-            extensions=&quot;foo,bar&quot;
-            class=&quot;com.example.xyz.MyLocalFileHandler&quot;&gt;
-         &lt;/parser&gt;
-      &lt;/extension&gt;
-   &lt;/pre&gt;
+         Following is an example of a NodeConverter definition:
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         id=&quot;net.sf.eclipsensis.defaultNodeConverters&quot;
+         point=&quot;net.sf.eclipsensis.nodeConverters&quot;&gt;
+      &lt;nodeConverter
+            class=&quot;net.sf.eclipsensis.util.StringNodeConverter&quot;&gt;
+         &lt;nameClassMapping
+               class=&quot;java.lang.String&quot;
+               name=&quot;string&quot;&gt;
+         &lt;/nameClassMapping&gt;
+      &lt;/nodeConverter&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -117,7 +125,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Plug-ins that want to extend this extension point must implement &lt;samp&gt;net.ef.eclipsensis.help.IHelpBrowserLocalFileHandler&lt;/samp&gt; interface.
+         The value of the class attribute must represent a class that implements &lt;samp&gt;net.sf.eclipsensis.util.INodeConverter&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -126,7 +134,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The EclipseNSIS plugin includes a supplied implementation (&lt;samp&gt;net.sf.eclipsensis.help.HelpBrowserLocalFileHandler&lt;/samp&gt;).
+         The EclipseNSIS plugin includes several supplied implementations in the &lt;samp&gt;net.sf.eclipsensis.util&lt;/samp&gt; package.
       </documentation>
    </annotation>
 

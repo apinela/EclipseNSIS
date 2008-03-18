@@ -9,14 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
-import net.sf.eclipsensis.util.INodeConverter;
+import net.sf.eclipsensis.util.AbstractNodeConverter;
 
 import org.w3c.dom.*;
 
-public class NSISInstallElementNodeConverter implements INodeConverter
+public class NSISInstallElementNodeConverter extends AbstractNodeConverter
 {
-    private static Class[] cSupportedClasses = {INSISInstallElement.class};
-
     public Object fromNode(Node node, Class clasz)
     {
         if(INSISInstallElement.class.isAssignableFrom(clasz)) {
@@ -33,10 +31,5 @@ public class NSISInstallElementNodeConverter implements INodeConverter
             return ((INSISInstallElement)object).toNode(document);
         }
         throw new IllegalArgumentException(String.valueOf(object));
-    }
-
-    public Class[] getSupportedClasses()
-    {
-        return (Class[])cSupportedClasses.clone();
     }
 }

@@ -25,7 +25,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  An optional identifier of the extension instance.
+                  The identifier of the extension instance.
                </documentation>
             </annotation>
          </attribute>
@@ -48,7 +48,7 @@
             <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
          <documentation>
-            An NSIS Configuration Wizard extension
+            An NSIS Configuration Wizard extension.
          </documentation>
       </annotation>
       <complexType>
@@ -58,14 +58,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  a unique name that can be used to identify this wizard
+                  A unique name that can be used to identify this wizard.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  a translatable name of the wizard that will be used in the main NSIS Configuration Wizard dialog
+                  A translatable name of the wizard that will be used in the main NSIS Configuration Wizard dialog.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -75,7 +75,7 @@
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  a relative path of an icon that will be used together with the name to represent the wizard as one of the choices in the main NSIS Configuration Wizard dialog box.
+                  A relative path of an icon that will be used together with the name to represent the wizard as one of the choices in the main NSIS Configuration Wizard dialog box.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -85,7 +85,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the Java class implementing &lt;samp&gt;net.sf.eclipsensis.config.INSISConfigWizard&lt;/samp&gt;.
+                  A fully qualified name of the Java class implementing &lt;samp&gt;net.sf.eclipsensis.config.INSISConfigWizard&lt;/samp&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="net.sf.eclipsensis.config.NSISConfigWizard"/>
@@ -95,7 +95,7 @@
          <attribute name="canFinishEarly" type="boolean">
             <annotation>
                <documentation>
-                  whether the wizard is capable of finishing without ever showing pages to the user.
+                  Indication of whether the wizard is capable of finishing without ever showing pages to the user.
                </documentation>
             </annotation>
          </attribute>
@@ -108,7 +108,7 @@
             <meta.element translatable="true"/>
          </appInfo>
          <documentation>
-            an optional subelement whose body contains a short text describing what the wizard will do when started
+            An optional subelement whose body contains a short text describing what the wizard will do when started.
          </documentation>
       </annotation>
    </element>
@@ -152,7 +152,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the class attribute must represent a class that implements net.sf.eclipsensis.config.INSISConfigWizard. If the wizard is created from within the main NSIS Configuration Wizard it will be inserted into the existing wizard.
+         The value of the class attribute must represent a class that implements &lt;samp&gt;net.sf.eclipsensis.config.INSISConfigWizard&lt;/samp&gt;. If the wizard is created from within the main NSIS Configuration Wizard it will be inserted into the existing wizard.
       </documentation>
    </annotation>
 
@@ -161,7 +161,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The EclipseNSIS plugin includes a supplied implementation to manually configure NSIS (net.sf.eclipsensis.config.NSISManualConfigWizard).
+         The EclipseNSIS plugin includes a supplied implementation to manually configure NSIS (&lt;samp&gt;net.sf.eclipsensis.config.NSISManualConfigWizard&lt;/samp&gt;).
       </documentation>
    </annotation>
 

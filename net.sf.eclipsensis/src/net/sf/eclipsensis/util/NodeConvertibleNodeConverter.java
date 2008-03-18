@@ -11,10 +11,8 @@ package net.sf.eclipsensis.util;
 
 import org.w3c.dom.*;
 
-public class NodeConvertibleNodeConverter implements INodeConverter
+public class NodeConvertibleNodeConverter extends AbstractNodeConverter
 {
-    private static Class[] cSupportedClasses = {INodeConvertible.class};
-
     public Object fromNode(Node node, Class clasz)
     {
         Object obj = Common.createDefaultObject(clasz);
@@ -34,10 +32,5 @@ public class NodeConvertibleNodeConverter implements INodeConverter
             return ((INodeConvertible)object).toNode(document);
         }
         throw new IllegalArgumentException(String.valueOf(object));
-    }
-
-    public Class[] getSupportedClasses()
-    {
-        return (Class[])cSupportedClasses.clone();
     }
 }

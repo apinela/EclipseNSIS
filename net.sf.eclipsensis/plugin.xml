@@ -14,6 +14,7 @@
 <plugin>
    <extension-point id="helpBrowserLocalFileHandler" name="%help.browser.file.handler.extension.name" schema="schema/helpBrowserLocalFileHandler.exsd"/>
    <extension-point id="nsisConfigWizard" name="%nsis.config.wizard.extension.name" schema="schema/nsisConfigWizard.exsd"/>
+   <extension-point id="nodeConverters" name="Node Converters" schema="schema/nodeConverters.exsd"/>
    <extension
          point="org.eclipse.core.runtime.products">
       <product name="%product.name" application="org.eclipse.ui.ide.workbench" description="%product.description">
@@ -1091,5 +1092,76 @@
             <editor id="net.sf.eclipsensis.editor.NSISEditor"/>
          </editors>
       </association>
+   </extension>
+   <extension
+         id="net.sf.eclipsensis.defaultNodeConverters"
+         point="net.sf.eclipsensis.nodeConverters">
+      <nodeConverter
+            class="net.sf.eclipsensis.util.NodeConvertibleNodeConverter">
+         <nameClassMapping
+               class="net.sf.eclipsensis.wizard.settings.NSISWizardSettings"
+               name="settings">
+         </nameClassMapping>
+         <nameClassMapping
+               class="net.sf.eclipsensis.util.Version"
+               name="version">
+         </nameClassMapping>
+      </nodeConverter>
+      <nodeConverter
+            class="net.sf.eclipsensis.wizard.settings.NSISInstallElementNodeConverter">
+         <nameClassMapping
+               class="net.sf.eclipsensis.wizard.settings.INSISInstallElement"
+               name="element">
+         </nameClassMapping>
+      </nodeConverter>
+      <nodeConverter
+            class="net.sf.eclipsensis.lang.NSISLanguageNodeConverter">
+         <nameClassMapping
+               class="net.sf.eclipsensis.lang.NSISLanguage"
+               name="language">
+         </nameClassMapping>
+      </nodeConverter>
+      <nodeConverter
+            class="net.sf.eclipsensis.util.PrimitivesNodeConverter">
+         <nameClassMapping
+               class="java.lang.Integer"
+               name="integer">
+         </nameClassMapping>
+         <nameClassMapping
+               class="java.lang.Short"
+               name="short">
+         </nameClassMapping>
+         <nameClassMapping
+               class="java.lang.Long"
+               name="long">
+         </nameClassMapping>
+         <nameClassMapping
+               class="java.lang.Byte"
+               name="byte">
+         </nameClassMapping>
+         <nameClassMapping
+               class="java.lang.Double"
+               name="double">
+         </nameClassMapping>
+         <nameClassMapping
+               class="java.lang.Float"
+               name="float">
+         </nameClassMapping>
+         <nameClassMapping
+               class="java.lang.Boolean"
+               name="boolean">
+         </nameClassMapping>
+         <nameClassMapping
+               class="java.lang.Character"
+               name="character">
+         </nameClassMapping>
+      </nodeConverter>
+      <nodeConverter
+            class="net.sf.eclipsensis.util.StringNodeConverter">
+         <nameClassMapping
+               class="java.lang.String"
+               name="string">
+         </nameClassMapping>
+      </nodeConverter>
    </extension>
 </plugin>

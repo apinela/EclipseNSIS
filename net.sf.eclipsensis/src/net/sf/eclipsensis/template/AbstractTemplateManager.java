@@ -10,7 +10,7 @@
 package net.sf.eclipsensis.template;
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -319,15 +319,37 @@ public abstract class AbstractTemplateManager
      */
     public void save() throws IOException
     {
-        List list = new ArrayList();
+        Map map = new LinkedHashMap();
         for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
             AbstractTemplate template = (AbstractTemplate)iter.next();
             checkClass(template);
-            if(template.getType() != AbstractTemplate.TYPE_DEFAULT) {
-                list.add(template);
+
+            if(System.getProperty("manage.default.templates") != null) { //$NON-NLS-1$
+                template.setType(AbstractTemplate.TYPE_DEFAULT);
+                map.put(template.getName(),template);
+            }
+            else {
+                if(template.getType() != AbstractTemplate.TYPE_DEFAULT) {
+                    map.put(template,template);
+                }
             }
         }
-        IOUtility.writeObject(mUserTemplatesStore, list);
+        if(System.getProperty("manage.default.templates") != null) { //$NON-NLS-1$
+            try {
+                mDefaultTemplatesMap.clear();
+                mDefaultTemplatesMap.putAll(map);
+                mTemplates.clear();
+                URI uri = new URI(FileLocator.toFileURL(mDefaultTemplatesStore).toExternalForm());
+                File file = new File(uri);
+                IOUtility.writeObject(file, new HashMap(mDefaultTemplatesMap));
+            }
+            catch (URISyntaxException e) {
+                throw new IOException(e.getMessage());
+            }
+        }
+        else {
+            IOUtility.writeObject(mUserTemplatesStore, new ArrayList(map.values()));
+        }
     }
 
     private final void checkClass(AbstractTemplate template)

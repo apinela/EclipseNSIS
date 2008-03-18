@@ -66,6 +66,22 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
             }
         });
 
+        final Text templateId;
+        if(System.getProperty("manage.default.templates") != null) { //$NON-NLS-1$
+            templateId = NSISWizardDialogUtil.createText(composite,mTemplate==null?"":mTemplate.getId(),"template.dialog.id.label",true,null,true); //$NON-NLS-1$ //$NON-NLS-2$
+            templateId.addModifyListener(new ModifyListener() {
+                public void modifyText(ModifyEvent e)
+                {
+                    if(mTemplate != null) {
+                        mTemplate.setId(((Text)e.widget).getText());
+                        validatePage(VALIDATE_ALL);
+                    }
+                }
+            });
+        }
+        else {
+            templateId = null;
+        }
         ((GridData)NSISWizardDialogUtil.createLabel(composite,"template.dialog.description.label", //$NON-NLS-1$
                 true,null,false).getLayoutData()).horizontalSpan=2;
 
@@ -104,11 +120,17 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
                     mTemplate = newTemplate;
                     if(mTemplate != null) {
                         templateName.setText(mTemplate.getName());
+                        if(templateId != null) {
+                            templateId.setText(mTemplate.getId());
+                        }
                         description.setText(mTemplate.getDescription());
                         enabled.setSelection(mTemplate.isEnabled());
                     }
                     else {
                         templateName.setText(""); //$NON-NLS-1$
+                        if(templateId != null) {
+                            templateId.setText(""); //$NON-NLS-1$
+                        }
                         description.setText(""); //$NON-NLS-1$
                         enabled.setSelection(false);
                     }
@@ -124,13 +146,21 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
     public boolean validatePage(int flag)
     {
         boolean b = !Common.isEmpty(mTemplate != null?mTemplate.getName():""); //$NON-NLS-1$
-        setPageComplete(b);
         if(b) {
-            setErrorMessage(null);
+            if(System.getProperty("manage.default.templates") != null) { //$NON-NLS-1$
+                b = b && !Common.isEmpty(mTemplate != null?mTemplate.getId():""); //$NON-NLS-1$
+            }
+            if(b) {
+                setErrorMessage(null);
+            }
+            else {
+                setErrorMessage(EclipseNSISPlugin.getResourceString("wizard.template.missing.id.error")); //$NON-NLS-1$
+            }
         }
         else {
             setErrorMessage(EclipseNSISPlugin.getResourceString("wizard.template.missing.name.error")); //$NON-NLS-1$
         }
+        setPageComplete(b);
         return b;
     }
 }

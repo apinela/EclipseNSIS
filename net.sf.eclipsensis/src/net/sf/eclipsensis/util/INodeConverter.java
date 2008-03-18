@@ -9,11 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
+import java.util.Map;
+
 import org.w3c.dom.*;
 
 public interface INodeConverter
 {
-    public Class[] getSupportedClasses();
+    public Map getNameClassMappings();
+    public void addNameClassMapping(String name, Class clasz);
     public Node toNode(Document document, Object object);
-    public Object fromNode(Node node, Class clasz);
+    public Object fromNode(Node node);
 }
