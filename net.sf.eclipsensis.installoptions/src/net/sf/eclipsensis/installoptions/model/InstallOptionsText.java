@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
@@ -26,6 +26,8 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsText extends InstallOptionsEditableElement
 {
+    private static final long serialVersionUID = 1762300869047432809L;
+
     protected InstallOptionsText(INISection section)
     {
         super(section);
@@ -34,6 +36,12 @@ public class InstallOptionsText extends InstallOptionsEditableElement
     public String getType()
     {
         return InstallOptionsModel.TYPE_TEXT;
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("text"); //$NON-NLS-1$
     }
 
     protected ILabelProvider getDisplayLabelProvider()

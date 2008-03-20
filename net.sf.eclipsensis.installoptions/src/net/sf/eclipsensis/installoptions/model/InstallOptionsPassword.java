@@ -13,6 +13,8 @@ import net.sf.eclipsensis.installoptions.ini.INISection;
 
 public class InstallOptionsPassword extends InstallOptionsText
 {
+    private static final long serialVersionUID = -8185800757229481950L;
+
     protected InstallOptionsPassword(INISection section)
     {
         super(section);

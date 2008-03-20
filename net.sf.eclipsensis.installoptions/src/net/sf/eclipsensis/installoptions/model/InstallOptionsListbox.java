@@ -34,6 +34,8 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class InstallOptionsListbox extends InstallOptionsListItems
 {
+    private static final long serialVersionUID = -3774074381295970839L;
+
     protected InstallOptionsListbox(INISection section)
     {
         super(section);

@@ -20,6 +20,8 @@ import org.eclipse.ui.views.properties.*;
 
 public class InstallOptionsButton extends InstallOptionsUneditableElement
 {
+    private static final long serialVersionUID = 8926994498442712588L;
+
     private String mState;
 
     protected InstallOptionsButton(INISection section)

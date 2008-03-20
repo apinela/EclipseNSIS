@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import java.util.Collection;
+
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
 
@@ -17,6 +19,13 @@ public abstract class InstallOptionsLine extends InstallOptionsWidget
     public InstallOptionsLine(INISection section)
     {
         super(section);
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("flags"); //$NON-NLS-1$
+        skippedProperties.add("horizontal"); //$NON-NLS-1$
     }
 
     protected IPropertySectionCreator createPropertySectionCreator()

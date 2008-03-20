@@ -27,6 +27,7 @@ import org.eclipse.ui.views.properties.*;
 
 public class InstallOptionsLink extends InstallOptionsLabel
 {
+    private static final long serialVersionUID = -6806110942403416762L;
     public static final RGB DEFAULT_TXTCOLOR = new RGB(0,0,255);
     private static ILabelProvider cLabelProvider = new LabelProvider(){
         public String getText(Object element)

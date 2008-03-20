@@ -9,10 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import java.io.Serializable;
+
 import org.eclipse.draw2d.geometry.*;
 
-public class Position implements Cloneable
+public class Position implements Cloneable, Serializable
 {
+    private static final long serialVersionUID = 2635176884349612233L;
+
     public int left;
     public int top;
     public int right;

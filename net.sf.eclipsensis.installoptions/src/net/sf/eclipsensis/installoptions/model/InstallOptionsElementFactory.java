@@ -15,6 +15,7 @@ import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.util.CaseInsensitiveMap;
 
 import org.eclipse.gef.requests.CreationFactory;
+import org.w3c.dom.Node;
 
 public class InstallOptionsElementFactory implements CreationFactory
 {
@@ -38,6 +39,22 @@ public class InstallOptionsElementFactory implements CreationFactory
         }
     }
 
+    public static InstallOptionsElement createFromNode(Node node)
+    {
+        if(node.getNodeName().equals(InstallOptionsWidget.NODE_NAME)) {
+            String nodeType = node.getAttributes().getNamedItem(InstallOptionsWidget.TYPE_ATTRIBUTE).getNodeValue();
+            InstallOptionsElementFactory factory = getFactory(nodeType);
+            if(factory != null) {
+                InstallOptionsElement element = (InstallOptionsElement)factory.getNewObject();
+                if(element != null) {
+                    element.fromNode(node);
+                    return element;
+                }
+            }
+        }
+        return null;
+    }
+
     private InstallOptionsModelTypeDef mTypeDef;
 
     /**
@@ -57,7 +74,7 @@ public class InstallOptionsElementFactory implements CreationFactory
         return getNewObject(null);
     }
 
-    public Object getNewObject(INISection section)
+    public InstallOptionsElement getNewObject(INISection section)
     {
         return mTypeDef.createModel(section);
     }

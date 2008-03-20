@@ -25,7 +25,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.*;
 
-public abstract class InstallOptionsElement implements IPropertySource, Cloneable
+public abstract class InstallOptionsElement extends AbstractNodeConvertible implements IPropertySource, Cloneable
 {
     private static final IPropertyDescriptor cNullPropertyDescriptor = new IPropertyDescriptor(){
         public CellEditor createPropertyEditor(Composite parent)
@@ -74,17 +74,19 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         }
     };
 
+    private static final String CHILD_NODE_NAME = "attribute"; //$NON-NLS-1$
+
     protected static final String OLD_METADATA_PREFIX = ";InstallOptions Editor Guides (DO NOT EDIT):"; //$NON-NLS-1$
     protected static final String METADATA_PREFIX = ";InstallOptions Editor Metadata (DO NOT EDIT):"; //$NON-NLS-1$
 
-    private INISection mSection = null;
-    protected PropertyChangeSupport mListeners = new PropertyChangeSupport(this);
-    protected ArrayList mModelCommandListeners = new ArrayList();
-    private boolean mDirty = false;
-    protected Map mDescriptors = new HashMap();
-    private Map mTypeConverters = null;
+    private transient INISection mSection = null;
+    protected transient PropertyChangeSupport mListeners = new PropertyChangeSupport(this);
+    protected transient ArrayList mModelCommandListeners = new ArrayList();
+    private transient boolean mDirty = false;
+    protected transient Map mDescriptors = new HashMap();
+    private transient Map mTypeConverters = null;
 
-    private INIComment mMetadataComment;
+    private transient INIComment mMetadataComment;
 
     public InstallOptionsElement(INISection section)
     {
@@ -95,6 +97,26 @@ public abstract class InstallOptionsElement implements IPropertySource, Cloneabl
         else {
             setDefaults();
         }
+    }
+
+    protected String getChildNodeName()
+    {
+        return CHILD_NODE_NAME;
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("editableValue"); //$NON-NLS-1$
+        skippedProperties.add("icon"); //$NON-NLS-1$
+        skippedProperties.add("iconImage"); //$NON-NLS-1$
+        skippedProperties.add("metadataComment"); //$NON-NLS-1$
+        skippedProperties.add("propertyDescriptors"); //$NON-NLS-1$
+        skippedProperties.add("propertyNames"); //$NON-NLS-1$
+        skippedProperties.add("section"); //$NON-NLS-1$
+        skippedProperties.add("sectionName"); //$NON-NLS-1$
+        skippedProperties.add("type"); //$NON-NLS-1$
+        skippedProperties.add("dirty"); //$NON-NLS-1$
     }
 
     protected void init()

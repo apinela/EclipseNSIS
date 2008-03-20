@@ -28,6 +28,8 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class InstallOptionsFileRequest extends InstallOptionsPathRequest
 {
+    private static final long serialVersionUID = -1414856427625675866L;
+
     public  static final char FILTER_SEPARATOR = ';';
 
     public static final TypeConverter FILEFILTER_LIST_CONVERTER = new TypeConverter(){
@@ -76,14 +78,15 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
 
     private List mFilter;
 
-    public boolean usesOtherTab()
-    {
-        return true;
-    }
-
     protected InstallOptionsFileRequest(INISection section)
     {
         super(section);
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("text"); //$NON-NLS-1$
     }
 
     protected void init()

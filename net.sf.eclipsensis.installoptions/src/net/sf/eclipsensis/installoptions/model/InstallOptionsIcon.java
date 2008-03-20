@@ -17,6 +17,8 @@ import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsIcon extends InstallOptionsPicture
 {
+    private static final long serialVersionUID = 1L;
+
     public static final Image ICON_IMAGE = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("icon.image")); //$NON-NLS-1$
 
     protected InstallOptionsIcon(INISection section)

@@ -30,10 +30,14 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class InstallOptionsDialog extends InstallOptionsElement implements IInstallOptionsConstants
 {
+    private static final long serialVersionUID = 1L;
+
     public static final String PROPERTY_SELECTION = "net.sf.eclipsensis.installoptions.selection"; //$NON-NLS-1$
 
     private static final String GUIDES_PREFIX = "guides="; //$NON-NLS-1$
     private static final String LOCKED_PREFIX = "locked="; //$NON-NLS-1$
+
+    public static final String NODE_NAME = "dialog"; //$NON-NLS-1$
 
     public static final int DEFAULT_OPTION = 0;
     public static final Integer[] OPTION_DATA = {InstallOptionsModel.OPTION_DEFAULT,
@@ -59,8 +63,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     };
 
     protected List mChildren = new ArrayList();
-    protected InstallOptionsRuler mVerticalRuler;
-    protected InstallOptionsRuler mHorizontalRuler;
+    protected transient InstallOptionsRuler mVerticalRuler;
+    protected transient InstallOptionsRuler mHorizontalRuler;
 
     private String mTitle;
     private Integer mCancelEnabled;
@@ -71,12 +75,12 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     private String mBackButtonText;
     private Integer mRect;
     private Integer mRTL;
-    private int[] mSelectedIndices;
-    private UpDownMover mUpDownMover;
-    private INIFile mINIFile;
-    private Map mINISectionMap;
-    private DialogSize mDialogSize;
-    private boolean mShowDialogSize;
+    private transient int[] mSelectedIndices;
+    private transient UpDownMover mUpDownMover;
+    private transient INIFile mINIFile;
+    private transient Map mINISectionMap;
+    private transient DialogSize mDialogSize;
+    private transient boolean mShowDialogSize;
 
     public InstallOptionsDialog(INISection section)
     {
@@ -84,6 +88,19 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         if(section != null) {
             mINISectionMap.put(section,this);
         }
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("dialogSize"); //$NON-NLS-1$
+        skippedProperties.add("showDialogSize"); //$NON-NLS-1$
+        skippedProperties.add("selection"); //$NON-NLS-1$
+    }
+
+    public String getNodeName()
+    {
+        return NODE_NAME;
     }
 
     protected void init()

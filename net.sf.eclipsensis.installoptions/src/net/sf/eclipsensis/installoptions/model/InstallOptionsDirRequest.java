@@ -20,6 +20,7 @@ import org.eclipse.ui.views.properties.*;
 
 public class InstallOptionsDirRequest extends InstallOptionsPathRequest
 {
+    private static final long serialVersionUID = 8683714309397828717L;
     private String mRoot;
 
     public boolean usesOtherTab()

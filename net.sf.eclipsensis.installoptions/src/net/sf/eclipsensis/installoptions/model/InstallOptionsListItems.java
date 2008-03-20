@@ -37,6 +37,14 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         super(section);
     }
 
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("multiSelect"); //$NON-NLS-1$
+        skippedProperties.add("text"); //$NON-NLS-1$
+        skippedProperties.add("maxLen"); //$NON-NLS-1$
+    }
+
     protected void init()
     {
         super.init();

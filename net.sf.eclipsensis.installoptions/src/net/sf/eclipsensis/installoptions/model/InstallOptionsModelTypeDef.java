@@ -90,12 +90,12 @@ public class InstallOptionsModelTypeDef
         return mName;
     }
 
-    public Object createModel(INISection section)
+    public InstallOptionsElement createModel(INISection section)
     {
-        Object model = null;
+        InstallOptionsElement model = null;
         if(mModelConstructor != null) {
             try {
-                model = mModelConstructor.newInstance(new Object[]{section});
+                model = (InstallOptionsElement)mModelConstructor.newInstance(new Object[]{section});
             }
             catch (Exception e) {
                 InstallOptionsPlugin.getDefault().log(e);

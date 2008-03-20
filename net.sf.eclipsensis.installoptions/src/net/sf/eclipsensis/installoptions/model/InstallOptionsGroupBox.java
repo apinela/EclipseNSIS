@@ -14,6 +14,8 @@ import net.sf.eclipsensis.installoptions.ini.INISection;
 
 public class InstallOptionsGroupBox extends InstallOptionsUneditableElement
 {
+    private static final long serialVersionUID = -3886719827770413416L;
+
     protected InstallOptionsGroupBox(INISection section)
     {
         super(section);

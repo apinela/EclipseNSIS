@@ -17,6 +17,8 @@ import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsBitmap extends InstallOptionsPicture
 {
+    private static final long serialVersionUID = 1L;
+
     public static final Image BITMAP_IMAGE = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("bitmap.image")); //$NON-NLS-1$
 
     protected InstallOptionsBitmap(INISection section)

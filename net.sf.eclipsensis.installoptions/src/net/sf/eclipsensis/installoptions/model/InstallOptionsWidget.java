@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.model;
 
 import java.beans.*;
+import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 
@@ -37,11 +38,16 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+import org.w3c.dom.*;
 
-public abstract class InstallOptionsWidget extends InstallOptionsElement
+public abstract class InstallOptionsWidget extends InstallOptionsElement implements Serializable
 {
     public static final String PROPERTY_BOUNDS = "Bounds"; //$NON-NLS-1$
     public static final String PROPERTY_LOCKED = "Locked"; //$NON-NLS-1$
+
+    public static final String NODE_NAME = "widget"; //$NON-NLS-1$
+    public static final String TYPE_ATTRIBUTE = "type"; //$NON-NLS-1$
+
     private static final Position cDefaultPosition = new Position(0,0,63,35);
 
     private static LabelProvider cPositionLabelProvider = new LabelProvider(){
@@ -72,15 +78,15 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     };
     private static final String MISSING_DISPLAY_NAME = InstallOptionsPlugin.getResourceString("missing.outline.display.name"); //$NON-NLS-1$
 
-    private InstallOptionsModelTypeDef mTypeDef;
-    protected InstallOptionsDialog mParent;
+    private transient InstallOptionsModelTypeDef mTypeDef;
+    protected transient InstallOptionsDialog mParent;
     protected int mIndex;
     protected Position mPosition;
-    protected InstallOptionsGuide mVerticalGuide;
-    protected InstallOptionsGuide mHorizontalGuide;
+    protected transient InstallOptionsGuide mVerticalGuide;
+    protected transient InstallOptionsGuide mHorizontalGuide;
     private List mFlags;
     protected boolean mLocked;
-    private IPropertySectionCreator mPropertySectionCreator = null;
+    private transient IPropertySectionCreator mPropertySectionCreator = null;
     private transient Collection mPropertyNames;
 
     protected InstallOptionsWidget(INISection section)
@@ -88,16 +94,36 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         super(section);
     }
 
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("defaultPosition"); //$NON-NLS-1$
+        skippedProperties.add("displayLabelProvider"); //$NON-NLS-1$
+        skippedProperties.add("displayName"); //$NON-NLS-1$
+        skippedProperties.add("horizontalGuide"); //$NON-NLS-1$
+        skippedProperties.add("parent"); //$NON-NLS-1$
+        skippedProperties.add("propertySectionCreator"); //$NON-NLS-1$
+        skippedProperties.add("typeDef"); //$NON-NLS-1$
+        skippedProperties.add("verticalGuide"); //$NON-NLS-1$
+    }
+
+    public String getNodeName()
+    {
+        return NODE_NAME;
+    }
+
     protected void init()
     {
         super.init();
-        mTypeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(getType());
         mIndex = -1;
         mPosition = new Position();
     }
 
     public InstallOptionsModelTypeDef getTypeDef()
     {
+        if(mTypeDef == null) {
+            mTypeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(getType());
+        }
         return mTypeDef;
     }
 
@@ -555,7 +581,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     protected final String getDisplayName()
     {
-        String displayName = (String)getPropertyValue(mTypeDef.getDisplayProperty());
+        String displayName = (String)getPropertyValue(getTypeDef().getDisplayProperty());
         ILabelProvider labelProvider = getDisplayLabelProvider();
         if(labelProvider != null) {
             displayName = labelProvider.getText(displayName);
@@ -570,7 +596,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     public final Image getIconImage()
     {
-        return InstallOptionsPlugin.getImageManager().getImage(mTypeDef.getSmallIcon());
+        return InstallOptionsPlugin.getImageManager().getImage(getTypeDef().getSmallIcon());
     }
 
     protected ILabelProvider getDisplayLabelProvider()
@@ -594,6 +620,41 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     protected IPropertySectionCreator createPropertySectionCreator()
     {
         return null;
+    }
+
+    public void fromNode(Node node)
+    {
+        String nodeType = node.getAttributes().getNamedItem(TYPE_ATTRIBUTE).getNodeValue();
+        if(nodeType.equals(getType())) {
+            super.fromNode(node);
+        }
+    }
+
+    public Node toNode(Document document)
+    {
+        Node node = super.toNode(document);
+        XMLUtil.addAttribute(document,node,TYPE_ATTRIBUTE,getType());
+        return node;
+    }
+
+    protected String convertToString(String name, Object obj)
+    {
+        if(obj instanceof Position) {
+            return TypeConverter.POSITION_CONVERTER.asString(obj);
+        }
+        else {
+            return super.convertToString(name, obj);
+        }
+    }
+
+    protected Object convertFromString(String name, String string, Class clasz)
+    {
+        if(clasz.equals(Position.class)) {
+            return TypeConverter.POSITION_CONVERTER.asType(string);
+        }
+        else {
+            return super.convertFromString(name, string, clasz);
+        }
     }
 
     private class IndexPropertyDescriptor extends ComboBoxPropertyDescriptor

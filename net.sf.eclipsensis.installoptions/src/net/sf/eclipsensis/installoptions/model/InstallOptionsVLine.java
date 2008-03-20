@@ -13,6 +13,8 @@ import net.sf.eclipsensis.installoptions.ini.INISection;
 
 public class InstallOptionsVLine extends InstallOptionsLine
 {
+    private static final long serialVersionUID = -4499207515713601488L;
+
     public InstallOptionsVLine(INISection section)
     {
         super(section);

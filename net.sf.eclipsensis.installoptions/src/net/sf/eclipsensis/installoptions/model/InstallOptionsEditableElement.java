@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
@@ -30,6 +30,14 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     protected InstallOptionsEditableElement(INISection section)
     {
         super(section);
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("defaultMaxLen"); //$NON-NLS-1$
+        skippedProperties.add("defaultMinLen"); //$NON-NLS-1$
+        skippedProperties.add("defaultState"); //$NON-NLS-1$
     }
 
     protected void init()

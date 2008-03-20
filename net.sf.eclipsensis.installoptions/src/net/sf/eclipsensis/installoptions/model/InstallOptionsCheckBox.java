@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
@@ -23,6 +23,8 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
 {
+    private static final long serialVersionUID = 1L;
+
     private static final int DEFAULT_STATE = 0;
     private static final Integer[] STATE_DATA = {InstallOptionsModel.STATE_DEFAULT,
     											 InstallOptionsModel.STATE_UNCHECKED,
@@ -37,6 +39,15 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
     {
         super(section);
     }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("stateDefault"); //$NON-NLS-1$
+        skippedProperties.add("stateDisplay"); //$NON-NLS-1$
+        skippedProperties.add("stateData"); //$NON-NLS-1$
+    }
+
     protected void init()
     {
         super.init();

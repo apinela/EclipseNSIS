@@ -10,7 +10,7 @@
 package net.sf.eclipsensis.installoptions.model;
 
 import java.beans.*;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
@@ -27,9 +27,18 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public class InstallOptionsCombobox extends InstallOptionsListItems
 {
+    private static final long serialVersionUID = 5374900660429140670L;
+
     protected InstallOptionsCombobox(INISection section)
     {
         super(section);
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("stateReadOnly"); //$NON-NLS-1$
+        skippedProperties.remove("maxLen"); //$NON-NLS-1$
     }
 
     public String getType()

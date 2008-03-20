@@ -15,6 +15,7 @@ import net.sf.eclipsensis.util.Common;
 
 public class InstallOptionsUnknown extends InstallOptionsWidget
 {
+    private static final long serialVersionUID = -3898402393485983161L;
     private String mType;
 
     public InstallOptionsUnknown(INISection section)

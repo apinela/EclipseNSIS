@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import java.util.Collection;
+
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
 
@@ -23,9 +25,12 @@ public abstract class InstallOptionsPicture extends InstallOptionsUneditableElem
         super(section);
     }
 
-    public boolean isMultiLine()
+    protected void addSkippedProperties(Collection skippedProperties)
     {
-        return false;
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("SWTImageType"); //$NON-NLS-1$
+        skippedProperties.add("fileExtension"); //$NON-NLS-1$
+        skippedProperties.add("image"); //$NON-NLS-1$
     }
 
     protected String getDefaultText()

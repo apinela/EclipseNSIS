@@ -14,6 +14,8 @@ import net.sf.eclipsensis.installoptions.ini.INISection;
 
 public class InstallOptionsRadioButton extends InstallOptionsCheckBox
 {
+    private static final long serialVersionUID = 1L;
+
     private static final String[] STATE_DISPLAY = {InstallOptionsPlugin.getResourceString("state.default"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("state.unselected"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("state.selected")}; //$NON-NLS-1$

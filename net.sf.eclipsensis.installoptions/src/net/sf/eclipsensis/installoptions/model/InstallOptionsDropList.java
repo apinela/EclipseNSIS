@@ -9,16 +9,24 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.util.*;
 
 public class InstallOptionsDropList extends InstallOptionsCombobox
 {
+    private static final long serialVersionUID = 1180170632304276812L;
+
     protected InstallOptionsDropList(INISection section)
     {
         super(section);
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("maxLen"); //$NON-NLS-1$
     }
 
     public String getType()

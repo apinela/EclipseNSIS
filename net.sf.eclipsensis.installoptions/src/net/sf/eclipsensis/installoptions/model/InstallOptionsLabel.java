@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
+import java.util.Collection;
+
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.MultiLineTextPropertyDescriptor;
@@ -21,9 +23,17 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 public class InstallOptionsLabel extends InstallOptionsUneditableElement
 {
+    private static final long serialVersionUID = 3769025637384744242L;
+
     protected InstallOptionsLabel(INISection section)
     {
         super(section);
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("multiLine"); //$NON-NLS-1$
     }
 
     public String getType()
