@@ -392,4 +392,21 @@
                initPreference="CheckEditorAssociation"/>
       </association>
    </extension>
+   <extension
+         point="net.sf.eclipsensis.nodeConverters">
+      <nodeConverter
+            class="net.sf.eclipsensis.installoptions.model.InstallOptionsWidgetNodeConverter">
+         <nameClassMapping
+               class="net.sf.eclipsensis.installoptions.model.InstallOptionsWidget"
+               name="widget">
+         </nameClassMapping>
+      </nodeConverter>
+      <nodeConverter
+            class="net.sf.eclipsensis.util.NodeConvertibleNodeConverter">
+         <nameClassMapping
+               class="net.sf.eclipsensis.installoptions.model.InstallOptionsDialog"
+               name="dialog">
+         </nameClassMapping>
+      </nodeConverter>
+   </extension>
 </plugin>

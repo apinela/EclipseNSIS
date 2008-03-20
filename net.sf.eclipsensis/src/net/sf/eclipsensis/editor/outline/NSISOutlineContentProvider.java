@@ -42,8 +42,14 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     public static final int IFDEF = IF+1;
     public static final int IFNDEF = IFDEF+1;
     public static final int IFMACRODEF = IFNDEF+1;
-    public static final int IFNMACRODEF = IFMACRODEF+1;
-    public static final int ENDIF = IFNMACRODEF+1;
+    public static final int IFMACRONDEF = IFMACRODEF+1;
+    public static final int ELSE = IFMACRONDEF+1;
+    public static final int ELSEIF = ELSE+1;
+    public static final int ELSEIFDEF = ELSEIF+1;
+    public static final int ELSEIFNDEF = ELSEIFDEF+1;
+    public static final int ELSEIFMACRODEF = ELSEIFNDEF+1;
+    public static final int ELSEIFMACRONDEF = ELSEIFMACRODEF+1;
+    public static final int ENDIF = ELSEIFMACRONDEF+1;
     public static final int MACRO = ENDIF+1;
     public static final int MACROEND = MACRO+1;
     public static final int FUNCTION = MACROEND+1;
@@ -243,7 +249,13 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                             case IFDEF:
                             case IFNDEF:
                             case IFMACRODEF:
-                            case IFNMACRODEF:
+                            case IFMACRONDEF:
+                            case ELSE:
+                            case ELSEIF:
+                            case ELSEIFDEF:
+                            case ELSEIFNDEF:
+                            case ELSEIFMACRODEF:
+                            case ELSEIFMACRONDEF:
                             case MACRO:
                             case FUNCTION:
                             case SECTION:
@@ -300,6 +312,36 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                             }
                                             if(temp != null) {
                                                 switch(type) {
+                                                    case IF:
+                                                    case IFDEF:
+                                                    case IFNDEF:
+                                                    case IFMACRODEF:
+                                                    case IFMACRONDEF:
+                                                    case ELSEIF:
+                                                    case ELSEIFDEF:
+                                                    case ELSEIFNDEF:
+                                                    case ELSEIFMACRODEF:
+                                                    case ELSEIFMACRONDEF:
+                                                        if(name.length() > 0) {
+                                                            name.append(" "); //$NON-NLS-1$
+                                                        }
+                                                        name.append(temp);
+                                                        continue;
+                                                    case ELSE:
+                                                        if(name.length() == 0) {
+                                                            name2 = new StringBuffer(nsisToken.getType()).append(" ").append(temp).toString(); //$NON-NLS-1$
+                                                            int type2 = mResources.getTypeIndex(name2);
+                                                            if(type2 >= 0) {
+                                                                type = type2;
+                                                                IRegion r1 = nsisToken.getRegion();
+                                                                IRegion r2 = data.getRegion();
+                                                                nsisToken = new NSISOutlineData(name2, new Region(r1.getOffset(),r2.getOffset()+r2.getLength()-r1.getOffset()));
+                                                                continue;
+                                                            }
+                                                        }
+                                                        name.append(" "); //$NON-NLS-1$
+                                                        name.append(temp);
+                                                        continue;
                                                     case SECTION:
                                                         if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
                                                             if(temp.equalsIgnoreCase("/o")) { //$NON-NLS-1$
@@ -402,13 +444,19 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                 case IFDEF:
                                 case IFNDEF:
                                 case IFMACRODEF:
-                                case IFNMACRODEF:
+                                case IFMACRONDEF:
+                                case ELSE:
+                                case ELSEIF:
+                                case ELSEIFDEF:
+                                case ELSEIFNDEF:
+                                case ELSEIFMACRODEF:
+                                case ELSEIFMACRONDEF:
                                 case MACRO:
                                     current = openElement(current, element, null);
                                     break;
                                 case ENDIF:
                                     current = closeElement(document, current, element,
-                                                         new int[]{IF, IFDEF, IFNDEF, IFMACRODEF, IFNMACRODEF});
+                                                         new int[]{IF, IFDEF, IFNDEF, IFMACRODEF, IFMACRONDEF});
                                     break;
                                 case MACROEND:
                                     current = closeElement(document, current, element,
@@ -442,7 +490,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                 case VAR:
                                     if(current.getType() == NSISOutlineElement.ROOT || currentType == MACRO ||
                                        currentType == IFDEF || currentType == IFNDEF ||
-                                       currentType == IFMACRODEF || currentType == IFNMACRODEF) {
+                                       currentType == IFMACRODEF || currentType == IFMACRONDEF) {
                                         addLine(document, current, element);
                                     }
                                     break;
