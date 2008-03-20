@@ -267,7 +267,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         return node;
     }
 
-    private String convertToString(String name, Object obj)
+    protected String convertToString(String name, Object obj)
     {
         if(obj instanceof RGB) {
             return StringConverter.asString((RGB)obj);
@@ -275,7 +275,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         return (obj==null?null:obj.toString());
     }
 
-    private Object convertFromString(String name, String string, Class clasz)
+    protected Object convertFromString(String name, String string, Class clasz)
     {
         if(clasz.equals(String.class)) {
             return string;

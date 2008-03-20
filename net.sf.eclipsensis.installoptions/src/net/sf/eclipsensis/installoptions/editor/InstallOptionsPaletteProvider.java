@@ -144,7 +144,7 @@ public class InstallOptionsPaletteProvider
         final List entries = new ArrayList();
         Boolean unload = Boolean.valueOf(InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(IInstallOptionsConstants.PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED));
         for(Iterator iter = InstallOptionsTemplateManager.INSTANCE.getTemplates().iterator(); iter.hasNext(); ) {
-            InstallOptionsTemplate template = (InstallOptionsTemplate)iter.next();
+            IInstallOptionsTemplate template = (IInstallOptionsTemplate)iter.next();
             if(!template.isDeleted()) {
                 ToolEntry entry = createTemplateEntry(template);
                 entry.setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, unload);
@@ -155,7 +155,7 @@ public class InstallOptionsPaletteProvider
         drawer.setChildren(new ArrayList(entries));
 
         final IInstallOptionsTemplateListener listener = new IInstallOptionsTemplateListener() {
-            private ToolEntry findEntry(InstallOptionsTemplate template)
+            private ToolEntry findEntry(IInstallOptionsTemplate template)
             {
                 for (Iterator iter = entries.iterator(); iter.hasNext();) {
                     CombinedTemplateCreationEntry entry = (CombinedTemplateCreationEntry)iter.next();
@@ -170,8 +170,8 @@ public class InstallOptionsPaletteProvider
             {
                 for (int i = 0; i < events.length; i++) {
                     InstallOptionsTemplateEvent event = events[i];
-                    InstallOptionsTemplate oldTemplate = event.getOldTemplate();
-                    InstallOptionsTemplate newTemplate = event.getNewTemplate();
+                    IInstallOptionsTemplate oldTemplate = event.getOldTemplate();
+                    IInstallOptionsTemplate newTemplate = event.getNewTemplate();
                     ToolEntry entry;
                     switch(event.getType()) {
                         case InstallOptionsTemplateEvent.TEMPLATE_ADDED:
@@ -227,7 +227,7 @@ public class InstallOptionsPaletteProvider
         return drawer;
     }
 
-    private static ToolEntry createTemplateEntry(InstallOptionsTemplate template)
+    private static ToolEntry createTemplateEntry(IInstallOptionsTemplate template)
     {
         CombinedTemplateCreationEntry entry = new CombinedTemplateCreationEntry(
                 template.getName(),

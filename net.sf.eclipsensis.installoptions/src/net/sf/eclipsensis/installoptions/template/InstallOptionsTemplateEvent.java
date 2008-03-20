@@ -16,22 +16,22 @@ public class InstallOptionsTemplateEvent
     public static final int TEMPLATE_UPDATED = 2;
 
     private int mType;
-    private InstallOptionsTemplate mOldTemplate;
-    private InstallOptionsTemplate mNewTemplate;
+    private IInstallOptionsTemplate mOldTemplate;
+    private IInstallOptionsTemplate mNewTemplate;
 
-    public InstallOptionsTemplateEvent(int type, InstallOptionsTemplate oldTemplate, InstallOptionsTemplate newTemplate)
+    public InstallOptionsTemplateEvent(int type, IInstallOptionsTemplate oldTemplate, IInstallOptionsTemplate newTemplate)
     {
         mType = type;
         mOldTemplate = oldTemplate;
         mNewTemplate = newTemplate;
     }
 
-    public InstallOptionsTemplate getOldTemplate()
+    public IInstallOptionsTemplate getOldTemplate()
     {
         return mOldTemplate;
     }
 
-    public InstallOptionsTemplate getNewTemplate()
+    public IInstallOptionsTemplate getNewTemplate()
     {
         return mNewTemplate;
     }

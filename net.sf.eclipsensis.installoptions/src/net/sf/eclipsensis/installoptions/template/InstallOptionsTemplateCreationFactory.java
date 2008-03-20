@@ -13,10 +13,10 @@ import org.eclipse.gef.requests.CreationFactory;
 
 public class InstallOptionsTemplateCreationFactory implements CreationFactory
 {
-    public static final Object TYPE = InstallOptionsTemplate.class;
-    private InstallOptionsTemplate mTemplate;
+    public static final Object TYPE = IInstallOptionsTemplate.class;
+    private IInstallOptionsTemplate mTemplate;
 
-    public InstallOptionsTemplateCreationFactory(InstallOptionsTemplate template)
+    public InstallOptionsTemplateCreationFactory(IInstallOptionsTemplate template)
     {
         super();
         mTemplate = template;
@@ -24,7 +24,7 @@ public class InstallOptionsTemplateCreationFactory implements CreationFactory
 
     public Object[] getNewObjects()
     {
-        return mTemplate.createWidgets();
+        return mTemplate.getWidgets();
     }
 
     public Object getNewObject()

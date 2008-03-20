@@ -156,4 +156,17 @@ public class NSISWizardTemplate extends AbstractTemplate
         mSettings = settings;
     }
 
+    public boolean isEqualTo(ITemplate template)
+    {
+        if (this == template) {
+            return true;
+        }
+        if (!super.equals(template)) {
+            return false;
+        }
+        if (getClass() != template.getClass()) {
+            return false;
+        }
+        return Common.objectsAreEqual(getSettings(),((NSISWizardTemplate)template).getSettings());
+    }
 }

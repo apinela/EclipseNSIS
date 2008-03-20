@@ -20,7 +20,7 @@ import net.sf.eclipsensis.util.*;
 
 import org.w3c.dom.*;
 
-public class InstallOptionsTemplate extends AbstractTemplate
+public class InstallOptionsTemplate extends AbstractTemplate implements IInstallOptionsTemplate
 {
     private static final String SECTIONS_NODE= "sections"; //$NON-NLS-1$
 
@@ -137,7 +137,7 @@ public class InstallOptionsTemplate extends AbstractTemplate
         mSections = sections;
     }
 
-    public InstallOptionsWidget[] createWidgets()
+    public InstallOptionsWidget[] getWidgets()
     {
         List list = new ArrayList();
         for (int i = 0; i < mSections.length; i++) {
@@ -162,5 +162,40 @@ public class InstallOptionsTemplate extends AbstractTemplate
         }
         template.setSections(sections);
         return template;
+    }
+
+    public boolean isEqualTo(ITemplate template)
+    {
+        if (this == template) {
+            return true;
+        }
+        if (!super.equals(template)) {
+            return false;
+        }
+        if (getClass() != template.getClass()) {
+            return false;
+        }
+
+        InstallOptionsTemplate other = (InstallOptionsTemplate)template;
+        INISection[] sections1 = getSections();
+        INISection[] sections2 = other.getSections();
+        if (sections1==sections2) {
+            return true;
+        }
+        if (sections1==null || sections2==null) {
+            return false;
+        }
+
+        int length = sections1.length;
+        if (sections2.length != length) {
+            return false;
+        }
+
+        for (int i=0; i<length; i++) {
+            if (!(sections1[i]==null ? sections2[i]==null : sections1[i].isEqualTo(sections2[i]))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

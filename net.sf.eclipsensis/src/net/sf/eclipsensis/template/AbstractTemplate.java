@@ -17,7 +17,7 @@ import net.sf.eclipsensis.util.*;
 
 import org.w3c.dom.*;
 
-public abstract class AbstractTemplate extends AbstractNodeConvertible implements Serializable, Cloneable
+public abstract class AbstractTemplate extends AbstractNodeConvertible implements ITemplate, Serializable
 {
     private static final long serialVersionUID = -6593538372175606301L;
 
@@ -25,10 +25,6 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
     protected static final String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
     protected static final String NAME_ATTRIBUTE= "name"; //$NON-NLS-1$
     protected static final String DESCRIPTION_NODE= "description"; //$NON-NLS-1$
-
-    public static final int TYPE_DEFAULT = 0;
-    public static final int TYPE_CUSTOM = 1;
-    public static final int TYPE_USER = 2;
 
     private String mId = null;
     private String mName = null;
@@ -115,6 +111,7 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
         skippedProperties.add("available"); //$NON-NLS-1$
         skippedProperties.add("enabled"); //$NON-NLS-1$
         skippedProperties.add("deleted"); //$NON-NLS-1$
+        skippedProperties.add("equalTo"); //$NON-NLS-1$
         skippedProperties.add("description"); //$NON-NLS-1$
         skippedProperties.add("settings"); //$NON-NLS-1$
     }
@@ -195,7 +192,7 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
     /**
      * @param deleted The deleted to set.
      */
-    protected void setDeleted(boolean deleted)
+    public void setDeleted(boolean deleted)
     {
         mDeleted = deleted;
     }
@@ -233,5 +230,35 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
         catch (CloneNotSupportedException e) {
             return null;
         }
+    }
+
+    public boolean isEqualTo(ITemplate template)
+    {
+        if (this == template) {
+            return true;
+        }
+        if (template == null) {
+            return false;
+        }
+        if (getClass() != template.getClass()) {
+            return false;
+        }
+        AbstractTemplate other = (AbstractTemplate)template;
+        if (isDeleted() != other.isDeleted()) {
+            return false;
+        }
+        if (!Common.stringsAreEqual(getDescription(),other.getDescription())) {
+            return false;
+        }
+        if (isEnabled() != other.isEnabled()) {
+            return false;
+        }
+        if (!Common.stringsAreEqual(getId(),other.getId())) {
+            return false;
+        }
+        if (!Common.stringsAreEqual(getName(),other.getName())) {
+            return false;
+        }
+        return true;
     }
 }

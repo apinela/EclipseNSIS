@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.*;
 
 public abstract class AbstractTemplateDialog extends TrayDialog
 {
-    private AbstractTemplate mOldTemplate = null;
-    private AbstractTemplate mTemplate = null;
+    private ITemplate mOldTemplate = null;
+    private ITemplate mTemplate = null;
     private AbstractTemplateManager mTemplateManager = null;
     private Text mTemplateName = null;
     private Text mTemplateDescription = null;
@@ -35,7 +35,7 @@ public abstract class AbstractTemplateDialog extends TrayDialog
     /**
      * @param parentShell
      */
-    public AbstractTemplateDialog(Shell parentShell, AbstractTemplateManager templateManager, AbstractTemplate template, boolean create)
+    public AbstractTemplateDialog(Shell parentShell, AbstractTemplateManager templateManager, ITemplate template, boolean create)
     {
         super(parentShell);
         setCreate(create);
@@ -45,12 +45,12 @@ public abstract class AbstractTemplateDialog extends TrayDialog
         }
         else {
             mOldTemplate = template;
-            mTemplate = (AbstractTemplate)mOldTemplate.clone();
+            mTemplate = (ITemplate)mOldTemplate.clone();
         }
         mTemplateManager = templateManager;
     }
 
-    protected AbstractTemplate getTemplate()
+    protected ITemplate getTemplate()
     {
         return mTemplate;
     }
@@ -150,7 +150,7 @@ public abstract class AbstractTemplateDialog extends TrayDialog
         }
     }
 
-    protected abstract AbstractTemplate createTemplate(String name);
+    protected abstract ITemplate createTemplate(String name);
     protected abstract String getShellTitle();
     protected abstract Image getShellImage();
 }

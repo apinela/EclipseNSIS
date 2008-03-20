@@ -198,7 +198,7 @@ public class INILine implements Cloneable, Serializable
         }
     }
 
-    public boolean matches(INILine line)
+    public boolean isEqualTo(INILine line)
     {
         if (this == line) {
             return true;

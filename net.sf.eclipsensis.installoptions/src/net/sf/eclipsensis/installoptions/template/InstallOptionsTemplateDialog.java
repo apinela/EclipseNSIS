@@ -20,7 +20,7 @@ public class InstallOptionsTemplateDialog extends AbstractTemplateDialog
 {
     private InstallOptionsWidget[] mWidgets;
 
-    public InstallOptionsTemplateDialog(Shell parentShell, InstallOptionsTemplate template)
+    public InstallOptionsTemplateDialog(Shell parentShell, IInstallOptionsTemplate template)
     {
         this(parentShell, template, null);
     }
@@ -30,22 +30,22 @@ public class InstallOptionsTemplateDialog extends AbstractTemplateDialog
         this(parentShell, null, widgets);
     }
 
-    private InstallOptionsTemplateDialog(Shell parentShell, InstallOptionsTemplate template, InstallOptionsWidget[] widgets)
+    private InstallOptionsTemplateDialog(Shell parentShell, IInstallOptionsTemplate template, InstallOptionsWidget[] widgets)
     {
         super(parentShell, InstallOptionsTemplateManager.INSTANCE, template, template == null);
         mWidgets = widgets;
     }
 
-    protected AbstractTemplate createTemplate(String name)
+    protected ITemplate createTemplate(String name)
     {
-        return new InstallOptionsTemplate(name);
+        return new InstallOptionsTemplate2(name);
     }
 
     protected void createUpdateTemplate()
     {
         super.createUpdateTemplate();
         if(isCreate()) {
-            ((InstallOptionsTemplate)getTemplate()).setWidgets(mWidgets);
+            ((IInstallOptionsTemplate)getTemplate()).setWidgets(mWidgets);
         }
     }
 

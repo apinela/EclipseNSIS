@@ -7,21 +7,13 @@
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
-package net.sf.eclipsensis.wizard.template;
+package net.sf.eclipsensis.installoptions.template;
 
-import net.sf.eclipsensis.template.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.template.ITemplate;
 
-public class NSISWizardTemplateReaderWriter extends AbstractTemplateReaderWriter
+public interface IInstallOptionsTemplate extends ITemplate
 {
-    static final NSISWizardTemplateReaderWriter INSTANCE = new NSISWizardTemplateReaderWriter();
-
-    private NSISWizardTemplateReaderWriter()
-    {
-        super();
-    }
-
-    protected ITemplate createTemplate()
-    {
-        return new NSISWizardTemplate();
-    }
+    public InstallOptionsWidget[] getWidgets();
+    public void setWidgets(InstallOptionsWidget[] widgets);
 }

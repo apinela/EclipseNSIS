@@ -29,7 +29,7 @@ public class NSISWizardTemplateDialog extends AbstractTemplateDialog
         mSettings = settings;
     }
 
-    protected AbstractTemplate createTemplate(String name)
+    protected ITemplate createTemplate(String name)
     {
         return new NSISWizardTemplate(name);
     }

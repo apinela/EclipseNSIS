@@ -289,9 +289,9 @@ public class InstallOptionsWizardPage extends WizardPage
         ViewerFilter filter = new ViewerFilter() {
             public boolean select(Viewer viewer, Object parentElement, Object element)
             {
-                if(element instanceof InstallOptionsTemplate) {
-                    InstallOptionsTemplate template = (InstallOptionsTemplate)element;
-                    return template.isEnabled() && !template.isDeleted();
+                if(element instanceof IInstallOptionsTemplate) {
+                    IInstallOptionsTemplate template = (IInstallOptionsTemplate)element;
+                    return template.isAvailable() && template.isEnabled() && !template.isDeleted();
                 }
                 return true;
             }
@@ -305,8 +305,8 @@ public class InstallOptionsWizardPage extends WizardPage
                 InstallOptionsWizard wizard = (InstallOptionsWizard)getWizard();
                 if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
                     Object obj = ((IStructuredSelection)sel).getFirstElement();
-                    if(obj instanceof InstallOptionsTemplate) {
-                        wizard.setTemplate((InstallOptionsTemplate)obj);
+                    if(obj instanceof IInstallOptionsTemplate) {
+                        wizard.setTemplate((IInstallOptionsTemplate)obj);
                         t.setText(wizard.getTemplate().getDescription());
                     }
                 }
@@ -525,9 +525,9 @@ public class InstallOptionsWizardPage extends WizardPage
     protected String getContents()
     {
         InstallOptionsDialog dialog = InstallOptionsDialog.loadINIFile(new INIFile());
-        InstallOptionsTemplate template = ((InstallOptionsWizard)getWizard()).getTemplate();
+        IInstallOptionsTemplate template = ((InstallOptionsWizard)getWizard()).getTemplate();
         if(template != null) {
-            InstallOptionsWidget[] widgets = template.createWidgets();
+            InstallOptionsWidget[] widgets = template.getWidgets();
             if(!Common.isEmptyArray(widgets)) {
                 for (int i = 0; i < widgets.length; i++) {
                     dialog.addChild(widgets[i]);

@@ -47,7 +47,7 @@ public abstract class AbstractTemplateReaderWriter
             int count= elements.getLength();
             for (int i= 0; i != count; i++) {
                 Node node= elements.item(i);
-                AbstractTemplate template = createTemplate();
+                ITemplate template = createTemplate();
                 template.fromNode(node);
                 templates.add(template);
             }
@@ -84,7 +84,7 @@ public abstract class AbstractTemplateReaderWriter
             document.appendChild(root);
 
             for (Iterator iter=templates.iterator(); iter.hasNext(); ) {
-                AbstractTemplate template= (AbstractTemplate)iter.next();
+                ITemplate template= (ITemplate)iter.next();
                 Node node= template.toNode(document);
                 root.appendChild(node);
             }
@@ -106,5 +106,5 @@ public abstract class AbstractTemplateReaderWriter
             throw new IOException(e.getMessage());
         }
     }
-    protected abstract AbstractTemplate createTemplate();
+    protected abstract ITemplate createTemplate();
 }

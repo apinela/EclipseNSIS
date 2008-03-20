@@ -190,12 +190,12 @@ public class INIKeyValue extends INILine
         return new StringBuffer("\"").append(text).append("\"").toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public boolean matches(INILine line)
+    public boolean isEqualTo(INILine line)
     {
         if (this == line) {
             return true;
         }
-        if (!super.matches(line)) {
+        if (!super.isEqualTo(line)) {
             return false;
         }
 

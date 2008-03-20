@@ -19,11 +19,11 @@ import org.eclipse.jface.action.Action;
 public class DeleteTemplateAction extends Action
 {
     public static final String ID = "net.sf.eclipsensis.installoptions.delete_template"; //$NON-NLS-1$
-    private InstallOptionsTemplate mTemplate;
+    private IInstallOptionsTemplate mTemplate;
     /**
      * @param part
      */
-    public DeleteTemplateAction(InstallOptionsTemplate template)
+    public DeleteTemplateAction(IInstallOptionsTemplate template)
     {
         super();
         setText(InstallOptionsPlugin.getResourceString("delete.template.action.label")); //$NON-NLS-1$

@@ -11,9 +11,9 @@ package net.sf.eclipsensis.installoptions.template;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.template.*;
 
 import org.eclipse.core.runtime.*;
@@ -45,10 +45,10 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
 
     protected Class getTemplateClass()
     {
-        return InstallOptionsTemplate.class;
+        return IInstallOptionsTemplate.class;
     }
 
-    public synchronized InstallOptionsTemplateCreationFactory getTemplateFactory(InstallOptionsTemplate template)
+    public synchronized InstallOptionsTemplateCreationFactory getTemplateFactory(IInstallOptionsTemplate template)
     {
         InstallOptionsTemplateCreationFactory factory = (InstallOptionsTemplateCreationFactory)mTemplateFactories.get(template);
         if(factory == null) {
@@ -60,19 +60,19 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
         return factory;
     }
 
-    public boolean addTemplate(AbstractTemplate template)
+    public boolean addTemplate(ITemplate template)
     {
         if(super.addTemplate(template)) {
-            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)template);
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (IInstallOptionsTemplate)template);
             return true;
         }
         return false;
     }
 
-    public boolean updateTemplate(AbstractTemplate oldTemplate, AbstractTemplate newTemplate)
+    public boolean updateTemplate(ITemplate oldTemplate, ITemplate newTemplate)
     {
         if(super.updateTemplate(oldTemplate, newTemplate)) {
-            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_UPDATED, (InstallOptionsTemplate)oldTemplate, (InstallOptionsTemplate)newTemplate);
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_UPDATED, (IInstallOptionsTemplate)oldTemplate, (IInstallOptionsTemplate)newTemplate);
             return true;
         }
         else {
@@ -80,11 +80,11 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
         }
     }
 
-    public boolean removeTemplate(AbstractTemplate template)
+    public boolean removeTemplate(ITemplate template)
     {
         if(super.removeTemplate(template)) {
             if(!template.isDeleted()) {
-                queueEvent(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, (InstallOptionsTemplate)template, null);
+                queueEvent(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, (IInstallOptionsTemplate)template, null);
             }
             return true;
         }
@@ -96,31 +96,31 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     public void resetToDefaults()
     {
         for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {
-            InstallOptionsTemplate template = (InstallOptionsTemplate)iter.next();
+            IInstallOptionsTemplate template = (IInstallOptionsTemplate)iter.next();
             if(!template.isDeleted()) {
                 queueEvent(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, template, null);
             }
         }
         super.resetToDefaults();
         for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {
-            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)iter.next());
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (IInstallOptionsTemplate)iter.next());
         }
     }
 
-    protected boolean restore(AbstractTemplate template)
+    protected boolean restore(ITemplate template)
     {
         if(super.restore(template)) {
-            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)template);
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (IInstallOptionsTemplate)template);
             return true;
         }
         return false;
     }
 
-    public AbstractTemplate revert(AbstractTemplate template)
+    public ITemplate revert(ITemplate template)
     {
-        InstallOptionsTemplate newTemplate = (InstallOptionsTemplate)super.revert(template);
+        IInstallOptionsTemplate newTemplate = (IInstallOptionsTemplate)super.revert(template);
         if(newTemplate != null) {
-            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_UPDATED, (InstallOptionsTemplate)template, newTemplate);
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_UPDATED, (IInstallOptionsTemplate)template, newTemplate);
         }
         return newTemplate;
     }
@@ -137,7 +137,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
         mListeners.remove(listener);
     }
 
-    private void queueEvent(int type, InstallOptionsTemplate oldTemplate, InstallOptionsTemplate newTemplate)
+    private void queueEvent(int type, IInstallOptionsTemplate oldTemplate, IInstallOptionsTemplate newTemplate)
     {
         mEventQueue.add(new InstallOptionsTemplateEvent(type, oldTemplate, newTemplate));
     }
@@ -157,6 +157,33 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
         }
     }
 
+    protected Map loadDefaultTemplateStore() throws IOException, ClassNotFoundException
+    {
+        Map map = super.loadDefaultTemplateStore();
+        for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry entry = (Entry)iter.next();
+            IInstallOptionsTemplate template = (IInstallOptionsTemplate)entry.getValue();
+            if(template instanceof InstallOptionsTemplate) {
+                template = new InstallOptionsTemplate2(template);
+                entry.setValue(template);
+            }
+        }
+        return map;
+    }
+
+    protected List loadUserTemplateStore() throws IOException, ClassNotFoundException
+    {
+        List list = super.loadUserTemplateStore();
+        for (ListIterator iter = list.listIterator(); iter.hasNext();) {
+            IInstallOptionsTemplate template = (IInstallOptionsTemplate)iter.next();
+            if(template instanceof InstallOptionsTemplate) {
+                template = new InstallOptionsTemplate2(template);
+                iter.set(template);
+            }
+        }
+        return list;
+    }
+
     public void save() throws IOException
     {
         super.save();
@@ -166,14 +193,14 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     public void discard()
     {
         for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {
-            InstallOptionsTemplate template = (InstallOptionsTemplate)iter.next();
+            IInstallOptionsTemplate template = (IInstallOptionsTemplate)iter.next();
             if(!template.isDeleted()) {
                 queueEvent(InstallOptionsTemplateEvent.TEMPLATE_REMOVED, template, null);
             }
         }
         super.discard();
         for(Iterator iter=getTemplates().iterator(); iter.hasNext(); ) {
-            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (InstallOptionsTemplate)iter.next());
+            queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, (IInstallOptionsTemplate)iter.next());
         }
 
         notifyListeners();
@@ -187,32 +214,5 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager
     protected Image getShellImage()
     {
         return InstallOptionsPlugin.getShellImage();
-    }
-
-    protected boolean templatesAreEqual(AbstractTemplate t1, AbstractTemplate t2)
-    {
-        if(super.templatesAreEqual(t1,t2)) {
-            INISection[] sections1 = ((InstallOptionsTemplate)t1).getSections();
-            INISection[] sections2 = ((InstallOptionsTemplate)t2).getSections();
-            if (sections1==sections2) {
-                return true;
-            }
-            if (sections1==null || sections2==null) {
-                return false;
-            }
-
-            int length = sections1.length;
-            if (sections2.length != length) {
-                return false;
-            }
-
-            for (int i=0; i<length; i++) {
-                if (!(sections1[i]==null ? sections2[i]==null : sections1[i].matches(sections2[i]))) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
     }
 }

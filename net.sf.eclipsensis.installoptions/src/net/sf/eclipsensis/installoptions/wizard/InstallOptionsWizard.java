@@ -10,7 +10,7 @@
 package net.sf.eclipsensis.installoptions.wizard;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.template.InstallOptionsTemplate;
+import net.sf.eclipsensis.installoptions.template.IInstallOptionsTemplate;
 import net.sf.eclipsensis.util.ColorManager;
 import net.sf.eclipsensis.wizard.WizardShellImageChanger;
 
@@ -24,7 +24,7 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
 {
     private static final Image cShellImage = InstallOptionsPlugin.getShellImage();
 
-    private InstallOptionsTemplate mTemplate = null;
+    private IInstallOptionsTemplate mTemplate = null;
     private IPageChangedListener mPageChangedListener;
 
     public InstallOptionsWizard()
@@ -63,12 +63,12 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
         }
     }
 
-    protected InstallOptionsTemplate getTemplate()
+    protected IInstallOptionsTemplate getTemplate()
     {
         return mTemplate;
     }
 
-    protected void setTemplate(InstallOptionsTemplate template)
+    protected void setTemplate(IInstallOptionsTemplate template)
     {
         mTemplate = template;
     }

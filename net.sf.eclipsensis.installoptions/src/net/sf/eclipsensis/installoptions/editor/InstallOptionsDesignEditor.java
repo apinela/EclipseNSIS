@@ -2003,9 +2003,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             Object model = selectedPart.getModel();
             if (model instanceof CombinedTemplateCreationEntry) {
                 final Object template = ((CombinedTemplateCreationEntry)model).getTemplate();
-                if(template instanceof InstallOptionsTemplate) {
-                    menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new EditTemplateAction((InstallOptionsTemplate)template));
-                    menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new DeleteTemplateAction((InstallOptionsTemplate)template));
+                if(template instanceof IInstallOptionsTemplate) {
+                    menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new EditTemplateAction((IInstallOptionsTemplate)template));
+                    menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new DeleteTemplateAction((IInstallOptionsTemplate)template));
                 }
             }
         }
@@ -2125,18 +2125,18 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
                     return false;
                 }
 
-                protected AbstractTemplate createTemplate(String name)
+                protected ITemplate createTemplate(String name)
                 {
-                    return new InstallOptionsTemplate(name);
+                    return new InstallOptionsTemplate2(name);
                 }
 
-                protected Dialog createDialog(final AbstractTemplate template)
+                protected Dialog createDialog(final ITemplate template)
                 {
-                    InstallOptionsTemplateDialog dialog = new InstallOptionsTemplateDialog(getShell(), (InstallOptionsTemplate)template) {
+                    InstallOptionsTemplateDialog dialog = new InstallOptionsTemplateDialog(getShell(), (IInstallOptionsTemplate)template) {
                         protected void okPressed()
                         {
                             createUpdateTemplate();
-                            AbstractTemplate t = getTemplate();
+                            ITemplate t = getTemplate();
                             if(template != t) {
                                 template.setName(t.getName());
                                 template.setDescription(t.getDescription());

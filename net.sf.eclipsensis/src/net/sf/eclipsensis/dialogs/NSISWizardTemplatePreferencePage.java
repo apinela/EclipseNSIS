@@ -54,12 +54,12 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
                 return true;
             }
 
-            protected AbstractTemplate createTemplate(String name)
+            protected ITemplate createTemplate(String name)
             {
                 return new NSISWizardTemplate(name);
             }
 
-            protected Dialog createDialog(AbstractTemplate template)
+            protected Dialog createDialog(ITemplate template)
             {
                 final NSISWizardTemplate wizardTemplate = (NSISWizardTemplate)template;
                 final NSISTemplateWizardDialog[] wizardDialog = new NSISTemplateWizardDialog[1];

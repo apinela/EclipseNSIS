@@ -49,8 +49,8 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
         if (type instanceof String) {
             return InstallOptionsElementFactory.getFactory((String)type);
         }
-        else if(type instanceof InstallOptionsTemplate) {
-            return InstallOptionsTemplateManager.INSTANCE.getTemplateFactory((InstallOptionsTemplate)type);
+        else if(type instanceof IInstallOptionsTemplate) {
+            return InstallOptionsTemplateManager.INSTANCE.getTemplateFactory((IInstallOptionsTemplate)type);
         }
         return null;
     }

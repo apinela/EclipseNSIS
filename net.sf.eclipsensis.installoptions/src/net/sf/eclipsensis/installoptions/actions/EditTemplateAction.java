@@ -19,11 +19,11 @@ public class EditTemplateAction extends Action
 {
     public static final String ID = "net.sf.eclipsensis.installoptions.edit_template"; //$NON-NLS-1$
 
-    private InstallOptionsTemplate mTemplate;
+    private IInstallOptionsTemplate mTemplate;
     /**
      * @param part
      */
-    public EditTemplateAction(InstallOptionsTemplate template)
+    public EditTemplateAction(IInstallOptionsTemplate template)
     {
         super();
         setText(InstallOptionsPlugin.getResourceString("edit.template.action.label")); //$NON-NLS-1$

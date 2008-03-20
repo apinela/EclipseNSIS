@@ -9,6 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.template;
 
+import java.io.*;
+import java.util.*;
+
 import net.sf.eclipsensis.template.*;
 
 class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter
@@ -20,8 +23,28 @@ class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter
         super();
     }
 
-    protected AbstractTemplate createTemplate()
+    public Collection import$(File file) throws IOException
     {
-        return new InstallOptionsTemplate();
+        Collection templates = super.import$(file);
+        List list = new ArrayList(templates);
+        boolean changed = false;
+        for(ListIterator iter = list.listIterator(); iter.hasNext(); ) {
+            IInstallOptionsTemplate template = (IInstallOptionsTemplate)iter.next();
+            if(template instanceof InstallOptionsTemplate) {
+                template = new InstallOptionsTemplate2(template);
+                iter.set(template);
+                changed = true;
+            }
+        }
+        if(changed) {
+            templates.clear();
+            templates.addAll(list);
+        }
+        return templates;
+    }
+
+    protected ITemplate createTemplate()
+    {
+        return new InstallOptionsTemplate2();
     }
 }

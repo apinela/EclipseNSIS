@@ -79,8 +79,8 @@ public abstract class AbstractTemplateManager
             List list = loadUserTemplateStore();
             if(list != null) {
                 for (Iterator iter = list.iterator(); iter.hasNext();) {
-                    AbstractTemplate template = (AbstractTemplate)iter.next();
-                    if(template.getType() == AbstractTemplate.TYPE_CUSTOM) {
+                    ITemplate template = (ITemplate)iter.next();
+                    if(template.getType() == ITemplate.TYPE_CUSTOM) {
                         map.remove(template.getName());
                     }
                     mTemplates.add(template);
@@ -119,20 +119,20 @@ public abstract class AbstractTemplateManager
                 Map defaults = new HashMap();
                 if(mDefaultTemplatesMap != null) {
                     for (Iterator iter = mDefaultTemplatesMap.values().iterator(); iter.hasNext();) {
-                        AbstractTemplate template = (AbstractTemplate)iter.next();
+                        ITemplate template = (ITemplate)iter.next();
                         defaults.put(template.getName(),template);
                     }
                 }
                 list = new ArrayList();
                 for(Iterator iter = ((Map)obj).values().iterator(); iter.hasNext(); ) {
-                    AbstractTemplate template = (AbstractTemplate)iter.next();
+                    ITemplate template = (ITemplate)iter.next();
                     switch(template.getType()) {
-                        case AbstractTemplate.TYPE_DEFAULT:
+                        case ITemplate.TYPE_DEFAULT:
                             continue;
-                        case AbstractTemplate.TYPE_CUSTOM:
-                            AbstractTemplate t = (AbstractTemplate)defaults.get(template.getName());
+                        case ITemplate.TYPE_CUSTOM:
+                            ITemplate t = (ITemplate)defaults.get(template.getName());
                             if(t == null) {
-                                template.setType(AbstractTemplate.TYPE_USER);
+                                template.setType(ITemplate.TYPE_USER);
                             }
                             else {
                                 template.setId(t.getId());
@@ -140,7 +140,7 @@ public abstract class AbstractTemplateManager
                                    continue;
                                 }
                             }
-                        case AbstractTemplate.TYPE_USER:
+                        case ITemplate.TYPE_USER:
                             list.add(template);
                     }
                 }
@@ -166,10 +166,10 @@ public abstract class AbstractTemplateManager
         return mUserTemplatesStore;
     }
 
-    public AbstractTemplate getTemplate(String id)
+    public ITemplate getTemplate(String id)
     {
         for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-            AbstractTemplate template = (AbstractTemplate)iter.next();
+            ITemplate template = (ITemplate)iter.next();
             if(Common.stringsAreEqual(template.getId(),id)) {
                 return template;
             }
@@ -187,20 +187,20 @@ public abstract class AbstractTemplateManager
         return Collections.unmodifiableCollection(mDefaultTemplatesMap.values());
     }
 
-    public boolean addTemplate(final AbstractTemplate template)
+    public boolean addTemplate(final ITemplate template)
     {
         checkClass(template);
         template.setId(null);
-        template.setType(AbstractTemplate.TYPE_USER);
+        template.setType(ITemplate.TYPE_USER);
         template.setDeleted(false);
         mTemplates.add(template);
         return true;
     }
 
-    protected boolean containsTemplate(AbstractTemplate template)
+    protected boolean containsTemplate(ITemplate template)
     {
         for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-            AbstractTemplate t = (AbstractTemplate)iter.next();
+            ITemplate t = (ITemplate)iter.next();
             if(templatesAreEqual(t,template)) {
                 return true;
             }
@@ -208,18 +208,18 @@ public abstract class AbstractTemplateManager
         return false;
     }
 
-    public boolean removeTemplate(AbstractTemplate template)
+    public boolean removeTemplate(ITemplate template)
     {
         checkClass(template);
         if(containsTemplate(template)) {
             switch(template.getType()) {
-                case AbstractTemplate.TYPE_DEFAULT:
-                case AbstractTemplate.TYPE_CUSTOM:
-                    AbstractTemplate t = (AbstractTemplate)template.clone();
-                    t.setType(AbstractTemplate.TYPE_CUSTOM);
+                case ITemplate.TYPE_DEFAULT:
+                case ITemplate.TYPE_CUSTOM:
+                    ITemplate t = (ITemplate)template.clone();
+                    t.setType(ITemplate.TYPE_CUSTOM);
                     t.setDeleted(true);
                     mTemplates.add(t);
-                case AbstractTemplate.TYPE_USER:
+                case ITemplate.TYPE_USER:
                     mTemplates.remove(template);
             }
             return true;
@@ -227,20 +227,20 @@ public abstract class AbstractTemplateManager
         return false;
     }
 
-    public boolean updateTemplate(AbstractTemplate oldTemplate, final AbstractTemplate template)
+    public boolean updateTemplate(ITemplate oldTemplate, final ITemplate template)
     {
         checkClass(oldTemplate);
         checkClass(template);
         if(containsTemplate(oldTemplate)) {
             mTemplates.remove(oldTemplate);
 
-            if(oldTemplate.getType() != AbstractTemplate.TYPE_USER) {
-                AbstractTemplate defaultTemplate = (AbstractTemplate)mDefaultTemplatesMap.get(oldTemplate.getId());
+            if(oldTemplate.getType() != ITemplate.TYPE_USER) {
+                ITemplate defaultTemplate = (ITemplate)mDefaultTemplatesMap.get(oldTemplate.getId());
                 if(defaultTemplate != null) {
-                    template.setType(templatesAreEqual(template,defaultTemplate)?AbstractTemplate.TYPE_DEFAULT:AbstractTemplate.TYPE_CUSTOM);
+                    template.setType(templatesAreEqual(template,defaultTemplate)?ITemplate.TYPE_DEFAULT:ITemplate.TYPE_CUSTOM);
                 }
                 else {
-                    template.setType(AbstractTemplate.TYPE_USER);
+                    template.setType(ITemplate.TYPE_USER);
                 }
             }
             template.setDeleted(false);
@@ -253,18 +253,18 @@ public abstract class AbstractTemplateManager
     public void restore()
     {
         for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-            restore((AbstractTemplate)iter.next());
+            restore((ITemplate)iter.next());
         }
     }
 
-    protected boolean restore(AbstractTemplate template)
+    protected boolean restore(ITemplate template)
     {
         checkClass(template);
-        if(template.getType() == AbstractTemplate.TYPE_CUSTOM && template.isDeleted()) {
+        if(template.getType() == ITemplate.TYPE_CUSTOM && template.isDeleted()) {
             template.setDeleted(false);
-            AbstractTemplate defaultTemplate = (AbstractTemplate)mDefaultTemplatesMap.get(template.getId());
+            ITemplate defaultTemplate = (ITemplate)mDefaultTemplatesMap.get(template.getId());
             if(templatesAreEqual(template,defaultTemplate)) {
-                template.setType(AbstractTemplate.TYPE_DEFAULT);
+                template.setType(ITemplate.TYPE_DEFAULT);
             }
             return true;
         }
@@ -274,9 +274,9 @@ public abstract class AbstractTemplateManager
     public boolean canRestore()
     {
         for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-            AbstractTemplate template = (AbstractTemplate)iter.next();
+            ITemplate template = (ITemplate)iter.next();
             checkClass(template);
-            if(template.getType() == AbstractTemplate.TYPE_CUSTOM && template.isDeleted()) {
+            if(template.getType() == ITemplate.TYPE_CUSTOM && template.isDeleted()) {
                 return true;
             }
         }
@@ -289,11 +289,11 @@ public abstract class AbstractTemplateManager
         mTemplates.addAll(mDefaultTemplatesMap.values());
     }
 
-    public AbstractTemplate revert(AbstractTemplate template)
+    public ITemplate revert(ITemplate template)
     {
         checkClass(template);
-        if(template.getType() == AbstractTemplate.TYPE_CUSTOM) {
-            AbstractTemplate defaultTemplate = (AbstractTemplate)mDefaultTemplatesMap.get(template.getId());
+        if(template.getType() == ITemplate.TYPE_CUSTOM) {
+            ITemplate defaultTemplate = (ITemplate)mDefaultTemplatesMap.get(template.getId());
             checkClass(defaultTemplate);
             mTemplates.remove(template);
             mTemplates.add(defaultTemplate);
@@ -302,10 +302,10 @@ public abstract class AbstractTemplateManager
         return null;
     }
 
-    public boolean canRevert(AbstractTemplate template)
+    public boolean canRevert(ITemplate template)
     {
         checkClass(template);
-        return (containsTemplate(template) && (template.getType() == AbstractTemplate.TYPE_CUSTOM));
+        return (containsTemplate(template) && (template.getType() == ITemplate.TYPE_CUSTOM));
     }
 
     public void discard()
@@ -321,15 +321,15 @@ public abstract class AbstractTemplateManager
     {
         Map map = new LinkedHashMap();
         for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-            AbstractTemplate template = (AbstractTemplate)iter.next();
+            ITemplate template = (ITemplate)iter.next();
             checkClass(template);
 
             if(System.getProperty("manage.default.templates") != null) { //$NON-NLS-1$
-                template.setType(AbstractTemplate.TYPE_DEFAULT);
+                template.setType(ITemplate.TYPE_DEFAULT);
                 map.put(template.getName(),template);
             }
             else {
-                if(template.getType() != AbstractTemplate.TYPE_DEFAULT) {
+                if(template.getType() != ITemplate.TYPE_DEFAULT) {
                     map.put(template,template);
                 }
             }
@@ -352,14 +352,14 @@ public abstract class AbstractTemplateManager
         }
     }
 
-    private final void checkClass(AbstractTemplate template)
+    private final void checkClass(ITemplate template)
     {
-        if(template != null && !template.getClass().equals(getTemplateClass())) {
+        if(template != null && !getTemplateClass().isAssignableFrom(template.getClass())) {
             throw new IllegalArgumentException(template.getClass().getName());
         }
     }
 
-    protected boolean templatesAreEqual(AbstractTemplate t1, AbstractTemplate t2)
+    private boolean templatesAreEqual(ITemplate t1, ITemplate t2)
     {
         checkClass(t1);
         checkClass(t2);
@@ -369,22 +369,7 @@ public abstract class AbstractTemplateManager
         if (t1 == null || t2 == null) {
             return false;
         }
-        if (t1.isDeleted() != t2.isDeleted()) {
-            return false;
-        }
-        if (!Common.stringsAreEqual(t1.getDescription(),t2.getDescription())) {
-            return false;
-        }
-        if (t1.isEnabled() != t2.isEnabled()) {
-            return false;
-        }
-        if (!Common.stringsAreEqual(t1.getId(),t2.getId())) {
-            return false;
-        }
-        if (!Common.stringsAreEqual(t1.getName(),t2.getName())) {
-            return false;
-        }
-        return true;
+        return t1.isEqualTo(t2);
     }
 
     protected abstract Plugin getPlugin();

@@ -20,14 +20,6 @@ public class CutCommand extends CopyCommand
     private InstallOptionsDialog mParent;
     private Stack mUndoStack = new Stack();
     private ArrayList mOriginals = new ArrayList();
-    private static final Comparator WIDGET_COMPARATOR = new Comparator() {
-        public int compare(Object o1, Object o2)
-        {
-            InstallOptionsWidget w1 = (InstallOptionsWidget)o1;
-            InstallOptionsWidget w2 = (InstallOptionsWidget)o2;
-            return w2.getIndex()-w1.getIndex();
-        }
-    };
 
     public CutCommand()
     {
@@ -47,8 +39,8 @@ public class CutCommand extends CopyCommand
 
     public void execute()
     {
-        Collections.sort(mOriginals, WIDGET_COMPARATOR);
-        Collections.sort(mCopies, WIDGET_COMPARATOR);
+        Collections.sort(mOriginals, InstallOptionsWidgetComparator.REVERSE_INSTANCE);
+        Collections.sort(mCopies, InstallOptionsWidgetComparator.REVERSE_INSTANCE);
         super.execute();
     }
 

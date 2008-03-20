@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.*;
+import net.sf.eclipsensis.installoptions.model.Position;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.draw2d.geometry.*;
@@ -51,18 +52,18 @@ public abstract class TypeConverter
     public static final TypeConverter POINT_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return (o==null?null:Common.flatten(new String[]{Integer.toString(((Point)o).x),Integer.toString(((Point)o).y)},','));
+            return (o==null?null:Common.flatten(new int[]{((Point)o).x,((Point)o).y},','));
         }
 
         public Object asType(String s)
         {
             Point p = null;
             if(s != null) {
-	            int n = s.indexOf(","); //$NON-NLS-1$
-	            if(n > 0) {
+                String[] parts = Common.tokenize(s,',');
+	            if(parts.length == 2) {
 	                p = new Point();
-	                p.x = Integer.parseInt(s.substring(0,n));
-	                p.y = Integer.parseInt(s.substring(n+1));
+	                p.x = Integer.parseInt(parts[0]);
+	                p.y = Integer.parseInt(parts[1]);
 	            }
             }
             return p;
@@ -71,6 +72,37 @@ public abstract class TypeConverter
         public Object makeCopy(Object o)
         {
             return new Point((Point)o);
+        }
+    };
+
+    public static final TypeConverter POSITION_CONVERTER = new TypeConverter() {
+        public String asString(Object o)
+        {
+            String s = null;
+            if(o != null ) {
+                Rectangle rect = ((Position)o).getBounds();
+                s = Common.flatten(new int[]{rect.x, rect.y, rect.width, rect.height},',');
+            }
+            return s;
+        }
+
+        public Object asType(String s)
+        {
+            Position p = null;
+            if(s != null) {
+                String[] parts = Common.tokenize(s,',');
+                if(parts.length == 4) {
+                    p = new Position();
+                    p.setLocation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+                    p.setSize(Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+                }
+            }
+            return p;
+        }
+
+        public Object makeCopy(Object o)
+        {
+            return ((Position)o).getCopy();
         }
     };
 
@@ -306,19 +338,19 @@ public abstract class TypeConverter
     public static final TypeConverter DIMENSION_CONVERTER = new TypeConverter() {
         public String asString(Object o)
         {
-            return (o==null?null:Common.flatten(new String[]{Integer.toString(((Dimension)o).width),Integer.toString(((Dimension)o).height)},','));
+            return (o==null?null:Common.flatten(new int[]{((Dimension)o).width,((Dimension)o).height},','));
         }
 
         public Object asType(String s)
         {
             Dimension d = null;
 			if (s != null) {
-				int n = s.indexOf(","); //$NON-NLS-1$
-				if (n > 0) {
-					d = new Dimension();
-					d.width = Integer.parseInt(s.substring(0, n));
-					d.height = Integer.parseInt(s.substring(n + 1));
-				}
+                String[] parts = Common.tokenize(s,',');
+                if(parts.length == 2) {
+                    d = new Dimension();
+                    d.width = Integer.parseInt(parts[0]);
+                    d.height = Integer.parseInt(parts[1]);
+                }
 			}
 			return d;
         }

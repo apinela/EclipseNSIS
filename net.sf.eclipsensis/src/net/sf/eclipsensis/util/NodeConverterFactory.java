@@ -127,22 +127,23 @@ public class NodeConverterFactory implements IExtensionChangeHandler
     {
         synchronized (mLock) {
             if (!mExtensions.containsKey(extension.getUniqueIdentifier())) {
+                String pluginId = extension.getNamespaceIdentifier();
+                Bundle bundle = Platform.getBundle(pluginId);
                 IConfigurationElement[] elements = extension.getConfigurationElements();
                 List nodeConverters = new ArrayList();
                 for (int i = 0; i < elements.length; i++) {
                     if (NODE_CONVERTER.equals(elements[i].getName())) {
                         try {
-                            String className = elements[i].getAttribute(NODE_CONVERTER_CLASS);
-                            Class clasz = Class.forName(className);
-                            if(INodeConverter.class.isAssignableFrom(clasz)) {
-                                INodeConverter nodeConverter = (INodeConverter)clasz.getConstructor(null).newInstance(null);
+                            Object executableExtension = elements[i].createExecutableExtension(NODE_CONVERTER_CLASS);
+                            if(INodeConverter.class.isAssignableFrom(executableExtension.getClass())) {
+                                INodeConverter nodeConverter = (INodeConverter)executableExtension;
 
                                 IConfigurationElement[] elements2 = elements[i].getChildren();
                                 for (int j = 0; j < elements2.length; j++) {
                                     if(NAME_CLASS_MAPPING.equals(elements2[j].getName())) {
                                         String name = elements2[j].getAttribute(NAME_CLASS_MAPPING_NAME);
-                                        className = elements2[j].getAttribute(NAME_CLASS_MAPPING_CLASS);
-                                        clasz = Class.forName(className);
+                                        String className = elements2[j].getAttribute(NAME_CLASS_MAPPING_CLASS);
+                                        Class clasz = bundle.loadClass(className);
                                         nodeConverter.addNameClassMapping(name, clasz);
                                     }
                                 }

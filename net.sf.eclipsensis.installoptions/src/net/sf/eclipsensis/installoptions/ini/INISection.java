@@ -507,12 +507,12 @@ public class INISection extends INILine implements IINIContainer
         return this;
     }
 
-    public boolean matches(INILine line)
+    public boolean isEqualTo(INILine line)
     {
         if (this == line) {
             return true;
         }
-        if (!super.matches(line)) {
+        if (!super.isEqualTo(line)) {
             return false;
         }
 
@@ -530,7 +530,7 @@ public class INISection extends INILine implements IINIContainer
                         if(o1 instanceof INILine && o2 instanceof INILine) {
                             INILine line1 = (INILine)o1;
                             INILine line2 = (INILine)o2;
-                            if(!line1.matches(line2)) {
+                            if(!line1.isEqualTo(line2)) {
                                 return false;
                             }
                         }

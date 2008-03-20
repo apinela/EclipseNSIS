@@ -347,7 +347,7 @@ public class Common
                 buf.append(obj==null?"":obj); //$NON-NLS-1$
                 for (int i = 1; i < length; i++) {
                     obj = Array.get(array, i);
-                    buf.append(separator).append(obj==null?"":obj); //$NON-NLS-1$
+                    buf.append(separator).append(obj==null?"":String.valueOf(obj)); //$NON-NLS-1$
                 }
             }
         }
