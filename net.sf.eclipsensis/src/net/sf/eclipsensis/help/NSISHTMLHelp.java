@@ -399,6 +399,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 try {
                     mNonUserChange = true;
                     mIndexViewer.setSelection(new StructuredSelection(index.getEntries().get(0)));
+                    mIndexViewer.getList().setTopIndex(mIndexViewer.getList().getSelectionIndex());
                 }
                 finally {
                     mNonUserChange = false;
@@ -944,6 +945,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                         try {
                             mNonUserChange = true;
                             mIndexViewer.setSelection(new StructuredSelection(entry));
+                            mIndexViewer.getList().setTopIndex(mIndexViewer.getList().getSelectionIndex());
                         }
                         finally {
                             mNonUserChange = false;
