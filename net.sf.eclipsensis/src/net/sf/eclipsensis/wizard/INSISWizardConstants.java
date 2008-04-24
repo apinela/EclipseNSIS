@@ -64,6 +64,6 @@ public interface INSISWizardConstants
     public static final int MULTIUSER_EXEC_LEVEL_ADMIN = 2;
     public static final int MULTIUSER_EXEC_LEVEL_HIGHEST = 3;
 
-    public static final int MULTIUSER_INSTALL_MODE_MACHINE = 0;
-    public static final int MULTIUSER_INSTALL_MODE_USER = 1;
+    public static final int MULTIUSER_INSTALL_MODE_ALLUSERS = 0;
+    public static final int MULTIUSER_INSTALL_MODE_CURRENTUSER = 1;
 }

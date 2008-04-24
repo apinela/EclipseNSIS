@@ -307,7 +307,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 mScript.addElement(new NSISScriptDefine("MULTIUSER_NOUNINSTALL")); //$NON-NLS-1$
             }
             if(mSettings.getMultiUserExecLevel() > MULTIUSER_EXEC_LEVEL_STANDARD) {
-                if(mSettings.getMultiUserInstallMode() == MULTIUSER_INSTALL_MODE_USER) {
+                if(mSettings.getMultiUserInstallMode() == MULTIUSER_INSTALL_MODE_CURRENTUSER) {
                     mScript.addElement(new NSISScriptDefine("MULTIUSER_INSTALLMODE_DEFAULT_CURRENTUSER")); //$NON-NLS-1$
                 }
                 if(mSettings.isMultiUserInstallModeAsk()) {

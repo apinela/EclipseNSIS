@@ -186,7 +186,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         if(data instanceof GridData) {
             GridData d = (GridData)data;
             d.widthHint = SIZING_WIZARD_WIDTH;
-            d.heightHint = SIZING_WIZARD_HEIGHT + //Account for Multi-User group
+            d.heightHint = SIZING_WIZARD_HEIGHT + //Account for MultiUser group
                 (INSISVersions.VERSION_2_35.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) <= 0?60:0);
         }
     }

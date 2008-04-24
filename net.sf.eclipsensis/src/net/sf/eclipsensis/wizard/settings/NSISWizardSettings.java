@@ -162,7 +162,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 
     private boolean mMultiUserInstallation = false;
     private int mMultiUserExecLevel = MULTIUSER_EXEC_LEVEL_STANDARD;
-    private int mMultiUserInstallMode = MULTIUSER_INSTALL_MODE_MACHINE;
+    private int mMultiUserInstallMode = MULTIUSER_INSTALL_MODE_ALLUSERS;
     private boolean mMultiUserInstallModeRemember = false;
     private boolean mMultiUserInstallModeAsk = false;
 

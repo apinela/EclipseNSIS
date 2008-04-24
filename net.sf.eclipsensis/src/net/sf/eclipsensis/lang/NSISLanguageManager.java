@@ -12,6 +12,7 @@ package net.sf.eclipsensis.lang;
 import java.beans.*;
 import java.io.*;
 import java.util.*;
+import java.util.regex.*;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
@@ -25,7 +26,10 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
     private static NSISLanguageManager cInstance = null;
     public static final String PROPERTY_LANGUAGES="net.sf.eclipsensis.languages"; //$NON-NLS-1$
 
-    private String mDefineMUILanguageText = null;
+    // !define\s+MUI_LANGNAME\s+(\S+|(")(?:\\?.)*?\2)
+    private Pattern mDefineMUILangNamePattern = null;
+    // !insertmacro\s+LANGFILE\s+(\S+|(")(?:\\?.)*?\2)\s+(\S+|(")(?:\\?.)*?\4)
+    private Pattern mInsertMacroLangFilePattern = null;
     private Map mLanguageMap = null;
     private List mLanguages = null;
     private Map mLocaleLanguageMap= null;
@@ -51,17 +55,19 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
             mLanguageMap = new CaseInsensitiveMap();
             mLanguages = new ArrayList();
             mPropertyChangeSupport = new PropertyChangeSupport(this);
-            mDefineMUILanguageText = NSISKeywords.getInstance()
-                    .getKeyword("!DEFINE").toUpperCase() + " MUI_LANGNAME "; //$NON-NLS-1$ //$NON-NLS-2$
+            mDefineMUILangNamePattern = Pattern.compile(NSISKeywords.getInstance()
+                    .getKeyword("!DEFINE") + "\\s+MUI_LANGNAME\\s+(\\S+|(\")(?:\\\\?.)*?\\2)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$ //$NON-NLS-2$
+            mInsertMacroLangFilePattern = Pattern.compile(NSISKeywords.getInstance()
+            .getKeyword("!INSERTMACRO").toUpperCase() + "\\s+LANGFILE\\s+(\\S+|(\")(?:\\\\?.)*?\\2)\\s+(\\S+|(\")(?:\\\\?.)*?\\4)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$ //$NON-NLS-2$
             try {
                 ResourceBundle bundle = ResourceBundle
                         .getBundle(NSISLanguageManager.class.getName());
                 mLocaleLanguageMap = Common.loadMapProperty(bundle,
-                        "locale.language.map"); //$NON-NLS-1$
+                        "locale.language.map");
                 mLanguageIdLocaleMap = Common.loadMapProperty(bundle,
-                        "langid.locale.map"); //$NON-NLS-1$
+                        "langid.locale.map");
                 mDefaultLanguageId = Integer.valueOf(bundle
-                        .getString("default.langid")); //$NON-NLS-1$
+                        .getString("default.langid"));
             }
             catch (Exception ex) {
                 mDefaultLanguageId = new Integer(1033);
@@ -77,7 +83,8 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         if (cInstance == this) {
             cInstance = null;
             NSISPreferences.INSTANCE.removeListener(this);
-            mDefineMUILanguageText = null;
+            mDefineMUILangNamePattern = null;
+            mInsertMacroLangFilePattern = null;
             mLanguageMap = null;
             mLanguages = null;
             mLocaleLanguageMap= null;
@@ -117,7 +124,8 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                 File nsisHome = new File(NSISPreferences.INSTANCE.getNSISHome());
                 if(nsisHome.exists()) {
                     mLangDir = new File(nsisHome,INSISConstants.LANGUAGE_FILES_LOCATION);
-                    mMuiLangDir = new File(nsisHome,INSISConstants.MUI_LANGUAGE_FILES_LOCATION);
+                    mMuiLangDir = new File(nsisHome,NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_30)>=0?
+                            INSISConstants.LANGUAGE_FILES_LOCATION:INSISConstants.MUI_LANGUAGE_FILES_LOCATION);
                     if(mLangDir.exists()) {
                         File[] langFiles = mLangDir.listFiles(new FileFilter() {
                            public boolean accept(File pathName)
@@ -221,21 +229,19 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                                 if (m >= 0) {
                                     line = line.substring(0, m).trim();
                                 }
-                                if (line.toUpperCase().startsWith(mDefineMUILanguageText)) {
-                                    line = line.substring(mDefineMUILanguageText.length()).trim();
-                                    //Check for quotes.
-                                    m = line.indexOf('"');
-                                    if (m >= 0) {
-                                        n = line.indexOf('"', m + 1);
-                                        if (n >= 0) {
-                                            line = line.substring(m + 1, n);
-                                        }
-                                        else {
-                                            line = line.substring(m + 1);
-                                        }
+                                if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_30) >= 0) {
+                                    Matcher matcher = mInsertMacroLangFilePattern.matcher(line);
+                                    if (matcher.matches()) {
+                                        displayName = Common.maybeUnquote(matcher.group(3));
+                                        break;
                                     }
-                                    displayName = line;
-                                    break;
+                                }
+                                else {
+                                    Matcher matcher = mDefineMUILangNamePattern.matcher(line);
+                                    if (matcher.matches()) {
+                                        displayName = Common.maybeUnquote(matcher.group(1));
+                                        break;
+                                    }
                                 }
                                 line = skipComments(br);
                             }

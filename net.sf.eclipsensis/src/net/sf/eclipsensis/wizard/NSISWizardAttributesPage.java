@@ -162,7 +162,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
     private void createMultiUserGroup(Composite parent)
     {
-        final Group multiUserGroup = NSISWizardDialogUtil.createGroup(parent, 2, "Multi-User Installation",null,false); //$NON-NLS-1$
+        final Group multiUserGroup = NSISWizardDialogUtil.createGroup(parent, 2, "MultiUser Installation",null,false); //$NON-NLS-1$
         GridData data = ((GridData)multiUserGroup.getLayoutData());
         data.verticalAlignment = SWT.FILL;
         data.horizontalAlignment = SWT.FILL;

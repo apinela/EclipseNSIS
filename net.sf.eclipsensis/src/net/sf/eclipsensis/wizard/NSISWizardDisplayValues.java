@@ -25,7 +25,7 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
     public static final String[] EXECUTION_LEVELS = new String[EXECUTION_LEVEL_HIGHEST+1];
     public static final String[] TARGET_PLATFORMS = new String[TARGET_PLATFORM_X64+1];
     public static final String[] MULTIUSER_EXEC_LEVELS = new String[MULTIUSER_EXEC_LEVEL_HIGHEST+1];
-    public static final String[] MULTIUSER_INSTALL_MODES = new String[MULTIUSER_INSTALL_MODE_USER+1];
+    public static final String[] MULTIUSER_INSTALL_MODES = new String[MULTIUSER_INSTALL_MODE_CURRENTUSER+1];
 
     static {
         INSTALLER_TYPE_NAMES[INSTALLER_TYPE_SILENT] = EclipseNSISPlugin.getResourceString("installer.type.silent"); //$NON-NLS-1$
@@ -81,8 +81,8 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
         MULTIUSER_EXEC_LEVELS[MULTIUSER_EXEC_LEVEL_ADMIN] = EclipseNSISPlugin.getResourceString("multiuser.exec.level.admin"); //$NON-NLS-1$
         MULTIUSER_EXEC_LEVELS[MULTIUSER_EXEC_LEVEL_HIGHEST] = EclipseNSISPlugin.getResourceString("multiuser.exec.level.highest"); //$NON-NLS-1$
 
-        MULTIUSER_INSTALL_MODES[MULTIUSER_INSTALL_MODE_MACHINE] = EclipseNSISPlugin.getResourceString("multiuser.install.mode.machine"); //$NON-NLS-1$
-        MULTIUSER_INSTALL_MODES[MULTIUSER_INSTALL_MODE_USER] = EclipseNSISPlugin.getResourceString("multiuser.install.mode.user"); //$NON-NLS-1$
+        MULTIUSER_INSTALL_MODES[MULTIUSER_INSTALL_MODE_ALLUSERS] = EclipseNSISPlugin.getResourceString("multiuser.install.mode.all.users"); //$NON-NLS-1$
+        MULTIUSER_INSTALL_MODES[MULTIUSER_INSTALL_MODE_CURRENTUSER] = EclipseNSISPlugin.getResourceString("multiuser.install.mode.current.user"); //$NON-NLS-1$
     }
 
     public static int getHKeyIndex(String rootKey)
