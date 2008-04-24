@@ -2,7 +2,7 @@ Revision History
 ================
 
 0.9.6.3 (04/22/2008)
-    * Added support for !else and !elseif in outline view.
+    * Added support for !else in outline view.
     * Wizard now supports MUI2 and Multi-User Install.
     * Added preview to NSIS Command Wizard.
     * Feature Requests:

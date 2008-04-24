@@ -27,9 +27,9 @@ public class StringParam extends SubstitutableParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
+    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new StringParamEditor(parentEditor);
+        return new StringParamEditor(command, parentEditor);
     }
 
     protected String validateText(String text)
@@ -49,9 +49,9 @@ public class StringParam extends SubstitutableParam
     {
         protected Text mText = null;
 
-        public StringParamEditor(INSISParamEditor parentEditor)
+        public StringParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         public void clear()

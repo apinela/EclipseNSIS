@@ -126,6 +126,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         }
     };
     private INSISParamEditor mParamEditor;
+    private NSISCommandResult mResult;
     private IDocument mCommandDoc = new Document();
     private boolean mRemember;
     private BrowserDialogTray mTray = null;
@@ -191,9 +192,9 @@ public class NSISCommandDialog extends StatusMessageDialog
     }
 
 
-    public String getCommandText()
+    public NSISCommandResult getCommandResult()
     {
-        return mCommandDoc.get();
+        return mResult;
     }
 
     public boolean close()
@@ -210,13 +211,13 @@ public class NSISCommandDialog extends StatusMessageDialog
            String error = mParamEditor.validate();
            if(error != null) {
                updateStatus(new DialogStatus(IStatus.ERROR,error));
+               mResult = null;
                mCommandDoc.set(""); //$NON-NLS-1$
            }
            else {
                updateStatus(new DialogStatus(IStatus.OK,"")); //$NON-NLS-1$
-               StringBuffer buf = new StringBuffer(mCommand.getName());
-               mParamEditor.appendText(buf);
-               mCommandDoc.set(buf.toString());
+               mResult = mCommand.getResult(mParamEditor);
+               mCommandDoc.set(mResult.getContent());
            }
         }
     }
@@ -453,7 +454,7 @@ public class NSISCommandDialog extends StatusMessageDialog
 
         NSISSourceViewer previewer = createPreviewer(previewComposite);
         data = new GridData(SWT.FILL,SWT.FILL,true,true);
-        Point pt = Common.calculateControlSize(previewer.getControl(), 0, 2);
+        Point pt = Common.calculateControlSize(previewer.getControl(), 0, 3);
         data.heightHint = pt.y;
         previewer.getControl().setLayoutData(data);
 

@@ -45,9 +45,9 @@ public class KeyboardShortcutParam extends PrefixableParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
+    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new KeyboardShortcutParamEditor(parentEditor);
+        return new KeyboardShortcutParamEditor(command, parentEditor);
     }
 
     protected class KeyboardShortcutParamEditor extends PrefixableParamEditor
@@ -55,9 +55,9 @@ public class KeyboardShortcutParam extends PrefixableParam
         private Button[] mModifierButtons;
         private Combo mKeyCombo;
 
-        public KeyboardShortcutParamEditor(INSISParamEditor parentEditor)
+        public KeyboardShortcutParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         public void clear()

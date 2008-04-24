@@ -37,9 +37,9 @@ public abstract class ComboParam extends PrefixableParam
         mDefaultIndex = XMLUtil.getIntValue(node.getAttributes(), ATTR_DEFAULT);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
+    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new ComboParamEditor(parentEditor);
+        return new ComboParamEditor(command, parentEditor);
     }
 
     protected boolean isUserEditable()
@@ -113,9 +113,9 @@ public abstract class ComboParam extends PrefixableParam
     {
         protected ComboViewer mChoicesViewer = null;
 
-        public ComboParamEditor(INSISParamEditor parentEditor)
+        public ComboParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         protected String getPrefixableParamText()

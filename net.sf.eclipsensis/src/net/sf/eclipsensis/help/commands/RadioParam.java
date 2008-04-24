@@ -38,18 +38,18 @@ public class RadioParam extends GroupParam
         mDefaultIndex = XMLUtil.getIntValue(node.getAttributes(), ATTR_DEFAULT);
     }
 
-    protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new RadioParamEditor(parentEditor);
+        return new RadioParamEditor(command, parentEditor);
     }
 
     protected class RadioParamEditor extends GroupParamEditor
     {
         private Map mRadioButtonMap = new HashMap();
 
-        public RadioParamEditor(INSISParamEditor parentEditor)
+        public RadioParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         protected void appendParamText(StringBuffer buf)

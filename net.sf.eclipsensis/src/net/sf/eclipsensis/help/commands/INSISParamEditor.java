@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.*;
 
 public interface INSISParamEditor
 {
+    public NSISCommand getCommand();
     public Control createControl(Composite parent);
     public Control getControl();
     public String validate();

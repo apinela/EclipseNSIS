@@ -59,9 +59,9 @@ public class SubCommandParam extends NSISParam
         }
     }
 
-    protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new SubCommandParamEditor(parentEditor);
+        return new SubCommandParamEditor(command, parentEditor);
     }
 
     protected class SubCommandParamEditor extends NSISParamEditor
@@ -69,9 +69,9 @@ public class SubCommandParam extends NSISParam
         private INSISParamEditor mCommandEditor = null;
         private ComboViewer mComboViewer;
 
-        public SubCommandParamEditor(INSISParamEditor parentEditor)
+        public SubCommandParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         public void clear()

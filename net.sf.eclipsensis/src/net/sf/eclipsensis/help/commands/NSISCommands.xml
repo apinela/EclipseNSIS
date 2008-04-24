@@ -158,7 +158,7 @@
           <subcommand name="ifmacrondef" command="!ifmacrondef"/>
         </param>
       </command>
-      <command name="!if" category="conditional.compilation.category">
+      <command name="!if" category="conditional.compilation.category" terminator="!endif">
         <param name="not" value="!" type="static" optional="true"/>
         <param name="value" type="number" acceptVar="false"/>
         <param type="group" optional="true">
@@ -235,16 +235,14 @@
   </version>
   <version name="2.05">
     <add>
-      <command name="SectionGroup" category="section.commands.category">
+      <command name="SectionGroup" category="section.commands.category" terminator="SectionGroupEnd">
         <param name="/e" type="static" optional="true"/>
         <param name="section_group_name" type="string"/>
         <param name="index_output" type="string" optional="true"/>
       </command>
-      <command name="SectionGroupEnd" category="section.commands.category"/>
     </add>
     <remove>
       <command name="SubSection"/>
-      <command name="SubSectionEnd"/>
     </remove>
   </version>
   <version name="2.03">
@@ -380,11 +378,10 @@
           <subcommand name="ifmacrondef" command="!ifmacrondef"/>
         </param>
       </command>
-      <command name="!endif" category="conditional.compilation.category"/>
       <command name="!error" category="compiler.utility.commands.category">
         <param name="message" type="string" allowBlank="true"/>
       </command>
-      <command name="!ifdef" category="conditional.compilation.category">
+      <command name="!ifdef" category="conditional.compilation.category" terminator="!endif">
         <param name="gflag" type="string"/>
         <param type="repeatable" optional="true" label="condition.repeatable.label">
           <param type="group">
@@ -396,7 +393,7 @@
           </param>
         </param>
       </command>
-      <command name="!ifndef" category="conditional.compilation.category">
+      <command name="!ifndef" category="conditional.compilation.category" terminator="!endif">
         <param name="gflag" type="string"/>
         <param type="repeatable" optional="true" label="condition.repeatable.label">
           <param type="group">
@@ -408,7 +405,7 @@
           </param>
         </param>
       </command>
-      <command name="!ifmacrodef" category="conditional.compilation.category">
+      <command name="!ifmacrodef" category="conditional.compilation.category" terminator="!endif">
         <param name="gflag" type="string"/>
         <param type="repeatable" optional="true" label="macro.repeatable.label">
           <param type="group">
@@ -420,7 +417,7 @@
           </param>
         </param>
       </command>
-      <command name="!ifmacrondef" category="conditional.compilation.category">
+      <command name="!ifmacrondef" category="conditional.compilation.category" terminator="!endif">
         <param name="gflag" type="string"/>
         <param type="repeatable" optional="true" label="macro.repeatable.label">
           <param type="group">
@@ -444,13 +441,12 @@
           <param name="parameter" type="string"/>
         </param>
       </command>
-      <command name="!macro" category="conditional.compilation.category">
+      <command name="!macro" category="conditional.compilation.category" terminator="!macroend">
         <param name="macro_name" type="string"/>
         <param type="repeatable" optional="true" label="parameter.repeatable.label">
           <param name="parameter" type="string" allowBlank="true"/>
         </param>
       </command>
-      <command name="!macroend" category="conditional.compilation.category"/>
       <command name="!packhdr" category="compiler.utility.commands.category">
         <param name="tempfile" type="localfile" acceptVar="false"/>
         <param name="command" type="string"/>
@@ -804,10 +800,9 @@
       <command name="FlushINI" category="reg.ini.file.instructions.category">
         <param name="ini_filename" type="pathname"/>
       </command>
-      <command name="Function" category="function.commands.category">
+      <command name="Function" category="function.commands.category" terminator="FunctionEnd">
         <param name="function_name" type="string"/>
       </command>
-      <command name="FunctionEnd" category="function.commands.category"/>
       <command name="GetCurInstType" category="section.management.category">
         <param name="user_var" type="var"/>
       </command>
@@ -1138,7 +1133,7 @@
           </param>
         </param>
       </command>
-      <command name="PageEx" category="pages.category">
+      <command name="PageEx" category="pages.category" terminator="PageExEnd">
         <param type="choice">
           <choice value="custom"/>
           <choice value="license"/>
@@ -1154,7 +1149,6 @@
           <choice value="un.uninstConfirm"/>
         </param>
       </command>
-      <command name="PageExEnd" category="pages.category"/>
       <command name="Pop" category="stack.support.category">
         <param name="user_var(out)" type="var"/>
       </command>
@@ -1215,12 +1209,11 @@
         <param name="user_var(output)" type="var"/>
         <param name="filename" type="filename"/>
       </command>
-      <command name="Section" category="section.commands.category">
+      <command name="Section" category="section.commands.category" terminator="SectionEnd">
         <param name="/o" type="static" optional="true"/>
         <param name="section_name" type="string" allowBlank="true" optional="true"/>
         <param name="section index output" type="string" optional="true"/>
       </command>
-      <command name="SectionEnd" category="section.commands.category"/>
       <command name="SectionGetFlags" category="section.management.category">
         <param name="section_index" type="number" domain="natural"/>
         <param name="user_var(output)" type="var"/>
@@ -1488,12 +1481,11 @@
         </param>
         <param name="subcaption" type="string" allowBlank="true"/>
       </command>
-      <command name="SubSection" category="section.commands.category">
+      <command name="SubSection" category="section.commands.category" terminator="SubSectionEnd">
         <param name="/e" type="static" optional="true"/>
         <param name="sub_section_name" type="string"/>
         <param name="index_output" type="string" optional="true"/>
       </command>
-      <command name="SubSectionEnd" category="section.commands.category"/>
       <command name="UnRegDLL" category="general.purpose.instructions.category">
         <param name="dllfile" type="pathname"/>
       </command>

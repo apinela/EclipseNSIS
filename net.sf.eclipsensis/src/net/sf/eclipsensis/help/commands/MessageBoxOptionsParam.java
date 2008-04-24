@@ -29,9 +29,9 @@ public class MessageBoxOptionsParam extends NSISParam
         super(node);
     }
 
-    protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new MessageBoxOptionsParamEditor(parentEditor);
+        return new MessageBoxOptionsParamEditor(command, parentEditor);
     }
 
     protected class MessageBoxOptionsParamEditor extends NSISParamEditor
@@ -41,9 +41,9 @@ public class MessageBoxOptionsParam extends NSISParam
         private Combo mDefaultCombo = null;
         private Button[] mOthersButtons = null;
 
-        public MessageBoxOptionsParamEditor(INSISParamEditor parentEditor)
+        public MessageBoxOptionsParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         public void clear()

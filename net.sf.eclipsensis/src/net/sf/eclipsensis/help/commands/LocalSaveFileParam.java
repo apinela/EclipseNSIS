@@ -21,16 +21,16 @@ public class LocalSaveFileParam extends LocalFileParam
         super(node);
     }
 
-    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(INSISParamEditor parentEditor)
+    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new LocalSaveFileParamEditor(parentEditor);
+        return new LocalSaveFileParamEditor(command, parentEditor);
     }
 
     protected class LocalSaveFileParamEditor extends LocalFileParamEditor
     {
-        public LocalSaveFileParamEditor(INSISParamEditor parentEditor)
+        public LocalSaveFileParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         protected boolean isSave()

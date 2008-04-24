@@ -29,18 +29,18 @@ public class LocalDirParam extends LocalFilesystemObjectParam
         super(node);
     }
 
-    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(INSISParamEditor parentEditor)
+    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new LocalDirParamEditor(parentEditor);
+        return new LocalDirParamEditor(command, parentEditor);
     }
 
     protected class LocalDirParamEditor extends LocalFilesystemObjectParamEditor
     {
         protected Text mDirText = null;
 
-        public LocalDirParamEditor(INSISParamEditor parentEditor)
+        public LocalDirParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         public void clear()

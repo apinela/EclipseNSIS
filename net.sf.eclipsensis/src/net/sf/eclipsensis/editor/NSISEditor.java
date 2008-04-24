@@ -916,18 +916,18 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
             StyledText styledText = viewer.getTextWidget();
             if(styledText != null && !styledText.isDisposed()) {
                 if(command != null) {
-                    String text = null;
+                    NSISCommandResult result = null;
                     if (command.hasParameters()) {
                         NSISCommandDialog dlg = new NSISCommandDialog(styledText.getShell(), command);
                         int code = dlg.open();
                         if (code == Window.OK) {
-                            text = dlg.getCommandText();
+                            result = dlg.getCommandResult();
                         }
                     }
                     else {
-                        text = command.getName();
+                        result = command.getResult();
                     }
-                    if (!Common.isEmpty(text)) {
+                    if (result != null && !Common.isEmpty(result.getContent())) {
                         Point sel = styledText.getSelection();
                         try {
                             IDocument doc = getDocumentProvider().getDocument(getEditorInput());
@@ -937,12 +937,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                                 styledText.setFocus();
                             }
                             int offset = styledText.getCaretOffset();
-                            String delim = doc.getLineDelimiter(styledText.getLineAtOffset(offset));
-                            if (delim != null) {
-                                text = text + delim;
-                            }
-                            doc.replace(offset, 0, text);
-                            styledText.setCaretOffset(offset + text.length());
+                            doc.replace(offset, 0, result.getContent());
+                            styledText.setCaretOffset(offset + result.getCursorPos());
                         }
                         catch (Exception e) {
                             Common.openError(styledText.getShell(), e.getMessage(), EclipseNSISPlugin.getShellImage());

@@ -51,9 +51,9 @@ public abstract class PrefixableParam extends NSISParam
         mPrefix = prefix;
     }
 
-    protected final NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
+    protected final NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return createPrefixableParamEditor(parentEditor);
+        return createPrefixableParamEditor(command, parentEditor);
     }
 
     protected final String getDefaultValue()
@@ -69,15 +69,15 @@ public abstract class PrefixableParam extends NSISParam
         return ""; //$NON-NLS-1$
     }
 
-    protected abstract PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor);
+    protected abstract PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor);
 
     protected abstract class PrefixableParamEditor extends NSISParamEditor
     {
         public static final String DATA_BUTTON = "BUTTON"; //$NON-NLS-1$
 
-        public PrefixableParamEditor(INSISParamEditor parentEditor)
+        public PrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         protected final void appendParamText(StringBuffer buf)

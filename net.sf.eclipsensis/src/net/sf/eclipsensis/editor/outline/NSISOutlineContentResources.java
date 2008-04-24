@@ -29,11 +29,11 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
                                             "!else ifmacrondef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "SubSection", "SubSectionEnd", "SectionGroup", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                            "Page", "PageEx", "Pageexend","!include","Var", "Name"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+                                            "Page", "PageEx", "PageExEnd","!include","Var", "Name"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
     private static final String[] cClosingTypes = {"!endif", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$
                                                     "FunctionEnd", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$
                                                     "SubSectionEnd", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$
-                                                    "Pageexend","Name"}; //$NON-NLS-1$ //$NON-NLS-2$
+                                                    "PageExEnd","Name"}; //$NON-NLS-1$ //$NON-NLS-2$
     private static final File cFilterCacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),NSISOutlineContentResources.class.getName()+".Filter.ser"); //$NON-NLS-1$
 
     private List mTypeList = null;

@@ -55,9 +55,9 @@ public class RepeatableParam extends NSISParam
         return null;
     }
 
-    protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new RepeatableParamEditor(parentEditor);
+        return new RepeatableParamEditor(command, parentEditor);
     }
 
     protected class RepeatableParamEditor extends NSISParamEditor
@@ -66,9 +66,9 @@ public class RepeatableParam extends NSISParam
         public static final String DATA_BUTTONS = "BUTTONS"; //$NON-NLS-1$
         private List mChildParamEditors = new ArrayList();
 
-        public RepeatableParamEditor(INSISParamEditor parentEditor)
+        public RepeatableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         public void clear()
@@ -229,7 +229,7 @@ public class RepeatableParam extends NSISParam
          */
         private INSISParamEditor createChildParamEditor(int index, Map childSettings)
         {
-            INSISParamEditor editor = mChildParam.createEditor(this);
+            INSISParamEditor editor = mChildParam.createEditor(getCommand(), this);
             editor.setSettings(childSettings);
             mChildParamEditors.add(index, editor);
             return editor;

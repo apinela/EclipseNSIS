@@ -107,9 +107,9 @@ public abstract class NSISParam
         return shouldQuote;
     }
 
-    public INSISParamEditor createEditor(INSISParamEditor parentEditor)
+    public INSISParamEditor createEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return createParamEditor(parentEditor);
+        return createParamEditor(command, parentEditor);
     }
 
     protected String getDefaultValue()
@@ -117,10 +117,11 @@ public abstract class NSISParam
         return null;
     }
 
-    protected abstract NSISParamEditor createParamEditor(INSISParamEditor parentEditor);
+    protected abstract NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor);
 
     protected abstract class NSISParamEditor implements INSISParamEditor
     {
+        private NSISCommand mCommand = null;
         protected Control mControl = null;
         protected Button mOptionalButton = null;
         protected Label mNameLabel = null;
@@ -130,9 +131,15 @@ public abstract class NSISParam
         private INSISParamEditor mParentEditor;
         private boolean mRequiredFields = false;
 
-        public NSISParamEditor(INSISParamEditor parentEditor)
+        public NSISParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
+            mCommand = command;
             mParentEditor = parentEditor;
+        }
+
+        public NSISCommand getCommand()
+        {
+            return mCommand;
         }
 
         public boolean hasRequiredFields()

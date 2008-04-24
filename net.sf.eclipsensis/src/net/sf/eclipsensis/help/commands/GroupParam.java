@@ -42,9 +42,9 @@ public class GroupParam extends NSISParam
         return mChildParams;
     }
 
-    protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new GroupParamEditor(parentEditor);
+        return new GroupParamEditor(command, parentEditor);
     }
 
     private void addDependent(Object parent, NSISParam dependent)
@@ -96,13 +96,13 @@ public class GroupParam extends NSISParam
     {
         protected List mParamEditors;
 
-        public GroupParamEditor(INSISParamEditor parentEditor)
+        public GroupParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
             Map map = new HashMap();
             mParamEditors = new ArrayList(mChildParams.length);
             for (int i = 0; i < mChildParams.length; i++) {
-                mParamEditors.add(mChildParams[i].createEditor(this));
+                mParamEditors.add(mChildParams[i].createEditor(command, this));
                 map.put(mChildParams[i], mParamEditors.get(i));
             }
             for (Iterator iter= mDependencies.keySet().iterator(); iter.hasNext(); ) {

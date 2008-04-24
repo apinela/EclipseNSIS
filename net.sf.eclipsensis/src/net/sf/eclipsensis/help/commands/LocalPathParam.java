@@ -30,18 +30,18 @@ public class LocalPathParam extends LocalFileParam
         super(node);
     }
 
-    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(INSISParamEditor parentEditor)
+    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new LocalPathParamEditor(parentEditor);
+        return new LocalPathParamEditor(command, parentEditor);
     }
 
     protected class LocalPathParamEditor extends LocalFilesystemObjectParamEditor
     {
         protected Text mPathText = null;
 
-        public LocalPathParamEditor(INSISParamEditor parentEditor)
+        public LocalPathParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         public void clear()

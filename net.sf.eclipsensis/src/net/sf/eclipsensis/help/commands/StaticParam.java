@@ -44,16 +44,16 @@ public class StaticParam extends NSISParam
         return getValue();
     }
 
-    protected NSISParamEditor createParamEditor(INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new StaticParamEditor(parentEditor);
+        return new StaticParamEditor(command, parentEditor);
     }
 
     protected class StaticParamEditor extends NSISParamEditor
     {
-        public StaticParamEditor(INSISParamEditor parentEditor)
+        public StaticParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         protected void appendParamText(StringBuffer buf)

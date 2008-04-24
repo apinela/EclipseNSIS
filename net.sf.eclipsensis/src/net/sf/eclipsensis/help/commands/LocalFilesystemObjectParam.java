@@ -20,18 +20,18 @@ public abstract class LocalFilesystemObjectParam extends SubstitutableParam
         super(node);
     }
 
-    protected final PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
+    protected final PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return createLocalFilesystemObjectParamEditor(parentEditor);
+        return createLocalFilesystemObjectParamEditor(command, parentEditor);
     }
 
-    protected abstract LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(INSISParamEditor parentEditor);
+    protected abstract LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor);
 
     protected abstract class LocalFilesystemObjectParamEditor extends PrefixableParamEditor
     {
-        public LocalFilesystemObjectParamEditor(INSISParamEditor parentEditor)
+        public LocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         protected boolean testSymbol(String text)

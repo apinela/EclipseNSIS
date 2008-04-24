@@ -24,9 +24,9 @@ public class MultiChoiceParam extends ChoiceParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
+    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new MultiChoiceParamEditor(parentEditor);
+        return new MultiChoiceParamEditor(command, parentEditor);
     }
 
     protected class MultiChoiceParamEditor extends PrefixableParamEditor
@@ -34,9 +34,9 @@ public class MultiChoiceParam extends ChoiceParam
         public static final String DATA_CHOICE = "CHOICE"; //$NON-NLS-1$
         protected Button[] mChoiceButtons = null;
 
-        public MultiChoiceParamEditor(INSISParamEditor parentEditor)
+        public MultiChoiceParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         public void clear()

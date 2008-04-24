@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.util.*;
 
 import org.w3c.dom.*;
@@ -18,10 +18,12 @@ public class NSISCommand
 {
     public static final String ATTR_NAME = "name"; //$NON-NLS-1$
     public static final String ATTR_CATEGORY = "category"; //$NON-NLS-1$
+    public static final String ATTR_TERMINATOR = "terminator"; //$NON-NLS-1$
 
     private String mName;
     private GroupParam mParam;
     private String mCategory;
+    private String mTerminator;
 
     public NSISCommand(Node node)
     {
@@ -30,6 +32,7 @@ public class NSISCommand
         XMLUtil.removeValue(attributes, ATTR_NAME);
         mParam = loadParam(node);
         mCategory = EclipseNSISPlugin.getResourceString(XMLUtil.getStringValue(attributes, ATTR_CATEGORY));
+        mTerminator = XMLUtil.getStringValue(attributes, ATTR_TERMINATOR);
     }
 
     public String getCategory()
@@ -61,7 +64,28 @@ public class NSISCommand
 
     public INSISParamEditor createEditor()
     {
-        return mParam.createEditor(null);
+        return mParam.createEditor(this, null);
+    }
+
+    public NSISCommandResult getResult()
+    {
+        return getResult(null);
+    }
+
+    NSISCommandResult getResult(INSISParamEditor editor)
+    {
+        StringBuffer buf = new StringBuffer(getName());
+        if(editor != null && this.equals(editor.getCommand())) {
+            editor.appendText(buf);
+        }
+        buf.append(INSISConstants.LINE_SEPARATOR);
+        int length = buf.length();
+        if(!Common.isEmpty(mTerminator)) {
+            buf.append(INSISConstants.LINE_SEPARATOR);
+            buf.append(mTerminator);
+            buf.append(INSISConstants.LINE_SEPARATOR);
+        }
+        return new NSISCommandResult(buf.toString(),length);
     }
 
     public boolean hasParameters()

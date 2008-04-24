@@ -27,9 +27,9 @@ public class RGBParam extends HexStringParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor(INSISParamEditor parentEditor)
+    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
-        return new RGBParamEditor(parentEditor);
+        return new RGBParamEditor(command, parentEditor);
     }
 
     protected String getValidateErrorMessage()
@@ -52,9 +52,9 @@ public class RGBParam extends HexStringParam
 
     protected class RGBParamEditor extends StringParamEditor
     {
-        public RGBParamEditor(INSISParamEditor parentEditor)
+        public RGBParamEditor(NSISCommand command, INSISParamEditor parentEditor)
         {
-            super(parentEditor);
+            super(command, parentEditor);
         }
 
         public void clear()
