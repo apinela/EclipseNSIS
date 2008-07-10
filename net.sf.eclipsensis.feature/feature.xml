@@ -13,7 +13,7 @@
 <feature
       id="net.sf.eclipsensis"
       label="%feature.name"
-      version="0.9.6.3"
+      version="0.9.7"
       provider-name="%provider.name"
       os="win32"
       ws="win32"
@@ -38,18 +38,8 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.3.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.editors" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.ide" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views" version="3.2.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.help.base" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.debug.ui" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.console" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.externaltools" version="3.1.200" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.variables" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.4.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -59,7 +49,7 @@
          arch="x86"
          download-size="3236"
          install-size="3236"
-         version="0.9.6.3"
+         version="0.9.7"
          unpack="false"/>
 
    <plugin
@@ -69,7 +59,7 @@
          arch="x86"
          download-size="125"
          install-size="125"
-         version="0.9.6.3"
+         version="0.9.7"
          unpack="false"/>
 
    <plugin
@@ -79,7 +69,7 @@
          arch="x86"
          download-size="18"
          install-size="18"
-         version="0.9.6.2"
+         version="0.9.7"
          unpack="false"/>
 
 </feature>

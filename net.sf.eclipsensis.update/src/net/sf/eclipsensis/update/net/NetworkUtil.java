@@ -187,7 +187,7 @@ public class NetworkUtil
 
     public static boolean downloadLatest(URL url, File targetFile)
     {
-        boolean ok = true;
+        boolean ok = false;
         boolean downloaded = false;
         FileOutputStream fos = null;
         HttpURLConnection conn2 = null;

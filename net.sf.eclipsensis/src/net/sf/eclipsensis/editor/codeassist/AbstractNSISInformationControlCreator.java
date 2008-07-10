@@ -20,7 +20,7 @@ public class AbstractNSISInformationControlCreator implements IInformationContro
 {
     protected int mStyle = SWT.NONE;
 
-    protected DefaultInformationControl.IInformationPresenter mInformationPresenter = createInformationPresenter();
+    protected NSISInformationControl.IInformationPresenter mInformationPresenter = createInformationPresenter();
 
     public AbstractNSISInformationControlCreator(int style)
     {
@@ -29,10 +29,10 @@ public class AbstractNSISInformationControlCreator implements IInformationContro
 
     public IInformationControl createInformationControl(Shell parent)
     {
-        return new DefaultInformationControl(parent,mStyle,mInformationPresenter);
+        return new NSISInformationControl(parent,mStyle,mInformationPresenter);
     }
 
-    protected DefaultInformationControl.IInformationPresenter createInformationPresenter()
+    protected NSISInformationControl.IInformationPresenter createInformationPresenter()
     {
         return null;
     }

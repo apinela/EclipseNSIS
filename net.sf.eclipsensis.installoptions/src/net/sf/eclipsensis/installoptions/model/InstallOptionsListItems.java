@@ -29,6 +29,10 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 public abstract class InstallOptionsListItems extends InstallOptionsEditableElement
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5321738343148820961L;
     protected static LabelProvider cListItemsLabelProvider = new ListLabelProvider();
     private List mListItems;
 

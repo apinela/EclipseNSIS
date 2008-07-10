@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-Name: %plugin.name
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: net.sf.eclipsensis.installoptions; singleton:=true
-Bundle-Version: 0.9.6.3
+Bundle-Version: 0.9.7
 Bundle-Activator: net.sf.eclipsensis.installoptions.InstallOptionsPlugin
 Bundle-Vendor: %plugin.vendor
 Bundle-Localization: plugin
@@ -16,8 +16,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.3.100",
  net.sf.eclipsensis;bundle-version="0.9.6.3",
  org.eclipse.core.expressions;bundle-version="3.3.0",
  org.eclipse.ui.views.properties.tabbed;bundle-version="3.3.0",
- net.sf.eclipsensis.startup;bundle-version="0.9.6"
-Eclipse-LazyStart: true
+ net.sf.eclipsensis.startup;bundle-version="0.9.7"
+Bundle-ActivationPolicy: lazy
 Export-Package: net.sf.eclipsensis.installoptions,
  net.sf.eclipsensis.installoptions.actions,
  net.sf.eclipsensis.installoptions.builder,
@@ -65,3 +65,6 @@ Export-Package: net.sf.eclipsensis.installoptions,
  net.sf.eclipsensis.installoptions.template,
  net.sf.eclipsensis.installoptions.util,
  net.sf.eclipsensis.installoptions.wizard
+Bundle-RequiredExecutionEnvironment: J2SE-1.4,
+ J2SE-1.5,
+ JavaSE-1.6

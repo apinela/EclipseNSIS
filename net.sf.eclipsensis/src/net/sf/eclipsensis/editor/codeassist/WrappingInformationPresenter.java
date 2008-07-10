@@ -11,11 +11,11 @@ package net.sf.eclipsensis.editor.codeassist;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 
-public class WrappingInformationPresenter implements DefaultInformationControl.IInformationPresenter
+public class WrappingInformationPresenter implements NSISInformationControl.IInformationPresenter
 {
     static final String BREAK_CHARS = ",;|-.?!:"; //$NON-NLS-1$
 

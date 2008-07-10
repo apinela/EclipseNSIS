@@ -5,9 +5,12 @@ Revision History
     * Added support for !else in outline view.
     * Wizard now supports MUI2 and Multi-User Install.
     * Added preview to NSIS Command Wizard.
+    * Added support for unicode version of NSIS.
     * Feature Requests:
         o 1902422
-    * Minor bug fixes.
+    * Bug Fixes
+        o 1996176
+    * Other minor bug fixes.
 
 0.9.6.2 (01/02/2008)
     * Updated copyright notice.

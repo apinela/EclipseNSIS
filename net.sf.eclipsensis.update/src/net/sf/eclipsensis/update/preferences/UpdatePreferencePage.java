@@ -16,7 +16,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.jobs.NSISUpdateURLs;
 import net.sf.eclipsensis.update.net.*;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.*;
@@ -31,9 +31,6 @@ import org.eclipse.ui.*;
 
 public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage, IUpdatePreferenceConstants
 {
-    private Button mUseHttpProxy;
-    private Text mHttpProxyHost;
-    private Text mHttpProxyPort;
     private Text mNSISUpdateSite;
     private Text mSourceforgeMirror;
     private Button mIgnorePreview;
@@ -65,7 +62,6 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         l.setText(EclipseNSISUpdatePlugin.getResourceString("preference.page.header")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
 
-        createProxyGroup(parent);
         createSitesGroup(parent);
         createOptionsGroup(parent);
 
@@ -79,16 +75,6 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     {
         IPreferenceStore prefs = getPreferenceStore();
 
-        mUseHttpProxy.setSelection(prefs.getBoolean(USE_HTTP_PROXY));
-        mHttpProxyHost.setText(prefs.getString(HTTP_PROXY_HOST));
-        int proxyPort = prefs.getInt(HTTP_PROXY_PORT);
-        if(proxyPort > 0 && proxyPort <= 0xFFFF) {
-            mHttpProxyPort.setText(Integer.toString(proxyPort));
-        }
-        else {
-            mHttpProxyPort.setText(""); //$NON-NLS-1$
-        }
-
         mNSISUpdateSite.setText(prefs.getString(NSIS_UPDATE_SITE));
         mSourceforgeMirror.setText(prefs.getString(SOURCEFORGE_MIRROR));
         boolean autoSelect = prefs.getBoolean(AUTOSELECT_SOURCEFORGE_MIRROR);
@@ -97,31 +83,11 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         updateMirrorSelector(!autoSelect);
 
         mIgnorePreview.setSelection(prefs.getBoolean(IGNORE_PREVIEW));
-
-        updateProxyGroup();
-    }
-
-    private void updateProxyGroup()
-    {
-        Enabler enabler = Enabler.get(mUseHttpProxy);
-        if(enabler != null) {
-            enabler.run();
-        }
     }
 
     private void loadDefaults()
     {
         IPreferenceStore prefs = getPreferenceStore();
-
-        mUseHttpProxy.setSelection(prefs.getDefaultBoolean(USE_HTTP_PROXY));
-        mHttpProxyHost.setText(prefs.getDefaultString(HTTP_PROXY_HOST));
-        int proxyPort = prefs.getDefaultInt(HTTP_PROXY_PORT);
-        if(proxyPort > 0 && proxyPort <= 0xFFFF) {
-            mHttpProxyPort.setText(Integer.toString(proxyPort));
-        }
-        else {
-            mHttpProxyPort.setText(""); //$NON-NLS-1$
-        }
 
         mNSISUpdateSite.setText(prefs.getDefaultString(NSIS_UPDATE_SITE));
         mSourceforgeMirror.setText(prefs.getDefaultString(SOURCEFORGE_MIRROR));
@@ -131,61 +97,17 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         updateMirrorSelector(!autoSelect);
 
         mIgnorePreview.setSelection(prefs.getDefaultBoolean(IGNORE_PREVIEW));
-
-        updateProxyGroup();
     }
 
     private void savePreferences()
     {
         IPreferenceStore prefs = getPreferenceStore();
-        prefs.setValue(USE_HTTP_PROXY,mUseHttpProxy.getSelection());
-        prefs.setValue(HTTP_PROXY_HOST,mHttpProxyHost.getText());
-        prefs.setValue(HTTP_PROXY_PORT,mHttpProxyPort.getText());
 
         prefs.setValue(NSIS_UPDATE_SITE,mNSISUpdateSite.getText());
         prefs.setValue(SOURCEFORGE_MIRROR,mSourceforgeMirror.getText());
         prefs.setValue(AUTOSELECT_SOURCEFORGE_MIRROR,mAutoSelectMirror.getSelection());
 
         prefs.setValue(IGNORE_PREVIEW,mIgnorePreview.getSelection());
-    }
-
-    private void createProxyGroup(Composite parent)
-    {
-        GridLayout layout;
-        Group group = new Group(parent, SWT.NONE);
-        group.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        group.setText(EclipseNSISUpdatePlugin.getResourceString("proxy.group.label")); //$NON-NLS-1$
-        layout = new GridLayout(2,false);
-        group.setLayout(layout);
-
-        mUseHttpProxy = new Button(group, SWT.CHECK);
-        mUseHttpProxy.setText(EclipseNSISUpdatePlugin.getResourceString("use.http.proxy.label")); //$NON-NLS-1$
-        GridData gridData = new GridData(SWT.FILL,SWT.FILL,true,false);
-        gridData.horizontalSpan = 2;
-        mUseHttpProxy.setLayoutData(gridData);
-        mUseHttpProxy.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
-            {
-                updateState();
-            }
-        });
-
-        Label l1 = new Label(group,SWT.NONE);
-        l1.setText(EclipseNSISUpdatePlugin.getResourceString("http.proxy.host.label")); //$NON-NLS-1$
-        l1.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
-        mHttpProxyHost = new Text(group,SWT.BORDER|SWT.SINGLE);
-        mHttpProxyHost.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        mHttpProxyHost.addModifyListener(mModifyListener);
-
-        Label l2 = new Label(group,SWT.NONE);
-        l2.setText(EclipseNSISUpdatePlugin.getResourceString("http.proxy.port.label")); //$NON-NLS-1$
-        l2.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
-        mHttpProxyPort = new Text(group,SWT.BORDER|SWT.SINGLE);
-        mHttpProxyPort.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        mHttpProxyPort.addVerifyListener(new NumberVerifyListener());
-        mHttpProxyPort.addModifyListener(mModifyListener);
-
-        new Enabler(mUseHttpProxy, new Control[] {l1, mHttpProxyHost, l2, mHttpProxyPort});
     }
 
     private void createSitesGroup(Composite parent)
@@ -338,27 +260,6 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
             if(text.indexOf('/') >= 0 || text.indexOf(':') >= 0) {
                 setErrorMessage(EclipseNSISUpdatePlugin.getResourceString("invalid.sourceforge.mirror.error")); //$NON-NLS-1$
                 return false;
-            }
-        }
-        if(mUseHttpProxy.getSelection()) {
-            text = mHttpProxyHost.getText();
-            if(text == null || text.trim().length() == 0) {
-                setErrorMessage(EclipseNSISUpdatePlugin.getResourceString("missing.proxy.host.error")); //$NON-NLS-1$
-                return false;
-            }
-            text = mHttpProxyPort.getText();
-            if(text != null && text.length() > 0) {
-                try {
-                    int port = Integer.parseInt(text);
-                    if(port < 1 || port > 0xFFFF) {
-                        setErrorMessage(EclipseNSISUpdatePlugin.getResourceString("invalid.proxy.port.error")); //$NON-NLS-1$
-                        return false;
-                    }
-                }
-                catch(NumberFormatException nfe) {
-                    setErrorMessage(EclipseNSISUpdatePlugin.getResourceString("invalid.proxy.port.error")); //$NON-NLS-1$
-                    return false;
-                }
             }
         }
         setErrorMessage(null);

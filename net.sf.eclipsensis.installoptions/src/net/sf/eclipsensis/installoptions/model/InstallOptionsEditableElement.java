@@ -21,6 +21,10 @@ import org.eclipse.ui.views.properties.*;
 
 public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9002023506652287815L;
     private String mText;
     private String mState;
     private String mMaxLen;

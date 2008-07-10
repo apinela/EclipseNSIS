@@ -15,8 +15,8 @@
    <extension
          point="org.eclipse.ui.editorActions">
       <editorContribution
-            targetID="%editor.id"
-            id="%editor.contribution.id">
+            targetID="net.sf.eclipsensis.editor.NSISEditor"
+            id="net.sf.eclipsensis.update.editorContribution">
          <action
                toolbarPath="net.sf.eclipsensis.Group2"
                label="%update.action.name"
@@ -25,21 +25,21 @@
                icon="icons/update.gif"
                disabledIcon="icons/update_d.gif"
                menubarPath="net.sf.eclipsensis.Menu/net.sf.eclipsensis.Group4"
-               id="%update.action.id">
+               id="net.sf.eclipsensis.actions.NSISUpdateAction">
          </action>
       </editorContribution>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="%preference.page.category"
+            category="net.sf.eclipsensis.dialogs.NSISPreferencePage"
             class="net.sf.eclipsensis.update.preferences.UpdatePreferencePage"
-            id="%preference.page.id"
+            id="net.sf.eclipsensis.update.preferences.UpdatePreferencePage"
             name="%preference.page.name"/>
       <page
-            category="%preference.page.id"
+            category="net.sf.eclipsensis.update.preferences.UpdatePreferencePage"
             class="net.sf.eclipsensis.update.preferences.SchedulerPreferencePage"
-            id="%scheduler.preference.page.id"
+            id="net.sf.eclipsensis.update.preferences.SchedulerPreferencePage"
             name="%scheduler.preference.page.name"/>
    </extension>
    <extension

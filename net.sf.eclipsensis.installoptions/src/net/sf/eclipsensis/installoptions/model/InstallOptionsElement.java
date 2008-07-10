@@ -27,6 +27,11 @@ import org.eclipse.ui.views.properties.*;
 
 public abstract class InstallOptionsElement extends AbstractNodeConvertible implements IPropertySource, Cloneable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9064593091880736332L;
+
     private static final IPropertyDescriptor cNullPropertyDescriptor = new IPropertyDescriptor(){
         public CellEditor createPropertyEditor(Composite parent)
         {

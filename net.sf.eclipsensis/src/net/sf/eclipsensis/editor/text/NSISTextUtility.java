@@ -54,17 +54,6 @@ public class NSISTextUtility implements INSISConstants
 
     public static int computeOffset(ISourceViewer sourceViewer, int type)
     {
-        if (sourceViewer == null) {
-            return -1;
-        }
-
-        if (sourceViewer instanceof ITextViewerExtension4)  {
-            ITextViewerExtension4 extension4= (ITextViewerExtension4) sourceViewer;
-            if (extension4.moveFocusToWidgetToken()) {
-                return -100;
-            }
-        }
-
         if (!(sourceViewer instanceof ITextViewerExtension2)) {
             return -1;
         }

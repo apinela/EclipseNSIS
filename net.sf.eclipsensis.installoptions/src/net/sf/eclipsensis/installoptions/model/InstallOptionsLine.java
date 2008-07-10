@@ -16,6 +16,11 @@ import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
 
 public abstract class InstallOptionsLine extends InstallOptionsWidget
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1423121089228222673L;
+
     public InstallOptionsLine(INISection section)
     {
         super(section);

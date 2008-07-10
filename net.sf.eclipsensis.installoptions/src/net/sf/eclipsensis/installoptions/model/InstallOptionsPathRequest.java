@@ -17,6 +17,11 @@ import org.eclipse.ui.views.properties.*;
 
 public abstract class InstallOptionsPathRequest extends InstallOptionsEditableElement
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1868308753895206491L;
+
     protected InstallOptionsPathRequest(INISection section)
     {
         super(section);

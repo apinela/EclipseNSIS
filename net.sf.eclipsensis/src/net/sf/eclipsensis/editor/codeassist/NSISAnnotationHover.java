@@ -30,7 +30,7 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
     private IInformationControlCreator mHoverControlCreator = new IInformationControlCreator(){
         public IInformationControl createInformationControl(Shell parent)
         {
-            return new DefaultInformationControl(parent, new WrappingInformationPresenter());
+            return new NSISInformationControl(parent, new WrappingInformationPresenter());
         }
     };
 
@@ -82,6 +82,11 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
                     return buf.toString();
                 }
             }
+
+            if (lineNumber > -1) {
+                return EclipseNSISPlugin.getFormattedString("line.number.tooltip", new String[] { Integer.toString(lineNumber + 1) }); //$NON-NLS-1$
+            }
+
 		}
         catch (Exception ex) {
 		}

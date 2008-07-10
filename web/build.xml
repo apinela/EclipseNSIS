@@ -11,10 +11,46 @@
 -->
 <project name="EclipseNSIS Web" default="all">
     <target name="update">
-    	<mkdir dir="update"/>
+        <mkdir dir="update"/>
         <antcall target="update.site"/>
         <antcall target="update.features"/>
         <antcall target="update.plugins"/>
+        <antcall target="update.p2.metadata"/>
+    </target>
+    <target name="test.eclipse.home.property" unless="eclipse.home">
+        <fail message="Property eclipse.home not defined."/>
+    </target>
+    <target name="test.eclipse.exe" if="eclipse.home">
+        <available property="eclipse" value="${eclipse.home}\eclipse.exe" file="${eclipse.home}\eclipse.exe"/>
+    </target>
+    <target name="test.eclipse.property" unless="eclipse">
+        <fail message="eclipse.exe not found."/>
+    </target>
+    <target name="update.p2.metadata" depends="test.eclipse.home.property,test.eclipse.exe,test.eclipse.property">
+        <dirname property="ant.file.dir" file="${ant.file}"/>
+        <property name="update.site.dir" value="${ant.file.dir}\update"/>
+        <exec executable="${eclipse}" >
+            <arg value="-application"/>
+            <arg value="org.eclipse.equinox.p2.metadata.generator.EclipseGenerator"/>
+            <arg value="-updateSite"/>
+            <arg value="${update.site.dir}"/>
+            <arg value="-site"/>
+            <arg value="file:${update.site.dir}\site.xml"/>
+            <arg value="-metadataRepository"/>
+            <arg value="file:${update.site.dir}\"/>
+            <arg value="-metadataRepositoryName"/>
+            <arg value="EclipseNSIS Update Site"/>
+            <arg value="-artifactRepository"/>
+            <arg value="file:${update.site.dir}\"/>
+            <arg value="-artifactRepositoryName"/>
+            <arg value="EclipseNSIS Artifacts"/>
+            <arg value="-compress"/>
+            <arg value="-reusePack200Files"/>
+            <arg value="-noDefaultIUs"/>
+            <arg value="-noSplash"/>
+            <arg value="-vmargs"/>
+            <arg value="-Xmx256m"/>
+        </exec>
     </target>
     <target name="update.site">
         <copy todir="update" includeEmptyDirs="false">
@@ -22,75 +58,75 @@
         </copy>
     </target>
     <target name="update.features">
-    	<mkdir dir="update/features"/>
+        <mkdir dir="update/features"/>
         <antcall target="update.feature">
-        	<param name="feature.dir" value="../net.sf.eclipsensis.feature"/>
+            <param name="feature.dir" value="../net.sf.eclipsensis.feature"/>
         </antcall>
         <antcall target="update.feature">
-        	<param name="feature.dir" value="../net.sf.eclipsensis.installoptions.feature"/>
+            <param name="feature.dir" value="../net.sf.eclipsensis.installoptions.feature"/>
         </antcall>
         <antcall target="update.feature">
-        	<param name="feature.dir" value="../net.sf.eclipsensis.utilities.feature"/>
+            <param name="feature.dir" value="../net.sf.eclipsensis.utilities.feature"/>
         </antcall>
         <antcall target="update.feature">
-        	<param name="feature.dir" value="../net.sf.eclipsensis.source.feature"/>
+            <param name="feature.dir" value="../net.sf.eclipsensis.source.feature"/>
         </antcall>
     </target>
     <target name="update.feature" if="feature.dir">
-    	<xmlproperty file="${feature.dir}/feature.xml"/>
-    	<delete>
+        <xmlproperty file="${feature.dir}/feature.xml"/>
+        <delete>
             <fileset dir="update/features" includes="${feature(id)}_*.jar" excludes="${feature(id)}_${feature(version)}.jar"/>
-    	</delete>
+        </delete>
         <copy todir="update/features">
             <fileset dir="../net.sf.eclipsensis.site/features" includes="${feature(id)}_${feature(version)}.jar"/>
         </copy>
     </target>
     <target name="update.plugins">
-    	<mkdir dir="update/plugins"/>
+        <mkdir dir="update/plugins"/>
         <antcall target="update.plugin">
-        	<param name="plugin.dir" value="../net.sf.eclipsensis.startup"/>
-        	<param name="plugin.name" value="net.sf.eclipsensis.startup"/>
+            <param name="plugin.dir" value="../net.sf.eclipsensis.startup"/>
+            <param name="plugin.name" value="net.sf.eclipsensis.startup"/>
         </antcall>
         <antcall target="update.plugin">
-        	<param name="plugin.dir" value="../net.sf.eclipsensis"/>
-        	<param name="plugin.name" value="net.sf.eclipsensis"/>
+            <param name="plugin.dir" value="../net.sf.eclipsensis"/>
+            <param name="plugin.name" value="net.sf.eclipsensis"/>
         </antcall>
         <antcall target="update.plugin">
-        	<param name="plugin.dir" value="../net.sf.eclipsensis.update"/>
-        	<param name="plugin.name" value="net.sf.eclipsensis.update"/>
+            <param name="plugin.dir" value="../net.sf.eclipsensis.update"/>
+            <param name="plugin.name" value="net.sf.eclipsensis.update"/>
         </antcall>
         <antcall target="update.plugin">
-        	<param name="plugin.dir" value="../net.sf.eclipsensis.installoptions"/>
-        	<param name="plugin.name" value="net.sf.eclipsensis.installoptions"/>
+            <param name="plugin.dir" value="../net.sf.eclipsensis.installoptions"/>
+            <param name="plugin.name" value="net.sf.eclipsensis.installoptions"/>
         </antcall>
         <antcall target="update.plugin">
-        	<param name="plugin.dir" value="../net.sf.eclipsensis.utilities"/>
-        	<param name="plugin.name" value="net.sf.eclipsensis.utilities"/>
+            <param name="plugin.dir" value="../net.sf.eclipsensis.utilities"/>
+            <param name="plugin.name" value="net.sf.eclipsensis.utilities"/>
         </antcall>
         <antcall target="update.plugin">
-        	<param name="plugin.dir" value="../JARSigner"/>
-        	<param name="plugin.name" value="net.sf.jarsigner"/>
+            <param name="plugin.dir" value="../JARSigner"/>
+            <param name="plugin.name" value="net.sf.jarsigner"/>
         </antcall>
         <antcall target="update.plugin">
-        	<param name="plugin.dir" value="../JNIGen"/>
-        	<param name="plugin.name" value="net.sf.jnigen"/>
+            <param name="plugin.dir" value="../JNIGen"/>
+            <param name="plugin.name" value="net.sf.jnigen"/>
         </antcall>
         <antcall target="update.plugin">
-        	<param name="plugin.dir" value="../net.sf.eclipsensis.source"/>
-        	<param name="plugin.name" value="net.sf.eclipsensis.source"/>
+            <param name="plugin.dir" value="../net.sf.eclipsensis.source"/>
+            <param name="plugin.name" value="net.sf.eclipsensis.source"/>
         </antcall>
     </target>
-	<target name="test.plugin.dir" unless="plugin.dir">
-		<fail message="Property plugin.dir not set"/>
-	</target>
-	<target name="test.plugin.name" unless="plugin.name">
-		<fail message="Property plugin.name not set"/>
-	</target>
+    <target name="test.plugin.dir" unless="plugin.dir">
+        <fail message="Property plugin.dir not set"/>
+    </target>
+    <target name="test.plugin.name" unless="plugin.name">
+        <fail message="Property plugin.name not set"/>
+    </target>
     <target name="update.plugin" depends="test.plugin.dir,test.plugin.name">
-		<property file="${plugin.dir}/META-INF/MANIFEST.MF"/>
-    	<delete>
+        <property file="${plugin.dir}/META-INF/MANIFEST.MF"/>
+        <delete>
             <fileset dir="update/plugins" includes="${plugin.name}_*.jar" excludes="${plugin.name}_${Bundle-Version}.jar"/>
-    	</delete>
+        </delete>
         <copy todir="update/plugins">
             <fileset dir="../net.sf.eclipsensis.site/plugins" includes="${plugin.name}_${Bundle-Version}.jar"/>
         </copy>
@@ -98,7 +134,7 @@
     <target name="clean.update">
         <delete includeemptydirs="true">
             <fileset dir="update" includes="**/*"/>
-    	</delete>
+        </delete>
     </target>
     <target name="help">
         <sync todir="help/eclipsensis" includeEmptyDirs="false">
@@ -106,22 +142,22 @@
         </sync>
         <copy todir="help/eclipsensis" preservelastmodified="true">
             <fileset file="help/redirect.js"/>
-        	<fileset file="help/nsiscontrib.js"/>
+            <fileset file="help/nsiscontrib.js"/>
         </copy>
         <sync todir="help/installoptions" includeEmptyDirs="false">
             <fileset dir="../net.sf.eclipsensis.installoptions/help" excludes="**/CVS/*,redirect.js,nsiscontrib.js"/>
         </sync>
         <copy todir="help/installoptions" preservelastmodified="true">
             <fileset file="help/redirect.js"/>
-        	<fileset file="help/nsiscontrib.js"/>
+            <fileset file="help/nsiscontrib.js"/>
         </copy>
     </target>
     <target name="clean.help">
         <delete includeemptydirs="true">
             <fileset dir="help/eclipsensis" includes="**/*"/>
             <fileset dir="help/installoptions" includes="**/*"/>
-    	</delete>
+        </delete>
     </target>
-	<target name="all" depends="update,help"/>
-	<target name="clean" depends="clean.update,clean.help"/>
+    <target name="all" depends="update,help"/>
+    <target name="clean" depends="clean.update,clean.help"/>
 </project>

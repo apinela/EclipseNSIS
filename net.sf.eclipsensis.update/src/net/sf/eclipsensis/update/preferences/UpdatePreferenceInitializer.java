@@ -23,10 +23,6 @@ public class UpdatePreferenceInitializer extends AbstractPreferenceInitializer i
 
         prefs.putInt(PLUGIN_PREFERENCES_VERSION, 0);
 
-        prefs.putBoolean(USE_HTTP_PROXY, false);
-        prefs.put(HTTP_PROXY_HOST, ""); //$NON-NLS-1$
-        prefs.put(HTTP_PROXY_PORT, ""); //$NON-NLS-1$
-
         prefs.put(NSIS_UPDATE_SITE, NSISUpdateURLs.getDefaultUpdateSite());
         prefs.put(SOURCEFORGE_MIRROR, NSISUpdateURLs.getDefaultDownloadSite());
         prefs.putBoolean(AUTOSELECT_SOURCEFORGE_MIRROR, true);

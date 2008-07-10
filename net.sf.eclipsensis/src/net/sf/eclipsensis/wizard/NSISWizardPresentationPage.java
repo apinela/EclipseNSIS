@@ -538,7 +538,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     {
         final NSISWizardSettings settings = mWizard.getSettings();
 
-        final Shell shell = new Shell(getShell().getDisplay(), SWT.APPLICATION_MODAL | SWT.NO_TRIM);
+        final Shell shell = new Shell(getShell().getDisplay(), SWT.APPLICATION_MODAL|SWT.NO_TRIM);
         shell.setText(EclipseNSISPlugin.getResourceString("background.preview.title")); //$NON-NLS-1$
         final String previewText = EclipseNSISPlugin.getFormattedString("background.preview.text", new Object[]{settings.getName()});  //$NON-NLS-1$
         final Display display = shell.getDisplay();
@@ -546,8 +546,6 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         fillLayout.marginHeight=0;
         fillLayout.marginWidth=0;
         shell.setLayout(fillLayout);
-        final Rectangle rect = display.getBounds();
-        shell.setBounds(rect.x,rect.y,rect.width,rect.height);
         shell.setParent(getShell());
         final Font previewFont = new Font(display,mBGPreviewFontData);
         final Font messageFont = new Font(display,mBGPreviewEscapeFontData);
@@ -560,6 +558,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             wavFile = null;
         }
 
+        final Shell parentShell = getShell();
         shell.addKeyListener(new KeyAdapter(){
             public void keyReleased(KeyEvent e) {
                 if(e.character == SWT.ESC) {
@@ -570,13 +569,15 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     if(wavFile != null) {
                         WinAPI.PlaySound(null, 0, WinAPI.SND_PURGE);
                     }
+                    if(parentShell != null && !parentShell.getMinimized()) {
+                        parentShell.forceActive();
+                    }
                 }
             }
         });
 
         Canvas canvas = new Canvas(shell, SWT.NO_BACKGROUND);
 
-        final Shell parentShell = getShell();
         final Shell windowShell;
         Shell temp;
         try {
@@ -586,39 +587,30 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             temp = null;
         }
         windowShell = temp;
-        final boolean parentMinimized;
-        if(parentShell != null) {
-            parentMinimized = parentShell.getMinimized();
-            if(!parentMinimized) {
-                parentShell.setMinimized(true);
-            }
+        final boolean parentMinimized = parentShell != null && parentShell.getMinimized();
+        if(!parentMinimized) {
+            parentShell.setMinimized(true);
         }
-        else {
-            parentMinimized = false;
+
+        final boolean windowMinimized = windowShell != null && windowShell.getMinimized();
+        if(!windowMinimized) {
+            windowShell.setMinimized(true);
         }
-        final boolean windowMinimized;
-        if(windowShell != null) {
-            windowMinimized = windowShell.getMinimized();
-            if(!windowMinimized) {
-                windowShell.setMinimized(true);
-            }
-        }
-        else {
-            windowMinimized = false;
-        }
+
         shell.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e)
             {
-                if(windowShell != null && !windowMinimized && windowShell.getMinimized()) {
+                if(!windowMinimized && windowShell.getMinimized()) {
                     windowShell.setMinimized(false);
                 }
-                if(parentShell != null && !parentMinimized && parentShell.getMinimized()) {
+                if(!parentMinimized && parentShell.getMinimized()) {
                     parentShell.setMinimized(false);
                 }
             }
         });
         final GC gc = new GC(canvas);
         shell.open();
+        shell.setFullScreen(true);
         shell.forceActive();
         if (wavFile != null) {
             WinAPI.PlaySound(wavFile.getAbsolutePath(), 0, WinAPI.SND_ASYNC | WinAPI.SND_FILENAME | WinAPI.SND_NODEFAULT | WinAPI.SND_LOOP);
@@ -631,6 +623,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 long r = topRGB.red << 10;
                 long g = topRGB.green << 10;
                 long b = topRGB.blue << 10;
+                Rectangle rect = display.getBounds();
                 long dr = (((botRGB.red << 10) - r) * 4) / rect.height;
                 long dg = (((botRGB.green << 10) - g) * 4) / rect.height;
                 long db = (((botRGB.blue << 10) - b) * 4) / rect.height;
@@ -779,10 +772,6 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             mAdvSplash = OS_VERSION >= 5.0 && (mFadeInDelay > 0 || mFadeOutDelay > 0);
             mShell = new Shell(getShell().getDisplay(), SWT.APPLICATION_MODAL | SWT.NO_TRIM | SWT.NO_BACKGROUND);
             mShell.setText(EclipseNSISPlugin.getResourceString("splash.preview.title")); //$NON-NLS-1$
-            if(mAdvSplash) {
-                WinAPI.SetWindowLong(mShell.handle, WinAPI.GWL_EXSTYLE,
-                                     WinAPI.GetWindowLong(mShell.handle, WinAPI.GWL_EXSTYLE) | WinAPI.WS_EX_LAYERED);
-            }
 
             mDisplay = mShell.getDisplay();
             FillLayout fillLayout = new FillLayout();
@@ -803,7 +792,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             Label l = new Label(mShell,SWT.NONE);
             l.setImage(mImage);
             if(mAdvSplash) {
-                WinAPI.SetLayeredWindowAttributes(mShell.handle, 0, 0, 0, (mFadeInDelay > 0?0:255), WinAPI.LWA_ALPHA);
+                mShell.setAlpha(mFadeInDelay > 0?0:255);
             }
 
             mAlpha = -1;
@@ -875,7 +864,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     public void run(){
                         if(mAlpha != newAlpha) {
                             mAlpha = newAlpha;
-                            WinAPI.SetLayeredWindowAttributes(mShell.handle, 0, 0, 0, mAlpha, WinAPI.LWA_ALPHA);
+                            mShell.setAlpha(mAlpha);
                         }
                     }
                 });

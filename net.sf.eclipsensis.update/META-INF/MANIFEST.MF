@@ -2,19 +2,21 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.sf.eclipsensis.update;singleton:=true
-Bundle-Version: 0.9.6.3
+Bundle-Version: 0.9.7
 Bundle-Activator: net.sf.eclipsensis.update.EclipseNSISUpdatePlugin
 Bundle-Vendor: %plugin.vendor
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui;bundle-version="3.3.0",
- org.eclipse.core.runtime;bundle-version="3.3.100",
- net.sf.eclipsensis;bundle-version="0.9.6"
-Eclipse-LazyStart: true
+Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",
+ org.eclipse.core.runtime;bundle-version="3.4.0",
+ net.sf.eclipsensis;bundle-version="0.9.7"
+Bundle-ActivationPolicy: lazy
 Export-Package: net.sf.eclipsensis.update,
  net.sf.eclipsensis.update.actions,
  net.sf.eclipsensis.update.jobs,
  net.sf.eclipsensis.update.net,
  net.sf.eclipsensis.update.preferences,
- net.sf.eclipsensis.update.proxy,
  net.sf.eclipsensis.update.scheduler,
  net.sf.eclipsensis.update.wizard
+Bundle-RequiredExecutionEnvironment: J2SE-1.4,
+ J2SE-1.5,
+ JavaSE-1.6

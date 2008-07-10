@@ -30,7 +30,7 @@
             icon="icons/installoptions.gif"
             class="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor"
             contributorClass="net.sf.eclipsensis.installoptions.actions.InstallOptionsDesignActionContributor"
-            id="%installoptions.design.editor.id">
+            id="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor">
       </editor>
       <editor
             default="false"
@@ -39,7 +39,7 @@
             icon="icons/installoptionssrc.gif"
             class="net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor"
             contributorClass="net.sf.eclipsensis.installoptions.actions.InstallOptionsSourceActionContributor"
-            id="%installoptions.source.editor.id">
+            id="net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor">
       </editor>
    </extension>
    <extension
@@ -49,7 +49,7 @@
             icon="icons/installoptionswizard.gif"
             category="net.sf.eclipsensis"
             class="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard"
-            id="%installoptions.wizard.id">
+            id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
          <description>
             %installoptions.wizard.description
          </description>
@@ -64,7 +64,7 @@
          point="org.eclipse.help.contentProducer">
        <contentProducer>
           <producer class="net.sf.eclipsensis.help.NSISHelpProducer">
-             <parameter name="pluginId" value="%plugin.id"/>
+             <parameter name="pluginId" value="net.sf.eclipsensis.installoptions"/>
              <parameter name="javascriptOnly" value="true"/>
           </producer>
        </contentProducer>
@@ -82,19 +82,19 @@
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
          <newWizardShortcut
-               id="%installoptions.wizard.id">
+               id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
          </newWizardShortcut>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <newWizardShortcut
-               id="%installoptions.wizard.id">
+               id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
          </newWizardShortcut>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.pde.ui.PDEPerspective">
          <newWizardShortcut
-               id="%installoptions.wizard.id">
+               id="net.sf.eclipsensis.installoptions.wizard.InstallOptionsWizard">
          </newWizardShortcut>
       </perspectiveExtension>
    </extension>
@@ -102,9 +102,9 @@
          point="org.eclipse.ui.preferencePages">
       <page
             name="%installoptions.preference.page.name"
-            category="%installoptions.preference.page.category"
+            category="net.sf.eclipsensis.dialogs.NSISPreferencePage"
             class="net.sf.eclipsensis.installoptions.dialogs.InstallOptionsPreferencePage"
-            id="%installoptions.preference.page.id">
+            id="net.sf.eclipsensis.installoptions.dialogs.InstallOptionsPreferencePage">
       </page>
    </extension>
    <extension
@@ -133,33 +133,33 @@
       <category
          name="%commands.category.name"
          description="%commands.category.description"
-         id="%commands.category.id">
+         id="net.sf.eclipsensis.installoptions.InstallOptionsCategory">
       </category>
       <command
          name="%switch.editor.command.name"
          description="%switch.editor.command.description"
-         id="%switch.editor.command.id"
-         categoryId="%commands.category.id"/>
+         id="net.sf.eclipsensis.installoptions.commands.SwitchEditor"
+         categoryId="net.sf.eclipsensis.installoptions.InstallOptionsCategory"/>
       <command
          name="%create.control.command.name"
          description="%create.control.command.description"
-         id="%create.control.command.id"
-         categoryId="%commands.category.id"/>
+         id="net.sf.eclipsensis.installoptions.commands.CreateControl"
+         categoryId="net.sf.eclipsensis.installoptions.InstallOptionsCategory"/>
       <command
          name="%edit.control.command.name"
          description="%edit.control.command.description"
-         id="%edit.control.command.id"
-         categoryId="%commands.category.id"/>
+         id="net.sf.eclipsensis.installoptions.commands.EditControl"
+         categoryId="net.sf.eclipsensis.installoptions.InstallOptionsCategory"/>
       <command
          name="%delete.control.command.name"
          description="%delete.control.command.description"
-         id="%delete.control.command.id"
-         categoryId="%commands.category.id"/>
+         id="net.sf.eclipsensis.installoptions.commands.DeleteControl"
+         categoryId="net.sf.eclipsensis.installoptions.InstallOptionsCategory"/>
       <command
          name="%delete.control.command.name"
          description="%delete.control.command.description"
-         id="%delete.control.command.id2"
-         categoryId="%commands.category.id"/>
+         id="net.sf.eclipsensis.installoptions.commands.DeleteControl2"
+         categoryId="net.sf.eclipsensis.installoptions.InstallOptionsCategory"/>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
@@ -167,82 +167,82 @@
             name="%editing.installoptions.source.name"
             description="%editing.installoptions.source.description"
             parentId="org.eclipse.ui.textEditorScope"
-            id="%editing.installoptions.source.id">
+            id="net.sf.eclipsensis.installoptions.InstallOptionsSourceEditorScope">
       </context>
       <context
             name="%installoptions.source.outline.name"
             description="%installoptions.source.outline.description"
             parentId="org.eclipse.ui.contexts.window"
-            id="%installoptions.source.outline.id">
+            id="net.sf.eclipsensis.installoptions.InstallOptionsSourceOutlineScope">
       </context>
       <context
             name="%editing.installoptions.design.name"
             description="%editing.installoptions.design.description"
             parentId="org.eclipse.ui.contexts.window"
-            id="%editing.installoptions.design.id">
+            id="net.sf.eclipsensis.installoptions.InstallOptionsDesignEditorScope">
       </context>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%switch.editor.command.id"
-          contextId="%editing.installoptions.source.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.SwitchEditor"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceEditorScope"
           sequence="%switch.editor.command.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%create.control.command.id"
-          contextId="%editing.installoptions.source.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.CreateControl"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceEditorScope"
           sequence="%create.control.command.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%create.control.command.id"
-          contextId="%installoptions.source.outline.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.CreateControl"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceOutlineScope"
           sequence="%create.control.command.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%edit.control.command.id"
-          contextId="%editing.installoptions.source.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.EditControl"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceEditorScope"
           sequence="%edit.control.command.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%edit.control.command.id"
-          contextId="%installoptions.source.outline.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.EditControl"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceOutlineScope"
           sequence="%edit.control.command.keysequence"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%delete.control.command.id"
-          contextId="%editing.installoptions.source.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.DeleteControl"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceEditorScope"
           sequence="%delete.control.command.keysequence1"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%delete.control.command.id2"
-          contextId="%editing.installoptions.source.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.DeleteControl2"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceEditorScope"
           sequence="%delete.control.command.keysequence2"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%delete.control.command.id"
-          contextId="%installoptions.source.outline.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.DeleteControl"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceOutlineScope"
           sequence="%delete.control.command.keysequence1"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%delete.control.command.id2"
-          contextId="%installoptions.source.outline.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.DeleteControl2"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceOutlineScope"
           sequence="%delete.control.command.keysequence2"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%delete.control.command.id2"
-          contextId="%installoptions.source.outline.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.DeleteControl2"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceOutlineScope"
           sequence="%delete.control.command.keysequence3"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%delete.control.command.id2"
-          contextId="%installoptions.source.outline.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.DeleteControl2"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsSourceOutlineScope"
           sequence="%delete.control.command.keysequence4"/>
       <key
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-          commandId="%switch.editor.command.id"
-          contextId="%editing.installoptions.design.id"
+          commandId="net.sf.eclipsensis.installoptions.commands.SwitchEditor"
+          contextId="net.sf.eclipsensis.installoptions.InstallOptionsDesignEditorScope"
           sequence="%switch.editor.command.keysequence"/>
    </extension>
    <extension
@@ -270,7 +270,7 @@
       <runtime>
          <run class="net.sf.eclipsensis.installoptions.builder.InstallOptionsNature"/>
       </runtime>
-      <builder id="%installoptions.builder.id"/>
+      <builder id="net.sf.eclipsensis.installoptions.InstallOptionsBuilder"/>
    </extension>
    <extension point="org.eclipse.core.filebuffers.annotationModelCreation">
        <factory
@@ -287,7 +287,7 @@
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyContributor">
       <propertyContributor
-            contributorId="%tabbed.properties.contributor.id"
+            contributorId="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor"
             labelProvider="net.sf.eclipsensis.installoptions.properties.labelproviders.InstallOptionsElementLabelProvider"
             typeMapper="net.sf.eclipsensis.installoptions.properties.tabbed.InstallOptionsElementTypeMapper">
          <propertyCategory category="net.sf.eclipsensis.installoptions.properties.tabbed.DefaultPropertyCategory"/>
@@ -295,7 +295,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertyTabs">
-      <propertyTabs contributorId="%tabbed.properties.contributor.id">
+      <propertyTabs contributorId="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor">
          <propertyTab
                category="net.sf.eclipsensis.installoptions.properties.tabbed.DefaultPropertyCategory"
                id="net.sf.eclipsensis.installoptions.properties.tabbed.DialogPropertyTab"
@@ -318,7 +318,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.views.properties.tabbed.propertySections">
-      <propertySections contributorId="%tabbed.properties.contributor.id">
+      <propertySections contributorId="net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor">
          <propertySection
                class="net.sf.eclipsensis.installoptions.properties.tabbed.section.DialogPropertySection"
                id="net.sf.eclipsensis.installoptions.properties.tabbed.DialogPropertySection"
@@ -363,7 +363,7 @@
    <extension
          point="org.eclipse.ui.editorActions">
       <editorContribution
-            targetID="%installoptions.source.editor.id"
+            targetID="net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor"
             id="org.eclipse.ui.texteditor.ruler.actions">
          <action
                label="%quick.fix.ruler.action.label"
@@ -379,7 +379,7 @@
             markerType="net.sf.eclipsensis.installoptions.InstallOptionsProblem"/>
    </extension>
    <extension point="net.sf.eclipsensis.startup.fileAssociations">
-      <association id="%file.association.id">
+      <association id="net.sf.eclipsensis.installoptions.iniFiles">
          <fileTypes name="%installoptions.filetypes.name">
             <fileType name="*.ini"/>
          </fileTypes>

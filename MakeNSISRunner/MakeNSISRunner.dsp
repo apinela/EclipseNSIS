@@ -19,6 +19,7 @@ CFG=MakeNSISRunner - Win32 Release
 !MESSAGE 
 !MESSAGE "MakeNSISRunner - Win32 Release" (based on "Win32 (x86) Dynamic-Link Library")
 !MESSAGE "MakeNSISRunner - Win32 Debug" (based on "Win32 (x86) Dynamic-Link Library")
+!MESSAGE "MakeNSISRunner - Win32 Release Unicode" (based on "Win32 (x86) Dynamic-Link Library")
 !MESSAGE 
 
 # Begin Project
@@ -81,12 +82,40 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib jvm.lib /nologo /dll /debug /machine:I386 /pdbtype:sept
 
+!ELSEIF  "$(CFG)" == "MakeNSISRunner - Win32 Release Unicode"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "MakeNSISRunner___Win32_Release_Unicode"
+# PROP BASE Intermediate_Dir "MakeNSISRunner___Win32_Release_Unicode"
+# PROP BASE Ignore_Export_Lib 0
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "Release_Unicode"
+# PROP Intermediate_Dir "Release_Unicode"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MAKENSISRUNNER_EXPORTS" /D DWORD_PTR=DWORD /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MAKENSISRUNNER_EXPORTS" /D DWORD_PTR=DWORD /D "UNICODE" /D "_UNICODE" /YX /FD /c
+# ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
+# ADD BASE RSC /l 0x409 /d "NDEBUG"
+# ADD RSC /l 0x409 /d "NDEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib jvm.lib /nologo /dll /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib jvm.lib /nologo /dll /machine:I386 /out:"Release_Unicode/MakeNSISRunnerU.dll"
+
 !ENDIF 
 
 # Begin Target
 
 # Name "MakeNSISRunner - Win32 Release"
 # Name "MakeNSISRunner - Win32 Debug"
+# Name "MakeNSISRunner - Win32 Release Unicode"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -104,11 +133,23 @@ SOURCE=.\MakeNSISRunner.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\MakeNSISRunner.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\net_sf_eclipsensis_makensis_MakeNSISDelegate.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\net_sf_eclipsensis_makensis_MakeNSISDelegateU.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\net_sf_eclipsensis_makensis_MakeNSISProcess.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\net_sf_eclipsensis_makensis_MakeNSISRunner.h
+SOURCE=.\unicode.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

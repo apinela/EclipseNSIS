@@ -251,7 +251,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
             }
         }
 
-        updateUndoAction();
+        updateAction(ITextEditorActionConstants.UNDO);
         updateButtons();
     }
 
@@ -425,14 +425,6 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         Iterator iterator= mSelectionActions.iterator();
         while (iterator.hasNext()) {
             updateAction((String)iterator.next());
-        }
-    }
-
-    private void updateUndoAction()
-    {
-        IAction action= (IAction) mGlobalActions.get(ITextEditorActionConstants.UNDO);
-        if (action instanceof IUpdate) {
-            ((IUpdate) action).update();
         }
     }
 

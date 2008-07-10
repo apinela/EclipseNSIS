@@ -11,7 +11,8 @@
 #include <tchar.h>
 #include <process.h>
 #include "htmlhelp.h"
-#include "net_sf_eclipsensis_makensis_MakeNSISRunner.h"
+#include "MakeNSISRunner.h"
+#include "unicode.h"
 
 enum {
   MAKENSIS_NOTIFY_SCRIPT,
@@ -30,25 +31,25 @@ jmethodID g_arrayListConstructor = NULL;
 jmethodID g_arrayListAdd = NULL;
 
 HINSTANCE hInstance = NULL;
-TCHAR *sOutputFile = NULL;
-TCHAR *sScript = NULL;
-TCHAR **sErrors = NULL;
+_TCHAR *sOutputFile = NULL;
+_TCHAR *sScript = NULL;
+_TCHAR **sErrors = NULL;
 int lErrorsCount = 0;
-TCHAR **sWarnings = NULL;
+_TCHAR **sWarnings = NULL;
 int lWarningsCount = 0;
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 void RegisterWindowClass();
 unsigned WINAPI CreateWndThread(LPVOID);
 
-void ErrorHandler(LPCTSTR);
-void throwException(JNIEnv*, TCHAR*, TCHAR*);
-void freeArray(TCHAR***, int*);
-void freeString(TCHAR**);
-jobject makeArrayList(JNIEnv*, TCHAR**);
-jstring makeString(JNIEnv*, TCHAR*);
-void createString(TCHAR**,PCOPYDATASTRUCT);
-void createAppendArray(TCHAR***, int*, PCOPYDATASTRUCT);
+void ErrorHandler(_TCHAR*);
+void throwException(JNIEnv*, char*, char*);
+void freeArray(_TCHAR***, int*);
+void freeString(_TCHAR**);
+jobject makeArrayList(JNIEnv*, _TCHAR**);
+jstring makeString(JNIEnv*, _TCHAR*);
+void createString(_TCHAR**,PCOPYDATASTRUCT);
+void createAppendArray(_TCHAR***, int*, PCOPYDATASTRUCT);
 
 BOOL APIENTRY DllMain(HINSTANCE hinstDll, DWORD dwReasion, LPVOID lpReserved)
 {
@@ -134,56 +135,56 @@ unsigned WINAPI CreateWndThread(LPVOID pThreadParam) {
 	return Msg.wParam;
 }
 
-JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_init(JNIEnv *pEnv, jclass jcls)
+JNIEXPORT jlong JNICALL MakeNSISRunner_init(JNIEnv *pEnv, jobject obj)
 {
     if(!g_isInit) {
     	jclass arrayListClass = pEnv->FindClass("java/util/ArrayList");
     	if(arrayListClass == NULL) {
-    		throwException(pEnv, _T("java/lang/ClassNotFoundException"), _T("java.util.ArrayList"));
+    		throwException(pEnv, "java/lang/ClassNotFoundException", "java.util.ArrayList");
     		return 0;
     	}
-    
+
     	g_arrayListConstructor = pEnv->GetMethodID(arrayListClass, "<init>", "()V");
     	if(g_arrayListConstructor == NULL) {
-    		throwException(pEnv, _T("java/lang/NoSuchMethodException"), _T("java.util.ArrayList()"));
+    		throwException(pEnv, "java/lang/NoSuchMethodException", "java.util.ArrayList()");
     		return 0;
     	}
-    
+
     	g_arrayListAdd = pEnv->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
     	if(g_arrayListAdd == NULL) {
-    		throwException(pEnv, _T("java/lang/NoSuchMethodException"), _T("java.util.ArrayList.add(Object o)"));
+    		throwException(pEnv,"java/lang/NoSuchMethodException", "java.util.ArrayList.add(Object o)");
     		return 0;
     	}
-    
+
     	g_hWnd = CreateWindow(_T("Hidden EclipseNSIS Window"), NULL, WS_OVERLAPPEDWINDOW,
     						CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
     						NULL, NULL, hInstance, NULL);
     	if(g_hWnd == NULL) {
-    		throwException(pEnv, _T("java/lang/RuntimeException"), _T("CreateWindow"));
+    		throwException(pEnv, "java/lang/RuntimeException", "CreateWindow");
     		return 0;
     	}
-    
+
         UINT uThreadId = 0;
     	g_hThread = (HANDLE)_beginthreadex(NULL, 0, &CreateWndThread, g_hWnd, 0, &uThreadId);
     	if(!g_hThread)
     	{
-    		throwException(pEnv, _T("java/lang/RuntimeException"), _T("_beginthreadex"));
+    		throwException(pEnv, "java/lang/RuntimeException", "_beginthreadex");
     		return 0;
     	}
-    
+
         g_arrayListClass = (jclass)pEnv->NewGlobalRef(arrayListClass);
         pEnv->DeleteLocalRef(arrayListClass);
-        
+
         g_isInit = TRUE;
     }
 	return (jlong)g_hWnd;
 }
 
-JNIEXPORT void JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_destroy(JNIEnv *pEnv, jclass jcls)
+JNIEXPORT void JNICALL MakeNSISRunner_destroy(JNIEnv *pEnv, jobject obj)
 {
     if(g_isInit) {
         pEnv->DeleteGlobalRef(g_arrayListClass);
-    	Java_net_sf_eclipsensis_makensis_MakeNSISRunner_reset(pEnv, jcls);
+    	MakeNSISRunner_reset(pEnv, obj);
     	PostMessage(g_hWnd,WM_QUIT,0,0);
     	CloseHandle(g_hThread);
     	g_hWnd = 0;
@@ -192,7 +193,7 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_destroy(J
     }
 }
 
-JNIEXPORT void JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_reset(JNIEnv *pEnv, jclass jcls)
+JNIEXPORT void JNICALL MakeNSISRunner_reset(JNIEnv *pEnv, jobject obj)
 {
 	freeString(&sOutputFile);
 	freeString(&sScript);
@@ -200,29 +201,29 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_reset(JNI
 	freeArray(&sWarnings, &lWarningsCount);
 }
 
-JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_getErrors(JNIEnv *pEnv, jclass jcls)
+JNIEXPORT jobject JNICALL MakeNSISRunner_getErrors(JNIEnv *pEnv, jobject obj)
 {
 	return makeArrayList(pEnv, sErrors);
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_getOutputFileName(JNIEnv *pEnv, jclass jcls)
+JNIEXPORT jstring JNICALL MakeNSISRunner_getOutputFileName(JNIEnv *pEnv, jobject obj)
 {
 	return makeString(pEnv, sOutputFile);
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_getScriptFileName(JNIEnv *pEnv, jclass jcls)
+JNIEXPORT jstring JNICALL MakeNSISRunner_getScriptFileName(JNIEnv *pEnv, jobject obj)
 {
 	return makeString(pEnv, sScript);
 }
 
-JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISRunner_getWarnings(JNIEnv *pEnv, jclass jcls)
+JNIEXPORT jobject JNICALL MakeNSISRunner_getWarnings(JNIEnv *pEnv, jobject obj)
 {
 	return makeArrayList(pEnv, sWarnings);
 }
 
 // Utility functions
 
-void freeArray(TCHAR*** array, int *count)
+void freeArray(_TCHAR*** array, int *count)
 {
 	if(*array) {
 		HGLOBAL hMem;
@@ -240,7 +241,7 @@ void freeArray(TCHAR*** array, int *count)
 	}
 }
 
-void freeString(TCHAR **string)
+void freeString(_TCHAR **string)
 {
 	if(*string) {
 		GlobalFree(*string);
@@ -248,20 +249,20 @@ void freeString(TCHAR **string)
 	}
 }
 
-jobject makeArrayList(JNIEnv *pEnv, TCHAR **items)
+jobject makeArrayList(JNIEnv *pEnv, _TCHAR **items)
 {
 	if(items) {
 		jobject arrayListObject;
 
 		arrayListObject = pEnv->NewObject(g_arrayListClass,g_arrayListConstructor);
 		if(arrayListObject == NULL) {
-			throwException(pEnv, _T("java/lang/RuntimeException"), _T("java.util.ArrayList()"));
+			throwException(pEnv, "java/lang/RuntimeException", "java.util.ArrayList()");
 			return NULL;
 		}
 
 		int i=0;
 		while(items[i]) {
-			pEnv->CallBooleanMethod(arrayListObject, g_arrayListAdd, pEnv->NewStringUTF(items[i]));
+			pEnv->CallBooleanMethod(arrayListObject, g_arrayListAdd, NewJavaString(pEnv,items[i]));
 			i++;
 		}
 
@@ -273,47 +274,47 @@ jobject makeArrayList(JNIEnv *pEnv, TCHAR **items)
 	}
 }
 
-jstring makeString(JNIEnv *pEnv, TCHAR* string)
+jstring makeString(JNIEnv *pEnv, _TCHAR* string)
 {
 	if(string) {
-		return pEnv->NewStringUTF(string);
+		return NewJavaString(pEnv, string);
 	}
 	else {
 		return NULL;
 	}
 }
 
-void createString(TCHAR** string, PCOPYDATASTRUCT cds)
+void createString(_TCHAR** string, PCOPYDATASTRUCT cds)
 {
 	freeString(string);
-	*string = (TCHAR *)GlobalAlloc(GPTR, (cds->cbData)*sizeof(TCHAR));
-	_tcscpy(*string,(TCHAR *)cds->lpData);
+	*string = (_TCHAR *)GlobalAlloc(GPTR, (cds->cbData)*sizeof(_TCHAR));
+	_tcscpy(*string,(_TCHAR *)cds->lpData);
 }
 
-void createAppendArray(TCHAR*** array, int *count, PCOPYDATASTRUCT cds)
+void createAppendArray(_TCHAR*** array, int *count, PCOPYDATASTRUCT cds)
 {
 	HGLOBAL hMem;
 
 	if(*array) {
 		hMem = GlobalHandle(*array);
 		GlobalUnlock(hMem);
-		hMem = GlobalReAlloc(hMem, (*count+2)*sizeof(TCHAR *), GMEM_MOVEABLE|GMEM_ZEROINIT);
+		hMem = GlobalReAlloc(hMem, (*count+2)*sizeof(_TCHAR *), GMEM_MOVEABLE|GMEM_ZEROINIT);
 	}
 	else {
-		hMem = GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT, (*count+2)*sizeof(TCHAR *));
+		hMem = GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT, (*count+2)*sizeof(_TCHAR *));
 	}
-	*array = (TCHAR **)GlobalLock(hMem);
-	(*array)[*count] = (TCHAR *)GlobalAlloc(GPTR, (cds->cbData)*sizeof(TCHAR));
-	_tcscpy((*array)[*count],(TCHAR *)cds->lpData);
+	*array = (_TCHAR **)GlobalLock(hMem);
+	(*array)[*count] = (_TCHAR *)GlobalAlloc(GPTR, (cds->cbData)*sizeof(_TCHAR));
+	_tcscpy((*array)[*count],(_TCHAR *)cds->lpData);
 	(*count)++;
 	(*array)[*count] = NULL;
 }
 
-void ErrorHandler(LPCTSTR pszErrorMessage) {
+void ErrorHandler(_TCHAR* pszErrorMessage) {
 	MessageBox(NULL, pszErrorMessage, _T("Error"), MB_OK | MB_ICONERROR);
 }
 
-void throwException(JNIEnv *pEnv, TCHAR *exception, TCHAR *errMsg) {
+void throwException(JNIEnv *pEnv, char *exception, char *errMsg) {
     jclass failex = pEnv->FindClass(exception);
     if( failex != NULL ){
         pEnv->ThrowNew(failex, errMsg);

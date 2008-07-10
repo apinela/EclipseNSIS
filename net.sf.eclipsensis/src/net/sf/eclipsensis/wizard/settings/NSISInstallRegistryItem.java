@@ -15,6 +15,10 @@ import net.sf.eclipsensis.wizard.*;
 
 public abstract class NSISInstallRegistryItem extends AbstractNSISInstallItem
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6851931721096996387L;
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
      */

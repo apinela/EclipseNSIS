@@ -57,5 +57,10 @@ if %errorlevel% GTR 0 goto END
 if not exist Release\MakeNSISRunner.dll goto END
 copy /Y Release\MakeNSISRunner.dll ..\net.sf.eclipsensis\os\win32\x86\
 
+nmake -f MakeNSISRunner.mak CFG="MakeNSISRunner - Win32 Release Unicode" %2 %3 %4 %5 %6 %7 %8 %9
+if %errorlevel% GTR 0 goto END
+if not exist Release_Unicode\MakeNSISRunnerU.dll goto END
+copy /Y Release_Unicode\MakeNSISRunnerU.dll ..\net.sf.eclipsensis\os\win32\x86\
+
 :END
 endlocal

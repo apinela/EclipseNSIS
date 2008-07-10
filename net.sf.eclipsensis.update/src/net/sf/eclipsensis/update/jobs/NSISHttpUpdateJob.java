@@ -14,19 +14,13 @@ import java.net.*;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.net.NetworkUtil;
-import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
-import net.sf.eclipsensis.update.proxy.ProxyAuthenticator;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.NestedProgressMonitor;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 public abstract class NSISHttpUpdateJob extends NSISUpdateJob
 {
-    protected static final String HTTP_PROXY_PORT = "http.proxyPort"; //$NON-NLS-1$
-    protected static final String HTTP_PROXY_HOST = "http.proxyHost"; //$NON-NLS-1$
-    protected static final String HTTP_PROXY_SET = "http.proxySet"; //$NON-NLS-1$
-
     protected static final IPreferenceStore cPreferenceStore = EclipseNSISUpdatePlugin.getDefault().getPreferenceStore();
 
     private INSISUpdateJobRunner mJobRunner = null;
@@ -71,81 +65,39 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
             }
 
             if (url != null || defaultUrl != null) {
-                String oldProxySet = System.getProperty(HTTP_PROXY_SET);
-                String oldProxyHost = System.getProperty(HTTP_PROXY_HOST);
-                String oldProxyPort = System.getProperty(HTTP_PROXY_PORT);
-                boolean isUsingProxy = cPreferenceStore.getBoolean(IUpdatePreferenceConstants.USE_HTTP_PROXY);
-                String proxyHost = cPreferenceStore.getString(IUpdatePreferenceConstants.HTTP_PROXY_HOST);
-                int proxyPort = cPreferenceStore.getInt(IUpdatePreferenceConstants.HTTP_PROXY_PORT);
-                if (proxyPort < 1 || proxyPort > 0xFFFF) {
-                    proxyPort = 80; //Default HTTP port
-                }
-                if (monitor.isCanceled()) {
-                    return Status.CANCEL_STATUS;
-                }
-                if (isUsingProxy) {
-                    System.setProperty(HTTP_PROXY_SET, Boolean.TRUE.toString());
-                    System.setProperty(HTTP_PROXY_HOST, proxyHost);
-                    System.setProperty(HTTP_PROXY_PORT, Integer.toString(proxyPort));
-                }
                 try {
-                    ProxyAuthenticator auth = null;
                     if (monitor.isCanceled()) {
                         return Status.CANCEL_STATUS;
                     }
-                    Authenticator defaultAuthenticator = null;
-                    if (isUsingProxy) {
-                        defaultAuthenticator = WinAPI.getDefaultAuthenticator();
-
-                        auth = new ProxyAuthenticator(proxyHost, proxyPort);
-                        Authenticator.setDefault(auth);
+                    if (monitor.isCanceled()) {
+                        return Status.CANCEL_STATUS;
                     }
+                    monitor.worked(5);
+                    HttpURLConnection conn = null;
                     try {
-                        if (monitor.isCanceled()) {
+                        IProgressMonitor subMonitor = new NestedProgressMonitor(monitor,getName(),5);
+                        conn = makeConnection(subMonitor, url, defaultUrl);
+                        if(monitor.isCanceled()) {
                             return Status.CANCEL_STATUS;
                         }
-                        monitor.worked(5);
-                        HttpURLConnection conn = null;
-                        try {
-                            IProgressMonitor subMonitor = new NestedProgressMonitor(monitor,getName(),5);
-                            conn = makeConnection(subMonitor, url, defaultUrl);
-                            if(monitor.isCanceled()) {
-                                return Status.CANCEL_STATUS;
-                            }
-                            subMonitor = new NestedProgressMonitor(monitor,getName(),100);
-                            IStatus status = handleConnection(conn, subMonitor);
-                            if(!status.isOK()) {
-                                return status;
-                            }
-                        }
-                        finally {
-                            if (conn != null) {
-                                conn.disconnect();
-                            }
-                        }
-                        if (isUsingProxy) {
-                            auth.success(); // This means success. So save the authentication.
-                        }
-                        if (monitor.isCanceled()) {
-                            return Status.CANCEL_STATUS;
+                        subMonitor = new NestedProgressMonitor(monitor,getName(),100);
+                        IStatus status = handleConnection(conn, subMonitor);
+                        if(!status.isOK()) {
+                            return status;
                         }
                     }
                     finally {
-                        if (isUsingProxy) {
-                            Authenticator.setDefault(defaultAuthenticator);
+                        if (conn != null) {
+                            conn.disconnect();
                         }
+                    }
+                    if (monitor.isCanceled()) {
+                        return Status.CANCEL_STATUS;
                     }
                 }
                 catch (Exception e) {
                     handleException(e);
                     return new Status(IStatus.ERROR, EclipseNSISUpdatePlugin.getDefault().getPluginId(), IStatus.ERROR, e.getMessage(), e);
-                }
-                finally {
-                    if (isUsingProxy) {
-                        setSystemProperty(HTTP_PROXY_SET, oldProxySet);
-                        setSystemProperty(HTTP_PROXY_HOST, oldProxyHost);
-                        setSystemProperty(HTTP_PROXY_PORT, oldProxyPort);
-                    }
                 }
             }
             return Status.OK_STATUS;

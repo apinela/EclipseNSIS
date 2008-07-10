@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
@@ -50,7 +50,7 @@ public class NSISInformationControlCreator extends AbstractNSISInformationContro
         if(shouldBuildStatusText()) {
             statusText = NSISInformationUtility.buildStatusText(mCommands);
         }
-        return new DefaultInformationControl(parent,mStyle,mInformationPresenter,statusText);
+        return new NSISInformationControl(parent,mStyle,mInformationPresenter,statusText);
     }
 
     protected boolean shouldBuildStatusText()

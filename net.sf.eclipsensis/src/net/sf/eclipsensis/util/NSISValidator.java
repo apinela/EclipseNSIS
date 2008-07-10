@@ -19,7 +19,7 @@ import net.sf.eclipsensis.makensis.MakeNSISRunner;
 
 public class NSISValidator implements INSISConstants
 {
-    private static final Pattern cVersionPattern = Pattern.compile("v?(\\d+(?:\\.\\d+)?(?:[A-Za-z]+\\d*)?)"); //$NON-NLS-1$
+    private static final Pattern cVersionPattern = Pattern.compile("v?(\\d+(?:\\.\\d+){0,3}(?:\\-?[A-Za-z]+\\d*)?)"); //$NON-NLS-1$
     private static final Pattern cCVSVersionPattern = Pattern.compile("v?([0-3][0-9]-[a-zA-Z]{3}-20[0-9]{2})\\.cvs"); //$NON-NLS-1$
     private static final SimpleDateFormat cCVSDateFormat;
     private static final SimpleDateFormat cCVSEnglishDateFormat;

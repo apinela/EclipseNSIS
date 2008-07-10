@@ -42,6 +42,10 @@ import org.w3c.dom.*;
 
 public abstract class InstallOptionsWidget extends InstallOptionsElement implements Serializable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2008939141357319271L;
     public static final String PROPERTY_BOUNDS = "Bounds"; //$NON-NLS-1$
     public static final String PROPERTY_LOCKED = "Locked"; //$NON-NLS-1$
 

@@ -24,6 +24,8 @@ public class NSISCommand
     private GroupParam mParam;
     private String mCategory;
     private String mTerminator;
+//    private boolean mIfScopeSupported = false;
+//    private
 
     public NSISCommand(Node node)
     {

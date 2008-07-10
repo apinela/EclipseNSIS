@@ -18,6 +18,7 @@ import net.sf.eclipsensis.dialogs.*;
 import net.sf.eclipsensis.editor.NSISTaskTag;
 import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.filemon.*;
+import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.resources.IMarker;
@@ -53,6 +54,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     public static final NSISPreferences INSTANCE;
 
     public static final String NSIS_CONFIG_COMPRESSION_SUPPORT="NSIS_CONFIG_COMPRESSION_SUPPORT"; //$NON-NLS-1$
+    public static final String NSIS_UNICODE_SUPPORT="NSIS_UNICODE"; //$NON-NLS-1$
 
     private IPreferenceStore mPreferenceStore = null;
     private File mNSISExe = null;
@@ -66,6 +68,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     private Collection mDefaultTaskTags = null;
     private boolean mCaseSensitiveTaskTags = true;
     private List mListeners = new ArrayList();
+    private boolean mUnicode = false;
     private boolean mSolidCompressionSupported = false;
     private boolean mProcessPrioritySupported = false;
 
@@ -352,6 +355,10 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         return mSolidCompressionSupported;
     }
 
+    public boolean isUnicode()
+    {
+        return mUnicode;
+    }
 
     public boolean isProcessPrioritySupported()
     {
@@ -398,6 +405,8 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             mNSISHome = nsisHome;
             mNSISVersion = NSISValidator.getNSISVersion(mNSISExe);
             mNSISDefaultSymbols = NSISValidator.loadNSISDefaultSymbols(mNSISExe);
+            mUnicode = mNSISDefaultSymbols.containsKey(NSIS_UNICODE_SUPPORT);
+            MakeNSISRunner.setUnicode(mUnicode);
             FileMonitor.INSTANCE.register(mNSISExe,this);
             mSolidCompressionSupported = (mNSISVersion.compareTo(INSISVersions.VERSION_2_07) >=0 && mNSISDefaultSymbols.containsKey(NSIS_CONFIG_COMPRESSION_SUPPORT));
             mProcessPrioritySupported = mNSISVersion.compareTo(INSISVersions.VERSION_2_24) >=0;

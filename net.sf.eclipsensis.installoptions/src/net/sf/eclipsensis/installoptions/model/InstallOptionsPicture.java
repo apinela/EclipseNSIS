@@ -18,6 +18,10 @@ import org.eclipse.swt.graphics.*;
 
 public abstract class InstallOptionsPicture extends InstallOptionsUneditableElement
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2617864864963263131L;
     public static final String PROPERTY_IMAGE = "Image"; //$NON-NLS-1$
 
     protected InstallOptionsPicture(INISection section)

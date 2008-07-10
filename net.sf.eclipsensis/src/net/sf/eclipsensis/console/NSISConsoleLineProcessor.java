@@ -12,6 +12,7 @@ package net.sf.eclipsensis.console;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -70,7 +71,7 @@ public class NSISConsoleLineProcessor implements INSISConsoleLineProcessor
         else if(mErrorMode) {
             line = NSISConsoleLine.error(text);
         }
-        else if(mWarningCount > 0) {
+        else if(mWarningCount > 0 && !Common.isEmpty(text)) {
             mWarningCount--;
             line = NSISConsoleLine.warning(text);
         }

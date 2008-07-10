@@ -252,7 +252,7 @@ public class NSISInformationUtility implements INSISConstants
                     }
                 }
             }
-            if(region != null || !region.equals(NSISTextUtility.EMPTY_REGION)) {
+            if(region != null && !region.equals(NSISTextUtility.EMPTY_REGION)) {
                 if(region.getOffset()+region.getLength() > offset) {
                     region = new Region(region.getOffset(),offset-region.getOffset()+1);
                 }

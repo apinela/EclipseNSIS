@@ -20,6 +20,10 @@ import org.eclipse.ui.views.properties.*;
 
 public abstract class InstallOptionsUneditableElement extends InstallOptionsWidget
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7057456623768374043L;
     private String mText;
 
     protected InstallOptionsUneditableElement(INISection section)

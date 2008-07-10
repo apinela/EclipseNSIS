@@ -193,7 +193,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                 int n;
                 String line;
                 try {
-                    br = new BufferedReader(new FileReader(langFile));
+                    br = new BufferedReader(new UnicodeReader(new FileInputStream(langFile)));
                     n = 0;
                     line = skipComments(br);
                     outer: while (line != null) {

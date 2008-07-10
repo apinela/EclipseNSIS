@@ -52,8 +52,7 @@ public class MakeNSISRunner implements INSISConstants
     private static MakeNSISProcess cCompileProcess = null;
     private static String cBestCompressorFormat = null;
     private static String cCompileLock = "lock"; //$NON-NLS-1$
-    private static String cHwndLock = "lock"; //$NON-NLS-1$
-    private static long cHwnd = 0;
+    private static IMakeNSISDelegate cMakeNSISDelegate;
     private static Set cListeners = new HashSet();
     private static IPath cScript = null;
 
@@ -70,7 +69,6 @@ public class MakeNSISRunner implements INSISConstants
     static {
         cCompilationTimeFormat = new MessageFormat(EclipseNSISPlugin.getResourceString("compilation.time.format")); //$NON-NLS-1$
         cTotalCompilationTimeFormat = new MessageFormat(EclipseNSISPlugin.getResourceString("total.compilation.time.format")); //$NON-NLS-1$
-        System.loadLibrary("MakeNSISRunner"); //$NON-NLS-1$
         cBestCompressorFormat = EclipseNSISPlugin.getResourceString("best.compressor.format"); //$NON-NLS-1$
 
         int index = COMPRESSOR_DEFAULT + 1;
@@ -155,7 +153,7 @@ public class MakeNSISRunner implements INSISConstants
     {
         List problems = new ArrayList();
         if (Common.isEmptyCollection(errors)) {
-            ArrayList compileErrors = getErrors();
+            ArrayList compileErrors = cMakeNSISDelegate.getErrors();
             if(!Common.isEmptyCollection(compileErrors)) {
                 errors = new ArrayList();
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -209,7 +207,7 @@ public class MakeNSISRunner implements INSISConstants
         }
 
         if(Common.isEmptyCollection(warnings)) {
-            warnings = getWarnings();
+            warnings = cMakeNSISDelegate.getWarnings();
             if (warnings != null) {
                 CaseInsensitiveMap map = new CaseInsensitiveMap();
                 for (Iterator iter = warnings.iterator(); iter.hasNext();) {
@@ -294,7 +292,7 @@ public class MakeNSISRunner implements INSISConstants
                 try {
                     notifyListeners(MakeNSISRunEvent.STARTED, script, null);
                     console.clearConsole();
-                    reset();
+                    cMakeNSISDelegate.reset();
                     File file;
                     if (script.getDevice() == null) {
                         //Workspace file
@@ -382,7 +380,7 @@ public class MakeNSISRunner implements INSISConstants
                     System.arraycopy(optionsArray, 0, cmdArray, cmdArrayLen - optionsArray.length - (notifyHwnd?3:1), optionsArray.length);
                     if(notifyHwnd) {
                         cmdArray[cmdArrayLen - 3] = MAKENSIS_NOTIFYHWND_OPTION;
-                        cmdArray[cmdArrayLen - 2] = Long.toString(cHwnd);
+                        cmdArray[cmdArrayLen - 2] = Long.toString(cMakeNSISDelegate.getHwnd());
                     }
                     cmdArray[cmdArrayLen - 1] = fileName;
                     List consoleErrors = new ArrayList();
@@ -637,7 +635,7 @@ public class MakeNSISRunner implements INSISConstants
             results.setReturnCode(rv);
             if(results.getReturnCode() == MakeNSISResults.RETURN_SUCCESS) {
                 if (notifyHwnd) {
-                    String outputFileName = getOutputFileName();
+                    String outputFileName = cMakeNSISDelegate.getOutputFileName();
                     if (outputFileName == null) {
                         int i = 0;
                         while (outputFileName == null && i < 10) {
@@ -646,7 +644,7 @@ public class MakeNSISRunner implements INSISConstants
                             }
                             catch (Exception e) {
                             }
-                            outputFileName = getOutputFileName();
+                            outputFileName = cMakeNSISDelegate.getOutputFileName();
                             i++;
                         }
                         if (outputFileName == null) {
@@ -729,23 +727,48 @@ public class MakeNSISRunner implements INSISConstants
         }
     }
 
-    public static void startup()
+    public synchronized static void setUnicode(boolean unicode)
     {
-        synchronized(cHwndLock) {
-            if(cHwnd <= 0) {
-                cHwnd = init();
+        if(cMakeNSISDelegate != null) {
+            if(cMakeNSISDelegate.isUnicode() == unicode) {
+                return;
             }
+        }
+        loadMakeNSISDelegate(unicode);
+    }
+
+    private synchronized static void loadMakeNSISDelegate(boolean unicode)
+    {
+        unloadMakeNSISDelegate();
+        try {
+            cMakeNSISDelegate = unicode?(IMakeNSISDelegate)new MakeNSISDelegateU():
+                (IMakeNSISDelegate)new MakeNSISDelegate();
+            cMakeNSISDelegate.startup();
+        }
+        catch (Exception e) {
+            EclipseNSISPlugin.getDefault().log(e);
+            unloadMakeNSISDelegate();
         }
     }
 
-    public static void shutdown()
+    private synchronized static void unloadMakeNSISDelegate()
     {
-        synchronized(cHwndLock) {
-            if(cHwnd > 0) {
-                destroy();
-                cHwnd = 0;
-            }
+        if(cMakeNSISDelegate != null) {
+            cMakeNSISDelegate.shutdown();
+            cMakeNSISDelegate = null;
         }
+    }
+
+    public synchronized static void startup()
+    {
+        if(cMakeNSISDelegate == null) {
+            loadMakeNSISDelegate(NSISPreferences.INSTANCE.isUnicode());
+        }
+    }
+
+    public synchronized static void shutdown()
+    {
+        unloadMakeNSISDelegate();
     }
 
     public static String[] runProcessWithOutput(String makensisExe, String[] cmdArray, File workDir)
@@ -828,16 +851,4 @@ public class MakeNSISRunner implements INSISConstants
             return mOutputFileName;
         }
     }
-
-    private static native long init();
-
-    private static native void destroy();
-
-    private static native void reset();
-
-    private static native String getOutputFileName();
-
-    private static native ArrayList getErrors();
-
-    private static native ArrayList getWarnings();
 }

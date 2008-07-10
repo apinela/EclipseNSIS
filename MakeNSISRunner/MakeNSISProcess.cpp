@@ -16,6 +16,7 @@
 #include <tchar.h>
 #include <process.h>
 #include "net_sf_eclipsensis_makensis_MakeNSISProcess.h"
+#include "unicode.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,7 +33,7 @@ BOOL g_isNT = FALSE;
 BOOL g_isJRE5 = FALSE;
 jfieldID g_fileDescriptorFD;
 
-void throwException(JNIEnv *, TCHAR *, TCHAR *);
+void throwException(JNIEnv *, char *, char *);
 
 JNIEXPORT void JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISProcess_init(JNIEnv *pEnv, jclass jClass, jclass fdClass, jstring vmName, 
         jint vmMajorVersion, jint vmMinorVersion)
@@ -56,10 +57,10 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISProcess_init(JNI
     }
 	if(g_fileDescriptorFD == NULL) {
         if(g_isJRE5) {
-    		throwException(pEnv,_T("java/lang/RuntimeException"),_T("Could not find field handle for java.io.FileDescriptor class"));
+    		throwException(pEnv,"java/lang/RuntimeException","Could not find field handle for java.io.FileDescriptor class");
         }
         else {
-    		throwException(pEnv,_T("java/lang/RuntimeException"),_T("Could not find field fd for java.io.FileDescriptor class"));
+    		throwException(pEnv,"java/lang/RuntimeException","Could not find field fd for java.io.FileDescriptor class");
     	}
 	}
 }
@@ -74,11 +75,11 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISProcess_create(
     SECURITY_DESCRIPTOR sd={0,};
     PROCESS_INFORMATION pi={0,};
     STARTUPINFO si;
-    TCHAR *cmd, *cwd = NULL, *cmdenv = NULL;
+    _TCHAR *cmd, *cwd = NULL, *cmdenv = NULL;
     DWORD processFlag;
 
     if (!command) {
-        throwException(pEnv, _T("java/lang/NullPointerException"), _T(""));
+        throwException(pEnv, "java/lang/NullPointerException", "");
         return 0;
     }
 
@@ -103,7 +104,7 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISProcess_create(
         CloseHandle(hwrite[0]);
         CloseHandle(hwrite[1]);
         CloseHandle(hwrite[2]);
-        throwException(pEnv, _T("java/io/IOException"), _T("CreatePipe"));
+        throwException(pEnv, "java/io/IOException", "CreatePipe");
         return 0;
     }
 
@@ -126,12 +127,13 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISProcess_create(
         processFlag = DETACHED_PROCESS;
     }
 
-    cmd = (TCHAR*)pEnv->GetStringUTFChars(command, 0);
+    cmd = (_TCHAR*)GetJavaStringChars(pEnv, command);
+
     if (env) {
-        cmdenv = (TCHAR*)pEnv->GetStringUTFChars(env, 0);
+        cmdenv = (_TCHAR*)GetJavaStringChars(pEnv, env);
     }
     if (workingDir) { 
-        cwd = (TCHAR*)pEnv->GetStringUTFChars(workingDir, 0);
+        cwd = (_TCHAR*)GetJavaStringChars(pEnv, workingDir);
     }
 
     ret = CreateProcess(0,                /* executable name */
@@ -150,12 +152,12 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISProcess_create(
     CloseHandle(hwrite[2]);
 
     if (!ret) {
-        TCHAR msg[1024];
+        char msg[1024];
         CloseHandle(hwrite[0]);
         CloseHandle(hread[1]);
         CloseHandle(hread[2]);
-        _stprintf(msg, _T("CreateProcess: %s error=%d"), cmd, GetLastError());
-        throwException(pEnv, _T("java/io/IOException"), msg);
+        sprintf(msg, "CreateProcess error=%d", GetLastError());
+        throwException(pEnv, "java/io/IOException", msg);
     }
     else {
         CloseHandle(pi.hThread);
@@ -171,12 +173,12 @@ JNIEXPORT jlong JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISProcess_create(
             pEnv->SetIntField(stderrFD, g_fileDescriptorFD, _open_osfhandle((long)hread[2], 0));
         }
     }
-    pEnv->ReleaseStringUTFChars(command, cmd);
+    ReleaseJavaStringChars(pEnv, command, cmd);
     if (env) {
-        pEnv->ReleaseStringUTFChars(env, cmdenv);
+        ReleaseJavaStringChars(pEnv, env, cmdenv);
     }
     if (workingDir) {
-        pEnv->ReleaseStringUTFChars(workingDir, cwd);
+        ReleaseJavaStringChars(pEnv, workingDir, cwd);
     }
     return ret;
 }
@@ -187,7 +189,7 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISProcess_exitValu
 
     GetExitCodeProcess((void *)handle, (LPDWORD)&exit_code);
     if (exit_code == STILL_ACTIVE) {
-        throwException(pEnv, _T("java/lang/IllegalThreadStateException"), _T("Process has not exited"));
+        throwException(pEnv, "java/lang/IllegalThreadStateException", "Process has not exited");
         return -1;
     }
     return exit_code;
@@ -207,7 +209,7 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_makensis_MakeNSISProcess_waitFor(
         GetExitCodeProcess((void *)handle, (LPDWORD)&exit_code);
     } 
     else {
-        throwException(pEnv, _T("java/lang/InterruptedException"), _T(""));
+        throwException(pEnv, "java/lang/InterruptedException", "");
     }
 
     return exit_code;

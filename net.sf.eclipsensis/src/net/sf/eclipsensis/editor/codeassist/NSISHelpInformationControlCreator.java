@@ -12,7 +12,6 @@ package net.sf.eclipsensis.editor.codeassist;
 import net.sf.eclipsensis.help.NSISHelpURLProvider;
 
 import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.widgets.Display;
@@ -38,7 +37,7 @@ public class NSISHelpInformationControlCreator extends NSISInformationControlCre
         return b;
     }
 
-    protected IInformationPresenter createInformationPresenter()
+    protected NSISInformationControl.IInformationPresenter createInformationPresenter()
     {
         return new WrappingInformationPresenter("\t\t") { //$NON-NLS-1$
             public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight)
