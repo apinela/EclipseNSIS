@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
+import net.sf.eclipsensis.editor.codeassist.NSISAnnotationHover.NSISInformation;
+
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
@@ -20,7 +22,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public class NSISInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension4, IInformationControlExtension5
+public class NSISInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, IInformationControlExtension3, IInformationControlExtension4, IInformationControlExtension5
 {
     private static final int INNER_BORDER = 1;
 
@@ -47,6 +49,8 @@ public class NSISInformationControl implements IInformationControl, IInformation
     private final TextPresentation mPresentation = new TextPresentation();
 
     private final int mTextStyles;
+
+    private IInformationControlCreator mCreator = null;
 
     public NSISInformationControl(Shell parent, IInformationPresenter presenter)
     {
@@ -297,44 +301,7 @@ public class NSISInformationControl implements IInformationControl, IInformation
 
     public void setInformation(String content)
     {
-        if (mPresenter == null) {
-            mText.setText(content);
-        }
-        else {
-            mPresentation.clear();
-
-            int maxWidth = -1;
-            int maxHeight = -1;
-            Point constraints = getSizeConstraints();
-            if (constraints != null) {
-                maxWidth = constraints.x;
-                maxHeight = constraints.y;
-                if (mText.getWordWrap()) {
-                    maxWidth -= INNER_BORDER * 2;
-                    maxHeight -= INNER_BORDER * 2;
-                }
-                else {
-                    maxWidth -= INNER_BORDER; // indent
-                }
-                Rectangle trim = computeTrim();
-                maxWidth -= trim.width;
-                maxHeight -= trim.height;
-                maxWidth -= mText.getCaret().getSize().x; // StyledText adds a
-                                                          // border at the end
-                                                          // of the line for the
-                                                          // caret.
-            }
-
-            content = mPresenter.updatePresentation(getShell().getDisplay(), content, mPresentation, maxWidth, maxHeight);
-
-            if (content != null) {
-                mText.setText(content);
-                TextPresentation.applyTextPresentation(mPresentation, mText);
-            }
-            else {
-                mText.setText(""); //$NON-NLS-1$
-            }
-        }
+        setInput(new NSISInformation(content==null?"":content));
     }
 
     public void setVisible(boolean visible)
@@ -396,16 +363,59 @@ public class NSISInformationControl implements IInformationControl, IInformation
 
     public IInformationControlCreator getInformationPresenterControlCreator()
     {
-        return new IInformationControlCreator() {
-            public IInformationControl createInformationControl(Shell parent)
-            {
-                return new NSISInformationControl(parent, SWT.NONE, mPresenter);
-            }
-        };
+        return mCreator;
+    }
+
+    void setInformationPresenterControlCreator(IInformationControlCreator creator)
+    {
+        mCreator = creator;
     }
 
     public interface IInformationPresenter
     {
         String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
+    }
+
+    public void setInput(Object input)
+    {
+        String content = input != null?String.valueOf(input):"";
+        if (mPresenter == null) {
+            mText.setText(content);
+        }
+        else {
+            mPresentation.clear();
+
+            int maxWidth = -1;
+            int maxHeight = -1;
+            Point constraints = getSizeConstraints();
+            if (constraints != null) {
+                maxWidth = constraints.x;
+                maxHeight = constraints.y;
+                if (mText.getWordWrap()) {
+                    maxWidth -= INNER_BORDER * 2;
+                    maxHeight -= INNER_BORDER * 2;
+                }
+                else {
+                    maxWidth -= INNER_BORDER; // indent
+                }
+                Rectangle trim = computeTrim();
+                maxWidth -= trim.width;
+                maxHeight -= trim.height;
+                maxWidth -= mText.getCaret().getSize().x; // StyledText adds a
+                                                          // border at the end
+                                                          // of the line for the
+                                                          // caret.
+            }
+
+            content = mPresenter.updatePresentation(getShell().getDisplay(), content, mPresentation, maxWidth, maxHeight);
+
+            if (content != null) {
+                mText.setText(content);
+                TextPresentation.applyTextPresentation(mPresentation, mText);
+            }
+            else {
+                mText.setText(""); //$NON-NLS-1$
+            }
+        }
     }
 }

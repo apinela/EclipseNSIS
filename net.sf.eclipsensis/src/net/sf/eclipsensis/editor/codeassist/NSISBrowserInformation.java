@@ -9,21 +9,22 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
-public class NSISBrowserInformation
+public class NSISBrowserInformation implements INSISKeywordInformation
 {
     private String mKeyword;
-    private String mInformation;
+    private String mContent;
 
-    public NSISBrowserInformation(String keyword, String information)
+    public NSISBrowserInformation(String keyword, String content)
     {
         mKeyword = keyword;
-        mInformation = information;
+        mContent = content;
     }
 
-    public String getInformation()
+    public String getContent()
     {
-        return mInformation;
+        return mContent;
     }
+
     public String getKeyword()
     {
         return mKeyword;

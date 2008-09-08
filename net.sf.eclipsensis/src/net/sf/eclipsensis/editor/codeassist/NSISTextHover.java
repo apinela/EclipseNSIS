@@ -26,10 +26,10 @@ public class NSISTextHover extends NSISAnnotationHover
     /*
      * (non-Javadoc) Method declared on ITextHover
      */
-    public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion)
+    public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion)
     {
-        String info1 = super.getHoverInfo(textViewer, hoverRegion);
-        String info2 = (String)mInformationProvider.getInformation2(textViewer, hoverRegion);
+        Object info1 = super.getHoverInfo2(textViewer, hoverRegion);
+        Object info2 = mInformationProvider.getInformation2(textViewer, hoverRegion);
         mUseSuper = (info2 == null && info1 != null);
         return info2 != null?info2:info1;
     }

@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 public class NSISInformationControlCreator extends AbstractNSISInformationControlCreator
 {
     private ParameterizedCommand[] mCommands = null;
+    private NSISBrowserInformationControlCreator mCreator = new NSISBrowserInformationControlCreator(SWT.V_SCROLL|SWT.H_SCROLL);
 
     public NSISInformationControlCreator(String[] commandIds)
     {
@@ -50,7 +51,9 @@ public class NSISInformationControlCreator extends AbstractNSISInformationContro
         if(shouldBuildStatusText()) {
             statusText = NSISInformationUtility.buildStatusText(mCommands);
         }
-        return new NSISInformationControl(parent,mStyle,mInformationPresenter,statusText);
+        NSISInformationControl informationControl = new NSISInformationControl(parent,mStyle,mInformationPresenter,statusText);
+        informationControl.setInformationPresenterControlCreator(mCreator);
+        return informationControl;
     }
 
     protected boolean shouldBuildStatusText()

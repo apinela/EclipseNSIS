@@ -12,11 +12,10 @@ package net.sf.eclipsensis.editor.codeassist;
 
 import net.sf.eclipsensis.INSISConstants;
 
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
 
-public class AbstractNSISInformationControlCreator implements IInformationControlCreator,INSISConstants
+public abstract class AbstractNSISInformationControlCreator implements IInformationControlCreator,INSISConstants
 {
     protected int mStyle = SWT.NONE;
 
@@ -25,11 +24,6 @@ public class AbstractNSISInformationControlCreator implements IInformationContro
     public AbstractNSISInformationControlCreator(int style)
     {
         mStyle = style;
-    }
-
-    public IInformationControl createInformationControl(Shell parent)
-    {
-        return new NSISInformationControl(parent,mStyle,mInformationPresenter);
     }
 
     protected NSISInformationControl.IInformationPresenter createInformationPresenter()

@@ -23,7 +23,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
 /**
  * The NSISAnnotationHover provides the hover support for NSIS editors.
  */
-public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IAnnotationHoverExtension, ITextHover, ITextHoverExtension
+public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IAnnotationHoverExtension, ITextHover, ITextHoverExtension, ITextHoverExtension2
 {
     private Set mAnnotationTypes;
 
@@ -128,42 +128,8 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
 
     public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion)
     {
-        if(textViewer instanceof ISourceViewer) {
-            try {
-                ISourceViewer sourceViewer = (ISourceViewer)textViewer;
-                IAnnotationModel model = sourceViewer.getAnnotationModel();
-
-                if (model != null) {
-                    ArrayList messages = new ArrayList();
-                    for(Iterator e= model.getAnnotationIterator(); e.hasNext(); ) {
-                        Annotation a= (Annotation) e.next();
-                        if(isSupported(a)) {
-                            Position p= model.getPosition(a);
-                            if (p != null && p.overlapsWith(hoverRegion.getOffset(), hoverRegion.getLength())) {
-                                String msg = null;
-                                msg= a.getText();
-                                if (!Common.isEmpty(msg)) {
-                                    messages.add(msg);
-                                }
-                            }
-                        }
-                    }
-                    if(messages.size() == 1) {
-                        return (String)messages.get(0);
-                    }
-                    else if(messages.size() > 1) {
-                        StringBuffer buf = new StringBuffer(EclipseNSISPlugin.getResourceString("multiple.markers.message")); //$NON-NLS-1$
-                        for (Iterator iter = messages.iterator(); iter.hasNext();) {
-                            buf.append(LINE_SEPARATOR).append("\t- ").append(iter.next()); //$NON-NLS-1$
-                        }
-                        return buf.toString();
-                    }
-                }
-            }
-            catch (Exception ex) {
-            }
-        }
-        return null;
+        Object info = getHoverInfo2(textViewer, hoverRegion);
+        return info != null?info.toString():null;
     }
 
     public IRegion getHoverRegion(ITextViewer textViewer, int offset)
@@ -189,5 +155,65 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
             }
         }
         return null;
+    }
+
+    public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion)
+    {
+        if(textViewer instanceof ISourceViewer) {
+            try {
+                ISourceViewer sourceViewer = (ISourceViewer)textViewer;
+                IAnnotationModel model = sourceViewer.getAnnotationModel();
+
+                if (model != null) {
+                    ArrayList messages = new ArrayList();
+                    for(Iterator e= model.getAnnotationIterator(); e.hasNext(); ) {
+                        Annotation a= (Annotation) e.next();
+                        if(isSupported(a)) {
+                            Position p= model.getPosition(a);
+                            if (p != null && p.overlapsWith(hoverRegion.getOffset(), hoverRegion.getLength())) {
+                                String msg = null;
+                                msg= a.getText();
+                                if (!Common.isEmpty(msg)) {
+                                    messages.add(msg);
+                                }
+                            }
+                        }
+                    }
+                    if(messages.size() == 1) {
+                        return new NSISInformation((String)messages.get(0));
+                    }
+                    else if(messages.size() > 1) {
+                        StringBuffer buf = new StringBuffer(EclipseNSISPlugin.getResourceString("multiple.markers.message")); //$NON-NLS-1$
+                        for (Iterator iter = messages.iterator(); iter.hasNext();) {
+                            buf.append(LINE_SEPARATOR).append("\t- ").append(iter.next()); //$NON-NLS-1$
+                        }
+                        return new NSISInformation(buf.toString());
+                    }
+                }
+            }
+            catch (Exception ex) {
+            }
+        }
+        return null;
+    }
+
+    static class NSISInformation implements INSISInformation
+    {
+        private String mContent;
+
+        public NSISInformation(String content)
+        {
+            mContent = content;
+        }
+
+        public String getContent()
+        {
+            return mContent;
+        }
+
+        public String toString()
+        {
+            return getContent();
+        }
     }
 }

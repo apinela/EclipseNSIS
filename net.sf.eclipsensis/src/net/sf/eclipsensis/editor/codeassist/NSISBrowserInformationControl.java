@@ -42,6 +42,8 @@ import org.eclipse.ui.part.FileEditorInput;
 public class NSISBrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, IInformationControlExtension3,  DisposeListener
 {
     private static final int BORDER= 1;
+    private static final int MIN_WIDTH = 500;
+    private static final int MIN_HEIGHT = 250;
 
     private Shell mShell;
     private ToolBar mToolBar;
@@ -330,8 +332,14 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         }
         else if(input instanceof NSISBrowserInformation) {
             NSISBrowserInformation info = (NSISBrowserInformation)input;
-            setInformation(info.getInformation());
+            setInformation(info.getContent());
             mKeyword = info.getKeyword();
+        }
+        else if(input instanceof INSISKeywordInformation) {
+            setInput(new NSISBrowserInformationProvider().getInformation(((INSISKeywordInformation)input).getKeyword()));
+        }
+        else if(input instanceof INSISInformation) {
+            setInformation(((INSISInformation)input).getContent());
         }
     }
 
@@ -429,8 +437,8 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
 
     public void setSizeConstraints(int maxWidth, int maxHeight)
     {
-        mMaxWidth= maxWidth;
-        mMaxHeight= maxHeight;
+        mMaxWidth= Math.max(MIN_WIDTH,maxWidth);
+        mMaxHeight= Math.max(MIN_HEIGHT,maxHeight);
     }
 
     public Point computeSizeHint()

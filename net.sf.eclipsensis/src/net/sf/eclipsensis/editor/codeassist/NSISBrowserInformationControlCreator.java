@@ -23,7 +23,7 @@ public class NSISBrowserInformationControlCreator extends AbstractNSISInformatio
     public IInformationControl createInformationControl(Shell parent)
     {
         if(!NSISBrowserUtility.isBrowserAvailable(parent)) {
-            return super.createInformationControl(parent);
+            return new NSISInformationControl(parent,mStyle,mInformationPresenter);
         }
         else {
             return new NSISBrowserInformationControl(parent, SWT.RESIZE,mStyle);

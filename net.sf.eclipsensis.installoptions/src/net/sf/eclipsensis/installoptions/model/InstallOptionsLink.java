@@ -19,7 +19,7 @@ import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Version;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.RGB;
@@ -109,7 +109,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
 
     public void setTxtColor(RGB txtColor)
     {
-        if((mTxtColor == null && txtColor != null) || (mTxtColor != null && !mTxtColor.equals(txtColor))) {
+        if(!Common.objectsAreEqual(mTxtColor,txtColor)) {
             RGB oldTxtColor = mTxtColor;
             mTxtColor = (DEFAULT_TXTCOLOR.equals(txtColor)?null:txtColor);
             firePropertyChange(InstallOptionsModel.PROPERTY_TXTCOLOR, oldTxtColor, txtColor);
@@ -149,7 +149,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
             return descriptor;
         }
         else if(name.equals(InstallOptionsModel.PROPERTY_TXTCOLOR)) {
-            CustomColorPropertyDescriptor descriptor = new CustomColorPropertyDescriptor(InstallOptionsModel.PROPERTY_TXTCOLOR, InstallOptionsPlugin.getResourceString("txtcolor.property.name")); //$NON-NLS-1$;
+            CustomColorPropertyDescriptor descriptor = new CustomColorPropertyDescriptor(this, InstallOptionsModel.PROPERTY_TXTCOLOR, InstallOptionsPlugin.getResourceString("txtcolor.property.name")); //$NON-NLS-1$;
             descriptor.setDefaultColor(DEFAULT_TXTCOLOR);
             descriptor.setLabelProvider(cLabelProvider);
             return descriptor;

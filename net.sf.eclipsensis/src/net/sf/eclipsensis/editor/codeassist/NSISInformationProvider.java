@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.editor.codeassist;
 
 import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.editor.codeassist.NSISAnnotationHover.NSISInformation;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.help.NSISUsageProvider;
 
@@ -53,7 +54,11 @@ public class NSISInformationProvider implements IInformationProvider,
 
     protected Object getInformation(String word)
     {
-        return NSISUsageProvider.getInstance().getUsage(word);
+        String info = NSISUsageProvider.getInstance().getUsage(word);
+        if(info != null) {
+            return new NSISKeywordInformation(word, info);
+        }
+        return null;
     }
 
     /* (non-Javadoc)
@@ -70,5 +75,21 @@ public class NSISInformationProvider implements IInformationProvider,
     public void setInformationPresenterControlCreator(IInformationControlCreator informationControlCreator)
     {
         mInformationControlCreator = informationControlCreator;
+    }
+
+    static class NSISKeywordInformation extends NSISInformation implements INSISKeywordInformation
+    {
+        private String mKeyword;
+
+        public NSISKeywordInformation(String keyword, String content)
+        {
+            super(content);
+            mKeyword = keyword;
+        }
+
+        public String getKeyword()
+        {
+            return mKeyword;
+        }
     }
 }

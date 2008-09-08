@@ -20,9 +20,9 @@ public class NSISBrowserInformationProvider extends NSISInformationProvider
             Object obj = super.getInformation(word);
             if(obj != null) {
                 StringBuffer buf = new StringBuffer(NSISHelpURLProvider.KEYWORD_HELP_HTML_PREFIX);
-                buf.append(obj);
+                buf.append(obj.toString());
                 buf.append(NSISHelpURLProvider.KEYWORD_HELP_HTML_SUFFIX);
-                return buf.toString();
+                return new NSISBrowserInformation(word, buf.toString());
             }
             return null;
         }
