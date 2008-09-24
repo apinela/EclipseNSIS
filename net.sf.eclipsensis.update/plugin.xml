@@ -78,4 +78,15 @@
          </description>
      </wizard>
    </extension>
+   <extension
+         id="net.sf.eclipsensis.update.updateNodeConverters"
+         point="net.sf.eclipsensis.nodeConverters">
+      <nodeConverter
+            class="net.sf.eclipsensis.util.NodeConvertibleNodeConverter">
+         <nameClassMapping
+               class="net.sf.eclipsensis.update.net.DownloadSite"
+               name="downloadsite">
+         </nameClassMapping>
+      </nodeConverter>
+   </extension>
 </plugin>

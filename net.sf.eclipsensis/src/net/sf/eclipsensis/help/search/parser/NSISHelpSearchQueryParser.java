@@ -2,14 +2,14 @@
 package net.sf.eclipsensis.help.search.parser;
 
 import java.io.*;
-import java.util.Collection;
-
-import net.sf.eclipsensis.util.CaseInsensitiveSet;
+import java.util.*;
 
 import org.apache.lucene.analysis.Analyzer;
 
+import net.sf.eclipsensis.util.CaseInsensitiveSet;
+
 public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConstants {
-    public static final String REGEX_PREFIX = "re:"; //$NON-NLS-1$
+    public static final String REGEX_PREFIX = "re:";
 
     private String mField;
     private Analyzer mAnalyzer;
@@ -26,7 +26,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
 
     public NSISHelpSearchQueryParser(String field, Analyzer analyzer)
     {
-        this(new StringReader("")); //$NON-NLS-1$
+        this(new StringReader(""));
         mField = field;
         mAnalyzer = analyzer;
     }
@@ -69,16 +69,16 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
             char c = wildcard.charAt(i);
             switch(c) {
                 case '*':
-                    s.append("\\w*"); //$NON-NLS-1$
+                    s.append("\\w*");
                     break;
                 case '?':
-                    s.append("\\w"); //$NON-NLS-1$
+                    s.append("\\w");
                     break;
                     // escape special regexp-characters
                 case '(': case ')': case '[': case ']': case '$':
                 case '^': case '.': case '{': case '}': case '|':
                 case '\\':
-                    s.append("\\"); //$NON-NLS-1$
+                    s.append("\\");
                     s.append(c);
                     break;
                 default:
@@ -110,7 +110,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
       break;
     default:
       jj_la1[1] = jj_gen;
-
+      ;
     }
   }
 
@@ -137,7 +137,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
       break;
     default:
       jj_la1[3] = jj_gen;
-
+      ;
     }
   }
 
@@ -159,7 +159,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
       case RANGEIN_START:
       case RANGEEX_START:
       case NUMBER:
-
+        ;
         break;
       default:
         jj_la1[4] = jj_gen;
@@ -176,7 +176,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
       jj_consume_token(TERM);
       jj_consume_token(COLON);
     } else {
-
+      ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case QUOTED:
@@ -198,7 +198,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[5] = jj_gen;
-
+        ;
       }
       break;
     default:
@@ -237,7 +237,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[8] = jj_gen;
-
+        ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CARAT:
@@ -249,12 +249,12 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
           break;
         default:
           jj_la1[9] = jj_gen;
-
+          ;
         }
         break;
       default:
         jj_la1[10] = jj_gen;
-
+        ;
       }
              String termImage=discardEscapeChar(term.image);
              if (wildcard) {
@@ -295,7 +295,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[12] = jj_gen;
-
+        ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case RANGEIN_GOOP:
@@ -317,7 +317,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[14] = jj_gen;
-
+        ;
       }
                 if (goop1.kind == RANGEIN_QUOTED) {
                     goop1.image = goop1.image.substring(1, goop1.image.length()-1);
@@ -354,7 +354,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[16] = jj_gen;
-
+        ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case RANGEEX_GOOP:
@@ -376,7 +376,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[18] = jj_gen;
-
+        ;
       }
                 if (goop1.kind == RANGEEX_QUOTED) {
                     goop1.image = goop1.image.substring(1, goop1.image.length()-1);
@@ -401,7 +401,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[19] = jj_gen;
-
+        ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case CARAT:
@@ -410,7 +410,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         break;
       default:
         jj_la1[20] = jj_gen;
-
+        ;
       }
             result.add(term.image.substring(1, term.image.length()-1));
       break;
@@ -421,144 +421,123 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     }
   }
 
-  final private boolean jj_2_1(int xla) {
+  private boolean jj_2_1(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_1(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(0, xla); }
   }
 
-  final private boolean jj_3_1() {
-    if (jj_scan_token(TERM)) {
-        return true;
-    }
-    if (jj_scan_token(COLON)) {
-        return true;
-    }
+  private boolean jj_3_1() {
+    if (jj_scan_token(TERM)) return true;
+    if (jj_scan_token(COLON)) return true;
     return false;
   }
 
+  /** Generated Token Manager. */
   public NSISHelpSearchQueryParserTokenManager token_source;
   JavaCharStream jj_input_stream;
-  public Token token, jj_nt;
+  /** Current token. */
+  public Token token;
+  /** Next token. */
+  public Token jj_nt;
   private int jj_ntk;
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
-  public boolean lookingAhead = false;
   private int jj_gen;
   final private int[] jj_la1 = new int[22];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
-      jj_la1_0();
-      jj_la1_1();
+      jj_la1_init_0();
+      jj_la1_init_1();
    }
-   private static void jj_la1_0() {
+   private static void jj_la1_init_0() {
       jj_la1_0 = new int[] {0x600,0x600,0x3800,0x3800,0x1ec7e00,0x20000,0x1ec4000,0x1280000,0x100000,0x100000,0x20000,0x18000000,0x2000000,0x18000000,0x20000,0x80000000,0x20000000,0x80000000,0x20000,0x100000,0x20000,0x1ec0000,};
    }
-   private static void jj_la1_1() {
+   private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x0,0x1,0x0,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[1];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
+  /** Constructor with InputStream. */
   public NSISHelpSearchQueryParser(java.io.InputStream stream) {
      this(stream, null);
   }
+  /** Constructor with InputStream and supplied encoding */
   public NSISHelpSearchQueryParser(java.io.InputStream stream, String encoding) {
     try { jj_input_stream = new JavaCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new NSISHelpSearchQueryParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) {
-        jj_la1[i] = -1;
-    }
-    for (int i = 0; i < jj_2_rtns.length; i++) {
-        jj_2_rtns[i] = new JJCalls();
-    }
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
+  /** Reinitialise. */
   public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
+  /** Reinitialise. */
   public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) {
-        jj_la1[i] = -1;
-    }
-    for (int i = 0; i < jj_2_rtns.length; i++) {
-        jj_2_rtns[i] = new JJCalls();
-    }
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
+  /** Constructor. */
   public NSISHelpSearchQueryParser(java.io.Reader stream) {
     jj_input_stream = new JavaCharStream(stream, 1, 1);
     token_source = new NSISHelpSearchQueryParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) {
-        jj_la1[i] = -1;
-    }
-    for (int i = 0; i < jj_2_rtns.length; i++) {
-        jj_2_rtns[i] = new JJCalls();
-    }
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
+  /** Reinitialise. */
   public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) {
-        jj_la1[i] = -1;
-    }
-    for (int i = 0; i < jj_2_rtns.length; i++) {
-        jj_2_rtns[i] = new JJCalls();
-    }
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
+  /** Constructor with generated Token Manager. */
   public NSISHelpSearchQueryParser(NSISHelpSearchQueryParserTokenManager tm) {
     token_source = tm;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) {
-        jj_la1[i] = -1;
-    }
-    for (int i = 0; i < jj_2_rtns.length; i++) {
-        jj_2_rtns[i] = new JJCalls();
-    }
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
+  /** Reinitialise. */
   public void ReInit(NSISHelpSearchQueryParserTokenManager tm) {
     token_source = tm;
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) {
-        jj_la1[i] = -1;
-    }
-    for (int i = 0; i < jj_2_rtns.length; i++) {
-        jj_2_rtns[i] = new JJCalls();
-    }
+    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  final private Token jj_consume_token(int kind) throws ParseException {
+  private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
-    if ((oldToken = token).next != null) {
-        token = token.next;
-    }
-    else {
-        token = token.next = token_source.getNextToken();
-    }
+    if ((oldToken = token).next != null) token = token.next;
+    else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
     if (token.kind == kind) {
       jj_gen++;
@@ -567,9 +546,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         for (int i = 0; i < jj_2_rtns.length; i++) {
           JJCalls c = jj_2_rtns[i];
           while (c != null) {
-            if (c.gen < jj_gen) {
-                c.first = null;
-            }
+            if (c.gen < jj_gen) c.first = null;
             c = c.next;
           }
         }
@@ -581,14 +558,9 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     throw generateParseException();
   }
 
-  static private final class LookaheadSuccess extends java.lang.Error {
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = -5134906006293461125L; }
+  static private final class LookaheadSuccess extends java.lang.Error { private static final long serialVersionUID = 1L; }
   final private LookaheadSuccess jj_ls = new LookaheadSuccess();
-  final private boolean jj_scan_token(int kind) {
+  private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {
       jj_la--;
       if (jj_scanpos.next == null) {
@@ -602,63 +574,48 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     if (jj_rescan) {
       int i = 0; Token tok = token;
       while (tok != null && tok != jj_scanpos) { i++; tok = tok.next; }
-      if (tok != null) {
-        jj_add_error_token(kind, i);
+      if (tok != null) jj_add_error_token(kind, i);
     }
-    }
-    if (jj_scanpos.kind != kind) {
-        return true;
-    }
-    if (jj_la == 0 && jj_scanpos == jj_lastpos) {
-        throw jj_ls;
-    }
+    if (jj_scanpos.kind != kind) return true;
+    if (jj_la == 0 && jj_scanpos == jj_lastpos) throw jj_ls;
     return false;
   }
 
+
+/** Get the next Token. */
   final public Token getNextToken() {
-    if (token.next != null) {
-        token = token.next;
-    }
-    else {
-        token = token.next = token_source.getNextToken();
-    }
+    if (token.next != null) token = token.next;
+    else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
     jj_gen++;
     return token;
   }
 
+/** Get the specific Token. */
   final public Token getToken(int index) {
-    Token t = lookingAhead ? jj_scanpos : token;
+    Token t = token;
     for (int i = 0; i < index; i++) {
-      if (t.next != null) {
-        t = t.next;
-    }
-    else {
-        t = t.next = token_source.getNextToken();
-    }
+      if (t.next != null) t = t.next;
+      else t = t.next = token_source.getNextToken();
     }
     return t;
   }
 
-  final private int jj_ntk() {
-    if ((jj_nt=token.next) == null) {
-        return (jj_ntk = (token.next=token_source.getNextToken()).kind);
-    }
-    else {
-        return (jj_ntk = jj_nt.kind);
-    }
+  private int jj_ntk() {
+    if ((jj_nt=token.next) == null)
+      return (jj_ntk = (token.next=token_source.getNextToken()).kind);
+    else
+      return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.Vector jj_expentries = new java.util.Vector();
+  private java.util.List jj_expentries = new java.util.ArrayList();
   private int[] jj_expentry;
   private int jj_kind = -1;
   private int[] jj_lasttokens = new int[100];
   private int jj_endpos;
 
   private void jj_add_error_token(int kind, int pos) {
-    if (pos >= 100) {
-        return;
-    }
+    if (pos >= 100) return;
     if (pos == jj_endpos + 1) {
       jj_lasttokens[jj_endpos++] = kind;
     } else if (jj_endpos != 0) {
@@ -666,37 +623,26 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
       for (int i = 0; i < jj_endpos; i++) {
         jj_expentry[i] = jj_lasttokens[i];
       }
-      boolean exists = false;
-      for (java.util.Enumeration e = jj_expentries.elements(); e.hasMoreElements();) {
-        int[] oldentry = (int[])(e.nextElement());
+      jj_entries_loop: for (java.util.Iterator it = jj_expentries.iterator(); it.hasNext();) {
+        int[] oldentry = (int[])(it.next());
         if (oldentry.length == jj_expentry.length) {
-          exists = true;
           for (int i = 0; i < jj_expentry.length; i++) {
             if (oldentry[i] != jj_expentry[i]) {
-              exists = false;
-              break;
+              continue jj_entries_loop;
             }
           }
-          if (exists) {
-            break;
-        }
+          jj_expentries.add(jj_expentry);
+          break jj_entries_loop;
         }
       }
-      if (!exists) {
-        jj_expentries.addElement(jj_expentry);
-    }
-      if (pos != 0) {
-        jj_lasttokens[(jj_endpos = pos) - 1] = kind;
-    }
+      if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
     }
   }
 
+  /** Generate ParseException. */
   public ParseException generateParseException() {
-    jj_expentries.removeAllElements();
+    jj_expentries.clear();
     boolean[] la1tokens = new boolean[33];
-    for (int i = 0; i < 33; i++) {
-      la1tokens[i] = false;
-    }
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -717,7 +663,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
-        jj_expentries.addElement(jj_expentry);
+        jj_expentries.add(jj_expentry);
       }
     }
     jj_endpos = 0;
@@ -725,18 +671,20 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     jj_add_error_token(0, 0);
     int[][] exptokseq = new int[jj_expentries.size()][];
     for (int i = 0; i < jj_expentries.size(); i++) {
-      exptokseq[i] = (int[])jj_expentries.elementAt(i);
+      exptokseq[i] = (int[])jj_expentries.get(i);
     }
     return new ParseException(token, exptokseq, tokenImage);
   }
 
+  /** Enable tracing. */
   final public void enable_tracing() {
   }
 
+  /** Disable tracing. */
   final public void disable_tracing() {
   }
 
-  final private void jj_rescan_token() {
+  private void jj_rescan_token() {
     jj_rescan = true;
     for (int i = 0; i < 1; i++) {
     try {
@@ -755,7 +703,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     jj_rescan = false;
   }
 
-  final private void jj_save(int index, int xla) {
+  private void jj_save(int index, int xla) {
     JJCalls p = jj_2_rtns[index];
     while (p.gen > jj_gen) {
       if (p.next == null) { p = p.next = new JJCalls(); break; }

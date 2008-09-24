@@ -15,7 +15,7 @@ import net.sf.eclipsensis.INSISConstants;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.swt.SWT;
 
-public abstract class AbstractNSISInformationControlCreator implements IInformationControlCreator,INSISConstants
+public abstract class AbstractNSISInformationControlCreator implements IInformationControlCreator, INSISConstants
 {
     protected int mStyle = SWT.NONE;
 

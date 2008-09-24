@@ -226,10 +226,10 @@ public class Version extends AbstractNodeConvertible implements Comparable, Seri
                     if (nameNode != null) {
                         String propertyName = nameNode.getNodeValue();
                         if(NUMBERS_ATTRIBUTE.equals(propertyName)) {
-                            mNumbers = (int[])readArrayNode(childNode, int[].class);
+                            mNumbers = (int[])NodeConversionUtility.readArrayNode(childNode, int[].class);
                         }
                         else if(QUALIFIERS_ATTRIBUTE.equals(propertyName)) {
-                            mQualifiers = (String[])readArrayNode(childNode, String[].class);
+                            mQualifiers = (String[])NodeConversionUtility.readArrayNode(childNode, String[].class);
                         }
                         else if(DISPLAY_TEXT_ATTRIBUTE.equals(propertyName)) {
                             mDisplayText = (String)getNodeValue(childNode, propertyName, String.class);

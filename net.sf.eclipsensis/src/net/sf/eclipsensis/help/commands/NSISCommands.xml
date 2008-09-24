@@ -11,6 +11,45 @@
 ###############################################################################
 -->
 <commands>
+  <version name="2.39">
+    <add>
+      <command name="!define" category="conditional.compilation.category" scope="any">
+        <param type="radio">
+          <param type="group">
+            <param type="radio" optional="true" depends="2">
+              <param name="/date" type="static"/>
+              <param name="/utcdate" type="static"/>
+            </param>
+            <param name="gflag" type="string"/>
+            <param name="value" type="string" allowBlank="true" optional="true"/>
+          </param>
+          <param type="group">
+            <param name="/file" type="static"/>
+            <param name="gflag" type="string"/>
+	        <param name="filename.txt" type="localfile" acceptVar="false">
+	          <filter name="txt.files.filter.name" value="*.txt"/>
+	          <filter name="all.files.filter.name" value="*.*"/>
+	        </param>
+          </param>
+        </param>
+      </command>
+      <command name="!searchparse" category="conditional.compilation.category" scope="any">
+        <param name="/ignorecase" type="static" optional="true"/>
+        <param name="/noerrors" type="static" optional="true"/>
+        <param type="radio">
+          <param name="/file" tooltip="file" prefix="/file " type="localfile" acceptVar="false"/>
+          <param name="source_string" tooltip="source string" type="string" acceptVar="false"/>
+        </param>
+        <param name="substring_start" type="string" acceptVar="false"/>
+        <param type="repeatable" label="output.symbol.repeatable.label">
+          <param type="group">
+            <param name="OUTPUTSYMBOL" type="string" acceptVar="false"/>
+            <param name="substring" type="string" acceptVar="false" optional="true"/>
+          </param>
+        </param>
+      </command>
+    </add>
+  </version>
   <version name="2.31">
     <add>
       <command name="SetRegView" category="misc.instructions.category" scope="section,function,if">

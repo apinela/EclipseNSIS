@@ -9,14 +9,34 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextHoverExtension;
+import org.eclipse.jface.text.ITextHoverExtension2;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.IAnnotationHoverExtension;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ILineRange;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 

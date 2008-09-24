@@ -393,6 +393,7 @@
       </association>
    </extension>
    <extension
+         id="net.sf.eclipsensis.installoptions.modelNodeConverters"
          point="net.sf.eclipsensis.nodeConverters">
       <nodeConverter
             class="net.sf.eclipsensis.installoptions.model.InstallOptionsWidgetNodeConverter">

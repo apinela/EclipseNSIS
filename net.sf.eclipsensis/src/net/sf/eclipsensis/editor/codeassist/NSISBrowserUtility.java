@@ -31,6 +31,8 @@ public class NSISBrowserUtility
     public static final Image DISABLED_BACK_IMAGE;
     public static final Image FORWARD_IMAGE;
     public static final Image DISABLED_FORWARD_IMAGE;
+    public static final Image HTMLHELP_IMAGE;
+    public static final Image HTMLHELP_DISABLED_IMAGE;
     public static final Set HTML_EXTENSIONS;
 
     private static RGB cBrowserHelpBackground = null;
@@ -45,6 +47,8 @@ public class NSISBrowserUtility
         FORWARD_IMAGE = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.forward.icon")); //$NON-NLS-1$
         DISABLED_FORWARD_IMAGE = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.disabled.forward.icon")); //$NON-NLS-1$
         HOME_IMAGE = loadImage(EclipseNSISPlugin.getResourceString("hoverhelp.home.icon")); //$NON-NLS-1$
+        HTMLHELP_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("hoverhelp.htmlhelp.icon")); //$NON-NLS-1$
+        HTMLHELP_DISABLED_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("hoverhelp.disabled.htmlhelp.icon")); //$NON-NLS-1$
         HTML_EXTENSIONS = Collections.unmodifiableSet(new CaseInsensitiveSet(Common.loadListProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),
                                                         "hoverhelp.html.extensions"))); //$NON-NLS-1$
 

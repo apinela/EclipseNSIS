@@ -1,11 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2004-2008 Sunil Kamath (IcemanK).
- * All rights reserved.
- * This program is made available under the terms of the Common Public License
- * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- *
- * Contributors:
- *     Sunil Kamath (IcemanK) - initial API and implementation
+ * Copyright (c) 2004-2008 Sunil Kamath (IcemanK). All rights reserved. This
+ * program is made available under the terms of the Common Public License v1.0
+ * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
@@ -13,9 +11,12 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import org.w3c.dom.Node;
 
 public class StringParam extends SubstitutableParam
@@ -34,7 +35,8 @@ public class StringParam extends SubstitutableParam
 
     protected String validateText(String text)
     {
-        if(isAllowBlank() || (text != null && text.length() > 0)) {
+        if (isAllowBlank() || text != null && text.length() > 0)
+        {
             return null;
         }
         return EclipseNSISPlugin.getResourceString("string.param.error"); //$NON-NLS-1$
@@ -56,7 +58,8 @@ public class StringParam extends SubstitutableParam
 
         public void clear()
         {
-            if(Common.isValid(mText)) {
+            if (Common.isValid(mText))
+            {
                 mText.setText(""); //$NON-NLS-1$
             }
             super.clear();
@@ -64,7 +67,8 @@ public class StringParam extends SubstitutableParam
 
         protected String getPrefixableParamText()
         {
-            if(Common.isValid(mText)) {
+            if (Common.isValid(mText))
+            {
                 return mText.getText();
             }
             return null;
@@ -72,7 +76,8 @@ public class StringParam extends SubstitutableParam
 
         protected String validateParam()
         {
-            if(Common.isValid(mText)) {
+            if (Common.isValid(mText))
+            {
                 return StringParam.this.validateText(mText.getText());
             }
             return null;
@@ -81,24 +86,27 @@ public class StringParam extends SubstitutableParam
         public void saveSettings()
         {
             super.saveSettings();
-            if(Common.isValid(mText) && getSettings() != null) {
+            if (Common.isValid(mText) && getSettings() != null)
+            {
                 getSettings().put(SETTING_TEXT, mText.getText());
             }
         }
 
         protected Control createParamControl(Composite parent)
         {
-            mText = new Text(parent,SWT.BORDER);
+            mText = new Text(parent, SWT.BORDER);
             setToolTip(mText);
-            mText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
+            mText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             mText.addVerifyListener(new VerifyListener() {
                 public void verifyText(VerifyEvent e)
                 {
-                    Text text = (Text)e.widget;
+                    Text text = (Text) e.widget;
                     StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                    buf.append(text.getText().substring(0,e.start)).append(e.text).append(text.getText().substring(e.end));
+                    buf.append(text.getText().substring(0, e.start)).append(e.text).append(
+                            text.getText().substring(e.end));
                     e.doit = StringParam.this.verifyText(buf.toString());
-                    if(!e.doit) {
+                    if (!e.doit)
+                    {
                         e.display.beep();
                     }
                 }
@@ -109,8 +117,9 @@ public class StringParam extends SubstitutableParam
         protected void initParamEditor()
         {
             super.initParamEditor();
-            if(Common.isValid(mText)) {
-                mText.setText((String)getSettingValue(SETTING_TEXT, String.class, "")); //$NON-NLS-1$
+            if (Common.isValid(mText))
+            {
+                mText.setText((String) getSettingValue(SETTING_TEXT, String.class, "")); //$NON-NLS-1$
             }
         }
     }

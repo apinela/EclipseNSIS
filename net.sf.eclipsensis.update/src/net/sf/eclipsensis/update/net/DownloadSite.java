@@ -1,26 +1,38 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008 Sunil Kamath (IcemanK).
- * All rights reserved.
- * This program is made available under the terms of the Common Public License
- * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- *
- * Contributors:
- *     Sunil Kamath (IcemanK) - initial API and implementation
+ * Copyright (c) 2005-2008 Sunil Kamath (IcemanK). All rights reserved. This
+ * program is made available under the terms of the Common Public License v1.0
+ * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.update.net;
 
-import org.eclipse.swt.graphics.Image;
+import java.beans.PropertyDescriptor;
+import java.io.File;
+import java.util.Collection;
 
-public class DownloadSite
+import net.sf.eclipsensis.util.AbstractNodeConvertible;
+
+import org.eclipse.swt.graphics.Image;
+import org.w3c.dom.Node;
+
+public class DownloadSite extends AbstractNodeConvertible
 {
-    private Image mImage;
+    private static final long serialVersionUID = -6504957629669082738L;
+
+    private File mImageFile;
     private String mLocation;
     private String mContinent;
     private String mName;
 
-    DownloadSite(Image image, String location, String continent, String name)
+    public DownloadSite()
     {
-        mImage = image;
+        this(null, null, null, null);
+    }
+
+    DownloadSite(File imageFile, String location, String continent, String name)
+    {
+        mImageFile = imageFile;
         mLocation = location;
         mContinent = continent;
         mName = name;
@@ -33,7 +45,12 @@ public class DownloadSite
 
     public Image getImage()
     {
-        return mImage;
+        return NetworkUtil.getImageFromCache(mImageFile);
+    }
+
+    public File getImageFile()
+    {
+        return mImageFile;
     }
 
     public String getLocation()
@@ -44,5 +61,135 @@ public class DownloadSite
     public String getName()
     {
         return mName;
+    }
+
+    protected String getChildNodeName()
+    {
+        return "attribute";
+    }
+
+    public String getNodeName()
+    {
+        return "downloadsite";
+    }
+
+    protected void addSkippedProperties(Collection skippedProperties)
+    {
+        super.addSkippedProperties(skippedProperties);
+        skippedProperties.add("image");
+    }
+
+    protected void propertyFromNode(Node childNode, PropertyDescriptor propertyDescriptor)
+    {
+        String propertyName = propertyDescriptor.getName();
+        if ("imageFile".equals(propertyName))
+        {
+            mImageFile = (File) getNodeValue(childNode, propertyDescriptor.getName(), File.class);
+        }
+        else if ("location".equals(propertyName))
+        {
+            mLocation = (String) getNodeValue(childNode, propertyDescriptor.getName(), String.class);
+        }
+        else if ("name".equals(propertyName))
+        {
+            mName = (String) getNodeValue(childNode, propertyDescriptor.getName(), String.class);
+        }
+        else if ("continent".equals(propertyName))
+        {
+            mContinent = (String) getNodeValue(childNode, propertyDescriptor.getName(), String.class);
+        }
+        else
+        {
+            super.propertyFromNode(childNode, propertyDescriptor);
+        }
+    }
+
+    protected Object convertFromString(String string, Class clasz)
+    {
+        if (File.class.equals(clasz))
+        {
+            return new File(string);
+        }
+        return super.convertFromString(string, clasz);
+    }
+
+    protected String convertToString(String name, Object obj)
+    {
+        if (obj instanceof File)
+        {
+            return ((File) obj).getAbsolutePath();
+        }
+        return super.convertToString(name, obj);
+    }
+
+    public int hashCode()
+    {
+        int result = 31 + (mContinent == null ? 0 : mContinent.hashCode());
+        result = 31 * result + (mImageFile == null ? 0 : mImageFile.hashCode());
+        result = 31 * result + (mLocation == null ? 0 : mLocation.hashCode());
+        result = 31 * result + (mName == null ? 0 : mName.hashCode());
+        return result;
+    }
+
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        DownloadSite other = (DownloadSite) obj;
+        if (mContinent == null)
+        {
+            if (other.mContinent != null)
+            {
+                return false;
+            }
+        }
+        else if (!mContinent.equals(other.mContinent))
+        {
+            return false;
+        }
+        if (mImageFile == null)
+        {
+            if (other.mImageFile != null)
+            {
+                return false;
+            }
+        }
+        else if (!mImageFile.equals(other.mImageFile))
+        {
+            return false;
+        }
+        if (mLocation == null)
+        {
+            if (other.mLocation != null)
+            {
+                return false;
+            }
+        }
+        else if (!mLocation.equals(other.mLocation))
+        {
+            return false;
+        }
+        if (mName == null)
+        {
+            if (other.mName != null)
+            {
+                return false;
+            }
+        }
+        else if (!mName.equals(other.mName))
+        {
+            return false;
+        }
+        return true;
     }
 }

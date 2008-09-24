@@ -651,13 +651,13 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement impleme
         }
     }
 
-    protected Object convertFromString(String name, String string, Class clasz)
+    protected Object convertFromString(String string, Class clasz)
     {
         if(clasz.equals(Position.class)) {
             return TypeConverter.POSITION_CONVERTER.asType(string);
         }
         else {
-            return super.convertFromString(name, string, clasz);
+            return super.convertFromString(string, clasz);
         }
     }
 
