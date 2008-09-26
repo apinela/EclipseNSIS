@@ -48,6 +48,8 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -118,24 +120,22 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
 
         mShell = new Shell(parent, SWT.TOOL | SWT.NO_FOCUS | SWT.ON_TOP | shellStyle);
         Display display = mShell.getDisplay();
-        // mShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
         layout = new GridLayout(1, false);
         layout.marginHeight = layout.marginWidth = (shellStyle & SWT.NO_TRIM) == 0 ? 0 : BORDER;
         mShell.setLayout(layout);
         mShell.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         Composite composite = new Composite(mShell, SWT.NONE);
-        layout = new GridLayout(2, false);
+        layout = new GridLayout(3, false);
         layout.marginHeight = layout.marginWidth = layout.verticalSpacing = 0;
-        // composite.setBackground(display.getSystemColor(SWT.
-        // COLOR_INFO_BACKGROUND));
+
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         // Browser field
         mBrowser = new Browser(composite, SWT.NONE);
         mHideScrollBars = (style & SWT.V_SCROLL) == 0 && (style & SWT.H_SCROLL) == 0;
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-        gd.horizontalSpan = 2;
+        gd.horizontalSpan = 3;
         mBrowser.setLayoutData(gd);
         mBrowser.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
         mBrowser.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
@@ -159,6 +159,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         // Replace browser's built-in context menu with none
         mBrowser.setMenu(new Menu(mShell, SWT.NONE));
 
+        String statusText = null;
         boolean helpAvailable = NSISHelpURLProvider.getInstance().isNSISHelpAvailable();
         if (helpAvailable)
         {
@@ -181,6 +182,15 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                     }
                 }
                 final int[][] keys = (int[][]) list2.toArray(new int[list2.size()][]);
+                try
+                {
+                    statusText = NSISInformationUtility.buildStatusText(command.getCommand().getDescription(),
+                            (KeySequence[]) list.toArray(new KeySequence[list.size()]));
+                }
+                catch (Exception e)
+                {
+                    statusText = null;
+                }
 
                 mBrowser.addKeyListener(new KeyListener() {
                     public void keyPressed(KeyEvent e)
@@ -207,10 +217,35 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
         separator.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        gd.horizontalSpan = 2;
+        gd.horizontalSpan = 3;
         separator.setLayoutData(gd);
 
         createToolBar(composite, helpAvailable);
+        if (statusText == null)
+        {
+            ((GridData) mToolBar.getLayoutData()).horizontalSpan = 2;
+        }
+        else
+        {
+            Label l = new Label(composite, SWT.NONE);
+            FontData[] fd = l.getFont().getFontData();
+            for (int i = 0; i < fd.length; i++)
+            {
+                fd[i].height *= 0.9;
+            }
+            final Font f = new Font(l.getDisplay(), fd);
+            l.setFont(f);
+            l.addDisposeListener(new DisposeListener() {
+                public void widgetDisposed(DisposeEvent e)
+                {
+                    f.dispose();
+                }
+            });
+            l.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+            l.setText(statusText);
+            gd = new GridData(SWT.END, SWT.CENTER, false, false);
+            l.setLayoutData(gd);
+        }
         Composite resizer = new Composite(composite, SWT.H_SCROLL | SWT.V_SCROLL);
         gd = new GridData(SWT.END, SWT.END, false, false);
         gd.widthHint = 0;
@@ -227,10 +262,15 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
     private void gotoHelp()
     {
         String keyword = mKeyword;
-        if (mShell != null && !mShell.isDisposed())
-        {
-            mShell.dispose();
-        }
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run()
+            {
+                if (mShell != null && !mShell.isDisposed())
+                {
+                    mShell.dispose();
+                }
+            }
+        });
         NSISHelpURLProvider.getInstance().showHelpURL(keyword);
     }
 
@@ -248,8 +288,6 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
             mToolBar = new ToolBar(displayArea, SWT.FLAT);
             GridData data = new GridData(SWT.LEFT, SWT.FILL, true, false);
             mToolBar.setLayoutData(data);
-            // mToolBar.setBackground(mToolBar.getDisplay().getSystemColor(SWT.
-            // COLOR_INFO_BACKGROUND));
 
             // Add a button to navigate backwards through previously visited
             // pages

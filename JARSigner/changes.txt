@@ -1,6 +1,9 @@
 Revision History
 ================
 
+0.9.2.2 (09/26/2008)
+    * Added compatibility for Eclipse 3.4.
+
 0.9.2.1 (01/02/2008)
     * Updated copyright notice.
 

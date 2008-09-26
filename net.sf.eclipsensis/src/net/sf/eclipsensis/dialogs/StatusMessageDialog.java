@@ -1,30 +1,40 @@
 /*******************************************************************************
- * Copyright (c) 2004-2008 Sunil Kamath (IcemanK).
- * All rights reserved.
- * This program is made available under the terms of the Common Public License
- * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- *
- * Contributors:
- *     Sunil Kamath (IcemanK) - initial API and implementation
+ * Copyright (c) 2004-2008 Sunil Kamath (IcemanK). All rights reserved. This
+ * program is made available under the terms of the Common Public License v1.0
+ * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 
 public abstract class StatusMessageDialog extends TrayDialog implements IDialogConstants
 {
     protected String mMessage;
     protected Label mMessageLabel;
     protected Label mImageLabel;
-    private DialogStatus mStatus = new DialogStatus(IStatus.OK,""); //$NON-NLS-1$
+    private DialogStatus mStatus = new DialogStatus(IStatus.OK, ""); //$NON-NLS-1$
     private Image mErrorImage = null;
     private Image mWarningImage = null;
     private Image mInfoImage = null;
@@ -34,8 +44,9 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
 
     /**
      * Creates a new dialog.
-     *
-     * @param parent the shell parent of the dialog
+     * 
+     * @param parent
+     *            the shell parent of the dialog
      */
     public StatusMessageDialog(Shell parent)
     {
@@ -46,24 +57,25 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     protected Control createMessageArea(Composite composite)
     {
         Image image = getImage();
-        if (image != null) {
+        if (image != null)
+        {
             mImageLabel = new Label(composite, SWT.NONE);
             image.setBackground(mImageLabel.getBackground());
             mImageLabel.setImage(image);
-            mImageLabel.setLayoutData(new GridData(
-                    GridData.HORIZONTAL_ALIGN_CENTER
-                            | GridData.VERTICAL_ALIGN_BEGINNING));
+            mImageLabel
+                    .setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_BEGINNING));
         }
         // create message
-        if (mMessage != null) {
+        if (mMessage != null)
+        {
             mMessageLabel = new Label(composite, getMessageLabelStyle());
             mMessageLabel.setText(mMessage);
-            GridData data = new GridData(GridData.GRAB_HORIZONTAL
-                    | GridData.HORIZONTAL_ALIGN_FILL
+            GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL
                     | GridData.VERTICAL_ALIGN_BEGINNING);
             data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
             mMessageLabel.setLayoutData(data);
-            if((mMessageLabel.getStyle() & SWT.WRAP)==0) {
+            if ((mMessageLabel.getStyle() & SWT.WRAP) == 0)
+            {
                 mMessageLabel.addControlListener(new ControlAdapter() {
                     public void controlResized(ControlEvent e)
                     {
@@ -95,7 +107,8 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     public void setTitle(String title)
     {
         mTitle = title;
-        if(getShell() != null) {
+        if (getShell() != null)
+        {
             getShell().setText(mTitle);
         }
     }
@@ -108,7 +121,8 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     public void setShellImage(Image shellImage)
     {
         mShellImage = shellImage;
-        if(getShell() != null) {
+        if (getShell() != null)
+        {
             getShell().setImage(mShellImage);
         }
     }
@@ -124,12 +138,15 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     /**
      * Updates the status of the ok button to reflect the given status.
      * Subclasses may override this method to update additional buttons.
-     * @param status the status.
+     * 
+     * @param status
+     *            the status.
      */
     protected final void updateButtonsEnableState(IStatus status)
     {
         Button b = getButton(IDialogConstants.OK_ID);
-        if (b != null && !b.isDisposed()) {
+        if (b != null && !b.isDisposed())
+        {
             b.setEnabled(!status.matches(IStatus.ERROR));
         }
     }
@@ -143,7 +160,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         layout.marginWidth = 0;
         layout.verticalSpacing = 0;
         composite.setLayout(layout);
-        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         applyDialogFont(composite);
         // initialize the dialog units
         initializeDialogUnits(composite);
@@ -152,11 +169,13 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
 
         Composite composite2 = new Composite(composite, SWT.NONE);
         composite2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-        layout = new GridLayout(1,false);
+        layout = new GridLayout(1, false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite2.setLayout(layout);
         buttonBar = createButtonBar(composite2);
+        GridData gd = (GridData) buttonBar.getLayoutData();
+        gd.grabExcessHorizontalSpace = true;
         return composite;
     }
 
@@ -166,22 +185,26 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     protected final Control createDialogArea(Composite parent)
     {
         parent = new Composite(parent, SWT.NONE);
-        GridLayout layout= new GridLayout();
+        GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         parent.setLayout(layout);
         parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         mErrorImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("error.icon")); //$NON-NLS-1$
-        mWarningImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("warning.icon")); //$NON-NLS-1$
+        mWarningImage = EclipseNSISPlugin.getImageManager().getImage(
+                EclipseNSISPlugin.getResourceString("warning.icon")); //$NON-NLS-1$
         mInfoImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("info.icon")); //$NON-NLS-1$
 
-        int width = Math.max(mInfoImage.getBounds().width,Math.max(mErrorImage.getBounds().width,mWarningImage.getBounds().width));
-        int height = Math.max(mInfoImage.getBounds().height,Math.max(mErrorImage.getBounds().height,mWarningImage.getBounds().height));
-        Image tempImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("transparent.icon")); //$NON-NLS-1$
+        int width = Math.max(mInfoImage.getBounds().width, Math.max(mErrorImage.getBounds().width, mWarningImage
+                .getBounds().width));
+        int height = Math.max(mInfoImage.getBounds().height, Math.max(mErrorImage.getBounds().height, mWarningImage
+                .getBounds().height));
+        Image tempImage = EclipseNSISPlugin.getImageManager().getImage(
+                EclipseNSISPlugin.getResourceString("transparent.icon")); //$NON-NLS-1$
         ImageData imageData = tempImage.getImageData();
         imageData = imageData.scaledTo(width, height);
-        mOKImage = new Image(getShell().getDisplay(),imageData);
+        mOKImage = new Image(getShell().getDisplay(), imageData);
 
         createControlAndMessageArea(parent);
         applyDialogFont(parent);
@@ -193,8 +216,8 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
      */
     protected void createControlAndMessageArea(Composite parent)
     {
-        Composite composite= new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(1,false);
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout(1, false);
         layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
         layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
         composite.setLayout(layout);
@@ -206,9 +229,9 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
         label.setLayoutData(data);
 
-        composite= new Composite(parent, SWT.NONE);
+        composite = new Composite(parent, SWT.NONE);
         layout = new GridLayout();
-        layout.numColumns= 2;
+        layout.numColumns = 2;
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         mMessage = getMessage();
@@ -219,10 +242,12 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     {
         mStatus = status;
         updateButtonsEnableState(status);
-        if(mImageLabel != null && !mImageLabel.isDisposed()) {
+        if (mImageLabel != null && !mImageLabel.isDisposed())
+        {
             mImageLabel.setImage(getImage());
         }
-        if(mMessageLabel != null && !mMessageLabel.isDisposed()) {
+        if (mMessageLabel != null && !mMessageLabel.isDisposed())
+        {
             mMessageLabel.setText(getMessage());
             updateMessageLabelToolTip();
         }
@@ -231,20 +256,23 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     private void updateMessageLabelToolTip()
     {
         boolean ok = true;
-        if(mMessageLabel != null && !mMessageLabel.isDisposed()) {
+        if (mMessageLabel != null && !mMessageLabel.isDisposed())
+        {
             GC gc = new GC(mMessageLabel);
             Point extent = gc.stringExtent(mMessageLabel.getText());
             gc.dispose();
-            ok = (mMessageLabel.getSize().x >= extent.x);
+            ok = mMessageLabel.getSize().x >= extent.x;
         }
-        mMessageLabel.setToolTipText(ok?null:mMessageLabel.getText());
+        mMessageLabel.setToolTipText(ok ? null : mMessageLabel.getText());
     }
 
     protected final Image getImage()
     {
         Image image = mStatus.getImage();
-        if(image == null) {
-            switch(mStatus.getSeverity()) {
+        if (image == null)
+        {
+            switch (mStatus.getSeverity())
+            {
                 case IStatus.ERROR:
                     return mErrorImage;
                 case IStatus.WARNING:
@@ -255,7 +283,8 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
                     return mOKImage;
             }
         }
-        else {
+        else
+        {
             return image;
         }
     }
@@ -265,12 +294,15 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         return mStatus.getMessage();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.jface.window.Window#close()
      */
     public boolean close()
     {
-        if(mOKImage != null && !mOKImage.isDisposed()) {
+        if (mOKImage != null && !mOKImage.isDisposed())
+        {
             mOKImage.dispose();
         }
         return super.close();
@@ -284,19 +316,20 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
 
         public DialogStatus(int severity, String message)
         {
-            this(severity,message,null);
+            this(severity, message, null);
         }
 
         public DialogStatus(int severity, String message, Image image)
         {
-            super(severity,INSISConstants.PLUGIN_ID,0,message,null);
+            super(severity, INSISConstants.PLUGIN_ID, 0, message, null);
             mImage = image;
             refreshStatus();
         }
 
         protected void setMessage(String message)
         {
-            if(message==null) {
+            if (message == null)
+            {
                 message = ""; //$NON-NLS-1$
             }
             super.setMessage(message);
@@ -343,7 +376,8 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
 
         protected final void refreshStatus()
         {
-            if(mStatus == this) {
+            if (mStatus == this)
+            {
                 updateStatus(this);
             }
         }

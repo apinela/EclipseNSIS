@@ -1,7 +1,10 @@
 Revision History
 ================
 
-0.9.6.3 (04/22/2008)
+0.9.7 (09/26/2008)
+    * Upgraded to Eclipse 3.4 - no longer compliant with Eclipse 3.3.
+    * Added support for new !searchparse command.
+    * Added support for new /file option for !define command.
     * Added support for !else in outline view.
     * Wizard now supports MUI2 and Multi-User Install.
     * Added preview to NSIS Command Wizard.
@@ -10,6 +13,7 @@ Revision History
         o 1902422
     * Bug Fixes
         o 1996176
+        o 2050658
     * Other minor bug fixes.
 
 0.9.6.2 (01/02/2008)

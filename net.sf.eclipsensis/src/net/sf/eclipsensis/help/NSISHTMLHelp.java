@@ -1,47 +1,126 @@
 /*******************************************************************************
- * Copyright (c) 2004-2008 Sunil Kamath (IcemanK).
- * All rights reserved.
- * This program is made available under the terms of the Common Public License
- * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- *
- * Contributors:
- *     Sunil Kamath (IcemanK) - initial API and implementation
+ * Copyright (c) 2004-2008 Sunil Kamath (IcemanK). All rights reserved. This
+ * program is made available under the terms of the Common Public License v1.0
+ * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
 
-import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.dialogs.*;
-import net.sf.eclipsensis.help.NSISHelpIndex.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.dialogs.NSISConfigWizardDialog;
+import net.sf.eclipsensis.dialogs.TableResizer;
+import net.sf.eclipsensis.help.NSISHelpIndex.NSISHelpIndexEntry;
+import net.sf.eclipsensis.help.NSISHelpIndex.NSISHelpIndexURL;
 import net.sf.eclipsensis.help.NSISHelpTOC.NSISHelpTOCNode;
-import net.sf.eclipsensis.help.search.*;
+import net.sf.eclipsensis.help.search.INSISHelpSearchConstants;
+import net.sf.eclipsensis.help.search.INSISHelpSearchRequester;
+import net.sf.eclipsensis.help.search.NSISHelpSearchResult;
 import net.sf.eclipsensis.help.search.parser.NSISHelpSearchQueryParser;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.settings.*;
-import net.sf.eclipsensis.util.*;
-import net.sf.eclipsensis.viewer.*;
+import net.sf.eclipsensis.settings.INSISPreferenceConstants;
+import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.util.CaseInsensitiveSet;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.CommonImages;
+import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.viewer.CollectionLabelProvider;
+import net.sf.eclipsensis.viewer.EmptyContentProvider;
 
-import org.apache.lucene.search.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.QueryFilter;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreeViewerListener;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.*;
-import org.eclipse.swt.browser.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.LocationAdapter;
+import org.eclipse.swt.browser.LocationEvent;
+import org.eclipse.swt.browser.LocationListener;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.browser.StatusTextEvent;
+import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 public class NSISHTMLHelp extends ViewPart implements INSISConstants
@@ -49,8 +128,10 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     public static final String ECLIPSENSIS_URI_SCHEME = "eclipsensis:"; //$NON-NLS-1$
     public static final String FILE_URI_SCHEME = "file:"; //$NON-NLS-1$
     private static String cFirstPage = null;
-    private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
-    private static final int IMAGE_COUNT = Integer.parseInt(EclipseNSISPlugin.getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
+    private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin
+            .getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
+    private static final int IMAGE_COUNT = Integer.parseInt(EclipseNSISPlugin
+            .getResourceString("help.browser.throbber.icon.count")); //$NON-NLS-1$
     private static final String HIGHLIGHT_JS_CONTENT;
     private static final String ENCODING_SCHEME = System.getProperty("file.encoding"); //$NON-NLS-1$
 
@@ -74,7 +155,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private String mStartPage;
     private int mThrobberImageIndex;
     private boolean mBusy;
-    private INSISHelpURLListener mHelpURLListener = new INSISHelpURLListener(){
+    private INSISHelpURLListener mHelpURLListener = new INSISHelpURLListener() {
         public void helpURLsChanged()
         {
             Runnable runnable = new Runnable() {
@@ -82,61 +163,79 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 {
                     String location = null;
                     ISelection sel = mContentsViewer.getSelection();
-                    if(sel != null && !sel.isEmpty()) {
-                        NSISHelpTOCNode node = (NSISHelpTOCNode)((IStructuredSelection)sel).getFirstElement();
+                    if (sel != null && !sel.isEmpty())
+                    {
+                        NSISHelpTOCNode node = (NSISHelpTOCNode) ((IStructuredSelection) sel).getFirstElement();
                         NSISHelpTOC toc = NSISHelpURLProvider.getInstance().getCachedHelpTOC();
                         NSISHelpTOCNode node2 = toc.getNode(node.getName());
-                        if(node2 != null) {
+                        if (node2 != null)
+                        {
                             location = node2.getURL();
                         }
-                        else {
+                        else
+                        {
                             node2 = toc.getNode(node.getURL());
-                            if(node2 != null) {
+                            if (node2 != null)
+                            {
                                 location = node2.getURL();
                             }
                         }
                     }
-                    if(location == null) {
+                    if (location == null)
+                    {
                         location = mBrowser.getUrl();
-                        if(location != null) {
-                            try {
+                        if (location != null)
+                        {
+                            try
+                            {
                                 URI uri = new URI(location);
-                                try {
+                                try
+                                {
                                     new File(uri);
                                 }
-                                catch(IllegalArgumentException iae) {
-                                    try {
+                                catch (IllegalArgumentException iae)
+                                {
+                                    try
+                                    {
                                         location = uri.toURL().toString();
                                     }
-                                    catch (MalformedURLException e) {
+                                    catch (MalformedURLException e)
+                                    {
                                         location = null;
                                     }
                                 }
                             }
-                            catch (URISyntaxException e) {
+                            catch (URISyntaxException e)
+                            {
                                 location = null;
                             }
                         }
-                        if(location != null) {
+                        if (location != null)
+                        {
                             File f = new File(location);
-                            if(f.exists()) {
+                            if (f.exists())
+                            {
                                 location = IOUtility.getFileURLString(f);
                             }
-                            else {
+                            else
+                            {
                                 location = null;
                             }
                         }
                     }
-                    if(location != null) {
+                    if (location != null)
+                    {
                         cFirstPage = location;
                     }
                     init();
                 }
             };
-            if(Display.getCurrent() != null) {
+            if (Display.getCurrent() != null)
+            {
                 runnable.run();
             }
-            else {
+            else
+            {
                 Display.getDefault().syncExec(runnable);
             }
         }
@@ -153,18 +252,22 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private MessageFormat mHighlightJSPrefix = null;
     private String mHighlightJS = null;
 
-    static {
+    static
+    {
         String highlighJSContent = null;
         InputStream is = null;
-        try {
+        try
+        {
             is = NSISHTMLHelp.class.getResourceAsStream("highlight.js"); //$NON-NLS-1$
             highlighJSContent = new String(IOUtility.loadContentFromStream(is));
         }
-        catch(Exception ex) {
+        catch (Exception ex)
+        {
             highlighJSContent = null;
             EclipseNSISPlugin.getDefault().log(ex);
         }
-        finally {
+        finally
+        {
             IOUtility.closeIO(is);
         }
         HIGHLIGHT_JS_CONTENT = highlighJSContent;
@@ -172,28 +275,33 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
     public static boolean showHelp(final String url)
     {
-        final boolean[] result = {false};
+        final boolean[] result = { false };
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run()
             {
-                try {
+                try
+                {
                     IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                    NSISHTMLHelp htmlHelp = (NSISHTMLHelp)activePage.findView(HTMLHELP_ID);
-                    if(htmlHelp == null) {
+                    NSISHTMLHelp htmlHelp = (NSISHTMLHelp) activePage.findView(HTMLHELP_ID);
+                    if (htmlHelp == null)
+                    {
                         cFirstPage = url;
-                        htmlHelp = (NSISHTMLHelp)activePage.showView(HTMLHELP_ID);
+                        htmlHelp = (NSISHTMLHelp) activePage.showView(HTMLHELP_ID);
                         result[0] = htmlHelp.isActivated();
                     }
-                    else {
+                    else
+                    {
                         activePage.activate(htmlHelp);
                         result[0] = htmlHelp.isActivated();
-                        if(result[0]) {
+                        if (result[0])
+                        {
                             cFirstPage = url;
                             htmlHelp.openHelp();
                         }
                     }
                 }
-                catch(PartInitException pie) {
+                catch (PartInitException pie)
+                {
                     result[0] = false;
                     EclipseNSISPlugin.getDefault().log(pie);
                 }
@@ -204,7 +312,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
     public NSISHTMLHelp()
     {
-        if(HIGHLIGHT_JS_CONTENT != null) {
+        if (HIGHLIGHT_JS_CONTENT != null)
+        {
             mHighlightJSPrefix = new MessageFormat("var keywords = new Array({0});\r\nvar regex = new Array({1});\r\n"); //$NON-NLS-1$
         }
     }
@@ -219,8 +328,12 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         return getBrowser() != null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
+     * .Composite)
      */
     public void createPartControl(Composite parent)
     {
@@ -229,17 +342,20 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
         initResources();
 
-        mSashForm = new SashForm(parent, SWT.HORIZONTAL|SWT.SMOOTH);
+        mSashForm = new SashForm(parent, SWT.HORIZONTAL | SWT.SMOOTH);
         createNavigationPane(mSashForm);
-        Composite composite = new Composite(mSashForm,SWT.NONE);
+        Composite composite = new Composite(mSashForm, SWT.NONE);
         composite.setLayout(new FillLayout());
-        mSashForm.setWeights(new int[] {1,3});
-        try {
+        mSashForm.setWeights(new int[] { 1, 3 });
+        try
+        {
             mBrowser = new Browser(composite, SWT.BORDER);
         }
-        catch (SWTError e) {
+        catch (SWTError e)
+        {
             mBrowser = null;
-            if(mSashForm != null) {
+            if (mSashForm != null)
+            {
                 mSashForm.dispose();
             }
             parent.setLayout(new FillLayout());
@@ -253,10 +369,10 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         createToolBar(parent);
         createThrobber(parent);
         createStatusArea(parent);
-        Label l = new Label(parent,SWT.SEPARATOR|SWT.HORIZONTAL);
+        Label l = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
         FormData data = new FormData();
-        data.left = new FormAttachment(0,0);
-        data.right = new FormAttachment(100,0);
+        data.left = new FormAttachment(0, 0);
+        data.right = new FormAttachment(100, 0);
         data.top = new FormAttachment(mThrobber, 5, SWT.DEFAULT);
         l.setLayoutData(data);
 
@@ -276,28 +392,38 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
             public void changing(LocationEvent event)
             {
-                if(!Common.isEmpty(event.location)) {
+                if (!Common.isEmpty(event.location))
+                {
                     File f = null;
-                    if(event.location.regionMatches(true,0,FILE_URI_SCHEME,0,FILE_URI_SCHEME.length())) {
-                        try {
+                    if (event.location.regionMatches(true, 0, FILE_URI_SCHEME, 0, FILE_URI_SCHEME.length()))
+                    {
+                        try
+                        {
                             URI url = new URI(event.location);
-                            if(url.getFragment() != null) {
+                            if (url.getFragment() != null)
+                            {
                                 int n = event.location.lastIndexOf('#');
-                                if(n >= 0) {
-                                    url = new URI(event.location.substring(0,n));
+                                if (n >= 0)
+                                {
+                                    url = new URI(event.location.substring(0, n));
                                 }
                             }
-                            if(url != null) {
+                            if (url != null)
+                            {
                                 f = new File(url);
                             }
                         }
-                        catch (URISyntaxException e) {
+                        catch (URISyntaxException e)
+                        {
                             EclipseNSISPlugin.getDefault().log(e);
                         }
                     }
-                    else if(event.location.regionMatches(true,0,ECLIPSENSIS_URI_SCHEME,0,ECLIPSENSIS_URI_SCHEME.length())) {
+                    else if (event.location.regionMatches(true, 0, ECLIPSENSIS_URI_SCHEME, 0, ECLIPSENSIS_URI_SCHEME
+                            .length()))
+                    {
                         String action = event.location.substring(ECLIPSENSIS_URI_SCHEME.length());
-                        if(action.equals(NSISHelpProducer.CONFIGURE)) {
+                        if (action.equals(NSISHelpProducer.CONFIGURE))
+                        {
                             IJobStatusRunnable runnable = new IJobStatusRunnable() {
                                 public IStatus run(IProgressMonitor monitor)
                                 {
@@ -305,31 +431,39 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                                     return Status.OK_STATUS;
                                 }
                             };
-                            EclipseNSISPlugin.getDefault().getJobScheduler().scheduleUIJob(NSISHTMLHelp.class, EclipseNSISPlugin.getResourceString("configure.nsis.job.name"), runnable); //$NON-NLS-1$
+                            EclipseNSISPlugin.getDefault().getJobScheduler().scheduleUIJob(NSISHTMLHelp.class,
+                                    EclipseNSISPlugin.getResourceString("configure.nsis.job.name"), runnable); //$NON-NLS-1$
                             event.doit = false;
                         }
                     }
-                    else {
+                    else
+                    {
                         f = new File(event.location);
                     }
                     File f2 = NSISHelpURLProvider.getInstance().translateCachedFile(f);
-                    if(f2 != null && f2.exists()) {
+                    if (f2 != null && f2.exists())
+                    {
                         event.doit = !HelpBrowserLocalFileHandler.INSTANCE.handle(f2);
                     }
-                    if(event.doit) {
-                        //File has been translated and not handled.
-                        //Handle it manually
-                        if(f2.isDirectory()) {
+                    if (event.doit)
+                    {
+                        // File has been translated and not handled.
+                        // Handle it manually
+                        if (f2.isDirectory())
+                        {
                             event.doit = false;
-                            try {
+                            try
+                            {
                                 Program.launch(f2.getCanonicalPath());
                             }
-                            catch (IOException e) {
+                            catch (IOException e)
+                            {
                                 EclipseNSISPlugin.getDefault().log(e);
                                 mBrowser.setUrl(IOUtility.getFileURLString(f2));
                             }
                         }
-                        else if(!Common.objectsAreEqual(f,f2)) {
+                        else if (!Common.objectsAreEqual(f, f2))
+                        {
                             event.doit = false;
                             mBrowser.setUrl(IOUtility.getFileURLString(f2));
                         }
@@ -346,30 +480,38 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     {
         Composite parent = mBrowser.getParent();
         NSISHelpTOC toc = NSISHelpURLProvider.getInstance().getCachedHelpTOC();
-        if(toc == null) {
+        if (toc == null)
+        {
             mShowHideNavButton.dispose();
             mShowHideNavButton = null;
             mSynchedButton.dispose();
             mSynchedButton = null;
             mSeparator.dispose();
             mSeparator = null;
-            if(mSashForm.getMaximizedControl() != parent) {
+            if (mSashForm.getMaximizedControl() != parent)
+            {
                 mSashForm.setMaximizedControl(parent);
             }
             mContentsViewer.setInput(null);
             mIndexViewer.setInput(null);
         }
-        else {
-            if(mShowHideNavButton == null) {
+        else
+        {
+            if (mShowHideNavButton == null)
+            {
                 createNavToolItems();
             }
-            if(mShowNav) {
-                if(mSashForm.getMaximizedControl() != null) {
+            if (mShowNav)
+            {
+                if (mSashForm.getMaximizedControl() != null)
+                {
                     mSashForm.setMaximizedControl(null);
                 }
             }
-            else {
-                if(mSashForm.getMaximizedControl() != parent) {
+            else
+            {
+                if (mSashForm.getMaximizedControl() != parent)
+                {
                     mSashForm.setMaximizedControl(parent);
                 }
             }
@@ -377,31 +519,39 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             NSISHelpIndex index = NSISHelpURLProvider.getInstance().getCachedHelpIndex();
             TabItem indexTabItem = null;
             TabItem[] tabItems = mNavigationPane.getItems();
-            for (int i = 0; i < tabItems.length; i++) {
-                if(Common.objectsAreEqual(tabItems[i].getControl(),mIndexViewer.getControl().getParent())) {
+            for (int i = 0; i < tabItems.length; i++)
+            {
+                if (Common.objectsAreEqual(tabItems[i].getControl(), mIndexViewer.getControl().getParent()))
+                {
                     indexTabItem = tabItems[i];
                     break;
                 }
             }
-            if(index == null) {
-                if(indexTabItem != null) {
+            if (index == null)
+            {
+                if (indexTabItem != null)
+                {
                     indexTabItem.dispose();
                 }
                 mIndexViewer.setInput(null);
             }
-            else {
-                if(indexTabItem == null) {
-                    TabItem tabItem = new TabItem(mNavigationPane,SWT.NONE,1);
+            else
+            {
+                if (indexTabItem == null)
+                {
+                    TabItem tabItem = new TabItem(mNavigationPane, SWT.NONE, 1);
                     tabItem.setText(EclipseNSISPlugin.getResourceString("help.browser.index.tab.label")); //$NON-NLS-1$
                     tabItem.setControl(mIndexViewer.getControl().getParent());
                 }
                 mIndexViewer.setInput(index);
-                try {
+                try
+                {
                     mNonUserChange = true;
                     mIndexViewer.setSelection(new StructuredSelection(index.getEntries().get(0)));
                     mIndexViewer.getList().setTopIndex(mIndexViewer.getList().getSelectionIndex());
                 }
-                finally {
+                finally
+                {
                     mNonUserChange = false;
                 }
             }
@@ -421,45 +571,56 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
      */
     private void synch(String location)
     {
-        if(mSynched && mContentsViewer != null) {
+        if (mSynched && mContentsViewer != null)
+        {
             String url = location;
-            try {
+            try
+            {
                 new URL(url);
             }
-            catch(MalformedURLException mue) {
+            catch (MalformedURLException mue)
+            {
                 String suffix = ""; //$NON-NLS-1$
                 int n = url.lastIndexOf('#');
-                if(n > 0) {
+                if (n > 0)
+                {
                     suffix = url.substring(n);
-                    url = url.substring(0,n);
+                    url = url.substring(0, n);
                 }
                 File f = new File(url);
-                url = IOUtility.getFileURLString(f)+suffix;
+                url = IOUtility.getFileURLString(f) + suffix;
 
             }
             NSISHelpTOC toc = NSISHelpURLProvider.getInstance().getCachedHelpTOC();
-            NSISHelpTOCNode node = toc.getNode(url);
-            if(node == null) {
+            NSISHelpTOCNode node = toc == null ? null : toc.getNode(url);
+            if (node == null)
+            {
                 int n = url.lastIndexOf('#');
-                if(n >= 0) {
-                    url = url.substring(0,n+1);
+                if (n >= 0)
+                {
+                    url = url.substring(0, n + 1);
                     node = toc.getNode(url);
-                    if(node == null) {
-                        url = url.substring(0,n);
+                    if (node == null)
+                    {
+                        url = url.substring(0, n);
                         node = toc.getNode(url);
                     }
                 }
-                else {
-                    node = toc.getNode(url+"#"); //$NON-NLS-1$
+                else
+                {
+                    node = toc == null ? null : toc.getNode(url + "#"); //$NON-NLS-1$
                 }
             }
-            if(node != null) {
+            if (node != null)
+            {
                 ISelection sel = mContentsViewer.getSelection();
-                if(sel.isEmpty() || !Common.objectsAreEqual(node,((StructuredSelection)sel).getFirstElement())) {
+                if (sel.isEmpty() || !Common.objectsAreEqual(node, ((StructuredSelection) sel).getFirstElement()))
+                {
                     mContentsViewer.setSelection(new StructuredSelection(node));
                 }
             }
-            else {
+            else
+            {
                 mContentsViewer.setSelection(StructuredSelection.EMPTY);
             }
         }
@@ -476,11 +637,14 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
      */
     private void initResources()
     {
-        if (mThrobberImages == null) {
+        if (mThrobberImages == null)
+        {
             MessageFormat mf = new MessageFormat(IMAGE_LOCATION_FORMAT);
             mThrobberImages = new Image[IMAGE_COUNT];
-            for (int i = 0; i < IMAGE_COUNT; ++i) {
-                mThrobberImages[i] = EclipseNSISPlugin.getImageManager().getImage(mf.format(new Object[]{new Integer(i)}));
+            for (int i = 0; i < IMAGE_COUNT; ++i)
+            {
+                mThrobberImages[i] = EclipseNSISPlugin.getImageManager().getImage(
+                        mf.format(new Object[] { new Integer(i) }));
             }
         }
     }
@@ -489,12 +653,14 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     {
         Table table = column.getParent();
         GC gc = new GC(table);
-        int width = gc.stringExtent(column.getText()).x+16;
-        if(table.getSortColumn() == column && table.getSortDirection() != SWT.NONE) {
+        int width = gc.stringExtent(column.getText()).x + 16;
+        if (table.getSortColumn() == column && table.getSortDirection() != SWT.NONE)
+        {
             width += 26;
         }
         gc.dispose();
-        if(column.getWidth() < width) {
+        if (column.getWidth() < width)
+        {
             column.setWidth(width);
         }
     }
@@ -519,26 +685,28 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private Composite createSearchTab(Composite parent)
     {
         Composite searchComposite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(1,false);
+        GridLayout layout = new GridLayout(1, false);
         searchComposite.setLayout(layout);
 
         Composite composite = new Composite(searchComposite, SWT.NONE);
-        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        layout = new GridLayout(2,false);
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+        layout = new GridLayout(2, false);
         layout.marginWidth = layout.marginHeight = 0;
         composite.setLayout(layout);
 
-        Label l = new Label(composite,SWT.WRAP);
+        Label l = new Label(composite, SWT.WRAP);
         l.setText(EclipseNSISPlugin.getResourceString("help.browser.search.box.label")); //$NON-NLS-1$
-        GridData data = new GridData(SWT.FILL,SWT.CENTER,true,false);
+        GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         l.setLayoutData(data);
 
         final String searchSyntaxURL = NSISHelpURLProvider.getInstance().getSearchManager().getSearchSyntaxURL();
-        if(searchSyntaxURL != null) {
-            ToolBar toolbar = new ToolBar(composite,SWT.FLAT);
+        if (searchSyntaxURL != null)
+        {
+            ToolBar toolbar = new ToolBar(composite, SWT.FLAT);
             toolbar.setCursor(toolbar.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
             ToolItem toolItem = new ToolItem(toolbar, SWT.PUSH);
-            Image image = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("help.small.icon")); //$NON-NLS-1$
+            Image image = EclipseNSISPlugin.getImageManager().getImage(
+                    EclipseNSISPlugin.getResourceString("help.small.icon")); //$NON-NLS-1$
             toolItem.setImage(image);
             toolItem.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.search.syntax.tooltip")); //$NON-NLS-1$
             toolItem.addSelectionListener(new SelectionAdapter() {
@@ -547,34 +715,36 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     mBrowser.setUrl(searchSyntaxURL);
                 }
             });
-            toolbar.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
+            toolbar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
         }
-        else {
+        else
+        {
             data.horizontalSpan = 2;
         }
 
         composite = new Composite(searchComposite, SWT.NONE);
-        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        layout = new GridLayout(2,false);
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+        layout = new GridLayout(2, false);
         layout.marginWidth = layout.marginHeight = 0;
         composite.setLayout(layout);
 
         final Text searchText = new Text(composite, SWT.BORDER);
-        searchText.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        final Button b = new Button(composite,SWT.ARROW|SWT.RIGHT);
-        b.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+        searchText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+        final Button b = new Button(composite, SWT.ARROW | SWT.RIGHT);
+        b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
-        final Menu menu = new Menu(parent.getShell(),SWT.POP_UP);
+        final Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
         SelectionAdapter menuAdapter = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                MenuItem mi = (MenuItem)e.widget;
+                MenuItem mi = (MenuItem) e.widget;
                 searchText.insert(mi.getText());
             }
         };
-        String[] labels = {" AND "," OR "," NOT "}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        for (int i = 0; i < labels.length; i++) {
-            MenuItem mi = new MenuItem(menu,SWT.PUSH);
+        String[] labels = { " AND ", " OR ", " NOT " }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        for (int i = 0; i < labels.length; i++)
+        {
+            MenuItem mi = new MenuItem(menu, SWT.PUSH);
             mi.setText(labels[i]);
             mi.addSelectionListener(menuAdapter);
         }
@@ -582,13 +752,15 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         b.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                if(menu.isVisible()) {
+                if (menu.isVisible())
+                {
                     menu.setVisible(false);
                 }
-                else {
+                else
+                {
                     Rectangle rect = b.getBounds();
-                    Point pt = new Point (rect.x+rect.width, rect.y);
-                    pt = b.getParent().toDisplay (pt);
+                    Point pt = new Point(rect.x + rect.width, rect.y);
+                    pt = b.getParent().toDisplay(pt);
                     menu.setLocation(pt.x, pt.y);
                     menu.setVisible(true);
                 }
@@ -596,15 +768,15 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         });
 
         composite = new Composite(searchComposite, SWT.NONE);
-        composite.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,true,false));
-        layout = new GridLayout(2,true);
+        composite.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false));
+        layout = new GridLayout(2, true);
         layout.marginWidth = layout.marginHeight = 0;
-        layout.horizontalSpacing=40;
+        layout.horizontalSpacing = 40;
         composite.setLayout(layout);
 
-        final Button listTopics = new Button(composite,SWT.PUSH);
+        final Button listTopics = new Button(composite, SWT.PUSH);
         listTopics.setText(EclipseNSISPlugin.getResourceString("help.browser.list.topics.label")); //$NON-NLS-1$
-        listTopics.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+        listTopics.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
         listTopics.setEnabled(false);
 
         searchText.addModifyListener(new ModifyListener() {
@@ -614,75 +786,81 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             }
         });
 
-        Button display = new Button(composite,SWT.PUSH);
+        Button display = new Button(composite, SWT.PUSH);
         display.setText(EclipseNSISPlugin.getResourceString("help.browser.display.label")); //$NON-NLS-1$
-        display.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+        display.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
         composite = new Composite(searchComposite, SWT.NONE);
-        composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         layout = new GridLayout(3, false);
         layout.marginWidth = layout.marginHeight = 0;
         composite.setLayout(layout);
-        l = new Label(composite,SWT.NONE);
+        l = new Label(composite, SWT.NONE);
         l.setText(EclipseNSISPlugin.getResourceString("help.browser.search.results.label")); //$NON-NLS-1$
-        data = new GridData(SWT.FILL,SWT.FILL,false,false);
+        data = new GridData(SWT.FILL, SWT.FILL, false, false);
         data.widthHint = 70;
         l.setLayoutData(data);
 
-        l = new Label(composite,SWT.NONE);
-        l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        l = new Label(composite, SWT.NONE);
+        l.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-        final MessageFormat foundFormat = new MessageFormat(EclipseNSISPlugin.getResourceString("help.browser.search.results.count.format")); //$NON-NLS-1$
+        final MessageFormat foundFormat = new MessageFormat(EclipseNSISPlugin
+                .getResourceString("help.browser.search.results.count.format")); //$NON-NLS-1$
         final Integer[] foundArgs = { Common.ZERO };
-        final Label found = new Label(composite,SWT.NONE);
+        final Label found = new Label(composite, SWT.NONE);
         found.setText(foundFormat.format(foundArgs));
-        data = new GridData(SWT.FILL,SWT.FILL,false,false);
+        data = new GridData(SWT.FILL, SWT.FILL, false, false);
         data.widthHint = 120;
         found.setLayoutData(data);
 
-        final Table table = new Table(searchComposite, SWT.SINGLE|SWT.BORDER|SWT.FULL_SELECTION|SWT.V_SCROLL|SWT.H_SCROLL);
-        final TableColumn titleColumn = new TableColumn(table,SWT.NONE);
+        final Table table = new Table(searchComposite, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL
+                | SWT.H_SCROLL);
+        final TableColumn titleColumn = new TableColumn(table, SWT.NONE);
         titleColumn.setText(EclipseNSISPlugin.getResourceString("help.browser.search.title.label")); //$NON-NLS-1$
-        final TableColumn rankColumn = new TableColumn(table,SWT.NONE);
+        final TableColumn rankColumn = new TableColumn(table, SWT.NONE);
         rankColumn.setText(EclipseNSISPlugin.getResourceString("help.browser.search.rank.label")); //$NON-NLS-1$
         table.setHeaderVisible(true);
         table.setLinesVisible(false);
-        table.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-        final TableResizer tableResizer = new TableResizer(new double[] {4,1});
+        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        final TableResizer tableResizer = new TableResizer(new double[] { 4, 1 });
         table.addControlListener(tableResizer);
 
-        final Comparator sortComparator = new Comparator()
-        {
+        final Comparator sortComparator = new Comparator() {
             public int compare(Object o1, Object o2)
             {
-                NSISHelpSearchResult r1 = (NSISHelpSearchResult)o1;
-                NSISHelpSearchResult r2 = (NSISHelpSearchResult)o2;
+                NSISHelpSearchResult r1 = (NSISHelpSearchResult) o1;
+                NSISHelpSearchResult r2 = (NSISHelpSearchResult) o2;
                 TableColumn sortCol = table.getSortColumn();
                 int sortDir = table.getSortDirection();
                 int cmp;
-                if(sortCol == titleColumn) {
+                if (sortCol == titleColumn)
+                {
                     cmp = r1.getTitle().compareTo(r2.getTitle());
                 }
-                else {
+                else
+                {
                     cmp = r1.getRank() - r2.getRank();
                 }
-                return (sortDir==SWT.DOWN?-cmp:cmp);
+                return sortDir == SWT.DOWN ? -cmp : cmp;
             }
         };
 
         SelectionListener colummSortListener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                NSISHelpSearchResult[] results = (NSISHelpSearchResult[])mSearchViewer.getInput();
-                if(!Common.isEmptyArray(results)) {
-                    TableColumn col = (TableColumn)e.widget;
+                NSISHelpSearchResult[] results = (NSISHelpSearchResult[]) mSearchViewer.getInput();
+                if (!Common.isEmptyArray(results))
+                {
+                    TableColumn col = (TableColumn) e.widget;
                     Table t = col.getParent();
                     TableColumn sortCol = t.getSortColumn();
-                    if(sortCol == col) {
+                    if (sortCol == col)
+                    {
                         int sortDir = t.getSortDirection();
-                        t.setSortDirection(sortDir==SWT.UP?SWT.DOWN:SWT.UP);
+                        t.setSortDirection(sortDir == SWT.UP ? SWT.DOWN : SWT.UP);
                     }
-                    else {
+                    else
+                    {
                         t.setSortColumn(col);
                         t.setSortDirection(SWT.UP);
                     }
@@ -702,30 +880,32 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mSearchViewer.setLabelProvider(new CollectionLabelProvider() {
             public String getColumnText(Object element, int columnIndex)
             {
-                if(element instanceof NSISHelpSearchResult) {
-                    switch(columnIndex) {
+                if (element instanceof NSISHelpSearchResult)
+                {
+                    switch (columnIndex)
+                    {
                         case 0:
-                            return ((NSISHelpSearchResult)element).getTitle();
+                            return ((NSISHelpSearchResult) element).getTitle();
                         case 1:
-                            return String.valueOf(((NSISHelpSearchResult)element).getRank());
+                            return String.valueOf(((NSISHelpSearchResult) element).getRank());
                     }
                 }
                 return super.getColumnText(element, columnIndex);
             }
         });
 
-        final Button searchPrevious = new Button(searchComposite,SWT.CHECK);
+        final Button searchPrevious = new Button(searchComposite, SWT.CHECK);
         searchPrevious.setText(EclipseNSISPlugin.getResourceString("help.browser.search.previous.results.label")); //$NON-NLS-1$
-        searchPrevious.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        searchPrevious.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-        final Button useStemming = new Button(searchComposite,SWT.CHECK);
+        final Button useStemming = new Button(searchComposite, SWT.CHECK);
         useStemming.setSelection(true);
         useStemming.setText(EclipseNSISPlugin.getResourceString("help.browser.search.stemmed.label")); //$NON-NLS-1$
-        useStemming.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        useStemming.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-        final Button searchTitles = new Button(searchComposite,SWT.CHECK);
+        final Button searchTitles = new Button(searchComposite, SWT.CHECK);
         searchTitles.setText(EclipseNSISPlugin.getResourceString("help.browser.search.titles.label")); //$NON-NLS-1$
-        searchTitles.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        searchTitles.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
         mSearchingDialog = new SearchingDialog(getSite().getShell()) {
             public void searchCompleted(final NSISHelpSearchResult[] results, Collection highlightTerms)
@@ -734,12 +914,12 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 getSite().getShell().getDisplay().asyncExec(new Runnable() {
                     public void run()
                     {
-                        int size = (results==null?0:results.length);
-                        foundArgs[0] = (size==0?Common.ZERO:new Integer(size));
+                        int size = results == null ? 0 : results.length;
+                        foundArgs[0] = size == 0 ? Common.ZERO : new Integer(size);
                         found.setText(foundFormat.format(foundArgs));
                         Table table = mSearchViewer.getTable();
-                        table.setSortColumn(Common.isEmptyArray(results)?null:rankColumn);
-                        table.setSortDirection(Common.isEmptyArray(results)?SWT.NONE:SWT.UP);
+                        table.setSortColumn(Common.isEmptyArray(results) ? null : rankColumn);
+                        table.setSortDirection(Common.isEmptyArray(results) ? SWT.NONE : SWT.UP);
                         resizeColumn(rankColumn);
                         mSearchViewer.setInput(results);
                     }
@@ -749,7 +929,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             public int open()
             {
                 int rv = super.open();
-                NSISHelpURLProvider.getInstance().getSearchManager().search(searchTitles.getSelection()?INSISHelpSearchConstants.INDEX_FIELD_TITLE:null,this);
+                NSISHelpURLProvider.getInstance().getSearchManager().search(
+                        searchTitles.getSelection() ? INSISHelpSearchConstants.INDEX_FIELD_TITLE : null, this);
                 return rv;
             }
         };
@@ -757,66 +938,86 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             public void run()
             {
                 ISelection sel = mSearchViewer.getSelection();
-                if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
-                    if(mHighlightJSPrefix != null && HIGHLIGHT_JS_CONTENT != null) {
-                        if(mHighlightJS == null) {
+                if (!sel.isEmpty() && sel instanceof IStructuredSelection)
+                {
+                    if (mHighlightJSPrefix != null && HIGHLIGHT_JS_CONTENT != null)
+                    {
+                        if (mHighlightJS == null)
+                        {
                             Collection terms = mSearchingDialog.getTerms();
-                            if(!Common.isEmptyCollection(terms)) {
+                            if (!Common.isEmptyCollection(terms))
+                            {
                                 StringBuffer keywords = new StringBuffer(""); //$NON-NLS-1$
                                 StringBuffer regex = new StringBuffer(""); //$NON-NLS-1$
-                                for (Iterator iter = terms.iterator(); iter.hasNext();) {
-                                    String term = (String)iter.next();
+                                for (Iterator iter = terms.iterator(); iter.hasNext();)
+                                {
+                                    String term = (String) iter.next();
                                     boolean isRegex = false;
-                                    if(term.startsWith(NSISHelpSearchQueryParser.REGEX_PREFIX)) {
+                                    if (term.startsWith(NSISHelpSearchQueryParser.REGEX_PREFIX))
+                                    {
                                         isRegex = true;
-                                        term = term.substring(NSISHelpSearchQueryParser.REGEX_PREFIX.length()).replaceAll("\\\\","\\\\\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
+                                        term = term.substring(NSISHelpSearchQueryParser.REGEX_PREFIX.length())
+                                                .replaceAll("\\\\", "\\\\\\\\"); //$NON-NLS-1$ //$NON-NLS-2$
                                     }
-                                    if(keywords.length() > 0) {
+                                    if (keywords.length() > 0)
+                                    {
                                         keywords.append(","); //$NON-NLS-1$
                                         regex.append(","); //$NON-NLS-1$
                                     }
-                                    keywords.append("\"").append(term.replaceAll("\\\"","\\\\\"")).append("\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                                    keywords.append("\"").append(term.replaceAll("\\\"", "\\\\\"")).append("\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                     regex.append(isRegex);
                                 }
 
                                 final StringBuffer js = new StringBuffer(""); //$NON-NLS-1$
-                                mHighlightJSPrefix.format(new String[] {keywords.toString(),regex.toString()},js,null);
+                                mHighlightJSPrefix.format(new String[] { keywords.toString(), regex.toString() }, js,
+                                        null);
                                 js.append(HIGHLIGHT_JS_CONTENT);
                                 mHighlightJS = js.toString();
                             }
                         }
-                        final String url = ((NSISHelpSearchResult)((IStructuredSelection)sel).getFirstElement()).getURL();
-                        if(mHighlightJS != null ) {
+                        final String url = ((NSISHelpSearchResult) ((IStructuredSelection) sel).getFirstElement())
+                                .getURL();
+                        if (mHighlightJS != null)
+                        {
                             final String urlFile;
                             String url2 = decode(url);
                             int n = url2.lastIndexOf('#');
-                            if(n < 0) {
+                            if (n < 0)
+                            {
                                 urlFile = url2;
                             }
-                            else {
-                                urlFile = url2.substring(0,n);
+                            else
+                            {
+                                urlFile = url2.substring(0, n);
                             }
                             mBrowser.addLocationListener(new LocationAdapter() {
                                 public void changed(LocationEvent event)
                                 {
                                     String location = event.location;
-                                    if (!Common.isEmpty(location)) {
-                                        if (!location.regionMatches(true, 0, FILE_URI_SCHEME, 0, FILE_URI_SCHEME.length())) {
-                                            //This is a windows file name
+                                    if (!Common.isEmpty(location))
+                                    {
+                                        if (!location.regionMatches(true, 0, FILE_URI_SCHEME, 0, FILE_URI_SCHEME
+                                                .length()))
+                                        {
+                                            // This is a windows file name
                                             location = decode(IOUtility.getFileURLString(new File(location)));
                                         }
                                         String file;
                                         int n = location.lastIndexOf('#');
-                                        if (n < 0) {
+                                        if (n < 0)
+                                        {
                                             file = location;
                                         }
-                                        else {
+                                        else
+                                        {
                                             file = location.substring(0, n);
                                         }
-                                        if(!urlFile.equalsIgnoreCase(file)) {
+                                        if (!urlFile.equalsIgnoreCase(file))
+                                        {
                                             mBrowser.removeLocationListener(this);
                                         }
-                                        else {
+                                        else
+                                        {
                                             mBrowser.execute(mHighlightJS);
                                         }
                                     }
@@ -853,7 +1054,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         searchText.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e)
             {
-                if(e.character == SWT.CR || e.character == SWT.LF) {
+                if (e.character == SWT.CR || e.character == SWT.LF)
+                {
                     searchRunnable.run();
                     searchText.selectAll();
                 }
@@ -873,23 +1075,24 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private Composite createIndexTab(Composite parent)
     {
         Composite indexComposite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(1,false);
+        GridLayout layout = new GridLayout(1, false);
         indexComposite.setLayout(layout);
 
         Label l = new Label(indexComposite, SWT.NONE);
         l.setText(EclipseNSISPlugin.getResourceString("help.browser.index.keyword.label")); //$NON-NLS-1$
-        l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        l.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         final Text indexText = new Text(indexComposite, SWT.BORDER);
-        indexText.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        indexText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-        List list = new List(indexComposite, SWT.BORDER|SWT.SINGLE|SWT.V_SCROLL);
-        list.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        List list = new List(indexComposite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
+        list.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         mIndexViewer = new ListViewer(list);
         mIndexViewer.setContentProvider(new EmptyContentProvider() {
             public Object[] getElements(Object inputElement)
             {
-                if(inputElement instanceof NSISHelpIndex) {
-                    return ((NSISHelpIndex)inputElement).getEntries().toArray();
+                if (inputElement instanceof NSISHelpIndex)
+                {
+                    return ((NSISHelpIndex) inputElement).getEntries().toArray();
                 }
                 return null;
             }
@@ -897,8 +1100,9 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mIndexViewer.setLabelProvider(new LabelProvider() {
             public String getText(Object element)
             {
-                if(element instanceof NSISHelpIndexEntry) {
-                    return ((NSISHelpIndexEntry)element).getName();
+                if (element instanceof NSISHelpIndexEntry)
+                {
+                    return ((NSISHelpIndexEntry) element).getName();
                 }
                 return super.getText(element);
             }
@@ -906,11 +1110,13 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mIndexViewer.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event)
             {
-                IStructuredSelection sel = (IStructuredSelection)event.getSelection();
-                if(!sel.isEmpty()) {
+                IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+                if (!sel.isEmpty())
+                {
                     Object element = sel.getFirstElement();
-                    if(element instanceof NSISHelpIndexEntry) {
-                        displayIndexEntry((NSISHelpIndexEntry)element);
+                    if (element instanceof NSISHelpIndexEntry)
+                    {
+                        displayIndexEntry((NSISHelpIndexEntry) element);
                     }
                 }
             }
@@ -918,16 +1124,21 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mIndexViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event)
             {
-                if (!mNonUserChange) {
-                    IStructuredSelection sel = (IStructuredSelection)event.getSelection();
-                    if(!sel.isEmpty()) {
+                if (!mNonUserChange)
+                {
+                    IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+                    if (!sel.isEmpty())
+                    {
                         Object element = sel.getFirstElement();
-                        if(element instanceof NSISHelpIndexEntry) {
-                            try {
+                        if (element instanceof NSISHelpIndexEntry)
+                        {
+                            try
+                            {
                                 mNonUserChange = true;
-                                indexText.setText(((NSISHelpIndexEntry)element).getName());
+                                indexText.setText(((NSISHelpIndexEntry) element).getName());
                             }
-                            finally {
+                            finally
+                            {
                                 mNonUserChange = false;
                             }
                         }
@@ -938,33 +1149,39 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         indexText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
-                if (!mNonUserChange) {
+                if (!mNonUserChange)
+                {
                     String text = indexText.getText();
-                    NSISHelpIndexEntry entry = ((NSISHelpIndex)mIndexViewer.getInput()).findEntry(text);
-                    if(entry != null) {
-                        try {
+                    NSISHelpIndexEntry entry = ((NSISHelpIndex) mIndexViewer.getInput()).findEntry(text);
+                    if (entry != null)
+                    {
+                        try
+                        {
                             mNonUserChange = true;
                             mIndexViewer.setSelection(new StructuredSelection(entry));
                             mIndexViewer.getList().setTopIndex(mIndexViewer.getList().getSelectionIndex());
                         }
-                        finally {
+                        finally
+                        {
                             mNonUserChange = false;
                         }
                     }
                 }
             }
         });
-        Button b = new Button(indexComposite,SWT.PUSH);
+        Button b = new Button(indexComposite, SWT.PUSH);
         b.setText(EclipseNSISPlugin.getResourceString("help.browser.display.label")); //$NON-NLS-1$
-        b.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,false,false));
+        b.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
         b.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                IStructuredSelection sel = (IStructuredSelection)mIndexViewer.getSelection();
-                if(!sel.isEmpty()) {
+                IStructuredSelection sel = (IStructuredSelection) mIndexViewer.getSelection();
+                if (!sel.isEmpty())
+                {
                     Object element = sel.getFirstElement();
-                    if(element instanceof NSISHelpIndexEntry) {
-                        displayIndexEntry((NSISHelpIndexEntry)element);
+                    if (element instanceof NSISHelpIndexEntry)
+                    {
+                        displayIndexEntry((NSISHelpIndexEntry) element);
                     }
                 }
             }
@@ -975,45 +1192,51 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private Composite createContentsTab(Composite parent)
     {
         Composite contentsComposite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(1,false);
+        GridLayout layout = new GridLayout(1, false);
         contentsComposite.setLayout(layout);
-        Tree tree = new Tree(contentsComposite,SWT.BORDER|SWT.SINGLE|SWT.V_SCROLL);
-        tree.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+        Tree tree = new Tree(contentsComposite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
+        tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         mContentsViewer = new TreeViewer(tree);
         final ITreeContentProvider contentProvider = new EmptyContentProvider() {
             public Object[] getChildren(Object parentElement)
             {
-                if(parentElement instanceof NSISHelpTOC) {
-                    return ((NSISHelpTOC)parentElement).getChildren().toArray();
+                if (parentElement instanceof NSISHelpTOC)
+                {
+                    return ((NSISHelpTOC) parentElement).getChildren().toArray();
                 }
-                else if(parentElement instanceof NSISHelpTOCNode) {
-                    return ((NSISHelpTOCNode)parentElement).getChildren().toArray();
+                else if (parentElement instanceof NSISHelpTOCNode)
+                {
+                    return ((NSISHelpTOCNode) parentElement).getChildren().toArray();
                 }
                 return null;
             }
 
             public Object getParent(Object element)
             {
-                if(element instanceof NSISHelpTOCNode) {
-                    return ((NSISHelpTOCNode)element).getParent();
+                if (element instanceof NSISHelpTOCNode)
+                {
+                    return ((NSISHelpTOCNode) element).getParent();
                 }
                 return null;
             }
 
             public boolean hasChildren(Object element)
             {
-                if(element instanceof NSISHelpTOC) {
-                    return !Common.isEmptyCollection(((NSISHelpTOC)element).getChildren());
+                if (element instanceof NSISHelpTOC)
+                {
+                    return !Common.isEmptyCollection(((NSISHelpTOC) element).getChildren());
                 }
-                else if(element instanceof NSISHelpTOCNode) {
-                    return !Common.isEmptyCollection(((NSISHelpTOCNode)element).getChildren());
+                else if (element instanceof NSISHelpTOCNode)
+                {
+                    return !Common.isEmptyCollection(((NSISHelpTOCNode) element).getChildren());
                 }
                 return false;
             }
 
             public Object[] getElements(Object inputElement)
             {
-                if(inputElement instanceof NSISHelpTOC) {
+                if (inputElement instanceof NSISHelpTOC)
+                {
                     return getChildren(inputElement);
                 }
                 return null;
@@ -1027,16 +1250,21 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mContentsViewer.setLabelProvider(new LabelProvider() {
             public Image getImage(Object element)
             {
-                if(element instanceof NSISHelpTOCNode) {
-                    NSISHelpTOCNode node = (NSISHelpTOCNode)element;
-                    if(Common.isEmptyCollection(node.getChildren())) {
+                if (element instanceof NSISHelpTOCNode)
+                {
+                    NSISHelpTOCNode node = (NSISHelpTOCNode) element;
+                    if (Common.isEmptyCollection(node.getChildren()))
+                    {
                         return helpPage;
                     }
-                    else {
-                        if(mContentsViewer.getExpandedState(element)) {
+                    else
+                    {
+                        if (mContentsViewer.getExpandedState(element))
+                        {
                             return helpOpen;
                         }
-                        else {
+                        else
+                        {
                             return helpClosed;
                         }
                     }
@@ -1046,8 +1274,9 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
             public String getText(Object element)
             {
-                if(element instanceof NSISHelpTOCNode) {
-                    return ((NSISHelpTOCNode)element).getName();
+                if (element instanceof NSISHelpTOCNode)
+                {
+                    return ((NSISHelpTOCNode) element).getName();
                 }
                 return super.getText(element);
             }
@@ -1055,11 +1284,14 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mContentsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event)
             {
-                if(!event.getSelection().isEmpty()) {
-                    Object element = ((IStructuredSelection)event.getSelection()).getFirstElement();
-                    if(element instanceof NSISHelpTOCNode) {
-                        String url = ((NSISHelpTOCNode)element).getURL();
-                        if(!Common.stringsAreEqual(url, mBrowser.getUrl(), true)) {
+                if (!event.getSelection().isEmpty())
+                {
+                    Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
+                    if (element instanceof NSISHelpTOCNode)
+                    {
+                        String url = ((NSISHelpTOCNode) element).getURL();
+                        if (!Common.stringsAreEqual(url, mBrowser.getUrl(), true))
+                        {
                             mBrowser.setUrl(url);
                         }
                     }
@@ -1079,11 +1311,12 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             private void updateLabels(final TreeViewer treeViewer, TreeExpansionEvent event)
             {
                 final Object element = event.getElement();
-                if(element instanceof NSISHelpTOCNode) {
+                if (element instanceof NSISHelpTOCNode)
+                {
                     treeViewer.getTree().getDisplay().asyncExec(new Runnable() {
                         public void run()
                         {
-                            treeViewer.update(element,null);
+                            treeViewer.update(element, null);
                         }
                     });
                 }
@@ -1100,18 +1333,23 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private void displayIndexEntry(NSISHelpIndexEntry entry)
     {
         java.util.List urls = entry.getURLs();
-        if(urls.size() > 0) {
+        if (urls.size() > 0)
+        {
             NSISHelpIndexURL url = null;
-            if(urls.size() > 1) {
-                NSISHelpIndexEntryDialog dialog = new NSISHelpIndexEntryDialog(getSite().getShell(),entry);
-                if(dialog.open() == Window.OK) {
+            if (urls.size() > 1)
+            {
+                NSISHelpIndexEntryDialog dialog = new NSISHelpIndexEntryDialog(getSite().getShell(), entry);
+                if (dialog.open() == Window.OK)
+                {
                     url = dialog.getURL();
                 }
             }
-            else {
-                url = (NSISHelpIndexURL)urls.get(0);
+            else
+            {
+                url = (NSISHelpIndexURL) urls.get(0);
             }
-            if(url != null) {
+            if (url != null)
+            {
                 mBrowser.setUrl(url.getURL());
             }
         }
@@ -1145,44 +1383,50 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         createNavToolItems();
 
         // Add a button to navigate backwards through previously visited pages
-        mBackButton = createToolItem(mToolBar,"help.browser.back.tooltip", //$NON-NLS-1$
-                               CommonImages.BROWSER_BACK_ICON);
+        mBackButton = createToolItem(mToolBar, "help.browser.back.tooltip", //$NON-NLS-1$
+                CommonImages.BROWSER_BACK_ICON);
 
         // Add a button to navigate forward through previously visited pages
-        mForwardButton = createToolItem(mToolBar,"help.browser.forward.tooltip", //$NON-NLS-1$
-                               CommonImages.BROWSER_FORWARD_ICON);
+        mForwardButton = createToolItem(mToolBar, "help.browser.forward.tooltip", //$NON-NLS-1$
+                CommonImages.BROWSER_FORWARD_ICON);
 
         // Add a separator
         new ToolItem(mToolBar, SWT.SEPARATOR);
 
         // Add a button to abort web page loading
-        mStopButton = createToolItem(mToolBar,"help.browser.stop.tooltip", //$NON-NLS-1$
-                               CommonImages.BROWSER_STOP_ICON);
+        mStopButton = createToolItem(mToolBar, "help.browser.stop.tooltip", //$NON-NLS-1$
+                CommonImages.BROWSER_STOP_ICON);
 
         // Add a button to refresh the current web page
-        mRefreshButton = createToolItem(mToolBar,"help.browser.refresh.tooltip", //$NON-NLS-1$
-                               CommonImages.BROWSER_REFRESH_ICON);
+        mRefreshButton = createToolItem(mToolBar, "help.browser.refresh.tooltip", //$NON-NLS-1$
+                CommonImages.BROWSER_REFRESH_ICON);
 
         // Add a button to navigate to the Home page
-        mHomeButton = createToolItem(mToolBar,"help.browser.home.tooltip", //$NON-NLS-1$
-                               CommonImages.BROWSER_HOME_ICON);
+        mHomeButton = createToolItem(mToolBar, "help.browser.home.tooltip", //$NON-NLS-1$
+                CommonImages.BROWSER_HOME_ICON);
 
         Listener listener = new Listener() {
-            public void handleEvent(Event event) {
-                ToolItem item = (ToolItem)event.widget;
-                if (item == mBackButton) {
+            public void handleEvent(Event event)
+            {
+                ToolItem item = (ToolItem) event.widget;
+                if (item == mBackButton)
+                {
                     mBrowser.back();
                 }
-                else if (item == mForwardButton) {
+                else if (item == mForwardButton)
+                {
                     mBrowser.forward();
                 }
-                else if (item == mStopButton) {
+                else if (item == mStopButton)
+                {
                     mBrowser.stop();
                 }
-                else if (item == mRefreshButton) {
+                else if (item == mRefreshButton)
+                {
                     mBrowser.refresh();
                 }
-                else if (item == mHomeButton) {
+                else if (item == mHomeButton)
+                {
                     cFirstPage = null;
                     openHelp();
                 }
@@ -1203,39 +1447,44 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         // Add a button to show/hide navigation pane
         final String showNavToolTip = EclipseNSISPlugin.getResourceString("help.browser.shownav.tooltip"); //$NON-NLS-1$
         final String hideNavToolTip = EclipseNSISPlugin.getResourceString("help.browser.hidenav.tooltip"); //$NON-NLS-1$
-        mShowHideNavButton = createToolItem(mToolBar,(mShowNav?hideNavToolTip:showNavToolTip),
-                                       (mShowNav?CommonImages.BROWSER_HIDENAV_ICON:CommonImages.BROWSER_SHOWNAV_ICON), 0);
+        mShowHideNavButton = createToolItem(mToolBar, (mShowNav ? hideNavToolTip : showNavToolTip),
+                (mShowNav ? CommonImages.BROWSER_HIDENAV_ICON : CommonImages.BROWSER_SHOWNAV_ICON), 0);
 
         // Add a button to sync browser with contents
-        mSynchedButton = createToolItem(mToolBar,"help.browser.synced.tooltip", //$NON-NLS-1$
-                                 CommonImages.BROWSER_SYNCED_ICON, 1, SWT.CHECK);
+        mSynchedButton = createToolItem(mToolBar, "help.browser.synced.tooltip", //$NON-NLS-1$
+                CommonImages.BROWSER_SYNCED_ICON, 1, SWT.CHECK);
         mSynchedButton.setSelection(mSynched);
         mSynchedButton.setEnabled(mShowNav);
 
         // Add a separator
         mSeparator = new ToolItem(mToolBar, SWT.SEPARATOR, 2);
         Listener listener = new Listener() {
-            public void handleEvent(Event event) {
-                ToolItem item = (ToolItem)event.widget;
-                if (item == mShowHideNavButton) {
-                    if(mSashForm.getMaximizedControl() == null) {
+            public void handleEvent(Event event)
+            {
+                ToolItem item = (ToolItem) event.widget;
+                if (item == mShowHideNavButton)
+                {
+                    if (mSashForm.getMaximizedControl() == null)
+                    {
                         mShowNav = false;
                         mSashForm.setMaximizedControl(mBrowser.getParent());
                         item.setImage(CommonImages.BROWSER_SHOWNAV_ICON);
                         item.setToolTipText(showNavToolTip);
                     }
-                    else {
+                    else
+                    {
                         mShowNav = true;
                         mSashForm.setMaximizedControl(null);
                         item.setImage(CommonImages.BROWSER_HIDENAV_ICON);
                         item.setToolTipText(hideNavToolTip);
                     }
                     mSynchedButton.setEnabled(mShowNav);
-                    NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.NSIS_HELP_VIEW_SHOW_NAV,mShowNav);
+                    NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.NSIS_HELP_VIEW_SHOW_NAV, mShowNav);
                 }
-                else if (item == mSynchedButton) {
+                else if (item == mSynchedButton)
+                {
                     mSynched = mSynchedButton.getSelection();
-                    NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.NSIS_HELP_VIEW_SYNCHED,mSynched);
+                    NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.NSIS_HELP_VIEW_SYNCHED, mSynched);
                     synch(mBrowser.getUrl());
                 }
             }
@@ -1260,13 +1509,15 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mThrobber.setLayoutData(data);
 
         mThrobber.addListener(SWT.Paint, new Listener() {
-            public void handleEvent(Event e) {
-                Point pt = ((Canvas)e.widget).getSize();
+            public void handleEvent(Event e)
+            {
+                Point pt = ((Canvas) e.widget).getSize();
                 e.gc.drawImage(mThrobberImages[mThrobberImageIndex], 0, 0, rect.width, rect.height, 0, 0, pt.x, pt.y);
             }
         });
         mThrobber.addListener(SWT.MouseDown, new Listener() {
-            public void handleEvent(Event e) {
+            public void handleEvent(Event e)
+            {
                 cFirstPage = null;
                 openHelp();
             }
@@ -1274,13 +1525,17 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
         final Display display = displayArea.getDisplay();
         display.asyncExec(new Runnable() {
-            public void run() {
-                if (mThrobber.isDisposed()) {
+            public void run()
+            {
+                if (mThrobber.isDisposed())
+                {
                     return;
                 }
-                if (isBusy()) {
-                    mThrobberImageIndex ++;
-                    if(mThrobberImageIndex == mThrobberImages.length) {
+                if (isBusy())
+                {
+                    mThrobberImageIndex++;
+                    if (mThrobberImageIndex == mThrobberImages.length)
+                    {
                         mThrobberImageIndex = 1;
                     }
                     mThrobber.redraw();
@@ -1298,14 +1553,16 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     private void setBusy(boolean busy)
     {
         mBusy = busy;
-        if(mStopButton != null && !mStopButton.isDisposed()) {
+        if (mStopButton != null && !mStopButton.isDisposed())
+        {
             mStopButton.setEnabled(busy);
         }
     }
 
     private void createStatusArea(Composite composite)
     {
-        // Add a label for displaying status messages as they are received from the control
+        // Add a label for displaying status messages as they are received from
+        // the control
         mStatusText = new Label(composite, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
         // Add a progress bar to display downloading progress information
         mProgressBar = new ProgressBar(composite, SWT.BORDER);
@@ -1322,7 +1579,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mProgressBar.setLayoutData(data);
 
         mBrowser.addStatusTextListener(new StatusTextListener() {
-            public void changed(StatusTextEvent event) {
+            public void changed(StatusTextEvent event)
+            {
                 mStatusText.setText(event.text);
             }
         });
@@ -1331,16 +1589,19 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             public void changed(ProgressEvent event)
             {
                 int ratio;
-                if (event.total == 0) {
+                if (event.total == 0)
+                {
                     ratio = 0;
                     setBusy(false);
                 }
-                else {
+                else
+                {
                     ratio = event.current * 100 / event.total;
                     setBusy(event.current != event.total);
                 }
                 mProgressBar.setSelection(ratio);
-                if (!isBusy()) {
+                if (!isBusy())
+                {
                     mThrobberImageIndex = 0;
                     mThrobber.redraw();
                 }
@@ -1360,47 +1621,58 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
     private String decode(String url)
     {
-        try {
+        try
+        {
             return URLDecoder.decode(url, ENCODING_SCHEME);
         }
-        catch (UnsupportedEncodingException e) {
+        catch (UnsupportedEncodingException e)
+        {
             return url;
         }
     }
 
     private void openHelp()
     {
-        if (isActivated()) {
-            if (!EclipseNSISPlugin.getDefault().isConfigured()) {
+        if (isActivated())
+        {
+            if (!EclipseNSISPlugin.getDefault().isConfigured())
+            {
                 mBrowser.setText(EclipseNSISPlugin.getFormattedString("unconfigured.browser.help.format", //$NON-NLS-1$
-                        new String[] {NSISHelpProducer.STYLE,ECLIPSENSIS_URI_SCHEME,
-                                      NSISHelpProducer.CONFIGURE}));
+                        new String[] { NSISHelpProducer.STYLE, ECLIPSENSIS_URI_SCHEME, NSISHelpProducer.CONFIGURE }));
             }
-            else {
+            else
+            {
                 mStartPage = NSISHelpURLProvider.getInstance().getCachedHelpStartPage();
-                if (mStartPage == null) {
+                if (mStartPage == null)
+                {
                     mStartPage = "about:blank"; //$NON-NLS-1$
                 }
-                String newUrl = decode(cFirstPage == null?mStartPage:cFirstPage);
+                String newUrl = decode(cFirstPage == null ? mStartPage : cFirstPage);
                 String oldUrl = mBrowser.getUrl();
-                if(!Common.isEmpty(oldUrl)) {
+                if (!Common.isEmpty(oldUrl))
+                {
                     String newUrl2;
                     int m = newUrl.lastIndexOf('#');
-                    if(m > 0) {
-                        newUrl2 = newUrl.substring(0,m);
+                    if (m > 0)
+                    {
+                        newUrl2 = newUrl.substring(0, m);
                     }
-                    else {
+                    else
+                    {
                         newUrl2 = newUrl;
                     }
                     String oldUrl2;
                     int n = oldUrl.lastIndexOf('#');
-                    if(n > 0) {
-                        oldUrl2 = oldUrl.substring(0,n);
+                    if (n > 0)
+                    {
+                        oldUrl2 = oldUrl.substring(0, n);
                     }
-                    else {
+                    else
+                    {
                         oldUrl2 = oldUrl;
                     }
-                    if(Common.stringsAreEqual(newUrl2,oldUrl2,true)) {
+                    if (Common.stringsAreEqual(newUrl2, oldUrl2, true))
+                    {
                         mBrowser.refresh();
                     }
                 }
@@ -1410,12 +1682,15 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
      */
     public void setFocus()
     {
-        if(isActivated()) {
+        if (isActivated())
+        {
             mBrowser.setFocus();
         }
     }
@@ -1429,7 +1704,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         {
             super(parent);
             mEntry = entry;
-            mURL = (NSISHelpIndexURL)mEntry.getURLs().get(0);
+            mURL = (NSISHelpIndexURL) mEntry.getURLs().get(0);
         }
 
         public NSISHelpIndexURL getURL()
@@ -1447,39 +1722,41 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         protected void createButtonsForButtonBar(Composite parent)
         {
             super.createButtonsForButtonBar(parent);
-            getButton(IDialogConstants.OK_ID).setText(EclipseNSISPlugin.getResourceString("help.browser.display.label")); //$NON-NLS-1$
+            getButton(IDialogConstants.OK_ID)
+                    .setText(EclipseNSISPlugin.getResourceString("help.browser.display.label")); //$NON-NLS-1$
         }
 
         protected Control createDialogArea(Composite parent)
         {
-            parent = (Composite)super.createDialogArea(parent);
-            Label l = new Label(parent,SWT.NONE);
+            parent = (Composite) super.createDialogArea(parent);
+            Label l = new Label(parent, SWT.NONE);
             l.setText(EclipseNSISPlugin.getResourceString("help.browser.index.entry.dialog.header")); //$NON-NLS-1$
-            l.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+            l.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-            Table table = new Table(parent,SWT.BORDER|SWT.SINGLE|SWT.FULL_SELECTION|SWT.V_SCROLL|SWT.H_SCROLL);
+            Table table = new Table(parent, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL);
             initializeDialogUnits(table);
-            GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
+            GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
             data.widthHint = convertWidthInCharsToPixels(80);
             data.heightHint = convertHeightInCharsToPixels(10);
             table.setLayoutData(data);
 
-            TableColumn col = new TableColumn(table,SWT.NONE);
+            TableColumn col = new TableColumn(table, SWT.NONE);
             col.setText(EclipseNSISPlugin.getResourceString("help.browser.title.label")); //$NON-NLS-1$
-            col = new TableColumn(table,SWT.NONE);
+            col = new TableColumn(table, SWT.NONE);
             col.setText(EclipseNSISPlugin.getResourceString("help.browser.location.label")); //$NON-NLS-1$
 
             table.setLinesVisible(false);
             table.setHeaderVisible(true);
 
-            table.addControlListener(new TableResizer(new double[] {1,1}));
+            table.addControlListener(new TableResizer(new double[] { 1, 1 }));
 
             final TableViewer viewer = new TableViewer(table);
             viewer.setContentProvider(new EmptyContentProvider() {
                 public Object[] getElements(Object inputElement)
                 {
-                    if(inputElement instanceof NSISHelpIndexEntry) {
-                        return ((NSISHelpIndexEntry)inputElement).getURLs().toArray();
+                    if (inputElement instanceof NSISHelpIndexEntry)
+                    {
+                        return ((NSISHelpIndexEntry) inputElement).getURLs().toArray();
                     }
                     return super.getElements(inputElement);
                 }
@@ -1487,12 +1764,14 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             viewer.setLabelProvider(new CollectionLabelProvider() {
                 public String getColumnText(Object element, int columnIndex)
                 {
-                    if(element instanceof NSISHelpIndexURL) {
-                        switch(columnIndex) {
+                    if (element instanceof NSISHelpIndexURL)
+                    {
+                        switch (columnIndex)
+                        {
                             case 0:
                                 return mEntry.getName();
                             case 1:
-                                return ((NSISHelpIndexURL)element).getLocation();
+                                return ((NSISHelpIndexURL) element).getLocation();
                         }
                     }
                     return super.getColumnText(element, columnIndex);
@@ -1507,7 +1786,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             viewer.addDoubleClickListener(new IDoubleClickListener() {
                 public void doubleClick(DoubleClickEvent event)
                 {
-                    if(updateURL(event.getSelection())) {
+                    if (updateURL(event.getSelection()))
+                    {
                         okPressed();
                     }
                 }
@@ -1519,9 +1799,10 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
         private boolean updateURL(ISelection sel)
         {
-            if(!sel.isEmpty() && sel instanceof IStructuredSelection) {
-                IStructuredSelection ssel = (IStructuredSelection)sel;
-                mURL = (NSISHelpIndexURL)ssel.getFirstElement();
+            if (!sel.isEmpty() && sel instanceof IStructuredSelection)
+            {
+                IStructuredSelection ssel = (IStructuredSelection) sel;
+                mURL = (NSISHelpIndexURL) ssel.getFirstElement();
                 return true;
             }
             return false;
@@ -1529,7 +1810,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     }
 
     private static final String SEARCHING_DIALOG_TITLE = EclipseNSISPlugin.getResourceString("searching.dialog.title"); //$NON-NLS-1$
-    private static final String SEARCHING_DIALOG_MESSAGE = EclipseNSISPlugin.getResourceString("searching.dialog.message"); //$NON-NLS-1$
+    private static final String SEARCHING_DIALOG_MESSAGE = EclipseNSISPlugin
+            .getResourceString("searching.dialog.message"); //$NON-NLS-1$
 
     private class SearchingDialog extends Dialog implements INSISHelpSearchRequester
     {
@@ -1550,9 +1832,10 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         {
             Point size = super.getInitialSize();
             GC gc = new GC(getShell());
-            int width = gc.stringExtent(SEARCHING_DIALOG_TITLE).x+75;
+            int width = gc.stringExtent(SEARCHING_DIALOG_TITLE).x + 75;
             gc.dispose();
-            if(size.x < width) {
+            if (size.x < width)
+            {
                 size.x = width;
             }
             return size;
@@ -1560,10 +1843,12 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
         public Filter getFilter()
         {
-            if(mSearchPrevious && mQuery != null) {
+            if (mSearchPrevious && mQuery != null)
+            {
                 return new QueryFilter(mQuery);
             }
-            else {
+            else
+            {
                 return null;
             }
         }
@@ -1621,17 +1906,20 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         public void searchCompleted(final NSISHelpSearchResult[] results, Collection highlightTerms)
         {
             getSite().getShell().getDisplay().asyncExec(new Runnable() {
-               public void run()
-               {
-                   close();
-               }
+                public void run()
+                {
+                    close();
+                }
             });
             mHighlightJS = null;
-            if(!Common.isEmptyArray(results)) {
-                if(!mSearchPrevious) {
+            if (!Common.isEmptyArray(results))
+            {
+                if (!mSearchPrevious)
+                {
                     mTerms.clear();
                 }
-                if(highlightTerms != null) {
+                if (highlightTerms != null)
+                {
                     mTerms.addAll(highlightTerms);
                 }
             }
@@ -1656,15 +1944,16 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             newShell.setImage(EclipseNSISPlugin.getShellImage());
         }
 
-        protected Control createButtonBar(Composite parent) {
+        protected Control createButtonBar(Composite parent)
+        {
             Composite composite = new Composite(parent, SWT.NONE);
-            GridLayout layout = new GridLayout(1,false);
+            GridLayout layout = new GridLayout(1, false);
             layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
             layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
             layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
             layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
             composite.setLayout(layout);
-            GridData data = new GridData(SWT.CENTER,SWT.CENTER,true,true);
+            GridData data = new GridData(SWT.CENTER, SWT.CENTER, true, true);
             composite.setLayoutData(data);
             composite.setFont(parent.getFont());
 
@@ -1675,10 +1964,10 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
         protected Control createDialogArea(Composite parent)
         {
-            Composite composite = (Composite)super.createDialogArea(parent);
-            Label l = new Label(composite,SWT.NONE);
+            Composite composite = (Composite) super.createDialogArea(parent);
+            Label l = new Label(composite, SWT.NONE);
             l.setText(SEARCHING_DIALOG_MESSAGE);
-            l.setLayoutData(new GridData(SWT.CENTER,SWT.FILL,true,true));
+            l.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true));
             return composite;
         }
 
