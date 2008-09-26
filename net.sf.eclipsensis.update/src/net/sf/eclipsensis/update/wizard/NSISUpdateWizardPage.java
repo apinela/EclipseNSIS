@@ -1,26 +1,28 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008 Sunil Kamath (IcemanK).
- * All rights reserved.
- * This program is made available under the terms of the Common Public License
- * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- *
- * Contributors:
- *     Sunil Kamath (IcemanK) - initial API and implementation
+ * Copyright (c) 2005-2008 Sunil Kamath (IcemanK). All rights reserved. This
+ * program is made available under the terms of the Common Public License v1.0
+ * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.update.wizard;
 
 import java.text.MessageFormat;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
-import net.sf.eclipsensis.update.preferences.UpdatePreferencePage;
 import net.sf.eclipsensis.update.scheduler.SchedulerConstants;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
@@ -32,8 +34,9 @@ public class NSISUpdateWizardPage extends WizardPage
     private int mAction = SchedulerConstants.DEFAULT_ACTION;
     private boolean mIgnorePreview = SchedulerConstants.DEFAULT_IGNORE_PREVIEW;
 
-    static {
-        LINK_TEXT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("wizard.proxy.link.text")).format(new String[] {UpdatePreferencePage.class.getName()}); //$NON-NLS-1$
+    static
+    {
+        LINK_TEXT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("wizard.proxy.link.text")).format(new String[] { "org.eclipse.ui.net.NetPreferences" }); //$NON-NLS-1$
     }
 
     public NSISUpdateWizardPage(int action, boolean ignorePreview)
@@ -58,44 +61,47 @@ public class NSISUpdateWizardPage extends WizardPage
     public void createControl(Composite parent)
     {
         parent = new Composite(parent, SWT.NONE);
-        parent.setLayout(new GridLayout(1,false));
+        parent.setLayout(new GridLayout(1, false));
 
         Group group1 = createActionGroup(parent);
         Group group2 = createOptionsGroup(parent);
-        Link link = new Link(parent,SWT.WRAP);
+        Link link = new Link(parent, SWT.WRAP);
         link.setText(LINK_TEXT);
         link.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                if(e.text != null) {
+                if (e.text != null)
+                {
                     PreferencesUtil.createPreferenceDialogOn(getShell(), e.text, null, null).open();
                 }
             }
         });
         Point size1 = group1.computeSize(SWT.DEFAULT, SWT.DEFAULT);
         Point size2 = group2.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        GridData gridData = new GridData(SWT.FILL,SWT.FILL,false,false);
-        gridData.widthHint = Math.max(size1.x,size2.x);
+        GridData gridData = new GridData(SWT.FILL, SWT.FILL, false, false);
+        gridData.widthHint = Math.max(size1.x, size2.x);
         link.setLayoutData(gridData);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,EclipseNSISUpdatePlugin.PLUGIN_CONTEXT_PREFIX+"nsis_update_wizard_context"); //$NON-NLS-1$
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+                EclipseNSISUpdatePlugin.PLUGIN_CONTEXT_PREFIX + "nsis_update_wizard_context"); //$NON-NLS-1$
         setControl(parent);
     }
 
     private Group createActionGroup(Composite parent)
     {
         Group group = new Group(parent, SWT.NONE);
-        group.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         group.setText(EclipseNSISUpdatePlugin.getResourceString("update.action.group.label")); //$NON-NLS-1$
-        group.setLayout(new GridLayout(1,false));
+        group.setLayout(new GridLayout(1, false));
 
         final Button notify = new Button(group, SWT.RADIO);
         notify.setText(EclipseNSISUpdatePlugin.getResourceString("update.action.notify.label")); //$NON-NLS-1$
-        notify.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        notify.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         notify.setSelection(mAction == SchedulerConstants.UPDATE_NOTIFY);
         notify.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                if(notify.getSelection()) {
+                if (notify.getSelection())
+                {
                     mAction = SchedulerConstants.UPDATE_NOTIFY;
                 }
             }
@@ -103,12 +109,13 @@ public class NSISUpdateWizardPage extends WizardPage
 
         final Button download = new Button(group, SWT.RADIO);
         download.setText(EclipseNSISUpdatePlugin.getResourceString("update.action.download.label")); //$NON-NLS-1$
-        download.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        download.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         download.setSelection(mAction == SchedulerConstants.UPDATE_DOWNLOAD);
         download.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                if(download.getSelection()) {
+                if (download.getSelection())
+                {
                     mAction = SchedulerConstants.UPDATE_DOWNLOAD;
                 }
             }
@@ -116,12 +123,13 @@ public class NSISUpdateWizardPage extends WizardPage
 
         final Button install = new Button(group, SWT.RADIO);
         install.setText(EclipseNSISUpdatePlugin.getResourceString("update.action.install.label")); //$NON-NLS-1$
-        install.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        install.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         install.setSelection(mAction == SchedulerConstants.UPDATE_INSTALL);
         install.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)
             {
-                if(install.getSelection()) {
+                if (install.getSelection())
+                {
                     mAction = SchedulerConstants.UPDATE_INSTALL;
                 }
             }
@@ -133,13 +141,13 @@ public class NSISUpdateWizardPage extends WizardPage
     private Group createOptionsGroup(Composite parent)
     {
         Group group = new Group(parent, SWT.NONE);
-        group.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         group.setText(EclipseNSISUpdatePlugin.getResourceString("update.options.group.label")); //$NON-NLS-1$
-        group.setLayout(new GridLayout(1,false));
+        group.setLayout(new GridLayout(1, false));
 
         final Button ignorePreview = new Button(group, SWT.CHECK);
         ignorePreview.setText(EclipseNSISUpdatePlugin.getResourceString("ignore.preview.label")); //$NON-NLS-1$
-        ignorePreview.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
+        ignorePreview.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         ignorePreview.setSelection(mIgnorePreview);
         ignorePreview.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e)

@@ -1,6 +1,9 @@
 Revision History
 ================
 
+0.9.7 (09/26/2008)
+    * Upgraded to Eclipse 3.4 - no longer compliant with Eclipse 3.3.
+
 0.9.6.1 (01/02/2008)
     * Updated copyright notice.
 

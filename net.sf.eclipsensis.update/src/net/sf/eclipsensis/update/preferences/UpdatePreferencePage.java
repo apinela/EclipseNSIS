@@ -9,6 +9,7 @@ package net.sf.eclipsensis.update.preferences;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,6 +40,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -46,14 +48,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage,
         IUpdatePreferenceConstants
 {
+    private static final String LINK_TEXT;
+
     private boolean mRefreshedSites = false;
     private Map mCachedAddresses = new HashMap();
     private Text mNSISUpdateSite;
@@ -63,6 +69,11 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     private Button mManualSelectMirror;
     private static Pattern cIPAddressRegex = Pattern
             .compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
+
+    static
+    {
+        LINK_TEXT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("preference.page.proxy.link.text")).format(new String[] { "org.eclipse.ui.net.NetPreferences" }); //$NON-NLS-1$
+    }
 
     private ModifyListener mModifyListener = new ModifyListener() {
         public void modifyText(ModifyEvent e)
@@ -89,8 +100,24 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         l.setText(EclipseNSISUpdatePlugin.getResourceString("preference.page.header")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-        createSitesGroup(parent);
-        createOptionsGroup(parent);
+        Group group1 = createSitesGroup(parent);
+        Group group2 = createOptionsGroup(parent);
+        Link link = new Link(parent, SWT.WRAP);
+        link.setText(LINK_TEXT);
+        link.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                if (e.text != null)
+                {
+                    PreferencesUtil.createPreferenceDialogOn(getShell(), e.text, null, null);
+                }
+            }
+        });
+        GridData gridData = new GridData(SWT.FILL, SWT.CENTER, false, false);
+        Point size1 = group1.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+        Point size2 = group2.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+        gridData.widthHint = Math.max(size1.x, size2.x);
+        link.setLayoutData(gridData);
 
         updateState();
         PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
@@ -123,7 +150,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         prefs.setValue(IGNORE_PREVIEW, mIgnorePreview.getSelection());
     }
 
-    private void createSitesGroup(Composite parent)
+    private Group createSitesGroup(Composite parent)
     {
         IPreferenceStore prefs = getPreferenceStore();
 
@@ -245,6 +272,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         };
         mAutoSelectMirror.addSelectionListener(adapter);
         mManualSelectMirror.addSelectionListener(adapter);
+        return group;
     }
 
     private void updateMirrorSelector(boolean flag)
@@ -253,7 +281,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         mSelectSourceforgeMirror.setEnabled(flag);
     }
 
-    private void createOptionsGroup(Composite parent)
+    private Group createOptionsGroup(Composite parent)
     {
         Group group = new Group(parent, SWT.NONE);
         group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -265,6 +293,8 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         mIgnorePreview.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
         mIgnorePreview.setSelection(getPreferenceStore().getBoolean(IGNORE_PREVIEW));
+
+        return group;
     }
 
     private void updateState()

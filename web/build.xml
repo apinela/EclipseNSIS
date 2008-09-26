@@ -28,20 +28,20 @@
     </target>
     <target name="update.p2.metadata" depends="test.eclipse.home.property,test.eclipse.exe,test.eclipse.property">
         <dirname property="ant.file.dir" file="${ant.file}"/>
-        <property name="update.site.dir" value="${ant.file.dir}\update"/>
+        <property name="update.site.dir" value="${ant.file.dir}/update"/>
         <exec executable="${eclipse}" >
             <arg value="-application"/>
             <arg value="org.eclipse.equinox.p2.metadata.generator.EclipseGenerator"/>
             <arg value="-updateSite"/>
             <arg value="${update.site.dir}"/>
             <arg value="-site"/>
-            <arg value="file:${update.site.dir}\site.xml"/>
+            <arg value="file:${update.site.dir}/site.xml"/>
             <arg value="-metadataRepository"/>
-            <arg value="file:${update.site.dir}\"/>
+            <arg value="file:${update.site.dir}/"/>
             <arg value="-metadataRepositoryName"/>
             <arg value="EclipseNSIS Update Site"/>
             <arg value="-artifactRepository"/>
-            <arg value="file:${update.site.dir}\"/>
+            <arg value="file:${update.site.dir}/"/>
             <arg value="-artifactRepositoryName"/>
             <arg value="EclipseNSIS Artifacts"/>
             <arg value="-compress"/>
