@@ -11,11 +11,18 @@
 -->
 <project name="EclipseNSIS Web" default="all">
     <target name="update">
+        <tempfile property="build.root" prefix="eclipsensis" suffix=".tmp" destDir="${java.io.tmpdir}"/>
+        <property name="build.features.root" value="${build.root}/features"/>
+        <property name="build.plugins.root" value="${build.root}/plugins"/>
+        <mkdir dir="${build.features.root}"/>
+        <mkdir dir="${build.plugins.root}"/>
         <mkdir dir="update"/>
         <antcall target="update.site"/>
         <antcall target="update.features"/>
         <antcall target="update.plugins"/>
         <antcall target="update.p2.metadata"/>
+        <antcall target="build.zips"/>
+        <delete dir="${build.root}"/>
     </target>
     <target name="test.eclipse.home.property" unless="eclipse.home">
         <fail message="Property eclipse.home not defined."/>
@@ -157,6 +164,80 @@
             <fileset dir="help/eclipsensis" includes="**/*"/>
             <fileset dir="help/installoptions" includes="**/*"/>
         </delete>
+    </target>
+    <target name="build.zips" depends="build.eclipsensis.zip,build.installoptions.zip,build.utilities.zip">
+    </target>
+    <target name="build.eclipsensis.zip">
+        <antcall target="unzip.feature">
+            <param name="feature.dir" value="../net.sf.eclipsensis.feature"/>
+        </antcall>
+        <antcall target="copy.plugin">
+            <param name="plugin.dir" value="../net.sf.eclipsensis.startup"/>
+            <param name="plugin.name" value="net.sf.eclipsensis.startup"/>
+        </antcall>
+        <antcall target="copy.plugin">
+            <param name="plugin.dir" value="../net.sf.eclipsensis"/>
+            <param name="plugin.name" value="net.sf.eclipsensis"/>
+        </antcall>
+        <antcall target="copy.plugin">
+            <param name="plugin.dir" value="../net.sf.eclipsensis.update"/>
+            <param name="plugin.name" value="net.sf.eclipsensis.update"/>
+        </antcall>
+        <antcall target="zip.feature">
+            <param name="feature.dir" value="../net.sf.eclipsensis.feature"/>
+        </antcall>
+    </target>
+    <target name="build.installoptions.zip">
+        <antcall target="unzip.feature">
+            <param name="feature.dir" value="../net.sf.eclipsensis.installoptions.feature"/>
+        </antcall>
+        <antcall target="copy.plugin">
+            <param name="plugin.dir" value="../net.sf.eclipsensis.installoptions"/>
+            <param name="plugin.name" value="net.sf.eclipsensis.installoptions"/>
+        </antcall>
+        <antcall target="zip.feature">
+            <param name="feature.dir" value="../net.sf.eclipsensis.installoptions.feature"/>
+        </antcall>
+    </target>
+    <target name="build.utilities.zip">
+        <antcall target="unzip.feature">
+            <param name="feature.dir" value="../net.sf.eclipsensis.utilities.feature"/>
+        </antcall>
+        <antcall target="copy.plugin">
+            <param name="plugin.dir" value="../net.sf.eclipsensis.utilities"/>
+            <param name="plugin.name" value="net.sf.eclipsensis.utilities"/>
+        </antcall>
+        <antcall target="copy.plugin">
+            <param name="plugin.dir" value="../JARSigner"/>
+            <param name="plugin.name" value="net.sf.jarsigner"/>
+        </antcall>
+        <antcall target="copy.plugin">
+            <param name="plugin.dir" value="../JNIGen"/>
+            <param name="plugin.name" value="net.sf.jnigen"/>
+        </antcall>
+        <antcall target="zip.feature">
+            <param name="feature.dir" value="../net.sf.eclipsensis.utilities.feature"/>
+        </antcall>
+    </target>
+	<target name="unzip.feature" if="feature.dir">
+        <xmlproperty file="${feature.dir}/feature.xml"/>
+		<unzip dest="${build.features.root}\${feature(id)}_${feature(version)}" overwrite="true">
+            <fileset dir="update/features" includes="${feature(id)}_${feature(version)}.jar"/>
+		</unzip>
+	</target>
+    <target name="zip.feature" if="feature.dir">
+        <xmlproperty file="${feature.dir}/feature.xml"/>
+        <zip destfile="..\${feature(id)}_${feature(version)}.zip">
+            <fileset dir="${build.root}" includes="**"/>
+        </zip>
+    	<delete dir="${build.features.root}"/>
+        <delete dir="${build.plugins.root}"/>
+    </target>
+    <target name="copy.plugin" depends="test.plugin.dir,test.plugin.name">
+        <property file="${plugin.dir}/META-INF/MANIFEST.MF"/>
+        <copy todir="${build.plugins.root}" overwrite="true">
+            <fileset dir="update/plugins" includes="${plugin.name}_${Bundle-Version}.jar"/>
+        </copy>
     </target>
     <target name="all" depends="update,help"/>
     <target name="clean" depends="clean.update,clean.help"/>

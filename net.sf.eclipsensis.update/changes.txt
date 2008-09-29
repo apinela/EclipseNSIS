@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.9.7 (09/26/2008)
+0.9.7 (09/29/2008)
     * Upgraded to Eclipse 3.4 - no longer compliant with Eclipse 3.3.
     * SourceForge download site is validated in Update preference page.
     * Proxy configuration is obtained from Eclipse network settings preferences.
