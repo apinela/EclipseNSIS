@@ -15,8 +15,12 @@
 	</target>
 	<target name="feature.internal">
 		<tempfile property="build.root" prefix="eclipsensis" suffix=".tmp" destDir="${java.io.tmpdir}"/>
-		<property name="build.src.root" value="${build.root}/src"/>
-		<mkdir dir="${build.src.root}"/>
+        <property name="build.features.root" value="${build.root}/features"/>
+        <property name="build.plugins.root" value="${build.root}/plugins"/>
+		<property name="build.src.root" value="${build.plugins.root}/src"/>
+		<mkdir dir="${build.features.root}"/>
+        <mkdir dir="${build.plugins.root}"/>
+        <mkdir dir="${build.src.root}"/>
 		<antcall target="startup.src"/>
 		<antcall target="eclipsensis.src"/>
 		<antcall target="update.src"/>
@@ -24,7 +28,7 @@
 		<antcall target="utilities.src"/>
 		<antcall target="jarsigner.src"/>
 		<antcall target="jnigen.src"/>
-		<copy todir="${build.root}">
+		<copy todir="${build.plugins.root}">
 			<fileset dir="../net.sf.eclipsensis.source">
 				<exclude name="**/CVS/*"/>
 				<exclude name="**/.cvsignore"/>
@@ -34,7 +38,7 @@
 		</copy>
 		<property file="../net.sf.eclipsensis.source/META-INF/MANIFEST.MF"/>
 		<zip destfile="../net.sf.eclipsensis.site/plugins/net.sf.eclipsensis.source_${Bundle-Version}.jar">
-			<fileset dir="${build.root}"/>
+			<fileset dir="${build.plugins.root}"/>
 		</zip>
 		<antcall target="sign.jar">
 			<param name="jar" value="../net.sf.eclipsensis.site/plugins/net.sf.eclipsensis.source_${Bundle-Version}.jar"/>
@@ -50,12 +54,26 @@
 		<antcall target="sign.jar">
 			<param name="jar" value="../net.sf.eclipsensis.site/features/net.sf.eclipsensis.source_${Bundle-Version}.jar"/>
 		</antcall>
-		<delete dir="${build.root}"/>
-		<zip destfile="../net.sf.eclipsensis.source_${Bundle-Version}.zip">
-			<fileset dir="../net.sf.eclipsensis.site">
-				<include name="**/net.sf.eclipsensis.source_${Bundle-Version}.jar"/>
+        <copy todir="${build.features.root}">
+            <fileset dir="../net.sf.eclipsensis.source.feature">
+                <exclude name="**/CVS/*"/>
+                <exclude name="**/.cvsignore"/>
+                <exclude name=".project"/>
+                <exclude name="build.properties"/>
+            </fileset>
+        </copy>
+		<zip destfile="${build.root}/net.sf.eclipsensis.source_${Bundle-Version}.zip">
+			<fileset dir="${build.root}">
+				<include name="features/**"/>
+                <include name="plugins/**"/>
 			</fileset>
 		</zip>
+		<copy todir=".." overwrite="true">
+			<fileset dir="${build.root}">
+				<include name="net.sf.eclipsensis.source_${Bundle-Version}.zip"/>
+			</fileset>
+		</copy>
+        <delete dir="${build.root}"/>
 	</target>
 	<target name="clean.feature">
 		<antcall target="clean.feature.internal"/>
