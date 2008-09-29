@@ -136,7 +136,7 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis097"
 src="images/closed.gif" onClick="toggle('trigger_eclipsensis097', 'toggle_eclipsensis097'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
-<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.7.zip?download">0.9.7</a> (09/26/2008)
+<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.7.zip?download">0.9.7</a> (09/29/2008)
 <div id="toggle_eclipsensis097" class="toggle">
 <ul>
   <li>Upgraded to Eclipse 3.4 - no longer compliant with Eclipse 3.3.</li>
