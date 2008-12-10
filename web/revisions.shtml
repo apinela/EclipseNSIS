@@ -35,10 +35,10 @@
   image_closed_over.src = "images/closed_over.gif";
 
   var latest = new Array();
-  latest["eclipsensis"] = "eclipsensis097";
+  latest["eclipsensis"] = "eclipsensis0971";
   latest["installoptions"] = "installoptions097";
   latest["utilities"] = "utilities0922";
-  latest["sources"] = "sources097";
+  latest["sources"] = "sources0971";
 
   function rollover(image)
   {
@@ -133,6 +133,23 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 <li><a href="#sources">EclipseNSIS Sources</a></li>
 </ul>
 <a name="eclipsensis"></a><h3>EclipseNSIS</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis0971"
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis0971', 'toggle_eclipsensis0971'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.7.1.zip?download">0.9.7.1</a> (12/09/2008)
+<div id="toggle_eclipsensis0971" class="toggle">
+<ul>
+  <li>Feature Requests:</li>
+  <ul>
+    <li><a href="http://sourceforge.net/tracker2/?func=detail&aid=2411044&group_id=116143&atid=673852">2411044</a></li>
+  </ul>
+  <li>Bug Fixes</li>
+  <ul>
+    <li><a href="http://sourceforge.net/tracker2/?func=detail&aid=2410938&group_id=116143&atid=673849">2410938</a></li>
+  </ul>
+</ul>
+</div>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis097"
 src="images/closed.gif" onClick="toggle('trigger_eclipsensis097', 'toggle_eclipsensis097'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
@@ -456,7 +473,7 @@ src="images/closed.gif" onClick="toggle('trigger_installoptions097', 'toggle_ins
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.7.zip?download">0.9.7</a>
-(09/26/2008)
+(09/29/2008)
 <div id="toggle_installoptions097" class="toggle">
 <ul>
   <li>Upgraded to Eclipse 3.4 - no longer compliant with Eclipse 3.3.</li>
@@ -652,7 +669,7 @@ src="images/closed.gif" onClick="toggle('trigger_utilities0922', 'toggle_utiliti
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.utilities_0.9.2.2.zip?download">0.9.2.2</a>
-(09/26/2008)
+(09/29/2008)
 <div id="toggle_utilities0922" class="toggle">
 <ul>
   <li>Added compatibility for Eclipse 3.4.</li>
@@ -761,12 +778,32 @@ Eclipse 3.0</li>
 //-->
 </script>
 <a name="sources"></a><h3>EclipseNSIS Sources</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_sources0971"
+src="images/closed.gif" onClick="toggle('trigger_sources0971', 'toggle_sources0971'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.source_0.9.7.1.zip?download">0.9.7.1</a>
+(12/09/2008)
+<div id="toggle_sources0971" class="toggle">
+<ul>
+  <li>This bundles source code for the following EclipseNSIS plugins into a single plugin:</li>
+      <ul>
+      <li>EclipseNSIS 0.9.7.1</li>
+      <li>EclipseNSIS Startup 0.9.7</li>
+      <li>EclipseNSIS Update 0.9.7</li>
+      <li>EclipseNSIS InstallOptions Editor 0.9.7</li>
+      <li>EclipseNSIS Utilities 0.9.2.2</li>
+      <li>JAR Signer 0.9.2.2</li>
+      <li>JNI Generator 0.9.2.2</li>
+      </ul>
+</ul>
+</div>
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_sources097"
 src="images/closed.gif" onClick="toggle('trigger_sources097', 'toggle_sources097'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.source_0.9.7.zip?download">0.9.7</a>
-(09/26/2008)
+(09/29/2008)
 <div id="toggle_sources097" class="toggle">
 <ul>
   <li>This bundles source code for the following EclipseNSIS plugins into a single plugin:</li>

@@ -58,6 +58,26 @@
             <arg value="-vmargs"/>
             <arg value="-Xmx256m"/>
         </exec>
+    	<uptodate property="artifacts.jar.ok" targetfile="${update.site.dir}\artifacts.jar" srcfile="${update.site.dir}\artifacts.xml"/>
+        <antcall target="jar.p2.metadata">
+            <param name="property.to.check" value="artifacts.jar.ok"/>
+        	<param name="p2.metadata.srcfile" value="artifacts.xml"/>
+            <param name="p2.metadata.targetfile" value="artifacts.jar"/>
+        </antcall>
+        <delete file="${update.site.dir}\artifacts.xml"/>
+        <uptodate property="content.jar.ok" targetfile="${update.site.dir}\content.jar" srcfile="${update.site.dir}\content.xml"/>
+        <antcall target="jar.p2.metadata">
+            <param name="property.to.check" value="content.jar.ok"/>
+            <param name="p2.metadata.srcfile" value="content.xml"/>
+            <param name="p2.metadata.targetfile" value="content.jar"/>
+        </antcall>
+        <delete file="${update.site.dir}\content.xml"/>
+    </target>
+    <target name="jar.p2.metadata" unless="${property.to.check}" if="update.site.dir">
+          <jar destfile="${update.site.dir}/${p2.metadata.targetfile}"
+               basedir="${update.site.dir}"
+               includes="${p2.metadata.srcfile}"
+          />
     </target>
     <target name="update.site">
         <copy todir="update" includeEmptyDirs="false">
@@ -219,18 +239,18 @@
             <param name="feature.dir" value="../net.sf.eclipsensis.utilities.feature"/>
         </antcall>
     </target>
-	<target name="unzip.feature" if="feature.dir">
+    <target name="unzip.feature" if="feature.dir">
         <xmlproperty file="${feature.dir}/feature.xml"/>
-		<unzip dest="${build.features.root}\${feature(id)}_${feature(version)}" overwrite="true">
+        <unzip dest="${build.features.root}\${feature(id)}_${feature(version)}" overwrite="true">
             <fileset dir="update/features" includes="${feature(id)}_${feature(version)}.jar"/>
-		</unzip>
-	</target>
+        </unzip>
+    </target>
     <target name="zip.feature" if="feature.dir">
         <xmlproperty file="${feature.dir}/feature.xml"/>
         <zip destfile="..\${feature(id)}_${feature(version)}.zip">
             <fileset dir="${build.root}" includes="**"/>
         </zip>
-    	<delete dir="${build.features.root}"/>
+        <delete dir="${build.features.root}"/>
         <delete dir="${build.plugins.root}"/>
     </target>
     <target name="copy.plugin" depends="test.plugin.dir,test.plugin.name">

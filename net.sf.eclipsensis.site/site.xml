@@ -3,13 +3,13 @@
    <description url="http://eclipsensis.sf.net/update">
       Download released versions of EclipseNSIS plugins here.
    </description>
-   <feature url="features/net.sf.eclipsensis_0.9.7.jar" id="net.sf.eclipsensis" version="0.9.7" os="win32" ws="win32" arch="x86">
+   <feature url="features/net.sf.eclipsensis_0.9.7.1.jar" id="net.sf.eclipsensis" version="0.9.7.1" os="win32" ws="win32" arch="x86">
       <category name="EclipseNSIS"/>
    </feature>
    <feature url="features/net.sf.eclipsensis.installoptions_0.9.7.jar" id="net.sf.eclipsensis.installoptions" version="0.9.7" os="win32" ws="win32" arch="x86">
       <category name="EclipseNSIS InstallOptions Editor"/>
    </feature>
-   <feature url="features/net.sf.eclipsensis.source_0.9.7.jar" id="net.sf.eclipsensis.source" version="0.9.7">
+   <feature url="features/net.sf.eclipsensis.source_0.9.7.1.jar" id="net.sf.eclipsensis.source" version="0.9.7.1">
       <category name="EclipseNSIS Sources"/>
    </feature>
    <feature url="features/net.sf.eclipsensis.utilities_0.9.2.2.jar" id="net.sf.eclipsensis.utilities" version="0.9.2.2">

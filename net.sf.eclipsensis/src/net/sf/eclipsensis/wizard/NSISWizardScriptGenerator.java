@@ -9,27 +9,96 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
-import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.editor.*;
-import net.sf.eclipsensis.help.*;
-import net.sf.eclipsensis.lang.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.INSISVersions;
+import net.sf.eclipsensis.editor.NSISExternalFileEditorInput;
+import net.sf.eclipsensis.editor.NSISTaskTag;
+import net.sf.eclipsensis.editor.NSISTaskTagUpdater;
+import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.help.NSISUsageProvider;
+import net.sf.eclipsensis.lang.NSISLanguage;
+import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
-import net.sf.eclipsensis.script.*;
+import net.sf.eclipsensis.script.INSISScriptElement;
+import net.sf.eclipsensis.script.NSISScript;
+import net.sf.eclipsensis.script.NSISScriptAttribute;
+import net.sf.eclipsensis.script.NSISScriptBlankLine;
+import net.sf.eclipsensis.script.NSISScriptDefine;
+import net.sf.eclipsensis.script.NSISScriptFunction;
+import net.sf.eclipsensis.script.NSISScriptInclude;
+import net.sf.eclipsensis.script.NSISScriptInsertMacro;
+import net.sf.eclipsensis.script.NSISScriptInstruction;
+import net.sf.eclipsensis.script.NSISScriptLabel;
+import net.sf.eclipsensis.script.NSISScriptMacro;
+import net.sf.eclipsensis.script.NSISScriptSection;
+import net.sf.eclipsensis.script.NSISScriptSectionGroup;
+import net.sf.eclipsensis.script.NSISScriptSingleLineComment;
+import net.sf.eclipsensis.script.NSISScriptUndef;
+import net.sf.eclipsensis.script.NSISScriptWriter;
+import net.sf.eclipsensis.script.NSISScriptlet;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.*;
-import net.sf.eclipsensis.wizard.settings.*;
+import net.sf.eclipsensis.util.CaseInsensitiveMap;
+import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.NSISCompileTestUtility;
+import net.sf.eclipsensis.util.RegistryImporter;
+import net.sf.eclipsensis.util.Version;
+import net.sf.eclipsensis.wizard.settings.INSISInstallElement;
+import net.sf.eclipsensis.wizard.settings.INSISInstallFileSystemObject;
+import net.sf.eclipsensis.wizard.settings.NSISInstallDirectory;
+import net.sf.eclipsensis.wizard.settings.NSISInstallElementFactory;
+import net.sf.eclipsensis.wizard.settings.NSISInstallFile;
+import net.sf.eclipsensis.wizard.settings.NSISInstallFiles;
+import net.sf.eclipsensis.wizard.settings.NSISInstallLibrary;
+import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryKey;
+import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryValue;
+import net.sf.eclipsensis.wizard.settings.NSISInstallShortcut;
+import net.sf.eclipsensis.wizard.settings.NSISSection;
+import net.sf.eclipsensis.wizard.settings.NSISSectionGroup;
+import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
@@ -90,8 +159,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         if(!Common.isEmpty(usage)) {
             usage = usage.toUpperCase();
             String search = new StringBuffer(getKeyword("/r")).append("|").append( //$NON-NLS-1$ //$NON-NLS-2$
-                                getKeyword("/REBOOTOK")).toString().toUpperCase(); //$NON-NLS-1$
-            mNewRmDirUsage = (usage.indexOf(search) < 0);
+                    getKeyword("/REBOOTOK")).toString().toUpperCase(); //$NON-NLS-1$
+            mNewRmDirUsage = usage.indexOf(search) < 0;
         }
     }
 
@@ -470,20 +539,20 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 if(!mIsSilent && mSettings.isChangeStartMenuGroup()) {
                     mReservedFiles.add("StartMenu.dll"); //$NON-NLS-1$
                     mScript.insertElement(pagesPlaceHolder,new NSISScriptAttribute("Page",new String[]{getKeyword("custom"),"StartMenuGroupSelect","", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                                               Common.quote((mSettings.isEnableLanguageSupport()?": $(StartMenuPageTitle)": //$NON-NLS-1$
-                                                                MessageFormat.format(": {0}",new String[]{ //$NON-NLS-1$
-                                                                EclipseNSISPlugin.getResourceString("scriptgen.start.menu.page.title")})))})); //$NON-NLS-1$
+                            Common.quote((mSettings.isEnableLanguageSupport()?": $(StartMenuPageTitle)": //$NON-NLS-1$
+                                MessageFormat.format(": {0}",new String[]{ //$NON-NLS-1$
+                                        EclipseNSISPlugin.getResourceString("scriptgen.start.menu.page.title")})))})); //$NON-NLS-1$
                     NSISScriptFunction fn = (NSISScriptFunction)mScript.insertElement(mFunctionsPlaceHolder,new NSISScriptFunction("StartMenuGroupSelect")); //$NON-NLS-1$
                     fn.addElement(new NSISScriptInstruction("Push",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
 
                     String[] args = new String[]{"/autoadd","/text", //$NON-NLS-1$ //$NON-NLS-2$
-                                                Common.quote(mSettings.isEnableLanguageSupport()?"$(StartMenuPageText)": //$NON-NLS-1$
-                                                 EclipseNSISPlugin.getResourceString("scriptgen.start.menu.page.text")), //$NON-NLS-1$
-                                                 "/lastused","$StartMenuGroup",mSettings.getStartMenuGroup()}; //$NON-NLS-1$ //$NON-NLS-2$
+                            Common.quote(mSettings.isEnableLanguageSupport()?"$(StartMenuPageText)": //$NON-NLS-1$
+                                EclipseNSISPlugin.getResourceString("scriptgen.start.menu.page.text")), //$NON-NLS-1$
+                                "/lastused","$StartMenuGroup",mSettings.getStartMenuGroup()}; //$NON-NLS-1$ //$NON-NLS-2$
                     if(mSettings.isDisableStartMenuShortcuts()) {
                         args = (String[])Common.joinArrays(new Object[] {new String[] {"/checknoshortcuts", //$NON-NLS-1$
-                                        Common.quote(mSettings.isEnableLanguageSupport()?"$(DisableStartMenuShortcutsText)": //$NON-NLS-1$
-                                                    EclipseNSISPlugin.getResourceString("scriptgen.disable.start.menu.shortcuts.text"))}, args}); //$NON-NLS-1$
+                                Common.quote(mSettings.isEnableLanguageSupport()?"$(DisableStartMenuShortcutsText)": //$NON-NLS-1$
+                                    EclipseNSISPlugin.getResourceString("scriptgen.disable.start.menu.shortcuts.text"))}, args}); //$NON-NLS-1$
                     }
                     fn.addElement(new NSISScriptInstruction("StartMenu::Select",args)); //$NON-NLS-1$
                     fn.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -501,7 +570,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
             mScript.insertElement(pagesPlaceHolder,new NSISScriptAttribute("Page",getKeyword("instfiles"))); //$NON-NLS-1$ //$NON-NLS-2$
             if(!Common.isEmpty(mSettings.getRunProgramAfterInstall()) ||
-               !Common.isEmpty(mSettings.getOpenReadmeAfterInstall())) {
+                    !Common.isEmpty(mSettings.getOpenReadmeAfterInstall())) {
                 mScript.addElement(new NSISScriptBlankLine());
                 NSISScriptFunction fn = (NSISScriptFunction)mScript.insertElement(mFunctionsPlaceHolder,new NSISScriptFunction(getKeyword(".onInstSuccess"))); //$NON-NLS-1$
                 if(!Common.isEmpty(mSettings.getRunProgramAfterInstall())) {
@@ -524,14 +593,14 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             String backgroundBMP = mSettings.getBackgroundBMP();
             String backgroundWAV = mSettings.getBackgroundWAV();
             RGB topColor = mSettings.getBGTopColor();
-			RGB bottomColor = mSettings.getBGBottomColor();
-			RGB textColor = mSettings.getBGTextColor();
-			if(Common.isEmpty(backgroundBMP)) {
+            RGB bottomColor = mSettings.getBGBottomColor();
+            RGB textColor = mSettings.getBGTextColor();
+            if(Common.isEmpty(backgroundBMP)) {
                 mScript.insertElement(attributesPlaceHolder,new NSISScriptAttribute("BGGradient", //$NON-NLS-1$
-                                 new String[] {
-                                      ColorManager.rgbToHex(topColor),
-                                      ColorManager.rgbToHex(bottomColor),
-                                      ColorManager.rgbToHex(textColor)}));
+                        new String[] {
+                        ColorManager.rgbToHex(topColor),
+                        ColorManager.rgbToHex(bottomColor),
+                        ColorManager.rgbToHex(textColor)}));
                 if(!Common.isEmpty(backgroundWAV)) {
                     mReservedFiles.add("BGImage.dll"); //$NON-NLS-1$
                     NSISScriptFunction fn;
@@ -543,11 +612,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         fn = (NSISScriptFunction)mScript.insertElement(mFunctionsPlaceHolder,new NSISScriptFunction(getKeyword(".onGUIInit"))); //$NON-NLS-1$
                     }
                     fn.addElement(new NSISScriptInstruction("File",new String[]{new StringBuffer(getKeyword("/oname")).append( //$NON-NLS-1$ //$NON-NLS-2$
-                                                            "=").append(getKeyword("$PLUGINSDIR")).append("\\bgimage.wav").toString(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                                            maybeMakeRelative(mSaveFile,backgroundWAV)}));
+                    "=").append(getKeyword("$PLUGINSDIR")).append("\\bgimage.wav").toString(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    maybeMakeRelative(mSaveFile,backgroundWAV)}));
                     fn.addElement(new NSISScriptInstruction("BGImage::Sound",new String[]{getKeyword("/NOUNLOAD"), //$NON-NLS-1$ //$NON-NLS-2$
-                                                                                          "/LOOP", //$NON-NLS-1$
-                                                                                          getKeyword("$PLUGINSDIR")+"\\bgimage.wav"})); //$NON-NLS-1$ //$NON-NLS-2$
+                            "/LOOP", //$NON-NLS-1$
+                            getKeyword("$PLUGINSDIR")+"\\bgimage.wav"})); //$NON-NLS-1$ //$NON-NLS-2$
                     mScript.insertElement(mFunctionsPlaceHolder,new NSISScriptBlankLine());
 
                     fn = (NSISScriptFunction)mScript.insertElement(mFunctionsPlaceHolder,new NSISScriptFunction(getKeyword(".onGUIEnd"))); //$NON-NLS-1$
@@ -569,14 +638,14 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 fn.addElement(new NSISScriptInstruction("Push",getKeyword("$R2"))); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("BgImage::SetReturn",new String[]{getKeyword("/NOUNLOAD"),"on"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 fn.addElement(new NSISScriptInstruction("BgImage::SetBg",new String[]{getKeyword("/NOUNLOAD"),"/GRADIENT", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                										Integer.toString(topColor.red), Integer.toString(topColor.green),
-                										Integer.toString(topColor.blue), Integer.toString(bottomColor.red),
-                										Integer.toString(bottomColor.green), Integer.toString(bottomColor.blue)}));
+                        Integer.toString(topColor.red), Integer.toString(topColor.green),
+                        Integer.toString(topColor.blue), Integer.toString(bottomColor.red),
+                        Integer.toString(bottomColor.green), Integer.toString(bottomColor.blue)}));
                 fn.addElement(new NSISScriptInstruction("Pop","$R1")); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("Strcmp",new String[]{getKeyword("$R1"),"success","0","error"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 fn.addElement(new NSISScriptInstruction("File",new String[]{new StringBuffer(getKeyword("/oname")).append( //$NON-NLS-1$ //$NON-NLS-2$
-                                            "=").append(getKeyword("$PLUGINSDIR")).append("\\bgimage.bmp").toString(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                            maybeMakeRelative(mSaveFile,backgroundBMP)}));
+                "=").append(getKeyword("$PLUGINSDIR")).append("\\bgimage.bmp").toString(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                maybeMakeRelative(mSaveFile,backgroundBMP)}));
                 fn.addElement(new NSISScriptInstruction("System::call","user32::GetSystemMetrics(i 0)i.R1")); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("System::call","user32::GetSystemMetrics(i 1)i.R2")); //$NON-NLS-1$ //$NON-NLS-2$
                 ImageData imageData = new ImageData(IOUtility.decodePath(backgroundBMP));
@@ -585,25 +654,25 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 fn.addElement(new NSISScriptInstruction("IntOp",new String[]{getKeyword("$R2"),getKeyword("$R2"),"-",Integer.toString(imageData.height)})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 fn.addElement(new NSISScriptInstruction("IntOp",new String[]{getKeyword("$R2"),getKeyword("$R2"),"/","2"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 fn.addElement(new NSISScriptInstruction("BGImage::AddImage",new String[]{getKeyword("/NOUNLOAD"), //$NON-NLS-1$ //$NON-NLS-2$
-                                getKeyword("$PLUGINSDIR")+"\\bgimage.bmp",getKeyword("$R1"),getKeyword("$R2")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                        getKeyword("$PLUGINSDIR")+"\\bgimage.bmp",getKeyword("$R1"),getKeyword("$R2")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 fn.addElement(new NSISScriptInstruction("CreateFont",new String[]{getKeyword("$R1"),"Times New Roman","26","700",getKeyword("/ITALIC")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
                 fn.addElement(new NSISScriptInstruction("BGImage::AddText",new String[]{getKeyword("/NOUNLOAD"),Common.quote("$(^SetupCaption)"),getKeyword("$R1"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-								                		Integer.toString(textColor.red), Integer.toString(textColor.green),
-														Integer.toString(textColor.blue),"16","8","500","100"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                        Integer.toString(textColor.red), Integer.toString(textColor.green),
+                        Integer.toString(textColor.blue),"16","8","500","100"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                 fn.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("Strcmp",new String[]{getKeyword("$R1"),"success","0","error"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
                 fn.addElement(new NSISScriptInstruction("BGImage::Redraw",getKeyword("/NOUNLOAD"))); //$NON-NLS-1$ //$NON-NLS-2$
                 if(!Common.isEmpty(backgroundWAV)) {
                     fn.addElement(new NSISScriptInstruction("File",new String[]{new StringBuffer(getKeyword("/oname")).append( //$NON-NLS-1$ //$NON-NLS-2$
-                                                            "=").append(getKeyword("$PLUGINSDIR")).append("\\bgimage.wav").toString(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                                            maybeMakeRelative(mSaveFile,backgroundWAV)}));
+                    "=").append(getKeyword("$PLUGINSDIR")).append("\\bgimage.wav").toString(), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    maybeMakeRelative(mSaveFile,backgroundWAV)}));
                     fn.addElement(new NSISScriptInstruction("BGImage::Sound",new String[]{getKeyword("/NOUNLOAD"), //$NON-NLS-1$ //$NON-NLS-2$
-                                                            "/LOOP",getKeyword("$PLUGINSDIR")+"\\bgimage.wav"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            "/LOOP",getKeyword("$PLUGINSDIR")+"\\bgimage.wav"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
                 fn.addElement(new NSISScriptInstruction("Goto","done")); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptLabel("error")); //$NON-NLS-1$
                 fn.addElement(new NSISScriptInstruction("MessageBox",new String[]{new StringBuffer(getKeyword("MB_OK")).append( //$NON-NLS-1$ //$NON-NLS-2$
-                                                        "|").append(getKeyword("MB_ICONSTOP")).toString(),getKeyword("$R1")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                "|").append(getKeyword("MB_ICONSTOP")).toString(),getKeyword("$R1")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 fn.addElement(new NSISScriptLabel("done")); //$NON-NLS-1$
                 fn.addElement(new NSISScriptInstruction("Pop",getKeyword("$R2"))); //$NON-NLS-1$ //$NON-NLS-2$
                 fn.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -639,8 +708,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 }
                 else {
                     mScript.insertElement(languagesPlaceHolder,new NSISScriptAttribute("LoadLanguageFile", //$NON-NLS-1$
-                                    new StringBuffer(mNsisDirKeyword).append("\\").append(INSISConstants.LANGUAGE_FILES_LOCATION).append( //$NON-NLS-1$
-                                    "\\").append(language.getName()).append(INSISConstants.LANGUAGE_FILES_EXTENSION).toString())); //$NON-NLS-1$
+                            new StringBuffer(mNsisDirKeyword).append("\\").append(INSISConstants.LANGUAGE_FILES_LOCATION).append( //$NON-NLS-1$
+                            "\\").append(language.getName()).append(INSISConstants.LANGUAGE_FILES_EXTENSION).toString())); //$NON-NLS-1$
                 }
             }
         }
@@ -668,7 +737,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             for(int j=i; j<4; j++) {
                 buf.append((j>0?".0":"0")); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            String langId=(mSettings.isEnableLanguageSupport()?new StringBuffer(getKeyword("/LANG")).append("=").append(defaultLanguage.getLangDef()).toString():null); //$NON-NLS-1$ //$NON-NLS-2$
+            String langId=mSettings.isEnableLanguageSupport()?new StringBuffer(getKeyword("/LANG")).append("=").append(defaultLanguage.getLangDef()).toString():null; //$NON-NLS-1$ //$NON-NLS-2$
             mScript.insertElement(attributesPlaceHolder,new NSISScriptAttribute("VIProductVersion",buf.toString())); //$NON-NLS-1$
             mScript.insertElement(attributesPlaceHolder,createVersionInfoKey(langId, new String[]{"ProductName",mSettings.getName()})); //$NON-NLS-1$
             mScript.insertElement(attributesPlaceHolder,createVersionInfoKey(langId,new String[]{"ProductVersion",Common.quote("${VERSION}")})); //$NON-NLS-1$ //$NON-NLS-2$
@@ -702,29 +771,29 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             if(mSettings.isShowSplash()) {
                 mOnInitFunction.addElement(new NSISScriptInstruction("Push",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
                 mOnInitFunction.addElement(new NSISScriptInstruction("File", //$NON-NLS-1$
-                                            new String[]{new StringBuffer(getKeyword("/oname")).append("=").append( //$NON-NLS-1$ //$NON-NLS-2$
-                                                    getKeyword("$PLUGINSDIR")).append("\\spltmp.bmp").toString(), //$NON-NLS-1$ //$NON-NLS-2$
-                                                    maybeMakeRelative(mSaveFile,mSettings.getSplashBMP())}));
+                        new String[]{new StringBuffer(getKeyword("/oname")).append("=").append( //$NON-NLS-1$ //$NON-NLS-2$
+                                getKeyword("$PLUGINSDIR")).append("\\spltmp.bmp").toString(), //$NON-NLS-1$ //$NON-NLS-2$
+                                maybeMakeRelative(mSaveFile,mSettings.getSplashBMP())}));
                 if(!Common.isEmpty(mSettings.getSplashWAV())) {
                     mOnInitFunction.addElement(new NSISScriptInstruction("File", //$NON-NLS-1$
-                                            new String[]{new StringBuffer(getKeyword("/oname")).append("=").append( //$NON-NLS-1$ //$NON-NLS-2$
-                                                    getKeyword("$PLUGINSDIR")).append("\\spltmp.wav").toString(), //$NON-NLS-1$ //$NON-NLS-2$
-                                                    maybeMakeRelative(mSaveFile,mSettings.getSplashWAV())}));
+                            new String[]{new StringBuffer(getKeyword("/oname")).append("=").append( //$NON-NLS-1$ //$NON-NLS-2$
+                                    getKeyword("$PLUGINSDIR")).append("\\spltmp.wav").toString(), //$NON-NLS-1$ //$NON-NLS-2$
+                                    maybeMakeRelative(mSaveFile,mSettings.getSplashWAV())}));
                 }
                 if(mSettings.getFadeInDelay() > 0 || mSettings.getFadeOutDelay() > 0) {
                     mOnInitFunction.addElement(new NSISScriptInstruction("advsplash::show",new String[]{ //$NON-NLS-1$
-                                        Integer.toString(mSettings.getSplashDelay()),
-                                        Integer.toString(mSettings.getFadeInDelay()),
-                                        Integer.toString(mSettings.getFadeOutDelay()),
-                                        "-1",getKeyword("$PLUGINSDIR")+"\\spltmp" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                     }));
+                            Integer.toString(mSettings.getSplashDelay()),
+                            Integer.toString(mSettings.getFadeInDelay()),
+                            Integer.toString(mSettings.getFadeOutDelay()),
+                            "-1",getKeyword("$PLUGINSDIR")+"\\spltmp" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    }));
                 }
                 else {
                     mOnInitFunction.addElement(new NSISScriptInstruction("splash::show", //$NON-NLS-1$
                             new String[]{
                             Integer.toString(mSettings.getSplashDelay()),
                             getKeyword("$PLUGINSDIR")+"\\spltmp" //$NON-NLS-1$ //$NON-NLS-2$
-                         }));
+                    }));
                 }
                 mOnInitFunction.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
                 mOnInitFunction.addElement(new NSISScriptInstruction("Pop",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -761,7 +830,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         if(mSettings.isCreateUninstaller()) {
             postSection = new NSISScriptSection("post",false,true,false); //$NON-NLS-1$
             postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
-                        getKeyword("HKLM"),Common.quote("${REGKEY}"),"Path",getKeyword("$INSTDIR")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                    getKeyword("HKLM"),Common.quote("${REGKEY}"),"Path",getKeyword("$INSTDIR")})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             if(!mIsMUI) {
                 if(mSettings.isSelectLanguage() && languages.size() > 1) {
                     postSection.addElement(new NSISScriptInstruction("WriteRegStr",new String[]{ //$NON-NLS-1$
@@ -931,11 +1000,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 unPostSection.addElement(0,new NSISScriptInstruction("DeleteRegKey",new String[]{getKeyword("HKLM"),Common.quote(cUninstallRegKey)})); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
-        mUnSectionList = (unPostSection == null?null:new ArrayList());
+        mUnSectionList = unPostSection == null?null:new ArrayList();
         INSISInstallElement[] contents =  mSettings.getInstaller().getChildren();
         mSectionCounter = 0;
         mSectionGroupCounter = 0;
-        Map secDescMap = (mIsMUI?new LinkedHashMap():null);
+        Map secDescMap = mIsMUI?new LinkedHashMap():null;
         for (int i = 0; i < contents.length; i++) {
             if(contents[i] instanceof NSISSection) {
                 mScript.insertElement(mSectionsPlaceHolder, buildSection((NSISSection)contents[i], secDescMap));
@@ -971,7 +1040,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         new String[] {new StringBuffer("${").append(id).append("}").toString(), //$NON-NLS-1$ //$NON-NLS-2$
                         mSettings.isEnableLanguageSupport()?
                                 new StringBuffer("$(").append(id).append("_DESC)").toString(): //$NON-NLS-1$ //$NON-NLS-2$
-                                    ((String)secDescMap.get(id))}));
+                                    (String)secDescMap.get(id)}));
             }
             mScript.addElement(new NSISScriptInsertMacro("MUI_FUNCTION_DESCRIPTION_END")); //$NON-NLS-1$
         }
@@ -999,20 +1068,20 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 }
                 if(mSettings.isCreateUninstaller() && mSettings.isCreateStartMenuGroup() && mSettings.isCreateUninstallerStartMenuShortcut()) {
                     unlinkScriptlet.addElement(new NSISScriptAttribute("LangString", //$NON-NLS-1$
-                                    new String[]{"^UninstallLink",language.getLangDef(), //$NON-NLS-1$
-                                   bundle.getString("scriptgen.uninstall.link")})); //$NON-NLS-1$
+                            new String[]{"^UninstallLink",language.getLangDef(), //$NON-NLS-1$
+                            bundle.getString("scriptgen.uninstall.link")})); //$NON-NLS-1$
                 }
                 if(!mIsMUI && mSettings.isCreateStartMenuGroup() && !mIsSilent && mSettings.isChangeStartMenuGroup()) {
                     smTitleScriptlet.addElement(new NSISScriptAttribute("LangString", //$NON-NLS-1$
-                           new String[]{"StartMenuPageTitle",language.getLangDef(), //$NON-NLS-1$
-                           bundle.getString("scriptgen.start.menu.page.title")})); //$NON-NLS-1$
+                            new String[]{"StartMenuPageTitle",language.getLangDef(), //$NON-NLS-1$
+                            bundle.getString("scriptgen.start.menu.page.title")})); //$NON-NLS-1$
                     smTextScriptlet.addElement(new NSISScriptAttribute("LangString", //$NON-NLS-1$
-                           new String[]{"StartMenuPageText",language.getLangDef(), //$NON-NLS-1$
-                           bundle.getString("scriptgen.start.menu.page.text")})); //$NON-NLS-1$
+                            new String[]{"StartMenuPageText",language.getLangDef(), //$NON-NLS-1$
+                            bundle.getString("scriptgen.start.menu.page.text")})); //$NON-NLS-1$
                     if(mSettings.isDisableStartMenuShortcuts()) {
                         disableSMScriptlet.addElement(new NSISScriptAttribute("LangString", //$NON-NLS-1$
-                               new String[]{"DisableStartMenuShortcutsText",language.getLangDef(), //$NON-NLS-1$
-                               bundle.getString("scriptgen.disable.start.menu.shortcuts.text")})); //$NON-NLS-1$
+                                new String[]{"DisableStartMenuShortcutsText",language.getLangDef(), //$NON-NLS-1$
+                                bundle.getString("scriptgen.disable.start.menu.shortcuts.text")})); //$NON-NLS-1$
                     }
                 }
                 if(secDescMap != null && secDescMap.size() > 0) {
@@ -1125,7 +1194,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     {
         String secGrpId = MessageFormat.format("SECGRP{0,number,0000}",new Object[]{new Integer(mSectionGroupCounter++)}); //$NON-NLS-1$
         NSISScriptSectionGroup scriptSecgrp = new NSISScriptSectionGroup(secGrp.getCaption(),secGrp.isDefaultExpanded(),secGrp.isBold(),
-                                                                secGrpId);
+                secGrpId);
         if(sectionDescMap != null && mIsMUI && !Common.isEmpty(secGrp.getDescription())) {
             sectionDescMap.put(secGrpId, secGrp.getDescription());
         }
@@ -1137,7 +1206,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 }
                 scriptSecgrp.addElement((children[i] instanceof NSISSectionGroup?
                         (INSISScriptElement)buildSectionGroup((NSISSectionGroup)children[i], sectionDescMap):
-                        (INSISScriptElement)buildSection((NSISSection)children[i], sectionDescMap)));
+                            (INSISScriptElement)buildSection((NSISSection)children[i], sectionDescMap)));
             }
         }
 
@@ -1213,7 +1282,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     unSectionId).append("}").toString()})); //$NON-NLS-1$
 
             unSection = new NSISScriptSection("un."+sec.getName(),false, true, true,  //$NON-NLS-1$
-                                              unSectionId);
+                    unSectionId);
             mUnSectionList.add(unSection);
         }
         INSISInstallElement[] children = sec.getChildren();
@@ -1257,20 +1326,26 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         }
                     }
                     if(type.equals(NSISInstallFile.TYPE)) {
-                        section.addElement(new NSISScriptInstruction("File",maybeMakeRelative(mSaveFile,((NSISInstallFile)installElement).getName()))); //$NON-NLS-1$
+                        section.addElement(new NSISScriptInstruction("File", new String[] {
+                                (((NSISInstallFile) installElement).getNonFatal() ? getKeyword("/nonfatal") : null),
+                                (((NSISInstallFile) installElement).getPreserveAttributes() ? getKeyword("/a") : null),
+                                maybeMakeRelative(mSaveFile, ((NSISInstallFile) installElement).getName()) }));
                         if(unSection != null) {
                             unSection.addElement(0,new NSISScriptInstruction("Delete", //$NON-NLS-1$
-                                                                        new String[]{getKeyword("/REBOOTOK"), //$NON-NLS-1$
+                                    new String[]{getKeyword("/REBOOTOK"), //$NON-NLS-1$
                                     new StringBuffer(outdir).append("\\").append(new Path(((NSISInstallFile)installElement).getName()).lastSegment()).toString()})); //$NON-NLS-1$
                         }
                     }
                     else if (type.equals(NSISInstallFiles.TYPE)) {
                         INSISInstallElement[] children2 = ((NSISInstallFiles)installElement).getChildren();
                         for (int j = 0; j < children2.length; j++) {
-                            section.addElement(new NSISScriptInstruction("File",maybeMakeRelative(mSaveFile,((NSISInstallFiles.FileItem)children2[j]).getName()))); //$NON-NLS-1$
+                            section.addElement(new NSISScriptInstruction("File", new String[] {
+                                    (((NSISInstallFiles) installElement).getNonFatal() ? getKeyword("/nonfatal"): null),
+                                    (((NSISInstallFiles) installElement).getPreserveAttributes() ? getKeyword("/a"): null),
+                                    maybeMakeRelative(mSaveFile,((NSISInstallFiles.FileItem) children2[j]).getName()) }));
                             if(unSection != null) {
                                 unSection.addElement(0,new NSISScriptInstruction("Delete", //$NON-NLS-1$
-                                                                            new String[]{getKeyword("/REBOOTOK"), //$NON-NLS-1$
+                                        new String[]{getKeyword("/REBOOTOK"), //$NON-NLS-1$
                                         new StringBuffer(outdir).append("\\").append(new Path(((NSISInstallFiles.FileItem)children2[j]).getName()).lastSegment()).toString()})); //$NON-NLS-1$
                             }
                         }
@@ -1279,23 +1354,30 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         NSISInstallDirectory installDirectory = (NSISInstallDirectory)installElement;
                         String name = installDirectory.getDisplayName() + "\\*"; //$NON-NLS-1$
                         if(installDirectory.isRecursive()) {
-                            section.addElement(new NSISScriptInstruction("File",new String[]{getKeyword("/r"),maybeMakeRelative(mSaveFile,name)})); //$NON-NLS-1$ //$NON-NLS-2$
+                            section.addElement(new NSISScriptInstruction("File",new String[]{
+                                    (installDirectory.getNonFatal() ? getKeyword("/nonfatal"): null),
+                                    (installDirectory.getPreserveAttributes() ? getKeyword("/a"): null),
+                                    getKeyword("/r"),
+                                    maybeMakeRelative(mSaveFile,name)}));
                             if(unSection != null) {
                                 if(mNewRmDirUsage) {
                                     unSection.addElement(0,new NSISScriptInstruction("RmDir", //$NON-NLS-1$
-                                                                                new String[]{getKeyword("/r"), //$NON-NLS-1$
-                                                                                             getKeyword("/REBOOTOK"), //$NON-NLS-1$
-                                                                                             outdir}));
+                                            new String[]{getKeyword("/r"), //$NON-NLS-1$
+                                            getKeyword("/REBOOTOK"), //$NON-NLS-1$
+                                            outdir}));
                                 }
                                 else {
                                     unSection.addElement(0,new NSISScriptInstruction("RmDir", //$NON-NLS-1$
-                                                                                new String[]{getKeyword("/r"), //$NON-NLS-1$
-                                                                                             outdir}));
+                                            new String[]{getKeyword("/r"), //$NON-NLS-1$
+                                            outdir}));
                                 }
                             }
                         }
                         else {
-                            section.addElement(new NSISScriptInstruction("File",maybeMakeRelative(mSaveFile,name))); //$NON-NLS-1$
+                            section.addElement(new NSISScriptInstruction("File", new String[] {
+                                    (installDirectory.getNonFatal() ? getKeyword("/nonfatal"): null),
+                                    (installDirectory.getPreserveAttributes() ? getKeyword("/a"): null),
+                                    maybeMakeRelative(mSaveFile,name)}));
                             if(unSection != null) {
                                 unSection.addElement(0,new NSISScriptInstruction("RmDir", //$NON-NLS-1$
                                         new String[]{getKeyword("/REBOOTOK"),outdir})); //$NON-NLS-1$
@@ -1309,16 +1391,16 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     if (type.equals(NSISInstallShortcut.TYPE)) {
                         NSISInstallShortcut shortcut = (NSISInstallShortcut)installElement;
                         String location = shortcut.getLocation();
-                        String path = (shortcut.getShortcutType()==SHORTCUT_INSTALLELEMENT?shortcut.getPath():shortcut.getUrl());
+                        String path = shortcut.getShortcutType()==SHORTCUT_INSTALLELEMENT?shortcut.getPath():shortcut.getUrl();
                         String name = shortcut.getName();
                         if(shortcut.isCreateInStartMenuGroup()) {
                             if(!mIsSilent && mSettings.isChangeStartMenuGroup() && mSettings.isDisableStartMenuShortcuts()) {
                                 addSMGroupShortcutFunctions();
                                 section.addElement(new NSISScriptInsertMacro("CREATE_SMGROUP_SHORTCUT",  //$NON-NLS-1$
-                                                                            new String[] {name, path}));
+                                        new String[] {name, path}));
                                 if(unSection != null) {
                                     unSection.addElement(0, new NSISScriptInsertMacro("DELETE_SMGROUP_SHORTCUT",  //$NON-NLS-1$
-                                                                                   name));
+                                            name));
                                 }
                                 continue;
                             }
@@ -1329,11 +1411,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                             section.addElement(new NSISScriptInstruction("SetOutPath",outdir)); //$NON-NLS-1$
                         }
                         location = new StringBuffer(outdir).append("\\").append( //$NON-NLS-1$
-                                                           name).append(".lnk").toString(); //$NON-NLS-1$
+                                name).append(".lnk").toString(); //$NON-NLS-1$
                         section.addElement(new NSISScriptInstruction("CreateShortcut",new String[]{location, path})); //$NON-NLS-1$
                         if(unSection != null) {
                             unSection.addElement(0,new NSISScriptInstruction("Delete", //$NON-NLS-1$
-                                                                        new String[]{getKeyword("/REBOOTOK"),location})); //$NON-NLS-1$
+                                    new String[]{getKeyword("/REBOOTOK"),location})); //$NON-NLS-1$
                         }
                         continue;
                     }
@@ -1368,16 +1450,16 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                                     instruction = "WriteRegStr"; //$NON-NLS-1$
                             }
                             section.addElement(new NSISScriptInstruction(instruction,
-                                                       new String[]{rootKey,
-                                                                    regValue.getSubKey(),
-                                                                    regValue.getValue(),
-                                                                    regValue.getData()
-                                                                   }));
+                                    new String[]{rootKey,
+                                    regValue.getSubKey(),
+                                    regValue.getValue(),
+                                    regValue.getData()
+                            }));
                             if(unSection != null) {
                                 unSection.addElement(0,new NSISScriptInstruction("DeleteRegValue", //$NON-NLS-1$
-                                                                            new String[]{rootKey,
-                                                                            regValue.getSubKey(),
-                                                                            regValue.getValue()}));
+                                        new String[]{rootKey,
+                                        regValue.getSubKey(),
+                                        regValue.getValue()}));
                             }
                             continue;
                         }
@@ -1390,28 +1472,28 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                             Pattern pattern = (Pattern)cReservedSubKeysMap.get(rootKey);
                             section.addElement(new NSISScriptInsertMacro("CreateRegKey", //$NON-NLS-1$
                                     new String[]{
-                                        new StringBuffer("${").append(rootKey).append("}").toString(), //$NON-NLS-1$ //$NON-NLS-2$
-                                        regKey.getSubKey()}));
-                             if(unSection != null) {
-                                 String subKey = regKey.getSubKey();
-                                 int index = 0;
-                                 while(subKey.length() > 0) {
-                                     if(pattern != null && pattern.matcher(subKey).matches()) {
-                                         break;
-                                     }
-                                     unSection.addElement(index++,new NSISScriptInstruction("DeleteRegKey", //$NON-NLS-1$
-                                                                                 new String[]{getKeyword("/IfEmpty"), //$NON-NLS-1$
-                                                                                 rootKey,
-                                                                                 subKey}));
-                                     int n = subKey.lastIndexOf('\\');
-                                     if(n < 0) {
-                                         break;
-                                     }
-                                     else {
-                                         subKey = subKey.substring(0,n);
-                                     }
-                                 }
-                             }
+                                    new StringBuffer("${").append(rootKey).append("}").toString(), //$NON-NLS-1$ //$NON-NLS-2$
+                                    regKey.getSubKey()}));
+                            if(unSection != null) {
+                                String subKey = regKey.getSubKey();
+                                int index = 0;
+                                while(subKey.length() > 0) {
+                                    if(pattern != null && pattern.matcher(subKey).matches()) {
+                                        break;
+                                    }
+                                    unSection.addElement(index++,new NSISScriptInstruction("DeleteRegKey", //$NON-NLS-1$
+                                            new String[]{getKeyword("/IfEmpty"), //$NON-NLS-1$
+                                            rootKey,
+                                            subKey}));
+                                    int n = subKey.lastIndexOf('\\');
+                                    if(n < 0) {
+                                        break;
+                                    }
+                                    else {
+                                        subKey = subKey.substring(0,n);
+                                    }
+                                }
+                            }
                         }
                         continue;
                     }
@@ -1535,7 +1617,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 getKeyword("HKLM"),Common.quote("${REGKEY}\\Components"),sec.getName(),"1"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         if(unSection != null) {
             unSection.addElement(new NSISScriptInstruction("DeleteRegValue",new String[]{ //$NON-NLS-1$
-                getKeyword("HKLM"),Common.quote("${REGKEY}\\Components"),sec.getName()})); //$NON-NLS-1$ //$NON-NLS-2$
+                    getKeyword("HKLM"),Common.quote("${REGKEY}\\Components"),sec.getName()})); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return section;
     }
@@ -1594,7 +1676,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             String language2 = received.getLanguage();
             if(Common.isEmpty(received.getVariant())) {
                 if(country1.equals(country2)) {
-                    return (Common.isEmpty(language2) || language1.equals(language2));
+                    return Common.isEmpty(language2) || language1.equals(language2);
                 }
             }
             return false;

@@ -1,17 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2004-2008 Sunil Kamath (IcemanK).
- * All rights reserved.
- * This program is made available under the terms of the Common Public License
- * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- *
- * Contributors:
- *     Sunil Kamath (IcemanK) - initial API and implementation
+ * Copyright (c) 2004-2008 Sunil Kamath (IcemanK). All rights reserved. This
+ * program is made available under the terms of the Common Public License v1.0
+ * which is available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFileDialog;
 import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
@@ -25,10 +24,13 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     public static final String TYPE = "File"; //$NON-NLS-1$
 
-    private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
+    private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(
+            EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
 
-    static {
-        NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.file.type.name"), IMAGE, NSISInstallFile.class); //$NON-NLS-1$
+    static
+    {
+        NSISInstallElementFactory.register(TYPE,
+                EclipseNSISPlugin.getResourceString("wizard.file.type.name"), IMAGE, NSISInstallFile.class); //$NON-NLS-1$
     }
 
     private String mName = null;
@@ -37,15 +39,22 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     private int mOverwriteMode = OVERWRITE_ON;
 
+    private boolean mNonFatal = false;
+
+    private boolean mPreserveAttributes = false;
+
     public String doValidate()
     {
-        if (!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
+        if (!IOUtility.isValidFile(IOUtility.decodePath(getName())))
+        {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
         }
-        else if (!NSISWizardUtil.isValidNSISPathName(getSettings().getTargetPlatform(), getDestination())) {
+        else if (!NSISWizardUtil.isValidNSISPathName(getSettings().getTargetPlatform(), getDestination()))
+        {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.destination.error"); //$NON-NLS-1$
         }
-        else {
+        else
+        {
             return super.doValidate();
         }
     }
@@ -57,33 +66,43 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     public boolean equals(Object obj)
     {
-        if (this == obj) {
+        if (this == obj)
+        {
             return true;
         }
-        if (obj == null) {
+        if (obj == null)
+        {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
+        {
             return false;
         }
-        final NSISInstallFile other = (NSISInstallFile)obj;
-        if (mDestination == null) {
-            if (other.mDestination != null) {
+        final NSISInstallFile other = (NSISInstallFile) obj;
+        if (mDestination == null)
+        {
+            if (other.mDestination != null)
+            {
                 return false;
             }
         }
-        else if (!mDestination.equals(other.mDestination)) {
+        else if (!mDestination.equals(other.mDestination))
+        {
             return false;
         }
-        if (mName == null) {
-            if (other.mName != null) {
+        if (mName == null)
+        {
+            if (other.mName != null)
+            {
                 return false;
             }
         }
-        else if (!mName.equals(other.mName)) {
+        else if (!mName.equals(other.mName))
+        {
             return false;
         }
-        if (mOverwriteMode != other.mOverwriteMode) {
+        if (mOverwriteMode != other.mOverwriteMode)
+        {
             return false;
         }
         return true;
@@ -99,8 +118,9 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     /*
      * (non-Javadoc)
-     *
-     * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
+     * 
+     * @see
+     * net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
      */
     public String getDisplayName()
     {
@@ -109,7 +129,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
      */
     public Image getImage()
@@ -133,9 +153,37 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
         return mOverwriteMode;
     }
 
+    public boolean getNonFatal()
+    {
+        return mNonFatal;
+    }
+
+    public void setNonFatal(boolean nonFatal)
+    {
+        if (mNonFatal != nonFatal)
+        {
+            setDirty();
+            mNonFatal = nonFatal;
+        }
+    }
+
+    public boolean getPreserveAttributes()
+    {
+        return mPreserveAttributes;
+    }
+
+    public void setPreserveAttributes(boolean preserveAttributes)
+    {
+        if (mPreserveAttributes != preserveAttributes)
+        {
+            setDirty();
+            mPreserveAttributes = preserveAttributes;
+        }
+    }
+
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
      */
     public String getType()
@@ -147,15 +195,15 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ((mDestination == null)?0:mDestination.hashCode());
-        result = PRIME * result + ((mName == null)?0:mName.hashCode());
+        result = PRIME * result + (mDestination == null ? 0 : mDestination.hashCode());
+        result = PRIME * result + (mName == null ? 0 : mName.hashCode());
         result = PRIME * result + mOverwriteMode;
         return result;
     }
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
      */
     public boolean isEditable()
@@ -169,7 +217,8 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
      */
     public void setDestination(String destination)
     {
-        if (!Common.stringsAreEqual(mDestination, destination)) {
+        if (!Common.stringsAreEqual(mDestination, destination))
+        {
             setDirty();
             mDestination = destination;
         }
@@ -181,7 +230,8 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
      */
     public void setName(String name)
     {
-        if (!Common.stringsAreEqual(mName, name)) {
+        if (!Common.stringsAreEqual(mName, name))
+        {
             setDirty();
             mName = name;
         }
@@ -193,7 +243,8 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
      */
     public void setOverwriteMode(int overwriteMode)
     {
-        if (mOverwriteMode != overwriteMode) {
+        if (mOverwriteMode != overwriteMode)
+        {
             setDirty();
             mOverwriteMode = overwriteMode;
         }

@@ -1,6 +1,12 @@
 Revision History
 ================
 
+0.9.7.1 (12/09/2008)
+    * Feature Requests:
+        o 2411044
+    * Bug Fixes
+        o 2410938
+
 0.9.7 (09/29/2008)
     * Upgraded to Eclipse 3.4 - no longer compliant with Eclipse 3.3.
     * Added support for new !searchparse command.
