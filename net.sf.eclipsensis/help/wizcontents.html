@@ -62,13 +62,15 @@ to Script Wizard</a>
 <p>The various installer items and the dialogs used to add and edit them are described in this section.</p>
 <a name="file"></a><h3 style="text-decoration: underline;">File</h3>
 <p>This consists of a single file on the filesystem.</p>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 418px; height: 255px;" usemap="#filedlg" ismap="ismap" alt="Add/Edit File" src="images/filedlg.gif"></p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 418px; height: 282px;" usemap="#filedlg" ismap="ismap" alt="Add/Edit File" src="images/filedlg.gif"></p>
 <a name="a_source"></a><dl id="id_source"><dt>Source File</dt><dd>The source file name. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_destination"></a><dl id="id_destination"><dt>Destination</dt><dd>The installation destination folder. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_overwrite"></a><dl id="id_overwrite"><dt>Overwrite</dt><dd>The overwrite action to take if the file already exists on the installation filesystem. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_preserveattr"></a><dl id="id_preserveattr"><dt>Preserve Attributes</dt><dd>If this option is selected, the installer will attempt to preserve the attributes of the source file. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_nonfatal"></a><dl id="id_nonfatal"><dt>Non-Fatal</dt><dd>If this option is selected, the compiler will issue a warning instead of an error if the source file is not found. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="fileset"></a><h3 style="text-decoration: underline;">File Set</h3>
 <p>This consists of a set of files on the filesystem which will be installed in the same destination folder.</p>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 418px; height: 380px;" usemap="#filesetdlg" ismap="ismap" alt="Add/Edit File Set" src="images/filesetdlg.gif"></p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 418px; height: 407px;" usemap="#filesetdlg" ismap="ismap" alt="Add/Edit File Set" src="images/filesetdlg.gif"></p>
 <a name="a_source2"></a><dl id="id_source2"><dt>Source Files</dt><dd>The source file names. These can be from different locations. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_add2"></a><dl id="id_add2"><dt>Add</dt><dd>Add one or more source files by browsing the filesystem. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_delete2"></a><dl id="id_delete2"><dt>Delete</dt><dd>Delete the selected source file(s) from the installer. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
@@ -76,16 +78,20 @@ to Script Wizard</a>
 <a name="a_down2"></a><dl id="id_down2"><dt>Down</dt><dd>Move the selected file(s) loweer in the installation sequence. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_destination2"></a><dl id="id_destination2"><dt>Destination</dt><dd>The installation destination folder. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_overwrite2"></a><dl id="id_overwrite2"><dt>Overwrite</dt><dd>The overwrite action to take if any of the files already exists on the installation filesystem. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_preserveattr2"></a><dl id="id_preserveattr2"><dt>Preserve Attributes</dt><dd>If this option is selected, the installer will attempt to preserve the attributes of the source files. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_nonfatal2"></a><dl id="id_nonfatal2"><dt>Non-Fatal</dt><dd>If this option is selected, the compiler will issue a warning instead of an error if any of the source files is not found. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="folder"></a><h3 style="text-decoration: underline;">Folder</h3>
 <p>This consists of a single
 folder on the filesystem. It can, however, be installed recursively,
 i.e., all its sub-folders and files will
 be installed as well.</p>
-<p style="text-align: center;"><img style="border: 0px solid ; width: 418px; height: 276px;" usemap="#folderdlg" ismap="ismap" alt="Add/Edit Folder" src="images/folderdlg.gif"></p>
+<p style="text-align: center;"><img style="border: 0px solid ; width: 418px; height: 303px;" usemap="#folderdlg" ismap="ismap" alt="Add/Edit Folder" src="images/folderdlg.gif"></p>
 <a name="a_source3"></a><dl id="id_source3"><dt>Source Folder</dt><dd>The source folder name. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_destination3"></a><dl id="id_destination3"><dt>Destination</dt><dd>The installation destination folder. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_overwrite3"></a><dl id="id_overwrite3"><dt>Overwrite</dt><dd>The overwrite action to take if the folder, or any of its children, already exist on the installation filesystem. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="a_includesub"></a><dl id="id_includesub"><dt>Include All Sub-Folders and Files</dt><dd>Option to recursively install the folder. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_preserveattr3"></a><dl id="id_preserveattr3"><dt>Preserve Attributes</dt><dd>If this option is selected, the installer will attempt to preserve the attributes of the source folder and its files and subfolders (if applicable). <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
+<a name="a_nonfatal3"></a><dl id="id_nonfatal3"><dt>Non-Fatal</dt><dd>If this option is selected, the compiler will issue a warning instead of an error if the source folder  is not found. <a href="javascript:history.go(-1)">&larr;&nbsp;Back</a></dd></dl>
 <a name="library"></a><h3 style="text-decoration: underline;">Library</h3>
 <p>This consists of a library file on the filesystem which is to be installed on the installation
 system. This option is only available in NSIS 2.01 or better, which include the <a href="javascript:redirectNSIS('AppendixB.html');">DLL/TLB Library Setup</a> system.</p>
@@ -239,22 +245,30 @@ is a useful way to attract the user's attention to a particular SectionGroup.
   <area id="expanded" shape="RECT" href="#a_expanded" alt="Expanded by Default" onClick="highlightDef('id_expanded');" coords="141,173,262,190">
 </map>
 <map name="filedlg">
-  <area id="source" shape="RECT" href="#a_source" alt="Source File" onClick="highlightDef('id_source');" coords="22,57,395,78"><area id="destination" shape="RECT" href="#a_destination" alt="Destination" onClick="highlightDef('id_destination');" coords="22,83,396,107"><area id="overwrite" shape="RECT" href="#a_overwrite" alt="Overwrite" onClick="highlightDef('id_overwrite');" coords="21,109,177,131">
+  <area id="source" shape="RECT" href="#a_source" alt="Source File" onClick="highlightDef('id_source');" coords="22,62,395,83">
+  <area id="destination" shape="RECT" href="#a_destination" alt="Destination" onClick="highlightDef('id_destination');" coords="22,88,396,112">
+  <area id="overwrite" shape="RECT" href="#a_overwrite" alt="Overwrite" onClick="highlightDef('id_overwrite');" coords="21,114,177,136">
+  <area id="preserveattr" shape="RECT" href="#a_preserveattr" alt="Preserve Attributes" onClick="highlightDef('id_preserveattr');" coords="23,142,136,156">
+  <area id="nonfatal" shape="RECT" href="#a_nonfatal" alt="Overwrite" onClick="highlightDef('id_nonfatal');" coords="211,142,275,156">
 </map>
 <map name="filesetdlg">
-  <area id="source2" shape="RECT" href="#a_source2" alt="Source Files" onClick="highlightDef('id_source2');" coords="21,54,362,205">
-  <area id="delete2" shape="RECT" href="#a_delete2" alt="Delete" onClick="highlightDef('id_delete2');" coords="367,105,395,131">
-  <area id="add2" shape="RECT" href="#a_add2" alt="Add" onClick="highlightDef('id_add2');" coords="367,74,395,100">
-  <area id="up2" shape="RECT" href="#a_up2" alt="Up" onClick="highlightDef('id_up2');" coords="367,136,395,162">
-  <area id="down2" shape="RECT" href="#a_down2" alt="Down" onClick="highlightDef('id_down2');" coords="367,167,395,193">
-  <area id="destination2" shape="RECT" href="#a_destination2" alt="Destination" onClick="highlightDef('id_destination2');" coords="21,208,395,231">
-  <area id="overwrite2" shape="RECT" href="#a_overwrite2" alt="Overwrite" onClick="highlightDef('id_overwrite2');" coords="21,235,178,256">
+  <area id="nonfatal2" shape="RECT" href="#a_nonfatal2" alt="Overwrite" onClick="highlightDef('id_nonfatal2');" coords="211,267,275,281">
+  <area id="preserveattr2" shape="RECT" href="#a_preserveattr2" alt="Preserve Attributes" onClick="highlightDef('id_preserveattr2');" coords="23,266,136,280">
+  <area id="overwrite2" shape="RECT" href="#a_overwrite2" alt="Overwrite" onClick="highlightDef('id_overwrite2');" coords="21,240,178,261">
+  <area id="destination2" shape="RECT" href="#a_destination2" alt="Destination" onClick="highlightDef('id_destination2');" coords="21,213,395,236">
+  <area id="down2" shape="RECT" href="#a_down2" alt="Down" onClick="highlightDef('id_down2');" coords="367,172,395,198">
+  <area id="up2" shape="RECT" href="#a_up2" alt="Up" onClick="highlightDef('id_up2');" coords="367,141,395,167">
+  <area id="delete2" shape="RECT" href="#a_delete2" alt="Delete" onClick="highlightDef('id_delete2');" coords="367,110,395,136">
+  <area id="add2" shape="RECT" href="#a_add2" alt="Add" onClick="highlightDef('id_add2');" coords="367,79,395,105">
+  <area id="source2" shape="RECT" href="#a_source2" alt="Source Files" onClick="highlightDef('id_source2');" coords="21,59,362,210">
 </map>
 <map name="folderdlg">
-  <area id="source3" shape="RECT" href="#a_source3" alt="Source Folder" onClick="highlightDef('id_source3');" coords="22,57,396,79">
-  <area id="destination3" shape="RECT" href="#a_destination3" alt="Destination" onClick="highlightDef('id_destination3');" coords="22,83,395,106">
-  <area id="overwrite3" shape="RECT" href="#a_overwrite3" alt="Overwrite" onClick="highlightDef('id_overwrite3');" coords="22,110,191,131">
-  <area id="includesub" shape="RECT" href="#a_includesub" alt="Include All Sub-Folders and Files" onClick="highlightDef('id_includesub');" coords="22,136,196,152">
+  <area id="includesub" shape="RECT" href="#a_includesub" alt="Include All Sub-Folders and Files" onClick="highlightDef('id_includesub');" coords="22,141,196,157">
+  <area id="overwrite3" shape="RECT" href="#a_overwrite3" alt="Overwrite" onClick="highlightDef('id_overwrite3');" coords="22,115,191,136">
+  <area id="destination3" shape="RECT" href="#a_destination3" alt="Destination" onClick="highlightDef('id_destination3');" coords="22,88,395,111">
+  <area id="source3" shape="RECT" href="#a_source3" alt="Source Folder" onClick="highlightDef('id_source3');" coords="22,62,396,84">
+  <area id="nonfatal3" shape="RECT" href="#a_nonfatal3" alt="Overwrite" onClick="highlightDef('id_nonfatal3');" coords="211,163,275,177">
+  <area id="preserveattr3" shape="RECT" href="#a_preserveattr3" alt="Preserve Attributes" onClick="highlightDef('id_preserveattr3');" coords="22,162,135,176">
 </map>
 <map name="librarydlg">
 <area id="remove" shape="rect" coords="23,284,136,297" href="#a_remove" alt="Remove on Uninstall" onClick="highlightDef('id_remove');">

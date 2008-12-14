@@ -1,6 +1,10 @@
 Revision History
 ================
 
+0.9.7.2 (12/13/2008)
+    * Bug Fixes
+        o 2410938
+
 0.9.7.1 (12/09/2008)
     * Feature Requests:
         o 2411044
