@@ -21,7 +21,7 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
     public static final String[] SHORTCUT_TYPE_NAMES = new String[SHORTCUT_INSTALLELEMENT+1];
     public static final String[] OVERWRITE_MODE_NAMES = new String[OVERWRITE_IFDIFF+1];
     public static final String[] REG_VALUE_TYPES = new String[REG_BIN+1];
-    public static final String[] LIBTYPES = new String[LIBTYPE_REGDLLTLB+1];
+    public static final String[] LIBTYPES = new String[LIBTYPE_REGEXE+1];
     public static final String[] EXECUTION_LEVELS = new String[EXECUTION_LEVEL_HIGHEST+1];
     public static final String[] TARGET_PLATFORMS = new String[TARGET_PLATFORM_X64+1];
     public static final String[] MULTIUSER_EXEC_LEVELS = new String[MULTIUSER_EXEC_LEVEL_HIGHEST+1];
@@ -58,6 +58,7 @@ public class NSISWizardDisplayValues implements INSISWizardConstants
         LIBTYPES[LIBTYPE_REGDLL] = EclipseNSISPlugin.getResourceString("lib.type.regdll"); //$NON-NLS-1$;
         LIBTYPES[LIBTYPE_TLB] = EclipseNSISPlugin.getResourceString("lib.type.tlb"); //$NON-NLS-1$;
         LIBTYPES[LIBTYPE_REGDLLTLB] = EclipseNSISPlugin.getResourceString("lib.type.regdlltlb"); //$NON-NLS-1$;
+        LIBTYPES[LIBTYPE_REGEXE] = EclipseNSISPlugin.getResourceString("lib.type.regexe"); //$NON-NLS-1$;
 
         EXECUTION_LEVELS[EXECUTION_LEVEL_NONE] = EclipseNSISPlugin.getResourceString("execution.level.none"); //$NON-NLS-1$;
         EXECUTION_LEVELS[EXECUTION_LEVEL_USER] = EclipseNSISPlugin.getResourceString("execution.level.user"); //$NON-NLS-1$;

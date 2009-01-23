@@ -1295,10 +1295,6 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 if(installElement instanceof INSISInstallFileSystemObject) {
                     INSISInstallFileSystemObject fsObject = (INSISInstallFileSystemObject)installElement;
                     String tempOutdir = fsObject.getDestination();
-                    //                    if (type.equals(NSISInstallDirectory.TYPE)) {
-                    //                        String sourceDir = ((NSISInstallDirectory)installElement).getName();
-                    //                        tempOutdir = new StringBuffer(tempOutdir).append("\\").append(new Path(sourceDir).lastSegment()).toString(); //$NON-NLS-1$
-                    //                    }
                     if(!outdir.equalsIgnoreCase(tempOutdir)) {
                         outdir = tempOutdir;
                         section.addElement(new NSISScriptInstruction("SetOutPath",outdir)); //$NON-NLS-1$
@@ -1524,6 +1520,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                             case LIBTYPE_REGDLLTLB:
                                 libType = "REGDLLTLB"; //$NON-NLS-1$
                                 break;
+                            case LIBTYPE_REGEXE:
+                                if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_42) >= 0) {
+                                    libType = "REGEXE"; //$NON-NLS-1$
+                                    break;
+                                }
                             default:
                                 libType = "DLL"; //$NON-NLS-1$
                         }

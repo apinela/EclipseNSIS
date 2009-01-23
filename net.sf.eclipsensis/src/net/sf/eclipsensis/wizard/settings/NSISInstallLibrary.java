@@ -10,9 +10,13 @@
 package net.sf.eclipsensis.wizard.settings;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISVersions;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.*;
-import net.sf.eclipsensis.wizard.*;
+import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.wizard.INSISWizardConstants;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallLibraryDialog;
 import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
 
@@ -157,9 +161,9 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + ((mDestination == null)?0:mDestination.hashCode());
+        result = PRIME * result + (mDestination == null?0:mDestination.hashCode());
         result = PRIME * result + mLibType;
-        result = PRIME * result + ((mName == null)?0:mName.hashCode());
+        result = PRIME * result + (mName == null?0:mName.hashCode());
         result = PRIME * result + (mProtected?1231:1237);
         result = PRIME * result + (mReboot?1231:1237);
         result = PRIME * result + (mRefreshShell?1231:1237);
@@ -239,6 +243,10 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
             case LIBTYPE_TLB:
             case LIBTYPE_REGDLLTLB:
                 break;
+            case LIBTYPE_REGEXE:
+                if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_42) >= 0) {
+                    break;
+                }
             default:
                 libType = LIBTYPE_DLL;
         }

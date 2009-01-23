@@ -9,24 +9,39 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings.dialogs;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.INSISVersions;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.*;
-import net.sf.eclipsensis.wizard.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.wizard.INSISWizardConstants;
+import net.sf.eclipsensis.wizard.NSISWizard;
+import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
 import net.sf.eclipsensis.wizard.settings.NSISInstallLibrary;
-import net.sf.eclipsensis.wizard.util.*;
+import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
+import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 
 public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
 {
     private static final String TLB_EXTENSION = ".tlb"; //$NON-NLS-1$
+    private static final String EXE_EXTENSION = ".exe"; //$NON-NLS-1$
 
     private static ArrayList cProperties = new ArrayList();
 
@@ -84,9 +99,18 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
 
+        final boolean supportsExeCom = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_42) >= 0;
+
+        String[] filterNames = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), "wizard.library.filternames"); //$NON-NLS-1$
+        String[] filters = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), "wizard.library.filters"); //$NON-NLS-1$
+        if(supportsExeCom) {
+            filterNames = (String[]) Common.joinArrays(new Object[]{Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), "wizard.library.filternames.exe"),filterNames}); //$NON-NLS-1$
+            filters = (String[]) Common.joinArrays(new Object[]{Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), "wizard.library.filters.exe"),filters}); //$NON-NLS-1$
+        }
+
         final Text t = NSISWizardDialogUtil.createFileBrowser(composite, mStore.getString("name"), false, //$NON-NLS-1$
-                Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), "wizard.library.filternames"), //$NON-NLS-1$
-                Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), "wizard.library.filters"), //$NON-NLS-1$
+                filterNames,
+                filters,
                 "wizard.library.label", true, null, true); //$NON-NLS-1$
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,
                 NSISWizardUtil.getPathConstantsAndVariables(mWizard.getSettings().getTargetPlatform()),
@@ -102,7 +126,16 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         GridData gd = (GridData)c1.getLayoutData();
         gd.horizontalAlignment = GridData.FILL;
 
-        final Combo c2 = NSISWizardDialogUtil.createCombo(composite, NSISWizardDisplayValues.LIBTYPES, mStore.getInt("libType"), //$NON-NLS-1$
+        String[] libTypes = NSISWizardDisplayValues.LIBTYPES;
+        if(!supportsExeCom) {
+            libTypes = (String[]) Common.subArray(libTypes, 0, libTypes.length-1);
+        }
+
+        int libType = mStore.getInt("libType"); //$NON-NLS-1$
+        if(libType >= libTypes.length) {
+            libType = 0;
+        }
+        final Combo c2 = NSISWizardDialogUtil.createCombo(composite, libTypes, libType,
                 true, "wizard.lib.type.label", true, null, false); //$NON-NLS-1$
         c2.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
@@ -115,14 +148,24 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         gd.horizontalAlignment = GridData.FILL;
 
         t.addModifyListener(new ModifyListener() {
+            private boolean fixLibType(String name, String extension, int libType)
+            {
+                if (name.regionMatches(true, name.length() - extension.length(), extension, 0, extension.length())) {
+                    if (c2.getSelectionIndex() != libType) {
+                        c2.select(libType);
+                        return true;
+                    }
+                }
+                return false;
+            }
+
             public void modifyText(ModifyEvent e)
             {
                 String name = t.getText().trim();
                 mStore.setValue("name", name); //$NON-NLS-1$
-                if (name.regionMatches(true, name.length() - TLB_EXTENSION.length(), TLB_EXTENSION, 0, TLB_EXTENSION.length())) {
-                    if (c2.getSelectionIndex() != INSISWizardConstants.LIBTYPE_TLB) {
-                        c2.select(INSISWizardConstants.LIBTYPE_TLB);
-                        return;
+                if (!fixLibType(name, TLB_EXTENSION, INSISWizardConstants.LIBTYPE_TLB)) {
+                    if (supportsExeCom) {
+                        fixLibType(name, EXE_EXTENSION, INSISWizardConstants.LIBTYPE_REGEXE);
                     }
                 }
                 validate();

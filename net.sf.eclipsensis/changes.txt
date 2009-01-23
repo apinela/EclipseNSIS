@@ -1,6 +1,10 @@
 Revision History
 ================
 
+0.9.7.3 (12/13/2008)
+    * Added support for !searchreplace command.
+    * Added support for registering EXE COM servers in InstallLib macros.
+
 0.9.7.2 (12/13/2008)
     * Bug Fixes
         o 2410938

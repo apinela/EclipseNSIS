@@ -11,6 +11,17 @@
 ###############################################################################
 -->
 <commands>
+  <version name="2.42">
+    <add>
+      <command name="!searchreplace" category="conditional.compilation.category" scope="any">
+        <param name="/ignorecase" type="static" optional="true"/>
+        <param name="symbol_out" tooltip="symbol_out" type="string" acceptVar="false"/>
+        <param name="source_string" tooltip="source string" type="string" acceptVar="false"/>
+        <param name="searchfor" tooltip="searchfor" type="string" acceptVar="false"/>
+        <param name="replacewith" tooltip="replacewith" type="string" acceptVar="false"/>
+      </command>
+    </add>
+  </version>
   <version name="2.39">
     <add>
       <command name="!define" category="conditional.compilation.category" scope="any">

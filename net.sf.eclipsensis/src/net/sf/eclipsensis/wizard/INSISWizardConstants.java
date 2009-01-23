@@ -46,6 +46,7 @@ public interface INSISWizardConstants
     public static final int LIBTYPE_REGDLL=1;
     public static final int LIBTYPE_TLB=2;
     public static final int LIBTYPE_REGDLLTLB=3;
+    public static final int LIBTYPE_REGEXE=4;
 
     public static final int VALIDATE_ALL=0xFFFF;
     public static final String WIZARD_TEMPLATE_EXTENSION=".xml"; //$NON-NLS-1$
