@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004-2008 Sunil Kamath (IcemanK). All rights reserved. This
+ * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  * 
  * Based upon org.eclipse.jdt.internal.ui.text.hover.BrowserInformationControl
- * Copyright (c) 2000-2008 IBM Corporation and others.
+ * Copyright (c) 2000-2009 IBM Corporation and others.
  * 
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;

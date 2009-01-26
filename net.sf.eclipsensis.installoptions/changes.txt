@@ -1,6 +1,10 @@
 Revision History
 ================
 
+0.9.7.1 (12/13/2008)
+    * Bug Fixes
+        o 2526120
+
 0.9.7 (09/29/2008)
     * Upgraded to Eclipse 3.4 - no longer compliant with Eclipse 3.3.
     * Minor bug fixes.
