@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
@@ -364,7 +364,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
     private void createLanguagesGroup(Composite parent)
     {
         final Group langGroup = NSISWizardDialogUtil
-                .createGroup(parent, 1, "language.support.group.label", null, false); //$NON-NLS-1$
+        .createGroup(parent, 1, "language.support.group.label", null, false); //$NON-NLS-1$
         GridData data = (GridData) langGroup.getLayoutData();
         data.verticalAlignment = SWT.FILL;
         data.grabExcessVerticalSpace = true;
@@ -420,7 +420,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         final List availableLangList = new List(leftComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
         data = new GridData(SWT.FILL, SWT.FILL, true, true);
         Dialog.applyDialogFont(availableLangList);
-        data.heightHint = Common.calculateControlSize(availableLangList, 0, 10).y;
+        data.heightHint = Common.calculateControlSize(availableLangList, 0, 12).y;
         availableLangList.setLayoutData(data);
         m.addSlave(availableLangList);
 
@@ -479,7 +479,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         final List selectedLangList = new List(rightComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
         data = new GridData(SWT.FILL, SWT.FILL, true, true);
         Dialog.applyDialogFont(selectedLangList);
-        data.heightHint = Common.calculateControlSize(selectedLangList, 0, 10).y;
+        data.heightHint = Common.calculateControlSize(selectedLangList, 0, 12).y;
         selectedLangList.setLayoutData(data);
         m.addSlave(selectedLangList);
 
@@ -580,7 +580,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 {
                     java.util.List selectedLanguages = (java.util.List) selectedLangViewer.getInput();
                     return settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isEnableLanguageSupport()
-                            && selectedLanguages.size() > 1;
+                    && selectedLanguages.size() > 1;
                 }
                 else
                 {
@@ -732,7 +732,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                     }
                     ((GridData) availableLangList.getLayoutData()).widthHint = listWidth;
                     ((GridData) buttonsComposite1.getLayoutData()).widthHint = totalWidth - 2 * (listWidth + delta)
-                            - buttonWidth;
+                    - buttonWidth;
                     ((GridData) selectedLangList.getLayoutData()).widthHint = listWidth;
                     ((GridData) buttonsComposite2.getLayoutData()).widthHint = buttonWidth;
                     listsComposite.layout();
@@ -761,7 +761,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 if (selectedLanguages.isEmpty())
                 {
                     NSISWizardWelcomePage welcomePage = (NSISWizardWelcomePage) mWizard
-                            .getPage(NSISWizardWelcomePage.NAME);
+                    .getPage(NSISWizardWelcomePage.NAME);
                     if (welcomePage != null)
                     {
                         if (!welcomePage.isCreateFromTemplate())

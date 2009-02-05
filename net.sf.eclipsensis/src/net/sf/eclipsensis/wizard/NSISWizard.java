@@ -9,22 +9,33 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISVersions;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
 
 public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizard, INSISWizardConstants
 {
@@ -35,7 +46,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     /**
      * The wizard dialog height
      */
-    private static final int SIZING_WIZARD_HEIGHT = 460;
+    private static final int SIZING_WIZARD_HEIGHT = 500;
 
     private NSISWizardSettings mSettings = null;
     private List mSettingsListeners = new ArrayList();
@@ -43,13 +54,13 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     private AbstractNSISWizardPage mCurrentPage = null;
 
     /**
-	 * Constructor for NSISWizard.
-	 */
-	public NSISWizard()
+     * Constructor for NSISWizard.
+     */
+    public NSISWizard()
     {
-		super();
+        super();
         setTitleBarColor(ColorManager.WHITE);
-	}
+    }
 
     void initSettings()
     {
@@ -97,14 +108,14 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     }
 
     /**
-	 * Adding the page to the wizard.
-	 */
-	public final void addPages()
+     * Adding the page to the wizard.
+     */
+    public final void addPages()
     {
         if(EclipseNSISPlugin.getDefault().isConfigured()) {
             initSettings();
 
-    		addStartPage();
+            addStartPage();
             addPage(new NSISWizardGeneralPage());
             addPage(new NSISWizardAttributesPage());
             addPage(new NSISWizardPresentationPage());
@@ -122,7 +133,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
                 }
             });
         }
-	}
+    }
 
     /**
      * @return Returns the settings.
@@ -160,7 +171,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     {
         IWizardPage nextPage = super.getNextPage(page);
         if(mSettings.getInstallerType() == INSTALLER_TYPE_SILENT && nextPage != null &&
-           nextPage.getName().equals(NSISWizardPresentationPage.NAME)) {
+                nextPage.getName().equals(NSISWizardPresentationPage.NAME)) {
             nextPage = super.getNextPage(nextPage);
         }
         return nextPage;
@@ -173,7 +184,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     {
         IWizardPage prevPage = super.getPreviousPage(page);
         if(mSettings.getInstallerType() == INSTALLER_TYPE_SILENT && prevPage != null &&
-           prevPage.getName().equals(NSISWizardPresentationPage.NAME)) {
+                prevPage.getName().equals(NSISWizardPresentationPage.NAME)) {
             prevPage = super.getNextPage(prevPage);
         }
         return prevPage;
@@ -187,7 +198,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
             GridData d = (GridData)data;
             d.widthHint = SIZING_WIZARD_WIDTH;
             d.heightHint = SIZING_WIZARD_HEIGHT + //Account for MultiUser group
-                (INSISVersions.VERSION_2_35.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) <= 0?60:0);
+            (INSISVersions.VERSION_2_35.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) <= 0?60:0);
         }
     }
 
@@ -203,9 +214,9 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
 
     /* (non-Javadoc)
      * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
-	 */
-	public void init(IWorkbench workbench, IStructuredSelection selection) {
-	}
+     */
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+    }
 
     protected abstract void addStartPage();
 
