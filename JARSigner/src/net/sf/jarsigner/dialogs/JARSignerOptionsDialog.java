@@ -35,13 +35,13 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
     private static final String INTERNAL_SF = "internal.sf"; //$NON-NLS-1$
     private static final String SECTIONS_ONLY = "sections.only"; //$NON-NLS-1$
 
-    private List mAliases;
+    private List<String> mAliases;
     private ComboViewer mComboViewer;
 
     /**
      * @param parentShell
      */
-    public JARSignerOptionsDialog(Shell parentShell, List selection)
+    public JARSignerOptionsDialog(Shell parentShell, List<Object> selection)
     {
         super(parentShell, selection);
     }
@@ -52,7 +52,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         String storePass = getStringDialogSetting(STORE_PASS);
         String keyStore = getKeyStore();
         KeyStore ks = JARSignerPlugin.loadKeyStore(keyStore,storePass);
-        mAliases = new ArrayList();
+        mAliases = new ArrayList<String>();
         if(ks != null) {
             setValue(STORE_PASS,storePass);
             try {

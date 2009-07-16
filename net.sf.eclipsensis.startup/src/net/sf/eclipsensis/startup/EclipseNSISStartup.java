@@ -9,10 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.startup;
 
-import java.util.*;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -27,6 +35,7 @@ public class EclipseNSISStartup extends AbstractUIPlugin
 
     private BundleContext mBundleContext;
     private ResourceBundle mResourceBundle;
+    private IEclipsePreferences mPreferences;
 
 	/**
 	 * The constructor
@@ -49,6 +58,8 @@ public class EclipseNSISStartup extends AbstractUIPlugin
     {
         cPlugin = this;
         mBundleContext = context;
+        String name = (String)context.getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
+        mPreferences = new InstanceScope().getNode(name);
 		super.start(context);
 	}
 
@@ -95,5 +106,34 @@ public class EclipseNSISStartup extends AbstractUIPlugin
             }
         }
         return key;
+    }
+    
+    public void savePreferences()
+    {
+    	try {
+			mPreferences.flush();
+		} 
+    	catch (BackingStoreException e) {
+			log(e);
+		}    	
+    }
+
+    public void log(Throwable t)
+    {
+        ILog log = getLog();
+        if(log != null) {
+            IStatus status;
+            if(t instanceof CoreException) {
+                status = ((CoreException)t).getStatus();
+            }
+            else {
+                String message = t.getMessage();
+                status = new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR, message==null?t.getClass().getName():message,t);
+            }
+            log.log(status);
+        }
+        else {
+            t.printStackTrace();
+        }
     }
 }

@@ -9,18 +9,25 @@
  *******************************************************************************/
 package net.sf.eclipsensis.update.net;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.html.HTML.*;
+import javax.swing.text.html.HTML.Attribute;
+import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.jobs.NSISUpdateURLs;
 import net.sf.eclipsensis.util.IOUtility;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 class DownloadURLsParserCallback extends ParserCallback
 {
@@ -29,20 +36,19 @@ class DownloadURLsParserCallback extends ParserCallback
     private static File cCacheFile = new File(cCacheFolder, PROPERTIES_FILE_NAME);
     private static final IPath cLocalPropertiesPath = new Path("/resources/"+PROPERTIES_FILE_NAME); //$NON-NLS-1$
 
-    private static final String FORM_ACTION = "/project/downloading.php"; //$NON-NLS-1$
-    private static final String USE_MIRROR = "use_mirror"; //$NON-NLS-1$
-    private static final String AUTO_SELECT = "Auto-select"; //$NON-NLS-1$
+    private static final String FORM_ACTION = "/settings/set_mirror"; //$NON-NLS-1$
+    private static final String MIRROR = "mirror"; //$NON-NLS-1$
+    private static final String AUTO_SELECT = "autoselect"; //$NON-NLS-1$
     private static final String TAG_LABEL = "label"; //$NON-NLS-1$
     private static final String INPUT_RADIO = "radio"; //$NON-NLS-1$
 
     private boolean mDone = false;
     private boolean mInForm = false;
-    private boolean mInSpan = false;
+    private boolean mInLI = false;
     private boolean mInLabel = false;
-    private String mContinent = null;
 
     private String[] mCurrentSite  = null;
-    private List mSites = new ArrayList();
+    private List<String[]> mSites = new ArrayList<String[]>();
     private Properties mImageURLs = new Properties();
 
     private void loadImageURLs()
@@ -81,14 +87,9 @@ class DownloadURLsParserCallback extends ParserCallback
                     mDone = true;
                 }
             }
-            else if(t.equals(Tag.SPAN)) {
-                if(mInForm) {
-                    mInSpan = false;
-                }
-            }
-            else if(t.toString().equals(TAG_LABEL)) {
-                if(mInForm) {
-                    mInLabel = false;
+            else if(t.equals(Tag.LI)) {
+                if(mInForm && mInLI) {
+                    mInLI = false;
                     if(mCurrentSite != null) {
                         if(mCurrentSite[3] != null) {
                             mSites.add(mCurrentSite);
@@ -97,15 +98,20 @@ class DownloadURLsParserCallback extends ParserCallback
                     }
                 }
             }
+            else if(t.toString().equals(TAG_LABEL)) {
+                if(mInForm && mInLI) {
+                    mInLabel = false;
+                }
+            }
         }
     }
 
     public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(!mDone) {
-            if(t.equals(Tag.SPAN)) {
+            if(t.equals(Tag.LI)) {
                 if(mInForm) {
-                    if(mInSpan) {
+                    if(mInLI) {
                         handleEndTag(t, pos);
                     }
                     else {
@@ -114,7 +120,7 @@ class DownloadURLsParserCallback extends ParserCallback
                 }
             }
             else if(t.toString().equals(TAG_LABEL)) {
-                if(mInForm) {
+                if(mInForm && mInLI) {
                     if(mInLabel) {
                         handleEndTag(t, pos);
                     }
@@ -124,11 +130,11 @@ class DownloadURLsParserCallback extends ParserCallback
                 }
             }
             else if(t.equals(Tag.INPUT)) {
-                if(mInForm && mInLabel && mCurrentSite != null) {
+                if(mInForm && mInLI && mCurrentSite != null) {
                     if(a.isDefined(Attribute.TYPE)) {
                         if(INPUT_RADIO.equalsIgnoreCase((String)a.getAttribute(Attribute.TYPE))) {
                             if(a.isDefined(Attribute.NAME)) {
-                                if(USE_MIRROR.equalsIgnoreCase((String)a.getAttribute(Attribute.NAME))) {
+                                if(MIRROR.equalsIgnoreCase((String)a.getAttribute(Attribute.NAME))) {
                                     if(a.isDefined(Attribute.VALUE)) {
                                         mCurrentSite[3] = (String)a.getAttribute(Attribute.VALUE);
                                         mCurrentSite[0] = mImageURLs.getProperty(mCurrentSite[3]);
@@ -153,18 +159,18 @@ class DownloadURLsParserCallback extends ParserCallback
                     }
                 }
             }
-            else if(t.equals(Tag.SPAN)) {
-                if(mInForm) {
-                    mInSpan = true;
+            else if(t.equals(Tag.LI)) {
+                if(mInForm && !mInLI) {
+                	String id = (String)a.getAttribute(Attribute.ID);
+                    mInLI = !AUTO_SELECT.equalsIgnoreCase(id);
+                    if(mInLI) {
+                        mCurrentSite = new String[4];
+                    }
                 }
             }
             else if(t.toString().equals(TAG_LABEL)) {
-                if(mInForm) {
+                if(mInForm && mInLI) {
                     mInLabel = true;
-                    if(mContinent != null) {
-                        mCurrentSite = new String[4];
-                        mCurrentSite[2] = mContinent;
-                    }
                 }
             }
         }
@@ -175,24 +181,23 @@ class DownloadURLsParserCallback extends ParserCallback
         if(!mDone) {
             if(mInForm) {
                 String string = new String(data).trim();
-                if(mInSpan) {
-                    if(!AUTO_SELECT.equalsIgnoreCase(string)) {
-                        mContinent = string;
-                    }
-                    else {
-                        mContinent = null;
-                    }
-                }
-                else if(mInLabel) {
+                if(mInLabel) {
                     if(mCurrentSite != null) {
                         mCurrentSite[1] = string;
                     }
+                }
+                else if(mInLI) {
+                	if(string.charAt(0) == '(' && string.charAt(string.length()-1) == ')')
+                	{
+                		string = string.substring(1,string.length()-1);
+                	}
+                	mCurrentSite[2] = string;
                 }
             }
         }
     }
 
-    public List getSites()
+    public List<String[]> getSites()
     {
         return mSites;
     }

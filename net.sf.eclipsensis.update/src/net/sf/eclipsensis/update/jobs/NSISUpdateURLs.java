@@ -24,7 +24,7 @@ public class NSISUpdateURLs
     private static final MessageFormat cDownloadURLFormat;
     private static final MessageFormat cGenericDownloadURLFormat;
     private static final MessageFormat cAutoDownloadURLFormat;
-    private static final URL cSelectDownloadURL;
+    private static final MessageFormat cSelectDownloadURLFormat;
     private static final URL cSiteImagesUpdateURL;
 
     static {
@@ -42,7 +42,7 @@ public class NSISUpdateURLs
         cDownloadURLFormat = readBundleFormat(bundle, "download.url.format"); //$NON-NLS-1$
         cGenericDownloadURLFormat = readBundleFormat(bundle, "generic.download.url.format"); //$NON-NLS-1$
         cAutoDownloadURLFormat = readBundleFormat(bundle, "auto.download.url.format"); //$NON-NLS-1$
-        cSelectDownloadURL = readBundleURL(bundle, "select.download.url"); //$NON-NLS-1$
+        cSelectDownloadURLFormat = readBundleFormat(bundle, "select.download.url"); //$NON-NLS-1$
         cSiteImagesUpdateURL = readBundleURL(bundle,"site.images.update.url"); //$NON-NLS-1$
     }
 
@@ -121,9 +121,9 @@ public class NSISUpdateURLs
         return new URL(cAutoDownloadURLFormat.format(new String[] {version}));
     }
 
-    public static synchronized URL getSelectDownloadURL()
+    public static synchronized URL getSelectDownloadURL(String version) throws IOException
     {
-        return cSelectDownloadURL;
+        return new URL(cSelectDownloadURLFormat.format(new String[] {version}));
     }
 
     public static synchronized URL getSiteImagesUpdateURL()

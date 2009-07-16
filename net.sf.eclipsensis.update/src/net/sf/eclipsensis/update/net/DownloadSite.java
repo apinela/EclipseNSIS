@@ -73,7 +73,7 @@ public class DownloadSite extends AbstractNodeConvertible
         return "downloadsite";
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("image");
@@ -104,7 +104,7 @@ public class DownloadSite extends AbstractNodeConvertible
         }
     }
 
-    protected Object convertFromString(String string, Class clasz)
+    protected Object convertFromString(String string, Class<?> clasz)
     {
         if (File.class.equals(clasz))
         {

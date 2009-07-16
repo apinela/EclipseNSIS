@@ -38,23 +38,23 @@ public class DownloadSiteSelectionDialog extends Dialog
      *
      */
     private String mSettingsKey;
-    private List mDownloadSites;
+    private List<DownloadSite> mDownloadSites;
     private DownloadSite mSelectedSite = null;
     private Button mSavePreferred = null;
     private IDialogSettings mDialogSettings = null;
     private Image mDefaultSiteImage;
 
-    public DownloadSiteSelectionDialog(Shell parentShell, List downloadSites, DownloadSite selectedSite)
+    public DownloadSiteSelectionDialog(Shell parentShell, List<DownloadSite> downloadSites, DownloadSite selectedSite)
     {
         this(parentShell, null, downloadSites, selectedSite);
     }
 
-    public DownloadSiteSelectionDialog(Shell parentShell, String settingsKey, List downloadSites)
+    public DownloadSiteSelectionDialog(Shell parentShell, String settingsKey, List<DownloadSite> downloadSites)
     {
         this(parentShell, settingsKey, downloadSites, null);
     }
 
-    public DownloadSiteSelectionDialog(Shell parentShell, String settingsKey, List downloadSites, DownloadSite selectedSite)
+    public DownloadSiteSelectionDialog(Shell parentShell, String settingsKey, List<DownloadSite> downloadSites, DownloadSite selectedSite)
     {
         super(parentShell);
         mSettingsKey = settingsKey;
@@ -174,7 +174,7 @@ public class DownloadSiteSelectionDialog extends Dialog
                 }
             }
         };
-        for (ListIterator iter = mDownloadSites.listIterator(); iter.hasNext();) {
+        for (ListIterator<DownloadSite> iter = mDownloadSites.listIterator(); iter.hasNext();) {
             DownloadSite site = (DownloadSite)iter.next();
             final Button button = new Button(composite2,SWT.RADIO);
             button.setBackground(white);

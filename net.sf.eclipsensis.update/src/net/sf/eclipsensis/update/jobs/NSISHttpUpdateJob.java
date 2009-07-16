@@ -137,9 +137,6 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
 
     protected URL getDefaultURL() throws IOException
     {
-        if(false) {
-            throw new IOException();
-        }
         return null;
     }
 

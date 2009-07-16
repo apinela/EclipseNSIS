@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.jarsigner.util;
 
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class JARSigner extends AbstractJARUtil
     private boolean mInternalSF = false;
     private boolean mSectionsOnly = false;
 
-    public JARSigner(IVMInstall vmInstall, String toolsJar, List targetJars, String keyStore, String storePass, String alias)
+    public JARSigner(IVMInstall vmInstall, String toolsJar, List<?> targetJars, String keyStore, String storePass, String alias)
     {
         super(vmInstall, toolsJar,targetJars);
         setKeyStore(keyStore);
@@ -145,7 +146,7 @@ public class JARSigner extends AbstractJARUtil
             }
         }
         else {
-            IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(mSignedJar));
+            IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(new File(mSignedJar).getAbsoluteFile().toURI());
             if(!Common.isEmptyArray(files)) {
                 for (int i = 0; i < files.length; i++) {
                     try {
@@ -160,7 +161,7 @@ public class JARSigner extends AbstractJARUtil
         return super.postProcess(target, monitor);
     }
 
-    protected void postJAR(IFile targetJar) throws Exception
+    protected void postJAR(IFile targetJar)
     {
     }
 }

@@ -30,7 +30,7 @@ public class Common
         return (str == null || str.trim().length() == 0);
     }
 
-    public static boolean isEmptyCollection(Collection collection)
+    public static boolean isEmptyCollection(Collection<?> collection)
     {
         if(collection != null) {
             return (collection.size() == 0);
@@ -75,9 +75,9 @@ public class Common
                                (ignoreCase?(str2==null?null:str2.toLowerCase()):str2));
     }
 
-    public static List tokenize(String text, char separator)
+    public static List<String> tokenize(String text, char separator)
     {
-        ArrayList list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         if(text != null && text.length() > 0) {
             char[] chars = text.toCharArray();
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -99,12 +99,12 @@ public class Common
     {
         int[] parts={0,0,0};
 
-        List list = tokenize(ver,'.');
+        List<String> list = tokenize(ver,'.');
         int n = Math.min(parts.length,list.size());
         String temp=""; //$NON-NLS-1$
         for(int i=0; i<n; i++) {
             outer: {
-                String token = (String)list.get(i);
+                String token = list.get(i);
                 char[] chars = token.toCharArray();
                 for (int j = 0; j < chars.length; j++) {
                     if(!Character.isDigit(chars[j])) {

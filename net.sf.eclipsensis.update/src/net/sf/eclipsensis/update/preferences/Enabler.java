@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.*;
 
 class Enabler
 {
-    private static Map cEnablers = new HashMap();
+    private static Map<Button, Enabler> cEnablers = new HashMap<Button, Enabler>();
 
     private Button mButton;
     private Control[] mDependents;
@@ -65,6 +65,6 @@ class Enabler
 
     public static Enabler get(Control control)
     {
-        return (Enabler)cEnablers.get(control);
+        return cEnablers.get(control);
     }
 }

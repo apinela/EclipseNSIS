@@ -26,25 +26,30 @@ public class NSISUpdateWizardAction implements IWorkbenchWindowActionDelegate
     {
         final Shell shell = mWindow.getShell();
         final NSISUpdateWizardDialog[] wizardDialog = new NSISUpdateWizardDialog[1];
-        BusyIndicator.showWhile(shell.getDisplay(),new Runnable() {
-            public void run()
-            {
-                try {
-                    NSISUpdateWizard wizard = new NSISUpdateWizard();
-                    wizard.setValidateNSISConfig(false);
-                    wizard.setWindowTitle(EclipseNSISUpdatePlugin.getResourceString("wizard.window.title")); //$NON-NLS-1$
-                    wizardDialog[0] = new NSISUpdateWizardDialog(shell, wizard);
-                    wizardDialog[0].create();
-                }
-                catch (Exception e) {
-                    wizardDialog[0] = null;
-                    EclipseNSISUpdatePlugin.getDefault().log(e);
-                }
-            }
-        });
-        if(wizardDialog[0] != null) {
-            wizardDialog[0].open();
-        }
+        try {
+			System.setProperty("net.sf.eclipsensis.config.IsConfiguring", String.valueOf(true));
+			BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+				public void run() {
+					try {
+						NSISUpdateWizard wizard = new NSISUpdateWizard();
+						wizard.setValidateNSISConfig(false);
+						wizard.setWindowTitle(EclipseNSISUpdatePlugin
+								.getResourceString("wizard.window.title")); //$NON-NLS-1$
+						wizardDialog[0] = new NSISUpdateWizardDialog(shell,
+								wizard);
+						wizardDialog[0].create();
+					} catch (Exception e) {
+						wizardDialog[0] = null;
+						EclipseNSISUpdatePlugin.getDefault().log(e);
+					}
+				}
+			});
+			if (wizardDialog[0] != null) {
+				wizardDialog[0].open();
+			}
+		} finally {
+			System.setProperty("net.sf.eclipsensis.config.IsConfiguring", String.valueOf(false));
+		}
 	}
 
 	public void selectionChanged(IAction action, ISelection selection)

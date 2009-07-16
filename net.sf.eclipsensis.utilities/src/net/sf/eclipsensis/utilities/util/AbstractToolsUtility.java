@@ -27,9 +27,9 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
     protected boolean mIgnoreErrors = false;
     protected IVMInstall mVMInstall;
     protected String mMainClassName;
-    protected List mSelection;
+    protected List<?> mSelection;
 
-    public AbstractToolsUtility(IVMInstall vmInstall, String toolsJar, String mainClassName, List selection)
+    public AbstractToolsUtility(IVMInstall vmInstall, String toolsJar, String mainClassName, List<?> selection)
     {
         mVMInstall = vmInstall;
         mToolsJar = new File(toolsJar);
@@ -80,7 +80,7 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
             IPath systemLibsPath = new Path(JavaRuntime.JRE_CONTAINER);
             IRuntimeClasspathEntry systemLibsEntry = JavaRuntime.newRuntimeContainerClasspathEntry(systemLibsPath,
                                                     IRuntimeClasspathEntry.STANDARD_CLASSES);
-            List classpath = new ArrayList();
+            List<String> classpath = new ArrayList<String>();
             classpath.add(toolsEntry.getMemento());
             classpath.add(systemLibsEntry.getMemento());
 
@@ -111,7 +111,7 @@ public abstract class AbstractToolsUtility implements IJavaLaunchConfigurationCo
                     consoleManager.showConsoleView(console);
                 }
             });
-            for(Iterator iter=mSelection.iterator(); iter.hasNext(); ) {
+            for(Iterator<?> iter=mSelection.iterator(); iter.hasNext(); ) {
                 Object target = iter.next();
                 try {
                     IStatus status = preProcess(target, monitor);

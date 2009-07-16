@@ -44,27 +44,27 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
 
     private static Pattern cCreatedByPattern = Pattern.compile("([1-9](\\.[0-9])*[_\\-0-9a-zA-Z]*)( \\(.*\\))*"); //$NON-NLS-1$
 
-    private Map mValues;
+    private Map<String, Object> mValues;
     private IDialogSettings mDialogSettings;
     private IVMInstall mVMInstall = null;
     private String mToolsMainClassName = null;
-    private List mSelection = Collections.EMPTY_LIST;
+    private List<Object> mSelection = Collections.emptyList();
 
     /**
      * @param parentShell
      * @throws KeyStoreException
      */
-    public AbstractToolsUtilityDialog(Shell parentShell, List selection)
+    public AbstractToolsUtilityDialog(Shell parentShell, List<Object> selection)
     {
         super(parentShell);
-        mSelection = (selection == null?Collections.EMPTY_LIST:selection);
+        mSelection = (selection == null?Collections.emptyList():selection);
         IDialogSettings dialogSettings = getPlugin().getDialogSettings();
         String name = getClass().getName();
         mDialogSettings = dialogSettings.getSection(name);
         if(mDialogSettings == null) {
             mDialogSettings = dialogSettings.addNewSection(name);
         }
-        mValues = new HashMap();
+        mValues = new HashMap<String, Object>();
         init();
     }
 
@@ -96,12 +96,12 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         return mDialogSettings;
     }
 
-    protected final List getSelection()
+    protected final List<Object> getSelection()
     {
         return mSelection;
     }
 
-    protected final Map getValues()
+    protected final Map<String, Object> getValues()
     {
         return mValues;
     }
@@ -335,7 +335,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
                     }
                 }
 
-                if(vmInstall != null) {
+                if(vmInstall != null && jarfile != null) {
                     toolsMainClassName = getToolsMainClassName(Common.parseVersion(((IVMInstall2)vmInstall).getJavaVersion()));
                     ZipEntry entry = jarfile.getEntry(toolsMainClassName.replace('.','/')+".class"); //$NON-NLS-1$
                     if(entry == null) {

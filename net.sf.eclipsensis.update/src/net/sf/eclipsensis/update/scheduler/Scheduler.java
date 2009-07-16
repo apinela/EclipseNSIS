@@ -123,12 +123,13 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
         //Create the job in the UI thread so that we don't deadlock the classloader
         final Job[] job = {null};
         Runnable r= new Runnable() {
-            public void run()
+            @SuppressWarnings("unchecked")
+			public void run()
             {
                 try {
-                    Class theClass = Class.forName("net.sf.eclipsensis.update.jobs.NSISCheckUpdateJob"); //$NON-NLS-1$
-                    Constructor constructor = theClass.getConstructor(new Class[]{NSISUpdateJobSettings.class});
-                    job[0] = (Job)constructor.newInstance(new Object[]{settings});
+                    Class<? extends Job> theClass = (Class<? extends Job>) Class.forName("net.sf.eclipsensis.update.jobs.NSISCheckUpdateJob"); //$NON-NLS-1$
+                    Constructor<? extends Job> constructor = theClass.getConstructor(new Class[]{NSISUpdateJobSettings.class});
+                    job[0] = constructor.newInstance(new Object[]{settings});
                 }
                 catch (Exception e) {
                     EclipseNSISUpdatePlugin.getDefault().log(e);

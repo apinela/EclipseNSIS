@@ -10,20 +10,43 @@
 package net.sf.eclipsensis.startup;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.dynamichelpers.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IStartup;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.progress.UIJob;
-import org.osgi.framework.*;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 
+@SuppressWarnings("restriction")
 public class FileAssociationChecker implements IStartup,  IExtensionChangeHandler
 {
     private static final IPreferenceStore PREFERENCES = EclipseNSISStartup.getDefault().getPreferenceStore();
@@ -40,11 +63,11 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
     private static final String ATTR_ID = "id"; //$NON-NLS-1$
 
     private static FileAssociationChecker cInstance = null;
-    private static Collection cCheckedAssociations = new HashSet();
+    private static Collection<String> cCheckedAssociations = new HashSet<String>();
 
     private static final Object JOB_FAMILY = new Object();
 
-    private Map mFileAssociationMap = new LinkedHashMap();
+    private Map<String, FileAssociationDef> mFileAssociationMap = new LinkedHashMap<String, FileAssociationDef>();
     private IEditorRegistry mEditorRegistry;
     private String mJobName;
     private MessageFormat mDialogTitleFormat;
@@ -88,8 +111,8 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
     public void earlyStartup()
     {
         cInstance = this;
-        for (Iterator iter = mFileAssociationMap.values().iterator(); iter.hasNext();) {
-            scheduleJob((FileAssociationDef)iter.next());
+        for (Iterator<FileAssociationDef> iter = mFileAssociationMap.values().iterator(); iter.hasNext();) {
+            scheduleJob(iter.next());
         }
     }
 
@@ -101,7 +124,7 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
             for (int i = 0; i < extensions.length; i++) {
                 addExtension(tracker, extensions[i]);
             }
-            EclipseNSISStartup.getDefault().savePluginPreferences();
+            EclipseNSISStartup.getDefault().savePreferences();
         }
     }
 
@@ -116,8 +139,8 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
         String bundleId = extension.getNamespaceIdentifier();
         for (int i = 0; i < associations.length; i++) {
             if (ELEM_ASSOCIATION.equals(associations[i].getName())) {
-                List fileTypesList = null;
-                List editorIdsList = null;
+                List<String> fileTypesList = null;
+                List<String> editorIdsList = null;
                 String id = associations[i].getAttribute(ATTR_ID);
                 String fileTypesName = ""; //$NON-NLS-1$
                 String editorsName = ""; //$NON-NLS-1$
@@ -128,7 +151,7 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
                     String name = children[j].getName();
                     if(fileTypesList == null && ELEM_FILETYPES.equals(name)) {
                         fileTypesName = children[j].getAttribute(ATTR_NAME);
-                        fileTypesList = new ArrayList();
+                        fileTypesList = new ArrayList<String>();
                         IConfigurationElement[] fileTypes = children[j].getChildren();
                         for (int k = 0; k < fileTypes.length; k++) {
                             if(ELEM_FILETYPE.equals(fileTypes[k].getName())) {
@@ -138,7 +161,7 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
                     }
                     else if(editorIdsList == null && ELEM_EDITORS.equals(name)) {
                         editorsName = children[j].getAttribute(ATTR_NAME);
-                        editorIdsList = new ArrayList();
+                        editorIdsList = new ArrayList<String>();
                         IConfigurationElement[] editors = children[j].getChildren();
                         for (int k = 0; k < editors.length; k++) {
                             if(ELEM_EDITOR.equals(editors[k].getName())) {
@@ -156,8 +179,8 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
                 }
                 if(fileTypesList != null && editorIdsList != null) {
                     initializePreference(id, enablement, bundleId, enablementPref);
-                    mFileAssociationMap.put(id, new FileAssociationDef(id, fileTypesName, (String[])fileTypesList.toArray(new String[fileTypesList.size()]),
-                            editorsName, (String[])editorIdsList.toArray(new String[editorIdsList.size()])));
+                    mFileAssociationMap.put(id, new FileAssociationDef(id, fileTypesName, fileTypesList.toArray(new String[fileTypesList.size()]),
+                            editorsName, editorIdsList.toArray(new String[editorIdsList.size()])));
                 }
             }
         }
@@ -170,10 +193,8 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
                 Bundle bundle = Platform.getBundle(bundleId);
                 if(bundle != null) {
                     IPreferenceStore prefs = new ScopedPreferenceStore(new InstanceScope(), bundle.getSymbolicName());
-                    if(prefs != null) {
-                        if(prefs.contains(enablementPref)) {
-                            enablement = prefs.getBoolean(enablementPref);
-                        }
+                    if(prefs.contains(enablementPref)) {
+                        enablement = prefs.getBoolean(enablementPref);
                     }
                 }
             }
@@ -229,7 +250,8 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
                                                 ((EditorRegistry)mEditorRegistry).saveAssociations();
                                                 //Fall through to next case to save the toggle state
                                             }
-                                            case IDialogConstants.NO_ID:
+	                                            //$FALL-THROUGH$
+											case IDialogConstants.NO_ID:
                                             {
                                                 boolean newToggleState = !dialog.getToggleState();
                                                 if (toggleState != newToggleState) {
@@ -276,7 +298,7 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
     {
         if(getFileAssociationChecking(associationId) != flag) {
             PREFERENCES.setValue(associationId,Boolean.toString(flag));
-            EclipseNSISStartup.getDefault().savePluginPreferences();
+            EclipseNSISStartup.getDefault().savePreferences();
         }
     }
 
@@ -286,7 +308,7 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
             cInstance = new FileAssociationChecker();
         }
         if(!cCheckedAssociations.contains(associationId)) {
-            cInstance.scheduleJob((FileAssociationDef)cInstance.mFileAssociationMap.get(associationId));
+            cInstance.scheduleJob(cInstance.mFileAssociationMap.get(associationId));
         }
     }
 

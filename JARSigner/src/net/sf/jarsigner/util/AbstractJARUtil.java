@@ -25,7 +25,7 @@ public abstract class AbstractJARUtil extends AbstractToolsUtility
     protected String mKeyStore = ""; //$NON-NLS-1$
     private MessageFormat mArgsFormat;
 
-    public AbstractJARUtil(IVMInstall vmInstall, String toolsJar, List targetJars)
+    public AbstractJARUtil(IVMInstall vmInstall, String toolsJar, List<?> targetJars)
     {
         super(vmInstall, toolsJar, JAR_SIGNER_MAIN_CLASS_NAME, targetJars);
     }

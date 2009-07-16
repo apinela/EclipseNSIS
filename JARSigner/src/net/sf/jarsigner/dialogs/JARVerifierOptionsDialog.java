@@ -23,18 +23,18 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
 {
     private static final String CERTS = "certs"; //$NON-NLS-1$
 
-    private List mControlsList;
+    private List<Control> mControlsList;
     /**
      * @param parentShell
      */
-    public JARVerifierOptionsDialog(Shell parentShell, List selection)
+    public JARVerifierOptionsDialog(Shell parentShell, List<Object> selection)
     {
         super(parentShell, selection);
     }
 
     protected void init()
     {
-        mControlsList = new ArrayList();
+        mControlsList = new ArrayList<Control>();
         super.init();
         setValue(CERTS,getDialogSettings().getBoolean(CERTS)?Boolean.TRUE:Boolean.FALSE);
     }
@@ -92,8 +92,8 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
 
     private void updateControlsState(boolean state)
     {
-        for(Iterator iter=mControlsList.iterator(); iter.hasNext(); ) {
-            ((Control)iter.next()).setEnabled(state);
+        for(Iterator<Control> iter=mControlsList.iterator(); iter.hasNext(); ) {
+            iter.next().setEnabled(state);
         }
     }
 

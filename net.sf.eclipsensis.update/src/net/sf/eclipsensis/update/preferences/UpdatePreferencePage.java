@@ -8,7 +8,9 @@
 package net.sf.eclipsensis.update.preferences;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,12 +21,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISVersions;
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.jobs.NSISUpdateURLs;
 import net.sf.eclipsensis.update.net.DownloadSite;
 import net.sf.eclipsensis.update.net.DownloadSiteSelectionDialog;
 import net.sf.eclipsensis.update.net.NetworkUtil;
 import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -61,12 +65,13 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     private static final String LINK_TEXT;
 
     private boolean mRefreshedSites = false;
-    private Map mCachedAddresses = new HashMap();
+    private Map<DownloadSite, byte[]> mCachedAddresses = new HashMap<DownloadSite, byte[]>();
     private Text mNSISUpdateSite;
     private Text mSourceforgeMirror;
     private Button mIgnorePreview;
     private Button mAutoSelectMirror;
     private Button mManualSelectMirror;
+    private String mLatestVersion = null;
     private static Pattern cIPAddressRegex = Pattern
             .compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
 
@@ -227,9 +232,8 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
                 BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
                     public void run()
                     {
-                        java.util.List downloadSites = NetworkUtil.getDownloadSites(new NullProgressMonitor(),
-                                EclipseNSISUpdatePlugin.getResourceString("retrieving.sourceforge.mirrors"), null); //$NON-NLS-1$
-                        if (!Common.isEmptyCollection(downloadSites))
+                    	List<DownloadSite> downloadSites = getDownloadSites(false);
+						if (!Common.isEmptyCollection(downloadSites))
                         {
                             DownloadSite selectedSite = null;
                             String str = mSourceforgeMirror.getText();
@@ -331,8 +335,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
                 BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
                     public void run()
                     {
-                        List downloadSites = NetworkUtil.getDownloadSites(new NullProgressMonitor(),
-                                EclipseNSISUpdatePlugin.getResourceString("retrieving.sourceforge.mirrors"), null);
+                    	List<DownloadSite> downloadSites = getDownloadSites(false);
                         if (getSelectedDownloadSite(downloadSites, site) == null)
                         {
                             if (!mRefreshedSites
@@ -340,9 +343,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
                                             .getResourceString("invalid.sourceforge.mirror.message"),
                                             EclipseNSISUpdatePlugin.getShellImage()))
                             {
-                                downloadSites = NetworkUtil.getDownloadSites(new NullProgressMonitor(),
-                                        EclipseNSISUpdatePlugin.getResourceString("retrieving.sourceforge.mirrors"),
-                                        null, true);
+                                downloadSites = getDownloadSites(true);
                                 mRefreshedSites = true;
                                 if (getSelectedDownloadSite(downloadSites, site) == null)
                                 {
@@ -367,18 +368,18 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         return true;
     }
 
-    private DownloadSite getSelectedDownloadSite(List downloadSites, String downloadSite)
+    private DownloadSite getSelectedDownloadSite(List<DownloadSite> downloadSites, String downloadSite)
     {
         byte[] ipAddress = parseIPAddress(downloadSite);
-        for (Iterator iter = downloadSites.iterator(); iter.hasNext();)
+        for (Iterator<DownloadSite> iter = downloadSites.iterator(); iter.hasNext();)
         {
-            DownloadSite site = (DownloadSite) iter.next();
+            DownloadSite site = iter.next();
             try
             {
                 String sitehost = NSISUpdateURLs.getGenericDownloadURL(site.getName(), "1.0").getHost(); //$NON-NLS-1$
                 if (ipAddress != null)
                 {
-                    byte[] siteAddress = (byte[]) mCachedAddresses.get(site);
+                    byte[] siteAddress = mCachedAddresses.get(site);
                     if (siteAddress == null)
                     {
                         InetAddress address = InetAddress.getByName(sitehost);
@@ -442,5 +443,34 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
 
     public void init(IWorkbench workbench)
     {
+    }
+    
+    private List<DownloadSite> getDownloadSites(boolean forceRefresh)
+    {
+    	List<DownloadSite> downloadSites = null;
+    	HttpURLConnection connection = null;
+        try {
+        	if(mLatestVersion == null)
+        	{
+				String version = INSISVersions.MINIMUM_VERSION
+						.toString();
+				URL url = NSISUpdateURLs.getUpdateURL(version);
+				connection = NetworkUtil
+						.makeConnection(new NullProgressMonitor(),
+								url, null);
+				String[] result = NetworkUtil.getLatestVersion(connection);
+				mLatestVersion = result[1];
+        	}
+			downloadSites = NetworkUtil.getDownloadSites(mLatestVersion, new NullProgressMonitor(),
+							EclipseNSISUpdatePlugin.getResourceString("retrieving.sourceforge.mirrors"), null, forceRefresh); //$NON-NLS-1$
+		} 
+        catch (IOException e) {
+			EclipseNSISUpdatePlugin.getDefault().log(e);
+		}
+        finally
+        {
+    		IOUtility.closeIO(connection);
+        }
+        return downloadSites;
     }
 }

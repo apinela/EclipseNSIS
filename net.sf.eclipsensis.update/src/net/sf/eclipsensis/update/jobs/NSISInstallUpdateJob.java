@@ -14,6 +14,7 @@ import java.nio.channels.FileLock;
 import java.text.MessageFormat;
 import java.util.*;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.filemon.FileMonitor;
 import net.sf.eclipsensis.settings.NSISPreferences;
@@ -69,9 +70,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                 fos = new FileOutputStream(file,true);
                 FileLock lock = null;
                 try {
-                    if(fos != null) {
-                        lock = fos.getChannel().tryLock();
-                    }
+                    lock = fos.getChannel().tryLock();
                     return lock == null;
                 }
                 catch (IOException e) {
@@ -117,7 +116,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                 if(!Common.isEmpty(NSISPreferences.INSTANCE.getNSISHome())) {
                     fileMonStopped = FileMonitor.INSTANCE.stop();
                     if(!Common.isEmpty(nsisHome)) {
-                        final List list = new ArrayList();
+                        final List<String> list = new ArrayList<String>();
                         checkForLocks(new File(nsisHome), list);
                         if(list.size() > 0) {
                             final boolean[] retry = {false};
@@ -149,7 +148,12 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                         }
                     }
                 }
-                final List cmd = new ArrayList();
+                final List<String> cmd = new ArrayList<String>();
+                if(EclipseNSISPlugin.getDefault().isWinVista())
+                {
+                	cmd.add("cmd.exe");
+                	cmd.add("/c");
+                }
                 cmd.add(mSetupExe.getAbsolutePath());
                 boolean install = ((settings.getAction() & SchedulerConstants.UPDATE_INSTALL) == SchedulerConstants.UPDATE_INSTALL);
                 if(install) {
@@ -164,7 +168,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                 int rv = INSTALL_SUCCESS;
                 final boolean[] terminated = { false };
                 try {
-                    final Process p = Runtime.getRuntime().exec((String[])cmd.toArray(Common.EMPTY_STRING_ARRAY));
+                    final Process p = Runtime.getRuntime().exec(cmd.toArray(Common.EMPTY_STRING_ARRAY));
                     new Thread(new Runnable() {
                         public void run()
                         {
@@ -251,7 +255,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
         return Status.OK_STATUS;
     }
 
-    private void checkForLocks(File folder, List list)
+    private void checkForLocks(File folder, List<String> list)
     {
         if(IOUtility.isValidDirectory(folder)) {
             File[] children = folder.listFiles();

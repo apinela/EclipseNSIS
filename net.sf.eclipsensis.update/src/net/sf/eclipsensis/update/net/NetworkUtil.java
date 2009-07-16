@@ -8,11 +8,14 @@
 package net.sf.eclipsensis.update.net;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
@@ -54,16 +57,18 @@ public class NetworkUtil
     private static final String PREFERENCE_IMAGE_CACHE_REFRESH_TIMESTAMP = "imageCacheRefreshTimestamp"; //$NON-NLS-1$
     private static final String PREFERENCE_CACHED_DOWNLOAD_SITES = "cachedDownloadSites"; //$NON-NLS-1$
     private static final String PREFERENCE_DOWNLOAD_SITES_REFRESH_TIMESTAMP = "downloadSitesRefreshTimestamp"; //$NON-NLS-1$
+    private static final String PREFERENCE_DOWNLOAD_SITES_VERSION = "downloadSitesVersion"; //$NON-NLS-1$
     private static final int DOWNLOAD_BUFFER_SIZE = 32768;
     private static MessageFormat cConnectionFormat = new MessageFormat(EclipseNSISUpdatePlugin
             .getResourceString("http.connect.message")); //$NON-NLS-1$
-    private static Map cImageCache = new HashMap();
+    private static Map<File, Image> cImageCache = new HashMap<File, Image>();
     private static long cImageCacheRefreshTimestamp = EclipseNSISUpdatePlugin.getDefault().getPreferenceStore()
             .getLong(PREFERENCE_IMAGE_CACHE_REFRESH_TIMESTAMP);
     private static final File IMAGE_CACHE_FOLDER = new File(EclipseNSISUpdatePlugin.getPluginStateLocation(),
             "imageCache"); //$NON-NLS-1$
-    private static List cDownloadSites;
+    private static List<DownloadSite> cDownloadSites;
     private static long cDownloadSitesRefreshTimestamp;
+    private static String cDownloadSitesVersion;
 
     static
     {
@@ -74,7 +79,7 @@ public class NetworkUtil
             if (!Common.isEmpty(xml))
             {
                 Document doc = XMLUtil.loadDocument(new ByteArrayInputStream(xml.getBytes()));
-                cDownloadSites = (List) NodeConversionUtility.readCollectionNode(doc.getDocumentElement(), List.class);
+                cDownloadSites = Common.makeGenericList(DownloadSite.class, NodeConversionUtility.readCollectionNode(doc.getDocumentElement(), List.class));
             }
         }
         catch (Exception e)
@@ -84,13 +89,16 @@ public class NetworkUtil
         }
         if (cDownloadSites == null)
         {
-            cDownloadSites = new ArrayList();
+            cDownloadSites = new ArrayList<DownloadSite>();
             cDownloadSitesRefreshTimestamp = 0;
+            cDownloadSitesVersion = "0";
         }
         else
         {
             cDownloadSitesRefreshTimestamp = EclipseNSISUpdatePlugin.getDefault().getPreferenceStore().getLong(
                     PREFERENCE_DOWNLOAD_SITES_REFRESH_TIMESTAMP);
+            cDownloadSitesVersion = EclipseNSISUpdatePlugin.getDefault().getPreferenceStore().getString(
+                    PREFERENCE_DOWNLOAD_SITES_VERSION);
         }
     }
 
@@ -134,7 +142,7 @@ public class NetworkUtil
                 }
                 if (responseCode >= 400)
                 {
-                    String message = (conn).getResponseMessage();
+                    String message = conn == null?null:conn.getResponseMessage();
                     if (Common.isEmpty(message))
                     {
                         message = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("http.error")).format(new Object[] { new Integer(responseCode) }); //$NON-NLS-1$
@@ -199,7 +207,7 @@ public class NetworkUtil
                     buf.flip();
                     fileChannel.write(buf);
 
-                    if (monitor != null && length > 0)
+                    if (monitor != null && length > 0 && args != null)
                     {
                         int newWorked = Math.round(totalread * 100 / length);
                         args[0] = Integer.toString(newWorked);
@@ -217,7 +225,7 @@ public class NetworkUtil
                 buf.flip();
                 fileChannel.write(buf);
             }
-            if (monitor != null && length > 0)
+            if (monitor != null && length > 0 && args != null)
             {
                 args[0] = "100"; //$NON-NLS-1$
                 monitor.setTaskName(mf.format(args));
@@ -324,16 +332,41 @@ public class NetworkUtil
         }
         return ok;
     }
-
-    public static synchronized List getDownloadSites(IProgressMonitor monitor, String taskName, String parentTaskName)
+    
+    public static String[] getLatestVersion(HttpURLConnection conn) throws IOException
     {
-        return getDownloadSites(monitor, taskName, parentTaskName, false);
+    	InputStream is = null;
+        String type = null;
+        String version = ""; //$NON-NLS-1$
+        try {
+            is = conn.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line = reader.readLine();
+            if(line != null) {
+                String[] tokens = Common.tokenize(line, '|');
+                if(tokens.length > 0) {
+                    type = tokens[0];
+                    if(tokens.length > 1) {
+                        version = tokens[1];
+                    }
+                }
+            }
+        }
+        finally {
+            IOUtility.closeIO(is);
+        }
+        return new String[]{type,version};
     }
 
-    public static synchronized List getDownloadSites(IProgressMonitor monitor, String taskName, String parentTaskName,
+    public static synchronized List<DownloadSite> getDownloadSites(String version, IProgressMonitor monitor, String taskName, String parentTaskName)
+    {
+        return getDownloadSites(version, monitor, taskName, parentTaskName, false);
+    }
+
+    public static synchronized List<DownloadSite> getDownloadSites(String version, IProgressMonitor monitor, String taskName, String parentTaskName,
             boolean forceRefresh)
     {
-        if (!forceRefresh)
+        if (!forceRefresh && Common.stringsAreEqual(cDownloadSitesVersion,version))
         {
             long now = System.currentTimeMillis();
             if (now - cDownloadSitesRefreshTimestamp <= 86400000)
@@ -344,13 +377,14 @@ public class NetworkUtil
         try
         {
             monitor.beginTask(taskName, 100);
-            cDownloadSites = new ArrayList();
+            cDownloadSites = new ArrayList<DownloadSite>();
             HttpURLConnection conn2 = null;
             String content = null;
             try
             {
+            	//if(NSISPreferences)
                 conn2 = makeConnection(new NestedProgressMonitor(monitor, taskName, parentTaskName, 25), NSISUpdateURLs
-                        .getSelectDownloadURL(), null);
+                        .getSelectDownloadURL(version), null);
                 content = getContent(conn2);
                 monitor.worked(25);
             }
@@ -387,7 +421,7 @@ public class NetworkUtil
                 {
                     return null;
                 }
-                List sites = callback.getSites();
+                List<String[]> sites = callback.getSites();
                 if (sites.size() > 0)
                 {
                     long now = System.currentTimeMillis();
@@ -405,7 +439,7 @@ public class NetworkUtil
                         IMAGE_CACHE_FOLDER.mkdirs();
                     }
                     int count = 0;
-                    for (Iterator iter = sites.iterator(); iter.hasNext();)
+                    for (Iterator<String[]> iter = sites.iterator(); iter.hasNext();)
                     {
                         String[] element = (String[]) iter.next();
                         if (element != null && element.length == 4)
@@ -463,8 +497,11 @@ public class NetworkUtil
                 EclipseNSISUpdatePlugin.getDefault().getPreferenceStore().setValue(PREFERENCE_CACHED_DOWNLOAD_SITES,
                         xml);
                 cDownloadSitesRefreshTimestamp = System.currentTimeMillis();
+                cDownloadSitesVersion = version;
                 EclipseNSISUpdatePlugin.getDefault().getPreferenceStore().setValue(
                         PREFERENCE_DOWNLOAD_SITES_REFRESH_TIMESTAMP, cDownloadSitesRefreshTimestamp);
+                EclipseNSISUpdatePlugin.getDefault().getPreferenceStore().setValue(
+                		PREFERENCE_DOWNLOAD_SITES_VERSION, version);
             }
             catch (Exception e)
             {
@@ -477,10 +514,10 @@ public class NetworkUtil
     static Image getImageFromCache(File imageFile)
     {
         Image image;
-        image = (Image) cImageCache.get(imageFile);
+        image = cImageCache.get(imageFile);
         if (image == null)
         {
-            if (imageFile.exists())
+            if (imageFile != null && imageFile.exists())
             {
                 final ImageData imageData = new ImageData(imageFile.getAbsolutePath());
                 final Image[] imageArray = new Image[1];

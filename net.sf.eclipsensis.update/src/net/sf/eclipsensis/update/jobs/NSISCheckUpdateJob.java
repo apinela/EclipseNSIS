@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
+import net.sf.eclipsensis.update.net.NetworkUtil;
 import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
 import net.sf.eclipsensis.update.scheduler.SchedulerConstants;
 import net.sf.eclipsensis.util.*;
@@ -89,29 +90,9 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
     {
         try {
             monitor.beginTask(getName(), 100);
-            InputStream is = null;
-            String type = null;
-            String version = ""; //$NON-NLS-1$
-            try {
-                is = conn.getInputStream();
-                if (monitor.isCanceled()) {
-                    return Status.CANCEL_STATUS;
-                }
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                String line = reader.readLine();
-                if(line != null) {
-                    String[] tokens = Common.tokenize(line, '|');
-                    if(tokens.length > 0) {
-                        type = tokens[0];
-                        if(tokens.length > 1) {
-                            version = tokens[1];
-                        }
-                    }
-                }
-            }
-            finally {
-                IOUtility.closeIO(is);
-            }
+            String[] result = NetworkUtil.getLatestVersion(conn);
+            String type = result[0];
+            String version = result[1];
             if (monitor.isCanceled()) {
                 return Status.CANCEL_STATUS;
             }

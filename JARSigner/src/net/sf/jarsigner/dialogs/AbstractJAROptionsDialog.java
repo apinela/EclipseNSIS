@@ -31,7 +31,7 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
      * @param parentShell
      * @throws KeyStoreException
      */
-    public AbstractJAROptionsDialog(Shell parentShell, List selection)
+    public AbstractJAROptionsDialog(Shell parentShell, List<Object> selection)
     {
         super(parentShell, selection);
     }

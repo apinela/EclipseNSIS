@@ -18,7 +18,7 @@ import org.eclipse.ui.progress.UIJob;
 public class JobScheduler
 {
     private boolean mRunning = false;
-    private Set mJobFamilies = new HashSet();
+    private Set<Object> mJobFamilies = new HashSet<Object>();
 
     public JobScheduler()
     {
@@ -38,7 +38,7 @@ public class JobScheduler
             mRunning = false;
             IJobManager manager = Job.getJobManager();
             if(manager != null) {
-                for(Iterator iter = mJobFamilies.iterator(); iter.hasNext(); ) {
+                for(Iterator<Object> iter = mJobFamilies.iterator(); iter.hasNext(); ) {
                     manager.cancel(iter.next());
                     iter.remove();
                 }
