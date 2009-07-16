@@ -20,18 +20,21 @@ public class LabelParam extends RegexpParam
         super(node);
     }
 
-    protected void init(Node node)
+    @Override
+	protected void init(Node node)
     {
         super.init(node);
         mAllowBlank = true;
     }
 
-    protected String getRegexp()
+    @Override
+	protected String getRegexp()
     {
         return "0|\\+[1-9][0-9]*|\\-[1-9][0-9]*|[^\\+\\-0-9\\$\\!\"'`\\s].*"; //$NON-NLS-1$
     }
 
-    protected String getValidateErrorMessage()
+    @Override
+	protected String getValidateErrorMessage()
     {
         return EclipseNSISPlugin.getResourceString("label.param.error"); //$NON-NLS-1$
     }

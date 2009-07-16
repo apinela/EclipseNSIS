@@ -25,7 +25,8 @@ public class TextCellEditorLocator extends InstallOptionsCellEditorLocator
         super(text);
     }
 
-    protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
+    @Override
+	protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
         return new Rectangle(editArea.x + X_OFFSET, editArea.y, editArea.width + W_OFFSET, editArea.height);
     }

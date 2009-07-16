@@ -28,11 +28,13 @@ public class ToggleStateCommand extends Command
         mOldState = mModel.getState();
     }
 
-    public void execute() {
+    @Override
+	public void execute() {
         mModel.setState(mNewState);
     }
 
-    public void undo() {
+    @Override
+	public void undo() {
         mModel.setState(mOldState);
     }
 }

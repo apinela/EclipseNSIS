@@ -24,7 +24,8 @@ import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelEditPart
 {
-    protected IInstallOptionsFigure createInstallOptionsFigure()
+    @Override
+	protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         if(cIsNT) {
             //This is a hack because Windows NT Labels don't seem to respond to the
@@ -36,17 +37,20 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
         }
     }
 
-    protected UneditableElementDirectEditPolicy createDirectEditPolicy()
+    @Override
+	protected UneditableElementDirectEditPolicy createDirectEditPolicy()
     {
         return null;
     }
 
-   protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
+    @Override
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
     {
         return null;
     }
 
-    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    @Override
+	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return null;
     }
@@ -63,27 +67,25 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
             super(propertySource);
         }
 
-        protected void createChildFigures()
+        @Override
+		protected void createChildFigures()
         {
             mImageFigure = new ImageFigure();
             mImageFigure.setBorder(new DashedLineBorder());
             add(mImageFigure);
         }
 
-        protected void init(IPropertySource propertySource)
+        @Override
+		protected void init(IPropertySource propertySource)
         {
             super.init(propertySource);
             setImage((Image)propertySource.getPropertyValue(InstallOptionsPicture.PROPERTY_IMAGE));
         }
 
-        protected void setChildConstraints(Rectangle rect)
+        @Override
+		protected void setChildConstraints(Rectangle rect)
         {
             setConstraint(mImageFigure, new Rectangle(0,0,rect.width,rect.height));
-        }
-
-        protected Image getImage()
-        {
-            return mImage;
         }
 
         protected void setImage(Image image)
@@ -94,7 +96,8 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
             }
         }
 
-        public void refresh()
+        @Override
+		public void refresh()
         {
             super.refresh();
             mImageFigure.setImage(mImage);

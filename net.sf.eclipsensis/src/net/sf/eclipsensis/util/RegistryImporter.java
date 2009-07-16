@@ -33,7 +33,7 @@ public class RegistryImporter
     private static String[] cRegFileFilterNames = Common.tokenize(EclipseNSISPlugin.getResourceString("regfile.filter.names"),','); //$NON-NLS-1$
     private static File cRegEdit = null;
 
-    private static Map cRootKeyHandleMap = new CaseInsensitiveMap();
+    private static Map<String, String> cRootKeyHandleMap = new CaseInsensitiveMap<String>();
 
     private boolean mShowMultiSZWarning = true;
 
@@ -209,7 +209,7 @@ public class RegistryImporter
                             fis = new FileInputStream(regFile);
                             int n = fis.read(bytes);
                             if(n < bytes.length) {
-                                throwException();
+                                throw new RuntimeException(EclipseNSISPlugin.getResourceString("invalid.regfile.error")); //$NON-NLS-1$
                             }
                             if(bytes[0] == (byte)0xFF && bytes[1] == (byte)0xFE) {
                                 isRegEdit5 = true;
@@ -224,14 +224,14 @@ public class RegistryImporter
                                 br = new BufferedReader(new InputStreamReader(fis,"8859_1")); //$NON-NLS-1$
                             }
                             else {
-                                throwException();
+                                throw new RuntimeException(EclipseNSISPlugin.getResourceString("invalid.regfile.error")); //$NON-NLS-1$
                             }
 
                             String line = br.readLine();
                             if(line != null) {
                                 if ( !(isRegEdit4 && line.equals("REGEDIT4")) && //$NON-NLS-1$
                                      !(isRegEdit5 && line.equals("Windows Registry Editor Version 5.00"))) { //$NON-NLS-1$
-                                    throwException();
+                                    throw new RuntimeException(EclipseNSISPlugin.getResourceString("invalid.regfile.error")); //$NON-NLS-1$
                                 }
                                 String rootKey = null;
                                 String subKey = null;
@@ -374,12 +374,12 @@ public class RegistryImporter
                                                 }
                                             }
                                         }
-                                        throwException();
+                                        throw new RuntimeException(EclipseNSISPlugin.getResourceString("invalid.regfile.error")); //$NON-NLS-1$
                                     }
                                 }
                             }
                             else {
-                                throwException();
+                                throw new RuntimeException(EclipseNSISPlugin.getResourceString("invalid.regfile.error")); //$NON-NLS-1$
                             }
                         }
                         catch (Exception e) {
@@ -394,20 +394,12 @@ public class RegistryImporter
                     }
                 }
             }
-
-            /**
-             *
-             */
-            private void throwException()
-            {
-                throw new RuntimeException(EclipseNSISPlugin.getResourceString("invalid.regfile.error")); //$NON-NLS-1$
-            }
         });
     }
 
     public static final String rootKeyNameToHandle(String rootKey)
     {
-        String handle = (String)cRootKeyHandleMap.get(rootKey);
+        String handle = cRootKeyHandleMap.get(rootKey);
         return (handle==null?"":handle); //$NON-NLS-1$
     }
 

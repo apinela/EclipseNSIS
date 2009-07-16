@@ -9,23 +9,38 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import java.beans.*;
-import java.util.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.*;
-import net.sf.eclipsensis.installoptions.model.commands.*;
+import net.sf.eclipsensis.installoptions.ini.INIComment;
+import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
+import net.sf.eclipsensis.installoptions.ini.INILine;
+import net.sf.eclipsensis.installoptions.ini.INISection;
+import net.sf.eclipsensis.installoptions.model.commands.IModelCommandListener;
+import net.sf.eclipsensis.installoptions.model.commands.ModelCommandEvent;
+import net.sf.eclipsensis.installoptions.model.commands.SetPropertyValueCommand;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.AbstractNodeConvertible;
+import net.sf.eclipsensis.util.CaseInsensitiveMap;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
 
-public abstract class InstallOptionsElement extends AbstractNodeConvertible implements IPropertySource, Cloneable
+public abstract class InstallOptionsElement extends AbstractNodeConvertible implements IPropertySource
 {
     /**
      * 
@@ -86,10 +101,10 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
 
     private transient INISection mSection = null;
     protected transient PropertyChangeSupport mListeners = new PropertyChangeSupport(this);
-    protected transient ArrayList mModelCommandListeners = new ArrayList();
+    protected transient List<IModelCommandListener> mModelCommandListeners = new ArrayList<IModelCommandListener>();
     private transient boolean mDirty = false;
-    protected transient Map mDescriptors = new HashMap();
-    private transient Map mTypeConverters = null;
+    protected transient Map<String, IPropertyDescriptor> mDescriptors = new HashMap<String, IPropertyDescriptor>();
+    private transient Map<String, TypeConverter<?>> mTypeConverters = null;
 
     private transient INIComment mMetadataComment;
 
@@ -104,12 +119,14 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
         }
     }
 
-    protected String getChildNodeName()
+    @Override
+	protected String getChildNodeName()
     {
         return CHILD_NODE_NAME;
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("editableValue"); //$NON-NLS-1$
@@ -157,7 +174,7 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
     protected void fireModelCommand(Command cmd)
     {
         ModelCommandEvent e = new ModelCommandEvent(this,cmd);
-        IModelCommandListener[] listeners = (IModelCommandListener[])mModelCommandListeners.toArray(new IModelCommandListener[mModelCommandListeners.size()]);
+        IModelCommandListener[] listeners = mModelCommandListeners.toArray(new IModelCommandListener[mModelCommandListeners.size()]);
         for (int i = 0; i < listeners.length; i++) {
             listeners[i].executeModelCommand(e);
         }
@@ -177,7 +194,7 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
      */
     private IPropertyDescriptor doGetPropertyDescriptor(String name)
     {
-        IPropertyDescriptor descriptor = (IPropertyDescriptor)mDescriptors.get(name);
+        IPropertyDescriptor descriptor = mDescriptors.get(name);
         if(descriptor == null) {
             descriptor = createPropertyDescriptor(name);
             if(descriptor != null) {
@@ -192,15 +209,15 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
 
     public final IPropertyDescriptor[] getPropertyDescriptors()
     {
-        Collection names = getPropertyNames();
-        ArrayList list = new ArrayList();
-        for (Iterator iter = names.iterator(); iter.hasNext();) {
-            IPropertyDescriptor descriptor = doGetPropertyDescriptor((String)iter.next());
+        Collection<String> names = getPropertyNames();
+        List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
+        for (Iterator<String> iter = names.iterator(); iter.hasNext();) {
+            IPropertyDescriptor descriptor = doGetPropertyDescriptor(iter.next());
             if(descriptor != cNullPropertyDescriptor) {
                 list.add(descriptor);
             }
         }
-        return (IPropertyDescriptor[])list.toArray(new IPropertyDescriptor[list.size()]);
+        return list.toArray(new IPropertyDescriptor[list.size()]);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener l)
@@ -258,13 +275,14 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
         return null;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         try {
             InstallOptionsElement element = (InstallOptionsElement)super.clone();
             element.mListeners = new PropertyChangeSupport(element);
-            element.mModelCommandListeners = new ArrayList();
-            element.mDescriptors = new HashMap();
+            element.mModelCommandListeners = new ArrayList<IModelCommandListener>();
+            element.mDescriptors = new HashMap<String, IPropertyDescriptor>();
             element.mSection = null;
             element.mDirty = true;
             element.mMetadataComment = null;
@@ -298,19 +316,19 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
     protected void loadSection(INISection section)
     {
         mSection = section;
-        Collection properties = doGetPropertyNames();
-        for (Iterator iter=properties.iterator(); iter.hasNext(); ) {
-            String property = (String)iter.next();
+        Collection<String> properties = doGetPropertyNames();
+        for (Iterator<String> iter=properties.iterator(); iter.hasNext(); ) {
+            String property = iter.next();
             INIKeyValue[] keyValues = section.findKeyValues(property);
             if(!Common.isEmptyArray(keyValues)) {
                 String value = keyValues[0].getValue();
-                TypeConverter converter = getTypeConverter(property, value);
+                TypeConverter<?> converter = getTypeConverter(property, value);
                 setPropertyValue(property,(converter != null?converter.asType(value):value));
             }
         }
         mMetadataComment = null;
-        for(Iterator iter=mSection.getChildren().iterator(); iter.hasNext(); ) {
-            INILine line = (INILine)iter.next();
+        for(Iterator<INILine> iter=mSection.getChildren().iterator(); iter.hasNext(); ) {
+            INILine line = iter.next();
             if(line instanceof INIComment) {
                 String text = line.getText().trim();
                 if(text.startsWith(OLD_METADATA_PREFIX) || text.startsWith(METADATA_PREFIX)) {
@@ -345,12 +363,12 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
         }
         if(isDirty()) {
             section.setName(getSectionName());
-            Collection properties = doGetPropertyNames();
-            for (Iterator iter=properties.iterator(); iter.hasNext(); ) {
-                String property = (String)iter.next();
+            Collection<String> properties = doGetPropertyNames();
+            for (Iterator<String> iter=properties.iterator(); iter.hasNext(); ) {
+                String property = iter.next();
                 Object propertyValue = getPropertyValue(property);
-                TypeConverter converter = getTypeConverter(property, propertyValue);
-                String value = (propertyValue != null?(converter != null?converter.asString(propertyValue):propertyValue.toString()):""); //$NON-NLS-1$
+                TypeConverter<?> converter = getTypeConverter(property, propertyValue);
+                String value = (propertyValue != null?(converter != null?converter.toString(propertyValue):propertyValue.toString()):""); //$NON-NLS-1$
                 value = (value == null?"":value); //$NON-NLS-1$
 
                 INIKeyValue[] keyValues = section.findKeyValues(property);
@@ -366,8 +384,8 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
                 }
             }
 
-            for(Iterator iter=section.getChildren().iterator(); iter.hasNext(); ) {
-                INILine line = (INILine)iter.next();
+            for(Iterator<INILine> iter=section.getChildren().iterator(); iter.hasNext(); ) {
+                INILine line = iter.next();
                 if(iter.hasNext() && line.getDelimiter() == null) {
                     line.setDelimiter(INSISConstants.LINE_SEPARATOR);
                 }
@@ -377,12 +395,12 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
         return section;
     }
 
-    protected final TypeConverter getTypeConverter(String property, Object value)
+    protected final TypeConverter<?> getTypeConverter(String property, Object value)
     {
         if(mTypeConverters == null) {
-            mTypeConverters = new CaseInsensitiveMap();
+            mTypeConverters = new CaseInsensitiveMap<TypeConverter<?>>();
         }
-        TypeConverter typeConverter = (TypeConverter)mTypeConverters.get(property);
+        TypeConverter<?> typeConverter = mTypeConverters.get(property);
         if(typeConverter == null) {
             typeConverter = loadTypeConverter(property, value);
             mTypeConverters.put(property, typeConverter);
@@ -390,7 +408,7 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
         return typeConverter;
     }
 
-    protected TypeConverter loadTypeConverter(String property, Object value)
+    protected TypeConverter<?> loadTypeConverter(String property, Object value)
     {
         return TypeConverter.STRING_CONVERTER;
     }
@@ -400,7 +418,7 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
         return null;
     }
 
-    protected Collection getPropertyNames()
+    protected Collection<String> getPropertyNames()
     {
         return doGetPropertyNames();
     }
@@ -410,7 +428,7 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
 
     }
 
-    protected abstract Collection doGetPropertyNames();
+    protected abstract Collection<String> doGetPropertyNames();
     protected abstract IPropertyDescriptor createPropertyDescriptor(String name);
     public abstract String getType();
     protected abstract String getSectionName();

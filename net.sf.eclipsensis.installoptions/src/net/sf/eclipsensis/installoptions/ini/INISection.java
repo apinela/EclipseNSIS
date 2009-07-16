@@ -23,7 +23,7 @@ public class INISection extends INILine implements IINIContainer
 {
     private static final long serialVersionUID = -1320834864833847467L;
 
-    private List mChildren = new ArrayList();
+    private List<INILine> mChildren = new ArrayList<INILine>();
     private String mName;
     private String mOriginalName;
     private Position mPosition;
@@ -47,7 +47,8 @@ public class INISection extends INILine implements IINIContainer
         return mDirty;
     }
 
-    public void setDirty(boolean dirty)
+    @Override
+	public void setDirty(boolean dirty)
     {
         mDirty = dirty;
         super.setDirty(dirty);
@@ -75,8 +76,8 @@ public class INISection extends INILine implements IINIContainer
     {
         if(isDirty()) {
             int length = getLength();
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                length += ((INILine)iter.next()).getLength();
+            for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+                length += iter.next().getLength();
             }
             mPosition.setLength(length);
             setDirty(false);
@@ -113,49 +114,51 @@ public class INISection extends INILine implements IINIContainer
         }
     }
 
-    public List getChildren()
+    public List<INILine> getChildren()
     {
         return mChildren;
     }
 
     public INIKeyValue[] getKeyValues()
     {
-        List list = new ArrayList();
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-            INILine element = (INILine)iter.next();
+        List<INIKeyValue> list = new ArrayList<INIKeyValue>();
+        for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+            INILine element = iter.next();
             if(element instanceof INIKeyValue) {
-                list.add(element);
+                list.add((INIKeyValue) element);
             }
         }
-        return (INIKeyValue[])list.toArray(new INIKeyValue[list.size()]);
+        return list.toArray(new INIKeyValue[list.size()]);
     }
 
     public INIKeyValue[] findKeyValues(String key)
     {
-        List list = new ArrayList();
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-            INILine element = (INILine)iter.next();
+        List<INIKeyValue> list = new ArrayList<INIKeyValue>();
+        for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+            INILine element = iter.next();
             if(element instanceof INIKeyValue && ((INIKeyValue)element).getKey().equalsIgnoreCase(key)) {
-                list.add(element);
+                list.add((INIKeyValue) element);
             }
         }
-        return (INIKeyValue[])list.toArray(new INIKeyValue[list.size()]);
+        return list.toArray(new INIKeyValue[list.size()]);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         StringBuffer buf = new StringBuffer(super.toString());
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+        for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
             buf.append(iter.next());
         }
         return buf.toString();
     }
 
-    public boolean hasErrors()
+    @Override
+	public boolean hasErrors()
     {
         if(!super.hasErrors()) {
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                if(((INILine)iter.next()).hasErrors()) {
+            for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+                if(iter.next().hasErrors()) {
                     return true;
                 }
             }
@@ -164,11 +167,12 @@ public class INISection extends INILine implements IINIContainer
         return true;
     }
 
-    public boolean hasWarnings()
+    @Override
+	public boolean hasWarnings()
     {
         if(!super.hasWarnings()) {
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                if(((INILine)iter.next()).hasWarnings()) {
+            for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+                if(iter.next().hasWarnings()) {
                     return true;
                 }
             }
@@ -185,8 +189,8 @@ public class INISection extends INILine implements IINIContainer
                 return this;
             }
             int start = pos.offset+getLength();
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                INILine line = (INILine)iter.next();
+            for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+                INILine line = iter.next();
                 if(offset < start+line.getLength()) {
                     return line;
                 }
@@ -200,8 +204,8 @@ public class INISection extends INILine implements IINIContainer
     {
         if(mChildren.contains(child)) {
             int offset = getPosition().offset+getLength();
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                INILine line = (INILine)iter.next();
+            for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+                INILine line = iter.next();
                 if(line == child) {
                     return new Position(offset, line.getLength());
                 }
@@ -213,7 +217,8 @@ public class INISection extends INILine implements IINIContainer
         return null;
     }
 
-    protected void checkProblems(int fixFlag)
+    @Override
+	protected void checkProblems(int fixFlag)
     {
         //Validate section
         final INIFile parent = (INIFile)getParent();
@@ -232,18 +237,19 @@ public class INISection extends INILine implements IINIContainer
                                                         new String[]{getName()}));
                     addProblem(problem);
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.dup.sections")) { //$NON-NLS-1$
-                        protected INIProblemFix[] createFixes()
+                        @Override
+						protected INIProblemFix[] createFixes()
                         {
-                            List fixes = new ArrayList();
+                            List<INIProblemFix> fixes = new ArrayList<INIProblemFix>();
                             int count = 0;
                             for (int i = sections.length-1; i >= 0; i--) {
                                 if(sections[i] != INISection.this) {
                                     count--;
-                                    List children = sections[i].getChildren();
+                                    List<INILine> children = sections[i].getChildren();
                                     if(!Common.isEmptyCollection(children)) {
-                                        ListIterator iter = children.listIterator(children.size());
+                                        ListIterator<INILine> iter = children.listIterator(children.size());
                                         while(iter.hasPrevious()) {
-                                            fixes.add(new INIProblemFix((INILine)iter.previous()));
+                                            fixes.add(new INIProblemFix(iter.previous()));
                                         }
                                     }
                                     fixes.add(new INIProblemFix(sections[i]));
@@ -276,7 +282,7 @@ public class INISection extends INILine implements IINIContainer
                                 }
                             }
 
-                            return (INIProblemFix[])fixes.toArray(new INIProblemFix[fixes.size()]);
+                            return fixes.toArray(new INIProblemFix[fixes.size()]);
                         }
                     });
                 }
@@ -284,12 +290,12 @@ public class INISection extends INILine implements IINIContainer
         }
 
         for (int i=0; i<mChildren.size(); i++) {
-            ((INILine)mChildren.get(i)).validate(fixFlag);
+            mChildren.get(i).validate(fixFlag);
         }
 
         //Validate required keys
         if(getName().equalsIgnoreCase(InstallOptionsModel.SECTION_SETTINGS)) {
-            Collection settings = InstallOptionsModel.INSTANCE.getDialogSettings();
+            Collection<String> settings = InstallOptionsModel.INSTANCE.getDialogSettings();
             INIKeyValue[] keyValues = getKeyValues();
             for (int i = 0; i < keyValues.length; i++) {
                 if(!settings.contains(keyValues[i].getKey())) {
@@ -303,7 +309,8 @@ public class INISection extends INILine implements IINIContainer
                         keyValues[i].addProblem(problem);
                         final INIKeyValue keyValue = keyValues[i];
                         problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.unrecognized.key")) { //$NON-NLS-1$
-                            protected INIProblemFix[] createFixes()
+                            @Override
+							protected INIProblemFix[] createFixes()
                             {
                                 return new INIProblemFix[] {new INIProblemFix(keyValue)};
                             }
@@ -314,15 +321,15 @@ public class INISection extends INILine implements IINIContainer
         }
         else {
             if(isInstallOptionsField()) {
-                final List missing = new ArrayList();
-                final Map requiredSettings = InstallOptionsModel.INSTANCE.getControlRequiredSettings();
-                for (Iterator iter = requiredSettings.keySet().iterator(); iter.hasNext(); ) {
-                    String name = (String)iter.next();
+                final List<String> missing = new ArrayList<String>();
+                final Map<String,String> requiredSettings = InstallOptionsModel.INSTANCE.getControlRequiredSettings();
+                for (Iterator<String> iter = requiredSettings.keySet().iterator(); iter.hasNext(); ) {
+                    String name = iter.next();
                     INIKeyValue[] keyValues = findKeyValues(name);
                     if(Common.isEmptyArray(keyValues)) {
                         if((fixFlag & VALIDATE_FIX_ERRORS) > 0) {
                             INIKeyValue keyValue = new INIKeyValue(name);
-                            keyValue.setValue((String)requiredSettings.get(name));
+                            keyValue.setValue(requiredSettings.get(name));
                             addChild(0,keyValue);
                         }
                         else {
@@ -333,7 +340,7 @@ public class INISection extends INILine implements IINIContainer
                 if(missing.size() > 0) {
                     Integer size = new Integer(missing.size());
                     StringBuffer buf = new StringBuffer();
-                    Iterator iter = missing.iterator();
+                    Iterator<String> iter = missing.iterator();
                     buf.append("\"").append(iter.next()).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
                     while(iter.hasNext()) {
                         buf.append(", \"").append(iter.next()).append("\""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -342,15 +349,16 @@ public class INISection extends INILine implements IINIContainer
                                                         new Object[]{buf.toString(), size}));
                     addProblem(problem);
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.insert.missing.keys")) { //$NON-NLS-1$
-                        protected INIProblemFix[] createFixes()
+                        @Override
+						protected INIProblemFix[] createFixes()
                         {
                             StringBuffer buf = new StringBuffer(INISection.this.getText());
                             INILine previous = INISection.this;
-                            for (Iterator iter = missing.iterator(); iter.hasNext(); ) {
+                            for (Iterator<String> iter = missing.iterator(); iter.hasNext(); ) {
                                 buf.append(previous.getDelimiter() == null?INSISConstants.LINE_SEPARATOR:previous.getDelimiter());
-                                String name = (String)iter.next();
+                                String name = iter.next();
                                 INIKeyValue keyValue = new INIKeyValue(name);
-                                buf.append(keyValue.buildText((String)requiredSettings.get(name)));
+                                buf.append(keyValue.buildText(requiredSettings.get(name)));
                                 previous = keyValue;
                             }
                             return new INIProblemFix[] {new INIProblemFix(INISection.this,buf.toString())};
@@ -363,7 +371,7 @@ public class INISection extends INILine implements IINIContainer
                     String type = keyValues[0].getValue();
                     InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type);
                     if(typeDef != null) {
-                        Collection settingsSet;
+                        Collection<String> settingsSet;
                         settingsSet = typeDef.getSettings();
                         keyValues = getKeyValues();
                         for (int i = 0; i < keyValues.length; i++) {
@@ -378,7 +386,8 @@ public class INISection extends INILine implements IINIContainer
                                     keyValues[i].addProblem(problem);
                                     final INIKeyValue keyValue = keyValues[i];
                                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.unrecognized.key")) { //$NON-NLS-1$
-                                        protected INIProblemFix[] createFixes()
+                                        @Override
+										protected INIProblemFix[] createFixes()
                                         {
                                             return new INIProblemFix[] {new INIProblemFix(keyValue)};
                                         }
@@ -399,7 +408,8 @@ public class INISection extends INILine implements IINIContainer
                                                         new Object[]{InstallOptionsModel.PROPERTY_TYPE}));
                         addProblem(problem);
                         problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.insert.missing.key")) { //$NON-NLS-1$
-                            protected INIProblemFix[] createFixes()
+                            @Override
+							protected INIProblemFix[] createFixes()
                             {
                                 StringBuffer buf = new StringBuffer(INISection.this.getText());
                                 buf.append(INISection.this.getDelimiter() == null?INSISConstants.LINE_SEPARATOR:INISection.this.getDelimiter());
@@ -422,15 +432,16 @@ public class INISection extends INILine implements IINIContainer
         return (getName() != null && InstallOptionsModel.SECTION_FIELD_PATTERN.matcher(getName()).matches());
     }
 
-    public void update()
+    @Override
+	public void update()
     {
         if(!Common.stringsAreEqual(mName,mOriginalName)) {
             String newText = buildText(mName);
             mOriginalName = mName;
             setText(newText);
         }
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-            ((INILine)iter.next()).update();
+        for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+            iter.next().update();
         }
     }
 
@@ -463,10 +474,11 @@ public class INISection extends INILine implements IINIContainer
 
     public INILine getChild(int index)
     {
-        return (INILine)mChildren.get(index);
+        return mChildren.get(index);
     }
 
-    public INILine copy()
+    @Override
+	public INILine copy()
     {
         INISection sec = (INISection)clone();
         if(mPosition != null) {
@@ -475,13 +487,14 @@ public class INISection extends INILine implements IINIContainer
         return sec;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         INISection section = (INISection)super.clone();
         section.mPosition = null;
-        section.mChildren = new ArrayList();
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-            INILine line = (INILine)iter.next();
+        section.mChildren = new ArrayList<INILine>();
+        for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+            INILine line = iter.next();
             section.addChild((INILine)line.clone());
         }
         section.setDirty(false);
@@ -492,7 +505,7 @@ public class INISection extends INILine implements IINIContainer
     {
         int n = mChildren.size();
         for (int i=n-1; i>=0; i--) {
-            INILine line = (INILine)mChildren.get(i);
+            INILine line = mChildren.get(i);
             if(line.getClass().equals(INILine.class)) {
                 if(Common.isEmpty(line.getText())) {
                     removeChild(line);
@@ -507,7 +520,8 @@ public class INISection extends INILine implements IINIContainer
         return this;
     }
 
-    public boolean isEqualTo(INILine line)
+    @Override
+	public boolean isEqualTo(INILine line)
     {
         if (this == line) {
             return true;

@@ -10,37 +10,44 @@
 package net.sf.eclipsensis.installoptions.edit.uneditable;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditManager;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsUneditableElement;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 
-public abstract class InstallOptionsUneditableElementEditManager extends InstallOptionsDirectEditManager
+public abstract class InstallOptionsUneditableElementEditManager extends InstallOptionsDirectEditManager<TextCellEditor>
 {
-    public InstallOptionsUneditableElementEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
+    public InstallOptionsUneditableElementEditManager(GraphicalEditPart source, CellEditorLocator locator)
     {
-        super(source, editorType, locator);
+        super(source, TextCellEditor.class, locator);
     }
 
-    protected String getInitialText(InstallOptionsWidget control)
+    @Override
+	protected String getInitialText(InstallOptionsWidget control)
     {
         return ((InstallOptionsUneditableElement)control).getText();
     }
 
-    protected void selectCellEditorText()
+    @Override
+	protected void selectCellEditorText()
     {
         Text text = (Text)getCellEditor().getControl();
         text.selectAll();
     }
 
-    protected CellEditor createCellEditor(Composite composite)
+    @Override
+	protected TextCellEditor createCellEditor(Composite composite)
     {
         return new TextCellEditor(composite, getCellEditorStyle());
     }
 
-    protected String getDirectEditProperty()
+    @Override
+	protected String getDirectEditProperty()
     {
         return InstallOptionsModel.PROPERTY_TEXT;
     }

@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.edit.droplist;
 
 import net.sf.eclipsensis.installoptions.edit.combobox.InstallOptionsComboboxEditManager;
+import net.sf.eclipsensis.installoptions.properties.editors.EditableComboBoxCellEditor;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
@@ -17,16 +18,18 @@ import org.eclipse.swt.SWT;
 
 public class InstallOptionsDropListEditManager extends InstallOptionsComboboxEditManager
 {
-    public InstallOptionsDropListEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
+    public InstallOptionsDropListEditManager(GraphicalEditPart source, Class<EditableComboBoxCellEditor> editorType, CellEditorLocator locator)
     {
         super(source, editorType, locator);
     }
 
-    protected void selectCellEditorText()
+    @Override
+	protected void selectCellEditorText()
     {
     }
 
-    protected int getCellEditorStyle()
+    @Override
+	protected int getCellEditorStyle()
     {
         return super.getCellEditorStyle()|SWT.READ_ONLY;
     }

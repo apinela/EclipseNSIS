@@ -27,14 +27,16 @@ public class InstallOptionsCheckBoxExtendedEditPolicy extends InstallOptionsExte
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy#getExtendedEditCommand(net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest)
      */
-    protected Command getExtendedEditCommand(ExtendedEditRequest request)
+    @Override
+	protected Command getExtendedEditCommand(ExtendedEditRequest request)
     {
         ToggleStateCommand command = new ToggleStateCommand((InstallOptionsCheckBox)request.getEditPart().getModel(),
                                                                                     (Integer)request.getNewValue());
         return command;
     }
 
-    protected String getExtendedEditProperty()
+    @Override
+	protected String getExtendedEditProperty()
     {
         return InstallOptionsModel.PROPERTY_STATE;
     }

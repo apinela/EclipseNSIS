@@ -35,7 +35,8 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
     private TabbedPropertySheetPage mPage;
     private Composite mParent;
 
-    public void createControls(Composite parent, TabbedPropertySheetPage page)
+    @Override
+	public void createControls(Composite parent, TabbedPropertySheetPage page)
     {
         super.createControls(parent, page);
         mPage = page;
@@ -44,7 +45,8 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
         mParent.setLayout(new GridLayout(1,false));
     }
 
-    public void dispose()
+    @Override
+	public void dispose()
     {
         super.dispose();
         mPage = null;
@@ -56,6 +58,7 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
 	/**
 	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySection#setInput(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public final void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
 		if(selection instanceof IStructuredSelection && !selection.isEmpty()) {
@@ -98,7 +101,8 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
     private void createCommandHelper(CommandStack stack)
     {
         mCommandHelper = new InstallOptionsCommandHelper(stack) {
-            protected void refresh()
+            @Override
+			protected void refresh()
             {
                 InstallOptionsElementPropertySection.this.refresh();
             }
@@ -131,7 +135,8 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
         }
     }
 
-    public boolean shouldUseExtraSpace()
+    @Override
+	public boolean shouldUseExtraSpace()
     {
         return true;
     }
@@ -155,6 +160,7 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
 				}
 			};
 
+			@Override
 			public void controlResized(ControlEvent e)
 			{
 				if (!scheduler.isScheduled(jobFamily)) {

@@ -109,12 +109,14 @@ public class NSISTaskTag implements Serializable
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    public String toString()
+    @Override
+	public String toString()
     {
         return getTag();
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if(obj instanceof NSISTaskTag) {
             NSISTaskTag tag = (NSISTaskTag)obj;
@@ -124,7 +126,8 @@ public class NSISTaskTag implements Serializable
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return mTag.hashCode()+mPriority+(mDefault?1:0);
     }

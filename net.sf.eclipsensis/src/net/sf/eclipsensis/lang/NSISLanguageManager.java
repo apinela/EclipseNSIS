@@ -30,10 +30,10 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
     private Pattern mDefineMUILangNamePattern = null;
     // !insertmacro\s+LANGFILE\s+(\S+|(")(?:\\?.)*?\2)\s+(\S+|(")(?:\\?.)*?\4)
     private Pattern mInsertMacroLangFilePattern = null;
-    private Map mLanguageMap = null;
-    private List mLanguages = null;
-    private Map mLocaleLanguageMap= null;
-    private Map mLanguageIdLocaleMap = null;
+    private Map<String, NSISLanguage> mLanguageMap = null;
+    private List<NSISLanguage> mLanguages = null;
+    private Map<String,String> mLocaleLanguageMap= null;
+    private Map<String,String> mLanguageIdLocaleMap = null;
     private Integer mDefaultLanguageId = null;
     private PropertyChangeSupport mPropertyChangeSupport = null;
     private File mLangDir;
@@ -52,8 +52,8 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
     public void start(IProgressMonitor monitor)
     {
         if (cInstance == null) {
-            mLanguageMap = new CaseInsensitiveMap();
-            mLanguages = new ArrayList();
+            mLanguageMap = new CaseInsensitiveMap<NSISLanguage>();
+            mLanguages = new ArrayList<NSISLanguage>();
             mPropertyChangeSupport = new PropertyChangeSupport(this);
             mDefineMUILangNamePattern = Pattern.compile(NSISKeywords.getInstance()
                     .getKeyword("!DEFINE") + "\\s+MUI_LANGNAME\\s+(\\S+|(\")(?:\\\\?.)*?\\2)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$ //$NON-NLS-2$
@@ -142,7 +142,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                                     mLanguageMap.put(locale, language);
                                 }
                                 mLanguageMap.put(language.getName(), language);
-                                mLanguageMap.put(langId, language);
+                                mLanguageMap.put(Integer.toString(langId), language);
                                 mLanguages.add(language);
                             }
                             if(monitor != null) {
@@ -263,9 +263,9 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         return language;
     }
 
-    public List getLanguages()
+    public List<NSISLanguage> getLanguages()
     {
-        return new ArrayList(mLanguages);
+        return new ArrayList<NSISLanguage>(mLanguages);
     }
 
     public NSISLanguage getDefaultLanguage()
@@ -276,31 +276,31 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         int langId;
         if(version.compareTo(INSISVersions.VERSION_2_13) >= 0) {
             langId = WinAPI.GetUserDefaultUILanguage();
-            lang = (NSISLanguage)mLanguageMap.get(new Integer(langId));
+            lang = mLanguageMap.get(Integer.toString(langId));
         }
         if(lang == null) {
             langId = WinAPI.GetUserDefaultLangID();
-            lang = (NSISLanguage)mLanguageMap.get(new Integer(langId));
+            lang = mLanguageMap.get(Integer.toString(langId));
         }
         if(lang == null) {
             Locale locale = Locale.getDefault();
-            lang = (NSISLanguage)mLanguageMap.get(locale.toString());
+            lang = mLanguageMap.get(locale.toString());
             if(lang == null) {
                 if(!Common.isEmpty(locale.getVariant())) {
-                    lang = (NSISLanguage)mLanguageMap.get(new Locale(locale.getLanguage(),locale.getCountry()).toString());
+                    lang = mLanguageMap.get(new Locale(locale.getLanguage(),locale.getCountry()).toString());
                 }
                 if (lang == null) {
                     //Try the user's language
-                    lang = (NSISLanguage)mLanguageMap.get(locale.getDisplayLanguage(Locale.US));
+                    lang = mLanguageMap.get(locale.getDisplayLanguage(Locale.US));
                     if (lang == null) {
                         //See if this is one of the specially mapped locales
-                        lang = (NSISLanguage)mLanguageMap.get(mLocaleLanguageMap.get(locale.toString()));
+                        lang = mLanguageMap.get(mLocaleLanguageMap.get(locale.toString()));
                         if (lang == null) {
                             //Try the default lang id
-                            lang = (NSISLanguage)mLanguageMap.get(mDefaultLanguageId);
+                            lang = mLanguageMap.get(mDefaultLanguageId.toString());
                             if (lang == null && mLanguages.size() > 0) {
                                 //When all else fails, return the first one
-                                lang = (NSISLanguage)mLanguages.get(0);
+                                lang = mLanguages.get(0);
                             }
                         }
                     }
@@ -318,12 +318,12 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
 
     public NSISLanguage getLanguage(String name)
     {
-        return (NSISLanguage)mLanguageMap.get(name);
+        return mLanguageMap.get(name);
     }
 
     public NSISLanguage getLanguage(int langId)
     {
-        return (NSISLanguage)mLanguageMap.get(new Integer(langId));
+        return mLanguageMap.get(Integer.toString(langId));
     }
 
     public NSISLanguage getLanguage(File langFile)
@@ -349,19 +349,13 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         int defaultLangId = mDefaultLanguageId.intValue();
         String strLangId = Integer.toString(langId);
 
-        Object obj = mLanguageIdLocaleMap.get(strLangId);
-        if(obj == null && langId != defaultLangId) {
-            obj = getLocaleForLangId(defaultLangId);
-            mLanguageIdLocaleMap.put(strLangId,obj);
+        String localeName = mLanguageIdLocaleMap.get(strLangId);
+        if(localeName == null && langId != defaultLangId) {
+            locale = getLocaleForLangId(defaultLangId);
+            mLanguageIdLocaleMap.put(strLangId,locale.toString());
         }
-        if(obj != null) {
-            if(obj instanceof Locale) {
-                locale = (Locale)obj;
-            }
-            else {
-                locale = parseLocale(obj.toString());
-                mLanguageIdLocaleMap.put(strLangId, locale);
-            }
+        if(localeName != null) {
+            locale = parseLocale(localeName);
         }
         return locale;
     }

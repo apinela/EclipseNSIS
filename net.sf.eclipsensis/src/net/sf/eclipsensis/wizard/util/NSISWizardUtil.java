@@ -39,7 +39,7 @@ public class NSISWizardUtil
 
     public static String[] getPathConstantsAndVariables(int targetPlatform)
     {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         String[] array = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.PATH_CONSTANTS_AND_VARIABLES);
         for (int i = 0; i < array.length; i++) {
             boolean exclude = false;
@@ -55,7 +55,7 @@ public class NSISWizardUtil
                 list.add(array[i]);
             }
         }
-        return (String[])list.toArray(new String[list.size()]);
+        return list.toArray(new String[list.size()]);
     }
 
     public static boolean isValidNSISPathName(int targetPlatform, String pathName)

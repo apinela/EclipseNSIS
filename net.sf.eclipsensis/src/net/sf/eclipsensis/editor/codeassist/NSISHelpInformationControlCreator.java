@@ -26,7 +26,8 @@ public class NSISHelpInformationControlCreator extends NSISInformationControlCre
         super(ids, style);
     }
 
-    protected boolean shouldBuildStatusText()
+    @Override
+	protected boolean shouldBuildStatusText()
     {
         boolean b = super.shouldBuildStatusText();
         if (b)
@@ -36,10 +37,12 @@ public class NSISHelpInformationControlCreator extends NSISInformationControlCre
         return b;
     }
 
-    protected NSISInformationControl.IInformationPresenter createInformationPresenter()
+    @Override
+	protected NSISInformationControl.IInformationPresenter createInformationPresenter()
     {
         return new WrappingInformationPresenter("\t\t") { //$NON-NLS-1$
-            public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation,
+            @Override
+			public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation,
                     int maxWidth, int maxHeight)
             {
                 hoverInfo = super.updatePresentation(display, hoverInfo, presentation, maxWidth, maxHeight);

@@ -13,7 +13,7 @@ import java.util.*;
 
 public abstract class AbstractNSISScriptElementContainer extends AbstractNSISScriptElement
 {
-    protected final ArrayList mElements = new ArrayList();
+    protected final List<INSISScriptElement> mElements = new ArrayList<INSISScriptElement>();
 
     /**
      * @param name
@@ -71,8 +71,8 @@ public abstract class AbstractNSISScriptElementContainer extends AbstractNSISScr
      */
     protected void writeElements(NSISScriptWriter writer)
     {
-        for (Iterator iter = mElements.iterator(); iter.hasNext();) {
-            INSISScriptElement element = (INSISScriptElement) iter.next();
+        for (Iterator<INSISScriptElement> iter = mElements.iterator(); iter.hasNext();) {
+            INSISScriptElement element = iter.next();
             element.write(writer);
         }
     }
@@ -84,12 +84,12 @@ public abstract class AbstractNSISScriptElementContainer extends AbstractNSISScr
 
     public INSISScriptElement get(int n)
     {
-        return (INSISScriptElement)mElements.get(n);
+        return mElements.get(n);
     }
 
     public INSISScriptElement remove(int n)
     {
-        return (INSISScriptElement)mElements.remove(n);
+        return mElements.remove(n);
     }
 
     public boolean remove(INSISScriptElement element)

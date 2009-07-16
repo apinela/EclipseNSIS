@@ -13,28 +13,28 @@ import java.util.*;
 
 import org.w3c.dom.Node;
 
-public abstract class AbstractNodeConverter implements INodeConverter
+public abstract class AbstractNodeConverter<T> implements INodeConverter<T>
 {
-    private Map mNameClassMap = new HashMap();
+    private Map<String,Class<?>> mNameClassMap = new HashMap<String,Class<?>>();
 
-    public Map getNameClassMappings()
+    public Map<String,Class<?>> getNameClassMappings()
     {
         return Collections.unmodifiableMap(mNameClassMap);
     }
 
-    public void addNameClassMapping(String name, Class clasz)
+    public void addNameClassMapping(String name, Class<?> clasz)
     {
         mNameClassMap.put(name, clasz);
     }
 
-    public Object fromNode(Node node)
+	public T fromNode(Node node)
     {
-        Class clasz = (Class)mNameClassMap.get(node.getNodeName());
+        Class<?> clasz = mNameClassMap.get(node.getNodeName());
         if(clasz != null) {
             return fromNode(node, clasz);
         }
         throw new IllegalArgumentException(node.getNodeName());
     }
 
-    public abstract Object fromNode(Node node, Class clasz);
+    public abstract T fromNode(Node node, Class<?> clasz);
 }

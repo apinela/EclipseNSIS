@@ -19,13 +19,19 @@ import net.sf.eclipsensis.util.*;
 import org.eclipse.draw2d.geometry.*;
 import org.eclipse.swt.graphics.RGB;
 
-public abstract class TypeConverter
+public abstract class TypeConverter<T>
 {
-    public abstract String asString(Object o);
-    public abstract Object asType(String s);
-    public abstract Object makeCopy(Object o);
+    public abstract String asString(T o);
+    public abstract T asType(String s);
+    public abstract T makeCopy(T o);
+    
+    @SuppressWarnings("unchecked")
+	public final String toString(Object o)
+    {
+    	return asString((T)o);
+    }
 
-    public String asString(Object o, Object defaultValue)
+    public String asString(T o, T defaultValue)
     {
     	String string;
         try {
@@ -37,9 +43,9 @@ public abstract class TypeConverter
 		return (string != null?string:asString(defaultValue));
     }
 
-    public Object asType(String s, Object defaultValue)
+    public T asType(String s, T defaultValue)
     {
-    	Object type;
+    	T type;
         try {
             type = asType(s);
         }
@@ -49,13 +55,15 @@ public abstract class TypeConverter
 		return (type != null?type:makeCopy(defaultValue));
     }
 
-    public static final TypeConverter POINT_CONVERTER = new TypeConverter() {
-        public String asString(Object o)
+    public static final TypeConverter<Point> POINT_CONVERTER = new TypeConverter<Point>() {
+        @Override
+		public String asString(Point o)
         {
-            return (o==null?null:Common.flatten(new int[]{((Point)o).x,((Point)o).y},','));
+            return (o==null?null:Common.flatten(new int[]{(o).x,(o).y},','));
         }
 
-        public Object asType(String s)
+        @Override
+		public Point asType(String s)
         {
             Point p = null;
             if(s != null) {
@@ -69,24 +77,27 @@ public abstract class TypeConverter
             return p;
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		public Point makeCopy(Point o)
         {
-            return new Point((Point)o);
+            return new Point(o);
         }
     };
 
-    public static final TypeConverter POSITION_CONVERTER = new TypeConverter() {
-        public String asString(Object o)
+    public static final TypeConverter<Position> POSITION_CONVERTER = new TypeConverter<Position>() {
+        @Override
+		public String asString(Position o)
         {
             String s = null;
             if(o != null ) {
-                Rectangle rect = ((Position)o).getBounds();
+                Rectangle rect = (o).getBounds();
                 s = Common.flatten(new int[]{rect.x, rect.y, rect.width, rect.height},',');
             }
             return s;
         }
 
-        public Object asType(String s)
+        @Override
+		public Position asType(String s)
         {
             Position p = null;
             if(s != null) {
@@ -100,48 +111,54 @@ public abstract class TypeConverter
             return p;
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		public Position makeCopy(Position o)
         {
-            return ((Position)o).getCopy();
+            return (o).getCopy();
         }
     };
 
-    public static final TypeConverter BOOLEAN_CONVERTER = new TypeConverter() {
-        public String asString(Object o)
+    public static final TypeConverter<Boolean> BOOLEAN_CONVERTER = new TypeConverter<Boolean>() {
+        @Override
+		public String asString(Boolean o)
         {
-            return (o != null?((Boolean)o).toString():null);
+            return (o != null?(o).toString():null);
         }
 
-        public Object asType(String s)
+        @Override
+		public Boolean asType(String s)
         {
             return (s == null?null:Boolean.valueOf(s));
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		public Boolean makeCopy(Boolean o)
         {
             return o;
         }
     };
 
-    public static final TypeConverter RGB_CONVERTER = new TypeConverter() {
+    public static final TypeConverter<RGB> RGB_CONVERTER = new TypeConverter<RGB>() {
         //There is a bug in InstallOptions where R & B are reversed
         private RGB flip(RGB rgb)
         {
             return new RGB(rgb.blue, rgb.green, rgb.red);
         }
 
-        public String asString(Object o)
+        @Override
+		public String asString(RGB o)
         {
         	if(o != null) {
 	            StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
-	            RGB rgb = flip((RGB)o);
+	            RGB rgb = flip(o);
 	            buf.append(ColorManager.rgbToHex(rgb));
 	            return buf.toString();
         	}
         	return null;
         }
 
-        public Object asType(String s)
+        @Override
+		public RGB asType(String s)
         {
             if(s != null && s.startsWith("0x") && s.length()==8) { //$NON-NLS-1$
                 RGB rgb = ColorManager.hexToRGB(s.substring(2));
@@ -154,113 +171,131 @@ public abstract class TypeConverter
             return null;
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		public RGB makeCopy(RGB o)
         {
-            RGB rgb = (RGB)o;
+            RGB rgb = o;
             return new RGB(rgb.red,rgb.green,rgb.blue);
         }
     };
 
-    public static final TypeConverter INTEGER_CONVERTER = new TypeConverter() {
-        public String asString(Object o)
+    public static final TypeConverter<Integer> INTEGER_CONVERTER = new TypeConverter<Integer>() {
+        @Override
+		public String asString(Integer o)
         {
-            return (o==null?null:((Integer)o).toString());
+            return (o==null?null:(o).toString());
         }
 
-        public Object asType(String s)
+        @Override
+		public Integer asType(String s)
         {
             return (Common.isEmpty(s)?null:Integer.valueOf(s));
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		public Integer makeCopy(Integer o)
         {
             return o;
         }
     };
 
-    public static final TypeConverter HEX_CONVERTER = new TypeConverter() {
-        public String asString(Object o)
+    public static final TypeConverter<Integer> HEX_CONVERTER = new TypeConverter<Integer>() {
+        @Override
+		public String asString(Integer o)
         {
-            return (o == null?null:"0x"+Integer.toHexString(((Integer)o).intValue())); //$NON-NLS-1$
+            return (o == null?null:"0x"+Integer.toHexString((o).intValue())); //$NON-NLS-1$
         }
 
-        public Object asType(String s)
+        @Override
+		public Integer asType(String s)
         {
             return (Common.isEmpty(s)?null:Integer.valueOf(s.substring(2), 16));
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		public Integer makeCopy(Integer o)
         {
             return o;
         }
     };
 
-    public static final TypeConverter STRING_ARRAY_CONVERTER = new TypeConverter() {
-        public String asString(Object o)
+    public static final TypeConverter<String[]> STRING_ARRAY_CONVERTER = new TypeConverter<String[]>() {
+        @Override
+		public String asString(String[] o)
         {
-            return (o==null?null:Common.flatten((String[])o,IInstallOptionsConstants.LIST_SEPARATOR));
+            return (o==null?null:Common.flatten(o,IInstallOptionsConstants.LIST_SEPARATOR));
         }
 
-        public Object asType(String s)
+        @Override
+		public String[] asType(String s)
         {
             return (s==null?null:Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR,false));
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		public String[] makeCopy(String[] o)
         {
-            return ((String[])o).clone();
+            return (o).clone();
         }
     };
 
-    public static final TypeConverter STRING_LIST_CONVERTER = new TypeConverter() {
-        public String asString(Object o)
+    public static final TypeConverter<List<String>> STRING_LIST_CONVERTER = new TypeConverter<List<String>>() {
+        @Override
+		public String asString(List<String> o)
         {
-            return (o==null?null:Common.flatten(((List)o).toArray(Common.EMPTY_STRING_ARRAY),IInstallOptionsConstants.LIST_SEPARATOR));
+            return (o==null?null:Common.flatten(o.toArray(Common.EMPTY_STRING_ARRAY),IInstallOptionsConstants.LIST_SEPARATOR));
         }
 
-        public Object asType(String s)
+        @Override
+		public List<String> asType(String s)
         {
             return (s==null?null:Common.tokenizeToList(s,IInstallOptionsConstants.LIST_SEPARATOR,false));
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		@SuppressWarnings("unchecked")
+		public List<String> makeCopy(List<String> o)
         {
             if(o instanceof Cloneable) {
                 try {
-                    Method method = o.getClass().getMethod("clone",null); //$NON-NLS-1$
-                    return method.invoke(o,null);
+                    Method method = o.getClass().getMethod("clone",(Class[])null); //$NON-NLS-1$
+                    return (List<String>) method.invoke(o,(Object[])null);
                 }
                 catch (Exception e) {
                     InstallOptionsPlugin.getDefault().log(e);
                 }
             }
-            return (new ArrayList((List)o)).clone();
+            return new ArrayList<String>(o);
         }
     };
 
-    public static final TypeConverter STRING_CONVERTER = new TypeConverter() {
-        public String asString(Object o)
+    public static final TypeConverter<String> STRING_CONVERTER = new TypeConverter<String>() {
+        @Override
+		public String asString(String o)
         {
-            return (String)o;
+            return o;
         }
 
-        public Object asType(String s)
+        @Override
+		public String asType(String s)
         {
             return s;
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		public String makeCopy(String o)
         {
             return o;
         }
     };
 
-    public static final TypeConverter ESCAPED_STRING_CONVERTER = new TypeConverter() {
-        public String asString(Object o)
+    public static final TypeConverter<String> ESCAPED_STRING_CONVERTER = new TypeConverter<String>() {
+        @Override
+		public String asString(String o)
         {
             if(o != null) {
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                char[] chars = ((String)o).toCharArray();
+                char[] chars = (o).toCharArray();
                 boolean escaped = false;
                 for (int i = 0; i < chars.length; i++) {
                     if(escaped) {
@@ -300,7 +335,8 @@ public abstract class TypeConverter
             return null;
         }
 
-        public Object asType(String s)
+        @Override
+		public String asType(String s)
         {
             if(s != null) {
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -329,19 +365,22 @@ public abstract class TypeConverter
             return null;
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		public String makeCopy(String o)
         {
             return o;
         }
     };
 
-    public static final TypeConverter DIMENSION_CONVERTER = new TypeConverter() {
-        public String asString(Object o)
+    public static final TypeConverter<Dimension> DIMENSION_CONVERTER = new TypeConverter<Dimension>() {
+        @Override
+		public String asString(Dimension o)
         {
-            return (o==null?null:Common.flatten(new int[]{((Dimension)o).width,((Dimension)o).height},','));
+            return (o==null?null:Common.flatten(new int[]{(o).width,(o).height},','));
         }
 
-        public Object asType(String s)
+        @Override
+		public Dimension asType(String s)
         {
             Dimension d = null;
 			if (s != null) {
@@ -355,9 +394,10 @@ public abstract class TypeConverter
 			return d;
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		public Dimension makeCopy(Dimension o)
         {
-            return new Dimension((Dimension)o);
+            return new Dimension(o);
         }
     };
 }

@@ -19,10 +19,10 @@ import org.eclipse.gef.commands.Command;
 public class ModifyListItemsCommand extends Command
 {
     private InstallOptionsListItems mModel;
-    private List mOldListItems;
-    private List mNewListItems;
+    private List<String> mOldListItems;
+    private List<String> mNewListItems;
 
-    public ModifyListItemsCommand(InstallOptionsListItems model, List newListItems)
+    public ModifyListItemsCommand(InstallOptionsListItems model, List<String> newListItems)
     {
         mModel = model;
         mNewListItems = newListItems;
@@ -30,12 +30,14 @@ public class ModifyListItemsCommand extends Command
         setLabel(InstallOptionsPlugin.getFormattedString("modify.listitems.command.label", new Object[]{mModel.getType()})); //$NON-NLS-1$
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         mModel.setListItems(mNewListItems);
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         mModel.setListItems(mOldListItems);
     }

@@ -219,7 +219,8 @@ public class NSISWizardDialogUtil
         button.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         button.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 Shell shell = button.getShell();
                 DirectoryDialog dialog = new DirectoryDialog(shell, SWT.NONE);
@@ -265,7 +266,8 @@ public class NSISWizardDialogUtil
         button.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         button.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 Shell shell = button.getShell();
                 FileDialog dialog = new FileDialog(shell, (isSave?SWT.SAVE:SWT.OPEN));
@@ -589,7 +591,8 @@ public class NSISWizardDialogUtil
         gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
         b.setLayoutData(gd);
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 NSISContentBrowserDialog dialog = new NSISContentBrowserDialog(b.getShell(), wizard.getSettings());
                 if (dialog.open() == Window.OK) {

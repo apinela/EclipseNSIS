@@ -22,10 +22,11 @@ import org.eclipse.swt.widgets.*;
  * The use of the Callback class is, strictly speaking, verboten.
  * However, we do what we have to do...
  */
+@SuppressWarnings("restriction")
 public class ControlSubclasser
 {
     private static int cNewProc;
-    private static Map cProcMap = new HashMap(101);
+    private static Map<Integer, ControlInfo> cProcMap = new HashMap<Integer, ControlInfo>(101);
 
     static {
         SubclassCallback subCallback = new SubclassCallback();
@@ -65,7 +66,8 @@ public class ControlSubclasser
         {
         }
 
-        public int windowProc(int hWnd, int msg, int wParam, int lParam)
+        @SuppressWarnings("unused")
+		public int windowProc(int hWnd, int msg, int wParam, int lParam)
         {
             int res;
 
@@ -82,7 +84,7 @@ public class ControlSubclasser
                     break;
                 default:
                     try {
-                        res=WinAPI.CallWindowProc(((ControlInfo)cProcMap.get(new Integer(hWnd))).oldProc,
+                        res=WinAPI.CallWindowProc(cProcMap.get(new Integer(hWnd)).oldProc,
                                                   hWnd, msg, wParam, lParam);
                     }
                     catch(Throwable t) {
@@ -98,7 +100,8 @@ public class ControlSubclasser
     private static class ControlInfo
     {
         int oldProc;
-        SWTControlFigure figure;
+        @SuppressWarnings("unused")
+		SWTControlFigure figure;
 
         public ControlInfo(int oldProc, SWTControlFigure figure)
         {

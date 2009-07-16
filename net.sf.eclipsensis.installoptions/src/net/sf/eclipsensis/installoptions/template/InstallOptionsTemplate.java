@@ -25,11 +25,9 @@ public class InstallOptionsTemplate extends AbstractTemplate implements IInstall
     private static final String SECTIONS_NODE= "sections"; //$NON-NLS-1$
 
     private static final long serialVersionUID = -2080053812185962758L;
-    private static final Comparator cWidgetsComparator = new Comparator(){
-        public int compare(Object o1, Object o2)
+    private static final Comparator<InstallOptionsWidget> cWidgetsComparator = new Comparator<InstallOptionsWidget>(){
+        public int compare(InstallOptionsWidget w1, InstallOptionsWidget w2)
         {
-            InstallOptionsWidget w1 = (InstallOptionsWidget)o1;
-            InstallOptionsWidget w2 = (InstallOptionsWidget)o2;
             return w1.getIndex()-w2.getIndex();
         }
     };
@@ -68,14 +66,16 @@ public class InstallOptionsTemplate extends AbstractTemplate implements IInstall
         setWidgets(widgets);
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("sections"); //$NON-NLS-1$
         skippedProperties.add("widgets"); //$NON-NLS-1$
     }
 
-    public Node toNode(Document document)
+    @Override
+	public Node toNode(Document document)
     {
         Node node = super.toNode(document);
         INISection[] iniSections = getSections();
@@ -95,7 +95,8 @@ public class InstallOptionsTemplate extends AbstractTemplate implements IInstall
         return node;
     }
 
-    public void fromNode(Node node)
+    @Override
+	public void fromNode(Node node)
     {
         super.fromNode(node);
         Node[] nodes = XMLUtil.findChildren(node, SECTIONS_NODE);
@@ -139,7 +140,7 @@ public class InstallOptionsTemplate extends AbstractTemplate implements IInstall
 
     public InstallOptionsWidget[] getWidgets()
     {
-        List list = new ArrayList();
+        List<InstallOptionsElement> list = new ArrayList<InstallOptionsElement>();
         for (int i = 0; i < mSections.length; i++) {
             INIKeyValue[] keyValues = mSections[i].findKeyValues(InstallOptionsModel.PROPERTY_TYPE);
             if(!Common.isEmptyArray(keyValues)) {
@@ -150,10 +151,11 @@ public class InstallOptionsTemplate extends AbstractTemplate implements IInstall
                 }
             }
         }
-        return (InstallOptionsWidget[])list.toArray(new InstallOptionsWidget[list.size()]);
+        return list.toArray(new InstallOptionsWidget[list.size()]);
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         InstallOptionsTemplate template = (InstallOptionsTemplate)super.clone();
         INISection[] sections = new INISection[mSections.length];
@@ -164,7 +166,8 @@ public class InstallOptionsTemplate extends AbstractTemplate implements IInstall
         return template;
     }
 
-    public boolean isEqualTo(ITemplate template)
+    @Override
+	public boolean isEqualTo(ITemplate template)
     {
         if (this == template) {
             return true;

@@ -31,21 +31,24 @@ public class InstallOptionsTemplateCreationTool extends CreationTool
         super();
     }
 
-    public void setFactory(CreationFactory factory)
+    @Override
+	public void setFactory(CreationFactory factory)
     {
         if(factory instanceof InstallOptionsTemplateCreationFactory) {
             super.setFactory(factory);
         }
     }
 
-    protected Request createTargetRequest()
+    @Override
+	protected Request createTargetRequest()
     {
         Request request = super.createTargetRequest();
         request.setType(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE);
         return request;
     }
 
-    protected void performCreation(int button) {
+    @Override
+	protected void performCreation(int button) {
         executeCurrentCommand();
         selectAddedObjects();
     }
@@ -57,11 +60,11 @@ public class InstallOptionsTemplateCreationTool extends CreationTool
         final Object[] models = (Object[])getCreateRequest().getNewObject();
         if(!Common.isEmptyArray(models)) {
             EditPartViewer viewer = getCurrentViewer();
-            List selection = new ArrayList();
+            List<EditPart> selection = new ArrayList<EditPart>();
             for (int i = 0; i < models.length; i++) {
                 Object editpart = viewer.getEditPartRegistry().get(models[i]);
                 if (editpart instanceof EditPart) {
-                    selection.add(editpart);
+                    selection.add((EditPart) editpart);
                 }
             }
             //Force the new object to get positioned in the viewer.

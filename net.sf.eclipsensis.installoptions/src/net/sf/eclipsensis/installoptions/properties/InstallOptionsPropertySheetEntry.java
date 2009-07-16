@@ -37,7 +37,8 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
     /**
      * @see org.eclipse.ui.views.properties.PropertySheetEntry#createChildEntry()
      */
-    protected PropertySheetEntry createChildEntry()
+    @Override
+	protected PropertySheetEntry createChildEntry()
     {
         return new InstallOptionsPropertySheetEntry();
     }
@@ -45,7 +46,8 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
     /**
      * @see org.eclipse.ui.views.properties.IPropertySheetEntry#dispose()
      */
-    public void dispose()
+    @Override
+	public void dispose()
     {
         if(mHelper != null) {
             mHelper.dispose();
@@ -58,7 +60,8 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
     {
         if(mHelper == null) {
             mHelper = new InstallOptionsCommandHelper(getCommandStack()) {
-                protected void refresh()
+                @Override
+				protected void refresh()
                 {
                     refreshFromRoot();
                 }
@@ -67,7 +70,8 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
         return mHelper;
     }
 
-    public Object getHelpContextIds()
+    @Override
+	public Object getHelpContextIds()
     {
         Object helpContextIds = super.getHelpContextIds();
         if(helpContextIds == null) {
@@ -88,7 +92,8 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
     /**
      * @see org.eclipse.ui.views.properties.IPropertySheetEntry#resetPropertyValue()
      */
-    public void resetPropertyValue()
+    @Override
+	public void resetPropertyValue()
     {
         if (getParent() == null) {
             // root does not have a default value
@@ -96,7 +101,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
         }
 
         //  Use our parent's values to reset our values.
-        List sources = new ArrayList();
+        List<IPropertySource> sources = new ArrayList<IPropertySource>();
         Object[] objects = getParent().getValues();
         for (int i = 0; i < objects.length; i++) {
             IPropertySource source = getPropertySource(objects[i]);
@@ -107,7 +112,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
 
         if(!Common.isEmptyCollection(sources)) {
             InstallOptionsCommandHelper helper = getHelper();
-            helper.resetPropertyValue((String)getDescriptor().getId(), (IPropertySource[])sources.toArray(new IPropertySource[sources.size()]));
+            helper.resetPropertyValue((String)getDescriptor().getId(), sources.toArray(new IPropertySource[sources.size()]));
         }
     }
 
@@ -119,27 +124,29 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
     /**
      * @see PropertySheetEntry#valueChanged(PropertySheetEntry)
      */
-    protected void valueChanged(PropertySheetEntry child)
+    @Override
+	protected void valueChanged(PropertySheetEntry child)
     {
         valueChanged((InstallOptionsPropertySheetEntry)child, new ForwardUndoCompoundCommand());
     }
 
     void valueChanged(InstallOptionsPropertySheetEntry child, CompoundCommand command)
     {
-        List sources = new ArrayList();
-        List newValues = new ArrayList();
+        List<IPropertySource> sources = new ArrayList<IPropertySource>();
+        List<Object> newValues = new ArrayList<Object>();
+        Object[] childValues = child.getValues();
         for (int i = 0; i < getValues().length; i++) {
             IPropertySource source = getPropertySource(getValues()[i]);
             if (source != null) {
                 sources.add(source);
-                newValues.add(child.getValues()[i]);
+				newValues.add(childValues[i]);
             }
         }
 
         if(!Common.isEmptyCollection(sources)) {
             getHelper().valueChanged((String)child.getDescriptor().getId(),
                     child.getDisplayName(),
-                    (IPropertySource[])sources.toArray(new IPropertySource[sources.size()]),
+                    sources.toArray(new IPropertySource[sources.size()]),
                     newValues.toArray(new Object[newValues.size()]),
                     command);
         }

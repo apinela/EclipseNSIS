@@ -13,7 +13,8 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import net.sf.eclipsensis.util.INodeConvertible;
-import net.sf.eclipsensis.wizard.*;
+import net.sf.eclipsensis.wizard.INSISWizardConstants;
+import net.sf.eclipsensis.wizard.NSISWizard;
 
 import org.eclipse.swt.graphics.Image;
 
@@ -47,7 +48,7 @@ public interface INSISInstallElement extends INSISWizardConstants, Serializable,
     public void setSettings(NSISWizardSettings settings);
     public NSISWizardSettings getSettings();
     public Object clone() throws CloneNotSupportedException;
-    public String validate(Collection changedElements);
+    public String validate(Collection<INSISInstallElement> changedElements);
     public String getError();
     public void setTargetPlatform(int targetPlatform);
 }

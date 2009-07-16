@@ -80,7 +80,8 @@ public class NSISContentOutlinePage extends ContentOutlinePage
         IMenuManager mm = getSite().getActionBars().getMenuManager();
 
         expandAllAction = new Action() {
-            public void run()
+            @Override
+			public void run()
             {
                 getTreeViewer().getTree().setRedraw(false);
                 try {
@@ -99,7 +100,8 @@ public class NSISContentOutlinePage extends ContentOutlinePage
         expandAllAction.setEnabled(true);
 
         collapseAllAction = new Action() {
-            public void run()
+            @Override
+			public void run()
             {
                 getTreeViewer().getTree().setRedraw(false);
                 try {
@@ -118,10 +120,11 @@ public class NSISContentOutlinePage extends ContentOutlinePage
         collapseAllAction.setEnabled(true);
 
         filterAction = new Action() {
-            public void run()
+            @Override
+			public void run()
             {
-                List oldList = mEditor.getOutlineContentProvider().getFilteredTypes();
-                List newList = new ArrayList(oldList);
+                List<String> oldList = mEditor.getOutlineContentProvider().getFilteredTypes();
+                List<String> newList = new ArrayList<String>(oldList);
                 NSISOutlineFilterDialog dialog = new NSISOutlineFilterDialog(getSite().getShell(),newList);
                 if(dialog.open() == Window.OK) {
                     Collections.sort(newList);
@@ -151,7 +154,8 @@ public class NSISContentOutlinePage extends ContentOutlinePage
     /*
      * (non-Javadoc) Method declared on ContentOutlinePage
      */
-    public void createControl(Composite parent)
+    @Override
+	public void createControl(Composite parent)
     {
         super.createControl(parent);
         if(mEditor != null) {
@@ -180,7 +184,8 @@ public class NSISContentOutlinePage extends ContentOutlinePage
     /* (non-Javadoc)
      * @see org.eclipse.ui.part.IPage#dispose()
      */
-    public void dispose()
+    @Override
+	public void dispose()
     {
         super.dispose();
         if(mEditor != null) {

@@ -20,17 +20,17 @@ import org.eclipse.gef.EditPart;
 
 public class InstallOptionsModelTypeDef
 {
-    private static final Class[] cModelParamTypes = new Class[]{INISection.class};
+    private static final Class<?>[] cModelParamTypes = new Class[]{INISection.class};
     private String mType;
     private String mName;
     private String mDescription;
     private String mLargeIcon;
     private String mSmallIcon;
     private String mDisplayProperty;
-    private Constructor mModelConstructor;
-    private Constructor mEditPartConstructor;
-    private Set mFlags = null;
-    private Set mSettings = null;
+    private Constructor<? extends InstallOptionsElement> mModelConstructor;
+    private Constructor<? extends EditPart> mEditPartConstructor;
+    private Set<String> mFlags = null;
+    private Set<String> mSettings = null;
 
     InstallOptionsModelTypeDef(String type, String name, String description, String smallIcon, String largeIcon, String displayProperty, String model, String part)
     {
@@ -44,12 +44,13 @@ public class InstallOptionsModelTypeDef
         mEditPartConstructor = createConstructor(part, null);
     }
 
-    private Constructor createConstructor(String name, Class[] paramTypes)
+    @SuppressWarnings("unchecked")
+	private <T> Constructor<T> createConstructor(String name, Class<?>[] paramTypes)
     {
-        Constructor constructor = null;
+        Constructor<T> constructor = null;
 
         try {
-            Class clasz = Class.forName(name);
+            Class<T> clasz = (Class<T>) Class.forName(name);
             constructor = clasz.getDeclaredConstructor(paramTypes);
         }
         catch (Exception e) {
@@ -95,7 +96,7 @@ public class InstallOptionsModelTypeDef
         InstallOptionsElement model = null;
         if(mModelConstructor != null) {
             try {
-                model = (InstallOptionsElement)mModelConstructor.newInstance(new Object[]{section});
+                model = mModelConstructor.newInstance(new Object[]{section});
             }
             catch (Exception e) {
                 InstallOptionsPlugin.getDefault().log(e);
@@ -110,7 +111,7 @@ public class InstallOptionsModelTypeDef
         EditPart part = null;
         if(mEditPartConstructor != null) {
             try {
-                part = (EditPart)mEditPartConstructor.newInstance(null);
+                part = mEditPartConstructor.newInstance((Object[])null);
             }
             catch (Exception e) {
                 InstallOptionsPlugin.getDefault().log(e);
@@ -120,12 +121,12 @@ public class InstallOptionsModelTypeDef
         return part;
     }
 
-    public Collection getFlags()
+    public Collection<String> getFlags()
     {
-        return (mFlags == null?Collections.EMPTY_SET:Collections.unmodifiableSet(mFlags));
+        return (mFlags == null?Collections.<String>emptySet():Collections.unmodifiableSet(mFlags));
     }
 
-    void setFlags(Collection flags)
+    void setFlags(Collection<String> flags)
     {
         if(mFlags == null) {
             if(flags == null) {
@@ -139,12 +140,12 @@ public class InstallOptionsModelTypeDef
         }
     }
 
-    public Collection getSettings()
+    public Collection<String> getSettings()
     {
-        return (mSettings == null?Collections.EMPTY_SET:Collections.unmodifiableSet(mSettings));
+        return (mSettings == null?Collections.<String>emptySet():Collections.unmodifiableSet(mSettings));
     }
 
-    void setSettings(Collection settings)
+    void setSettings(Collection<String> settings)
     {
         if(mSettings == null) {
             if(settings == null) {

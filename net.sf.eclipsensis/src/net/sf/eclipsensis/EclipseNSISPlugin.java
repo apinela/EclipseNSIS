@@ -55,7 +55,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private TemplateStore mTemplateStore;
     private ContributionContextTypeRegistry mContextTypeRegistry;
     private Locale mLocale;
-    private Map mResourceBundles = new HashMap();
+    private Map<Locale, CompoundResourceBundle> mResourceBundles = new HashMap<Locale, CompoundResourceBundle>();
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
     private boolean mIsNT = false;
@@ -63,7 +63,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private boolean mIsVista = false;
     private String mJavaVendor;
     private Version mJavaVersion;
-    private Stack mServices = new Stack();
+    private Stack<IEclipseNSISService> mServices = new Stack<IEclipseNSISService>();
     private JobScheduler mJobScheduler = new JobScheduler();
 
     private NSISConsole mConsole = null;
@@ -88,6 +88,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 	/**
 	 * This method is called upon plug-in activation
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception
     {
         super.start(context);
@@ -146,7 +147,10 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     }
                 };
                 if(wwindow != null && wwindow.getShell().isVisible()) {
-                    configOp.run();
+                    if (!Boolean.getBoolean("net.sf.eclipsensis.config.IsConfiguring")) 
+                    {
+						configOp.run();
+					}
                 }
                 else {
                     getWorkbench().addWindowListener(new IWindowListener(){
@@ -365,9 +369,9 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private void validateOS() throws CoreException
     {
         String[] supportedOS = Common.loadArrayProperty(getResourceBundle(),"supported.os"); //$NON-NLS-1$
-        List winNTOS = Common.loadListProperty(getResourceBundle(),"nt.os"); //$NON-NLS-1$
-        List win2KOS = Common.loadListProperty(getResourceBundle(),"2K.os"); //$NON-NLS-1$
-        List winVistaOS = Common.loadListProperty(getResourceBundle(),"vista.os"); //$NON-NLS-1$
+        List<String> winNTOS = Common.loadListProperty(getResourceBundle(),"nt.os"); //$NON-NLS-1$
+        List<String> win2KOS = Common.loadListProperty(getResourceBundle(),"2K.os"); //$NON-NLS-1$
+        List<String> winVistaOS = Common.loadListProperty(getResourceBundle(),"vista.os"); //$NON-NLS-1$
         if(!Common.isEmptyArray(supportedOS)) {
             String osName = System.getProperty("os.name"); //$NON-NLS-1$
             String osVersion = System.getProperty("os.version"); //$NON-NLS-1$
@@ -403,9 +407,17 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 }
             }
             String osError = getResourceString("unsupported.os.error"); //$NON-NLS-1$
-            Common.openError(getWorkbench().getActiveWorkbenchWindow().getShell(),
-                                    osError, getShellImage());
-            cInvalidException = osError;
+            IWorkbench workbench = getWorkbench();
+			if (workbench != null) 
+			{
+				IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+				if (window != null) 
+				{
+					Common.openError(window.getShell(), osError,
+							getShellImage());
+				}
+			}
+			cInvalidException = osError;
             throw new CoreException(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,osError,
                                     new RuntimeException(osError)));
         }
@@ -423,7 +435,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             version = System.getProperty("java.vm.version"); //$NON-NLS-1$
         }
         mJavaVersion = new Version(version,"._"); //$NON-NLS-1$
-        Map vms = Common.loadMapProperty(getResourceBundle(),(mIsNT?"nt.vms":"9x.vms"),'\u00FF'); //$NON-NLS-1$ //$NON-NLS-2$
+        Map<String,String> vms = Common.loadMapProperty(getResourceBundle(),(mIsNT?"nt.vms":"9x.vms"),'\u00FF'); //$NON-NLS-1$ //$NON-NLS-2$
         version = (String)vms.get(mJavaVendor);
         if(version != null) {
             String[] tokens = Common.tokenize(version,'-');
@@ -454,13 +466,14 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     /**
 	 * This method is called when the plug-in is stopped
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception
     {
         mJobScheduler.stop();
         MakeNSISRunner.shutdown();
         NullProgressMonitor monitor = new NullProgressMonitor();
         while(mServices.size() > 0) {
-            IEclipseNSISService service = (IEclipseNSISService)mServices.pop();
+            IEclipseNSISService service = mServices.pop();
             service.stop(monitor);
         }
         FileMonitor.INSTANCE.stop();
@@ -579,7 +592,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         if(!mResourceBundles.containsKey(locale)) {
             mResourceBundles.put(locale,new CompoundResourceBundle(locale, BUNDLE_NAMES));
         }
-        return (ResourceBundle)mResourceBundles.get(locale);
+        return mResourceBundles.get(locale);
     }
 
     /**

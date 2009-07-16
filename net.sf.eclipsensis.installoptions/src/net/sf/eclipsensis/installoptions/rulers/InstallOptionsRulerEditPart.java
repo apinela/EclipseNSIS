@@ -14,6 +14,7 @@ import org.eclipse.gef.*;
 import org.eclipse.gef.internal.ui.rulers.*;
 import org.eclipse.gef.requests.SelectionRequest;
 
+@SuppressWarnings("restriction")
 public class InstallOptionsRulerEditPart extends RulerEditPart
 {
     /**
@@ -24,19 +25,22 @@ public class InstallOptionsRulerEditPart extends RulerEditPart
         super(model);
     }
 
-    protected GraphicalViewer getDiagramViewer()
+    @Override
+	protected GraphicalViewer getDiagramViewer()
     {
         return super.getDiagramViewer();
     }
 
-    public DragTracker getDragTracker(Request request) {
+    @Override
+	public DragTracker getDragTracker(Request request) {
         if (request.getType().equals(REQ_SELECTION) && ((SelectionRequest)request).getLastButtonPressed() != 1) {
             return null;
         }
         return new InstallOptionsRulerDragTracker(this);
     }
 
-    protected IFigure createFigure()
+    @Override
+	protected IFigure createFigure()
     {
         RulerFigure ruler =  new InstallOptionsRulerFigure(this, isHorizontal(), getRulerProvider().getUnit());
         ruler.setInterval(100, 10);

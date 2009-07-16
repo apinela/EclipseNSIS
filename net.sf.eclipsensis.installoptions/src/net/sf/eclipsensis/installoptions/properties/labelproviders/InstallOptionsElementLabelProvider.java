@@ -35,7 +35,8 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
     /**
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
-    public Image getImage(Object objects)
+    @Override
+	public Image getImage(Object objects)
     {
         if (objects == null || objects.equals(StructuredSelection.EMPTY)) {
             return null;
@@ -59,7 +60,8 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
     /**
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
-    public String getText(Object objects)
+    @Override
+	public String getText(Object objects)
     {
         if (objects == null || objects.equals(StructuredSelection.EMPTY)) {
             return InstallOptionsPlugin.getResourceString("no.items.selected.message"); //$NON-NLS-1$
@@ -104,12 +106,12 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
             }
             // multiple elements selected
             multiple[0] = true;
-            Class firstClass = typeMapper.mapType(object);
+            Class<?> firstClass = typeMapper.mapType(object);
             // determine if all the objects in the selection are the same type
             if (selection.size() > 1) {
-                for (Iterator i = selection.iterator(); i.hasNext();) {
+                for (Iterator<?> i = selection.iterator(); i.hasNext();) {
                     Object next = i.next();
-                    Class nextClass = typeMapper.mapType(next);
+                    Class<?> nextClass = typeMapper.mapType(next);
                     if (!nextClass.equals(firstClass)) {
                         // two elements not equal == multiple selected unequal
                         multiple[0] = false;

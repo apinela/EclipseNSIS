@@ -13,22 +13,23 @@ import net.sf.eclipsensis.util.AbstractNodeConverter;
 
 import org.w3c.dom.*;
 
-public class InstallOptionsWidgetNodeConverter extends AbstractNodeConverter
+public class InstallOptionsWidgetNodeConverter extends AbstractNodeConverter<InstallOptionsWidget>
 {
-    public Object fromNode(Node node, Class clasz)
+    @Override
+	public InstallOptionsWidget fromNode(Node node, Class<?> clasz)
     {
         if(InstallOptionsWidget.class.isAssignableFrom(clasz)) {
             if(node.getNodeName().equals(InstallOptionsWidget.NODE_NAME)) {
-                return InstallOptionsElementFactory.createFromNode(node);
+                return (InstallOptionsWidget) InstallOptionsElementFactory.createFromNode(node);
             }
         }
         throw new IllegalArgumentException(clasz.getName());
     }
 
-    public Node toNode(Document document, Object object)
+    public Node toNode(Document document, InstallOptionsWidget object)
     {
-        if(object instanceof InstallOptionsWidget) {
-            return ((InstallOptionsWidget)object).toNode(document);
+        if(object != null) {
+            return object.toNode(document);
         }
         throw new IllegalArgumentException(String.valueOf(object));
     }

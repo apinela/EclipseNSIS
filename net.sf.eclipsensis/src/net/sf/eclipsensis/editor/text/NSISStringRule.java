@@ -20,7 +20,8 @@ public class NSISStringRule extends NSISSingleLineRule
               new String(new char[]{stringDelimiter}), successToken);
     }
 
-    protected boolean postProcess(ICharacterScanner scanner, int c)
+    @Override
+	protected boolean postProcess(ICharacterScanner scanner, int c)
     {
         NSISTextUtility.stringEscapeSequencesDetected(scanner, c);
         return true;

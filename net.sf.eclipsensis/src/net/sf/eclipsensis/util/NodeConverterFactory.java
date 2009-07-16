@@ -29,9 +29,9 @@ public class NodeConverterFactory implements IExtensionChangeHandler
 
     public static final NodeConverterFactory INSTANCE = new NodeConverterFactory();
 
-    private Map mExtensions = new HashMap();
-    private Map mNameNodeConverterMap = new HashMap();
-    private Map mClassNodeConverterMap = new HashMap();
+    private Map<String, List<INodeConverter<?>>> mExtensions = new HashMap<String, List<INodeConverter<?>>>();
+    private Map<String, INodeConverter<?>> mNameNodeConverterMap = new HashMap<String, INodeConverter<?>>();
+    private Map<Class<?>, INodeConverter<?>> mClassNodeConverterMap = new HashMap<Class<?>, INodeConverter<?>>();
 
     private Object mLock = new Object();
 
@@ -52,38 +52,38 @@ public class NodeConverterFactory implements IExtensionChangeHandler
         });
     }
 
-    public INodeConverter getNodeConverter(String name)
+    public INodeConverter<?> getNodeConverter(String name)
     {
         synchronized (mLock) {
-            return (INodeConverter)mNameNodeConverterMap.get(name);
+            return mNameNodeConverterMap.get(name);
         }
     }
 
-    public INodeConverter getNodeConverter(Class clasz)
+    @SuppressWarnings("unchecked")
+	public <T> INodeConverter<? super T> getNodeConverter(Class<T> clasz)
     {
         synchronized (mLock) {
-            INodeConverter nodeConverter = (INodeConverter)mClassNodeConverterMap.get(clasz);
+            INodeConverter<? super T> nodeConverter = (INodeConverter<? super T>) mClassNodeConverterMap.get(clasz);
             if(nodeConverter == null) {
-                Class parent = clasz.getSuperclass();
+                Class<?> parent = clasz.getSuperclass();
                 while(parent != null) {
-                    nodeConverter = (INodeConverter)mClassNodeConverterMap.get(parent);
+                    nodeConverter = (INodeConverter<? super T>) mClassNodeConverterMap.get(parent);
                     if(nodeConverter != null) {
                         return nodeConverter;
                     }
+                    
                     parent = parent.getSuperclass();
                 }
 
-                if(nodeConverter == null ) {
-                    nodeConverter = getNodeConverter2(clasz);
-                    if(nodeConverter == null) {
-                        parent = clasz.getSuperclass();
-                        while(parent != null) {
-                            nodeConverter = getNodeConverter2(parent);
-                            if(nodeConverter != null) {
-                                return nodeConverter;
-                            }
-                            parent = parent.getSuperclass();
+                nodeConverter = getNodeConverter2(clasz);
+                if(nodeConverter == null) {
+                    parent = clasz.getSuperclass();
+                    while(parent != null) {
+                        nodeConverter = (INodeConverter<? super T>) getNodeConverter2(parent);
+                        if(nodeConverter != null) {
+                            return nodeConverter;
                         }
+                        parent = parent.getSuperclass();
                     }
                 }
             }
@@ -91,12 +91,13 @@ public class NodeConverterFactory implements IExtensionChangeHandler
         }
     }
 
-    private INodeConverter getNodeConverter2(Class clasz)
+    @SuppressWarnings("unchecked")
+	private <T> INodeConverter<? super T> getNodeConverter2(Class<T> clasz)
     {
-        Class[] interfaces = clasz.getInterfaces();
+        Class<?>[] interfaces = clasz.getInterfaces();
         if(!Common.isEmptyArray(interfaces)) {
             for (int i = 0; i < interfaces.length; i++) {
-                INodeConverter nodeConverter = getNodeConverter(interfaces[i]);
+                INodeConverter<? super T> nodeConverter = (INodeConverter<? super T>) getNodeConverter(interfaces[i]);
                 if(nodeConverter != null) {
                     return nodeConverter;
                 }
@@ -130,25 +131,25 @@ public class NodeConverterFactory implements IExtensionChangeHandler
                 String pluginId = extension.getNamespaceIdentifier();
                 Bundle bundle = Platform.getBundle(pluginId);
                 IConfigurationElement[] elements = extension.getConfigurationElements();
-                List nodeConverters = new ArrayList();
+                List<INodeConverter<?>> nodeConverters = new ArrayList<INodeConverter<?>>();
                 for (int i = 0; i < elements.length; i++) {
                     if (NODE_CONVERTER.equals(elements[i].getName())) {
                         try {
                             Object executableExtension = elements[i].createExecutableExtension(NODE_CONVERTER_CLASS);
                             if(INodeConverter.class.isAssignableFrom(executableExtension.getClass())) {
-                                INodeConverter nodeConverter = (INodeConverter)executableExtension;
+                                INodeConverter<?> nodeConverter = (INodeConverter<?>)executableExtension;
 
                                 IConfigurationElement[] elements2 = elements[i].getChildren();
                                 for (int j = 0; j < elements2.length; j++) {
                                     if(NAME_CLASS_MAPPING.equals(elements2[j].getName())) {
                                         String name = elements2[j].getAttribute(NAME_CLASS_MAPPING_NAME);
                                         String className = elements2[j].getAttribute(NAME_CLASS_MAPPING_CLASS);
-                                        Class clasz = bundle.loadClass(className);
+                                        Class<?> clasz = bundle.loadClass(className);
                                         nodeConverter.addNameClassMapping(name, clasz);
                                     }
                                 }
-                                for (Iterator iterator = nodeConverter.getNameClassMappings().entrySet().iterator(); iterator.hasNext();) {
-                                    Map.Entry entry = (Map.Entry)iterator.next();
+                                for (Iterator<Map.Entry<String, Class<?>>> iterator = nodeConverter.getNameClassMappings().entrySet().iterator(); iterator.hasNext();) {
+                                    Map.Entry<String, Class<?>> entry = iterator.next();
                                     mNameNodeConverterMap.put(entry.getKey(),nodeConverter);
                                     mClassNodeConverterMap.put(entry.getValue(),nodeConverter);
                                 }
@@ -170,10 +171,10 @@ public class NodeConverterFactory implements IExtensionChangeHandler
     {
         synchronized (mLock) {
             if (mExtensions.containsKey(extension.getUniqueIdentifier())) {
-                List nodeConverters = (List)mExtensions.remove(extension.getUniqueIdentifier());
-                for (Iterator iterator = nodeConverters.iterator(); iterator.hasNext();) {
-                    INodeConverter nodeConverter = (INodeConverter)iterator.next();
-                    Map nameClassMapping = nodeConverter.getNameClassMappings();
+                List<INodeConverter<?>> nodeConverters = mExtensions.remove(extension.getUniqueIdentifier());
+                for (Iterator<INodeConverter<?>> iterator = nodeConverters.iterator(); iterator.hasNext();) {
+                    INodeConverter<?> nodeConverter = iterator.next();
+                    Map<String,Class<?>> nameClassMapping = nodeConverter.getNameClassMappings();
                     mNameNodeConverterMap.keySet().removeAll(nameClassMapping.keySet());
                     mClassNodeConverterMap.keySet().removeAll(nameClassMapping.values());
                 }

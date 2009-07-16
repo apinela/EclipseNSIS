@@ -29,9 +29,9 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
     private static final int MAX_WIDTH = 300;
     private CheckboxTableViewer mViewer;
     private NSISOutlineContentResources mResources = NSISOutlineContentResources.getInstance();
-    private List mFilteredTypes;
+    private List<String> mFilteredTypes;
 
-    public NSISOutlineFilterDialog(Shell parent, List filteredTypes)
+    public NSISOutlineFilterDialog(Shell parent, List<String> filteredTypes)
     {
         super(parent);
         mFilteredTypes = filteredTypes;
@@ -39,7 +39,8 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         setTitle(EclipseNSISPlugin.getResourceString("filter.dialog.title")); //$NON-NLS-1$
     }
 
-    protected Point getInitialSize()
+    @Override
+	protected Point getInitialSize()
     {
         Point result = super.getInitialSize();
         if(result.x > MAX_WIDTH) {
@@ -48,7 +49,8 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         return result;
     }
 
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -76,7 +78,8 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         mViewer = new CheckboxTableViewer(table);
         mViewer.setContentProvider(new CollectionContentProvider());
         mViewer.setLabelProvider(new CollectionLabelProvider() {
-            public Image getColumnImage(Object element, int columnIndex)
+            @Override
+			public Image getColumnImage(Object element, int columnIndex)
             {
                 if(element instanceof String && columnIndex == 0) {
                     return mResources.getImage((String)element);
@@ -84,7 +87,8 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
                 return super.getColumnImage(element, columnIndex);
             }
 
-            public String getColumnText(Object element, int columnIndex)
+            @Override
+			public String getColumnText(Object element, int columnIndex)
             {
                 if(element instanceof String && columnIndex == 0) {
                     return mResources.getTypeName((String)element);
@@ -93,8 +97,8 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
             }
         });
         mViewer.setComparator(new ViewerComparator());
-        final List types = new ArrayList(mResources.getTypes());
-        for (Iterator iter = types.iterator(); iter.hasNext();) {
+        final List<String> types = new ArrayList<String>(mResources.getTypes());
+        for (Iterator<String> iter = types.iterator(); iter.hasNext();) {
             String type = (String)iter.next();
             if(mResources.isClosingType(type)) {
                 iter.remove();
@@ -124,7 +128,8 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         b.setText(EclipseNSISPlugin.getResourceString("filter.dialog.select.all.label")); //$NON-NLS-1$
         b.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mFilteredTypes.addAll(types);
                 mViewer.setAllChecked(true);
@@ -135,7 +140,8 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         b.setText(EclipseNSISPlugin.getResourceString("filter.dialog.deselect.all.label")); //$NON-NLS-1$
         b.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mFilteredTypes.clear();
                 mViewer.setAllChecked(false);

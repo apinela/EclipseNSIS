@@ -9,12 +9,19 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.commands.ToggleEnablementCommand;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
@@ -36,23 +43,24 @@ public class ToggleEnablementAction extends SelectionAction
     /**
      * Initializes this action's text and images.
      */
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
         setId(ID);
         setEnabled(false);
     }
 
-    public Command createToggleEnablementCommand(List objects)
+    public Command createToggleEnablementCommand(List<?> objects)
     {
         if (objects.isEmpty()) {
             return null;
         }
 
         ToggleEnablementCommand cmd = null;
-        List list = new ArrayList();
-        Iterator iter = objects.iterator();
-        InstallOptionsWidget part = getPart(iter.next());
+        List<InstallOptionsWidget> list = new ArrayList<InstallOptionsWidget>();
+        Iterator<InstallOptionsWidgetEditPart> iter = Common.makeGenericList(InstallOptionsWidgetEditPart.class, objects).iterator();
+        InstallOptionsWidget part = (InstallOptionsWidget) iter.next().getModel();
         if(part != null) {
             if(!getFlags(part).contains(InstallOptionsModel.FLAGS_DISABLED)) {
                 return null;
@@ -60,7 +68,7 @@ public class ToggleEnablementAction extends SelectionAction
             boolean shouldEnable = shouldEnable(part);
             list.add(part);
             while (iter.hasNext()) {
-                part = getPart(iter.next());
+                part = (InstallOptionsWidget) iter.next().getModel();
                 if(part != null) {
                     if(getFlags(part).contains(InstallOptionsModel.FLAGS_DISABLED) &&
                        shouldEnable == shouldEnable(part)) {
@@ -70,7 +78,7 @@ public class ToggleEnablementAction extends SelectionAction
                 }
                 return null;
             }
-            cmd = new ToggleEnablementCommand((InstallOptionsWidget[])list.toArray(new InstallOptionsWidget[list.size()]),
+            cmd = new ToggleEnablementCommand(list.toArray(new InstallOptionsWidget[list.size()]),
                                                shouldEnable);
             String label = (shouldEnable?"enable.action.name":"disable.action.name"); //$NON-NLS-1$ //$NON-NLS-2$
             setText(InstallOptionsPlugin.getResourceString(label));
@@ -79,10 +87,10 @@ public class ToggleEnablementAction extends SelectionAction
         return cmd;
     }
 
-    private Collection getFlags(InstallOptionsWidget part)
+    private Collection<String> getFlags(InstallOptionsWidget part)
     {
         InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(part.getType());
-        return (typeDef == null?Collections.EMPTY_SET:typeDef.getFlags());
+        return (typeDef == null?Collections.<String>emptySet():typeDef.getFlags());
     }
 
     private boolean shouldEnable(InstallOptionsWidget part)
@@ -90,17 +98,8 @@ public class ToggleEnablementAction extends SelectionAction
         return part.getFlags().contains(InstallOptionsModel.FLAGS_DISABLED);
     }
 
-    private InstallOptionsWidget getPart(Object part)
-    {
-        if(part instanceof InstallOptionsWidgetEditPart) {
-            return (InstallOptionsWidget)((InstallOptionsWidgetEditPart)part).getModel();
-        }
-        else {
-            return null;
-        }
-    }
-
-    protected boolean calculateEnabled() {
+    @Override
+	protected boolean calculateEnabled() {
         Command cmd = createToggleEnablementCommand(getSelectedObjects());
         if (cmd == null) {
             return false;
@@ -108,7 +107,8 @@ public class ToggleEnablementAction extends SelectionAction
         return cmd.canExecute();
     }
 
-    public void run() {
+    @Override
+	public void run() {
         execute(createToggleEnablementCommand(getSelectedObjects()));
     }
 }

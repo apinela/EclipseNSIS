@@ -18,10 +18,11 @@ import org.eclipse.gef.requests.DirectEditRequest;
 
 public class EditableElementDirectEditPolicy extends DirectEditPolicy
 {
-    protected Command getDirectEditCommand(DirectEditRequest edit)
+    @Override
+	protected Command getDirectEditCommand(DirectEditRequest edit)
     {
         String text = getDirectEditValue(edit);
-        InstallOptionsEditableElementEditPart control = (InstallOptionsEditableElementEditPart)getHost();
+        InstallOptionsEditableElementEditPart<?> control = (InstallOptionsEditableElementEditPart<?>)getHost();
         InstallOptionsEditableElementCommand command = new InstallOptionsEditableElementCommand((InstallOptionsEditableElement)control.getModel(),text);
         return command;
     }
@@ -38,7 +39,8 @@ public class EditableElementDirectEditPolicy extends DirectEditPolicy
     /* (non-Javadoc)
      * @see org.eclipse.gef.editpolicies.DirectEditPolicy#showCurrentEditValue(org.eclipse.gef.requests.DirectEditRequest)
      */
-    protected void showCurrentEditValue(DirectEditRequest request)
+    @Override
+	protected void showCurrentEditValue(DirectEditRequest request)
     {
     }
 }

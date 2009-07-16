@@ -111,7 +111,8 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         }
     }
 
-    protected void configureShell(Shell shell)
+    @Override
+	protected void configureShell(Shell shell)
     {
         shell.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e)
@@ -188,7 +189,8 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         mCaption = caption;
     }
 
-    protected Control createContents(Composite parent)
+    @Override
+	protected Control createContents(Composite parent)
     {
         final Composite container = new Composite(parent, (mBGImage==null?SWT.NONE:SWT.NO_BACKGROUND));
         GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -220,12 +222,14 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         return container;
     }
 
-    protected Image getImage()
+    @Override
+	protected Image getImage()
     {
         return null;
     }
 
-    protected Control createMessageArea(Composite composite)
+    @Override
+	protected Control createMessageArea(Composite composite)
     {
         // create message
         if (message != null) {
@@ -243,7 +247,8 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         return composite;
     }
 
-    protected Control createDialogArea(Composite parent)
+    @Override
+	protected Control createDialogArea(Composite parent)
     {
         // task label
         message = ""; //$NON-NLS-1$
@@ -280,7 +285,8 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     /*
      * see org.eclipse.jface.Window.getInitialLocation()
      */
-    protected Point getInitialLocation(Point initialSize) {
+    @Override
+	protected Point getInitialLocation(Point initialSize) {
         Composite parent = getShell().getParent();
 
         if (parent == null) {
@@ -305,7 +311,8 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
                 Math.max(bounds.y, Math.min(center.y +VERTICAL_OFFSET, bounds.y+ bounds.height - initialSize.y)));
     }
 
-    protected Point getInitialSize()
+    @Override
+	protected Point getInitialSize()
     {
         Point calculatedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT,true);
         if (calculatedSize.x < mMinimumWidth) {
@@ -317,7 +324,8 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
         return calculatedSize;
     }
 
-    protected Control createButtonBar(Composite parent)
+    @Override
+	protected Control createButtonBar(Composite parent)
     {
         return null;
     }

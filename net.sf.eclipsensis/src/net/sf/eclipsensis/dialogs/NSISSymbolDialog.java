@@ -26,7 +26,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
     private String mValue = ""; //$NON-NLS-1$
     private Text mNameText = null;
     private Text mValueText = null;
-    private Collection mExistingSymbols = null;
+    private Collection<String> mExistingSymbols = null;
 
     /**
      * @param parentShell
@@ -49,7 +49,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
     /**
      * @param existingSymbols The existingSymbols to set.
      */
-    public void setExistingSymbols(Collection existingSymbols)
+    public void setExistingSymbols(Collection<String> existingSymbols)
     {
         mExistingSymbols = existingSymbols;
     }
@@ -57,7 +57,8 @@ public class NSISSymbolDialog extends StatusMessageDialog
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.StatusMessageDialog#createControl(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2,false);
@@ -133,7 +134,8 @@ public class NSISSymbolDialog extends StatusMessageDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         mName = mNameText.getText();
         if(!Common.isEmptyCollection(mExistingSymbols) && mExistingSymbols.contains(mName)) {
@@ -163,7 +165,8 @@ public class NSISSymbolDialog extends StatusMessageDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#create()
      */
-    public void create()
+    @Override
+	public void create()
     {
         super.create();
         validate();

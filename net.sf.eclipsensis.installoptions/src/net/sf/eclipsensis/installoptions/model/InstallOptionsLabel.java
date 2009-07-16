@@ -30,18 +30,21 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
         super(section);
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("multiLine"); //$NON-NLS-1$
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_LABEL;
     }
 
-    protected ILabelProvider getDisplayLabelProvider()
+    @Override
+	protected ILabelProvider getDisplayLabelProvider()
     {
         return (isMultiLine()?MultiLineLabelProvider.INSTANCE:super.getDisplayLabelProvider());
     }
@@ -49,7 +52,8 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
     /**
      * @return
      */
-    protected String getDefaultText()
+    @Override
+	protected String getDefaultText()
     {
         return InstallOptionsPlugin.getResourceString("label.text.default"); //$NON-NLS-1$
     }
@@ -57,12 +61,14 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
     /**
      * @return
      */
-    protected Position getDefaultPosition()
+    @Override
+	protected Position getDefaultPosition()
     {
         return new Position(0,0,19,9);
     }
 
-    public Object getPropertyValue(Object propName)
+    @Override
+	public Object getPropertyValue(Object propName)
     {
         if(InstallOptionsModel.PROPERTY_MULTILINE.equals(propName)) {
             return (isMultiLine()?Boolean.TRUE:Boolean.FALSE);
@@ -70,7 +76,8 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
         return super.getPropertyValue(propName);
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    @Override
+	protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_TEXT)) {
             String propertyName = InstallOptionsPlugin.getResourceString("text.property.name"); //$NON-NLS-1$;
@@ -97,7 +104,8 @@ public class InstallOptionsLabel extends InstallOptionsUneditableElement
         }
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    @Override
+	protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new LabelPropertySectionCreator(this);
     }

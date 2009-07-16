@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.editor;
 
 import java.util.Map;
 
+import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.installoptions.editor.text.InstallOptionsPartitionScanner;
 
 import org.eclipse.jface.text.IDocument;
@@ -28,7 +29,7 @@ public class InstallOptionsSourcePreviewer extends ProjectionViewer
                 styles);
     }
 
-    public void setSyntaxStyles(Map syntaxStyles)
+    public void setSyntaxStyles(Map<String, NSISSyntaxStyle> syntaxStyles)
     {
         if(fPresentationReconciler != null) {
             for(int i=0; i<InstallOptionsPartitionScanner.INSTALLOPTIONS_PARTITION_TYPES.length; i++) {
@@ -40,7 +41,7 @@ public class InstallOptionsSourcePreviewer extends ProjectionViewer
         invalidateTextPresentation();
     }
 
-    private void setContentTypeSyntaxStyles(String contentType, Map syntaxStyles)
+    private void setContentTypeSyntaxStyles(String contentType, Map<String, NSISSyntaxStyle> syntaxStyles)
     {
         IPresentationDamager damager = fPresentationReconciler.getDamager(contentType);
         IPresentationRepairer repairer = fPresentationReconciler.getRepairer(contentType);

@@ -26,7 +26,7 @@ public class InstallOptionsRuler
 
     private boolean mHorizontal;
 
-    private List mGuides = new ArrayList();
+    private List<InstallOptionsGuide> mGuides = new ArrayList<InstallOptionsGuide>();
 
     public InstallOptionsRuler(boolean isHorizontal)
     {
@@ -54,7 +54,7 @@ public class InstallOptionsRuler
     }
 
     // the returned list should not be modified
-    public List getGuides()
+    public List<InstallOptionsGuide> getGuides()
     {
         return mGuides;
     }

@@ -31,7 +31,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 public class InstallOptionsBuilder extends IncrementalProjectBuilder implements IInstallOptionsConstants
 {
     private static final Version cBuilderVersion;
-    private static final Set cExtensionsSet;
+    private static final Set<String> cExtensionsSet;
     private static final JobScheduler cJobScheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
 
     private IDocumentProvider mDocumentProvider = new FileDocumentProvider();
@@ -47,7 +47,8 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         }
     }
 
-    protected void clean(IProgressMonitor monitor)
+    @Override
+	protected void clean(IProgressMonitor monitor)
     {
         try {
             String taskName = InstallOptionsPlugin.getResourceString("clean.task.name"); //$NON-NLS-1$
@@ -59,7 +60,8 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         }
     }
 
-    protected void startupOnInitialize()
+    @Override
+	protected void startupOnInitialize()
     {
         super.startupOnInitialize();
 
@@ -155,6 +157,8 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
 	 *      java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException
     {
 		if (kind == FULL_BUILD) {
@@ -287,7 +291,8 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         if(file != null) {
             WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
             {
-                protected void execute(IProgressMonitor monitor)throws CoreException
+                @Override
+				protected void execute(IProgressMonitor monitor)throws CoreException
                 {
                     try {
                         monitor.beginTask(InstallOptionsPlugin.getResourceString("updating.markers.task.name"), 2+(iniFile==null?0:iniFile.getProblems().length)); //$NON-NLS-1$
@@ -339,7 +344,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         file.deleteMarkers(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
     }
 
-    public static void buildProject(final IProject project, final int kind, final Map args)
+    public static void buildProject(final IProject project, final int kind, final Map<?,?> args)
     {
         cJobScheduler.scheduleJob(new ProjectJobFamily(project),
                                  InstallOptionsPlugin.getResourceString("full.build.job.name"), //$NON-NLS-1$
@@ -351,7 +356,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                                 });
     }
 
-    private static IStatus internalBuildProject(final IProject project, final int kind, final Map args, IProgressMonitor monitor)
+    private static IStatus internalBuildProject(final IProject project, final int kind, final Map<?,?> args, IProgressMonitor monitor)
     {
         try {
             project.build(kind,INSTALLOPTIONS_BUILDER_ID,args,monitor);
@@ -363,7 +368,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         }
     }
 
-    public static void buildWorkspace(final Map args)
+    public static void buildWorkspace(final Map<?,?> args)
     {
         final IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IProject[] projects = workspace.getRoot().getProjects();
@@ -478,12 +483,19 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
             mProject = project;
         }
 
-        public boolean equals(Object other)
+        @Override
+		public boolean equals(Object other)
         {
             if(other instanceof ProjectJobFamily) {
                 return mProject.equals(((ProjectJobFamily)other).mProject);
             }
             return false;
         }
+
+		@Override
+		public int hashCode() 
+		{
+			return mProject.hashCode();
+		}
     }
 }

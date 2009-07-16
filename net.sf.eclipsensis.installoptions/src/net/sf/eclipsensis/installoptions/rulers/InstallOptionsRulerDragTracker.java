@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.rulers;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.internal.ui.rulers.*;
 
+@SuppressWarnings("restriction")
 public class InstallOptionsRulerDragTracker extends RulerDragTracker
 {
     public InstallOptionsRulerDragTracker(RulerEditPart source)
@@ -19,7 +20,8 @@ public class InstallOptionsRulerDragTracker extends RulerDragTracker
         super(source);
     }
 
-    protected boolean isCreationValid()
+    @Override
+	protected boolean isCreationValid()
     {
         if(getCurrentPosition() < 0) {
             return false;

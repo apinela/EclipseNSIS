@@ -14,6 +14,7 @@ package net.sf.eclipsensis.editor.codeassist;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -30,7 +31,6 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.text.IInformationControl;
@@ -95,8 +95,8 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
     private ToolItem mBack = null;
     private ToolItem mForward = null;
     private ToolItem mHelp = null;
-    private Stack mBackKeywords = null;
-    private Stack mForwardKeywords = null;
+    private Stack<String> mBackKeywords = null;
+    private Stack<String> mForwardKeywords = null;
     private boolean mCompleted = false;
 
     private INSISBrowserFileURLHandler mFileURLHandler = new INSISBrowserFileURLHandler() {
@@ -164,8 +164,8 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         if (helpAvailable)
         {
             ParameterizedCommand command = NSISInformationUtility.getCommand(INSISConstants.GOTO_HELP_COMMAND_ID);
-            ArrayList list = new ArrayList();
-            ArrayList list2 = new ArrayList();
+            List<KeySequence> list = new ArrayList<KeySequence>();
+            List<int[]> list2 = new ArrayList<int[]>();
             if (command != null)
             {
                 KeySequence[] sequences = NSISInformationUtility.getKeySequences(command);
@@ -181,11 +181,11 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                         }
                     }
                 }
-                final int[][] keys = (int[][]) list2.toArray(new int[list2.size()][]);
+                final int[][] keys = list2.toArray(new int[list2.size()][]);
                 try
                 {
                     statusText = NSISInformationUtility.buildStatusText(command.getCommand().getDescription(),
-                            (KeySequence[]) list.toArray(new KeySequence[list.size()]));
+                            list.toArray(new KeySequence[list.size()]));
                 }
                 catch (Exception e)
                 {
@@ -328,7 +328,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                         if (!Common.isEmptyCollection(mBackKeywords))
                         {
                             String oldKeyword = mKeyword;
-                            String keyword = (String) mBackKeywords.firstElement();
+                            String keyword = mBackKeywords.firstElement();
                             if (!Common.stringsAreEqual(oldKeyword, keyword))
                             {
                                 if (setKeyword(keyword) && oldKeyword != null)
@@ -345,7 +345,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                         if (!Common.isEmptyCollection(mBackKeywords))
                         {
                             String oldKeyword = mKeyword;
-                            String keyword = (String) mBackKeywords.pop();
+                            String keyword = mBackKeywords.pop();
                             if (setKeyword(keyword) && oldKeyword != null)
                             {
                                 mForwardKeywords.push(oldKeyword);
@@ -358,7 +358,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                         if (!Common.isEmptyCollection(mForwardKeywords))
                         {
                             String oldKeyword = mKeyword;
-                            String keyword = (String) mForwardKeywords.pop();
+                            String keyword = mForwardKeywords.pop();
                             if (setKeyword(keyword) && oldKeyword != null)
                             {
                                 mBackKeywords.push(oldKeyword);
@@ -377,8 +377,8 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
             mForward.addListener(SWT.Selection, listener);
             mHelp.addListener(SWT.Selection, listener);
 
-            mBackKeywords = new Stack();
-            mForwardKeywords = new Stack();
+            mBackKeywords = new Stack<String>();
+            mForwardKeywords = new Stack<String>();
             updateToolbarButtons();
         }
     }
@@ -724,7 +724,8 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         if (mBrowser != null && !mBrowser.isDisposed())
         {
             mBrowser.addLocationListener(new LocationAdapter() {
-                public void changing(LocationEvent event)
+                @Override
+				public void changing(LocationEvent event)
                 {
                     if (!NSISBrowserUtility.ABOUT_BLANK.equalsIgnoreCase(event.location))
                     {
@@ -805,8 +806,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         IEditorDescriptor descriptor;
         IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
         IFile ifile = null;
-        IFile[] ifiles = ResourcesPlugin.getWorkspace().getRoot()
-                .findFilesForLocation(new Path(file.getAbsolutePath()));
+        IFile[] ifiles = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(file.toURI());
         if (!Common.isEmptyArray(ifiles))
         {
             ifile = ifiles[0];

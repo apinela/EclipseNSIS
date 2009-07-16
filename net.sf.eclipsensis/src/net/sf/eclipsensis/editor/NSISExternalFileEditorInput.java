@@ -65,6 +65,7 @@ public class NSISExternalFileEditorInput implements IPathEditorInput, ILocationP
         return mFile.getAbsolutePath();
     }
 
+    @SuppressWarnings("unchecked")
     public Object getAdapter(Class adapter)
     {
         if(ILocationProvider.class.equals(adapter)) {
@@ -104,12 +105,14 @@ public class NSISExternalFileEditorInput implements IPathEditorInput, ILocationP
         return null;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return mFile.hashCode();
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this) {
             return true;
@@ -158,6 +161,7 @@ public class NSISExternalFileEditorInput implements IPathEditorInput, ILocationP
                     return (mFile != null && mFile.exists() && !mFile.canWrite());
                 }
 
+                @SuppressWarnings("unchecked")
                 public Object getAdapter(Class adapter)
                 {
                     return NSISExternalFileEditorInput.this.getAdapter(adapter);

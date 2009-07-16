@@ -31,12 +31,14 @@ public class CreateCommand extends org.eclipse.gef.commands.Command
         super(InstallOptionsPlugin.getResourceString("create.command.name")); //$NON-NLS-1$
     }
 
-    public boolean canExecute()
+    @Override
+	public boolean canExecute()
     {
         return mRect != null && mRect.x >= 0 && mRect.y >= 0;
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         if (mRect != null) {
             Position p  = mChild.getPosition();
@@ -53,7 +55,8 @@ public class CreateCommand extends org.eclipse.gef.commands.Command
         return mParent;
     }
 
-    public void redo()
+    @Override
+	public void redo()
     {
         mParent.addChild(mChild, mIndex);
     }
@@ -78,7 +81,8 @@ public class CreateCommand extends org.eclipse.gef.commands.Command
         mParent = newParent;
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         mParent.removeChild(mChild);
     }

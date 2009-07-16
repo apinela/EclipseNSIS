@@ -83,7 +83,8 @@ public class CustomColorPropertyDescriptor extends PropertyDescriptor implements
         mDefaultColor = defaultColor;
     }
 
-    public CellEditor createPropertyEditor(Composite parent)
+    @Override
+	public CellEditor createPropertyEditor(Composite parent)
     {
         final CustomColorCellEditor editor = new CustomColorCellEditor(parent);
         final PropertyChangeListener listener = new PropertyChangeListener(){

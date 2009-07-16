@@ -29,7 +29,8 @@ public abstract class InstallOptionsPicture extends InstallOptionsUneditableElem
         super(section);
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("SWTImageType"); //$NON-NLS-1$
@@ -37,18 +38,21 @@ public abstract class InstallOptionsPicture extends InstallOptionsUneditableElem
         skippedProperties.add("image"); //$NON-NLS-1$
     }
 
-    protected String getDefaultText()
+    @Override
+	protected String getDefaultText()
     {
         return ""; //$NON-NLS-1$
     }
 
-    protected Position getDefaultPosition()
+    @Override
+	protected Position getDefaultPosition()
     {
         Rectangle rect = getImage().getBounds();
         return new Position(0,0,rect.width-1,rect.height-1);
     }
 
-    public Object getPropertyValue(Object propName)
+    @Override
+	public Object getPropertyValue(Object propName)
     {
         if(PROPERTY_IMAGE.equals(propName)) {
             return getImage();
@@ -58,7 +62,8 @@ public abstract class InstallOptionsPicture extends InstallOptionsUneditableElem
         }
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    @Override
+	protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new PicturePropertySectionCreator(this);
     }

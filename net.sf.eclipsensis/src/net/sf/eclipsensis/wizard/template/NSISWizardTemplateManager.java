@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.graphics.*;
 
-public class NSISWizardTemplateManager extends AbstractTemplateManager
+public class NSISWizardTemplateManager extends AbstractTemplateManager<NSISWizardTemplate>
 {
     private static final Path cPath = new Path("wizard"); //$NON-NLS-1$
     private static Object[][] cPatches;
@@ -32,9 +32,10 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
         cPatches[0][2] = new byte[]{(byte)0x2D, (byte)0x38, (byte)0x37, (byte)0x33, (byte)0x34, (byte)0x34, (byte)0x30, (byte)0x32};
     }
 
-    protected List loadUserTemplateStore() throws IOException, ClassNotFoundException
+    @Override
+	protected List<NSISWizardTemplate> loadUserTemplateStore() throws IOException, ClassNotFoundException
     {
-        List list = null;
+        List<NSISWizardTemplate> list = null;
         try {
             list = super.loadUserTemplateStore();
         }
@@ -90,27 +91,32 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager
         }
     }
 
-    protected Plugin getPlugin()
+    @Override
+	protected Plugin getPlugin()
     {
         return EclipseNSISPlugin.getDefault();
     }
 
-    protected Class getTemplateClass()
+    @Override
+	protected Class<NSISWizardTemplate> getTemplateClass()
     {
         return NSISWizardTemplate.class;
     }
 
-    protected IPath getTemplatesPath()
+    @Override
+	protected IPath getTemplatesPath()
     {
         return cPath;
     }
 
-    protected AbstractTemplateReaderWriter createReaderWriter()
+    @Override
+	protected NSISWizardTemplateReaderWriter createReaderWriter()
     {
         return NSISWizardTemplateReaderWriter.INSTANCE;
     }
 
-    protected Image getShellImage()
+    @Override
+	protected Image getShellImage()
     {
         return EclipseNSISPlugin.getShellImage();
     }

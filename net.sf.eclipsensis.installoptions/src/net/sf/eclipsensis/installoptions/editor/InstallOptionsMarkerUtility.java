@@ -22,9 +22,9 @@ public class InstallOptionsMarkerUtility
     {
     }
 
-    public static Collection getMarkers(IFile file)
+    public static Collection<IMarker> getMarkers(IFile file)
     {
-        List list = new ArrayList();
+        List<IMarker> list = new ArrayList<IMarker>();
         if(file != null) {
             try {
                 IMarker[] markers = file.findMarkers(IInstallOptionsConstants.INSTALLOPTIONS_PROBLEM_MARKER_ID,

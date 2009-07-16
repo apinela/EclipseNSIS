@@ -25,12 +25,12 @@ public class NSISHelpFileParserCallback extends ParserCallback
     private static final String JAVASCRIPT_URI_SCHEME = "javascript:"; //$NON-NLS-1$
     private static final String NAV_MENU_MARKER = ">Previous</a>"; //$NON-NLS-1$
 
-    private static final Set HEADINGS = new HashSet();
+    private static final Set<Tag> HEADINGS = new HashSet<Tag>();
     private static final Pattern cOnClickPattern = Pattern.compile("parser\\(['\"]\\.\\./([\\.\\\\/a-z0-9_\\-\\s]+)['\"]\\)",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
-    private Set mKeywords;
-    private Map mURLKeywordsMap;
-    private Map mURLContentsMap;
+    private Set<String> mKeywords;
+    private Map<String, String> mURLKeywordsMap;
+    private Map<String, String> mURLContentsMap;
     private String mPrefix;
     private StringBuffer mBuffer = new StringBuffer(""); //$NON-NLS-1$
     private boolean mCollecting = false;
@@ -48,7 +48,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
         HEADINGS.add(Tag.H6);
     }
 
-    public NSISHelpFileParserCallback(File helpFile, String prefix, Set keywords, Map urlKeywordsMap, Map urlContentsMap)
+    public NSISHelpFileParserCallback(File helpFile, String prefix, Set<String> keywords, Map<String,String> urlKeywordsMap, Map<String, String> urlContentsMap)
     {
         super();
         mHelpFile = helpFile;
@@ -58,7 +58,8 @@ public class NSISHelpFileParserCallback extends ParserCallback
         mURLContentsMap = urlContentsMap;
     }
 
-    public void handleEndTag(Tag t, int pos)
+    @Override
+	public void handleEndTag(Tag t, int pos)
     {
         if(mCollecting) {
             if(t.equals(Tag.A) && mBuffer.length() == NSISHelpURLProvider.KEYWORD_HELP_HTML_PREFIX.length()) {
@@ -99,7 +100,8 @@ public class NSISHelpFileParserCallback extends ParserCallback
         mCollecting = false;
     }
 
-    public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
+    @Override
+	public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(mCollecting) {
             if(HEADINGS.contains(t)) {
@@ -134,7 +136,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
             else {
                 mBuffer.append("<").append(t); //$NON-NLS-1$
                 if(a != null && a.getAttributeCount() > 0) {
-                    for(Enumeration e = a.getAttributeNames(); e.hasMoreElements(); ) {
+                    for(Enumeration<?> e = a.getAttributeNames(); e.hasMoreElements(); ) {
                         Object name = e.nextElement();
                         Object value = a.getAttribute(name);
                         mBuffer.append(" ").append(name).append("=\"").append(value).append("\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -145,7 +147,8 @@ public class NSISHelpFileParserCallback extends ParserCallback
         }
     }
 
-    public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
+    @Override
+	public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(t.equals(Tag.A)) {
             if(a != null && a.isDefined(Attribute.NAME)) {
@@ -167,7 +170,8 @@ public class NSISHelpFileParserCallback extends ParserCallback
         handleSimpleTag(t,a,pos);
     }
 
-    public void handleText(char[] data, int pos)
+    @Override
+	public void handleText(char[] data, int pos)
     {
         if(mCollecting) {
             boolean isNewLine = false; //For some reason CR is being converted to NL by the parser.

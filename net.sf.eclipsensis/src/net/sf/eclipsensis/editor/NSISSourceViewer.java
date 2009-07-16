@@ -14,7 +14,6 @@ import java.util.List;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog;
-import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog.RegistryValue;
 import net.sf.eclipsensis.editor.codeassist.NSISInformationUtility;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.help.*;
@@ -58,7 +57,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     private NSISAutoIndentStrategy mAutoIndentStrategy = null;
     private ILineTracker mLineTracker = null;
     private String[] mConfiguredContentTypes = null;
-    private Set mPropertyQueue = new HashSet();
+    private Set<String> mPropertyQueue = new HashSet<String>();
     private NSISScrollTipHelper mScrollTipHelper = null;
     private IContentAssistant mInsertTemplateAssistant = null;
     private boolean mInsertTemplateAssistantInstalled = false;
@@ -87,9 +86,9 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
 
     public void processPropertyQueue()
     {
-        HashSet contentTypes = new HashSet();
-        for(Iterator iter = mPropertyQueue.iterator(); iter.hasNext(); ) {
-            String property = (String)iter.next();
+        HashSet<String> contentTypes = new HashSet<String>();
+        for(Iterator<String> iter = mPropertyQueue.iterator(); iter.hasNext(); ) {
+            String property = iter.next();
             for(int i=0; i<mConfiguredContentTypes.length; i++) {
                 IPresentationDamager damager = fPresentationReconciler.getDamager(mConfiguredContentTypes[i]);
                 if(damager instanceof IPropertyAdaptable) {
@@ -111,7 +110,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     public void keywordsChanged()
     {
         if(fPresentationReconciler != null) {
-            final HashSet contentTypes = new HashSet();
+            final HashSet<String> contentTypes = new HashSet<String>();
             for(int i=0; i<mConfiguredContentTypes.length; i++) {
                 IPresentationDamager damager = fPresentationReconciler.getDamager(mConfiguredContentTypes[i]);
                 if(damager instanceof NSISDamagerRepairer) {
@@ -137,7 +136,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     /**
      * @param contentTypes
      */
-    private void updatePresentation(Collection contentTypes)
+    private void updatePresentation(Collection<String> contentTypes)
     {
         IDocument doc = getDocument();
         try {
@@ -163,7 +162,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.ISourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)
      */
-    public void configure(SourceViewerConfiguration configuration)
+    @Override
+	public void configure(SourceViewerConfiguration configuration)
     {
         if(configuration instanceof NSISSourceViewerConfiguration) {
             mPreferenceStore = ((NSISSourceViewerConfiguration)configuration).getPreferenceStore();
@@ -192,7 +192,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         if(ruler != null) {
             ruler.getControl().addMouseListener(new MouseAdapter()
             {
-                public void mouseUp(MouseEvent e)
+                @Override
+				public void mouseUp(MouseEvent e)
                 {
                     try {
                         IAnnotationModel model = getAnnotationModel();
@@ -201,7 +202,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                         IRegion info= document.getLineInformation(lineNumber);
 
                         if (model != null) {
-                            for(Iterator iter= model.getAnnotationIterator(); iter.hasNext(); ) {
+                            for(Iterator<?> iter= model.getAnnotationIterator(); iter.hasNext(); ) {
                                 Annotation a= (Annotation) iter.next();
                                 Position p= model.getPosition(a);
                                 if (p != null && p.overlapsWith(info.getOffset(), info.getLength())) {
@@ -234,7 +235,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.ISourceViewerExtension2#unconfigure()
      */
-    public void unconfigure()
+    @Override
+	public void unconfigure()
     {
         mScrollTipHelper.disconnect();
 
@@ -262,15 +264,15 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         String property = event.getProperty();
         if(property.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH)||
            property.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS)) {
-            for(Iterator iter=fIndentChars.keySet().iterator(); iter.hasNext(); ) {
+            for(Iterator<?> iter=fIndentChars.keySet().iterator(); iter.hasNext(); ) {
                 setIndentPrefixes(calculatePrefixes(),(String)iter.next());
             }
 
-            for(Iterator iter=fAutoIndentStrategies.keySet().iterator(); iter.hasNext(); ) {
+            for(Iterator<?> iter=fAutoIndentStrategies.keySet().iterator(); iter.hasNext(); ) {
                 String contentType = (String)iter.next();
-                List list = (List)fAutoIndentStrategies.get(contentType);
+                List<?> list = (List<?>)fAutoIndentStrategies.get(contentType);
                 if(!Common.isEmptyCollection(list)) {
-                    for (Iterator iter2 = list.iterator(); iter2.hasNext();) {
+                    for (Iterator<?> iter2 = list.iterator(); iter2.hasNext();) {
                         IAutoEditStrategy autoEditStrategy = (IAutoEditStrategy)iter2.next();
                         if(autoEditStrategy instanceof NSISAutoEditStrategy) {
                             ((NSISAutoEditStrategy)autoEditStrategy).updateFromPreferences();
@@ -294,7 +296,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
 
     public String[] calculatePrefixes()
     {
-        ArrayList list= new ArrayList();
+        List<String> list= new ArrayList<String>();
 
         // prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
 
@@ -326,13 +328,14 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             list.add(prefix.toString());
         }
 
-        return (String[]) list.toArray(new String[list.size()]);
+        return list.toArray(new String[list.size()]);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextOperationTargetExtension#enableOperation(int, boolean)
      */
-    public void enableOperation(int operation, boolean enable)
+    @Override
+	public void enableOperation(int operation, boolean enable)
     {
         switch(operation) {
             case INSERT_TEMPLATE:
@@ -358,7 +361,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextOperationTarget#canDoOperation(int)
      */
-    public boolean canDoOperation(int operation)
+    @Override
+	public boolean canDoOperation(int operation)
     {
         switch(operation) {
             case GOTO_HELP:
@@ -384,7 +388,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
      */
-    public void doOperation(int operation)
+    @Override
+	public void doOperation(int operation)
     {
         String text = null;
         switch(operation) {
@@ -455,7 +460,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 }
                 if(dialog.open() == Window.OK) {
                     mRegValue = dialog.getRegistryValue();
-                    String regKey = mRegValue.getRegKey();
+                    String regKey = mRegValue.getRegKey().toString();
                     int n = regKey.indexOf("\\"); //$NON-NLS-1$
                     String rootKey;
                     String subKey;
@@ -503,7 +508,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 }
                 //Fall through
             }
-            default:
+	            //$FALL-THROUGH$
+			default:
             {
                 super.doOperation(operation);
                 return;
@@ -514,8 +520,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             Point p = getSelectedRange();
             try {
                 doc.replace(p.x,p.y,text);
-                setSelectedRange(p.x+text.length(), 0);
-                revealRange(p.x+text.length(), 0);
+                setSelectedRange(p.x+(text==null?0:text.length()), 0);
+                revealRange(p.x+(text==null?0:text.length()), 0);
             }
             catch (BadLocationException e) {
             }
@@ -654,28 +660,29 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 }
             }
 
-            int startPos = doc.getLineOffset(startLine);
-            int length = region.getOffset()+region.getLength()-startPos;
-
-            StringBuffer newText = new StringBuffer(""); //$NON-NLS-1$
-            for(int i=startLine; i<=endLine; i++) {
-                if(i > startLine) {
-                    newText.append(doc.getLineDelimiter(i-1));
-                }
-                if(allAreCommented) {
-                    String text2 = text[i-startLine].trim();
-                    int n = text[i-startLine].indexOf(text2);
-                    newText.append(text[i-startLine].substring(0,n));
-                    if(n < (text[i-startLine].length()-1)) {
-                        newText.append(text[i-startLine].substring(n+1));
-                    }
-                }
-                else {
-                    newText.append(";").append(text[i-startLine]); //$NON-NLS-1$
-                }
-            }
-
-            doc.replace(startPos,length,newText.toString());
+            if (region != null) {
+				int startPos = doc.getLineOffset(startLine);
+				int length = region.getOffset() + region.getLength() - startPos;
+				StringBuffer newText = new StringBuffer(""); //$NON-NLS-1$
+				for (int i = startLine; i <= endLine; i++) {
+					if (i > startLine) {
+						newText.append(doc.getLineDelimiter(i - 1));
+					}
+					if (allAreCommented) {
+						String text2 = text[i - startLine].trim();
+						int n = text[i - startLine].indexOf(text2);
+						newText.append(text[i - startLine].substring(0, n));
+						if (n < (text[i - startLine].length() - 1)) {
+							newText
+									.append(text[i - startLine]
+											.substring(n + 1));
+						}
+					} else {
+						newText.append(";").append(text[i - startLine]); //$NON-NLS-1$
+					}
+				}
+				doc.replace(startPos, length, newText.toString());
+			}
         }
         catch (BadLocationException e) {
             EclipseNSISPlugin.getDefault().log(e);
@@ -730,7 +737,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
         return false;
     }
 
-    protected void ensureOverviewHoverManagerInstalled()
+    @Override
+	protected void ensureOverviewHoverManagerInstalled()
     {
         // This is a hack so that the Hover control creator for hover help isn't used in the
         // Overview ruler.

@@ -12,19 +12,23 @@ package net.sf.eclipsensis.installoptions.edit.groupbox;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart;
-import net.sf.eclipsensis.installoptions.figures.*;
+import net.sf.eclipsensis.installoptions.figures.GroupBoxFigure;
+import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
 
-import org.eclipse.gef.tools.*;
+import org.eclipse.gef.tools.CellEditorLocator;
+import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsGroupBoxEditPart extends InstallOptionsUneditableElementEditPart
 {
-    protected String getDirectEditLabelProperty()
+    @Override
+	protected String getDirectEditLabelProperty()
     {
         return "groupbox.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected IInstallOptionsFigure createInstallOptionsFigure()
+    @Override
+	protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new GroupBoxFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
@@ -32,7 +36,8 @@ public class InstallOptionsGroupBoxEditPart extends InstallOptionsUneditableElem
     /**
      * @return
      */
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("groupbox.type.name"); //$NON-NLS-1$
     }
@@ -40,15 +45,17 @@ public class InstallOptionsGroupBoxEditPart extends InstallOptionsUneditableElem
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart#creatDirectEditManager(net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart, java.lang.Class, org.eclipse.gef.tools.CellEditorLocator)
      */
-    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
+    @Override
+	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
     {
-        return new InstallOptionsGroupBoxEditManager(part, clasz, locator);
+        return new InstallOptionsGroupBoxEditManager(part, locator);
     }
 
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart#createCellEditorLocator(net.sf.eclipsensis.installoptions.figures.UneditableElementFigure)
      */
-    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    @Override
+	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new GroupBoxCellEditorLocator((GroupBoxFigure)getFigure());
     }

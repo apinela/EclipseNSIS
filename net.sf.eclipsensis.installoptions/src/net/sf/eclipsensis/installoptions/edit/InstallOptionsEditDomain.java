@@ -43,7 +43,8 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
         setCommandStack(new InstallOptionsCommandStack());
     }
 
-    public void setCommandStack(CommandStack stack)
+    @Override
+	public void setCommandStack(CommandStack stack)
     {
         if(stack instanceof InstallOptionsCommandStack) {
             super.setCommandStack(stack);
@@ -110,9 +111,10 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
 
     private class InstallOptionsCommandStack extends CommandStack implements IModelCommandListener
     {
-        private Stack mCurrentCommands = new Stack();
+        private Stack<Command> mCurrentCommands = new Stack<Command>();
 
-        public synchronized void execute(Command command)
+        @Override
+		public synchronized void execute(Command command)
         {
             if(validateEdit()) {
                 CompoundCommand cmd = new CompoundCommand(command.getLabel());
@@ -163,7 +165,8 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class adapter)
+    @SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter)
     {
         if(adapter == IModelCommandListener.class) {
             return getCommandStack();

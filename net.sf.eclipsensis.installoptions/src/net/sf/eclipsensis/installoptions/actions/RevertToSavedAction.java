@@ -24,19 +24,22 @@ public class RevertToSavedAction extends EditorPartAction
         setLazyEnablementCalculation(false);
     }
 
-    protected boolean calculateEnabled()
+    @Override
+	protected boolean calculateEnabled()
     {
         return getEditorPart().isDirty();
     }
 
-    protected void init()
+    @Override
+	protected void init()
     {
         setText(InstallOptionsPlugin.getResourceString("revert.action.label")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString("revert.action.tooltip")); //$NON-NLS-1$
         setId(ActionFactory.REVERT.getId());
     }
 
-    public void run()
+    @Override
+	public void run()
     {
         ((InstallOptionsDesignEditor)getEditorPart()).doRevertToSaved();
     }

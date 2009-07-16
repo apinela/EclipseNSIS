@@ -22,19 +22,22 @@ public class PathRequestPropertySectionCreator extends EditableElementPropertySe
         super(element);
     }
 
-    protected Control createAppearancePropertySection(Composite parent, final TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
+    @Override
+	protected Control createAppearancePropertySection(Composite parent, final TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
         parent = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
         createTextSection(parent, InstallOptionsModel.PROPERTY_STATE, widgetFactory, commandHelper);
         return parent;
     }
 
-    protected boolean shouldCreateAppearancePropertySection()
+    @Override
+	protected boolean shouldCreateAppearancePropertySection()
     {
         return true;
     }
 
-    protected boolean shouldCreateOtherPropertySection()
+    @Override
+	protected boolean shouldCreateOtherPropertySection()
     {
         return true;
     }

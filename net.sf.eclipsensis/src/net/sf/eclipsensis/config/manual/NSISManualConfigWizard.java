@@ -40,7 +40,8 @@ public class NSISManualConfigWizard extends NSISConfigWizard
         mPageChangedListener = new WizardShellImageChanger(this, cShellImage);
     }
 
-    public void createPageControls(Composite pageContainer)
+    @Override
+	public void createPageControls(Composite pageContainer)
     {
         super.createPageControls(pageContainer);
         Object data = pageContainer.getLayoutData();
@@ -51,7 +52,8 @@ public class NSISManualConfigWizard extends NSISConfigWizard
         }
     }
 
-    public void setContainer(IWizardContainer wizardContainer)
+    @Override
+	public void setContainer(IWizardContainer wizardContainer)
     {
         if(getContainer() instanceof IPageChangeProvider) {
             ((IPageChangeProvider)getContainer()).removePageChangedListener(mPageChangedListener);
@@ -62,12 +64,14 @@ public class NSISManualConfigWizard extends NSISConfigWizard
         }
     }
 
-    protected boolean doPerformFinish()
+    @Override
+	protected boolean doPerformFinish()
     {
         return ((NSISManualConfigWizardPage)getPages()[0]).performFinish();
     }
 
-    public final void addPages()
+    @Override
+	public final void addPages()
     {
         addPage(new NSISManualConfigWizardPage());
     }

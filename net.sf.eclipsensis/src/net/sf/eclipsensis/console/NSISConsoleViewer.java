@@ -12,29 +12,55 @@
  *******************************************************************************/
 package net.sf.eclipsensis.console;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.NSISEditorUtilities;
 import net.sf.eclipsensis.settings.INSISPreferenceConstants;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationModel;
+import org.eclipse.jface.text.source.AnnotationRulerColumn;
+import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.console.*;
+import org.eclipse.swt.custom.LineStyleEvent;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.ui.console.IConsoleDocumentPartitioner;
+import org.eclipse.ui.console.TextConsoleViewer;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 
+@SuppressWarnings("restriction")
 public class NSISConsoleViewer extends TextConsoleViewer
 {
     private static final int REVEAL_SCHEDULE_DELAY = 50;
@@ -85,7 +111,8 @@ public class NSISConsoleViewer extends TextConsoleViewer
     {
         if(mRevealJob == null) {
             mRevealJob = new WorkbenchJob(EclipseNSISPlugin.getResourceString("console.reveal.job.name")){ //$NON-NLS-1$
-                public IStatus runInUIThread(IProgressMonitor monitor) {
+                @Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
                     StyledText textWidget = getTextWidget();
                     if (textWidget != null) {
                         int lineCount = textWidget.getLineCount();
@@ -99,17 +126,20 @@ public class NSISConsoleViewer extends TextConsoleViewer
         return mRevealJob;
     }
 
-    protected void revealEndOfDocument()
+    @Override
+	protected void revealEndOfDocument()
     {
         getRevealJob().schedule(REVEAL_SCHEDULE_DELAY);
     }
 
-    protected void createControl(Composite parent, int styles)
+    @Override
+	protected void createControl(Composite parent, int styles)
     {
         mHitDetectionCursor= parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
         mRuler = new CompositeRuler(VERTICAL_RULER_WIDTH);
         AnnotationRulerColumn rulerColumn = new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, new DefaultMarkerAnnotationAccess()) {
-            protected void doPaint(GC gc)
+            @Override
+			protected void doPaint(GC gc)
             {
                 try {
                     super.doPaint(gc);
@@ -118,7 +148,8 @@ public class NSISConsoleViewer extends TextConsoleViewer
                 }
             }
 
-            protected void doPaint1(GC gc)
+            @Override
+			protected void doPaint1(GC gc)
             {
                 try {
                     super.doPaint1(gc);
@@ -140,7 +171,8 @@ public class NSISConsoleViewer extends TextConsoleViewer
         mRuler.getControl().setBackground(getTextWidget().getBackground());
         rulerColumn.getControl().setBackground(getTextWidget().getBackground());
         mRuler.getControl().addMouseListener(new MouseAdapter() {
-            public void mouseUp(MouseEvent e)
+            @Override
+			public void mouseUp(MouseEvent e)
             {
                 NSISConsoleAnnotation a = getAnnotation(e.y);
                 if(a != null) {
@@ -170,7 +202,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
             IRegion info= document.getLineInformation(lineNumber);
 
             if (mAnnotationModel != null) {
-                for(Iterator iter= mAnnotationModel.getAnnotationIterator(); iter.hasNext(); ) {
+                for(Iterator<?> iter= mAnnotationModel.getAnnotationIterator(); iter.hasNext(); ) {
                     Annotation a= (Annotation) iter.next();
                     Position p= mAnnotationModel.getPosition(a);
                     if (p != null && p.overlapsWith(info.getOffset(), info.getLength())) {
@@ -201,12 +233,14 @@ public class NSISConsoleViewer extends TextConsoleViewer
         mAutoScroll = scroll;
     }
 
-    public Control getControl()
+    @Override
+	public Control getControl()
     {
         return mComposite;
     }
 
-    public void setDocument(IDocument document)
+    @Override
+	public void setDocument(IDocument document)
     {
         IDocument oldDocument= getDocument();
 
@@ -229,7 +263,8 @@ public class NSISConsoleViewer extends TextConsoleViewer
         }
     }
 
-    protected void handleDispose()
+    @Override
+	protected void handleDispose()
     {
         JFaceResources.getColorRegistry().removeListener(mPropertyChangeListener);
         JFaceResources.getFontRegistry().removeListener(mPropertyChangeListener);
@@ -260,11 +295,12 @@ public class NSISConsoleViewer extends TextConsoleViewer
     }
 
     //Need to replace the following 3 methods because I want my own link colors.
-    public void lineGetStyle(LineStyleEvent event)
+	@Override
+	public void lineGetStyle(LineStyleEvent event)
     {
         IDocument document = getDocument();
         if (document != null && document.getLength() > 0) {
-            ArrayList ranges = new ArrayList();
+            List<StyleRange> ranges = new ArrayList<StyleRange>();
             int offset = event.lineOffset;
             int length = event.lineText.length();
 
@@ -291,25 +327,25 @@ public class NSISConsoleViewer extends TextConsoleViewer
             }
 
             if (ranges.size() > 0) {
-                event.styles = (StyleRange[]) ranges.toArray(new StyleRange[ranges.size()]);
+                event.styles = ranges.toArray(new StyleRange[ranges.size()]);
             }
         }
     }
 
-    private void override(List ranges, StyleRange newRange)
+    private void override(List<StyleRange> ranges, StyleRange newRange)
     {
         if (ranges.isEmpty()) {
             ranges.add(newRange);
             return;
         }
 
-        List newRanges = new ArrayList();
+        List<StyleRange> newRanges = new ArrayList<StyleRange>();
         newRanges.add(newRange);
-        for (ListIterator iter=ranges.listIterator(); iter.hasNext(); ) {
+        for (ListIterator<StyleRange> iter=ranges.listIterator(); iter.hasNext(); ) {
             if(newRanges.size() > 0) {
-                StyleRange existingRange = (StyleRange)iter.next();
-                for(ListIterator iter2=newRanges.listIterator(); iter2.hasNext(); ) {
-                    newRange = (StyleRange)iter2.next();
+                StyleRange existingRange = iter.next();
+                for(ListIterator<StyleRange> iter2=newRanges.listIterator(); iter2.hasNext(); ) {
+                    newRange = iter2.next();
                     int offset1 = existingRange.start;
                     int offset2 = newRange.start;
                     int end1 = offset1 + existingRange.length - 1;
@@ -439,7 +475,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
         }
 
 
-        List list = new ArrayList();
+        List<Position> list = new ArrayList<Position>();
         int index = left - 1;
         if (index >= 0) {
             position= positions[index];
@@ -463,7 +499,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
         if (list.isEmpty()) {
             return null;
         }
-        return (Position[])list.toArray(new Position[list.size()]);
+        return list.toArray(new Position[list.size()]);
     }
 
     protected class RulerLayout extends Layout
@@ -475,7 +511,8 @@ public class NSISConsoleViewer extends TextConsoleViewer
             mGap= gap;
         }
 
-        protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache)
+        @Override
+		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache)
         {
             Control[] children= composite.getChildren();
             Point s= children[children.length - 1].computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
@@ -485,7 +522,8 @@ public class NSISConsoleViewer extends TextConsoleViewer
             return s;
         }
 
-        protected void layout(Composite composite, boolean flushCache)
+        @Override
+		protected void layout(Composite composite, boolean flushCache)
         {
             Rectangle clArea= composite.getClientArea();
             Rectangle trim= getTextWidget().computeTrim(0, 0, 0, 0);

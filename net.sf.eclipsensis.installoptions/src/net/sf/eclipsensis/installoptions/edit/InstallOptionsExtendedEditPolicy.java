@@ -29,7 +29,8 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
     }
 
 
-    public Command getCommand(Request request)
+    @Override
+	public Command getCommand(Request request)
     {
         if (IInstallOptionsConstants.REQ_EXTENDED_EDIT.equals(request.getType())) {
             return getExtendedEditCommand((ExtendedEditRequest)request);
@@ -42,7 +43,8 @@ public abstract class InstallOptionsExtendedEditPolicy extends GraphicalEditPoli
         }
     }
 
-    public boolean understandsRequest(Request request)
+    @Override
+	public boolean understandsRequest(Request request)
     {
         if (IInstallOptionsConstants.REQ_EXTENDED_EDIT.equals(request.getType())||
             RequestConstants.REQ_OPEN.equals(request.getType())) {

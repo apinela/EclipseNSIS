@@ -26,9 +26,9 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog implements INSISWizardConstants
+public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog
 {
-    private static ArrayList cProperties = new ArrayList();
+    private static List<String> cProperties = new ArrayList<String>();
 
     static {
         cProperties.add("createInStartMenuGroup"); //$NON-NLS-1$
@@ -46,7 +46,8 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         mStore.setDefault("shortcutType",SHORTCUT_URL); //$NON-NLS-1$
     }
 
-    protected String getHelpContextId()
+    @Override
+	protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_shortcutdlg_context"; //$NON-NLS-1$
     }
@@ -54,7 +55,8 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
-    protected List getProperties()
+    @Override
+	protected List<String> getProperties()
     {
         return cProperties;
     }
@@ -62,7 +64,8 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControlContents(Composite parent)
+    @Override
+	protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(3,false);
@@ -77,7 +80,8 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
             final Button b1 = NSISWizardDialogUtil.createRadioButton(group, "wizard.smgroup.location.label",  //$NON-NLS-1$
                                                                createInSMGroup, true, null, false);
             b1.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     if(b1.getSelection()) {
                         mStore.setValue("createInStartMenuGroup", true); //$NON-NLS-1$
@@ -88,7 +92,8 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
             final Button b2 = NSISWizardDialogUtil.createRadioButton(group, "wizard.other.location.label",  //$NON-NLS-1$
                     !createInSMGroup, true, null, false);
             b2.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     if(b2.getSelection()) {
                         mStore.setValue("createInStartMenuGroup", false); //$NON-NLS-1$
@@ -109,7 +114,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
                     false,"wizard.location.label",true,null,true); //$NON-NLS-1$
         }
         ((GridData)c1.getLayoutData()).horizontalAlignment = GridData.FILL;
-        ArrayList input = Common.makeList(NSISWizardUtil.getPathConstantsAndVariables(mWizard.getSettings().getTargetPlatform()));
+        List<String> input = Common.makeList(NSISWizardUtil.getPathConstantsAndVariables(mWizard.getSettings().getTargetPlatform()));
         ComboViewer cv = new ComboViewer(c1);
         cv.setContentProvider(new CollectionContentProvider());
         cv.setLabelProvider(new CollectionLabelProvider());
@@ -138,7 +143,8 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         final Button[] radio = NSISWizardDialogUtil.createRadioGroup(composite,NSISWizardDisplayValues.SHORTCUT_TYPE_NAMES,mStore.getInt("shortcutType"), //$NON-NLS-1$
                             "wizard.shortcut.type.label",true,null,false); //$NON-NLS-1$
         SelectionAdapter sa = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 Button b = (Button)e.widget;
                 if(b.getSelection()) {
                     int n=-1;
@@ -185,12 +191,14 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog imp
         return composite;
     }
 
-    protected boolean hasRequiredFields()
+    @Override
+	protected boolean hasRequiredFields()
     {
         return true;
     }
 
-    protected String checkForErrors()
+    @Override
+	protected String checkForErrors()
     {
         if(mStore.getBoolean("createInStartMenuGroup")) { //$NON-NLS-1$
             if(!mWizard.getSettings().isCreateStartMenuGroup()) {

@@ -32,8 +32,8 @@ public class IOUtility
 {
     public static final IOUtility INSTANCE = new IOUtility();
 
-    private static final Map cPathMappingx86tox64;
-    private static final Map cPathMappingx64tox86;
+    private static final Map<String, String> cPathMappingx86tox64;
+    private static final Map<String, String> cPathMappingx64tox86;
     private static final String cPathSeparator = System.getProperty("file.separator"); //$NON-NLS-1$
     private static final String cOnePathLevelUp = ".." + cPathSeparator; //$NON-NLS-1$
     private static Pattern cValidUNCName = Pattern.compile("\\\\{0,2}((((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
@@ -43,7 +43,7 @@ public class IOUtility
     private static Pattern cValidURL = Pattern.compile("(?:(?:ftp|https?):\\/\\/)?(?:[a-z0-9](?:[-a-z0-9]*[a-z0-9])?\\.)+(?:com|edu|biz|org|gov|int|info|mil|net|name|museum|coop|aero|[a-z][a-z])\\b(?:\\d+)?(?:\\/[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]*(?:[.,?]+[^;\"'<>()\\[\\]{}\\s\\x7f-\\xff]+)*)?"); //$NON-NLS-1$
     private static Pattern cValidAbsolutePathName = Pattern.compile("[A-Za-z]:\\\\((((\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2})\\\\)*(\\.?[A-Za-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]]\\\\?)+)?"); //$NON-NLS-1$
 
-    private static HashMap cBundleResources = new HashMap();
+    private static HashMap<BundleResource, Long> cBundleResources = new HashMap<BundleResource, Long>();
 
     public static final String FILE_URL_PREFIX = "file:///"; //$NON-NLS-1$
 
@@ -52,8 +52,8 @@ public class IOUtility
     }
 
     static {
-        cPathMappingx86tox64 = new CaseInsensitiveMap(Common.loadMapProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"path.mapping.x86.to.x64")); //$NON-NLS-1$
-        cPathMappingx64tox86 = new CaseInsensitiveMap(Common.loadMapProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"path.mapping.x64.to.x86")); //$NON-NLS-1$
+        cPathMappingx86tox64 = new CaseInsensitiveMap<String>(Common.loadMapProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"path.mapping.x86.to.x64")); //$NON-NLS-1$
+        cPathMappingx64tox86 = new CaseInsensitiveMap<String>(Common.loadMapProperty(EclipseNSISPlugin.getDefault().getResourceBundle(),"path.mapping.x64.to.x86")); //$NON-NLS-1$
     }
 
     public static boolean is64BitPath(String path)
@@ -84,7 +84,7 @@ public class IOUtility
             String[] p = Common.tokenize(path,cPathSeparator.charAt(0));
             if(p.length > 0) {
                 if(cPathMappingx86tox64.containsKey(p[0])) {
-                    p[0] = (String)cPathMappingx86tox64.get(p[0]);
+                    p[0] = cPathMappingx86tox64.get(p[0]);
                     return Common.flatten(p,cPathSeparator.charAt(0));
                 }
             }
@@ -98,7 +98,7 @@ public class IOUtility
             String[] p = Common.tokenize(path,cPathSeparator.charAt(0));
             if(p.length > 0) {
                 if(cPathMappingx64tox86.containsKey(p[0])) {
-                    p[0] = (String)cPathMappingx64tox86.get(p[0]);
+                    p[0] = cPathMappingx64tox86.get(p[0]);
                     return Common.flatten(p,cPathSeparator.charAt(0));
                 }
             }
@@ -202,22 +202,23 @@ public class IOUtility
         return path;
     }
 
-    public static Object readObject(File file) throws IOException, ClassNotFoundException
+    public static <T> T readObject(File file) throws IOException, ClassNotFoundException
     {
         return readObject(file, null);
     }
 
-    public static Object readObject(File file, ClassLoader classLoader) throws IOException, ClassNotFoundException
+    public static <T> T readObject(File file, ClassLoader classLoader) throws IOException, ClassNotFoundException
     {
         return readObject(new BufferedInputStream(new FileInputStream(file)), classLoader);
     }
 
-    public static Object readObject(InputStream inputStream) throws IOException, ClassNotFoundException
+    public static <T> T readObject(InputStream inputStream) throws IOException, ClassNotFoundException
     {
         return readObject(inputStream, null);
     }
 
-    public static Object readObject(InputStream inputStream, final ClassLoader classLoader) throws IOException, ClassNotFoundException
+    @SuppressWarnings("unchecked")
+	public static <T> T readObject(InputStream inputStream, final ClassLoader classLoader) throws IOException, ClassNotFoundException
     {
         ObjectInputStream ois = null;
         try {
@@ -226,7 +227,8 @@ public class IOUtility
             }
             ois = new ObjectInputStream(inputStream){
 
-                protected Class resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
+                @Override
+				protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
                 {
                     if(classLoader != null) {
                         try {
@@ -237,7 +239,7 @@ public class IOUtility
                     return super.resolveClass(desc);
                 }
             };
-            return ois.readObject();
+            return (T)ois.readObject();
         }
         finally {
             closeIO(ois);
@@ -478,12 +480,13 @@ public class IOUtility
             EclipseNSISPlugin.getDefault().log(e);
         }
         finally {
-            try {
-                fos.close();
-            }
-            catch (IOException e) {
-                EclipseNSISPlugin.getDefault().log(e);
-            }
+            if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException e) {
+					EclipseNSISPlugin.getDefault().log(e);
+				}
+			}
         }
     }
 
@@ -552,7 +555,7 @@ public class IOUtility
         }
         BundleResource key = new BundleResource(bundle,source);
         long lastModified;
-        Long l = (Long)cBundleResources.get(key);
+        Long l = cBundleResources.get(key);
         if(l != null) {
             lastModified = l.longValue();
         }
@@ -636,7 +639,8 @@ public class IOUtility
             mResource = resource;
         }
 
-        public boolean equals(Object obj)
+        @Override
+		public boolean equals(Object obj)
         {
             if(obj instanceof BundleResource) {
                 BundleResource other = (BundleResource)obj;
@@ -645,7 +649,8 @@ public class IOUtility
             return false;
         }
 
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             return mBundle.hashCode() << 16 + mResource.hashCode();
         }

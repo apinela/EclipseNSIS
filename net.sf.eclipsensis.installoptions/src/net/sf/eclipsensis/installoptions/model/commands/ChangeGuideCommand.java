@@ -42,7 +42,8 @@ public class ChangeGuideCommand extends Command
         }
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         // Cache the old values
         mOldGuide = mHorizontal?mWidget.getHorizontalGuide():mWidget.getVerticalGuide();
@@ -53,7 +54,8 @@ public class ChangeGuideCommand extends Command
         redo();
     }
 
-    public void redo()
+    @Override
+	public void redo()
     {
         changeGuide(mOldGuide, mNewGuide, mNewAlign);
     }
@@ -64,7 +66,8 @@ public class ChangeGuideCommand extends Command
         mNewAlign = alignment;
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         changeGuide(mNewGuide, mOldGuide, mOldAlign);
     }

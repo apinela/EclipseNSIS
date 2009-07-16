@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -45,7 +46,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
  */
 public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IAnnotationHoverExtension, ITextHover, ITextHoverExtension, ITextHoverExtension2
 {
-    private Set mAnnotationTypes;
+    private Set<String> mAnnotationTypes;
 
     private IInformationControlCreator mHoverControlCreator = new IInformationControlCreator(){
         public IInformationControl createInformationControl(Shell parent)
@@ -57,7 +58,7 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
     public NSISAnnotationHover(String[] annotationTypes)
     {
         super();
-        mAnnotationTypes = new HashSet(Arrays.asList(annotationTypes));
+        mAnnotationTypes = new HashSet<String>(Arrays.asList(annotationTypes));
     }
 
     protected boolean isSupported(Annotation a) throws CoreException
@@ -77,8 +78,8 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
 			IRegion info= document.getLineInformation(lineNumber);
 
             if (model != null) {
-                ArrayList messages = new ArrayList();
-                for(Iterator e= model.getAnnotationIterator(); e.hasNext(); ) {
+                List<String> messages = new ArrayList<String>();
+                for(Iterator<?> e= model.getAnnotationIterator(); e.hasNext(); ) {
                     Annotation a= (Annotation) e.next();
                     if(isSupported(a)) {
                         Position p= model.getPosition(a);
@@ -92,11 +93,11 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
                     }
                 }
                 if(messages.size() == 1) {
-                    return (String)messages.get(0);
+                    return messages.get(0);
                 }
                 else if(messages.size() > 1) {
                     StringBuffer buf = new StringBuffer(EclipseNSISPlugin.getResourceString("multiple.markers.message")); //$NON-NLS-1$
-                    for (Iterator iter = messages.iterator(); iter.hasNext();) {
+                    for (Iterator<String> iter = messages.iterator(); iter.hasNext();) {
                         buf.append(LINE_SEPARATOR).append("\t- ").append(iter.next()); //$NON-NLS-1$
                     }
                     return buf.toString();
@@ -160,7 +161,7 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
                 IAnnotationModel model = sourceViewer.getAnnotationModel();
 
                 if (model != null) {
-                    for(Iterator e= model.getAnnotationIterator(); e.hasNext(); ) {
+                    for(Iterator<?> e= model.getAnnotationIterator(); e.hasNext(); ) {
                         Annotation a= (Annotation) e.next();
                         if(isSupported(a)) {
                             Position p= model.getPosition(a);
@@ -185,8 +186,8 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
                 IAnnotationModel model = sourceViewer.getAnnotationModel();
 
                 if (model != null) {
-                    ArrayList messages = new ArrayList();
-                    for(Iterator e= model.getAnnotationIterator(); e.hasNext(); ) {
+                    ArrayList<String> messages = new ArrayList<String>();
+                    for(Iterator<?> e= model.getAnnotationIterator(); e.hasNext(); ) {
                         Annotation a= (Annotation) e.next();
                         if(isSupported(a)) {
                             Position p= model.getPosition(a);
@@ -200,11 +201,11 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
                         }
                     }
                     if(messages.size() == 1) {
-                        return new NSISInformation((String)messages.get(0));
+                        return new NSISInformation(messages.get(0));
                     }
                     else if(messages.size() > 1) {
                         StringBuffer buf = new StringBuffer(EclipseNSISPlugin.getResourceString("multiple.markers.message")); //$NON-NLS-1$
-                        for (Iterator iter = messages.iterator(); iter.hasNext();) {
+                        for (Iterator<String> iter = messages.iterator(); iter.hasNext();) {
                             buf.append(LINE_SEPARATOR).append("\t- ").append(iter.next()); //$NON-NLS-1$
                         }
                         return new NSISInformation(buf.toString());
@@ -231,7 +232,8 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
             return mContent;
         }
 
-        public String toString()
+        @Override
+		public String toString()
         {
             return getContent();
         }

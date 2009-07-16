@@ -19,7 +19,8 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModelFactory;
 
 public class NSISAnnotationModelFactory extends ResourceMarkerAnnotationModelFactory
 {
-    public IAnnotationModel createAnnotationModel(IPath location)
+    @Override
+	public IAnnotationModel createAnnotationModel(IPath location)
     {
         //First see if this is a workbench file
         IFile file= FileBuffers.getWorkspaceFileAtLocation(location);

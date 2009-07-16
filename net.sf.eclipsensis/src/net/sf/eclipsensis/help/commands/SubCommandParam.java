@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.XMLUtil;
@@ -43,14 +41,15 @@ public class SubCommandParam extends NSISParam
     public static final String TAG_SUBCOMMAND = "subcommand"; //$NON-NLS-1$
     public static final String SETTING_SUBCOMMAND = "subcommand"; //$NON-NLS-1$
 
-    protected Map mSubCommands;
+    protected Map<String,String> mSubCommands;
 
     public SubCommandParam(Node node)
     {
         super(node);
     }
 
-    protected void init(Node node)
+    @Override
+	protected void init(Node node)
     {
         super.init(node);
         loadSubCommands(node);
@@ -58,7 +57,7 @@ public class SubCommandParam extends NSISParam
 
     private void loadSubCommands(Node node)
     {
-        mSubCommands = new LinkedHashMap();
+        mSubCommands = new LinkedHashMap<String,String>();
         Node[] children = XMLUtil.findChildren(node, TAG_SUBCOMMAND);
         if (!Common.isEmptyArray(children))
         {
@@ -75,7 +74,8 @@ public class SubCommandParam extends NSISParam
         }
     }
 
-    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new SubCommandParamEditor(command, parentEditor);
     }
@@ -90,7 +90,8 @@ public class SubCommandParam extends NSISParam
             super(command, parentEditor);
         }
 
-        public void clear()
+        @Override
+		public void clear()
         {
             if (mComboViewer != null && Common.isValid(mComboViewer.getControl()))
             {
@@ -99,7 +100,8 @@ public class SubCommandParam extends NSISParam
             super.clear();
         }
 
-        public void reset()
+        @Override
+		public void reset()
         {
             super.reset();
             if (mCommandEditor != null)
@@ -110,7 +112,8 @@ public class SubCommandParam extends NSISParam
             }
         }
 
-        protected String validateParam()
+        @Override
+		protected String validateParam()
         {
             if (isSelected())
             {
@@ -129,29 +132,31 @@ public class SubCommandParam extends NSISParam
             return null;
         }
 
-        protected Map.Entry getCurrentCommand()
+        @SuppressWarnings("unchecked")
+		protected Map.Entry<String,String> getCurrentCommand()
         {
-            Map.Entry command = null;
+            Map.Entry<String,String> command = null;
             if (mComboViewer != null && Common.isValid(mComboViewer.getControl()))
             {
                 IStructuredSelection ssel = (IStructuredSelection) mComboViewer.getSelection();
                 if (!ssel.isEmpty())
                 {
-                    command = (Map.Entry) ssel.getFirstElement();
+                    command = (Map.Entry<String,String>) ssel.getFirstElement();
                 }
             }
             else if (mSubCommands.size() == 1)
             {
-                command = (Map.Entry) mSubCommands.entrySet().iterator().next();
+                command = mSubCommands.entrySet().iterator().next();
             }
             return command;
         }
 
-        protected void appendParamText(StringBuffer buf)
+        @Override
+		protected void appendParamText(StringBuffer buf)
         {
             if (mCommandEditor != null)
             {
-                Map.Entry command = getCurrentCommand();
+                Map.Entry<String,String> command = getCurrentCommand();
                 if (command != null)
                 {
                     if (buf.length() > 0)
@@ -164,7 +169,8 @@ public class SubCommandParam extends NSISParam
             }
         }
 
-        protected void updateState(boolean state)
+        @Override
+		protected void updateState(boolean state)
         {
             super.updateState(state);
             if (mComboViewer != null)
@@ -180,20 +186,22 @@ public class SubCommandParam extends NSISParam
             }
         }
 
-        public void setSettings(Map settings)
+        @Override
+		@SuppressWarnings("unchecked")
+		public void setSettings(Map<String,Object> settings)
         {
             super.setSettings(settings);
             if (mCommandEditor != null)
             {
                 if (settings != null)
                 {
-                    Map.Entry command = getCurrentCommand();
+                    Map.Entry<String,String> command = getCurrentCommand();
                     if (command != null)
                     {
-                        Map childSettings = (Map) settings.get(command.getKey());
+                        Map<String, Object> childSettings = (Map<String,Object>) settings.get(command.getKey());
                         if (childSettings == null)
                         {
-                            childSettings = new HashMap();
+                            childSettings = new HashMap<String,Object>();
                             settings.put(command.getKey(), childSettings);
                         }
                         mCommandEditor.setSettings(childSettings);
@@ -206,12 +214,13 @@ public class SubCommandParam extends NSISParam
             }
         }
 
-        public void saveSettings()
+        @Override
+		public void saveSettings()
         {
             super.saveSettings();
             if (getSettings() != null)
             {
-                Map.Entry command = getCurrentCommand();
+                Map.Entry<String,String> command = getCurrentCommand();
                 if (command != null)
                 {
                     getSettings().put(SETTING_SUBCOMMAND, command.getKey());
@@ -223,7 +232,8 @@ public class SubCommandParam extends NSISParam
             }
         }
 
-        protected Control createParamControl(Composite parent)
+        @Override
+		protected Control createParamControl(Composite parent)
         {
             if (mSubCommands.size() > 1)
             {
@@ -243,7 +253,8 @@ public class SubCommandParam extends NSISParam
                     public void selectionChanged(final SelectionChangedEvent event)
                     {
                         BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-                            public void run()
+                            @SuppressWarnings("unchecked")
+							public void run()
                             {
                                 boolean changed = false;
                                 if (mCommandEditor != null && Common.isValid(mCommandEditor.getControl()))
@@ -255,7 +266,7 @@ public class SubCommandParam extends NSISParam
                                 IStructuredSelection sel = (IStructuredSelection) event.getSelection();
                                 if (!sel.isEmpty())
                                 {
-                                    String commandName = (String) ((Map.Entry) sel.getFirstElement()).getKey();
+                                    String commandName = ((Map.Entry<String,String>) sel.getFirstElement()).getKey();
                                     NSISCommand cmd = NSISCommandManager.getCommand(commandName);
                                     if (cmd != null)
                                     {
@@ -280,7 +291,7 @@ public class SubCommandParam extends NSISParam
             }
             else if (mSubCommands.size() == 1)
             {
-                createCommandEditor(parent, NSISCommandManager.getCommand((String) getCurrentCommand().getKey()));
+                createCommandEditor(parent, NSISCommandManager.getCommand(getCurrentCommand().getKey()));
                 return mCommandEditor.getControl();
             }
             else
@@ -289,15 +300,16 @@ public class SubCommandParam extends NSISParam
             }
         }
 
-        protected void initParamEditor()
+        @Override
+		protected void initParamEditor()
         {
             super.initParamEditor();
             if (mComboViewer != null && Common.isValid(mComboViewer.getControl()))
             {
                 String commandName = (String) getSettingValue(SETTING_SUBCOMMAND, String.class, null);
-                for (Iterator iter = mSubCommands.entrySet().iterator(); iter.hasNext();)
+                for (Iterator<Map.Entry<String,String>> iter = mSubCommands.entrySet().iterator(); iter.hasNext();)
                 {
-                    Map.Entry entry = (Entry) iter.next();
+                    Map.Entry<String,String> entry = iter.next();
                     if (entry.getKey().equals(commandName))
                     {
                         mComboViewer.setSelection(new StructuredSelection(entry));
@@ -316,15 +328,16 @@ public class SubCommandParam extends NSISParam
          * @param commandName
          * @param cmd
          */
-        private void createCommandEditor(Composite container, NSISCommand cmd)
+        @SuppressWarnings("unchecked")
+		private void createCommandEditor(Composite container, NSISCommand cmd)
         {
             mCommandEditor = cmd.createEditor();
             if (getSettings() != null)
             {
-                Map commandSettings = (Map) getSettings().get(cmd.getName());
+                Map<String, Object> commandSettings = (Map<String, Object>) getSettings().get(cmd.getName());
                 if (commandSettings == null)
                 {
-                    commandSettings = new HashMap();
+                    commandSettings = new HashMap<String,Object>();
                     getSettings().put(cmd.getName(), commandSettings);
                 }
                 mCommandEditor.setSettings(commandSettings);

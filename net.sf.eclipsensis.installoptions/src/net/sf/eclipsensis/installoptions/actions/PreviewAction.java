@@ -9,38 +9,77 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.console.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.INSISVersions;
+import net.sf.eclipsensis.console.INSISConsole;
+import net.sf.eclipsensis.console.INSISConsoleLineProcessor;
+import net.sf.eclipsensis.console.NSISConsoleLine;
+import net.sf.eclipsensis.console.NullNSISConsole;
 import net.sf.eclipsensis.editor.NSISEditorUtilities;
-import net.sf.eclipsensis.installoptions.*;
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.editor.IInstallOptionsEditor;
 import net.sf.eclipsensis.installoptions.figures.DashedLineBorder;
-import net.sf.eclipsensis.installoptions.ini.*;
-import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.installoptions.util.*;
-import net.sf.eclipsensis.lang.*;
-import net.sf.eclipsensis.makensis.*;
+import net.sf.eclipsensis.installoptions.ini.INIFile;
+import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
+import net.sf.eclipsensis.installoptions.ini.INISection;
+import net.sf.eclipsensis.installoptions.model.DialogSize;
+import net.sf.eclipsensis.installoptions.model.DialogSizeManager;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsPicture;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.util.DummyNSISSettings;
+import net.sf.eclipsensis.installoptions.util.FontUtility;
+import net.sf.eclipsensis.lang.NSISLanguage;
+import net.sf.eclipsensis.lang.NSISLanguageManager;
+import net.sf.eclipsensis.makensis.IMakeNSISRunListener;
+import net.sf.eclipsensis.makensis.MakeNSISResults;
+import net.sf.eclipsensis.makensis.MakeNSISRunEvent;
+import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.script.NSISScriptProblem;
-import net.sf.eclipsensis.settings.*;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.settings.INSISHomeListener;
+import net.sf.eclipsensis.settings.INSISSettingsConstants;
+import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.settings.NSISSettings;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.gef.Disposable;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPathEditorInput;
 
 public class PreviewAction extends Action implements Disposable, IMakeNSISRunListener, INSISHomeListener
 {
@@ -50,9 +89,9 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
     private static final String cMUIDialogSizeName = InstallOptionsPlugin.getResourceString("mui.dialog.size.name"); //$NON-NLS-1$
     private static final String cClassicDialogSizeName = InstallOptionsPlugin.getResourceString("classic.dialog.size.name"); //$NON-NLS-1$
     private static INSISConsole cDummyConsole = new NullNSISConsole();
-    private static HashMap cPreviewCache = new HashMap();
-    private static HashMap cBitmapCache = new HashMap();
-    private static HashMap cIconCache = new HashMap();
+    private static Map<PreviewCacheKey,File> cPreviewCache = new HashMap<PreviewCacheKey,File>();
+    private static Map<Dimension, File> cBitmapCache = new HashMap<Dimension, File>();
+    private static Map<Dimension, File> cIconCache = new HashMap<Dimension, File>();
 
     private IInstallOptionsEditor mEditor;
     private NSISSettings mSettings = new DummyNSISSettings();
@@ -63,7 +102,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         super();
         mEditor = editor;
         String resource;
-        LinkedHashMap symbols = new LinkedHashMap();
+        Map<String,String> symbols = new LinkedHashMap<String,String>();
         switch(type) {
             case IInstallOptionsConstants.PREVIEW_CLASSIC:
                 setId(PREVIEW_CLASSIC_ID);
@@ -117,7 +156,8 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         MakeNSISRunner.removeListener(this);
     }
 
-    public void run()
+    @Override
+	public void run()
     {
         if(mEditor != null) {
             Shell shell = mEditor.getSite().getShell();
@@ -189,14 +229,16 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
             public void run() {
                 final ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell) {
-                    protected void configureShell(Shell shell)
+                    @Override
+					protected void configureShell(Shell shell)
                     {
                         super.configureShell(shell);
                         Rectangle rect = shell.getDisplay().getBounds();
                         shell.setLocation(rect.x+rect.width+1,rect.y+rect.height+1);
                     }
 
-                    protected Rectangle getConstrainedShellBounds(Rectangle preferredSize)
+                    @Override
+					protected Rectangle getConstrainedShellBounds(Rectangle preferredSize)
                     {
                         Rectangle rect = shell.getDisplay().getBounds();
                         return new Rectangle(rect.x+rect.width+1,rect.y+rect.height+1,preferredSize.width,preferredSize.height);
@@ -225,12 +267,12 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                             }
                             dialog.setDialogSize(dialogSize);
                             Font font = FontUtility.getFont(lang);
-                            for(Iterator iter=dialog.getChildren().iterator(); iter.hasNext(); ) {
-                                InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
+                            for(Iterator<InstallOptionsWidget> iter=dialog.getChildren().iterator(); iter.hasNext(); ) {
+                                InstallOptionsWidget widget = iter.next();
                                 if(widget instanceof InstallOptionsPicture) {
                                     final InstallOptionsPicture picture = (InstallOptionsPicture)widget;
                                     final Dimension dim = widget.toGraphical(widget.getPosition(), font).getSize();
-                                    final HashMap cache;
+                                    final Map<Dimension, File> cache;
                                     switch(picture.getSWTImageType()) {
                                         case SWT.IMAGE_BMP:
                                             cache = cBitmapCache;
@@ -241,7 +283,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                         default:
                                             continue;
                                     }
-                                    final File[] imageFile = new File[] {(File)cache.get(dim)};
+                                    final File[] imageFile = new File[] {cache.get(dim)};
                                     if(!IOUtility.isValidFile(imageFile[0])) {
                                         shell.getDisplay().syncExec(new Runnable() {
                                             public void run()
@@ -318,13 +360,13 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                     }
                                 }
                                 PreviewCacheKey key = new PreviewCacheKey(file,lang);
-                                File previewFile = (File)cPreviewCache.get(key);
+                                File previewFile = cPreviewCache.get(key);
                                 if(previewFile == null || file.lastModified() > previewFile.lastModified()) {
                                     previewFile = createPreviewFile(previewFile, iniFile, lang);
                                     cPreviewCache.put(key,previewFile);
                                 }
 
-                                LinkedHashMap symbols = mSettings.getSymbols();
+                                Map<String,String> symbols = mSettings.getSymbols();
 
                                 symbols.put("PREVIEW_INI",previewFile.getAbsolutePath()); //$NON-NLS-1$
                                 symbols.put("PREVIEW_LANG",lang.getName()); //$NON-NLS-1$
@@ -357,13 +399,13 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                 });
                                 if(results != null) {
                                     if (results.getReturnCode() != 0) {
-                                        List errors = results.getProblems();
+                                        List<NSISScriptProblem> errors = results.getProblems();
                                         final String error;
                                         if (!Common.isEmptyCollection(errors)) {
-                                            Iterator iter = errors.iterator();
-                                            StringBuffer buf = new StringBuffer(((NSISScriptProblem)iter.next()).getText());
+                                            Iterator<NSISScriptProblem> iter = errors.iterator();
+                                            StringBuffer buf = new StringBuffer(iter.next().getText());
                                             while (iter.hasNext()) {
-                                                buf.append(INSISConstants.LINE_SEPARATOR).append(((NSISScriptProblem)iter.next()).getText());
+                                                buf.append(INSISConstants.LINE_SEPARATOR).append(iter.next().getText());
                                             }
                                             error = buf.toString();
                                         }
@@ -428,14 +470,16 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
             mLanguage = language;
         }
 
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             int result = 31 + ((mFile == null)?0:mFile.hashCode());
             result = 31 * result + ((mLanguage == null)?0:mLanguage.hashCode());
             return result;
         }
 
-        public boolean equals(Object obj)
+        @Override
+		public boolean equals(Object obj)
         {
             if(obj != this) {
                 if(obj instanceof PreviewCacheKey) {

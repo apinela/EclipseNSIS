@@ -31,7 +31,8 @@ public class InstallOptionsHelpAction extends Action
         setDisabledImageDescriptor(desc);
     }
 
-    public void run()
+    @Override
+	public void run()
     {
         PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(
                 PLUGIN_HELP_URL);

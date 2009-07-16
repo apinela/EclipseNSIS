@@ -24,11 +24,13 @@ import org.eclipse.swt.graphics.Font;
 public class CloneCommand extends Command
 {
 
-    private List mWidgets, mNewTopLevelWidgets;
+    private List<InstallOptionsElement> mWidgets, mNewTopLevelWidgets;
 
     private InstallOptionsDialog mParent;
 
-    private Map mBounds, mIndices;
+    private Map<InstallOptionsWidget, Rectangle> mBounds;
+    
+    private Map<InstallOptionsWidget, Integer> mIndices;
 
     private ChangeGuideCommand mVerticalGuideCommand, mHorizontalGuideCommand;
 
@@ -41,7 +43,7 @@ public class CloneCommand extends Command
     public CloneCommand()
     {
         super(InstallOptionsPlugin.getResourceString("clone.command.name")); //$NON-NLS-1$
-        mWidgets = new LinkedList();
+        mWidgets = new LinkedList<InstallOptionsElement>();
         mFont = FontUtility.getInstallOptionsFont();
     }
 
@@ -49,7 +51,7 @@ public class CloneCommand extends Command
     {
         mWidgets.add(widget);
         if (mBounds == null) {
-            mBounds = new HashMap();
+            mBounds = new HashMap<InstallOptionsWidget, Rectangle>();
         }
         newBounds = FigureUtility.pixelsToDialogUnits(newBounds,mFont);
         mBounds.put(widget, newBounds);
@@ -59,7 +61,7 @@ public class CloneCommand extends Command
     {
         mWidgets.add(widget);
         if (mIndices == null) {
-            mIndices = new HashMap();
+            mIndices = new HashMap<InstallOptionsWidget, Integer>();
         }
         mIndices.put(widget, new Integer(index));
     }
@@ -82,9 +84,9 @@ public class CloneCommand extends Command
             }
         }
         else if (oldWidget instanceof InstallOptionsDialog) {
-            Iterator i = ((InstallOptionsDialog)oldWidget).getChildren().iterator();
+            Iterator<InstallOptionsWidget> i = ((InstallOptionsDialog)oldWidget).getChildren().iterator();
             while (i.hasNext()) {
-                cloneWidget((InstallOptionsElement)i.next(), (InstallOptionsDialog)newWidget, null, -1);
+                cloneWidget(i.next(), (InstallOptionsDialog)newWidget, null, -1);
             }
         }
 
@@ -93,20 +95,21 @@ public class CloneCommand extends Command
         }
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
-        mNewTopLevelWidgets = new LinkedList();
+        mNewTopLevelWidgets = new LinkedList<InstallOptionsElement>();
 
-        Iterator i = mWidgets.iterator();
+        Iterator<InstallOptionsElement> i = mWidgets.iterator();
 
         InstallOptionsWidget widget = null;
         while (i.hasNext()) {
             widget = (InstallOptionsWidget)i.next();
             if (mBounds != null && mBounds.containsKey(widget)) {
-                cloneWidget(widget, mParent, (Rectangle)mBounds.get(widget), -1);
+                cloneWidget(widget, mParent, mBounds.get(widget), -1);
             }
             else if (mIndices != null && mIndices.containsKey(widget)) {
-                cloneWidget(widget, mParent, null, ((Integer)mIndices.get(widget)).intValue());
+                cloneWidget(widget, mParent, null, mIndices.get(widget).intValue());
             }
             else {
                 cloneWidget(widget, mParent, null, -1);
@@ -133,9 +136,10 @@ public class CloneCommand extends Command
         this.mParent = parent;
     }
 
-    public void redo()
+    @Override
+	public void redo()
     {
-        for (Iterator iter = mNewTopLevelWidgets.iterator(); iter.hasNext();) {
+        for (Iterator<InstallOptionsElement> iter = mNewTopLevelWidgets.iterator(); iter.hasNext();) {
             mParent.addChild((InstallOptionsWidget)iter.next());
         }
         if (mHorizontalGuideCommand != null) {
@@ -158,7 +162,8 @@ public class CloneCommand extends Command
         }
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         if (mHorizontalGuideCommand != null) {
             mHorizontalGuideCommand.undo();
@@ -166,7 +171,7 @@ public class CloneCommand extends Command
         if (mVerticalGuideCommand != null) {
             mVerticalGuideCommand.undo();
         }
-        for (Iterator iter = mNewTopLevelWidgets.iterator(); iter.hasNext();) {
+        for (Iterator<InstallOptionsElement> iter = mNewTopLevelWidgets.iterator(); iter.hasNext();) {
             mParent.removeChild((InstallOptionsWidget)iter.next());
         }
     }

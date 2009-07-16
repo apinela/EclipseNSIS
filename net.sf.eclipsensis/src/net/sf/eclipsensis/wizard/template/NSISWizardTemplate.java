@@ -57,7 +57,8 @@ public class NSISWizardTemplate extends AbstractTemplate
         super(id, name, description);
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         NSISWizardTemplate template = (NSISWizardTemplate)super.clone();
         try {
@@ -70,7 +71,8 @@ public class NSISWizardTemplate extends AbstractTemplate
         return template;
     }
 
-    public boolean isAvailable()
+    @Override
+	public boolean isAvailable()
     {
         return (mSettings != null && (mSettings.getMinimumNSISVersion() == null ||
                 NSISPreferences.INSTANCE.getNSISVersion().compareTo(mSettings.getMinimumNSISVersion()) >= 0));
@@ -82,13 +84,15 @@ public class NSISWizardTemplate extends AbstractTemplate
         validate();
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("settings"); //$NON-NLS-1$
     }
 
-    public Node toNode(Document document)
+    @Override
+	public Node toNode(Document document)
     {
         Node node = super.toNode(document);
         if(mSettings != null) {
@@ -97,7 +101,8 @@ public class NSISWizardTemplate extends AbstractTemplate
         return node;
     }
 
-    public void fromNode(Node node)
+    @Override
+	public void fromNode(Node node)
     {
         super.fromNode(node);
         Node[] settingsNode = XMLUtil.findChildren(node,NSISWizardSettings.NODE);
@@ -112,10 +117,10 @@ public class NSISWizardTemplate extends AbstractTemplate
     private void validate()
     {
         if(mSettings != null) {
-            ArrayList languages = mSettings.getLanguages();
+            List<NSISLanguage> languages = mSettings.getLanguages();
             if (!Common.isEmptyCollection(languages)) {
-                for (ListIterator iter = languages.listIterator(); iter.hasNext();) {
-                    NSISLanguage lang = (NSISLanguage)iter.next();
+                for (ListIterator<NSISLanguage> iter = languages.listIterator(); iter.hasNext();) {
+                    NSISLanguage lang = iter.next();
                     NSISLanguage lang2 = NSISLanguageManager.getInstance().getLanguage(lang.getName());
                     if (lang2 != null) {
                         iter.set(lang2);
@@ -156,7 +161,8 @@ public class NSISWizardTemplate extends AbstractTemplate
         mSettings = settings;
     }
 
-    public boolean isEqualTo(ITemplate template)
+    @Override
+	public boolean isEqualTo(ITemplate template)
     {
         if (this == template) {
             return true;

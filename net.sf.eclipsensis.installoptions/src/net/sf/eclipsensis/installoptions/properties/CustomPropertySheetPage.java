@@ -14,12 +14,14 @@ import org.eclipse.ui.views.properties.*;
 public class CustomPropertySheetPage extends PropertySheetPage
 {
     private static final PropertySheetSorter cNonSorter = new PropertySheetSorter() {
-        public int compare(IPropertySheetEntry entryA, IPropertySheetEntry entryB)
+        @Override
+		public int compare(IPropertySheetEntry entryA, IPropertySheetEntry entryB)
         {
             return -1;
         }
 
-        public int compareCategories(String categoryA, String categoryB)
+        @Override
+		public int compareCategories(String categoryA, String categoryB)
         {
             return -1;
         }
@@ -31,7 +33,8 @@ public class CustomPropertySheetPage extends PropertySheetPage
         super.setSorter(cNonSorter);
     }
 
-    protected void setSorter(PropertySheetSorter sorter)
+    @Override
+	protected void setSorter(PropertySheetSorter sorter)
     {
     }
 }

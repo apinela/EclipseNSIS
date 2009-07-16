@@ -28,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListener, IEclipseNSISService
 {
-    private static final Version HELP_URL_PROVIDER_VERSION = new Version("1.2"); //$NON-NLS-1$
+    private static final Version HELP_URL_PROVIDER_VERSION = new Version("1.3"); //$NON-NLS-1$
 
     private static final String STATE_LOCATION = "stateLocation"; //$NON-NLS-1$
     private static final String VERSION = "version"; //$NON-NLS-1$
@@ -64,12 +64,12 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private String mCHMStartPage = null;
     private NSISHelpTOC mTOC = null;
     private NSISHelpIndex mIndex = null;
-    private Map mHelpURLs = null;
-    private Map mCHMHelpURLs = null;
-    private Map mKeywordHelp = null;
-    private Map mNSISContribPaths;
+    private Map<String, String> mHelpURLs = null;
+    private Map<String, String> mCHMHelpURLs = null;
+    private Map<String, String> mKeywordHelp = null;
+    private Map<Version, String> mNSISContribPaths;
     private File mNSISHtmlHelpFile = null;
-    private Collection mListeners = new LinkedHashSet();
+    private Collection<INSISHelpURLListener> mListeners = new LinkedHashSet<INSISHelpURLListener>();
     private NSISHelpSearchManager mSearchManager = null;
 
     private ResourceBundle mBundle;
@@ -89,9 +89,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                         new Path(EclipseNSISPlugin.getResourceString("hoverhelp.style.sheet")), //$NON-NLS-1$
                                         new File(EclipseNSISPlugin.getPluginStateLocation(),EclipseNSISPlugin.getResourceString("hoverhelp.state.location"))); //$NON-NLS-1$
         }
-        catch (IOException e1) {
-            styleSheet = null;
-        }
+        catch (IOException e1) {}
         final StringBuffer htmlPrefix = new StringBuffer("<html>\n<head>\n"); //$NON-NLS-1$
         if(styleSheet != null) {
             htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append(IOUtility.getFileURLString(styleSheet)).append( //$NON-NLS-1$
@@ -162,7 +160,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     indexLocation.mkdirs();
                 }
                 mSearchManager = new NSISHelpSearchManager(mCachedHelpDocsLocation);
-                mNSISContribPaths = new LinkedHashMap();
+                mNSISContribPaths = new LinkedHashMap<Version, String>();
                 monitor.worked(10);
                 loadNSISContribPaths();
                 monitor.worked(10);
@@ -217,10 +215,10 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
     private void loadNSISContribPaths()
     {
-        Map temp = new HashMap();
-        List list = new ArrayList();
-        for(Enumeration e = mBundle.getKeys(); e.hasMoreElements(); ) {
-            String key = (String)e.nextElement();
+        Map<Version, String> temp = new HashMap<Version, String>();
+        List<Version> list = new ArrayList<Version>();
+        for(Enumeration<String> e = mBundle.getKeys(); e.hasMoreElements(); ) {
+            String key = e.nextElement();
             if(key.startsWith("nsis.contrib.path")) { //$NON-NLS-1$
                 String[] tokens = Common.tokenize(key,'#');
                 Version v;
@@ -236,13 +234,14 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         }
 
         Collections.sort(list);
-        for(Iterator iter=list.iterator(); iter.hasNext(); ) {
-            Version v = (Version)iter.next();
-            mNSISContribPaths.put(v, mBundle.getString((String)temp.get(v)));
+        for(Iterator<Version> iter=list.iterator(); iter.hasNext(); ) {
+            Version v = iter.next();
+            mNSISContribPaths.put(v, mBundle.getString(temp.get(v)));
         }
     }
 
-    private void loadHelpURLs()
+    @SuppressWarnings("unchecked")
+	private void loadHelpURLs()
     {
         mTOC = null;
         mIndex = null;
@@ -285,16 +284,16 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                             EclipseNSISPlugin.getDefault().log(e);
                         }
                         if (obj != null && Map.class.isAssignableFrom(obj.getClass())) {
-                            Map map = (Map)obj;
+                            Map<String,Object> map = (Map<String,Object>)obj;
                             Version version = (Version)map.get(VERSION);
                             if(version != null && HELP_URL_PROVIDER_VERSION.equals(version)) {
                                 String stateLocation = (String)map.get(STATE_LOCATION);
                                 if(!Common.isEmpty(stateLocation) && mStateLocation.getAbsolutePath().equalsIgnoreCase(stateLocation)) {
                                     mTOC = (NSISHelpTOC)map.get(TOC);
                                     mIndex = (NSISHelpIndex)map.get(INDEX);
-                                    mHelpURLs = (Map)map.get(HELP_URLS);
-                                    mCHMHelpURLs = (Map)map.get(CHM_HELP_URLS);
-                                    mKeywordHelp = (Map)map.get(KEYWORD_HELP);
+                                    mHelpURLs = (Map<String, String>)map.get(HELP_URLS);
+                                    mCHMHelpURLs = (Map<String, String>)map.get(CHM_HELP_URLS);
+                                    mKeywordHelp = (Map<String, String>)map.get(KEYWORD_HELP);
                                     mNSISHelpAvailable = true;
                                     return;
                                 }
@@ -307,14 +306,14 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                         mCacheFile.delete();
                     }
 
-                    Map topicMap = new CaseInsensitiveMap();
+                    Map<String, List<String>> topicMap = new CaseInsensitiveMap<List<String>>();
 
                     String[] mappedHelpTopics = Common.loadArrayProperty(mBundle, "mapped.help.topics"); //$NON-NLS-1$
                     if (!Common.isEmptyArray(mappedHelpTopics)) {
                         for (int i = 0; i < mappedHelpTopics.length; i++) {
                             String[] keywords = Common.loadArrayProperty(mBundle, mappedHelpTopics[i]);
                             if (!Common.isEmptyArray(keywords)) {
-                                ArrayList list = new ArrayList();
+                                ArrayList<String> list = new ArrayList<String>();
                                 for (int j = 0; j < keywords.length; j++) {
                                     keywords[j] = NSISKeywords.getInstance().getKeyword(keywords[j]);
                                     if (NSISKeywords.getInstance().isValidKeyword(keywords[j])) {
@@ -345,20 +344,20 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                 HTML_PARSER.parse(new FileReader(tocFile), parserCallback, false);
 
                                 mTOC = parserCallback.getTOC();
-                                Map keywordHelpMap = parserCallback.getKeywordHelpMap();
-                                mHelpURLs = new CaseInsensitiveMap();
-                                mCHMHelpURLs = new CaseInsensitiveMap();
+                                Map<String,String> keywordHelpMap = parserCallback.getKeywordHelpMap();
+                                mHelpURLs = new CaseInsensitiveMap<String>();
+                                mCHMHelpURLs = new CaseInsensitiveMap<String>();
                                 if (!Common.isEmptyMap(keywordHelpMap)) {
                                     StringBuffer buf = new StringBuffer();
                                     String[] args = new String[]{null};
                                     StringBuffer chmBuf = new StringBuffer();
                                     String[] chmArgs = new String[]{mNSISHtmlHelpFile.getAbsolutePath(), null};
-                                    for (Iterator iter = keywordHelpMap.keySet().iterator(); iter.hasNext();) {
+                                    for (Iterator<String> iter = keywordHelpMap.keySet().iterator(); iter.hasNext();) {
                                         buf.setLength(0);
                                         chmBuf.setLength(0);
 
-                                        String keyword = (String)iter.next();
-                                        String location = (String)keywordHelpMap.get(keyword);
+                                        String keyword = iter.next();
+                                        String location = keywordHelpMap.get(keyword);
 
                                         args[0] = location;
                                         mHelpURLs.put(keyword, NSIS_PLATFORM_HELP_FORMAT.format(args, buf, null).toString());
@@ -367,16 +366,16 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                         mCHMHelpURLs.put(keyword, NSIS_CHM_HELP_FORMAT.format(chmArgs, chmBuf, null).toString());
                                     }
 
-                                    Map urlContentsMap = new CaseInsensitiveMap();
-                                    List processedFiles = new ArrayList();
+                                    Map<String,String> urlContentsMap = new CaseInsensitiveMap<String>();
+                                    List<String> processedFiles = new ArrayList<String>();
                                     CaseInsensitiveSet keywords = new CaseInsensitiveSet(keywordHelpMap.keySet());
-                                    CaseInsensitiveMap urlKeywordMap = new CaseInsensitiveMap();
-                                    for (Iterator iter = keywordHelpMap.entrySet().iterator(); iter.hasNext();) {
-                                        Map.Entry entry = (Map.Entry)iter.next();
+                                    CaseInsensitiveMap<String> urlKeywordMap = new CaseInsensitiveMap<String>();
+                                    for (Iterator<Map.Entry<String, String>> iter = keywordHelpMap.entrySet().iterator(); iter.hasNext();) {
+                                    	Map.Entry<String, String> entry = iter.next();
                                         urlKeywordMap.put(entry.getValue(),entry.getKey());
                                     }
-                                    for (Iterator iter = urlKeywordMap.keySet().iterator(); iter.hasNext();) {
-                                        String url = (String)iter.next();
+                                    for (Iterator<String> iter = urlKeywordMap.keySet().iterator(); iter.hasNext();) {
+                                        String url = iter.next();
                                         int n = url.indexOf('#');
                                         if (n > 1) {
                                             String htmlFile = url.substring(0, n).toLowerCase();
@@ -388,11 +387,11 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                         }
                                     }
 
-                                    mKeywordHelp = new CaseInsensitiveMap();
-                                    for (Iterator iter = keywordHelpMap.keySet().iterator(); iter.hasNext();) {
-                                        String keyword = (String)iter.next();
-                                        String url = (String)keywordHelpMap.get(keyword);
-                                        String help = (String)urlContentsMap.get(url);
+                                    mKeywordHelp = new CaseInsensitiveMap<String>();
+                                    for (Iterator<String> iter = keywordHelpMap.keySet().iterator(); iter.hasNext();) {
+                                        String keyword = iter.next();
+                                        String url = keywordHelpMap.get(keyword);
+                                        String help = urlContentsMap.get(url);
                                         if (help != null) {
                                             mKeywordHelp.put(keyword, help);
                                         }
@@ -415,7 +414,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                     }
                                 }
 
-                                Map map = new HashMap();
+                                Map<String,Object> map = new HashMap<String,Object>();
                                 map.put(STATE_LOCATION, mStateLocation.getAbsolutePath());
                                 map.put(VERSION, HELP_URL_PROVIDER_VERSION);
                                 map.put(TOC, mTOC);
@@ -501,7 +500,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                 mStartPage = mCachedStartPage = mCHMStartPage = IOUtility.getFileURLString(mNoHelpFile);
             }
 
-            INSISHelpURLListener[] listeners = (INSISHelpURLListener[])mListeners.toArray(new INSISHelpURLListener[mListeners.size()]);
+            INSISHelpURLListener[] listeners = mListeners.toArray(new INSISHelpURLListener[mListeners.size()]);
             for (int i = 0; i < listeners.length; i++) {
                 listeners[i].helpURLsChanged();
             }
@@ -511,7 +510,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     public String getKeywordHelp(String keyword)
     {
         checkHelpFile();
-        return (String)(mKeywordHelp==null?null:mKeywordHelp.get(keyword));
+        return (mKeywordHelp==null?null:mKeywordHelp.get(keyword));
     }
 
     public String getHelpStartPage()
@@ -583,7 +582,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     return mStartPage;
                 }
                 if(mHelpURLs != null) {
-                    return (String)mHelpURLs.get(keyWord);
+                    return mHelpURLs.get(keyWord);
                 }
             }
             else {
@@ -591,7 +590,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     return mCHMStartPage;
                 }
                 if(mCHMHelpURLs != null) {
-                    return (String)mCHMHelpURLs.get(keyWord);
+                    return mCHMHelpURLs.get(keyWord);
                 }
             }
         }
@@ -702,10 +701,10 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     {
         Version nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
         String nsisContribPath = null;
-        for(Iterator iter=mNSISContribPaths.keySet().iterator(); iter.hasNext(); ) {
-            Version v = (Version)iter.next();
+        for(Iterator<Version> iter=mNSISContribPaths.keySet().iterator(); iter.hasNext(); ) {
+            Version v = iter.next();
             if(nsisVersion.compareTo(v) >= 0) {
-                nsisContribPath = (String)mNSISContribPaths.get(v);
+                nsisContribPath = mNSISContribPaths.get(v);
             }
             else {
                 break;

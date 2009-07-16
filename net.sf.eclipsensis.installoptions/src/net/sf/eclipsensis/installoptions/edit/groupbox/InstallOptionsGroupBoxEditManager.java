@@ -17,12 +17,13 @@ import org.eclipse.swt.SWT;
 
 public class InstallOptionsGroupBoxEditManager extends InstallOptionsUneditableElementEditManager
 {
-    public InstallOptionsGroupBoxEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
+    public InstallOptionsGroupBoxEditManager(GraphicalEditPart source, CellEditorLocator locator)
     {
-        super(source, editorType, locator);
+        super(source, locator);
     }
 
-    protected int getCellEditorStyle()
+    @Override
+	protected int getCellEditorStyle()
     {
         return SWT.SINGLE|SWT.LEFT;
     }

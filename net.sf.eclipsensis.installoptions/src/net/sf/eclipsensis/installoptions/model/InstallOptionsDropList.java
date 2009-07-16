@@ -23,23 +23,27 @@ public class InstallOptionsDropList extends InstallOptionsCombobox
         super(section);
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("maxLen"); //$NON-NLS-1$
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_DROPLIST;
     }
 
-    protected boolean isStateReadOnly()
+    @Override
+	protected boolean isStateReadOnly()
     {
         return true;
     }
 
-    public void setListItems(List listItems)
+    @Override
+	public void setListItems(List<String> listItems)
     {
         super.setListItems(listItems);
         String oldState = getState();

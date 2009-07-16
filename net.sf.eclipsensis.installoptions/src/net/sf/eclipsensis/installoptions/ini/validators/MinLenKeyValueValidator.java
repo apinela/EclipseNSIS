@@ -17,7 +17,8 @@ import net.sf.eclipsensis.util.Common;
 
 public class MinLenKeyValueValidator extends PositiveNumberKeyValueValidator
 {
-    public boolean validate(final INIKeyValue keyValue, int fixFlag)
+    @Override
+	public boolean validate(final INIKeyValue keyValue, int fixFlag)
     {
         boolean b = super.validate(keyValue, fixFlag);
         if(b) {
@@ -56,7 +57,8 @@ public class MinLenKeyValueValidator extends PositiveNumberKeyValueValidator
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("minlen.value.error",new Object[]{ //$NON-NLS-1$
                                                 keyValue.getKey(),new Integer(maxValue)}));
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.minlen.value")) { //$NON-NLS-1$
-                        protected INIProblemFix[] createFixes()
+                        @Override
+						protected INIProblemFix[] createFixes()
                         {
                             return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(maxValue, radix, prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                         }

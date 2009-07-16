@@ -36,7 +36,8 @@ public class LocalFileParam extends LocalFilesystemObjectParam
         super(node);
     }
 
-    protected void init(Node node)
+    @Override
+	protected void init(Node node)
     {
         super.init(node);
         loadFilters(node);
@@ -44,8 +45,8 @@ public class LocalFileParam extends LocalFilesystemObjectParam
 
     private void loadFilters(Node node)
     {
-        List filterNames = new ArrayList();
-        List filters = new ArrayList();
+        List<String> filterNames = new ArrayList<String>();
+        List<String> filters = new ArrayList<String>();
         Node[] children = XMLUtil.findChildren(node, ATTR_FILTER);
         if(!Common.isEmptyArray(children)) {
             for (int i = 0; i < children.length; i++) {
@@ -59,11 +60,12 @@ public class LocalFileParam extends LocalFilesystemObjectParam
                 }
             }
         }
-        mFilterNames = (String[])filterNames.toArray(new String[filterNames.size()]);
-        mFilters = (String[])filters.toArray(new String[filters.size()]);
+        mFilterNames = filterNames.toArray(new String[filterNames.size()]);
+        mFilters = filters.toArray(new String[filters.size()]);
     }
 
-    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new LocalFileParamEditor(command, parentEditor);
     }
@@ -77,7 +79,8 @@ public class LocalFileParam extends LocalFilesystemObjectParam
             super(command, parentEditor);
         }
 
-        public void clear()
+        @Override
+		public void clear()
         {
             if(Common.isValid(mFileText)) {
                 mFileText.setText(""); //$NON-NLS-1$
@@ -85,7 +88,8 @@ public class LocalFileParam extends LocalFilesystemObjectParam
             super.clear();
         }
 
-        protected String validateLocalFilesystemObjectParam()
+        @Override
+		protected String validateLocalFilesystemObjectParam()
         {
             if(Common.isValid(mFileText)) {
                 String file = IOUtility.decodePath(mFileText.getText());
@@ -107,7 +111,8 @@ public class LocalFileParam extends LocalFilesystemObjectParam
             return null;
         }
 
-        protected String getPrefixableParamText()
+        @Override
+		protected String getPrefixableParamText()
         {
             if(Common.isValid(mFileText)) {
                 String file = IOUtility.decodePath(mFileText.getText());
@@ -116,7 +121,8 @@ public class LocalFileParam extends LocalFilesystemObjectParam
             return null;
         }
 
-        protected void updateState(boolean state)
+        @Override
+		protected void updateState(boolean state)
         {
             if(Common.isValid(mFileText)) {
                 mFileText.setEnabled(state);
@@ -128,7 +134,8 @@ public class LocalFileParam extends LocalFilesystemObjectParam
             super.updateState(state);
         }
 
-        public void saveSettings()
+        @Override
+		public void saveSettings()
         {
             super.saveSettings();
             if(Common.isValid(mFileText) && getSettings() != null) {
@@ -136,7 +143,8 @@ public class LocalFileParam extends LocalFilesystemObjectParam
             }
         }
 
-        protected void initParamEditor()
+        @Override
+		protected void initParamEditor()
         {
             super.initParamEditor();
             if(Common.isValid(mFileText)) {
@@ -144,7 +152,8 @@ public class LocalFileParam extends LocalFilesystemObjectParam
             }
         }
 
-        protected Control createParamControl(Composite parent)
+        @Override
+		protected Control createParamControl(Composite parent)
         {
             parent = new Composite(parent,SWT.NONE);
             GridLayout layout = new GridLayout(2,false);
@@ -157,7 +166,8 @@ public class LocalFileParam extends LocalFilesystemObjectParam
             b.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
             b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
             b.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     FileDialog dialog = new FileDialog(b.getShell(),isSave()?SWT.SAVE:SWT.OPEN);
                     if(!Common.isEmptyArray(mFilters)) {

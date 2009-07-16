@@ -12,6 +12,7 @@ package net.sf.eclipsensis.installoptions.rulers;
 import org.eclipse.gef.*;
 import org.eclipse.gef.internal.ui.rulers.RulerEditPartFactory;
 
+@SuppressWarnings("restriction")
 public class InstallOptionsRulerEditPartFactory extends RulerEditPartFactory
 {
     /**
@@ -22,11 +23,13 @@ public class InstallOptionsRulerEditPartFactory extends RulerEditPartFactory
         super(primaryViewer);
     }
 
-    protected EditPart createRulerEditPart(EditPart parentEditPart, Object model) {
+    @Override
+	protected EditPart createRulerEditPart(EditPart parentEditPart, Object model) {
         return new InstallOptionsRulerEditPart(model);
     }
 
-    protected EditPart createGuideEditPart(EditPart parentEditPart, Object model)
+    @Override
+	protected EditPart createGuideEditPart(EditPart parentEditPart, Object model)
     {
         return new InstallOptionsGuideEditPart(model);
     }

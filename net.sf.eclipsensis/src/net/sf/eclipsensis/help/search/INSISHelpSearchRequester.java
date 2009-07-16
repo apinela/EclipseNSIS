@@ -18,7 +18,7 @@ public interface INSISHelpSearchRequester
     public String getSearchText();
     public Filter getFilter();
     public void queryParsed(Query query);
-    public void searchCompleted(NSISHelpSearchResult[] results, Collection highlightTerms);
+    public void searchCompleted(NSISHelpSearchResult[] results, Collection<String> highlightTerms);
     public boolean isCanceled();
     public boolean useStemming();
 }

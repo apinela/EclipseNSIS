@@ -14,6 +14,7 @@ import java.util.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.draw2d.XYLayout;
 import org.eclipse.draw2d.geometry.Rectangle;
@@ -41,7 +42,8 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
         setLayoutManager(new XYLayout());
         final Rectangle[] newBounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
         mTextFigure = new TextFigure(parent, new PropertySourceWrapper(propertySource){
-                public Object getPropertyValue(Object id)
+                @Override
+				public Object getPropertyValue(Object id)
                 {
                     if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
                         return newBounds[0];
@@ -52,7 +54,8 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
                 }
             });
         mButtonFigure = new ButtonFigure(parent, new PropertySourceWrapper(propertySource){
-            public Object getPropertyValue(Object id)
+            @Override
+			public Object getPropertyValue(Object id)
             {
                 if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
                     return newBounds[1];
@@ -61,7 +64,7 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
                     return BROWSE_BUTTON_TEXT;
                 }
                 else if( InstallOptionsModel.PROPERTY_FLAGS.equals(id)) {
-                    List flags = new ArrayList((List)propertySource.getPropertyValue(id));
+                    List<String> flags = Common.makeGenericList(String.class, ((List<?>)propertySource.getPropertyValue(id)));
                     flags.removeAll(SCROLL_FLAGS);
                     return flags;
                 }
@@ -117,7 +120,8 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
 
     }
 
-    public void setBounds(Rectangle rect)
+    @Override
+	public void setBounds(Rectangle rect)
     {
         Rectangle[] newBounds = calculateBounds(rect);
         getLayoutManager().setConstraint(mTextFigure,newBounds[0]);

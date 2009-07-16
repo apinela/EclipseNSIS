@@ -16,7 +16,7 @@ import net.sf.eclipsensis.template.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
-public class InstallOptionsTemplateDialog extends AbstractTemplateDialog
+public class InstallOptionsTemplateDialog extends AbstractTemplateDialog<IInstallOptionsTemplate>
 {
     private InstallOptionsWidget[] mWidgets;
 
@@ -36,25 +36,29 @@ public class InstallOptionsTemplateDialog extends AbstractTemplateDialog
         mWidgets = widgets;
     }
 
-    protected ITemplate createTemplate(String name)
+    @Override
+	protected IInstallOptionsTemplate createTemplate(String name)
     {
         return new InstallOptionsTemplate2(name);
     }
 
-    protected void createUpdateTemplate()
+    @Override
+	protected void createUpdateTemplate()
     {
         super.createUpdateTemplate();
         if(isCreate()) {
-            ((IInstallOptionsTemplate)getTemplate()).setWidgets(mWidgets);
+            (getTemplate()).setWidgets(mWidgets);
         }
     }
 
-    protected Image getShellImage()
+    @Override
+	protected Image getShellImage()
     {
         return InstallOptionsPlugin.getShellImage();
     }
 
-    protected String getShellTitle()
+    @Override
+	protected String getShellTitle()
     {
         return InstallOptionsPlugin.getResourceString((isCreate()?"create.template.dialog.title":"edit.template.dialog.title")); //$NON-NLS-1$ //$NON-NLS-2$
     }

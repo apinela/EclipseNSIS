@@ -28,7 +28,8 @@ public class ComboFigure extends EditableElementFigure
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent, int style)
+    @Override
+	protected Control createSWTControl(Composite parent, int style)
     {
         Combo combo = new Combo(parent, style);
         String state = getState();
@@ -39,7 +40,8 @@ public class ComboFigure extends EditableElementFigure
     /**
      * @return
      */
-    public int getDefaultStyle()
+    @Override
+	public int getDefaultStyle()
     {
         return SWT.DROP_DOWN;
     }

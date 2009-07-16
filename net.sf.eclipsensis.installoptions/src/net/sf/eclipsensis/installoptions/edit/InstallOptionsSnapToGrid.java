@@ -26,7 +26,8 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
         super(container);
     }
 
-    public int snapRectangle(Request request, int snapLocations, PrecisionRectangle rect, PrecisionRectangle result)
+    @Override
+	public int snapRectangle(Request request, int snapLocations, PrecisionRectangle rect, PrecisionRectangle result)
     {
         Font f = FontUtility.getInstallOptionsFont();
         double dpuX = ((double)FigureUtility.dialogUnitsToPixelsX(1000,f))/1000;

@@ -34,7 +34,8 @@ import org.eclipse.ui.views.properties.tabbed.*;
 
 public class FilterPropertySection extends InstallOptionsElementPropertySection
 {
-    protected Control createSection(final InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, final InstallOptionsCommandHelper commandHelper)
+    @Override
+	protected Control createSection(final InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, final InstallOptionsCommandHelper commandHelper)
     {
         if(element instanceof InstallOptionsFileRequest) {
             final FileFilter[] current = { null };
@@ -81,14 +82,15 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             summaryAdd.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
             summaryAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             summaryAdd.addListener(SWT.Selection, new Listener() {
-                public void handleEvent(Event e) {
+                @SuppressWarnings("unchecked")
+				public void handleEvent(Event e) {
                     if(!nonUserChange[0]) {
-                        List list = (List)summaryViewer.getInput();
+                        List<FileFilter> list = (List<FileFilter>)summaryViewer.getInput();
                         if(list != null) {
                             String desc = InstallOptionsPlugin.getFormattedString("default.filter.description",new Object[]{""}).trim(); //$NON-NLS-1$ //$NON-NLS-2$
                             int counter = 1;
-                            for(ListIterator iter=list.listIterator(); iter.hasNext(); ) {
-                                if(((FileFilter)iter.next()).getDescription().equals(desc)) {
+                            for(ListIterator<FileFilter> iter=list.listIterator(); iter.hasNext(); ) {
+                                if(iter.next().getDescription().equals(desc)) {
                                     while(iter.hasPrevious()) {
                                         iter.previous();
                                     }
@@ -118,13 +120,14 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             summaryDel.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
             summaryDel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             summaryDel.addListener(SWT.Selection, new Listener() {
-                public void handleEvent(Event e) {
-                    List list = (List)summaryViewer.getInput();
+                @SuppressWarnings("unchecked")
+				public void handleEvent(Event e) {
+                    List<FileFilter> list = (List<FileFilter>)summaryViewer.getInput();
                     if(list != null) {
                         IStructuredSelection selection= (IStructuredSelection) summaryViewer.getSelection();
                         if(!selection.isEmpty()) {
-                            ArrayList old = new ArrayList(list);
-                            for(Iterator iter=selection.toList().iterator(); iter.hasNext(); ) {
+                            List<FileFilter> old = new ArrayList<FileFilter>(list);
+                            for(Iterator<?> iter=selection.toList().iterator(); iter.hasNext(); ) {
                                 list.remove(iter.next());
                             }
                             String error = validator.isValid(list);
@@ -143,27 +146,29 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             });
             summaryDel.setEnabled(!summaryViewer.getSelection().isEmpty());
 
-            final TableViewerUpDownMover summaryMover = new TableViewerUpDownMover() {
-                protected List getAllElements()
+            final TableViewerUpDownMover<List<FileFilter>, FileFilter> summaryMover = new TableViewerUpDownMover<List<FileFilter>, FileFilter>() {
+                @Override
+				@SuppressWarnings("unchecked")
+				protected List<FileFilter> getAllElements()
                 {
-                    return (List)((TableViewer)getViewer()).getInput();
+                    return (List<FileFilter>)((TableViewer)getViewer()).getInput();
                 }
 
-                protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
+                @Override
+				protected void updateStructuredViewerInput(List<FileFilter> input, List<FileFilter> elements, List<FileFilter> move, boolean isDown)
                 {
-                    List list = (List)input;
-                    List old = new ArrayList(list);
-                    list.clear();
-                    list.addAll(elements);
-                    String error = validator.isValid(list);
+                    List<FileFilter> old = new ArrayList<FileFilter>(input);
+                    input.clear();
+                    input.addAll(elements);
+                    String error = validator.isValid(input);
                     if(Common.isEmpty(error)) {
                         summaryViewer.refresh(false);
-                        commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_FILTER, descriptor.getDisplayName(), element, list);
+                        commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_FILTER, descriptor.getDisplayName(), element, input);
                     }
                     else {
                         Common.openError(summaryViewer.getTable().getShell(), error, InstallOptionsPlugin.getShellImage());
-                        list.clear();
-                        list.addAll(old);
+                        input.clear();
+                        input.addAll(old);
                     }
                 }
             };
@@ -175,7 +180,8 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             summaryUp.setEnabled(summaryMover.canMoveUp());
             summaryUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             summaryUp.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     summaryMover.moveUp();
                 }
@@ -187,7 +193,8 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             summaryDown.setEnabled(summaryMover.canMoveDown());
             summaryDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             summaryDown.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     summaryMover.moveDown();
                 }
@@ -212,7 +219,8 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             final Text descriptionText = widgetFactory.createText(composite,"",SWT.FLAT|SWT.BORDER); //$NON-NLS-1$
             descriptionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             final TextChangeHelper helper = new TextChangeHelper() {
-                protected String getResetValue(Text text)
+                @Override
+				protected String getResetValue(Text text)
                 {
                     if(current[0] != null) {
                         return current[0].getDescription();
@@ -220,13 +228,15 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                     return ""; //$NON-NLS-1$
                 }
 
-                protected void handleTextChange(Text text)
+                @Override
+				@SuppressWarnings("unchecked")
+				protected void handleTextChange(Text text)
                 {
                     if(current[0] != null) {
                         String oldDescription = current[0].getDescription();
                         current[0].setDescription(text.getText());
 
-                        List list = (List)summaryViewer.getInput();
+                        List<FileFilter> list = (List<FileFilter>)summaryViewer.getInput();
                         String error = validator.isValid(list);
                         if(Common.isEmpty(error)) {
                             summaryViewer.update(current[0],null);
@@ -303,7 +313,8 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                     return ((FilePattern)element).getPattern();
                 }
 
-                public void modify(Object item, String property, Object value)
+                @SuppressWarnings("unchecked")
+				public void modify(Object item, String property, Object value)
                 {
                     if(value == null) {
                         Common.openError(patternsTable.getShell(),textEditor.getErrorMessage(), InstallOptionsPlugin.getShellImage());
@@ -313,7 +324,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                         String oldValue = pattern.getPattern();
                         pattern.setPattern((String)value);
 
-                        List list = (List)summaryViewer.getInput();
+                        List<FileFilter> list = (List<FileFilter>)summaryViewer.getInput();
                         String error = validator.isValid(list);
                         if(Common.isEmpty(error)) {
                             patternsViewer.update(pattern,null);
@@ -340,7 +351,8 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             patternsAdd.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
             patternsAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             patternsAdd.addListener(SWT.Selection, new Listener() {
-                public void handleEvent(Event e) {
+                @SuppressWarnings("unchecked")
+				public void handleEvent(Event e) {
                     if(current[0] != null) {
                         FilePattern[] oldPatterns = (FilePattern[])patternsViewer.getInput();
                         FilePattern[] patterns = (FilePattern[])Common.resizeArray(oldPatterns,oldPatterns.length+1);
@@ -349,7 +361,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                         patterns[patterns.length-1] = newPattern;
                         current[0].setPatterns(patterns);
 
-                        List list = (List)summaryViewer.getInput();
+                        List<FileFilter> list = (List<FileFilter>)summaryViewer.getInput();
                         String error = validator.isValid(list);
                         if(Common.isEmpty(error)) {
                             patternsViewer.setInput(patterns);
@@ -372,7 +384,8 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             patternsDel.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
             patternsDel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             patternsDel.addListener(SWT.Selection, new Listener() {
-                public void handleEvent(Event e)
+                @SuppressWarnings("unchecked")
+				public void handleEvent(Event e)
                 {
                     if(current[0] != null) {
                         FilePattern[] oldPatterns = (FilePattern[])patternsViewer.getInput();
@@ -390,7 +403,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                         }
                         current[0].setPatterns(newPatterns);
 
-                        List list = (List)summaryViewer.getInput();
+                        List<FileFilter> list = (List<FileFilter>)summaryViewer.getInput();
                         String error = validator.isValid(list);
                         if(Common.isEmpty(error)) {
                             patternsViewer.setInput(newPatterns);
@@ -408,25 +421,27 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             int len = (Common.isEmptyArray(patterns)?0:patterns.length);
             patternsDel.setEnabled(!isNull && !sel.isEmpty() && sel.size() != len && len > 1);
 
-            final TableViewerUpDownMover patternsMover = new TableViewerUpDownMover() {
-                protected List getAllElements()
+            final TableViewerUpDownMover<FilePattern[], FilePattern> patternsMover = new TableViewerUpDownMover<FilePattern[], FilePattern>() {
+                @Override
+				protected List<FilePattern> getAllElements()
                 {
                     if(current[0] != null) {
                         return Common.makeList((FilePattern[])((TableViewer)getViewer()).getInput());
                     }
-                    return Collections.EMPTY_LIST;
+                    return Collections.emptyList();
                 }
 
-                protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
+                @Override
+				@SuppressWarnings("unchecked")
+				protected void updateStructuredViewerInput(FilePattern[] input, List<FilePattern> elements, List<FilePattern> move, boolean isDown)
                 {
                     if(current[0] != null) {
-                        FilePattern[] patterns = (FilePattern[])input;
-                        FilePattern[] oldPatterns = (FilePattern[])patterns.clone();
-                        for (int i = 0; i < patterns.length; i++) {
-                            patterns[i] = (FilePattern)elements.get(i);
+                        FilePattern[] oldPatterns = input.clone();
+                        for (int i = 0; i < input.length; i++) {
+                            input[i] = elements.get(i);
                         }
 
-                        List list = (List)summaryViewer.getInput();
+                        List<FileFilter> list = (List<FileFilter>)summaryViewer.getInput();
                         String error = validator.isValid(list);
                         if(Common.isEmpty(error)) {
                             patternsViewer.refresh();
@@ -434,7 +449,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                         }
                         else {
                             Common.openError(summaryViewer.getTable().getShell(), error, InstallOptionsPlugin.getShellImage());
-                            System.arraycopy(oldPatterns,0,patterns,0,patterns.length);
+                            System.arraycopy(oldPatterns,0,input,0,input.length);
                         }
                     }
                 }
@@ -447,7 +462,8 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             patternsUp.setEnabled(!isNull && patternsMover.canMoveUp());
             patternsUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             patternsUp.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     patternsMover.moveUp();
                 }
@@ -459,7 +475,8 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             patternsDown.setEnabled(!isNull && patternsMover.canMoveDown());
             patternsDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             patternsDown.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     patternsMover.moveDown();
                 }
@@ -510,11 +527,12 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             summaryViewer.setInput(InstallOptionsFileRequest.FILEFILTER_LIST_CONVERTER.makeCopy(((InstallOptionsFileRequest)element).getFilter()));
 
             final PropertyChangeListener listener = new PropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent evt)
+                @SuppressWarnings("unchecked")
+				public void propertyChange(PropertyChangeEvent evt)
                 {
                     if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_FILTER)) {
-                        List newFilter = (List)evt.getNewValue();
-                        List oldFilter = (List)summaryViewer.getInput();
+                        List<FileFilter> newFilter = (List<FileFilter>)evt.getNewValue();
+                        List<FileFilter> oldFilter = (List<FileFilter>)summaryViewer.getInput();
                         if(!Common.objectsAreEqual(newFilter, oldFilter)) {
                             try {
                                 ISelection sel = summaryViewer.getSelection();

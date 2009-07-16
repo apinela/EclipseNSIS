@@ -9,20 +9,26 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.edit.unknown.InstallOptionsUnknownEditPart.IUnknownFigure;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.WinAPI;
 
-import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.geometry.*;
+import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.XYLayout;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnknownFigure
@@ -38,13 +44,14 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
         setOpaque(true);
         setLayoutManager(new XYLayout());
 
-        final List flags = new ArrayList((List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS));
+        final List<String> flags = Common.makeGenericList(String.class, (List<?>)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS));
         boolean hScroll = flags.remove(InstallOptionsModel.FLAGS_HSCROLL);
         boolean vScroll = flags.remove(InstallOptionsModel.FLAGS_VSCROLL);
 
         final Rectangle[] childBounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS), hScroll, vScroll);
         mOuterLabelFigure = new LabelFigure(parent, new PropertySourceWrapper(propertySource){
-            public Object getPropertyValue(Object id)
+            @Override
+			public Object getPropertyValue(Object id)
             {
                 if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
                     return childBounds[0];
@@ -64,7 +71,8 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
         mFigure.setBackgroundColor(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
         add(mFigure);
         mInnerLabelFigure = new LabelFigure(parent, new PropertySourceWrapper(propertySource){
-            public Object getPropertyValue(Object id)
+            @Override
+			public Object getPropertyValue(Object id)
             {
                 if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
                     return childBounds[2];
@@ -80,7 +88,8 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
                 }
             }
         }, SWT.CENTER|SWT.SINGLE) {
-            protected Control createUneditableSWTControl(Composite parent, int style)
+            @Override
+			protected Control createUneditableSWTControl(Composite parent, int style)
             {
                 Control control = super.createUneditableSWTControl(parent, style);
                 control.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
@@ -114,7 +123,8 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
         return childBounds;
     }
 
-    public void setBounds(Rectangle rect)
+    @Override
+	public void setBounds(Rectangle rect)
     {
         Dimension oldSize = bounds.getSize();
         super.setBounds(rect);

@@ -18,7 +18,8 @@ import org.eclipse.gef.requests.GroupRequest;
 
 public class InstallOptionsEditPolicy extends ComponentEditPolicy
 {
-    protected Command createDeleteCommand(GroupRequest request)
+    @Override
+	protected Command createDeleteCommand(GroupRequest request)
     {
         return new DeleteCommand((InstallOptionsDialog)getHost().getParent().getModel(),
                                  (InstallOptionsWidget)getHost().getModel());

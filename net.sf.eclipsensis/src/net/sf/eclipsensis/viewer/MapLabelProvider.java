@@ -30,20 +30,21 @@ public class MapLabelProvider extends LabelProvider implements ITableLabelProvid
      */
     public String getColumnText(Object element, int columnIndex)
     {
-        if(element instanceof Map.Entry) {
+        if(element instanceof Map.Entry<?,?>) {
             switch(columnIndex) {
                 case 0:
-                    return (String)((Map.Entry)element).getKey();
+                    return String.valueOf(((Map.Entry<?,?>)element).getKey());
                 case 1:
-                    return (String)((Map.Entry)element).getValue();
+                    return String.valueOf(((Map.Entry<?,?>)element).getValue());
             }
         }
         return null;
     }
 
-    public String getText(Object element)
+    @Override
+	public String getText(Object element)
     {
-        if(element instanceof Map.Entry) {
+        if(element instanceof Map.Entry<?,?>) {
             return getColumnText(element, 1);
         }
         return super.getText(element);

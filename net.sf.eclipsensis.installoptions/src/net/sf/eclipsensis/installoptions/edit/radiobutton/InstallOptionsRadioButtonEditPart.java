@@ -17,22 +17,26 @@ import org.eclipse.swt.widgets.Composite;
 
 public class InstallOptionsRadioButtonEditPart extends InstallOptionsCheckBoxEditPart
 {
-    protected String getDirectEditLabelProperty()
+    @Override
+	protected String getDirectEditLabelProperty()
     {
         return "radiobutton.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected String getExtendedEditLabelProperty()
+    @Override
+	protected String getExtendedEditLabelProperty()
     {
         return "radiobutton.extended.edit.label"; //$NON-NLS-1$
     }
 
-    protected IInstallOptionsFigure createInstallOptionsFigure()
+    @Override
+	protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new RadioButtonFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("radiobutton.type.name"); //$NON-NLS-1$
     }

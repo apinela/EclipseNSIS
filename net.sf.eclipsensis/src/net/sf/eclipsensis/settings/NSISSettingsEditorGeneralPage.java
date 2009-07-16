@@ -48,7 +48,8 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         super("general",settings); //$NON-NLS-1$
     }
 
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -66,7 +67,8 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         return composite;
     }
 
-    public void enableControls(boolean state)
+    @Override
+	public void enableControls(boolean state)
     {
         if(mGroup != null) {
             enableComposite(mGroup,state);
@@ -129,7 +131,8 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
                                           mSettings.getSolidCompression());
         mSolidCompression.setVisible(NSISPreferences.INSTANCE.isSolidCompressionSupported());
         mCompressor.addSelectionListener(new SelectionAdapter(){
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 setSolidCompressionState();
             }
@@ -153,7 +156,8 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
         mProcessPriority.setData(LABELS,new Object[] {mProcessPriority.getData(LABEL),l});
         mProcessPriority.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 if (isProcessPrioritySupported()) {
                     if (isWarnProcessPriority()) {
@@ -220,23 +224,27 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
     {
         Composite composite = new Composite(parent,SWT.NONE);
         SelectionAdapter addAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 addOrEditInstruction(parent.getShell(),""); //$NON-NLS-1$
             }
         };
         SelectionAdapter editAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 addOrEditInstruction(parent.getShell(),((String)((IStructuredSelection)mInstructions.getSelection()).getFirstElement()).trim());
             }
         };
         SelectionAdapter removeAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			@SuppressWarnings("unchecked")
+			public void widgetSelected(SelectionEvent e)
             {
-                Collection collection = (Collection)mInstructions.getInput();
+                Collection<String> collection = (Collection<String>)mInstructions.getInput();
                 IStructuredSelection selection = (IStructuredSelection)mInstructions.getSelection();
-                for(Iterator iter = selection.iterator(); iter.hasNext(); ) {
+                for(Iterator<?> iter = selection.iterator(); iter.hasNext(); ) {
                     collection.remove(iter.next());
                     fireChanged();
                 }
@@ -244,17 +252,20 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
             }
         };
 
-        TableViewerUpDownMover mover = new TableViewerUpDownMover() {
+        TableViewerUpDownMover<List<String>,String> mover = new TableViewerUpDownMover<List<String>,String>() {
 
-            protected List getAllElements()
+            @Override
+			@SuppressWarnings("unchecked")
+			protected List<String> getAllElements()
             {
-                return (ArrayList)((TableViewer)getViewer()).getInput();
+                return (List<String>)((TableViewer)getViewer()).getInput();
             }
 
-            protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
+            @Override
+			protected void updateStructuredViewerInput(List<String> input, List<String> elements, List<String> move, boolean isDown)
             {
-                ((ArrayList)input).clear();
-                ((ArrayList)input).addAll(elements);
+                input.clear();
+                input.addAll(elements);
                 fireChanged();
             }
         };
@@ -282,7 +293,9 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         return composite;
     }
 
-    protected boolean performApply(NSISSettings settings)
+    @Override
+	@SuppressWarnings("unchecked")
+	protected boolean performApply(NSISSettings settings)
     {
         if(getControl() != null) {
             settings.setHdrInfo(mHdrInfo.getSelection());
@@ -295,12 +308,13 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
             if (NSISPreferences.INSTANCE.isProcessPrioritySupported()) {
                 settings.setProcessPriority(mProcessPriority.getSelectionIndex()-1);
             }
-            settings.setInstructions((ArrayList)mInstructions.getInput());
+            settings.setInstructions((List<String>)mInstructions.getInput());
         }
         return true;
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
         mHdrInfo.setSelection(mSettings.getHdrInfo());
         mLicense.setSelection(mSettings.getLicense());
@@ -316,7 +330,8 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         mInstructions.setInput(mSettings.getInstructions());
     }
 
-    public void setDefaults()
+    @Override
+	public void setDefaults()
     {
         mHdrInfo.setSelection(mSettings.getDefaultHdrInfo());
         mLicense.setSelection(mSettings.getDefaultLicense());
@@ -332,12 +347,13 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         mInstructions.setInput(mSettings.getDefaultInstructions());
     }
 
-    private void addOrEditInstruction(Shell shell, String oldInstruction)
+    @SuppressWarnings("unchecked")
+	private void addOrEditInstruction(Shell shell, String oldInstruction)
     {
         NSISInstructionDialog dialog = new NSISInstructionDialog(shell,oldInstruction);
         if(dialog.open() == Window.OK) {
             String newInstruction = dialog.getInstruction();
-            Collection collection = (Collection)mInstructions.getInput();
+            Collection<String> collection = (Collection<String>)mInstructions.getInput();
             if(!Common.isEmpty(oldInstruction)) {
                 if(!oldInstruction.equals(newInstruction)) {
                     collection.remove(oldInstruction);

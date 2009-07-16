@@ -27,7 +27,8 @@ public class BeginningOfLineRule extends SingleLineRule
         super((Common.isEmpty(startSequence)?DUMMY_START_SEQUENCE:startSequence), endSequence, token, (char)0, true, breaksOnEOF);
     }
 
-    protected IToken doEvaluate(ICharacterScanner scanner, boolean resume)
+    @Override
+	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume)
     {
         try {
             int n = 0;

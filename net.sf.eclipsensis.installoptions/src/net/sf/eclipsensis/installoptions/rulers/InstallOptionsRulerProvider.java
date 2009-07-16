@@ -13,6 +13,7 @@ import java.beans.*;
 import java.util.*;
 
 import net.sf.eclipsensis.installoptions.figures.FigureUtility;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
 
@@ -74,28 +75,32 @@ public class InstallOptionsRulerProvider extends RulerProvider
     {
         this.mRuler = ruler;
         this.mRuler.addPropertyChangeListener(mRulerListener);
-        List guides = getGuides();
+        List<InstallOptionsGuide> guides = getGuides();
         for (int i = 0; i < guides.size(); i++) {
-            ((InstallOptionsGuide)guides.get(i)).addPropertyChangeListener(mGuideListener);
+            (guides.get(i)).addPropertyChangeListener(mGuideListener);
         }
     }
 
-    public List getAttachedModelObjects(Object guide)
+    @Override
+	public List<InstallOptionsWidget> getAttachedModelObjects(Object guide)
     {
-        return new ArrayList(((InstallOptionsGuide)guide).getWidgets());
+        return new ArrayList<InstallOptionsWidget>(((InstallOptionsGuide)guide).getWidgets());
     }
 
-    public Command getCreateGuideCommand(int position)
+    @Override
+	public Command getCreateGuideCommand(int position)
     {
         return new CreateGuideCommand(mRuler, position);
     }
 
-    public Command getDeleteGuideCommand(Object guide)
+    @Override
+	public Command getDeleteGuideCommand(Object guide)
     {
         return new DeleteGuideCommand((InstallOptionsGuide)guide, mRuler);
     }
 
-    public Command getMoveGuideCommand(Object guide, int pDelta)
+    @Override
+	public Command getMoveGuideCommand(Object guide, int pDelta)
     {
         return new MoveGuideCommand((InstallOptionsGuide)guide, pDelta);
     }
@@ -105,38 +110,44 @@ public class InstallOptionsRulerProvider extends RulerProvider
         return (guide.isHorizontal()?FigureUtility.dialogUnitsToPixelsY(guide.getPosition(),f):FigureUtility.dialogUnitsToPixelsX(guide.getPosition(),f));
     }
 
-    public int[] getGuidePositions()
+    @Override
+	public int[] getGuidePositions()
     {
-        List guides = getGuides();
+        List<InstallOptionsGuide> guides = getGuides();
         Font f = FontUtility.getInstallOptionsFont();
         int[] result = new int[guides.size()];
         for (int i = 0; i < guides.size(); i++) {
-            result[i] = convertGuidePosition(f,(InstallOptionsGuide)guides.get(i));
+            result[i] = convertGuidePosition(f,guides.get(i));
         }
         return result;
     }
 
-    public Object getRuler()
+    @Override
+	public Object getRuler()
     {
         return mRuler;
     }
 
-    public int getUnit()
+    @Override
+	public int getUnit()
     {
         return mRuler.getUnit();
     }
 
-    public void setUnit(int newUnit)
+    @Override
+	public void setUnit(int newUnit)
     {
         mRuler.setUnit(newUnit);
     }
 
-    public int getGuidePosition(Object guide)
+    @Override
+	public int getGuidePosition(Object guide)
     {
         return convertGuidePosition(FontUtility.getInstallOptionsFont(),(InstallOptionsGuide)guide);
     }
 
-    public List getGuides()
+    @Override
+	public List<InstallOptionsGuide> getGuides()
     {
         return mRuler.getGuides();
     }

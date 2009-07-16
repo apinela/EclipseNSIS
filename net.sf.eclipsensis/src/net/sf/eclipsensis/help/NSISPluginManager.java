@@ -36,8 +36,8 @@ public class NSISPluginManager implements INSISConstants
 
     };
 
-    private Map mDefaultPluginsMap = null;
-    private Map mCustomPluginsMap = new HashMap();
+    private Map<String, PluginInfo> mDefaultPluginsMap = null;
+    private Map<File, Map<String, PluginInfo>> mCustomPluginsMap = new HashMap<File, Map<String, PluginInfo>>();
     private File mCacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),NSISPluginManager.class.getName()+".Plugins.ser"); //$NON-NLS-1$
     public static final Pattern PLUGIN_CALL_PATTERN=Pattern.compile("([a-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\+\\,\\=\\[\\]]+)::([a-z_][a-z0-9_]*)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
@@ -55,7 +55,7 @@ public class NSISPluginManager implements INSISConstants
                 if(IOUtility.isValidDirectory(nsisPluginsDir)) {
                     if(mCacheFile.exists()) {
                         try {
-                            mDefaultPluginsMap = (Map)IOUtility.readObject(mCacheFile);
+                            mDefaultPluginsMap = IOUtility.readObject(mCacheFile);
                         }
                         catch (Exception e) {
                             mDefaultPluginsMap = null;
@@ -64,7 +64,7 @@ public class NSISPluginManager implements INSISConstants
 
                     boolean changed = false;
                     if(mDefaultPluginsMap == null) {
-                        mDefaultPluginsMap = new CaseInsensitiveMap();
+                        mDefaultPluginsMap = new CaseInsensitiveMap<PluginInfo>();
                         changed = true;
                     }
 
@@ -85,15 +85,15 @@ public class NSISPluginManager implements INSISConstants
 
     public void loadPlugins(File dir)
     {
-        Map pluginsMap = (Map)mCustomPluginsMap.get(dir);
+        Map<String, PluginInfo> pluginsMap = mCustomPluginsMap.get(dir);
         if(pluginsMap == null) {
-            pluginsMap = new CaseInsensitiveMap();
+            pluginsMap = new CaseInsensitiveMap<PluginInfo>();
             mCustomPluginsMap.put(dir,pluginsMap);
         }
         loadPlugins(dir,pluginsMap);
     }
 
-    private boolean loadPlugins(File dir, Map pluginsMap)
+    private boolean loadPlugins(File dir, Map<String, PluginInfo> pluginsMap)
     {
         boolean changed = false;
         File[] pluginFiles = dir.listFiles(PLUGIN_FILE_FILTER);
@@ -102,7 +102,7 @@ public class NSISPluginManager implements INSISConstants
             String name = pluginFiles[i].getName();
             name = name.substring(0,name.length()-NSIS_PLUGINS_EXTENSION_LENGTH);
             set.add(name);
-            PluginInfo pi = (PluginInfo)pluginsMap.get(name);
+            PluginInfo pi = pluginsMap.get(name);
             if(pi == null || pi.getTimeStamp() != pluginFiles[i].lastModified()) {
                 PluginInfo newPi = loadPluginInfo(name, pluginFiles[i]);
                 if(newPi != null) {
@@ -116,8 +116,8 @@ public class NSISPluginManager implements INSISConstants
             }
         }
         if(pluginsMap.size() != pluginFiles.length) {
-            for (Iterator iter = pluginsMap.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry entry = (Map.Entry)iter.next();
+            for (Iterator<Map.Entry<String, PluginInfo>> iter = pluginsMap.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry<String, PluginInfo> entry = iter.next();
                 if(!set.contains(entry.getKey())) {
                     iter.remove();
                     changed = true;
@@ -146,13 +146,13 @@ public class NSISPluginManager implements INSISConstants
 
     public String[] getDefaultPluginNames()
     {
-        return (mDefaultPluginsMap == null?Common.EMPTY_STRING_ARRAY:(String[])mDefaultPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY));
+        return (mDefaultPluginsMap == null?Common.EMPTY_STRING_ARRAY:mDefaultPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY));
     }
 
     public String[] getDefaultPluginExports(String name)
     {
         if (mDefaultPluginsMap != null) {
-            PluginInfo pi = (PluginInfo)mDefaultPluginsMap.get(name);
+            PluginInfo pi = mDefaultPluginsMap.get(name);
             if (pi == null) {
                 File pluginFile = new File(new File(NSISPreferences.INSTANCE.getNSISHome(), NSIS_PLUGINS_LOCATION), name + NSIS_PLUGINS_EXTENSION);
                 if (IOUtility.isValidFile(pluginFile)) {
@@ -200,31 +200,31 @@ public class NSISPluginManager implements INSISConstants
 
     public String[] getPluginNames(File dir)
     {
-        Map map = (Map)mCustomPluginsMap.get(dir);
+    	Map<String, PluginInfo> map = mCustomPluginsMap.get(dir);
         if(map == null) {
             loadPlugins(dir);
-            map = (Map)mCustomPluginsMap.get(dir);
+            map = mCustomPluginsMap.get(dir);
         }
         if(map != null) {
-            return (String[])map.keySet().toArray(Common.EMPTY_STRING_ARRAY);
+            return map.keySet().toArray(Common.EMPTY_STRING_ARRAY);
         }
         return null;
     }
 
     public String[] getPluginExports(File dir, String name)
     {
-        Map map = (Map)mCustomPluginsMap.get(dir);
+        Map<String, PluginInfo> map = mCustomPluginsMap.get(dir);
         if(map == null) {
             loadPlugins(dir);
-            map = (Map)mCustomPluginsMap.get(dir);
+            map = mCustomPluginsMap.get(dir);
         }
         if(map != null) {
-            PluginInfo pi = (PluginInfo)map.get(name);
+            PluginInfo pi = map.get(name);
             if(pi == null) {
                 File pluginFile = new File(dir,name+NSIS_PLUGINS_EXTENSION);
                 if(IOUtility.isValidFile(pluginFile)) {
                     pi = loadPluginInfo(name, pluginFile);
-                    map.put(name,pi);
+                    map.put(pi.getName(),pi);
                 }
             }
             if(pi != null) {

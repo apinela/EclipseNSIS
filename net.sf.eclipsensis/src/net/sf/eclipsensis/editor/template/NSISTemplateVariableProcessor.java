@@ -25,11 +25,8 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
     private char[] mAutoActivationChars = null;
     private boolean mInsertTemplateVariablesMode = false;
 
-    private static Comparator mTemplateVariableProposalComparator= new Comparator() {
-        public int compare(Object o1, Object o2) {
-            NSISTemplateVariableProposal proposal0= (NSISTemplateVariableProposal)o1;
-            NSISTemplateVariableProposal proposal1= (NSISTemplateVariableProposal)o2;
-
+    private static Comparator<NSISTemplateVariableProposal> mTemplateVariableProposalComparator= new Comparator<NSISTemplateVariableProposal>() {
+        public int compare(NSISTemplateVariableProposal proposal0, NSISTemplateVariableProposal proposal1) {
             return proposal0.getDisplayString().compareTo(proposal1.getDisplayString());
         }
     };
@@ -75,9 +72,10 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
     /*
      * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
      */
-    public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset)
+    @Override
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset)
     {
-        List proposals= new ArrayList();
+        List<NSISTemplateVariableProposal> proposals= new ArrayList<NSISTemplateVariableProposal>();
         if (mContextType != null) {
             String text= viewer.getDocument().get();
             int start= getStart(text, documentOffset);
@@ -92,7 +90,7 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
                 int offset= start;
                 int length= selectionEnd - start;
 
-                for (Iterator iterator= mContextType.resolvers(); iterator.hasNext(); ) {
+                for (Iterator<?> iterator= mContextType.resolvers(); iterator.hasNext(); ) {
                     TemplateVariableResolver variable= (TemplateVariableResolver) iterator.next();
 
                     if (Common.isEmpty(prefix) || variable.getType().startsWith(prefix)) {
@@ -103,7 +101,7 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
                 Collections.sort(proposals, mTemplateVariableProposalComparator);
             }
         }
-        ICompletionProposal[] completionProposals = (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+        ICompletionProposal[] completionProposals = proposals.toArray(new ICompletionProposal[proposals.size()]);
         if(!mInsertTemplateVariablesMode) {
             completionProposals = (ICompletionProposal[])Common.appendArray(completionProposals, super.computeCompletionProposals(viewer, documentOffset));
         }
@@ -152,7 +150,7 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
     private IRegion[] parsePattern(String string)
     {
         int state= TEXT;
-        ArrayList list = new ArrayList();
+        ArrayList<Region> list = new ArrayList<Region>();
 
         int offset = -1;
         for (int i= 0; i != string.length(); i++) {
@@ -204,12 +202,13 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
             }
         }
 
-        return (IRegion[])list.toArray(EMPTY_IREGION_ARRAY);
+        return list.toArray(EMPTY_IREGION_ARRAY);
     }
     /*
      * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
      */
-    public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset)
+    @Override
+	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset)
     {
         return null;
     }
@@ -217,7 +216,8 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
     /*
      * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
      */
-    public char[] getCompletionProposalAutoActivationCharacters()
+    @Override
+	public char[] getCompletionProposalAutoActivationCharacters()
     {
         return mAutoActivationChars;
     }
@@ -225,7 +225,8 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
     /*
      * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
      */
-    public char[] getContextInformationAutoActivationCharacters()
+    @Override
+	public char[] getContextInformationAutoActivationCharacters()
     {
         return null;
     }
@@ -233,7 +234,8 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
     /*
      * @see IContentAssistProcessor#getErrorMessage()
      */
-    public String getErrorMessage()
+    @Override
+	public String getErrorMessage()
     {
         return null;
     }
@@ -241,7 +243,8 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
     /*
      * @see IContentAssistProcessor#getContextInformationValidator()
      */
-    public IContextInformationValidator getContextInformationValidator()
+    @Override
+	public IContextInformationValidator getContextInformationValidator()
     {
         return null;
     }

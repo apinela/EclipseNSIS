@@ -19,9 +19,11 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.internal.ui.rulers.DragGuidePolicy;
 
+@SuppressWarnings("restriction")
 public class InstallOptionsDragGuidePolicy extends DragGuidePolicy
 {
-    protected boolean isMoveValid(int zoomedPosition)
+	@Override
+	protected boolean isMoveValid(int zoomedPosition)
     {
         if(zoomedPosition < 0) {
             return false;
@@ -31,7 +33,7 @@ public class InstallOptionsDragGuidePolicy extends DragGuidePolicy
             return false;
         }
         if(super.isMoveValid(zoomedPosition)) {
-            Iterator i = getGuideEditPart().getRulerProvider().getAttachedEditParts(getHost().getModel(),
+            Iterator<?> i = getGuideEditPart().getRulerProvider().getAttachedEditParts(getHost().getModel(),
                     ((InstallOptionsRulerEditPart)getHost().getParent()).getDiagramViewer()).iterator();
 
             int delta = zoomedPosition - getGuideEditPart().getZoomedPosition();

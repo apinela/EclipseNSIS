@@ -56,7 +56,8 @@ public class NSISConsoleLine
         setLineNum(lineNum);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return mText;
     }

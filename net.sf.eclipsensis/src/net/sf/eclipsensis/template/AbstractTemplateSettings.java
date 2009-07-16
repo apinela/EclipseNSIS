@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.template;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.text.Collator;
 import java.util.*;
 import java.util.List;
@@ -32,9 +33,9 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public abstract class AbstractTemplateSettings extends Composite
+public abstract class AbstractTemplateSettings<T extends ITemplate> extends Composite
 {
-    private AbstractTemplateManager mTemplateManager = null;
+    private AbstractTemplateManager<T> mTemplateManager = null;
 
     private CheckboxTableViewer mTableViewer = null;
     private Button mAddButton;
@@ -50,7 +51,7 @@ public abstract class AbstractTemplateSettings extends Composite
     /**
      *
      */
-    public AbstractTemplateSettings(Composite parent, int style, AbstractTemplateManager manager)
+    public AbstractTemplateSettings(Composite parent, int style, AbstractTemplateManager<T> manager)
     {
         super(parent, style);
         mTemplateManager = manager;
@@ -62,7 +63,7 @@ public abstract class AbstractTemplateSettings extends Composite
         return mTableViewer;
     }
 
-    protected AbstractTemplateManager getTemplateManager()
+    protected AbstractTemplateManager<T> getTemplateManager()
     {
         return mTemplateManager;
     }
@@ -111,10 +112,11 @@ public abstract class AbstractTemplateSettings extends Composite
             /* (non-Javadoc)
              * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
              */
-            public Object[] getElements(Object inputElement)
+            @Override
+			public Object[] getElements(Object inputElement)
             {
-                if(inputElement != null && inputElement instanceof AbstractTemplateManager) {
-                    return ((AbstractTemplateManager)inputElement).getTemplates().toArray();
+                if(inputElement != null && inputElement.equals(mTemplateManager)) {
+                    return mTemplateManager.getTemplates().toArray();
                 }
                 return super.getElements(inputElement);
             }
@@ -125,10 +127,12 @@ public abstract class AbstractTemplateSettings extends Composite
         mTableViewer.setSorter(new ViewerSorter(collator));
 
         ViewerFilter filter = new ViewerFilter() {
-            public boolean select(Viewer viewer, Object parentElement, Object element)
+            @Override
+			@SuppressWarnings("unchecked")
+			public boolean select(Viewer viewer, Object parentElement, Object element)
             {
-                if(element instanceof ITemplate) {
-                    ITemplate template = (ITemplate)element;
+                if(element != null && mTemplateManager.getTemplateClass().isAssignableFrom(element.getClass())) {
+                    T template = (T)element;
                     return template.isAvailable() && !template.isDeleted();
                 }
                 return true;
@@ -169,9 +173,10 @@ public abstract class AbstractTemplateSettings extends Composite
         });
 
         mTableViewer.addCheckStateListener(new ICheckStateListener() {
-            public void checkStateChanged(CheckStateChangedEvent event) {
-                ITemplate oldTemplate= (ITemplate)event.getElement();
-                ITemplate newTemplate= (ITemplate)oldTemplate.clone();
+            @SuppressWarnings("unchecked")
+			public void checkStateChanged(CheckStateChangedEvent event) {
+                T oldTemplate= (T)event.getElement();
+                T newTemplate= (T)oldTemplate.clone();
                 newTemplate.setEnabled(!oldTemplate.isEnabled());
                 getTemplateManager().updateTemplate(oldTemplate, newTemplate);
                 mTableViewer.refresh(true);
@@ -313,17 +318,18 @@ public abstract class AbstractTemplateSettings extends Composite
         return separator;
     }
 
-    private ITemplate[] getEnabledTemplates()
+    @SuppressWarnings("unchecked")
+	private T[] getEnabledTemplates()
     {
-        List enabled= new ArrayList();
-        Collection coll = mTemplateManager.getTemplates();
-        for (Iterator iter = coll.iterator(); iter.hasNext(); ) {
-            ITemplate template = (ITemplate)iter.next();
+        List<T> enabled= new ArrayList<T>();
+        Collection<T> coll = mTemplateManager.getTemplates();
+        for (Iterator<T> iter = coll.iterator(); iter.hasNext(); ) {
+            T template = iter.next();
             if (template.isEnabled() && !template.isDeleted()) {
                 enabled.add(template);
             }
         }
-        return (ITemplate[]) enabled.toArray(new ITemplate[enabled.size()]);
+        return enabled.toArray((T[])Array.newInstance(mTemplateManager.getTemplateClass(), enabled.size()));
     }
 
     private void doSelectionChanged()
@@ -335,12 +341,13 @@ public abstract class AbstractTemplateSettings extends Composite
     /**
      * Updates the description.
      */
-    protected void updateViewerInput()
+    @SuppressWarnings("unchecked")
+	protected void updateViewerInput()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
         if (selection.size() == 1) {
-            ITemplate template= (ITemplate) selection.getFirstElement();
+            T template= (T) selection.getFirstElement();
             mDescriptionText.setText(template.getDescription());
         }
         else {
@@ -348,9 +355,10 @@ public abstract class AbstractTemplateSettings extends Composite
         }
     }
 
-    private void duplicate()
+    @SuppressWarnings("unchecked")
+	private void duplicate()
     {
-        ITemplate template = (ITemplate)((ITemplate)((IStructuredSelection)getTableViewer().getSelection()).getFirstElement()).clone();
+        T template = (T)((T)((IStructuredSelection)getTableViewer().getSelection()).getFirstElement()).clone();
         template.setName(EclipseNSISPlugin.getFormattedString("template.settings.duplicate.format",new Object[] {template.getName()})); //$NON-NLS-1$
         add(template);
         edit();
@@ -358,7 +366,7 @@ public abstract class AbstractTemplateSettings extends Composite
 
     private void add()
     {
-        ITemplate template = createTemplate(""); //$NON-NLS-1$
+        T template = createTemplate(""); //$NON-NLS-1$
         Dialog dialog= createDialog(template);
         if (dialog.open() != Window.CANCEL) {
             add(template);
@@ -368,7 +376,7 @@ public abstract class AbstractTemplateSettings extends Composite
     /**
      * @param template
      */
-    private void add(ITemplate template)
+    private void add(T template)
     {
         getTemplateManager().addTemplate(template);
         getTableViewer().refresh(true);
@@ -379,15 +387,16 @@ public abstract class AbstractTemplateSettings extends Composite
     /**
      * Updates the buttons.
      */
-    protected void updateButtons()
+    @SuppressWarnings("unchecked")
+	protected void updateButtons()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
         int selectionCount= selection.size();
         int itemCount= mTableViewer.getTable().getItemCount();
         boolean canRestore= mTemplateManager.canRestore();
         boolean canRevert= false;
-        for (Iterator it= selection.iterator(); it.hasNext();) {
-            if(mTemplateManager.canRevert((ITemplate)it.next())) {
+        for (Iterator<?> it= selection.iterator(); it.hasNext();) {
+            if(mTemplateManager.canRevert((T)it.next())) {
                 canRevert= true;
                 break;
             }
@@ -401,7 +410,8 @@ public abstract class AbstractTemplateSettings extends Composite
         mRevertButton.setEnabled(canRevert);
     }
 
-    private void edit()
+    @SuppressWarnings("unchecked")
+	private void edit()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
@@ -410,13 +420,14 @@ public abstract class AbstractTemplateSettings extends Composite
             return;
         }
 
-        ITemplate oldTemplate= (ITemplate)selection.getFirstElement();
+        T oldTemplate= (T)selection.getFirstElement();
         edit(oldTemplate);
     }
 
-    private void edit(ITemplate oldTemplate)
+    @SuppressWarnings("unchecked")
+	private void edit(T oldTemplate)
     {
-        ITemplate newTemplate = (ITemplate)oldTemplate.clone();
+        T newTemplate = (T)oldTemplate.clone();
         Dialog dialog= createDialog(newTemplate);
         if (dialog.open() == Window.OK) {
             if(updateTemplate(oldTemplate, newTemplate)) {
@@ -428,7 +439,7 @@ public abstract class AbstractTemplateSettings extends Composite
         }
     }
 
-    private boolean updateTemplate(ITemplate oldTemplate, ITemplate template)
+    private boolean updateTemplate(T oldTemplate, T template)
     {
         boolean createnew = false;
         if((!oldTemplate.getName().equals(template.getName()))) {
@@ -458,11 +469,11 @@ public abstract class AbstractTemplateSettings extends Composite
         try {
             File file= new File(path);
             if (file.exists()) {
-                Collection coll = mTemplateManager.getReaderWriter().import$(file);
+                Collection<T> coll = mTemplateManager.getReaderWriter().import$(file);
                 if(!Common.isEmptyCollection(coll)) {
-                    for (Iterator iter=coll.iterator(); iter.hasNext(); ) {
-                        ITemplate template = (ITemplate)iter.next();
-                        ITemplate oldTemplate = null;
+                    for (Iterator<T> iter=coll.iterator(); iter.hasNext(); ) {
+                        T template = iter.next();
+                        T oldTemplate = null;
                         if(template.getId() != null) {
                             oldTemplate = mTemplateManager.getTemplate(template.getId());
                         }
@@ -489,7 +500,7 @@ public abstract class AbstractTemplateSettings extends Composite
     private void export()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
-        Collection templates= selection.toList();
+        Collection<T> templates= Common.makeGenericList(mTemplateManager.getTemplateClass(), selection.toList());
         FileDialog dialog= new FileDialog(getShell(), SWT.SAVE);
         dialog.setText(EclipseNSISPlugin.getResourceString("template.settings.export.title")); //$NON-NLS-1$
         dialog.setFilterExtensions(new String[] {EclipseNSISPlugin.getResourceString("template.settings.import.extension")}); //$NON-NLS-1$
@@ -512,14 +523,15 @@ public abstract class AbstractTemplateSettings extends Composite
         }
     }
 
-    private void remove()
+    @SuppressWarnings("unchecked")
+	private void remove()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
         if(!selection.isEmpty()) {
-            Iterator elements= selection.iterator();
+            Iterator<?> elements= selection.iterator();
             while (elements.hasNext()) {
-                ITemplate template= (ITemplate) elements.next();
+                T template= (T) elements.next();
                 mTemplateManager.removeTemplate(template);
             }
 
@@ -535,14 +547,15 @@ public abstract class AbstractTemplateSettings extends Composite
         updateButtons();
     }
 
-    private void revert()
+    @SuppressWarnings("unchecked")
+	private void revert()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
         if(!selection.isEmpty()) {
-            ArrayList list = new ArrayList();
-            for (Iterator iter= selection.iterator(); iter.hasNext(); ) {
-                ITemplate temp = mTemplateManager.revert((ITemplate) iter.next());
+            ArrayList<T> list = new ArrayList<T>();
+            for (Iterator<?> iter= selection.iterator(); iter.hasNext(); ) {
+                T temp = mTemplateManager.revert((T) iter.next());
                 if(temp != null) {
                     list.add(temp);
                 }
@@ -590,7 +603,7 @@ public abstract class AbstractTemplateSettings extends Composite
     }
 
     protected abstract boolean canAdd();
-    protected abstract ITemplate createTemplate(String name);
-    protected abstract Dialog createDialog(ITemplate newTemplate);
+    protected abstract T createTemplate(String name);
+    protected abstract Dialog createDialog(T newTemplate);
     protected abstract Image getShellImage();
 }

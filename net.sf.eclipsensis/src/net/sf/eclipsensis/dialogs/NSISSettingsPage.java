@@ -30,13 +30,15 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
-    protected final Control createContents(Composite parent)
+    @Override
+	protected final Control createContents(Composite parent)
     {
         mSettingsEditor = createSettingsEditor();
         return mSettingsEditor.createControl(parent);
     }
 
-    public void createControl(Composite parent)
+    @Override
+	public void createControl(Composite parent)
     {
         setDescription(getPageDescription());
         super.createControl(parent);
@@ -46,7 +48,8 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
-    public final boolean performOk()
+    @Override
+	public final boolean performOk()
     {
         if(super.performOk()) {
             return mSettingsEditor.performApply();
@@ -54,7 +57,8 @@ public abstract class NSISSettingsPage extends PropertyPage implements IWorkbenc
         return false;
     }
 
-    protected final void performDefaults()
+    @Override
+	protected final void performDefaults()
     {
         super.performDefaults();
         mSettingsEditor.performDefaults();

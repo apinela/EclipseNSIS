@@ -10,45 +10,111 @@
 package net.sf.eclipsensis.editor;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.ResourceBundle;
+import java.util.Set;
 
-import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.actions.*;
-import net.sf.eclipsensis.editor.outline.*;
-import net.sf.eclipsensis.editor.text.*;
-import net.sf.eclipsensis.help.*;
-import net.sf.eclipsensis.help.commands.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.actions.NSISAction;
+import net.sf.eclipsensis.actions.NSISScriptAction;
+import net.sf.eclipsensis.editor.outline.NSISContentOutlinePage;
+import net.sf.eclipsensis.editor.outline.NSISOutlineContentProvider;
+import net.sf.eclipsensis.editor.outline.NSISOutlineElement;
+import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
+import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.help.NSISHelpURLProvider;
+import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.help.commands.NSISCommand;
+import net.sf.eclipsensis.help.commands.NSISCommandDialog;
+import net.sf.eclipsensis.help.commands.NSISCommandResult;
+import net.sf.eclipsensis.help.commands.NSISCommandTransfer;
 import net.sf.eclipsensis.makensis.MakeNSISResults;
-import net.sf.eclipsensis.settings.*;
+import net.sf.eclipsensis.settings.INSISEditorPreferenceConstants;
+import net.sf.eclipsensis.settings.INSISHomeListener;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.startup.FileAssociationChecker;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.HTMLExporter;
+import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.Mutex;
+import net.sf.eclipsensis.util.NSISCompileTestUtility;
+import net.sf.eclipsensis.util.RegistryImporter;
 
 import org.eclipse.core.internal.filesystem.local.LocalFile;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.IRewriteTarget;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.InformationPresenter;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.text.source.projection.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.projection.IProjectionListener;
+import org.eclipse.jface.text.source.projection.ProjectionSupport;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dnd.IDragAndDropService;
-import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.IFoldingCommandIds;
+import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
+import org.eclipse.ui.texteditor.TextEditorAction;
+import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
+@SuppressWarnings("restriction")
 public class NSISEditor extends TextEditor implements INSISConstants, INSISEditorPreferenceConstants, INSISHomeListener, ISelectionChangedListener, IProjectionListener
 {
-    private Set mActions = new HashSet();
+    private Set<NSISAction> mActions = new HashSet<NSISAction>();
     private ProjectionSupport mProjectionSupport;
     private NSISContentOutlinePage mOutlinePage;
     private NSISOutlineContentProvider mOutlineContentProvider;
@@ -165,7 +231,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeKeyBindingScopes()
      */
-    protected void initializeKeyBindingScopes()
+    @Override
+	protected void initializeKeyBindingScopes()
     {
         setKeyBindingScopes(new String[] { NSIS_EDITOR_CONTEXT_ID });
     }
@@ -173,7 +240,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
     /*
      * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createPartControl(org.eclipse.swt.widgets.Composite)
      */
-    public void createPartControl(Composite parent)
+    @Override
+	public void createPartControl(Composite parent)
     {
         super.createPartControl(parent);
         ProjectionViewer viewer= (ProjectionViewer) getSourceViewer();
@@ -194,7 +262,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         updateAnnotations();
     }
 
-    protected void createActions()
+    @Override
+	protected void createActions()
     {
         super.createActions();
         ResourceBundle resourceBundle = EclipseNSISPlugin.getDefault().getResourceBundle();
@@ -289,7 +358,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         setAction(INSISEditorConstants.FOLDING_COLLAPSE_ALL, a);
     }
 
-    protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+    @Override
+	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
         super.rulerContextMenuAboutToShow(menu);
         IMenuManager foldingMenu= new MenuManager(EclipseNSISPlugin.getResourceString("folding.menu.label"), "net.sf.eclipsensis.projection"); //$NON-NLS-1$ //$NON-NLS-2$
         menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
@@ -302,7 +372,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         foldingMenu.add(action);
     }
 
-    public void dispose()
+    @Override
+	public void dispose()
     {
         mCurrentPosition = null;
         if (mOutlinePage != null) {
@@ -323,7 +394,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         super.dispose();
     }
 
-    public void doSetInput(IEditorInput input) throws CoreException
+    @Override
+	public void doSetInput(IEditorInput input) throws CoreException
     {
         IEditorInput oldInput = getEditorInput();
         super.doSetInput(input);
@@ -339,7 +411,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
     /*
      * @see org.eclipse.ui.texteditor.ExtendedTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
      */
-    protected void editorContextMenuAboutToShow(IMenuManager menu)
+    @Override
+	protected void editorContextMenuAboutToShow(IMenuManager menu)
     {
         super.editorContextMenuAboutToShow(menu);
         menu.add(new Separator());
@@ -371,7 +444,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
     /*
      * @see org.eclipse.ui.texteditor.ExtendedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
      */
-    protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles)
+    @Override
+	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles)
     {
         fAnnotationAccess= createAnnotationAccess();
         fOverviewRuler= createOverviewRuler(getSharedColors());
@@ -396,7 +470,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
 
     //This is copied from AbstractTextEditor so that we can support
     //text as well as custom drag & drop
-    protected void installTextDragAndDrop(ISourceViewer viewer)
+    @Override
+	protected void installTextDragAndDrop(ISourceViewer viewer)
     {
         if (mTextDragAndDropEnabled || viewer == null) {
             return;
@@ -423,7 +498,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         source.addDragListener(new DragSourceAdapter() {
             String mSelectedText;
             Point mSelection;
-            public void dragStart(DragSourceEvent event)
+            @Override
+			public void dragStart(DragSourceEvent event)
             {
                 mTextDragAndDropToken= null;
 
@@ -454,13 +530,15 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                 }
             }
 
-            public void dragSetData(DragSourceEvent event)
+            @Override
+			public void dragSetData(DragSourceEvent event)
             {
                 event.data= mSelectedText;
                 mTextDragAndDropToken= this; // Can be any non-null object
             }
 
-            public void dragFinished(DragSourceEvent event)
+            @Override
+			public void dragFinished(DragSourceEvent event)
             {
                 try {
                     if (event.detail == DND.DROP_MOVE && validateEditorInputState()) {
@@ -491,7 +569,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         DropTargetListener dropTargetListener= new DropTargetAdapter() {
             private Point mSelection;
 
-            public void dragEnter(DropTargetEvent event)
+            @Override
+			public void dragEnter(DropTargetEvent event)
             {
                 if(NSISCommandTransfer.INSTANCE.isSupportedType(event.currentDataType) ||
                    FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
@@ -518,7 +597,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                 }
             }
 
-            public void dragOperationChanged(DropTargetEvent event)
+            @Override
+			public void dragOperationChanged(DropTargetEvent event)
             {
                 if (NSISCommandTransfer.INSTANCE.isSupportedType(event.currentDataType) ||
                     FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
@@ -541,7 +621,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                 }
             }
 
-            public void dragOver(DropTargetEvent event)
+            @Override
+			public void dragOver(DropTargetEvent event)
             {
                 if (NSISCommandTransfer.INSTANCE.isSupportedType(event.currentDataType) ||
                     FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
@@ -584,7 +665,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                 }
             }
 
-            public void drop(DropTargetEvent event)
+            @Override
+			public void drop(DropTargetEvent event)
             {
                 if (NSISCommandTransfer.INSTANCE.isSupportedType(event.currentDataType)) {
                     insertCommand((NSISCommand)event.data, false);
@@ -602,7 +684,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                             if(dialog.open() != 0) {
                                 break;
                             }
-                        case DROP_EXTERNAL_FILES_OPEN_IN_EDITORS:
+	                        //$FALL-THROUGH$
+						case DROP_EXTERNAL_FILES_OPEN_IN_EDITORS:
                             openFiles((String[])event.data);
                             return;
                         default:
@@ -659,7 +742,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
 
     //This is copied from AbstractTextEditor so that we can support
     //text as well as custom drag & drop
-    protected void uninstallTextDragAndDrop(ISourceViewer viewer)
+    @Override
+	protected void uninstallTextDragAndDrop(ISourceViewer viewer)
     {
         mTextDragAndDropEnabled= false;
     }
@@ -790,7 +874,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
 //        }
 //    }
 
-    private void openFiles(String[] files)
+	private void openFiles(String[] files)
     {
         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
         for (int i = 0; i < files.length; i++) {
@@ -971,7 +1055,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
     /*
      * @see org.eclipse.ui.texteditor.AbstractTextEditor#adjustHighlightRange(int, int)
      */
-    protected void adjustHighlightRange(int offset, int length)
+    @Override
+	protected void adjustHighlightRange(int offset, int length)
     {
         ISourceViewer viewer= getSourceViewer();
         if (viewer instanceof ITextViewerExtension5) {
@@ -991,7 +1076,9 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         }
     }
 
-    public Object getAdapter(Class required)
+    @Override
+    @SuppressWarnings("unchecked")
+	public Object getAdapter(Class required)
     {
         ISourceViewer sourceViewer = getSourceViewer();
         if (IContentOutlinePage.class.equals(required)) {
@@ -1018,7 +1105,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
     /* (non-Javadoc)
      * Method declared on AbstractTextEditor
      */
-    protected void initializeEditor()
+    @Override
+	protected void initializeEditor()
     {
         super.initializeEditor();
         IPreferenceStore preferenceStore = NSISPreferences.INSTANCE.getPreferenceStore();
@@ -1071,8 +1159,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
     public void updateActionsState()
     {
         if(equals(getEditorSite().getPage().getActiveEditor())) {
-            for(Iterator iter=mActions.iterator(); iter.hasNext(); ) {
-                IActionDelegate action = (IActionDelegate)iter.next();
+            for(Iterator<NSISAction> iter=mActions.iterator(); iter.hasNext(); ) {
+                IActionDelegate action = iter.next();
                 if(action instanceof NSISScriptAction) {
                     ((NSISScriptAction)action).updateActionState();
                 }
@@ -1080,17 +1168,19 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         }
     }
 
-    protected String[] collectContextMenuPreferencePages()
+    @Override
+	protected String[] collectContextMenuPreferencePages()
     {
         String[] pages = {EDITOR_PREFERENCE_PAGE_ID, TEMPLATES_PREFERENCE_PAGE_ID, TASKTAGS_PREFERENCE_PAGE_ID};
         return (String[])Common.joinArrays(new Object[]{pages,super.collectContextMenuPreferencePages()});
     }
 
-    protected void performSaveAs(IProgressMonitor progressMonitor)
+    @Override
+	protected void performSaveAs(IProgressMonitor progressMonitor)
     {
         super.performSaveAs(progressMonitor);
         if(equals(getEditorSite().getPage().getActiveEditor())) {
-            NSISAction[] actions = (NSISAction[])mActions.toArray(new NSISAction[mActions.size()]);
+            NSISAction[] actions = mActions.toArray(new NSISAction[mActions.size()]);
             for (int i = 0; i < actions.length; i++) {
                 if (actions[i] instanceof NSISScriptAction) {
                     ((NSISScriptAction)actions[i]).updateInput();
@@ -1103,14 +1193,16 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorSaved()
      */
-    protected void editorSaved()
+    @Override
+	protected void editorSaved()
     {
         super.editorSaved();
         updateOutlinePage();
         updateActionsState();
         WorkspaceModifyOperation op = new WorkspaceModifyOperation()
         {
-            protected void execute(IProgressMonitor monitor)
+            @Override
+			protected void execute(IProgressMonitor monitor)
             {
                 NSISTaskTagUpdater taskTagUpdater = new NSISTaskTagUpdater();
                 updateTaskTagMarkers(taskTagUpdater);
@@ -1253,7 +1345,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         /*
          *  @see org.eclipse.jface.action.IAction#run()
          */
-        public void run()
+        @Override
+		public void run()
         {
             if(NSISHelpURLProvider.getInstance().isNSISHelpAvailable()) {
                 ISourceViewer sourceViewer = getSourceViewer();
@@ -1293,7 +1386,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
             mClickPoint = p;
         }
 
-        protected int computeOffset(ISourceViewer sourceViewer)
+        @Override
+		protected int computeOffset(ISourceViewer sourceViewer)
         {
             if(mClickPoint != null && sourceViewer != null && sourceViewer.getTextWidget() != null) {
                 Point p = sourceViewer.getTextWidget().toControl(mClickPoint);

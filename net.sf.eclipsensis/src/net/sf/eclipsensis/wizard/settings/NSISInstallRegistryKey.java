@@ -31,17 +31,20 @@ public class NSISInstallRegistryKey extends NSISInstallRegistryItem
         NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regkey.type.name"), IMAGE, NSISInstallRegistryKey.class); //$NON-NLS-1$
     }
 
-    protected int getRootKeyInternal()
+    @Override
+	protected int getRootKeyInternal()
     {
         return mRootKey;
     }
 
-    protected String getSubKeyInternal()
+    @Override
+	protected String getSubKeyInternal()
     {
         return mSubKey;
     }
 
-    protected void setRootKeyInternal(int rootKey)
+    @Override
+	protected void setRootKeyInternal(int rootKey)
     {
         if(mRootKey != rootKey) {
             setDirty();
@@ -49,7 +52,8 @@ public class NSISInstallRegistryKey extends NSISInstallRegistryItem
         }
     }
 
-    protected void setSubKeyInternal(String subKey)
+    @Override
+	protected void setSubKeyInternal(String subKey)
     {
         if(!Common.stringsAreEqual(mSubKey, subKey)) {
             setDirty();
@@ -83,7 +87,8 @@ public class NSISInstallRegistryKey extends NSISInstallRegistryItem
         return new NSISInstallRegistryKeyDialog(wizard,this).open() == Window.OK;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -92,7 +97,8 @@ public class NSISInstallRegistryKey extends NSISInstallRegistryItem
         return result;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;

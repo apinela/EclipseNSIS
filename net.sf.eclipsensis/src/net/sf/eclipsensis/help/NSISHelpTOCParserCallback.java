@@ -26,8 +26,8 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
     private static final String ATTR_VALUE_NAME="Name"; //$NON-NLS-1$
 
     private File mLocation;
-    private Map mTopicMap = null;
-    private Map mKeywordHelpMap = new CaseInsensitiveMap();
+    private Map<String,List<String>> mTopicMap = null;
+    private Map<String, String> mKeywordHelpMap = new CaseInsensitiveMap<String>();
     private boolean mCanProcess = false;
     private String mLocal = null;
     private String mName = null;
@@ -35,7 +35,7 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
     private NSISHelpTOC.NSISHelpTOCNode mParentNode = null;
     private NSISHelpTOC.NSISHelpTOCNode mCurrentNode = null;
 
-    public NSISHelpTOCParserCallback(File location, Map topicMap)
+    public NSISHelpTOCParserCallback(File location, Map<String,List<String>> topicMap)
     {
         mLocation = location;
         mTopicMap = topicMap;
@@ -44,14 +44,15 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
     /* (non-Javadoc)
      * @see javax.swing.text.html.HTMLEditorKit.ParserCallback#handleEndTag(javax.swing.text.html.HTML.Tag, int)
      */
-    public void handleEndTag(Tag t, int pos)
+    @Override
+	public void handleEndTag(Tag t, int pos)
     {
         if(t.equals(Tag.OBJECT) && mCanProcess) {
             if(mLocal != null && mName != null) {
                 if(mTopicMap.containsKey(mName)) {
-                    List keywords = (List)mTopicMap.get(mName);
-                    for (Iterator iter = keywords.iterator(); iter.hasNext();) {
-                        String keyword = (String)iter.next();
+                    List<String> keywords = mTopicMap.get(mName);
+                    for (Iterator<String> iter = keywords.iterator(); iter.hasNext();) {
+                        String keyword = iter.next();
                         if(NSISKeywords.getInstance().isValidKeyword(keyword)) {
                             mKeywordHelpMap.put(keyword, mLocal);
                         }
@@ -106,7 +107,8 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
     /* (non-Javadoc)
      * @see javax.swing.text.html.HTMLEditorKit.ParserCallback#handleSimpleTag(javax.swing.text.html.HTML.Tag, javax.swing.text.MutableAttributeSet, int)
      */
-    public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
+    @Override
+	public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(mCanProcess && t.equals(Tag.PARAM)) {
             if(a.isDefined(Attribute.NAME) && a.isDefined(Attribute.VALUE)) {
@@ -125,7 +127,8 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
     /* (non-Javadoc)
      * @see javax.swing.text.html.HTMLEditorKit.ParserCallback#handleStartTag(javax.swing.text.html.HTML.Tag, javax.swing.text.MutableAttributeSet, int)
      */
-    public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
+    @Override
+	public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(t.equals(Tag.OBJECT)) {
             if(a.isDefined(Attribute.TYPE)) {
@@ -143,7 +146,7 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
     /**
      * @return Returns the keywordMap.
      */
-    public Map getKeywordHelpMap()
+    public Map<String, String> getKeywordHelpMap()
     {
         return mKeywordHelpMap;
     }

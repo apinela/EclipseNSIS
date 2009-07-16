@@ -61,17 +61,20 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
         }
     }
 
-    public boolean isClickThrough()
+    @Override
+	public boolean isClickThrough()
     {
         return true;
     }
 
-    public boolean isDefaultClickThroughFigure()
+    @Override
+	public boolean isDefaultClickThroughFigure()
     {
         return false;
     }
 
-    protected boolean isTransparentAt(int x, int y)
+    @Override
+	protected boolean isTransparentAt(int x, int y)
     {
         if(!mShowDropdown) {
             Rectangle r = mComboFigure.getBounds();
@@ -126,7 +129,8 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
                                 new Rectangle(0,Math.max(0,rect1.height),rect.width,Math.max(0,rect.height-rect1.height))};
     }
 
-    public void setBounds(Rectangle rect)
+    @Override
+	public void setBounds(Rectangle rect)
     {
         Rectangle[] bounds = calculateBounds(rect);
         getLayoutManager().setConstraint(mComboFigure,bounds[0]);
@@ -142,12 +146,12 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
         return mComboFigure.getState();
     }
 
-    public List getListItems()
+    public List<String> getListItems()
     {
         return mListFigure.getListItems();
     }
 
-    public void setListItems(List listItems)
+    public void setListItems(List<String> listItems)
     {
         mListFigure.setListItems(listItems);
     }
@@ -186,13 +190,15 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
             mBounds = bounds;
         }
 
-        public Object getPropertyValue(Object id)
+        @Override
+		@SuppressWarnings("unchecked")
+		public Object getPropertyValue(Object id)
         {
             if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
                 return mBounds;
             }
             else if( InstallOptionsModel.PROPERTY_FLAGS.equals(id)) {
-                List flags = new ArrayList((List)getDelegate().getPropertyValue(id));
+                List<String> flags = new ArrayList<String>((List<String>)getDelegate().getPropertyValue(id));
                 flags.removeAll(SCROLL_FLAGS);
                 return flags;
             }

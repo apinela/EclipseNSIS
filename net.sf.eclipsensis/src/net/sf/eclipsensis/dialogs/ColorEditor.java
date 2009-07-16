@@ -42,7 +42,8 @@ public class ColorEditor {
 
         mButton.setImage(mImage);
         mButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent event) {
+            @Override
+			public void widgetSelected(SelectionEvent event) {
                 ColorDialog colorDialog= new ColorDialog(mButton.getShell());
                 colorDialog.setRGB(mRGB);
                 RGB newColor = colorDialog.open();

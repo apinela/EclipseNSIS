@@ -32,12 +32,14 @@ public class ReorderPartCommand extends Command
         this.newIndex = newIndex;
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         parent.moveChild(child, newIndex);
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         parent.moveChild(child, oldIndex);
     }

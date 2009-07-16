@@ -23,7 +23,8 @@ public class NSISScriptlet extends AbstractNSISScriptElementContainer
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.script.INSISScriptElement#write(net.sf.eclipsensis.script.NSISScriptWriter)
      */
-    public void write(NSISScriptWriter writer)
+    @Override
+	public void write(NSISScriptWriter writer)
     {
         writeElements(writer);
     }
@@ -31,7 +32,8 @@ public class NSISScriptlet extends AbstractNSISScriptElementContainer
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.script.AbstractNSISScriptElementContainer#validateElement(net.sf.eclipsensis.script.INSISScriptElement)
      */
-    protected void validateElement(INSISScriptElement element)
+    @Override
+	protected void validateElement(INSISScriptElement element)
             throws InvalidNSISScriptElementException
     {
     }

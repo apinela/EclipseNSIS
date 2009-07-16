@@ -11,6 +11,8 @@ package net.sf.eclipsensis.installoptions.dnd;
 
 import java.util.*;
 
+import net.sf.eclipsensis.util.Common;
+
 import org.eclipse.gef.*;
 import org.eclipse.gef.commands.*;
 import org.eclipse.gef.dnd.AbstractTransferDropTargetListener;
@@ -24,24 +26,28 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         super(viewer, InstallOptionsTreeViewerTransfer.INSTANCE);
     }
 
-    protected Request createTargetRequest()
+    @Override
+	@SuppressWarnings("unchecked")
+	protected Request createTargetRequest()
     {
         ChangeBoundsRequest request = new ChangeBoundsRequest(RequestConstants.REQ_MOVE);
-        request.setEditParts((List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject());
+        request.setEditParts((List<EditPart>)InstallOptionsTreeViewerTransfer.INSTANCE.getObject());
         return request;
     }
 
-    protected Command getCommand()
+    @Override
+	@SuppressWarnings("unchecked")
+	protected Command getCommand()
     {
         CompoundCommand command = new CompoundCommand();
 
-        Iterator iter = ((List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject()).iterator();
+        Iterator<EditPart> iter = ((List<EditPart>)InstallOptionsTreeViewerTransfer.INSTANCE.getObject()).iterator();
 
         Request  request = getTargetRequest();
         request.setType(isMove() ? RequestConstants.REQ_MOVE : RequestConstants.REQ_ORPHAN);
 
         while (iter.hasNext()) {
-            EditPart editPart = (EditPart)iter.next();
+            EditPart editPart = iter.next();
             command.add(editPart.getCommand(request));
         }
 
@@ -65,14 +71,16 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         return RequestConstants.REQ_ADD;
     }
 
-    protected Collection getExclusionSet() {
-        List selection = getViewer().getSelectedEditParts();
-        List exclude = new ArrayList(selection);
+    @Override
+	protected Collection<EditPart> getExclusionSet() {
+        List<EditPart> selection = Common.makeGenericList(EditPart.class, getViewer().getSelectedEditParts());
+        List<EditPart> exclude = new ArrayList<EditPart>(selection);
         exclude.addAll(includeChildren(selection));
         return exclude;
     }
 
-    protected void handleDragOver()
+    @Override
+	protected void handleDragOver()
     {
         if (InstallOptionsTreeViewerTransfer.INSTANCE.getViewer() != getViewer()) {
             getCurrentEvent().detail = DND.DROP_NONE;
@@ -82,29 +90,31 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         super.handleDragOver();
     }
 
-    protected EditPart getSourceEditPart()
+    @SuppressWarnings("unchecked")
+	protected EditPart getSourceEditPart()
     {
-        List selection = (List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
+        List<EditPart> selection = (List<EditPart>)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
         if (selection == null
           || selection.isEmpty()
           || !(selection.get(0) instanceof EditPart)) {
             return null;
         }
-        return (EditPart)selection.get(0);
+        return selection.get(0);
     }
 
-    protected List includeChildren(List list)
+    protected List<EditPart> includeChildren(List<EditPart> list)
     {
-        List result = new ArrayList();
+        List<EditPart> result = new ArrayList<EditPart>();
         for (int i = 0; i < list.size(); i++) {
-            List children = ((EditPart)list.get(i)).getChildren();
+            List<EditPart> children = Common.makeGenericList(EditPart.class, (list.get(i)).getChildren());
             result.addAll(children);
             result.addAll(includeChildren(children));
         }
         return result;
     }
 
-    public boolean isEnabled(DropTargetEvent event)
+    @Override
+	public boolean isEnabled(DropTargetEvent event)
     {
         if (event.detail != DND.DROP_MOVE) {
             return false;
@@ -112,12 +122,13 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         return super.isEnabled(event);
     }
 
-    protected boolean isMove()
+    @SuppressWarnings("unchecked")
+	protected boolean isMove()
     {
         EditPart source = getSourceEditPart();
-        List selection = (List)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
+        List<EditPart> selection = (List<EditPart>)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
         for (int i = 0; i < selection.size(); i++) {
-            EditPart ep = (EditPart)selection.get(i);
+            EditPart ep = selection.get(i);
             if (ep.getParent() != source.getParent()) {
                 return false;
             }
@@ -125,7 +136,8 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
         return source.getParent() == getTargetEditPart();
     }
 
-    protected void updateTargetRequest()
+    @Override
+	protected void updateTargetRequest()
     {
         ChangeBoundsRequest request = (ChangeBoundsRequest)getTargetRequest();
         request.setLocation(getDropLocation());

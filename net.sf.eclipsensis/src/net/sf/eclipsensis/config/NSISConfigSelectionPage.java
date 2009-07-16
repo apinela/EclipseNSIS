@@ -65,7 +65,8 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
         viewer.setContentProvider(new CollectionContentProvider());
         viewer.setLabelProvider(new LabelProvider() {
             ImageManager mImageManager = EclipseNSISPlugin.getImageManager();
-            public Image getImage(Object element)
+            @Override
+			public Image getImage(Object element)
             {
                 if(element instanceof NSISConfigWizardNode) {
                     NSISConfigWizardDescriptor descriptor = ((NSISConfigWizardNode)element).getDescriptor();
@@ -81,7 +82,8 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
                 return super.getImage(element);
             }
 
-            public String getText(Object element)
+            @Override
+			public String getText(Object element)
             {
                 if(element instanceof NSISConfigWizardNode) {
                     return ((NSISConfigWizardNode)element).getDescriptor().getName();
@@ -105,7 +107,8 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
             }
         });
         viewer.getTable().addSelectionListener(new SelectionAdapter() {
-            public void widgetDefaultSelected(SelectionEvent e)
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e)
             {
                 if(canFlipToNextPage()) {
                     IWizardPage nextPage = getNextPage();
@@ -116,7 +119,7 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
             }
         });
         NSISConfigWizardDescriptor[] wizardDescriptors = NSISConfigWizardRegistry.INSTANCE.getWizardDescriptors();
-        Collection input = new ArrayList();
+        Collection<NSISConfigWizardNode> input = new ArrayList<NSISConfigWizardNode>();
         for (int i = 0; i < wizardDescriptors.length; i++) {
             input.add(new NSISConfigWizardNode(this,wizardDescriptors[i]));
         }

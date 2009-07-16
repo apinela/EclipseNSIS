@@ -18,15 +18,16 @@ import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
 public class CutCommand extends CopyCommand
 {
     private InstallOptionsDialog mParent;
-    private Stack mUndoStack = new Stack();
-    private ArrayList mOriginals = new ArrayList();
+    private Stack<CutInfo> mUndoStack = new Stack<CutInfo>();
+    private List<InstallOptionsWidget> mOriginals = new ArrayList<InstallOptionsWidget>();
 
     public CutCommand()
     {
         super(InstallOptionsPlugin.getResourceString("cut.command.name")); //$NON-NLS-1$
     }
 
-    public void addWidget(InstallOptionsWidget widget)
+    @Override
+	public void addWidget(InstallOptionsWidget widget)
     {
         mOriginals.add(widget);
         super.addWidget(widget);
@@ -37,26 +38,29 @@ public class CutCommand extends CopyCommand
         mParent = parent;
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         Collections.sort(mOriginals, InstallOptionsWidgetComparator.REVERSE_INSTANCE);
         Collections.sort(mCopies, InstallOptionsWidgetComparator.REVERSE_INSTANCE);
         super.execute();
     }
 
-    public void redo()
+    @Override
+	public void redo()
     {
         super.redo();
-        for (Iterator iter = mOriginals.iterator(); iter.hasNext();) {
-            CutInfo cutInfo = new CutInfo((InstallOptionsWidget)iter.next());
+        for (Iterator<InstallOptionsWidget> iter = mOriginals.iterator(); iter.hasNext();) {
+            CutInfo cutInfo = new CutInfo(iter.next());
             cutInfo.cut();
             mUndoStack.push(cutInfo);
         }
     }
-    public void undo()
+    @Override
+	public void undo()
     {
         while(mUndoStack.size() > 0) {
-            CutInfo cutInfo = (CutInfo)mUndoStack.pop();
+            CutInfo cutInfo = mUndoStack.pop();
             cutInfo.uncut();
         }
         super.undo();

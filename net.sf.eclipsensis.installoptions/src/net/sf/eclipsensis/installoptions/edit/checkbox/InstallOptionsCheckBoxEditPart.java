@@ -45,7 +45,9 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
 
     };
 
-    public Object getAdapter(Class key)
+    @SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class key)
     {
         if(IExtendedEditSupport.class.equals(key)) {
             return mExtendedEditSupport;
@@ -53,43 +55,51 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
         return super.getAdapter(key);
     }
 
-    protected String getDirectEditLabelProperty()
+    @Override
+	protected String getDirectEditLabelProperty()
     {
         return "checkbox.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected IInstallOptionsFigure createInstallOptionsFigure()
+    @Override
+	protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new CheckBoxFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
-    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    @Override
+	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new CheckBoxCellEditorLocator((CheckBoxFigure)figure);
     }
 
-    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
+    @Override
+	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
     {
-        return new InstallOptionsCheckBoxEditManager(part, clasz, locator);
+        return new InstallOptionsCheckBoxEditManager(part, locator);
     }
 
-    protected void createEditPolicies()
+    @Override
+	protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsCheckBoxExtendedEditPolicy(this));
     }
 
-    protected String getExtendedEditLabelProperty()
+    @Override
+	protected String getExtendedEditLabelProperty()
     {
         return "checkbox.extended.edit.label"; //$NON-NLS-1$
     }
 
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("checkbox.type.name"); //$NON-NLS-1$
     }
 
-    protected void handleFlagAdded(String flag)
+    @Override
+	protected void handleFlagAdded(String flag)
     {
         if(flag.equals(InstallOptionsModel.FLAGS_RIGHT)) {
             ((CheckBoxFigure)getFigure()).setLeftText(true);
@@ -100,7 +110,8 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
         }
     }
 
-    protected void handleFlagRemoved(String flag)
+    @Override
+	protected void handleFlagRemoved(String flag)
     {
         if(flag.equals(InstallOptionsModel.FLAGS_RIGHT)) {
             ((CheckBoxFigure)getFigure()).setLeftText(false);
@@ -111,7 +122,8 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
         }
     }
 
-    protected void doPropertyChange(PropertyChangeEvent evt)
+    @Override
+	protected void doPropertyChange(PropertyChangeEvent evt)
     {
         if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
             CheckBoxFigure figure2 = (CheckBoxFigure)getFigure();

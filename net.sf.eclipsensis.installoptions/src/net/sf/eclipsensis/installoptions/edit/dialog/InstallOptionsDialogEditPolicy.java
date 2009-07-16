@@ -23,12 +23,14 @@ import org.eclipse.gef.requests.CreateRequest;
 
 public class InstallOptionsDialogEditPolicy extends ContainerEditPolicy implements IInstallOptionsConstants
 {
-    protected Command getCreateCommand(CreateRequest request)
+    @Override
+	protected Command getCreateCommand(CreateRequest request)
     {
         return null;
     }
 
-    public Command getCommand(Request request)
+    @Override
+	public Command getCommand(Request request)
     {
         if(REQ_REORDER_PART.equals(request.getType())) {
             return getReorderPartCommand((ReorderPartRequest)request);
@@ -41,7 +43,7 @@ public class InstallOptionsDialogEditPolicy extends ContainerEditPolicy implemen
     protected Command getReorderPartCommand(ReorderPartRequest request)
     {
         EditPart editpart = request.getEditPart();
-        List children = getHost().getChildren();
+        List<?> children = getHost().getChildren();
         int newIndex = request.getNewIndex();
         //Below is because children order is reversed in this edit part
         int oldIndex = (children.size()-1)-children.indexOf(editpart);

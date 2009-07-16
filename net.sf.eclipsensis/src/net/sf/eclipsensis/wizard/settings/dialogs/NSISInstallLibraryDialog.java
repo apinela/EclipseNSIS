@@ -43,7 +43,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
     private static final String TLB_EXTENSION = ".tlb"; //$NON-NLS-1$
     private static final String EXE_EXTENSION = ".exe"; //$NON-NLS-1$
 
-    private static ArrayList cProperties = new ArrayList();
+    private static List<String> cProperties = new ArrayList<String>();
 
     static {
         cProperties.add("destination"); //$NON-NLS-1$
@@ -73,7 +73,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         mStore.setDefault("x64", false); //$NON-NLS-1$
     }
 
-    protected String checkForErrors()
+    @Override
+	protected String checkForErrors()
     {
         if (!IOUtility.isValidFile(IOUtility.decodePath(mStore.getString("name")))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name"); //$NON-NLS-1$
@@ -91,7 +92,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
      *
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControlContents(Composite parent)
+    @Override
+	protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(3, false);
@@ -174,7 +176,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
 
         final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.shared.library.label", mStore.getBoolean("shared"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb1.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("shared", cb1.getSelection()); //$NON-NLS-1$
                 validate();
@@ -183,7 +186,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
 
         final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.upgrade.reboot.label", mStore.getBoolean("reboot"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb2.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("reboot", cb2.getSelection()); //$NON-NLS-1$
                 validate();
@@ -192,7 +196,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
 
         final Button cb3 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.protected.library.label", mStore.getBoolean("protected"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb3.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("protected", cb3.getSelection()); //$NON-NLS-1$
                 validate();
@@ -204,7 +209,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         if (flag && mWizard.getSettings().getTargetPlatform() == INSISWizardConstants.TARGET_PLATFORM_ANY) {
             final Button cb4 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.x64.library.label", mStore.getBoolean("x64"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
             cb4.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     mStore.setValue("x64", cb4.getSelection()); //$NON-NLS-1$
                     validate();
@@ -214,7 +220,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
 
         final Button cb5 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.refresh.shell.label", mStore.getBoolean("refreshShell"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb5.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("refreshShell", cb5.getSelection()); //$NON-NLS-1$
                 validate();
@@ -223,7 +230,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
 
         final Button cb6 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.unload.libraries.label", mStore.getBoolean("unloadLibraries"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb6.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("unloadLibraries", cb6.getSelection()); //$NON-NLS-1$
                 validate();
@@ -233,7 +241,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         if (flag) {
             final Button cb7 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.ignore.version.label", mStore.getBoolean("x64"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
             cb7.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     mStore.setValue("ignoreVersion", cb7.getSelection()); //$NON-NLS-1$
                     validate();
@@ -244,7 +253,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         if (mWizard.getSettings().isCreateUninstaller()) {
             final Button cb8 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.remove.on.uninstall.label", mStore.getBoolean("removeOnUninstall"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
             cb8.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     mStore.setValue("removeOnUninstall", cb8.getSelection()); //$NON-NLS-1$
                     validate();
@@ -255,7 +265,8 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         return composite;
     }
 
-    protected String getHelpContextId()
+    @Override
+	protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_librarydlg_context"; //$NON-NLS-1$
     }
@@ -265,12 +276,14 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
      *
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
-    protected List getProperties()
+    @Override
+	protected List<String> getProperties()
     {
         return cProperties;
     }
 
-    protected boolean hasRequiredFields()
+    @Override
+	protected boolean hasRequiredFields()
     {
         return true;
     }

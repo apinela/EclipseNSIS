@@ -60,7 +60,8 @@ public class NSISManualConfigWizardPage extends WizardPage
         button.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
         button.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 Shell shell = getShell();
                 DirectoryDialog dialog = new DirectoryDialog(shell);
@@ -78,7 +79,8 @@ public class NSISManualConfigWizardPage extends WizardPage
         validate();
     }
 
-    public void setErrorMessage(String message)
+    @Override
+	public void setErrorMessage(String message)
     {
         super.setMessage(message,ERROR);
     }

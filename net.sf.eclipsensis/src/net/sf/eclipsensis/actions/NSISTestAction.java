@@ -19,14 +19,16 @@ import org.eclipse.ui.texteditor.*;
 
 public class NSISTestAction extends NSISScriptAction implements IElementStateListener
 {
-    protected void started(IPath script)
+    @Override
+	protected void started(IPath script)
     {
         if(mAction != null) {
             mAction.setEnabled(false);
         }
     }
 
-    protected void stopped(IPath script, MakeNSISResults results)
+    @Override
+	protected void stopped(IPath script, MakeNSISResults results)
     {
         if(mAction != null) {
             mAction.setEnabled(isEnabled());
@@ -36,7 +38,8 @@ public class NSISTestAction extends NSISScriptAction implements IElementStateLis
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.actions.NSISAction#isEnabled()
      */
-    public boolean isEnabled()
+    @Override
+	public boolean isEnabled()
     {
         return (super.isEnabled() && (mEditor == null || !mEditor.isDirty()) && NSISCompileTestUtility.INSTANCE.canTest(getInput()));
     }
@@ -44,7 +47,8 @@ public class NSISTestAction extends NSISScriptAction implements IElementStateLis
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    public void run(IAction action)
+    @Override
+	public void run(IAction action)
     {
         NSISCompileTestUtility.INSTANCE.test(getInput());
     }
@@ -72,7 +76,8 @@ public class NSISTestAction extends NSISScriptAction implements IElementStateLis
     {
     }
 
-    public void setActiveEditor(IEditorPart targetEditor)
+    @Override
+	public void setActiveEditor(IEditorPart targetEditor)
     {
         if(mEditor != null) {
             IDocumentProvider provider = mEditor.getDocumentProvider();

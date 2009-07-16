@@ -30,7 +30,8 @@ public class INIFileCreateControlAction extends INIFileAction
         setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("create.control.disabled.icon"))); //$NON-NLS-1$)
     }
 
-    public boolean doRun(INIFile iniFile)
+    @Override
+	public boolean doRun(INIFile iniFile)
     {
         return doRun(iniFile, getSection(iniFile));
     }

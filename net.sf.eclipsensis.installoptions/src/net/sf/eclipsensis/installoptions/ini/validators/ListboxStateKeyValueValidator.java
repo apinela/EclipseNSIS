@@ -22,7 +22,8 @@ public class ListboxStateKeyValueValidator extends DropListStateKeyValueValidato
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
      */
-    public boolean validate(INIKeyValue keyValue, int fixFlag)
+    @Override
+	public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         boolean b = true;
         if(!isMultiSelect(keyValue)) {
@@ -50,7 +51,8 @@ public class ListboxStateKeyValueValidator extends DropListStateKeyValueValidato
         return false;
     }
 
-    protected String getType()
+    @Override
+	protected String getType()
     {
         return InstallOptionsModel.TYPE_LISTBOX;
     }

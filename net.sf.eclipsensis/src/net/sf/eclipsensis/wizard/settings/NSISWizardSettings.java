@@ -9,23 +9,33 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
-import java.beans.*;
-import java.io.Serializable;
-import java.util.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISVersions;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.lang.*;
+import net.sf.eclipsensis.lang.NSISLanguage;
+import net.sf.eclipsensis.lang.NSISLanguageManager;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.*;
-import net.sf.eclipsensis.wizard.*;
+import net.sf.eclipsensis.util.AbstractNodeConvertible;
+import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.Version;
+import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.wizard.INSISWizardConstants;
+import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
 
 import org.eclipse.swt.graphics.RGB;
-import org.w3c.dom.*;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
-public class NSISWizardSettings extends AbstractNodeConvertible implements INSISWizardConstants, Serializable, Cloneable
+public class NSISWizardSettings extends AbstractNodeConvertible implements INSISWizardConstants
 {
     public static final String NODE = "settings"; //$NON-NLS-1$
     public static final String CHILD_NODE = "attribute"; //$NON-NLS-1$
@@ -126,7 +136,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private String mLicenseData = ""; //$NON-NLS-1$
     private int mLicenseButtonType = LICENSE_BUTTON_CLASSIC;
     private boolean mEnableLanguageSupport = false;
-    private ArrayList mLanguages = new ArrayList();
+    private List<NSISLanguage> mLanguages = new ArrayList<NSISLanguage>();
     private boolean mSelectLanguage = false;
     private String mInstallDir = new StringBuffer(NSISKeywords.getInstance().getKeyword("$PROGRAMFILES")).append("\\").append(mName).toString(); //$NON-NLS-1$ //$NON-NLS-2$
     private boolean mChangeInstallDir = true;
@@ -195,7 +205,8 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         }
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("wizard"); //$NON-NLS-1$
@@ -880,7 +891,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     /**
      * @return Returns the languages.
      */
-    public ArrayList getLanguages()
+    public List<NSISLanguage> getLanguages()
     {
         return mLanguages;
     }
@@ -888,7 +899,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     /**
      * @param languages The languages to set.
      */
-    public void setLanguages(ArrayList languages)
+    public void setLanguages(List<NSISLanguage> languages)
     {
         if(mLanguages != languages) {
             mLanguages.clear();
@@ -1218,7 +1229,8 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         firePropertyChanged(EXECUTION_LEVEL, oldValue, executionLevel);
     }
 
-    protected Object getNodeValue(Node node, String name, Class clasz)
+    @Override
+	protected Object getNodeValue(Node node, String name, Class<?> clasz)
     {
         Object obj = super.getNodeValue(node, name, clasz);
         if(name.equals("installer")) { //$NON-NLS-1$
@@ -1228,13 +1240,13 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
             }
         }
         else if(name.equals("languages")) { //$NON-NLS-1$
-            if(obj instanceof Collection && ((Collection)obj).isEmpty()) {
+            if(obj instanceof Collection<?> && ((Collection<?>)obj).isEmpty()) {
                 NamedNodeMap attr = node.getAttributes();
                 if(attr != null) {
                     String langs = XMLUtil.getStringValue(attr, VALUE_ATTRIBUTE);
                     if(!Common.isEmpty(langs)) {
                         String[] langNames = Common.tokenize(langs, ',');
-                        ArrayList languages = new ArrayList();
+                        List<NSISLanguage> languages = new ArrayList<NSISLanguage>();
                         for (int i = 0; i < langNames.length; i++) {
                             NSISLanguage language = NSISLanguageManager.getInstance().getLanguage(langNames[i]);
                             if (language != null) {
@@ -1254,18 +1266,20 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         return NODE;
     }
 
-    protected String getChildNodeName()
+    @Override
+	protected String getChildNodeName()
     {
         return CHILD_NODE;
     }
 
-    public Object clone() throws CloneNotSupportedException
+    @Override
+	public Object clone() throws CloneNotSupportedException
     {
         NSISWizardSettings settings = (NSISWizardSettings)super.clone();
         settings.mBGTopColor = cloneRGB(mBGTopColor);
         settings.mBGBottomColor = cloneRGB(mBGBottomColor);
         settings.mBGTextColor = cloneRGB(mBGTextColor);
-        settings.mLanguages = (mLanguages==null?null:(ArrayList)mLanguages.clone());
+        settings.mLanguages = (mLanguages==null?null:new ArrayList<NSISLanguage>(mLanguages));
         settings.mWizard = null;
         settings.mInstaller = (INSISInstallElement)mInstaller.clone();
         settings.mInstaller.setSettings(settings);
@@ -1280,7 +1294,8 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         return (rgb==null?null:new RGB(rgb.red,rgb.green,rgb.blue));
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -1348,7 +1363,8 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         return result;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;

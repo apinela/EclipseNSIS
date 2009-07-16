@@ -37,7 +37,7 @@ public class FontUtility
 
     private static Font cDefaultFont;
     private static Font cInstallOptionsFont = null;
-    private static HashMap cFontMap = new HashMap();
+    private static Map<NSISLanguage,Font> cFontMap = new HashMap<NSISLanguage,Font> ();
     private static NSISSettings cNSISSettings = null;
     private static File cPropertiesFile = null;
     private static INSISConsole cNSISConsole = null;
@@ -106,8 +106,8 @@ public class FontUtility
                 if(cDefaultFont != null && !cDefaultFont.isDisposed()) {
                     cDefaultFont.dispose();
                 }
-                for(Iterator iter = cFontMap.values().iterator(); iter.hasNext(); ) {
-                    Font font = (Font)iter.next();
+                for(Iterator<Font> iter = cFontMap.values().iterator(); iter.hasNext(); ) {
+                    Font font = iter.next();
                     if(font != null && !font.isDisposed()) {
                         font.dispose();
                     }
@@ -156,7 +156,7 @@ public class FontUtility
 
     public static Font getFont(NSISLanguage lang)
     {
-        Font font = (Font)cFontMap.get(lang);
+        Font font = cFontMap.get(lang);
         if(font == null) {
             font = createFont(lang);
             if(font != null) {
@@ -189,7 +189,7 @@ public class FontUtility
                 if (cNSISConsole == null) {
                     cNSISConsole = new NullNSISConsole();
                 }
-                LinkedHashMap symbols = cNSISSettings.getSymbols();
+                Map<String,String> symbols = cNSISSettings.getSymbols();
 
                 if(EclipseNSISPlugin.getDefault().isWinVista() && NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_21) >= 0) {
                     symbols.put("WINDOWS_VISTA",""); //$NON-NLS-1$ //$NON-NLS-2$

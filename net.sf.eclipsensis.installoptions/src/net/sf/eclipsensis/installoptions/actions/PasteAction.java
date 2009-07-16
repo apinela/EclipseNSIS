@@ -9,20 +9,28 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import java.beans.*;
-import java.util.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditPart;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.commands.PasteCommand;
+import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.gef.*;
+import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.WorkbenchPartAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.ui.*;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 
 public class PasteAction extends WorkbenchPartAction implements PropertyChangeListener
@@ -40,7 +48,8 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
     /**
      * Initializes this action's text and images.
      */
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
@@ -70,7 +79,8 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
         }
     }
 
-    protected boolean calculateEnabled() {
+    @Override
+	protected boolean calculateEnabled() {
         Command command = null;
         if(Clipboard.getDefault().isContentsAvailable()) {
             command = createPasteCommand();
@@ -78,18 +88,19 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
         return command != null && command.canExecute();
     }
 
-    public void run() {
+    @Override
+	public void run() {
         PasteCommand command = createPasteCommand();
         if(command != null) {
             InstallOptionsDesignEditor editor = (InstallOptionsDesignEditor)getWorkbenchPart();
             GraphicalViewer viewer = editor.getGraphicalViewer();
             command.setParent((InstallOptionsDialog)editor.getGraphicalViewer().getContents().getModel());
             command.setClientArea(((Canvas)viewer.getControl()).getClientArea());
-            List selection = ((IStructuredSelection)viewer.getSelection()).toList();
-            List modelSelection = new ArrayList();
-            for (Iterator iter = selection.iterator(); iter.hasNext();) {
-                EditPart part = (EditPart)iter.next();
-                modelSelection.add(part.getModel());
+            List<InstallOptionsEditPart> selection = Common.makeGenericList(InstallOptionsEditPart.class, ((IStructuredSelection)viewer.getSelection()).toList());
+            List<InstallOptionsWidget> modelSelection = new ArrayList<InstallOptionsWidget>();
+            for (Iterator<InstallOptionsEditPart> iter = selection.iterator(); iter.hasNext();) {
+            	InstallOptionsEditPart part = (InstallOptionsEditPart)iter.next();
+                modelSelection.add((InstallOptionsWidget) part.getModel());
             }
             command.setSelection(modelSelection);
             execute(command);

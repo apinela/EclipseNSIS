@@ -34,19 +34,22 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
         super(section);
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("stateReadOnly"); //$NON-NLS-1$
         skippedProperties.remove("maxLen"); //$NON-NLS-1$
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_COMBOBOX;
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    @Override
+	protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             ComboStatePropertyDescriptor descriptor = new ComboStatePropertyDescriptor();
@@ -61,7 +64,8 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
         return super.createPropertyDescriptor(name);
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    @Override
+	protected IPropertySectionCreator createPropertySectionCreator()
     {
         if(isStateReadOnly()) {
             return super.createPropertySectionCreator();
@@ -103,15 +107,17 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
             mStyle = style;
         }
 
-        public void propertyChange(PropertyChangeEvent evt)
+        @SuppressWarnings("unchecked")
+		public void propertyChange(PropertyChangeEvent evt)
         {
             if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
-                setListItems((List)evt.getNewValue());
+                setListItems((List<String>)evt.getNewValue());
             }
 
         }
 
-        public CellEditor createPropertyEditor(Composite parent)
+        @Override
+		public CellEditor createPropertyEditor(Composite parent)
         {
             if(mEditor == null) {
                 mEditor = new CustomComboBoxCellEditor(parent, getListItems(), mStyle);
@@ -121,7 +127,7 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
             return mEditor;
         }
 
-        public void setListItems(List listItems)
+        public void setListItems(List<String> listItems)
         {
             if(mEditor != null) {
                 mEditor.setItems(listItems);

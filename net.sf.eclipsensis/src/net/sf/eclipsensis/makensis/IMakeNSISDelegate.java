@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.makensis;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface IMakeNSISDelegate
 {
@@ -27,7 +27,7 @@ public interface IMakeNSISDelegate
 
     String getScriptFileName();
 
-    ArrayList getErrors();
+    List<String> getErrors();
 
-    ArrayList getWarnings();
+    List<String> getWarnings();
 }

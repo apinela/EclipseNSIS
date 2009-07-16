@@ -48,7 +48,8 @@ public class INIFileFixProblemsAction extends INIFileAction
         setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString(prefix+".action.disabled.icon"))); //$NON-NLS-1$
     }
 
-    protected boolean doRun(INIFile iniFile)
+    @Override
+	protected boolean doRun(INIFile iniFile)
     {
         iniFile.validate(mFixFlag, true);
         iniFile.update();

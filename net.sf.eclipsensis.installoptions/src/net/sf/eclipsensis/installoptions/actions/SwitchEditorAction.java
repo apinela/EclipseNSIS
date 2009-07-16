@@ -37,7 +37,8 @@ public class SwitchEditorAction extends Action
         setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("switch.editor.disabled.icon"))); //$NON-NLS-1$
     }
 
-    public void run()
+    @Override
+	public void run()
     {
         if(mEditor.canSwitch()) {
             BusyIndicator.showWhile(null,new Runnable(){

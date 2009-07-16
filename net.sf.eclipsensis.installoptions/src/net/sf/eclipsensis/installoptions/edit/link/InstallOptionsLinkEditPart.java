@@ -12,15 +12,21 @@ package net.sf.eclipsensis.installoptions.edit.link;
 import java.beans.PropertyChangeEvent;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.*;
+import net.sf.eclipsensis.installoptions.edit.IExtendedEditSupport;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart;
 import net.sf.eclipsensis.installoptions.edit.uneditable.UneditableElementDirectEditPolicy;
-import net.sf.eclipsensis.installoptions.figures.*;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
+import net.sf.eclipsensis.installoptions.figures.LinkFigure;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 
-import org.eclipse.gef.tools.*;
+import org.eclipse.gef.tools.CellEditorLocator;
+import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
@@ -54,7 +60,9 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
 
     };
 
-    public Object getAdapter(Class key)
+    @SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class key)
     {
         if(IExtendedEditSupport.class.equals(key)) {
             return mExtendedEditSupport;
@@ -62,28 +70,33 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         return super.getAdapter(key);
     }
 
-    protected UneditableElementDirectEditPolicy createDirectEditPolicy()
+    @Override
+	protected UneditableElementDirectEditPolicy createDirectEditPolicy()
     {
         return new UneditableElementDirectEditPolicy();
     }
 
-    protected void createEditPolicies()
+    @Override
+	protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsLinkExtendedEditPolicy(this));
     }
 
-    protected String getExtendedEditLabelProperty()
+    @Override
+	protected String getExtendedEditLabelProperty()
     {
         return "link.extended.edit.label"; //$NON-NLS-1$
     }
 
-    protected String getDirectEditLabelProperty()
+    @Override
+	protected String getDirectEditLabelProperty()
     {
         return "link.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected IInstallOptionsFigure createInstallOptionsFigure()
+    @Override
+	protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         if(cIsNT) {
             //This is a hack because Windows NT Labels don't seem to respond to the
@@ -95,7 +108,8 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         }
     }
 
-    protected void doPropertyChange(PropertyChangeEvent evt)
+    @Override
+	protected void doPropertyChange(PropertyChangeEvent evt)
     {
         if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_TXTCOLOR)) {
             ILinkFigure figure2 = (ILinkFigure)getFigure();
@@ -110,15 +124,17 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
         }
     }
 
-    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
+    @Override
+	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
     {
-        return new InstallOptionsLinkEditManager(part, clasz, locator);
+        return new InstallOptionsLinkEditManager(part, locator);
     }
 
     /**
      * @return
      */
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("link.type.name"); //$NON-NLS-1$
     }
@@ -140,19 +156,22 @@ public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart
             super(propertySource);
         }
 
-        protected void init(IPropertySource propertySource)
+        @Override
+		protected void init(IPropertySource propertySource)
         {
             super.init(propertySource);
             mSource = propertySource;
             setTxtColor((RGB)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR));
         }
 
-        public boolean isMultiLine()
+        @Override
+		public boolean isMultiLine()
         {
             return Boolean.TRUE.equals(mSource.getPropertyValue(InstallOptionsModel.PROPERTY_MULTILINE));
         }
 
-        public RGB getTxtColor()
+        @Override
+		public RGB getTxtColor()
         {
             return mTxtColor==null?InstallOptionsLink.DEFAULT_TXTCOLOR:mTxtColor;
         }

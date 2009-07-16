@@ -26,14 +26,16 @@ public abstract class InstallOptionsLine extends InstallOptionsWidget
         super(section);
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("flags"); //$NON-NLS-1$
         skippedProperties.add("horizontal"); //$NON-NLS-1$
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    @Override
+	protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new WidgetPropertySectionCreator(this) { };
     }

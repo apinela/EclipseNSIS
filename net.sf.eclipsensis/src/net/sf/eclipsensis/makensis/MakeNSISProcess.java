@@ -73,7 +73,7 @@ public class MakeNSISProcess extends Process
         String path = (workingDir == null?null:workingDir.getAbsolutePath());
 
         mHandle = create(cmdstr, envstr, path, mStdIn, mStdOut, mStdErr);
-        java.security.AccessController.doPrivileged(new java.security.PrivilegedAction() {
+        java.security.AccessController.doPrivileged(new java.security.PrivilegedAction<Object>() {
             public Object run()
             {
                 mOutputStream = new BufferedOutputStream(
@@ -149,43 +149,50 @@ public class MakeNSISProcess extends Process
         }
     }
 
-    public InputStream getErrorStream()
+    @Override
+	public InputStream getErrorStream()
     {
         checkHandle();
         return mErrorStream;
     }
 
-    public InputStream getInputStream()
+    @Override
+	public InputStream getInputStream()
     {
         checkHandle();
         return mInputStream;
     }
 
-    public OutputStream getOutputStream()
+    @Override
+	public OutputStream getOutputStream()
     {
         checkHandle();
         return mOutputStream;
     }
 
-    public int exitValue()
+    @Override
+	public int exitValue()
     {
         checkHandle();
         return exitValue(mHandle);
     }
 
-    public int waitFor() throws InterruptedException
+    @Override
+	public int waitFor() throws InterruptedException
     {
         checkHandle();
         return waitFor(mHandle);
     }
 
-    public void destroy()
+    @Override
+	public void destroy()
     {
         checkHandle();
         destroy(mHandle);
     }
 
-    protected void finalize() throws Throwable
+    @Override
+	protected void finalize() throws Throwable
     {
         if(mHandle > 0) {
             close(mHandle);
@@ -193,7 +200,7 @@ public class MakeNSISProcess extends Process
         super.finalize();
     }
 
-    private static native void init(Class clasz, String vmName, int vmMajorVersion, int vmMinorVersion);
+    private static native void init(Class<?> clasz, String vmName, int vmMajorVersion, int vmMinorVersion);
 
     private native int exitValue(long handle);
 

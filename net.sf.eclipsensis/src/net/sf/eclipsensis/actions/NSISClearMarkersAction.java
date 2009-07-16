@@ -43,18 +43,21 @@ public class NSISClearMarkersAction extends NSISScriptAction
         ResourcesPlugin.getWorkspace().addResourceChangeListener(mResourceChangeListener);
     }
 
-    protected boolean enableForHeader()
+    @Override
+	protected boolean enableForHeader()
     {
         return true;
     }
 
-    public void dispose()
+    @Override
+	public void dispose()
     {
         ResourcesPlugin.getWorkspace().removeResourceChangeListener(mResourceChangeListener);
         super.dispose();
     }
 
-    protected void started(IPath script)
+    @Override
+	protected void started(IPath script)
     {
         IPath assocScript = getAssociatedScript();
         if(mAction != null && mAction.isEnabled() && assocScript != null &&
@@ -63,7 +66,8 @@ public class NSISClearMarkersAction extends NSISScriptAction
         }
     }
 
-    protected void stopped(IPath script, MakeNSISResults results)
+    @Override
+	protected void stopped(IPath script, MakeNSISResults results)
     {
         if(mAction != null) {
             IPath assocScript = getAssociatedScript();
@@ -76,7 +80,8 @@ public class NSISClearMarkersAction extends NSISScriptAction
         }
     }
 
-    public boolean isEnabled()
+    @Override
+	public boolean isEnabled()
     {
         if(super.isEnabled()) {
             IPath input = getInput();
@@ -87,7 +92,8 @@ public class NSISClearMarkersAction extends NSISScriptAction
         return false;
     }
 
-    public void run(IAction action)
+    @Override
+	public void run(IAction action)
     {
         NSISEditorUtilities.clearMarkers(getInput());
     }

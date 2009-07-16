@@ -8,6 +8,7 @@
 package net.sf.eclipsensis.help.commands;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
@@ -30,7 +31,7 @@ public class KeyboardShortcutParam extends PrefixableParam
 
     static
     {
-        ArrayList list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         for (char c = 'A'; c <= 'Z'; c++)
         {
             list.add(Character.toString(c));
@@ -43,7 +44,7 @@ public class KeyboardShortcutParam extends PrefixableParam
         {
             list.add("F" + i); //$NON-NLS-1$
         }
-        cKeys = (String[]) list.toArray(new String[list.size()]);
+        cKeys = list.toArray(new String[list.size()]);
     }
 
     public KeyboardShortcutParam(Node node)
@@ -51,7 +52,8 @@ public class KeyboardShortcutParam extends PrefixableParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new KeyboardShortcutParamEditor(command, parentEditor);
     }
@@ -66,7 +68,8 @@ public class KeyboardShortcutParam extends PrefixableParam
             super(command, parentEditor);
         }
 
-        public void clear()
+        @Override
+		public void clear()
         {
             if (Common.isValid(mKeyCombo))
             {
@@ -85,7 +88,8 @@ public class KeyboardShortcutParam extends PrefixableParam
             super.clear();
         }
 
-        protected void updateState(boolean state)
+        @Override
+		protected void updateState(boolean state)
         {
             if (Common.isValid(mKeyCombo))
             {
@@ -104,7 +108,8 @@ public class KeyboardShortcutParam extends PrefixableParam
             super.updateState(state);
         }
 
-        protected String getPrefixableParamText()
+        @Override
+		protected String getPrefixableParamText()
         {
             if (!Common.isEmptyArray(mModifierButtons) && Common.isValid(mKeyCombo))
             {
@@ -122,7 +127,8 @@ public class KeyboardShortcutParam extends PrefixableParam
             return null;
         }
 
-        protected String validateParam()
+        @Override
+		protected String validateParam()
         {
             boolean found = false;
             if (!Common.isEmptyArray(mModifierButtons))
@@ -158,7 +164,8 @@ public class KeyboardShortcutParam extends PrefixableParam
             return null;
         }
 
-        public void saveSettings()
+        @Override
+		public void saveSettings()
         {
             super.saveSettings();
             if (getSettings() != null)
@@ -181,7 +188,8 @@ public class KeyboardShortcutParam extends PrefixableParam
             }
         }
 
-        protected void initParamEditor()
+        @Override
+		protected void initParamEditor()
         {
             super.initParamEditor();
             if (!Common.isEmptyArray(mModifierButtons))
@@ -210,7 +218,8 @@ public class KeyboardShortcutParam extends PrefixableParam
             }
         }
 
-        protected Control createParamControl(Composite parent)
+        @Override
+		protected Control createParamControl(Composite parent)
         {
             parent = new Composite(parent, SWT.NONE);
             GridLayout layout = new GridLayout(cModifiers.length + 1, false);

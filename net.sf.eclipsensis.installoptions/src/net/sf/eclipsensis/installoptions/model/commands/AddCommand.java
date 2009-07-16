@@ -25,7 +25,8 @@ public class AddCommand extends org.eclipse.gef.commands.Command
         super(InstallOptionsPlugin.getResourceString("add.command.name")); //$NON-NLS-1$
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         if (mIndex < 0) {
             mParent.addChild(mChild);
@@ -40,7 +41,8 @@ public class AddCommand extends org.eclipse.gef.commands.Command
         return mParent;
     }
 
-    public void redo()
+    @Override
+	public void redo()
     {
         if (mIndex < 0) {
             mParent.addChild(mChild);
@@ -65,7 +67,8 @@ public class AddCommand extends org.eclipse.gef.commands.Command
         mParent = newParent;
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         mParent.removeChild(mChild);
     }

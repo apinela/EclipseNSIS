@@ -23,12 +23,14 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateTranslator#getErrorMessage()
      */
-    public String getErrorMessage()
+    @Override
+	public String getErrorMessage()
     {
         return mErrorMessage;
     }
 
-    public TemplateBuffer translate(Template template) throws TemplateException
+    @Override
+	public TemplateBuffer translate(Template template) throws TemplateException
     {
         return translate(template.getPattern());
     }
@@ -36,13 +38,14 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateTranslator#translate(java.lang.String)
      */
-    public TemplateBuffer translate(String string) throws TemplateException
+    @Override
+	public TemplateBuffer translate(String string) throws TemplateException
     {
         StringBuffer buffer = new StringBuffer(""); //$NON-NLS-1$
 
         int state= TEXT;
         mErrorMessage= null;
-        Map map = new CaseInsensitiveMap();
+        Map<String, List<Integer>> map = new CaseInsensitiveMap<List<Integer>>();
 
         int n=0;
         int offset = -1;
@@ -83,9 +86,9 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
                 switch (ch) {
                 case IDENTIFIER_BOUNDARY:
                     String name = buffer.substring(offset,n);
-                    List list = (List)map.get(name);
+                    List<Integer> list = map.get(name);
                     if(list == null) {
-                        list = new ArrayList();
+                        list = new ArrayList<Integer>();
                         map.put(name,list);
                     }
                     list.add(new Integer(offset));
@@ -113,10 +116,10 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
         }
 
         String translatedString= buffer.toString();
-        List variables = new ArrayList();
-        for(Iterator iter=map.keySet().iterator(); iter.hasNext(); ) {
-            String name = (String)iter.next();
-            List list = (List)map.get(name);
+        List<TemplateVariable> variables = new ArrayList<TemplateVariable>();
+        for(Iterator<String> iter=map.keySet().iterator(); iter.hasNext(); ) {
+            String name = iter.next();
+            List<Integer> list = map.get(name);
             int[] offsets = new int[list.size()];
             for (int j = 0; j < offsets.length; j++) {
                 offsets[j] = ((Integer)list.get(j)).intValue();
@@ -124,6 +127,6 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
             variables.add(new TemplateVariable(name, name, offsets));
         }
 
-        return new TemplateBuffer(translatedString, (TemplateVariable[])variables.toArray(new TemplateVariable[variables.size()]));
+        return new TemplateBuffer(translatedString, variables.toArray(new TemplateVariable[variables.size()]));
     }
 }

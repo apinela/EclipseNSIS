@@ -63,9 +63,10 @@ public class MultiLineKeyValueValidator implements IINIKeyValueValidator
                                 InstallOptionsPlugin.getFormattedString("missing.cr.error", //$NON-NLS-1$
                                         new Object[]{keyValue.getKey()}));
             problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.line.delims")) { //$NON-NLS-1$
-                protected INIProblemFix[] createFixes()
+                @Override
+				protected INIProblemFix[] createFixes()
                 {
-                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText((String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
+                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                 }
             });
             keyValue.addProblem(problem);
@@ -75,15 +76,16 @@ public class MultiLineKeyValueValidator implements IINIKeyValueValidator
                     InstallOptionsPlugin.getFormattedString("missing.lf.warning", //$NON-NLS-1$
                             new Object[]{keyValue.getKey()}));
             problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.insert.missing.lf.chars")) { //$NON-NLS-1$
-                protected INIProblemFix[] createFixes()
+                @Override
+				protected INIProblemFix[] createFixes()
                 {
-                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText((String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
+                    return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                 }
             });
             keyValue.addProblem(problem);
         }
         if(fixWarnings || fixErrors) {
-            keyValue.setValue((String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()));
+            keyValue.setValue(TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString()));
         }
         return !hasErrors && !hasWarnings;
     }

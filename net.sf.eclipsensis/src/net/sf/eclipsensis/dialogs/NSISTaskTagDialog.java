@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.*;
 public class NSISTaskTagDialog extends StatusMessageDialog
 {
     private NSISTaskTag mTaskTag = null;
-    private Collection mExistingTags = null;
+    private Collection<String> mExistingTags = null;
     /**
      * @param parentShell
      */
@@ -40,7 +40,7 @@ public class NSISTaskTagDialog extends StatusMessageDialog
     /**
      * @param existingTags The existingTags to set.
      */
-    public void setExistingTags(Collection existingTags)
+    public void setExistingTags(Collection<String> existingTags)
     {
         mExistingTags = existingTags;
     }
@@ -56,13 +56,15 @@ public class NSISTaskTagDialog extends StatusMessageDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#create()
      */
-    public void create()
+    @Override
+	public void create()
     {
         super.create();
         validate();
     }
 
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout gridLayout = new GridLayout(2,false);
@@ -101,7 +103,8 @@ public class NSISTaskTagDialog extends StatusMessageDialog
             combo.select(priority);
         }
         combo.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mTaskTag.setPriority(combo.getSelectionIndex());
             }

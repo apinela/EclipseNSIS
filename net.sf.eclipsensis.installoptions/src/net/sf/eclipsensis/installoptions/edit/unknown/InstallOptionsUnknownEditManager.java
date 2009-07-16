@@ -9,39 +9,30 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.unknown;
 
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditManager;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditManager;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsUnknown;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
 
-public class InstallOptionsUnknownEditManager extends InstallOptionsDirectEditManager
+public class InstallOptionsUnknownEditManager extends InstallOptionsUneditableElementEditManager
 {
-    public InstallOptionsUnknownEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
+    public InstallOptionsUnknownEditManager(GraphicalEditPart source, CellEditorLocator locator)
     {
-        super(source, editorType, locator);
+        super(source, locator);
     }
 
-    protected String getInitialText(InstallOptionsWidget control)
+    @Override
+	protected String getInitialText(InstallOptionsWidget control)
     {
         return ((InstallOptionsUnknown)control).getType();
     }
 
-    protected void selectCellEditorText()
-    {
-        Text text = (Text)getCellEditor().getControl();
-        text.selectAll();
-    }
-
-    protected CellEditor createCellEditor(Composite composite)
-    {
-        return new TextCellEditor(composite, getCellEditorStyle());
-    }
-
-    protected String getDirectEditProperty()
+    @Override
+	protected String getDirectEditProperty()
     {
         return InstallOptionsModel.PROPERTY_TYPE;
     }

@@ -9,12 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-public class Version extends AbstractNodeConvertible implements Comparable, Serializable, Cloneable
+public class Version extends AbstractNodeConvertible implements Comparable<Version>
 {
     private static final long serialVersionUID = -6848535742969237853L;
 
@@ -85,12 +87,14 @@ public class Version extends AbstractNodeConvertible implements Comparable, Seri
         mDisplayText = (displayText==null?version.mDisplayText:displayText);
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new Version(this);
     }
 
-    protected String getChildNodeName()
+    @Override
+	protected String getChildNodeName()
     {
         return CHILD_NODE;
     }
@@ -103,7 +107,8 @@ public class Version extends AbstractNodeConvertible implements Comparable, Seri
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if(obj instanceof Version) {
             Version v2 = (Version)obj;
@@ -125,7 +130,8 @@ public class Version extends AbstractNodeConvertible implements Comparable, Seri
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int hashCode = 0;
         for (int i = 0; i < mNumbers.length; i++) {
@@ -140,7 +146,8 @@ public class Version extends AbstractNodeConvertible implements Comparable, Seri
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    public String toString()
+    @Override
+	public String toString()
     {
         return mDisplayText;
     }
@@ -148,18 +155,17 @@ public class Version extends AbstractNodeConvertible implements Comparable, Seri
     /* (non-Javadoc)
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-    public int compareTo(Object o)
+    public int compareTo(Version v)
     {
-        Version v2 = (Version)o;
-        if(!equals(v2)) {
-            int max = Math.max(mNumbers.length,v2.mNumbers.length);
+        if(!equals(v)) {
+            int max = Math.max(mNumbers.length,v.mNumbers.length);
             for(int i=0; i<max; i++) {
                 int n1 = (i >= mNumbers.length?0:mNumbers[i]);
-                int n2 = (i >= v2.mNumbers.length?0:v2.mNumbers[i]);
+                int n2 = (i >= v.mNumbers.length?0:v.mNumbers[i]);
                 int diff = n1 - n2;
                 if(diff == 0) {
                     String q1 = (i >= mQualifiers.length?null:mQualifiers[i]);
-                    String q2 = (i >= v2.mQualifiers.length?null:v2.mQualifiers[i]);
+                    String q2 = (i >= v.mQualifiers.length?null:v.mQualifiers[i]);
                     if(q1 != null && q2 == null) {
                         return -1;
                     }
@@ -202,7 +208,7 @@ public class Version extends AbstractNodeConvertible implements Comparable, Seri
      */
     public int[] getNumbers()
     {
-        return (int[])mNumbers.clone();
+        return mNumbers.clone();
     }
 
     /**
@@ -210,10 +216,11 @@ public class Version extends AbstractNodeConvertible implements Comparable, Seri
      */
     public String[] getQualifiers()
     {
-        return (String[])mQualifiers.clone();
+        return mQualifiers.clone();
     }
 
-    public void fromNode(Node node)
+    @Override
+	public void fromNode(Node node)
     {
         if(node.getNodeName().equals(getNodeName())) {
             NodeList childNodes = node.getChildNodes();
@@ -240,7 +247,8 @@ public class Version extends AbstractNodeConvertible implements Comparable, Seri
         }
     }
 
-    public Node toNode(Document document)
+    @Override
+	public Node toNode(Document document)
     {
         Node node = document.createElement(getNodeName());
         node.appendChild(createChildNode(document, NUMBERS_ATTRIBUTE, mNumbers));

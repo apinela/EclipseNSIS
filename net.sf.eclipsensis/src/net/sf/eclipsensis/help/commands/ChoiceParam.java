@@ -27,7 +27,8 @@ public class ChoiceParam extends ComboParam
         super(node);
     }
 
-    protected void init(Node node)
+    @Override
+	protected void init(Node node)
     {
         super.init(node);
         loadChoices(node);
@@ -35,7 +36,7 @@ public class ChoiceParam extends ComboParam
 
     private void loadChoices(Node node)
     {
-        List list = new ArrayList();
+        List<ComboEntry> list = new ArrayList<ComboEntry>();
         Node[] children = XMLUtil.findChildren(node, TAG_CHOICE);
         if(!Common.isEmptyArray(children)) {
             for (int i = 0; i < children.length; i++) {
@@ -45,10 +46,11 @@ public class ChoiceParam extends ComboParam
                 list.add(new ComboEntry(value, EclipseNSISPlugin.getResourceString(display==null?value:display)));
             }
         }
-        mChoices = (ComboEntry[])list.toArray(new ComboEntry[list.size()]);
+        mChoices = list.toArray(new ComboEntry[list.size()]);
     }
 
-    protected ComboEntry[] getComboEntries()
+    @Override
+	protected ComboEntry[] getComboEntries()
     {
         return mChoices;
     }

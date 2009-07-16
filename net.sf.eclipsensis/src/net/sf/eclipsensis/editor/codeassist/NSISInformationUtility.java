@@ -35,10 +35,10 @@ public class NSISInformationUtility implements INSISConstants
     private static final char[] COMPLETION_AUTO_ACTIVATION_CHARS = { '.', '/','$','!',':' };
     private static final Image KEYWORD_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("keyword.icon")); //$NON-NLS-1$
     private static final Image PLUGIN_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("plugin.icon")); //$NON-NLS-1$
-    private static final Comparator cCompletionProposalComparator = new Comparator() {
-        public int compare(Object o1, Object o2)
+    private static final Comparator<ICompletionProposal> cCompletionProposalComparator = new Comparator<ICompletionProposal>() {
+        public int compare(ICompletionProposal o1, ICompletionProposal o2)
         {
-            return ((ICompletionProposal)o1).getDisplayString().compareToIgnoreCase(((ICompletionProposal)o2).getDisplayString());
+            return (o1).getDisplayString().compareToIgnoreCase((o2).getDisplayString());
         }
     };
 
@@ -64,7 +64,7 @@ public class NSISInformationUtility implements INSISConstants
 
     public static KeySequence[] getKeySequences(ParameterizedCommand command)
     {
-        ArrayList list = new ArrayList();
+        List<TriggerSequence> list = new ArrayList<TriggerSequence>();
         TriggerSequence[] sequences = cBindingService.getActiveBindingsFor(command);
         if (!Common.isEmptyArray(sequences)) {
             for (int j = 0; j < sequences.length; j++) {
@@ -73,14 +73,14 @@ public class NSISInformationUtility implements INSISConstants
                 }
             }
         }
-        return (KeySequence[])list.toArray(new KeySequence[list.size()]);
+        return list.toArray(new KeySequence[list.size()]);
     }
 
     public static String buildStatusText(String description, KeySequence[] sequences)
     {
         String statusText = null;
         if (!Common.isEmptyArray(sequences)) {
-            ArrayList params = new ArrayList();
+            List<String> params = new ArrayList<String>();
             for (int j = 0; j < sequences.length; j++) {
                 try {
                     String keyText = sequences[j].format();
@@ -105,7 +105,7 @@ public class NSISInformationUtility implements INSISConstants
     {
         String statusText = null;
         if(!Common.isEmptyArray(commands)) {
-            ArrayList params = new ArrayList();
+            List<String> params = new ArrayList<String>();
             for (int i = 0; i < commands.length; i++) {
                 KeySequence[] sequences = getKeySequences(commands[i]);
                 if (!Common.isEmptyArray(sequences)) {
@@ -258,7 +258,7 @@ public class NSISInformationUtility implements INSISConstants
                 }
                 String text = NSISTextUtility.getRegionText(doc,region);
                 if(!Common.isEmpty(text)) {
-                    ArrayList list = new ArrayList();
+                	List<CompletionProposal> list = new ArrayList<CompletionProposal>();
                     int pos = text.indexOf("::"); //$NON-NLS-1$
                     if(pos > 0) {
                         String pluginName = text.substring(0,pos);
@@ -322,7 +322,7 @@ public class NSISInformationUtility implements INSISConstants
                             continue;
                         }
                     }
-                    ICompletionProposal[] completionProposals = (ICompletionProposal[])list.toArray(EMPTY_COMPLETION_PROPOSAL_ARRAY);
+                    ICompletionProposal[] completionProposals = list.toArray(EMPTY_COMPLETION_PROPOSAL_ARRAY);
                     Arrays.sort(completionProposals, cCompletionProposalComparator);
                     return completionProposals;
                 }
@@ -349,7 +349,8 @@ public class NSISInformationUtility implements INSISConstants
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.text.INSISTextProcessor#isValid(int)
          */
-        public boolean isValid(int c)
+        @Override
+		public boolean isValid(int c)
         {
             if(testComplete()) {
                 return false;
@@ -379,7 +380,8 @@ public class NSISInformationUtility implements INSISConstants
             return true;
         }
 
-        protected boolean testComplete()
+        @Override
+		protected boolean testComplete()
         {
             boolean isComplete = false;
             if(mBuffer.length() > 1) {
@@ -426,7 +428,8 @@ public class NSISInformationUtility implements INSISConstants
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.text.INSISTextProcessor#setScanner(org.eclipse.jface.text.rules.ICharacterScanner)
          */
-        public void setScanner(ICharacterScanner scanner)
+        @Override
+		public void setScanner(ICharacterScanner scanner)
         {
             super.setScanner(scanner);
             mIsSymbol = false;
@@ -441,7 +444,8 @@ public class NSISInformationUtility implements INSISConstants
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#createToken()
          */
-        public IToken createToken()
+        @Override
+		public IToken createToken()
         {
             if(mStringChar != (char)0) {
                 return new Token(new Region(mStartOffset+1,(((NSISScanner)mScanner).getOffset()-mStartOffset-1)));
@@ -454,7 +458,8 @@ public class NSISInformationUtility implements INSISConstants
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#isValid(int)
          */
-        public boolean isValid(int c)
+        @Override
+		public boolean isValid(int c)
         {
             if(mStringChar == 0) {
                 if(c == '"' || c == '\'' || c == '`') {
@@ -494,7 +499,8 @@ public class NSISInformationUtility implements INSISConstants
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.text.INSISTextProcessor#isValid(int)
          */
-        public boolean isValid(int c)
+        @Override
+		public boolean isValid(int c)
         {
             boolean b = super.isValid(c);
             if(!b) {
@@ -541,7 +547,8 @@ public class NSISInformationUtility implements INSISConstants
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#createToken()
          */
-        public IToken createToken()
+        @Override
+		public IToken createToken()
         {
             if(mOffset >=0 && mFirstNonWhitespaceOffset >= 0 && mBuffer.length() > 0) {
                 int offset = ((NSISScanner)mScanner).getOffset();
@@ -555,7 +562,8 @@ public class NSISInformationUtility implements INSISConstants
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#isValid(int)
          */
-        public boolean isValid(int c)
+        @Override
+		public boolean isValid(int c)
         {
             if(!Character.isWhitespace((char)c)) {
                 if(mFirstNonWhitespaceOffset < 0) {
@@ -578,7 +586,8 @@ public class NSISInformationUtility implements INSISConstants
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#setScanner(org.eclipse.jface.text.rules.ICharacterScanner)
          */
-        public void setScanner(ICharacterScanner scanner)
+        @Override
+		public void setScanner(ICharacterScanner scanner)
         {
             super.setScanner(scanner);
             mFirstNonWhitespaceOffset = -1;
@@ -598,7 +607,8 @@ public class NSISInformationUtility implements INSISConstants
         /* (non-Javadoc)
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#isValid(int)
          */
-        public boolean isValid(int c)
+        @Override
+		public boolean isValid(int c)
         {
             if(!Character.isWhitespace((char)c)) {
                 if(mFirstNonWhitespaceOffset < 0) {

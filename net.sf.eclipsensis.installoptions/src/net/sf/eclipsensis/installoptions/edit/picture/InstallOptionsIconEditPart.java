@@ -13,12 +13,14 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
 public class InstallOptionsIconEditPart extends InstallOptionsPictureEditPart
 {
-    protected String getDirectEditLabelProperty()
+    @Override
+	protected String getDirectEditLabelProperty()
     {
         return "icon.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("icon.type.name"); //$NON-NLS-1$
     }

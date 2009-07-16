@@ -32,7 +32,8 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
         mDirty = true;
     }
 
-    public Object clone() throws CloneNotSupportedException
+    @Override
+	public Object clone() throws CloneNotSupportedException
     {
         AbstractNSISInstallElement element = (AbstractNSISInstallElement)super.clone();
         element.mSettings = null;
@@ -40,7 +41,8 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
         return element;
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("removable"); //$NON-NLS-1$
@@ -78,7 +80,8 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
         return mParent;
     }
 
-    public void fromNode(Node node)
+    @Override
+	public void fromNode(Node node)
     {
         String nodeType = node.getAttributes().getNamedItem(TYPE_ATTRIBUTE).getNodeValue();
         if(nodeType.equals(getType()) || nodeType.equals(NSISInstallElementFactory.getAlias(getType()))) {
@@ -86,14 +89,16 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
         }
     }
 
-    public Node toNode(Document document)
+    @Override
+	public Node toNode(Document document)
     {
         Node node = super.toNode(document);
         XMLUtil.addAttribute(document,node,TYPE_ATTRIBUTE,getType());
         return node;
     }
 
-    protected String getChildNodeName()
+    @Override
+	protected String getChildNodeName()
     {
         return CHILD_NODE;
     }
@@ -108,7 +113,7 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
         return mError;
     }
 
-    public String validate(Collection changedElements)
+    public String validate(Collection<INSISInstallElement> changedElements)
     {
         if(mDirty) {
             String error = doValidate();

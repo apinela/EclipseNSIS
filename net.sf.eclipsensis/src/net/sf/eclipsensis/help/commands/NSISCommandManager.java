@@ -27,27 +27,33 @@ public class NSISCommandManager
     public static final String TAG_ADD = "add"; //$NON-NLS-1$
     public static final String TAG_REMOVE = "remove"; //$NON-NLS-1$
     public static final String TAG_VERSION = "version"; //$NON-NLS-1$
-    private static Map cAddCommandsMap =  new HashMap();
-    private static Map cRemoveCommandsMap =  new HashMap();
-    private static Map cParamConstructorsMap = new HashMap();
-    private static List cVersionList;
+    private static Map<Version, Map<String, NSISCommand>> cAddCommandsMap =  new HashMap<Version, Map<String, NSISCommand>>();
+    private static Map<Version, Set<String>> cRemoveCommandsMap =  new HashMap<Version, Set<String>>();
+    private static Map<String, Constructor<? extends NSISParam>> cParamConstructorsMap = new HashMap<String, Constructor<? extends NSISParam>>();
+    private static List<Version> cVersionList;
 
     static {
-        Properties props = new Properties();
+        load();
+    }
+
+	@SuppressWarnings("unchecked")
+	private static void load() 
+	{
+		Properties props = new Properties();
         try {
             props.load(NSISCommandManager.class.getResourceAsStream("NSISCommandParams.properties")); //$NON-NLS-1$
         }
         catch (IOException e) {
             EclipseNSISPlugin.getDefault().log(e);
         }
-        Class[] argTypes = { Node.class };
-        for(Enumeration e = props.propertyNames(); e.hasMoreElements(); ) {
+        Class<?>[] argTypes = { Node.class };
+        for(Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); ) {
             String name = (String)e.nextElement();
             String className = props.getProperty(name);
-            Class clasz;
+            Class<? extends NSISParam> clasz;
             try {
-                clasz = Class.forName(className);
-                Constructor c = clasz.getConstructor(argTypes);
+                clasz = (Class<? extends NSISParam>) Class.forName(className);
+                Constructor<? extends NSISParam> c = clasz.getConstructor(argTypes);
                 cParamConstructorsMap.put(name,c);
             }
             catch (Exception e1) {
@@ -71,9 +77,9 @@ public class NSISCommandManager
                 for (int j = 0; j < childCount; j++) {
                     Node childNode = childNodes.item(j);
                     if(childNode.getNodeName().equals(TAG_ADD)) {
-                        Map commandsMap = (Map)cAddCommandsMap.get(version);
+                        Map<String, NSISCommand> commandsMap = cAddCommandsMap.get(version);
                         if(commandsMap == null) {
-                            commandsMap = new HashMap();
+                            commandsMap = new HashMap<String, NSISCommand>();
                             cAddCommandsMap.put(version, commandsMap);
                         }
                         NodeList commandNodes = childNode.getChildNodes();
@@ -87,9 +93,9 @@ public class NSISCommandManager
                         }
                     }
                     else if(childNode.getNodeName().equals(TAG_REMOVE)) {
-                        Set commandsSet = (Set)cRemoveCommandsMap.get(version);
+                        Set<String> commandsSet = cRemoveCommandsMap.get(version);
                         if(commandsSet == null) {
-                            commandsSet = new HashSet();
+                            commandsSet = new HashSet<String>();
                             cRemoveCommandsMap.put(version, commandsSet);
                         }
                         NodeList commandNodes = childNode.getChildNodes();
@@ -104,7 +110,7 @@ public class NSISCommandManager
                 }
 
             }
-            cVersionList = new ArrayList(cAddCommandsMap.keySet());
+            cVersionList = new ArrayList<Version>(cAddCommandsMap.keySet());
             Collections.sort(cVersionList);
         }
         catch (Throwable t) {
@@ -113,23 +119,23 @@ public class NSISCommandManager
         finally {
             IOUtility.closeIO(is);
         }
-    }
+	}
 
     public static NSISCommand getCommand(String name)
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
-        Set removeSet = new HashSet();
-        for (ListIterator iter = cVersionList.listIterator(cVersionList.size()); iter.hasPrevious();) {
-            Version v = (Version)iter.previous();
+        Set<String> removeSet = new HashSet<String>();
+        for (ListIterator<Version> iter = cVersionList.listIterator(cVersionList.size()); iter.hasPrevious();) {
+            Version v = iter.previous();
             if(version.compareTo(v) >= 0) {
-                Set removeCommandSet = (Set)cRemoveCommandsMap.get(v);
+                Set<String> removeCommandSet = cRemoveCommandsMap.get(v);
                 if(removeCommandSet != null) {
                     removeSet.addAll(removeCommandSet);
                 }
 
-                Map addCommandsMap = (Map)cAddCommandsMap.get(v);
+                Map<String, NSISCommand> addCommandsMap = cAddCommandsMap.get(v);
                 if(addCommandsMap != null) {
-                    NSISCommand command = (NSISCommand)addCommandsMap.get(name);
+                    NSISCommand command = addCommandsMap.get(name);
                     if(command != null && !removeSet.contains(command.getName())) {
                         return command;
                     }
@@ -146,15 +152,15 @@ public class NSISCommandManager
     public static NSISCommand[] getCommands()
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
-        Map map = new HashMap();
-        for (Iterator iter = cVersionList.iterator(); iter.hasNext();) {
-            Version v = (Version)iter.next();
+        Map<String, NSISCommand> map = new HashMap<String, NSISCommand>();
+        for (Iterator<Version> iter = cVersionList.iterator(); iter.hasNext();) {
+            Version v = iter.next();
             if(version.compareTo(v) >= 0) {
-                Map commandsMap = (Map)cAddCommandsMap.get(v);
+                Map<String, NSISCommand> commandsMap = cAddCommandsMap.get(v);
                 if(commandsMap != null) {
                     map.putAll(commandsMap);
                 }
-                Set commandsSet = (Set)cRemoveCommandsMap.get(v);
+                Set<String> commandsSet = cRemoveCommandsMap.get(v);
                 if(commandsSet != null) {
                     map.keySet().removeAll(commandsSet);
                 }
@@ -163,7 +169,7 @@ public class NSISCommandManager
                 break;
             }
         }
-        return (NSISCommand[])map.values().toArray(new NSISCommand[map.size()]);
+        return map.values().toArray(new NSISCommand[map.size()]);
     }
 
     static NSISParam createParam(Node paramNode)
@@ -171,9 +177,9 @@ public class NSISCommandManager
         NamedNodeMap attributes = paramNode.getAttributes();
         String type = XMLUtil.getStringValue(attributes,ATTR_TYPE);
         if(!Common.isEmpty(type)) {
-            Constructor c = (Constructor)cParamConstructorsMap.get(type);
+            Constructor<? extends NSISParam> c = cParamConstructorsMap.get(type);
             try {
-                return (NSISParam)c.newInstance(new Node[] {paramNode});
+                return c.newInstance(new Object[] {paramNode});
             }
             catch (Exception e) {
                 EclipseNSISPlugin.getDefault().log(e);

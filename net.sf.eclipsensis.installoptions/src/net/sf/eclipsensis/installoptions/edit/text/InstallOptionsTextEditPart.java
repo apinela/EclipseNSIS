@@ -11,43 +11,52 @@ package net.sf.eclipsensis.installoptions.edit.text;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
-import net.sf.eclipsensis.installoptions.edit.editable.*;
-import net.sf.eclipsensis.installoptions.figures.*;
+import net.sf.eclipsensis.installoptions.edit.editable.EditableElementDirectEditPolicy;
+import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditPart;
+import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
+import net.sf.eclipsensis.installoptions.figures.TextFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.gef.requests.DirectEditRequest;
-import org.eclipse.gef.tools.*;
+import org.eclipse.gef.tools.CellEditorLocator;
+import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
 
-public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEditPart
+public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEditPart<TextCellEditor>
 {
-    protected String getDirectEditLabelProperty()
+    @Override
+	protected String getDirectEditLabelProperty()
     {
         return "text.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected IInstallOptionsFigure createInstallOptionsFigure()
+    @Override
+	protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new TextFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
-    protected EditableElementDirectEditPolicy createDirectEditPolicy()
+    @Override
+	protected EditableElementDirectEditPolicy createDirectEditPolicy()
     {
         return new EditableElementDirectEditPolicy() {
-            protected String getDirectEditValue(DirectEditRequest edit)
+            @Override
+			protected String getDirectEditValue(DirectEditRequest edit)
             {
                 String text = super.getDirectEditValue(edit);
                 if(getInstallOptionsEditableElement().getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) &&
                    getInstallOptionsEditableElement().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE)) {
-                    text = (String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(text);
+                    text = TypeConverter.ESCAPED_STRING_CONVERTER.asType(text);
                 }
                 return text;
             }
         };
     }
 
-    protected void handleFlagAdded(String flag)
+    @Override
+	protected void handleFlagAdded(String flag)
     {
         TextFigure figure = (TextFigure)getFigure();
         if(flag.equals(InstallOptionsModel.FLAGS_ONLY_NUMBERS)) {
@@ -70,7 +79,8 @@ public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEdi
             super.handleFlagAdded(flag);
         }
     }
-    protected void handleFlagRemoved(String flag)
+    @Override
+	protected void handleFlagRemoved(String flag)
     {
         TextFigure figure = (TextFigure)getFigure();
         if(flag.equals(InstallOptionsModel.FLAGS_ONLY_NUMBERS)) {
@@ -96,18 +106,27 @@ public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEdi
     /**
      * @return
      */
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("text.type.name"); //$NON-NLS-1$
     }
 
-    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
+    @Override
+	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<TextCellEditor> clasz, CellEditorLocator locator)
     {
         return new InstallOptionsTextEditManager(part, clasz, locator);
     }
 
-    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    @Override
+	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new TextCellEditorLocator((TextFigure)getFigure());
     }
+
+	@Override
+	protected Class<TextCellEditor> getCellEditorClass() 
+	{
+		return TextCellEditor.class;
+	}
 }

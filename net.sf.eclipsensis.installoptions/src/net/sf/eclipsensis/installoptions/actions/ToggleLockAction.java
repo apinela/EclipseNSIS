@@ -45,28 +45,29 @@ public class ToggleLockAction extends SelectionAction
     /**
      * Initializes this action's text and images.
      */
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
         setId(ID);
         setEnabled(false);
     }
 
-    public Command createToggleLockCommand(List objects)
+    public Command createToggleLockCommand(List<?> objects)
     {
         if (Common.isEmptyCollection(objects)) {
             return null;
         }
 
         ToggleLockCommand cmd = null;
-        Iterator iter = objects.iterator();
-        InstallOptionsWidget part = getPart(iter.next());
+        Iterator<InstallOptionsWidgetEditPart> iter = Common.makeGenericList(InstallOptionsWidgetEditPart.class, objects).iterator();
+        InstallOptionsWidget part = (InstallOptionsWidget) iter.next().getModel();
         if(part != null) {
-            List list = new ArrayList();
+            List<InstallOptionsWidget> list = new ArrayList<InstallOptionsWidget>();
             boolean shouldLock = !part.isLocked();
             list.add(part);
             while (iter.hasNext()) {
-                part = getPart(iter.next());
+            	part = (InstallOptionsWidget) iter.next().getModel();
                 if(part != null) {
                     if(shouldLock != part.isLocked()) {
                         list.add(part);
@@ -79,7 +80,7 @@ public class ToggleLockAction extends SelectionAction
                 mShouldLock = shouldLock;
                 updateLabels();
             }
-            cmd = new ToggleLockCommand((InstallOptionsWidget[])list.toArray(new InstallOptionsWidget[list.size()]),
+            cmd = new ToggleLockCommand(list.toArray(new InstallOptionsWidget[list.size()]),
                     mShouldLock);
         }
         return cmd;
@@ -95,17 +96,8 @@ public class ToggleLockAction extends SelectionAction
         setText(label);
     }
 
-    private InstallOptionsWidget getPart(Object part)
-    {
-        if(part instanceof InstallOptionsWidgetEditPart) {
-            return (InstallOptionsWidget)((InstallOptionsWidgetEditPart)part).getModel();
-        }
-        else {
-            return null;
-        }
-    }
-
-    protected boolean calculateEnabled() {
+    @Override
+	protected boolean calculateEnabled() {
         Command cmd = createToggleLockCommand(getSelectedObjects());
         if (cmd == null) {
             return false;
@@ -113,7 +105,8 @@ public class ToggleLockAction extends SelectionAction
         return cmd.canExecute();
     }
 
-    public void run() {
+    @Override
+	public void run() {
         execute(createToggleLockCommand(getSelectedObjects()));
         setEnabled(calculateEnabled());
     }

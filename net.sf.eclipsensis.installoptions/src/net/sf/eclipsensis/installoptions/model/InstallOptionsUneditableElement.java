@@ -31,13 +31,15 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
         super(section);
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("defaultText"); //$NON-NLS-1$
     }
 
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
         mText = ""; //$NON-NLS-1$
@@ -46,20 +48,23 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
     /**
      * @param type
      */
-    protected void setDefaults()
+    @Override
+	protected void setDefaults()
     {
         super.setDefaults();
         mText = getDefaultText();
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         InstallOptionsUneditableElement clone = (InstallOptionsUneditableElement)super.clone();
         clone.setText(getText());
         return clone;
     }
 
-    protected void addPropertyName(List list, String setting)
+    @Override
+	protected void addPropertyName(List<String> list, String setting)
     {
         if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TEXT)) {
             list.add(InstallOptionsModel.PROPERTY_TEXT);
@@ -69,7 +74,8 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
         }
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    @Override
+	protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_TEXT)) {
             String propertyName = InstallOptionsPlugin.getResourceString("text.property.name"); //$NON-NLS-1$;
@@ -82,7 +88,8 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
         }
     }
 
-    public Object getPropertyValue(Object propName)
+    @Override
+	public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_TEXT.equals(propName)) {
             return getText();
@@ -90,7 +97,8 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
         return super.getPropertyValue(propName);
     }
 
-    public void setPropertyValue(Object id, Object value)
+    @Override
+	public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_TEXT)) {
             setText((String)value);
@@ -120,7 +128,8 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
         return ""; //$NON-NLS-1$
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    @Override
+	protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new UneditableElementPropertySectionCreator(this);
     }

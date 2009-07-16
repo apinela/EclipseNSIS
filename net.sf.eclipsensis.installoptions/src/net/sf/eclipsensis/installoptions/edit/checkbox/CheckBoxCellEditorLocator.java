@@ -25,7 +25,8 @@ public class CheckBoxCellEditorLocator extends ButtonCellEditorLocator
         super(button);
     }
 
-    protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
+    @Override
+	protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
         CheckBoxFigure figure = (CheckBoxFigure)getFigure();
         return new Rectangle(editArea.x + X_OFFSET + (figure.isLeftText()?0:15),

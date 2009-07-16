@@ -9,21 +9,32 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
-import java.beans.*;
-import java.util.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.NumberVerifyListener;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
@@ -58,7 +69,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
     {
         final IPropertyDescriptor descriptor = getElement().getPropertyDescriptor(propertyId);
         if (descriptor != null) {
-            final TypeConverter converter = (multiline?TypeConverter.ESCAPED_STRING_CONVERTER:TypeConverter.STRING_CONVERTER);
+            final TypeConverter<String> converter = (multiline?TypeConverter.ESCAPED_STRING_CONVERTER:TypeConverter.STRING_CONVERTER);
             GridLayout layout;
             layout = (GridLayout)composite.getLayout();
             if(layout.numColumns != 2) {
@@ -78,15 +89,17 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
             text.setData(LABEL,label);
             text.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,multiline));
             final TextChangeHelper helper = new TextChangeHelper(validator) {
-                protected String getResetValue(Text text)
+                @Override
+				protected String getResetValue(Text text)
                 {
                     return converter.asString(getElement().getStringPropertyValue(propertyId));
                 }
 
-                protected void handleTextChange(Text text)
+                @Override
+				protected void handleTextChange(Text text)
                 {
                     if(!isNonUserChange()) {
-                        String t = (String)converter.asType(text.getText());
+                        String t = converter.asType(text.getText());
                         if(!Common.stringsAreEqual(getElement().getStringPropertyValue(propertyId), t)) {
                             commandHelper.propertyChanged(propertyId,
                                     descriptor.getDisplayName(), getElement(), t);
@@ -103,7 +116,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
                     helper.setNonUserChange(true);
                     try {
                         if(evt.getPropertyName().equals(propertyId)) {
-                            String newText = converter.asString(evt.getNewValue());
+                            String newText = converter.asString((String) evt.getNewValue());
                             if(Common.isValid(text) && !Common.stringsAreEqual(newText, text.getText())) {
                                 text.setText(newText);
                             }
@@ -127,7 +140,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
         return null;
     }
 
-    protected final CCombo createComboSection(Composite composite, final String propertyId, final Map comboData, Object defaultValue, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
+    protected final CCombo createComboSection(Composite composite, final String propertyId, final Map<Integer,String> comboData, Object defaultValue, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
         final IPropertyDescriptor descriptor = getElement().getPropertyDescriptor(propertyId);
         if (descriptor != null) {
@@ -146,15 +159,15 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
             CLabel label = widgetFactory.createCLabel(composite, descriptor.getDisplayName());
             label.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
             final ICellEditorValidator validator = (ICellEditorValidator)Common.getObjectFieldValue(descriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
-            final Map.Entry[] entries = (Map.Entry[])comboData.entrySet().toArray(new Map.Entry[comboData.size()]);
+            final List<Map.Entry<Integer,String>> entries = new ArrayList<Map.Entry<Integer,String>>(comboData.entrySet());
             Object selected = getElement().getPropertyValue(propertyId);
 
             final CCombo combo = widgetFactory.createCCombo(composite, SWT.DROP_DOWN|SWT.READ_ONLY|SWT.FLAT|SWT.BORDER);
             combo.setLayoutData(new GridData(SWT.LEFT,SWT.FILL,false,false));
             combo.setData(LABEL,label);
 
-            for (int i = 0; i < entries.length; i++) {
-                combo.add(String.valueOf(entries[i].getValue()));
+            for (Map.Entry<Integer,String> entry : entries) {
+                combo.add(String.valueOf(entry.getValue()));
             }
             Object selectedDisplay = comboData.get(selected);
             if(selectedDisplay == null) {
@@ -165,12 +178,13 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
             }
             final boolean[] nonUserChange = { false };
             combo.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     if(!nonUserChange[0]) {
                         int n = combo.getSelectionIndex();
                         Object oldValue = getElement().getPropertyValue(propertyId);
-                        Object newValue = entries[n].getKey();
+                        Object newValue = entries.get(n).getKey();
                         boolean equal = false;
                         if(oldValue instanceof String && newValue instanceof String) {
                             equal = Common.stringsAreEqual((String)oldValue, (String)newValue, true);
@@ -242,7 +256,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
 
     protected void forceLayout(Composite composite)
     {
-        Stack deferred = new Stack();
+        Stack<Composite> deferred = new Stack<Composite>();
         Composite parent = composite.getParent();
         while(parent != null) {
             if(parent.isLayoutDeferred()) {
@@ -253,7 +267,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
         }
         composite.layout(true,true);
         while(deferred.size() > 0) {
-            parent = (Composite)deferred.pop();
+            parent = deferred.pop();
             parent.setLayoutDeferred(true);
         }
     }

@@ -26,7 +26,8 @@ public class FileFilterCellEditor extends DialogCellEditor
         mRequest = request;
     }
 
-    protected void updateContents(Object value)
+    @Override
+	protected void updateContents(Object value)
     {
         Label label = getDefaultLabel();
         if (label != null) {
@@ -34,7 +35,8 @@ public class FileFilterCellEditor extends DialogCellEditor
         }
     }
 
-    protected Object openDialogBox(Control cellEditorWindow)
+    @Override
+	protected Object openDialogBox(Control cellEditorWindow)
     {
         FileFilterDialog dialog = new FileFilterDialog(cellEditorWindow.getShell(),mRequest.getFilter());
         dialog.setValidator(getValidator());

@@ -45,7 +45,8 @@ public class NSISConfigSelectionWizard extends Wizard
         mPageChangedListener = new WizardShellImageChanger(this, cShellImage);
     }
 
-    public void createPageControls(Composite pageContainer)
+    @Override
+	public void createPageControls(Composite pageContainer)
     {
         super.createPageControls(pageContainer);
         Object data = pageContainer.getLayoutData();
@@ -56,7 +57,8 @@ public class NSISConfigSelectionWizard extends Wizard
         }
     }
 
-    public void setContainer(IWizardContainer wizardContainer)
+    @Override
+	public void setContainer(IWizardContainer wizardContainer)
     {
         if(getContainer() instanceof IPageChangeProvider) {
             ((IPageChangeProvider)getContainer()).removePageChangedListener(mPageChangedListener);
@@ -67,13 +69,15 @@ public class NSISConfigSelectionWizard extends Wizard
         }
     }
 
-    public void addPages()
+    @Override
+	public void addPages()
     {
         mMainPage = new NSISConfigSelectionPage();
         addPage(mMainPage);
     }
 
-    public boolean performFinish()
+    @Override
+	public boolean performFinish()
     {
         if (getContainer().getCurrentPage() == mMainPage) {
             if (mMainPage.canFinishEarly()) {
@@ -85,7 +89,8 @@ public class NSISConfigSelectionWizard extends Wizard
         return true;
     }
 
-    public boolean canFinish()
+    @Override
+	public boolean canFinish()
     {
         if (getContainer().getCurrentPage() == mMainPage) {
             if (mMainPage.canFinishEarly()) {

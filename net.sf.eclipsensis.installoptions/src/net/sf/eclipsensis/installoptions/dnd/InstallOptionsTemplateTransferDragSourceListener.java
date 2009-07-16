@@ -21,12 +21,14 @@ public class InstallOptionsTemplateTransferDragSourceListener extends TemplateTr
         setTransfer(InstallOptionsTemplateTransfer.INSTANCE);
     }
 
-    public void dragFinished(DragSourceEvent event)
+    @Override
+	public void dragFinished(DragSourceEvent event)
     {
         InstallOptionsTemplateTransfer.INSTANCE.setTemplate(null);
     }
 
-    public void dragStart(DragSourceEvent event)
+    @Override
+	public void dragStart(DragSourceEvent event)
     {
         Object template = getTemplate();
         if (template == null) {

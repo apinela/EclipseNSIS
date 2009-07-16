@@ -121,7 +121,8 @@ public class UnicodeReader extends Reader
         }
     }
 
-    public void close() throws IOException
+    @Override
+	public void close() throws IOException
     {
         if(mInternalReader != null) {
             mInternalReader.close();
@@ -134,7 +135,8 @@ public class UnicodeReader extends Reader
         mClosed = true;
     }
 
-    public int read(char[] cbuf, int off, int len) throws IOException
+    @Override
+	public int read(char[] cbuf, int off, int len) throws IOException
     {
         if(mClosed) {
             throw new IOException("Reader is closed");

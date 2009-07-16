@@ -20,7 +20,8 @@ public class HexStringParam extends RegexpParam
         super(node);
     }
 
-    protected String getRegexp()
+    @Override
+	protected String getRegexp()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(isAcceptVar()) {
@@ -33,7 +34,8 @@ public class HexStringParam extends RegexpParam
         return buf.toString();
     }
 
-    public boolean verifyText(String text)
+    @Override
+	public boolean verifyText(String text)
     {
         if(text != null && text.length() > 0) {
             if(((isAcceptSymbol() || isAcceptVar()) && text.charAt(0)=='$')) {
@@ -49,7 +51,8 @@ public class HexStringParam extends RegexpParam
         return super.verifyText(text);
     }
 
-    protected String getValidateErrorMessage()
+    @Override
+	protected String getValidateErrorMessage()
     {
         return EclipseNSISPlugin.getResourceString("hex.string.param.error"); //$NON-NLS-1$
     }

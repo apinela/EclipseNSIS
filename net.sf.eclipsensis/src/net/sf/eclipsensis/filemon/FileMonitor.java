@@ -27,9 +27,8 @@ public class FileMonitor
 
     public static final FileMonitor INSTANCE = new FileMonitor();
 
-    private static final WeakReference[] EMPTY_ARRAY = new WeakReference[0];
     private Timer mTimer;
-    private Map mRegistry = new LinkedHashMap();
+    private Map<File, FileChangeRegistryEntry> mRegistry = new LinkedHashMap<File, FileChangeRegistryEntry>();
     private FileChangeTimerTask mTask;
 
     static {
@@ -77,7 +76,7 @@ public class FileMonitor
 
     public void register(File file, IFileChangeListener listener)
     {
-        FileChangeRegistryEntry entry = (FileChangeRegistryEntry)mRegistry.get(file);
+        FileChangeRegistryEntry entry = mRegistry.get(file);
         if(entry == null) {
             entry = new FileChangeRegistryEntry();
             if(IOUtility.isValidFile(file)) {
@@ -88,20 +87,20 @@ public class FileMonitor
             }
             mRegistry.put(file,entry);
         }
-        for(Iterator iter=entry.listeners.iterator(); iter.hasNext(); ) {
-            if(((WeakReference)iter.next()).get() == listener) {
+        for(Iterator<WeakReference<IFileChangeListener>> iter=entry.listeners.iterator(); iter.hasNext(); ) {
+            if(iter.next().get() == listener) {
                 return;
             }
         }
-        entry.listeners.add(new WeakReference(listener));
+        entry.listeners.add(new WeakReference<IFileChangeListener>(listener));
     }
 
     public void unregister(File file, IFileChangeListener listener)
     {
-        FileChangeRegistryEntry entry = (FileChangeRegistryEntry)mRegistry.get(file);
+        FileChangeRegistryEntry entry = mRegistry.get(file);
         if(entry != null) {
-            for(Iterator iter=entry.listeners.iterator(); iter.hasNext(); ) {
-                if(((WeakReference)iter.next()).get() == listener) {
+            for(Iterator<WeakReference<IFileChangeListener>> iter=entry.listeners.iterator(); iter.hasNext(); ) {
+                if(iter.next().get() == listener) {
                     iter.remove();
                     if(entry.listeners.isEmpty()) {
                         if(!entry.removed) {
@@ -117,7 +116,7 @@ public class FileMonitor
 
     public void unregister(File file)
     {
-        FileChangeRegistryEntry entry = (FileChangeRegistryEntry)mRegistry.get(file);
+        FileChangeRegistryEntry entry = mRegistry.get(file);
         if(entry != null && !entry.removed) {
             mRegistry.remove(file);
             entry.removed = true;
@@ -128,7 +127,8 @@ public class FileMonitor
     {
         private boolean mCanceled = false;
 
-        public boolean cancel()
+        @Override
+		public boolean cancel()
         {
             if(super.cancel()) {
                 mCanceled = true;
@@ -137,16 +137,17 @@ public class FileMonitor
             return false;
         }
 
-        public void run()
+        @Override
+		public void run()
         {
             Thread.currentThread().setName(EclipseNSISPlugin.getResourceString("file.monitor.thread.name")); //$NON-NLS-1$
-            File[] files = (File[])mRegistry.keySet().toArray(new File[mRegistry.size()]);
+            File[] files = mRegistry.keySet().toArray(new File[mRegistry.size()]);
             for(int i=0; i<files.length; i++) {
                 if(mCanceled) {
                     return;
                 }
                 File file = files[i];
-                FileChangeRegistryEntry entry = (FileChangeRegistryEntry)mRegistry.get(file);
+                FileChangeRegistryEntry entry = mRegistry.get(file);
                 if(!IOUtility.isValidFile(file)) {
                     /* Sleep 50 ms & see if the file shows up again- i.e.,
                      * we caught the event in the middle of a move operation. */
@@ -180,11 +181,11 @@ public class FileMonitor
 
         private void fireChanged(int type, File file, FileChangeRegistryEntry entry)
         {
-            WeakReference[] listeners = (WeakReference[])entry.listeners.toArray(EMPTY_ARRAY);
-            for (int i = 0; i < listeners.length; i++) {
-                IFileChangeListener listener = (IFileChangeListener)listeners[i].get();
+        	List<WeakReference<IFileChangeListener>> listeners = new ArrayList<WeakReference<IFileChangeListener>>(entry.listeners);
+            for (WeakReference<IFileChangeListener> weakref : listeners) {
+                IFileChangeListener listener = weakref.get();
                 if(listener == null) {
-                    entry.listeners.remove(listeners[i]);
+                    entry.listeners.remove(weakref);
                 }
                 else {
                     listener.fileChanged(type, file);
@@ -196,7 +197,7 @@ public class FileMonitor
     private class FileChangeRegistryEntry
     {
         long lastModified;
-        List listeners = new ArrayList();
+        List<WeakReference<IFileChangeListener>> listeners = new ArrayList<WeakReference<IFileChangeListener>>();
         boolean removed = false;
     }
 }

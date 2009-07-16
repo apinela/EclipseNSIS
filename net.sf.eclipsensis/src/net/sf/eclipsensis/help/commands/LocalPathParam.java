@@ -30,7 +30,8 @@ public class LocalPathParam extends LocalFileParam
         super(node);
     }
 
-    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new LocalPathParamEditor(command, parentEditor);
     }
@@ -44,7 +45,8 @@ public class LocalPathParam extends LocalFileParam
             super(command, parentEditor);
         }
 
-        public void clear()
+        @Override
+		public void clear()
         {
             if(Common.isValid(mPathText)) {
                 mPathText.setText(""); //$NON-NLS-1$
@@ -52,7 +54,8 @@ public class LocalPathParam extends LocalFileParam
             super.clear();
         }
 
-        protected String getPrefixableParamText()
+        @Override
+		protected String getPrefixableParamText()
         {
             if(Common.isValid(mPathText)) {
                 String path = IOUtility.decodePath(mPathText.getText());
@@ -61,7 +64,8 @@ public class LocalPathParam extends LocalFileParam
             return null;
         }
 
-        protected void updateState(boolean state)
+        @Override
+		protected void updateState(boolean state)
         {
             if(Common.isValid(mPathText)) {
                 mPathText.setEnabled(state);
@@ -73,7 +77,8 @@ public class LocalPathParam extends LocalFileParam
             super.updateState(state);
         }
 
-        protected String validateLocalFilesystemObjectParam()
+        @Override
+		protected String validateLocalFilesystemObjectParam()
         {
             if(Common.isValid(mPathText)) {
                 String path = IOUtility.decodePath(mPathText.getText());
@@ -112,7 +117,8 @@ public class LocalPathParam extends LocalFileParam
             return null;
         }
 
-        public void saveSettings()
+        @Override
+		public void saveSettings()
         {
             super.saveSettings();
             if(Common.isValid(mPathText) && getSettings() != null) {
@@ -120,7 +126,8 @@ public class LocalPathParam extends LocalFileParam
             }
         }
 
-        protected void initParamEditor()
+        @Override
+		protected void initParamEditor()
         {
             super.initParamEditor();
             if(Common.isValid(mPathText)) {
@@ -128,7 +135,8 @@ public class LocalPathParam extends LocalFileParam
             }
         }
 
-        protected Control createParamControl(Composite parent)
+        @Override
+		protected Control createParamControl(Composite parent)
         {
             parent = new Composite(parent,SWT.NONE);
             GridLayout layout = new GridLayout(3,false);
@@ -145,7 +153,8 @@ public class LocalPathParam extends LocalFileParam
             MenuItem mi = new MenuItem(menu,SWT.PUSH);
             mi.setText(EclipseNSISPlugin.getResourceString("browse.file.text")); //$NON-NLS-1$
             mi.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     File f = new File(IOUtility.decodePath(mPathText.getText()));
 
@@ -170,7 +179,8 @@ public class LocalPathParam extends LocalFileParam
             mi = new MenuItem(menu,SWT.PUSH);
             mi.setText(EclipseNSISPlugin.getResourceString("browse.dir.text")); //$NON-NLS-1$
             mi.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     File f = new File(IOUtility.decodePath(mPathText.getText()));
                     DirectoryDialog dialog = new DirectoryDialog(b.getShell());
@@ -188,7 +198,8 @@ public class LocalPathParam extends LocalFileParam
             });
 
             b.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     if(menu.isVisible()) {
                         menu.setVisible(false);

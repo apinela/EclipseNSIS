@@ -27,10 +27,10 @@ import org.eclipse.ui.actions.*;
 public class DropDownAction extends PartEventAction implements IPropertyChangeListener
 {
     private IPreferenceStore mPreferenceStore;
-    private Map mChildren = new LinkedHashMap();
+    private Map<String, DropDownActionWrapper> mChildren = new LinkedHashMap<String, DropDownActionWrapper>();
     private DropDownActionWrapper mCurrent;
     private Menu mMenu = null;
-    private Set mEnabledActions = new HashSet();
+    private Set<Action> mEnabledActions = new HashSet<Action>();
     private IMenuCreator mMenuCreator = new IMenuCreator() {
         public void dispose()
         {
@@ -44,8 +44,8 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
         {
             if(mMenu == null || mMenu.isDisposed()) {
                 mMenu = new Menu(parent);
-                for(Iterator iter=mChildren.values().iterator(); iter.hasNext(); ) {
-                    ActionContributionItem item = new ActionContributionItem((IAction)iter.next());
+                for(Iterator<DropDownActionWrapper> iter=mChildren.values().iterator(); iter.hasNext(); ) {
+                    ActionContributionItem item = new ActionContributionItem(iter.next());
                     item.fill(mMenu, -1);
                 }
             }
@@ -64,8 +64,8 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
             public IStatus run(IProgressMonitor monitor)
             {
                 if(mDetectCurrent && !mEnabledActions.contains(mCurrent)) {
-                    for(Iterator iter=mChildren.values().iterator(); iter.hasNext(); ) {
-                        DropDownActionWrapper element = (DropDownActionWrapper)iter.next();
+                    for(Iterator<DropDownActionWrapper> iter=mChildren.values().iterator(); iter.hasNext(); ) {
+                        DropDownActionWrapper element = iter.next();
                         if((element).isEnabled()) {
                             mPreferenceStore.setValue(getId(),element.getId());
                             break;
@@ -82,7 +82,7 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
         {
             if (event.getProperty().equals(IAction.ENABLED)) {
                 IAction action = (IAction)event.getSource();
-                Object delegate = mChildren.get(action.getId());
+                DropDownActionWrapper delegate = mChildren.get(action.getId());
                 if(delegate != null) {
                     Boolean bool = (Boolean) event.getNewValue();
                     if(bool.booleanValue()) {
@@ -107,7 +107,8 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
         init(delegates);
     }
 
-    public IMenuCreator getMenuCreator()
+    @Override
+	public IMenuCreator getMenuCreator()
     {
         return mMenuCreator;
     }
@@ -124,9 +125,9 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
                 delegates[i].addPropertyChangeListener(mActionListener);
             }
             String delegateId = mPreferenceStore.getString(getId());
-            DropDownActionWrapper action = (DropDownActionWrapper)mChildren.get(delegateId);
+            DropDownActionWrapper action = mChildren.get(delegateId);
             if(action == null) {
-                action = (DropDownActionWrapper)mChildren.get(delegates[0].getId());
+                action = mChildren.get(delegates[0].getId());
                 mPreferenceStore.setValue(getId(),action.getId());
             }
             else {
@@ -136,19 +137,22 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
         updateEnabled();
     }
 
-    public void partActivated(IWorkbenchPart part)
+    @Override
+	public void partActivated(IWorkbenchPart part)
     {
         super.partActivated(part);
         updateEnabled();
     }
 
-    public void partClosed(IWorkbenchPart part)
+    @Override
+	public void partClosed(IWorkbenchPart part)
     {
         updateEnabled();
         super.partClosed(part);
     }
 
-    public void partDeactivated(IWorkbenchPart part)
+    @Override
+	public void partDeactivated(IWorkbenchPart part)
     {
         super.partDeactivated(part);
         updateEnabled();
@@ -162,7 +166,7 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
     public void propertyChange(PropertyChangeEvent event)
     {
         if(getId().equals(event.getProperty())) {
-            DropDownActionWrapper action = (DropDownActionWrapper)mChildren.get(event.getNewValue());
+            DropDownActionWrapper action = mChildren.get(event.getNewValue());
             if(action != null) {
                 setCurrent(action);
             }
@@ -200,7 +204,8 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
         }
     }
 
-    public void run()
+    @Override
+	public void run()
     {
         mCurrent.run();
     }
@@ -211,8 +216,8 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
     public void dispose()
     {
         mPreferenceStore.removePropertyChangeListener(this);
-        for (Iterator iter = mChildren.values().iterator(); iter.hasNext();) {
-            DropDownActionWrapper action = (DropDownActionWrapper)iter.next();
+        for (Iterator<DropDownActionWrapper> iter = mChildren.values().iterator(); iter.hasNext();) {
+            DropDownActionWrapper action = iter.next();
             RetargetAction delegate = action.getDelegate();
             if(delegate != null) {
                 delegate.removePropertyChangeListener(mActionListener);
@@ -269,7 +274,8 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
             }
         }
 
-        public void run()
+        @Override
+		public void run()
         {
             if(mDelegate != null) {
                 mDelegate.run();
@@ -277,7 +283,8 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
             }
         }
 
-        public void runWithEvent(Event event)
+        @Override
+		public void runWithEvent(Event event)
         {
             if(mDelegate != null) {
                 mDelegate.runWithEvent(event);

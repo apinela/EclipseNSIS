@@ -36,12 +36,14 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
         mAnnotationHover = new NSISAnnotationHover(new String[]{IInstallOptionsConstants.INSTALLOPTIONS_ERROR_ANNOTATION_NAME, IInstallOptionsConstants.INSTALLOPTIONS_WARNING_ANNOTATION_NAME});
     }
 
-    public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer)
+    @Override
+	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer)
     {
         return mAnnotationHover;
     }
 
-    public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType)
+    @Override
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType)
     {
         return mAnnotationHover;
     }
@@ -49,7 +51,8 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
     /*
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
-    public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer)
+    @Override
+	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer)
     {
         PresentationReconciler reconciler = new PresentationReconciler();
         reconciler.setDocumentPartitioning(InstallOptionsPartitionScanner.INSTALLOPTIONS_PARTITIONING);
@@ -64,7 +67,8 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
         return reconciler;
     }
 
-    public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer)
+    @Override
+	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer)
     {
         QuickAssistAssistant quickAssistAssistant = new QuickAssistAssistant();
         quickAssistAssistant.setQuickAssistProcessor(new IQuickAssistProcessor() {
@@ -96,18 +100,18 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
                                     if(inifile != null) {
                                         INILine line = inifile.getLineAtOffset(invocationContext.getOffset());
                                         if(line != null) {
-                                            List problems = new ArrayList(line.getProblems());
+                                            List<INIProblem> problems = new ArrayList<INIProblem>(line.getProblems());
                                             problems.addAll(inifile.getProblems(false));
                                             if(!Common.isEmptyCollection(problems)) {
-                                                List proposals = new ArrayList();
-                                                for (Iterator iter = problems.iterator(); iter.hasNext();) {
-                                                    INIProblem problem = (INIProblem)iter.next();
+                                                List<INIProblemQuickFixProposal> proposals = new ArrayList<INIProblemQuickFixProposal>();
+                                                for (Iterator<INIProblem> iter = problems.iterator(); iter.hasNext();) {
+                                                    INIProblem problem = iter.next();
                                                     if(problem.canFix()) {
                                                         proposals.add(new INIProblemQuickFixProposal(problem));
                                                     }
                                                 }
                                                 if(proposals.size() > 0) {
-                                                    return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
+                                                    return proposals.toArray(new ICompletionProposal[proposals.size()]);
                                                 }
                                             }
                                         }

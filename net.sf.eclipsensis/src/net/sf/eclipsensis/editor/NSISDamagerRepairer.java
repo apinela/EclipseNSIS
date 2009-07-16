@@ -37,7 +37,8 @@ public class NSISDamagerRepairer extends DefaultDamagerRepairer implements IProp
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.presentation.IPresentationDamager#getDamageRegion(org.eclipse.jface.text.ITypedRegion, org.eclipse.jface.text.DocumentEvent, boolean)
      */
-    public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent e,
+    @Override
+	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent e,
             boolean documentPartitioningChanged)
     {
         if (!documentPartitioningChanged) {

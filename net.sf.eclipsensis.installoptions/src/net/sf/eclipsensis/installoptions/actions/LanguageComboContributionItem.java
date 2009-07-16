@@ -29,9 +29,9 @@ import org.eclipse.ui.*;
 
 public class LanguageComboContributionItem extends ContributionItem implements PropertyChangeListener, IPropertyChangeListener
 {
-    private static final String DEFAULT = InstallOptionsPlugin.getResourceString("option.default"); //$NON-NLS-1$
-    private static final Comparator cLanguageComparator = new Comparator() {
-        public int compare(Object o1, Object o2)
+    private static final NSISLanguage DEFAULT;
+    private static final Comparator<NSISLanguage> cLanguageComparator = new Comparator<NSISLanguage>() {
+        public int compare(NSISLanguage o1, NSISLanguage o2)
         {
             return o1.toString().compareTo(o2.toString());
         }
@@ -70,6 +70,12 @@ public class LanguageComboContributionItem extends ContributionItem implements P
         }
     };
     private IPreferenceStore mPreferenceStore = InstallOptionsPlugin.getDefault().getPreferenceStore();
+
+    static
+    {
+    	String defaultLang = InstallOptionsPlugin.getResourceString("option.default","(Default)"); //$NON-NLS-1$
+    	DEFAULT = new NSISLanguage(defaultLang, defaultLang, 0);
+    }
 
     public LanguageComboContributionItem(IPartService partService)
     {
@@ -129,7 +135,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
                 }
                 String pref = mPreferenceStore.getString(IInstallOptionsConstants.PREFERENCE_PREVIEW_LANG);
                 Object sel;
-                List languages = new ArrayList(NSISLanguageManager.getInstance().getLanguages());
+                List<NSISLanguage> languages = new ArrayList<NSISLanguage>(NSISLanguageManager.getInstance().getLanguages());
                 Collections.sort(languages, cLanguageComparator);
                 languages.add(0, DEFAULT);
                 mComboViewer.setInput(languages);
@@ -185,7 +191,8 @@ public class LanguageComboContributionItem extends ContributionItem implements P
         });
         mComboViewer.setContentProvider(new CollectionContentProvider());
         mComboViewer.setLabelProvider(new LabelProvider() {
-            public String getText(Object element)
+            @Override
+			public String getText(Object element)
             {
                 if(element instanceof NSISLanguage) {
                     return ((NSISLanguage)element).getDisplayName();
@@ -203,7 +210,8 @@ public class LanguageComboContributionItem extends ContributionItem implements P
         return composite;
     }
 
-    public void dispose()
+    @Override
+	public void dispose()
     {
         NSISLanguageManager.getInstance().removePropertyChangedListener(this);
         mPreferenceStore.removePropertyChangeListener(this);
@@ -222,16 +230,19 @@ public class LanguageComboContributionItem extends ContributionItem implements P
         mComboViewer = null;
     }
 
-    public final void fill(Composite parent)
+    @Override
+	public final void fill(Composite parent)
     {
         createControl(parent);
     }
 
-    public final void fill(Menu parent, int index)
+    @Override
+	public final void fill(Menu parent, int index)
     {
     }
 
-    public void fill(ToolBar parent, int index)
+    @Override
+	public void fill(ToolBar parent, int index)
     {
         mToolitem = new ToolItem(parent, SWT.SEPARATOR, index);
         Control control = createControl(parent);

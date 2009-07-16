@@ -29,11 +29,13 @@ public class InstallOptionsDirectEditCommand extends Command
         mOldValue = mWidget.getPropertyValue(mProperty);
     }
 
-    public void execute() {
+    @Override
+	public void execute() {
         mWidget.setPropertyValue(mProperty, mNewValue);
     }
 
-    public void undo() {
+    @Override
+	public void undo() {
         mWidget.setPropertyValue(mProperty, mOldValue);
     }
 }

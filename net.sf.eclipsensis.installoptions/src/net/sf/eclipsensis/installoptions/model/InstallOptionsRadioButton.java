@@ -25,12 +25,14 @@ public class InstallOptionsRadioButton extends InstallOptionsCheckBox
         super(section);
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_RADIOBUTTON;
     }
 
-    protected Position getDefaultPosition()
+    @Override
+	protected Position getDefaultPosition()
     {
         return new Position(0,0,76,11);
     }
@@ -38,12 +40,14 @@ public class InstallOptionsRadioButton extends InstallOptionsCheckBox
     /**
      * @return
      */
-    public String[] getStateDisplay()
+    @Override
+	public String[] getStateDisplay()
     {
         return STATE_DISPLAY;
     }
 
-    protected String getDefaultText()
+    @Override
+	protected String getDefaultText()
     {
         return InstallOptionsPlugin.getResourceString("radiobutton.text.default"); //$NON-NLS-1$
     }

@@ -11,7 +11,7 @@ package net.sf.eclipsensis.util;
 
 import java.util.*;
 
-public final class MRUMap extends LinkedHashMap
+public final class MRUMap<K,V> extends LinkedHashMap<K,V>
 {
     private static final long serialVersionUID = -4303663274693162132L;
 
@@ -23,20 +23,22 @@ public final class MRUMap extends LinkedHashMap
         mMaxSize= maxSize;
     }
 
-    public MRUMap(int maxSize, Map map)
+    public MRUMap(int maxSize, Map<K,V> map)
     {
         this(maxSize);
         putAll(map);
     }
 
-    public Object put(Object key, Object value)
+    @Override
+	public V put(K key, V value)
     {
-        Object object= remove(key);
+        V object= remove(key);
         super.put(key, value);
         return object;
     }
 
-    protected boolean removeEldestEntry(Map.Entry eldest)
+    @Override
+	protected boolean removeEldestEntry(Map.Entry<K,V> eldest)
     {
         return (mMaxSize > 0 && size() > mMaxSize);
     }

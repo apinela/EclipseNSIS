@@ -8,6 +8,7 @@ import org.apache.lucene.analysis.Analyzer;
 
 import net.sf.eclipsensis.util.CaseInsensitiveSet;
 
+@SuppressWarnings({"serial","unchecked"})
 public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConstants {
     public static final String REGEX_PREFIX = "re:";
 
@@ -18,7 +19,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
      *  @param query  the query string to be parsed.
      *  @throws ParseException if the parsing fails
      */
-    public static Collection parse(String field, Analyzer analyzer, String query) throws ParseException
+    public static Collection<String> parse(String field, Analyzer analyzer, String query) throws ParseException
     {
         NSISHelpSearchQueryParser parser = new NSISHelpSearchQueryParser(field, analyzer);
         return parser.parseQuery(query);
@@ -35,11 +36,11 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
      *  @param query  the query string to be parsed.
      *  @throws ParseException if the parsing fails
      */
-    public Collection parseQuery(String query) throws ParseException
+    public Collection<String> parseQuery(String query) throws ParseException
     {
         ReInit(new StringReader(query));
         try {
-            Collection result = new CaseInsensitiveSet();
+            Collection<String> result = new CaseInsensitiveSet();
             parseQuery(result);
             return result;
         }
@@ -54,7 +55,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
         char[] caDest = new char[caSource.length];
         int j = 0;
         for (int i = 0; i < caSource.length; i++) {
-          if ((caSource[i] != '\\') || (i > 0 && caSource[i-1] == '\\')) {
+          if ((caSource[i] != '\u005c\u005c') || (i > 0 && caSource[i-1] == '\u005c\u005c')) {
               caDest[j++]=caSource[i];
           }
         }
@@ -69,16 +70,16 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
             char c = wildcard.charAt(i);
             switch(c) {
                 case '*':
-                    s.append("\\w*");
+                    s.append("\u005c\u005cw*");
                     break;
                 case '?':
-                    s.append("\\w");
+                    s.append("\u005c\u005cw");
                     break;
                     // escape special regexp-characters
                 case '(': case ')': case '[': case ']': case '$':
                 case '^': case '.': case '{': case '}': case '|':
-                case '\\':
-                    s.append("\\");
+                case '\u005c\u005c':
+                    s.append("\u005c\u005c");
                     s.append(c);
                     break;
                 default:
@@ -141,7 +142,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     }
   }
 
-  final public void parseQuery(Collection result) throws ParseException {
+  final public void parseQuery(Collection<String> result) throws ParseException {
     Modifiers();
     Clause(result);
     label_1:
@@ -171,7 +172,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     }
   }
 
-  final public void Clause(Collection result) throws ParseException {
+  final public void Clause(Collection<String> result) throws ParseException {
     if (jj_2_1(2)) {
       jj_consume_token(TERM);
       jj_consume_token(COLON);
@@ -208,7 +209,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     }
   }
 
-  final public void Term(Collection result) throws ParseException {
+  final public void Term(Collection<String> result) throws ParseException {
         Token term, goop1, goop2;
         boolean wildcard = false;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -331,8 +332,8 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
                 else {
                     goop2.image = discardEscapeChar(goop2.image);
                 }
-                result.add(goop1);
-                result.add(goop2);
+                result.add(goop1.image);
+                result.add(goop2.image);
       break;
     case RANGEEX_START:
       jj_consume_token(RANGEEX_START);
@@ -390,8 +391,8 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
                 else {
                     goop2.image = discardEscapeChar(goop2.image);
                 }
-                result.add(goop1);
-                result.add(goop2);
+                result.add(goop1.image);
+                result.add(goop2.image);
       break;
     case QUOTED:
       term = jj_consume_token(QUOTED);
@@ -558,7 +559,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     throw generateParseException();
   }
 
-  static private final class LookaheadSuccess extends java.lang.Error { private static final long serialVersionUID = 1L; }
+  static private final class LookaheadSuccess extends java.lang.Error { }
   final private LookaheadSuccess jj_ls = new LookaheadSuccess();
   private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {
@@ -608,7 +609,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
       return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.List jj_expentries = new java.util.ArrayList();
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
   private int[] jj_expentry;
   private int jj_kind = -1;
   private int[] jj_lasttokens = new int[100];
@@ -671,7 +672,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
     jj_add_error_token(0, 0);
     int[][] exptokseq = new int[jj_expentries.size()][];
     for (int i = 0; i < jj_expentries.size(); i++) {
-      exptokseq[i] = (int[])jj_expentries.get(i);
+      exptokseq[i] = jj_expentries.get(i);
     }
     return new ParseException(token, exptokseq, tokenImage);
   }

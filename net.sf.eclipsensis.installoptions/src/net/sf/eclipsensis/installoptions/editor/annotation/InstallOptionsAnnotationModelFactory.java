@@ -31,7 +31,8 @@ public class InstallOptionsAnnotationModelFactory extends ResourceMarkerAnnotati
         mEditorRegistry = workbench.getEditorRegistry();
     }
 
-    public IAnnotationModel createAnnotationModel(IPath location)
+    @Override
+	public IAnnotationModel createAnnotationModel(IPath location)
     {
         String editorId = null;
         try {

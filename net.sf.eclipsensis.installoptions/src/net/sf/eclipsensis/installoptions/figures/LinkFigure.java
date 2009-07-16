@@ -33,14 +33,16 @@ public class LinkFigure extends LabelFigure implements ILinkFigure
         super(parent, propertySource);
     }
 
-    protected void init(IPropertySource propertySource)
+    @Override
+	protected void init(IPropertySource propertySource)
     {
         mSource = propertySource;
         setTxtColor((RGB)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR));
         super.init(propertySource);
     }
 
-    public boolean isMultiLine()
+    @Override
+	public boolean isMultiLine()
     {
         return Boolean.TRUE.equals(mSource.getPropertyValue(InstallOptionsModel.PROPERTY_MULTILINE));
     }
@@ -58,7 +60,8 @@ public class LinkFigure extends LabelFigure implements ILinkFigure
     /**
      * @return
      */
-    protected Control createUneditableSWTControl(Composite parent, int style)
+    @Override
+	protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Control label = super.createUneditableSWTControl(parent, style);
         final Color color = new Color(label.getDisplay(),getTxtColor());
@@ -75,7 +78,8 @@ public class LinkFigure extends LabelFigure implements ILinkFigure
     /**
      * @return
      */
-    public int getDefaultStyle()
+    @Override
+	public int getDefaultStyle()
     {
         return SWT.LEFT;
     }

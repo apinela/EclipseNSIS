@@ -28,7 +28,8 @@ public class INIFileDeleteControlAction extends INIFileEditControlAction
         setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("delete.control.disabled.icon"))); //$NON-NLS-1$)
     }
 
-    protected boolean doRun2(INIFile iniFile, INISection section)
+    @Override
+	protected boolean doRun2(INIFile iniFile, INISection section)
     {
         boolean showOnShift = InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(IInstallOptionsConstants.PREFERENCE_DELETE_CONTROL_WARNING);
         if(!showOnShift || WinAPI.GetKeyState(WinAPI.VK_SHIFT)<0) {

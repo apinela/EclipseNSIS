@@ -53,6 +53,4 @@ Export-Package: net.sf.eclipsensis,
  net.sf.eclipsensis.wizard.settings.dialogs,
  net.sf.eclipsensis.wizard.template,
  net.sf.eclipsensis.wizard.util
-Bundle-RequiredExecutionEnvironment: J2SE-1.4,
- J2SE-1.5,
- JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

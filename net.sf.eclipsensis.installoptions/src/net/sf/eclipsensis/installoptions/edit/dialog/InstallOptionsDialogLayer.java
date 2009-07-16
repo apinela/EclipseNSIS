@@ -20,11 +20,12 @@ import org.eclipse.draw2d.geometry.*;
 
 public class InstallOptionsDialogLayer extends FreeformLayer implements IInstallOptionsConstants
 {
-    private List mChildren = new ArrayList();
+    private List<IFigure> mChildren = new ArrayList<IFigure>();
     private Dimension mDialogSize = new Dimension(100,100);
     private boolean mShowDialogSize = false;
 
-    protected void paintFigure(Graphics graphics)
+    @Override
+	protected void paintFigure(Graphics graphics)
     {
         super.paintFigure(graphics);
         if(mShowDialogSize && !mDialogSize.equals(0,0)) {
@@ -37,13 +38,15 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
         }
     }
 
-    public void add(IFigure child, Object constraint, int index)
+    @Override
+	public void add(IFigure child, Object constraint, int index)
     {
         mChildren.add(child);
         super.add(child, constraint, index);
     }
 
-    public void remove(IFigure child)
+    @Override
+	public void remove(IFigure child)
     {
         if ((child.getParent() == this) && getChildren().contains(child)) {
             mChildren.remove(child);
@@ -51,13 +54,14 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
         super.remove(child);
     }
 
-    protected void paintChildren(Graphics graphics)
+    @Override
+	protected void paintChildren(Graphics graphics)
     {
         IFigure child;
 
         Rectangle clip = Rectangle.SINGLETON;
-        for (Iterator iter = mChildren.iterator(); iter.hasNext(); ) {
-            child = (IFigure)iter.next();
+        for (Iterator<IFigure> iter = mChildren.iterator(); iter.hasNext(); ) {
+            child = iter.next();
             if (child.isVisible() && child.intersects(graphics.getClip(clip))) {
                 graphics.pushState();
                 graphics.clipRect(child.getBounds());
@@ -94,7 +98,8 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
         }
     }
 
-    public IFigure findFigureAt(int x, int y, TreeSearch search)
+    @Override
+	public IFigure findFigureAt(int x, int y, TreeSearch search)
     {
         IFigure figure = super.findFigureAt(x, y, search);
         if(figure instanceof IInstallOptionsFigure) {
@@ -126,13 +131,14 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
     {
         private TreeSearch mDelegate;
 
-        public WrappedExclusionSearch(TreeSearch delegate, Collection exclusions)
+        public WrappedExclusionSearch(TreeSearch delegate, Collection<IInstallOptionsFigure> exclusions)
         {
             super(exclusions);
             mDelegate = delegate;
         }
 
-        public boolean prune(IFigure f)
+        @Override
+		public boolean prune(IFigure f)
         {
             if(!mDelegate.prune(f)) {
                 return super.prune(f);

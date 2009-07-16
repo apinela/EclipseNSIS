@@ -88,7 +88,7 @@ public class Common
         {
             throw new IllegalArgumentException();
         }
-        Class c = array.getClass();
+        Class<?> c = array.getClass();
         if ( !c.isArray() ) {
             throw new IllegalArgumentException();
         }
@@ -144,12 +144,12 @@ public class Common
     {
         Object newArray = null;
         if(!isEmptyArray(arrays)) {
-            Class clasz = null;
+            Class<?> clasz = null;
             int count = 0;
             int[] lengths = new int[arrays.length];
             for (int i = 0; i < arrays.length; i++) {
                 if(arrays[i] != null) {
-                    Class arrayClass = arrays[i].getClass();
+                    Class<?> arrayClass = arrays[i].getClass();
                     if(arrayClass.isArray()) {
                         lengths[i] = Array.getLength(arrays[i]);
                         count += lengths[i];
@@ -157,7 +157,7 @@ public class Common
                             clasz = arrayClass.getComponentType();
                         }
                         else {
-                            Class clasz2 = arrayClass.getComponentType();
+                            Class<?> clasz2 = arrayClass.getComponentType();
                             if(!clasz2.equals(clasz)) {
                                 if(clasz.isAssignableFrom(clasz2)) {
                                     continue;
@@ -217,14 +217,14 @@ public class Common
         {
             return oldArray;
         }
-        Class newClass = newArray.getClass();
+        Class<?> newClass = newArray.getClass();
         if(!newClass.isArray()) {
             throw new IllegalArgumentException();
         }
         if(isEmptyArray(oldArray)) {
             return cloneArray(newArray);
         }
-        Class oldClass = oldArray.getClass();
+        Class<?> oldClass = oldArray.getClass();
         if(!oldClass.isArray()) {
             throw new IllegalArgumentException();
         }
@@ -250,7 +250,7 @@ public class Common
     public static Object cloneArray(Object array)
     {
 
-        Class clasz = array.getClass();
+        Class<?> clasz = array.getClass();
         if(clasz.isArray()) {
             Object arrayClone = Array.newInstance(clasz.getComponentType(),
                                                   Array.getLength(array));
@@ -284,7 +284,7 @@ public class Common
      * @param collection       Collection to be tested
      * @return            True if the collection is null or size is zero
      */
-    public static boolean isEmptyCollection(Collection collection)
+    public static boolean isEmptyCollection(Collection<?> collection)
     {
         if(collection != null) {
             return (collection.size() == 0);
@@ -298,7 +298,7 @@ public class Common
      * @param map       Map to be tested
      * @return          True if the map is null or size is zero
      */
-    public static boolean isEmptyMap(Map map)
+    public static boolean isEmptyMap(Map<?,?> map)
     {
         if(map != null) {
             return (map.size() == 0);
@@ -306,14 +306,12 @@ public class Common
         return true;
     }
 
-    public static boolean collectionContainsIgnoreCase(Collection collection, String item)
+    public static boolean collectionContainsIgnoreCase(Collection<String> collection, String item)
     {
-        for (Iterator iter = collection.iterator(); iter.hasNext();) {
-            Object element = iter.next();
-            if(element instanceof String) {
-                if(((String)element).equalsIgnoreCase(item)) {
-                    return true;
-                }
+        for (Iterator<String> iter = collection.iterator(); iter.hasNext();) {
+            String element = iter.next();
+            if(stringsAreEqual(element,item,true)) {
+                return true;
             }
         }
         return false;
@@ -354,7 +352,7 @@ public class Common
         return buf.toString();
     }
 
-    public static String flatten(Collection collection, char separator)
+    public static String flatten(Collection<?> collection, char separator)
     {
         return flatten(collection.toArray(),separator);
     }
@@ -366,17 +364,17 @@ public class Common
 
     public static String[] tokenize(String text, char separator, boolean trim)
     {
-        return (String[])tokenizeToList(text,separator,trim).toArray(EMPTY_STRING_ARRAY);
+        return tokenizeToList(text,separator,trim).toArray(EMPTY_STRING_ARRAY);
     }
 
-    public static List tokenizeToList(String text, char separator)
+    public static List<String> tokenizeToList(String text, char separator)
     {
         return tokenizeToList(text, separator, true);
     }
 
-    public static List tokenizeToList(String text, char separator, boolean trim)
+    public static List<String> tokenizeToList(String text, char separator, boolean trim)
     {
-        ArrayList list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         if(text != null && text.length() > 0) {
             char[] chars = text.toCharArray();
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -396,20 +394,20 @@ public class Common
 
     public static String[] loadArrayProperty(ResourceBundle bundle, String propertyName)
     {
-        return (String[])loadListProperty(bundle,propertyName).toArray(EMPTY_STRING_ARRAY);
+        return loadListProperty(bundle,propertyName).toArray(EMPTY_STRING_ARRAY);
     }
 
     public static String[] loadArrayProperty(ResourceBundle bundle, String propertyName, char separator)
     {
-        return (String[])loadListProperty(bundle,propertyName, separator).toArray(EMPTY_STRING_ARRAY);
+        return loadListProperty(bundle,propertyName, separator).toArray(EMPTY_STRING_ARRAY);
     }
 
-    public static List loadListProperty(ResourceBundle bundle, String propertyName)
+    public static List<String> loadListProperty(ResourceBundle bundle, String propertyName)
     {
         return loadListProperty(bundle, propertyName, ',');
     }
 
-    public static List loadListProperty(ResourceBundle bundle, String propertyName, char separator)
+    public static List<String> loadListProperty(ResourceBundle bundle, String propertyName, char separator)
     {
         String property = null;
         if(bundle != null) {
@@ -423,17 +421,17 @@ public class Common
         return tokenizeToList(property, separator);
     }
 
-    public static Map loadMapProperty(ResourceBundle bundle, String propertyName)
+    public static Map<String, String> loadMapProperty(ResourceBundle bundle, String propertyName)
     {
         return loadMapProperty(bundle,propertyName,',');
     }
 
-    public static Map loadMapProperty(ResourceBundle bundle, String propertyName, char separator)
+    public static Map<String, String> loadMapProperty(ResourceBundle bundle, String propertyName, char separator)
     {
-        Map map = new LinkedHashMap();
-        List list = loadListProperty(bundle, propertyName, separator);
-        for(Iterator iter=list.iterator(); iter.hasNext(); ) {
-            String pair = (String)iter.next();
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        List<String> list = loadListProperty(bundle, propertyName, separator);
+        for(Iterator<String> iter=list.iterator(); iter.hasNext(); ) {
+            String pair = iter.next();
             int n=pair.indexOf("="); //$NON-NLS-1$
             if(n > 0) {
                 String key = pair.substring(0,n).trim();
@@ -491,7 +489,7 @@ public class Common
         return input;
     }
 
-    public static void beanToStore(Object bean, IPreferenceStore store, java.util.List properties)
+    public static void beanToStore(Object bean, IPreferenceStore store, java.util.List<String> properties)
     {
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
@@ -499,31 +497,31 @@ public class Common
             for (int i = 0; i < pd.length; i++) {
                 String name = pd[i].getName();
                 if(properties.contains(name)) {
-                    Class clasz = pd[i].getPropertyType();
+                    Class<?> clasz = pd[i].getPropertyType();
                     Method m = pd[i].getReadMethod();
                     try {
                         if(clasz.equals(Boolean.class) || clasz.equals(Boolean.TYPE)) {
-                            Boolean b = (Boolean)m.invoke(bean,null);
+                            Boolean b = (Boolean)m.invoke(bean,(Object[])null);
                             store.setValue(name,(b==null?false:b.booleanValue()));
                         }
                         else if(clasz.equals(Integer.class) || clasz.equals(Integer.TYPE)) {
-                            Integer n = (Integer)m.invoke(bean,null);
+                            Integer n = (Integer)m.invoke(bean,(Object[])null);
                             store.setValue(name,(n==null?0:n.intValue()));
                         }
                         else if(clasz.equals(Long.class) || clasz.equals(Long.TYPE)) {
-                            Long l = (Long)m.invoke(bean,null);
+                            Long l = (Long)m.invoke(bean,(Object[])null);
                             store.setValue(name,(l==null?0:l.longValue()));
                         }
                         else if(clasz.equals(Double.class) || clasz.equals(Double.TYPE)) {
-                            Double d = (Double)m.invoke(bean,null);
+                            Double d = (Double)m.invoke(bean,(Object[])null);
                             store.setValue(name,(d==null?0:d.doubleValue()));
                         }
                         else if(clasz.equals(Float.class) || clasz.equals(Float.TYPE)) {
-                            Float f = (Float)m.invoke(bean,null);
+                            Float f = (Float)m.invoke(bean,(Object[])null);
                             store.setValue(name,(f==null?0:f.floatValue()));
                         }
                         else if(clasz.equals(String.class)) {
-                            String s = (String)m.invoke(bean,null);
+                            String s = (String)m.invoke(bean,(Object[])null);
                             store.setValue(name,(s==null?"":s)); //$NON-NLS-1$
                         }
                     }
@@ -538,7 +536,7 @@ public class Common
         }
     }
 
-    public static void storeToBean(Object bean, IPreferenceStore store, java.util.List properties)
+    public static void storeToBean(Object bean, IPreferenceStore store, java.util.List<String> properties)
     {
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
@@ -548,7 +546,7 @@ public class Common
             for (int i = 0; i < pd.length; i++) {
                 String name = pd[i].getName();
                 if(properties.contains(name)) {
-                    Class clasz = pd[i].getPropertyType();
+                    Class<?> clasz = pd[i].getPropertyType();
                     Method m = pd[i].getWriteMethod();
                     try {
                         if(clasz.equals(Boolean.class) || clasz.equals(Boolean.TYPE)) {
@@ -586,7 +584,7 @@ public class Common
         }
     }
 
-    public static String getClassSignature(Class clasz)
+    public static String getClassSignature(Class<?> clasz)
     {
         if(clasz.isArray()) {
             return "["+getClassSignature(clasz.getComponentType()); //$NON-NLS-1$
@@ -628,7 +626,7 @@ public class Common
         }
     }
 
-    public static Object getObjectFieldValue(Object object, String fieldName, Class fieldType)
+    public static Object getObjectFieldValue(Object object, String fieldName, Class<?> fieldType)
     {
         Object value;
         try {
@@ -708,7 +706,7 @@ public class Common
 
     public static String[] formatLines(String text, int maxLength)
     {
-        ArrayList lines = new ArrayList();
+        List<String> lines = new ArrayList<String>();
         BreakIterator boundary = BreakIterator.getLineInstance();
         boundary.setText(text);
         int start = boundary.first();
@@ -731,7 +729,7 @@ public class Common
         if(buf.length() > 0) {
             lines.add(buf.toString());
         }
-        return (String[])lines.toArray(EMPTY_STRING_ARRAY);
+        return lines.toArray(EMPTY_STRING_ARRAY);
     }
 
     public static String generateUniqueName(String prefix, String suffix)
@@ -836,9 +834,9 @@ public class Common
         }
     }
 
-    public static ArrayList makeList(Object[] array)
+    public static <T> List<T> makeList(T[] array)
     {
-        ArrayList list = new ArrayList();
+        List<T> list = new ArrayList<T>();
         if(!isEmptyArray(array)) {
             for (int i = 0; i < array.length; i++) {
                 list.add(array[i]);
@@ -956,17 +954,21 @@ public class Common
                     switch(pieces.length) {
                         case 3:
                             defaultName = pieces[2];
-                        case 2:
+                            //$FALL-THROUGH$
+					    case 2:
                             String[] ids = tokenize(pieces[1],'@');
                             switch(ids.length) {
                                 case 2:
                                     lcid = parseInt(ids[1],0);
+        	                        //$FALL-THROUGH$
                                 case 1:
                                     id = Math.abs(parseInt(ids[0],-1));
+        	                        //$FALL-THROUGH$
                                 default:
                                     break;
                             }
-                        default:
+	                        //$FALL-THROUGH$
+						default:
                             library = pieces[0];
                             break;
                     }
@@ -1013,7 +1015,7 @@ public class Common
     public static boolean isWrappedPrimitive(Object obj)
     {
         if(obj != null) {
-            Class clasz = obj.getClass();
+            Class<?> clasz = obj.getClass();
             return (Byte.class.equals(clasz) ||
                 Short.class.equals(clasz) ||
                 Integer.class.equals(clasz) ||
@@ -1029,7 +1031,7 @@ public class Common
     public static Object createDefaultObject(String className)
     {
         try {
-            Class clasz = Class.forName(className);
+            Class<?> clasz = Class.forName(className);
             return createDefaultObject(clasz);
         }
         catch (Exception e) {
@@ -1038,15 +1040,33 @@ public class Common
         }
     }
 
-    public static Object createDefaultObject(Class clasz)
+    public static <T> T createDefaultObject(Class<T> clasz)
     {
         try {
-            Constructor constructor = clasz.getConstructor(null);
-            return constructor.newInstance(null);
+            Constructor<T> constructor = clasz.getConstructor((Class[])null);
+            return constructor.newInstance((Object[])null);
         }
         catch (Exception e) {
             EclipseNSISPlugin.getDefault().log(e);
             return null;
         }
+    }
+    
+    public static <T> List<T> makeGenericList(Class<T> clasz, List<?> list)
+    {
+    	List<T> newList = new ArrayList<T>();
+    	for(Object o : list)
+    	{
+    		if(o != null)
+    		{
+    			if(clasz.isAssignableFrom(o.getClass()))
+    			{
+    				newList.add(clasz.cast(o));
+    			}
+    			continue;
+    		}
+    		newList.add(null);
+    	}
+    	return newList;
     }
 }

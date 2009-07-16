@@ -50,8 +50,8 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     private boolean mIsNameModifiable = false;
 
     private DialogStatus mValidationStatus = new DialogStatus(IStatus.OK,""); //$NON-NLS-1$
-    private Map mGlobalActions= new HashMap(10);
-    private List mSelectionActions = new ArrayList(3);
+    private Map<String, TextViewerAction> mGlobalActions= new HashMap<String, TextViewerAction>(10);
+    private List<String> mSelectionActions = new ArrayList<String>(3);
     private String[][] mContextTypes = null;
 
     private ContextTypeRegistry mContextTypeRegistry;
@@ -82,19 +82,20 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
 
         mContextTypeRegistry = contextTypeRegistry;
 
-        List contexts= new ArrayList();
-        for (Iterator it= mContextTypeRegistry.contextTypes(); it.hasNext();) {
+        List<String[]> contexts= new ArrayList<String[]>();
+        for (Iterator<?> it= mContextTypeRegistry.contextTypes(); it.hasNext();) {
             TemplateContextType type= (TemplateContextType) it.next();
             contexts.add(new String[] { type.getId(), type.getName() });
         }
-        mContextTypes= (String[][]) contexts.toArray(new String[contexts.size()][]);
+        mContextTypes= contexts.toArray(new String[contexts.size()][]);
 
-        mTemplateContextType = mContextTypeRegistry.getContextType(template.getContextTypeId());
-        setTitle(EclipseNSISPlugin.getResourceString((edit?"edit.template.dialog.title": //$NON-NLS-1$
+        mTemplateContextType = mContextTypeRegistry.getContextType(mContextTypeId);
+		setTitle(EclipseNSISPlugin.getResourceString((edit?"edit.template.dialog.title": //$NON-NLS-1$
                                                            "new.template.dialog.title"))); //$NON-NLS-1$
     }
 
-    public void create()
+    @Override
+	public void create()
     {
         super.create();
         if(mPatternEditor != null && Common.isEmpty(mPatternEditor.getTextWidget().getText())) {
@@ -107,7 +108,8 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         }
     }
 
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         Composite composite= new Composite(parent, SWT.NONE);
         GridLayout layout= new GridLayout();
@@ -407,30 +409,30 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     private void fillContextMenu(IMenuManager menu)
     {
         menu.add(new GroupMarker(ITextEditorActionConstants.GROUP_UNDO));
-        menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, (IAction) mGlobalActions.get(ITextEditorActionConstants.UNDO));
+        menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, mGlobalActions.get(ITextEditorActionConstants.UNDO));
 
         menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
-        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.CUT));
-        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.COPY));
-        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.PASTE));
-        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
-        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) mGlobalActions.get(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL));
+        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, mGlobalActions.get(ITextEditorActionConstants.CUT));
+        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, mGlobalActions.get(ITextEditorActionConstants.COPY));
+        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, mGlobalActions.get(ITextEditorActionConstants.PASTE));
+        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, mGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
+        menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, mGlobalActions.get(INSISEditorConstants.CONTENT_ASSIST_PROPOSAL));
 
         menu.add(new Separator("templates")); //$NON-NLS-1$
-        menu.appendToGroup("templates", (IAction) mGlobalActions.get("InsertTemplateVariableProposal")); //$NON-NLS-1$ //$NON-NLS-2$
+        menu.appendToGroup("templates", mGlobalActions.get("InsertTemplateVariableProposal")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void updateSelectionDependentActions()
     {
-        Iterator iterator= mSelectionActions.iterator();
+        Iterator<String> iterator= mSelectionActions.iterator();
         while (iterator.hasNext()) {
-            updateAction((String)iterator.next());
+            updateAction(iterator.next());
         }
     }
 
     private void updateAction(String actionId)
     {
-        IAction action= (IAction) mGlobalActions.get(actionId);
+        IAction action= mGlobalActions.get(actionId);
         if (action instanceof IUpdate) {
             ((IUpdate) action).update();
         }
@@ -507,7 +509,8 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         /**
          * @see Action#run()
          */
-        public void run()
+        @Override
+		public void run()
         {
             if (mOperationCode != -1 && mOperationTarget != null) {
                 mOperationTarget.doOperation(mOperationCode);

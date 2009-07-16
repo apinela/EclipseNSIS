@@ -11,7 +11,6 @@ package net.sf.eclipsensis.wizard.settings.dialogs;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog;
-import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog.RegistryValue;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryValue;
@@ -39,13 +38,14 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
         mStore.setDefault("valueType",REG_SZ); //$NON-NLS-1$
     }
 
-    protected void browseRegistry()
+    @Override
+	protected void browseRegistry()
     {
         RegistryValueSelectionDialog dialog = new RegistryValueSelectionDialog(getShell());
         dialog.setText(EclipseNSISPlugin.getResourceString("wizard.select.regval.message")); //$NON-NLS-1$
         String regKey = decodeRegKey();
         if(regKey != null) {
-            dialog.setRegistryValue(new RegistryValueSelectionDialog.RegistryValue(regKey, mShellConstantConverter.decodeConstants(mStore.getString("value")))); //$NON-NLS-1$
+            dialog.setRegistryValue(new RegistryValue(regKey, mShellConstantConverter.decodeConstants(mStore.getString("value")))); //$NON-NLS-1$
         }
         if(dialog.open() == Window.OK) {
             RegistryValue regValue = dialog.getRegistryValue();
@@ -73,7 +73,8 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControlContentsArea(Composite parent)
+    @Override
+	protected Control createControlContentsArea(Composite parent)
     {
         Composite composite = (Composite)super.createControlContentsArea(parent);
         final Composite c1 = new Composite(composite,SWT.NONE);
@@ -119,7 +120,8 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
             }
         });
         text2.addVerifyListener(new NumberVerifyListener() {
-            public void verifyText(VerifyEvent e)
+            @Override
+			public void verifyText(VerifyEvent e)
             {
                 int index = combo.getSelectionIndex();
                 if(index == INSISWizardConstants.REG_DWORD) {
@@ -139,7 +141,8 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
         });
 
         combo.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 int oldIndex = mStore.getInt("valueType"); //$NON-NLS-1$
                 int index = combo.getSelectionIndex();
                 mStore.setValue("valueType",index); //$NON-NLS-1$
@@ -203,12 +206,14 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
         return composite;
     }
 
-    protected String getHelpContextId()
+    @Override
+	protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_regval_context"; //$NON-NLS-1$
     }
 
-    protected String checkForErrors()
+    @Override
+	protected String checkForErrors()
     {
         String error = super.checkForErrors();
         if(Common.isEmpty(error)) {

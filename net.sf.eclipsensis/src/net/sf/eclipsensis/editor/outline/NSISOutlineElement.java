@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.editor.outline;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsensis.util.Common;
 
@@ -27,7 +28,7 @@ public class NSISOutlineElement
     private String mName;
     private Position mSelectPosition;
     private Position mPosition;
-    private ArrayList mChildren = new ArrayList();
+    private List<NSISOutlineElement> mChildren = new ArrayList<NSISOutlineElement>();
     private NSISOutlineElement mParent = null;
 
     /**
@@ -47,7 +48,8 @@ public class NSISOutlineElement
         mName = name;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         if(isRoot()) {
             if(!Common.isEmpty(mName)) {
@@ -80,7 +82,7 @@ public class NSISOutlineElement
     /**
      * @return Returns the children.
      */
-    public ArrayList getChildren()
+    public List<NSISOutlineElement> getChildren()
     {
         return mChildren;
     }

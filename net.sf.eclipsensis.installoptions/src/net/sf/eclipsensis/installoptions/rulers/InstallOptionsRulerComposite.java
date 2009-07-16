@@ -62,7 +62,8 @@ public class InstallOptionsRulerComposite extends Composite
         });
     }
 
-    private GraphicalViewer createRulerContainer(InstallOptionsDialog dialog, int orientation)
+    @SuppressWarnings("restriction")
+	private GraphicalViewer createRulerContainer(InstallOptionsDialog dialog, int orientation)
     {
         RulerViewer viewer = new RulerViewer(dialog);
         final boolean isHorizontal = orientation == PositionConstants.NORTH
@@ -206,7 +207,8 @@ public class InstallOptionsRulerComposite extends Composite
     /**
      * @see org.eclipse.swt.widgets.Composite#layout(boolean)
      */
-    public void layout(boolean change) {
+    @Override
+	public void layout(boolean change) {
         if (!mLayingOut && !isDisposed()) {
             checkWidget();
             if (change || mNeedToLayout) {
@@ -394,7 +396,8 @@ public class InstallOptionsRulerComposite extends Composite
         /**
          * @see org.eclipse.gef.EditPartViewer#appendSelection(org.eclipse.gef.EditPart)
          */
-        public void appendSelection(EditPart editpart) {
+        @Override
+		public void appendSelection(EditPart editpart) {
             if (editpart instanceof RootEditPart) {
                 editpart = ((RootEditPart)editpart).getContents();
             }
@@ -404,7 +407,9 @@ public class InstallOptionsRulerComposite extends Composite
         /**
          * @see org.eclipse.gef.GraphicalViewer#findHandleAt(org.eclipse.draw2d.geometry.Point)
          */
-        public Handle findHandleAt(org.eclipse.draw2d.geometry.Point p) {
+        @Override
+		@SuppressWarnings({ "restriction", "unchecked" })
+		public Handle findHandleAt(org.eclipse.draw2d.geometry.Point p) {
             final GraphicalEditPart gep =
                     (GraphicalEditPart)findObjectAtExcluding(p, new ArrayList());
             if (!(gep instanceof GuideEditPart)) {
@@ -422,7 +427,9 @@ public class InstallOptionsRulerComposite extends Composite
         /**
          * @see org.eclipse.gef.ui.parts.AbstractEditPartViewer#init()
          */
-        protected void init() {
+        @Override
+		@SuppressWarnings("restriction")
+		protected void init() {
             setContextMenu(new RulerContextMenuProvider(this));
             setKeyHandler(new RulerKeyHandler(this));
         }
@@ -432,7 +439,8 @@ public class InstallOptionsRulerComposite extends Composite
          *
          * @see org.eclipse.gef.EditPartViewer#reveal(org.eclipse.gef.EditPart)
          */
-        public void reveal(EditPart part) {
+        @Override
+		public void reveal(EditPart part) {
             if (part != getContents()) {
                 super.reveal(part);
             }
@@ -440,7 +448,8 @@ public class InstallOptionsRulerComposite extends Composite
         /**
          * @see org.eclipse.gef.EditPartViewer#setContents(org.eclipse.gef.EditPart)
          */
-        public void setContents(EditPart editpart) {
+        @Override
+		public void setContents(EditPart editpart) {
             super.setContents(editpart);
             setFocus(getContents());
         }
@@ -456,7 +465,9 @@ public class InstallOptionsRulerComposite extends Composite
             /**
              * @see org.eclipse.gef.KeyHandler#keyPressed(org.eclipse.swt.events.KeyEvent)
              */
-            public boolean keyPressed(KeyEvent event) {
+            @Override
+			@SuppressWarnings("restriction")
+			public boolean keyPressed(KeyEvent event) {
                 if (event.keyCode == SWT.DEL) {
                     // If a guide has focus, delete it
                     if (getFocusEditPart() instanceof GuideEditPart) {

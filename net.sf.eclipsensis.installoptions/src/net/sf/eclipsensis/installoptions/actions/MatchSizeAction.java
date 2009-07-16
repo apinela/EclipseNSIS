@@ -32,7 +32,8 @@ public class MatchSizeAction extends MatchWidthAction
         setToolTipText(InstallOptionsPlugin.getResourceString("match.size.action.tooltip")); //$NON-NLS-1$
     }
 
-    protected double getPreciseHeightDelta(PrecisionRectangle precisePartBounds, PrecisionRectangle precisePrimaryBounds)
+    @Override
+	protected double getPreciseHeightDelta(PrecisionRectangle precisePartBounds, PrecisionRectangle precisePrimaryBounds)
     {
         return precisePrimaryBounds.preciseHeight - precisePartBounds.preciseHeight;
     }

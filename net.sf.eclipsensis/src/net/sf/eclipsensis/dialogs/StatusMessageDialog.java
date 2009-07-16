@@ -77,7 +77,8 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
             if ((mMessageLabel.getStyle() & SWT.WRAP) == 0)
             {
                 mMessageLabel.addControlListener(new ControlAdapter() {
-                    public void controlResized(ControlEvent e)
+                    @Override
+					public void controlResized(ControlEvent e)
                     {
                         updateMessageLabelToolTip();
                     }
@@ -92,7 +93,8 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         return SWT.WRAP;
     }
 
-    protected void configureShell(Shell newShell)
+    @Override
+	protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setImage(mShellImage);
@@ -151,7 +153,8 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         }
     }
 
-    protected Control createContents(Composite parent)
+    @Override
+	protected Control createContents(Composite parent)
     {
         // create the top level composite for the dialog
         Composite composite = new Composite(parent, SWT.BORDER);
@@ -182,7 +185,8 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     /*
      * @see Dialog#createDialogArea(Composite)
      */
-    protected final Control createDialogArea(Composite parent)
+    @Override
+	protected final Control createDialogArea(Composite parent)
     {
         parent = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -299,7 +303,8 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
      * 
      * @see org.eclipse.jface.window.Window#close()
      */
-    public boolean close()
+    @Override
+	public boolean close()
     {
         if (mOKImage != null && !mOKImage.isDisposed())
         {
@@ -326,7 +331,8 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
             refreshStatus();
         }
 
-        protected void setMessage(String message)
+        @Override
+		protected void setMessage(String message)
         {
             if (message == null)
             {

@@ -13,16 +13,20 @@ import java.beans.PropertyChangeEvent;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.*;
+import net.sf.eclipsensis.installoptions.edit.IExtendedEditSupport;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
 import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditPart;
-import net.sf.eclipsensis.installoptions.figures.*;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
+import net.sf.eclipsensis.installoptions.figures.IListItemsFigure;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsListItems;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.properties.dialogs.ListItemsDialog;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.window.Window;
 
-public abstract class InstallOptionsListItemsEditPart extends InstallOptionsEditableElementEditPart
+public abstract class InstallOptionsListItemsEditPart<T extends CellEditor> extends InstallOptionsEditableElementEditPart<T>
 {
     private IExtendedEditSupport mExtendedEditSupport = new IExtendedEditSupport() {
         private Object mNewValue;
@@ -48,13 +52,16 @@ public abstract class InstallOptionsListItemsEditPart extends InstallOptionsEdit
 
     };
 
-    protected void createEditPolicies()
+    @Override
+	protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsListItemsExtendedEditPolicy(this));
     }
 
-    public Object getAdapter(Class key)
+    @Override
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class key)
     {
         if(IExtendedEditSupport.class.equals(key)) {
             return mExtendedEditSupport;
@@ -62,16 +69,19 @@ public abstract class InstallOptionsListItemsEditPart extends InstallOptionsEdit
         return super.getAdapter(key);
     }
 
-    protected final IInstallOptionsFigure createInstallOptionsFigure()
+    @Override
+	protected final IInstallOptionsFigure createInstallOptionsFigure()
     {
         return createListItemsFigure();
     }
 
-    public void doPropertyChange(PropertyChangeEvent evt)
+    @Override
+	@SuppressWarnings("unchecked")
+	public void doPropertyChange(PropertyChangeEvent evt)
     {
         if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_LISTITEMS)) {
             IListItemsFigure figure2 = (IListItemsFigure)getFigure();
-            figure2.setListItems((List)evt.getNewValue());
+            figure2.setListItems((List<String>)evt.getNewValue());
             setNeedsRefresh(true);
         }
         else {

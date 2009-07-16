@@ -20,12 +20,14 @@ public class InstallOptionsPassword extends InstallOptionsText
         super(section);
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_PASSWORD;
     }
 
-    protected String getDefaultState()
+    @Override
+	protected String getDefaultState()
     {
         return ""; //$NON-NLS-1$
     }

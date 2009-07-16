@@ -29,12 +29,14 @@ public class ModifyTxtColorCommand extends Command
         setLabel(InstallOptionsPlugin.getFormattedString("modify.txtcolor.command.label", new Object[]{mModel.getType()})); //$NON-NLS-1$
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         mModel.setTxtColor(mNewTxtColor);
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         mModel.setTxtColor(mOldTxtColor);
     }

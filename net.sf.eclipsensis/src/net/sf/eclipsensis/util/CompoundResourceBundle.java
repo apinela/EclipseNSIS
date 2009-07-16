@@ -48,9 +48,10 @@ public class CompoundResourceBundle extends ResourceBundle
     /* (non-Javadoc)
      * @see java.util.ResourceBundle#getKeys()
      */
-    public Enumeration getKeys()
+    @Override
+	public Enumeration<String> getKeys()
     {
-        ArrayList list = null;
+        List<String> list = null;
         for(int i=0; i<mResourceBundles.length; i++) {
             if(mResourceBundles[i] != null) {
                 if(list == null) {
@@ -65,14 +66,15 @@ public class CompoundResourceBundle extends ResourceBundle
             return Collections.enumeration(list);
         }
         else {
-            return Collections.enumeration(Collections.EMPTY_LIST);
+            return Collections.enumeration(Collections.<String>emptyList());
         }
     }
 
     /* (non-Javadoc)
      * @see java.util.ResourceBundle#handleGetObject(java.lang.String)
      */
-    protected Object handleGetObject(String key)
+    @Override
+	protected Object handleGetObject(String key)
     {
         for(int i=0; i<mResourceBundles.length; i++) {
             if(mResourceBundles[i] != null) {
@@ -89,7 +91,8 @@ public class CompoundResourceBundle extends ResourceBundle
     /* (non-Javadoc)
      * @see java.util.ResourceBundle#getLocale()
      */
-    public Locale getLocale()
+    @Override
+	public Locale getLocale()
     {
         for(int i=mResourceBundles.length-1; i>=0; i--) {
             if(mResourceBundles[i] != null) {
@@ -106,7 +109,8 @@ public class CompoundResourceBundle extends ResourceBundle
     /* (non-Javadoc)
      * @see java.util.ResourceBundle#setParent(java.util.ResourceBundle)
      */
-    protected void setParent(ResourceBundle parent)
+    @Override
+	protected void setParent(ResourceBundle parent)
     {
     }
 }

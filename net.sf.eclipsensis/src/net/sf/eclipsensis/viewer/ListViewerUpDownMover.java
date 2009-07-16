@@ -11,14 +11,15 @@ package net.sf.eclipsensis.viewer;
 
 import org.eclipse.jface.viewers.*;
 
-public abstract class ListViewerUpDownMover extends StructuredViewerUpDownMover
+public abstract class ListViewerUpDownMover<S, T> extends StructuredViewerUpDownMover<S, T>
 {
     private ListViewer mListViewer;
 
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.util.UpDownMover#setInput(java.lang.Object)
      */
-    public void setViewer(StructuredViewer viewer)
+    @Override
+	public void setViewer(StructuredViewer viewer)
     {
         mListViewer = (ListViewer)viewer;
     }
@@ -26,7 +27,8 @@ public abstract class ListViewerUpDownMover extends StructuredViewerUpDownMover
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.util.UpDownMover#getInput()
      */
-    public StructuredViewer getViewer()
+    @Override
+	public StructuredViewer getViewer()
     {
         return mListViewer;
     }
@@ -34,7 +36,8 @@ public abstract class ListViewerUpDownMover extends StructuredViewerUpDownMover
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.util.UpDownMover#getSelectedIndices()
      */
-    protected int[] getSelectedIndices()
+    @Override
+	protected int[] getSelectedIndices()
     {
         return mListViewer.getList().getSelectionIndices();
     }

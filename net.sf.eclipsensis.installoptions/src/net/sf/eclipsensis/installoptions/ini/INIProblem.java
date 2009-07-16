@@ -73,12 +73,14 @@ public class INIProblem
         return mMessage;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return (mMessage==null?0:mMessage.hashCode())+(mType==null?0:mType.hashCode());
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if(o != this) {
             if(o instanceof INIProblem) {

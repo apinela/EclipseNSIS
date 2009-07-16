@@ -18,7 +18,7 @@ public interface IINIContainer
     public void addChild(INILine element);
     public void addChild(int index, INILine element);
     public void removeChild(INILine element);
-    public List getChildren();
+    public List<INILine> getChildren();
     public void setDirty(boolean dirty);
     public boolean isDirty();
     public Position getChildPosition(INILine child);

@@ -20,12 +20,14 @@ public class PathNameParam extends RegexpParam
         super(node);
     }
 
-    protected String getRegexp()
+    @Override
+	protected String getRegexp()
     {
         return "([a-z]:)?\\\\?(((\\.?[a-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2}+)\\\\)*(\\.?[a-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+"; //$NON-NLS-1$
     }
 
-    protected String getValidateErrorMessage()
+    @Override
+	protected String getValidateErrorMessage()
     {
         return EclipseNSISPlugin.getResourceString("path.name.param.error"); //$NON-NLS-1$
     }

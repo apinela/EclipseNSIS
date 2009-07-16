@@ -20,8 +20,8 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
 {
 	private static final long serialVersionUID = 6871218426689788748L;
 
-    private Set mChildTypes = new LinkedHashSet();
-    private ArrayList mChildren = new ArrayList();
+    private Set<String> mChildTypes = new LinkedHashSet<String>();
+    private ArrayList<INSISInstallElement> mChildren = new ArrayList<INSISInstallElement>();
     private transient boolean mExpanded = true;
 
     /**
@@ -33,20 +33,22 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         setChildTypes();
     }
 
-    public Object clone() throws CloneNotSupportedException
+    @Override
+	public Object clone() throws CloneNotSupportedException
     {
         AbstractNSISInstallGroup group = (AbstractNSISInstallGroup)super.clone();
-        group.mChildren = new ArrayList();
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-            INSISInstallElement element = (INSISInstallElement)((INSISInstallElement)iter.next()).clone();
+        group.mChildren = new ArrayList<INSISInstallElement>();
+        for (Iterator<INSISInstallElement> iter = mChildren.iterator(); iter.hasNext();) {
+            INSISInstallElement element = (INSISInstallElement)iter.next().clone();
             group.addChild(element);
         }
-        group.mChildTypes = new LinkedHashSet();
+        group.mChildTypes = new LinkedHashSet<String>();
         group.mChildTypes.addAll(mChildTypes);
         return group;
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("expanded"); //$NON-NLS-1$
@@ -70,7 +72,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
      */
     public final INSISInstallElement[] getChildren()
     {
-        return (INSISInstallElement[])mChildren.toArray(new INSISInstallElement[0]);
+        return mChildren.toArray(new INSISInstallElement[0]);
     }
 
     public final void setChildren(INSISInstallElement[] children)
@@ -86,7 +88,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
      */
     public String[] getChildTypes()
     {
-        return (String[])mChildTypes.toArray(new String[0]);
+        return mChildTypes.toArray(new String[0]);
     }
 
     protected final void clearChildTypes()
@@ -103,7 +105,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         }
     }
 
-    protected final Iterator getChildrenIterator()
+    protected final Iterator<INSISInstallElement> getChildrenIterator()
     {
         return mChildren.iterator();
     }
@@ -153,7 +155,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
 
     public final boolean removeChild(int index)
     {
-        return removeChild((INSISInstallElement)mChildren.get(index));
+        return removeChild(mChildren.get(index));
     }
 
     /* (non-Javadoc)
@@ -185,8 +187,8 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     public final boolean removeAllChildren()
     {
         if(mChildren.size() > 0) {
-            for(Iterator iter=mChildren.iterator(); iter.hasNext(); ) {
-                INSISInstallElement child = (INSISInstallElement)iter.next();
+            for(Iterator<INSISInstallElement> iter=mChildren.iterator(); iter.hasNext(); ) {
+                INSISInstallElement child = iter.next();
                 iter.remove();
                 child.setParent(null);
                 child.setSettings(null);
@@ -222,8 +224,8 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         mExpanded = expanded;
         if(recursive) {
             if(!Common.isEmptyCollection(mChildren)) {
-                for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                    INSISInstallElement child = (INSISInstallElement)iter.next();
+                for (Iterator<INSISInstallElement> iter = mChildren.iterator(); iter.hasNext();) {
+                    INSISInstallElement child = iter.next();
                     if(child instanceof AbstractNSISInstallGroup) {
                         ((AbstractNSISInstallGroup)child).setExpanded(expanded, recursive);
                     }
@@ -232,12 +234,13 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         }
     }
 
-    public final void setSettings(NSISWizardSettings settings)
+    @Override
+	public final void setSettings(NSISWizardSettings settings)
     {
         super.setSettings(settings);
         if(!Common.isEmptyCollection(mChildren)) {
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                ((INSISInstallElement)iter.next()).setSettings(settings);
+            for (Iterator<INSISInstallElement> iter = mChildren.iterator(); iter.hasNext();) {
+                iter.next().setSettings(settings);
             }
         }
     }
@@ -247,8 +250,8 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         setChildTypes();
         if(recursive) {
             if(!Common.isEmptyCollection(mChildren)) {
-                for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                    INSISInstallElement child = (INSISInstallElement)iter.next();
+                for (Iterator<INSISInstallElement> iter = mChildren.iterator(); iter.hasNext();) {
+                    INSISInstallElement child = iter.next();
                     if(child instanceof AbstractNSISInstallGroup) {
                         ((AbstractNSISInstallGroup)child).resetChildTypes(recursive);
                     }
@@ -268,8 +271,8 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
             }
             if(recursive) {
                 if(!Common.isEmptyCollection(mChildren)) {
-                    for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                        INSISInstallElement child = (INSISInstallElement)iter.next();
+                    for (Iterator<INSISInstallElement> iter = mChildren.iterator(); iter.hasNext();) {
+                        INSISInstallElement child = iter.next();
                         if(child instanceof AbstractNSISInstallGroup) {
                             ((AbstractNSISInstallGroup)child).resetChildren(recursive);
                         }
@@ -279,7 +282,8 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         }
     }
 
-    public String validate(Collection changedElements)
+    @Override
+	public String validate(Collection<INSISInstallElement> changedElements)
     {
         String error = super.validate(changedElements);
         if(hasChildren()) {
@@ -295,7 +299,8 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         return error;
     }
 
-    public String doValidate()
+    @Override
+	public String doValidate()
     {
         if(!hasChildren()) {
             return EclipseNSISPlugin.getFormattedString("empty.contents.error",new Object[]{getDisplayName()}); //$NON-NLS-1$
@@ -303,7 +308,8 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         return super.doValidate();
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -311,7 +317,8 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         return result;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;
@@ -334,7 +341,8 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
         return true;
     }
 
-    public void setTargetPlatform(int targetPlatform)
+    @Override
+	public void setTargetPlatform(int targetPlatform)
     {
         int oldTargetPlatform = getTargetPlatform();
         super.setTargetPlatform(targetPlatform);

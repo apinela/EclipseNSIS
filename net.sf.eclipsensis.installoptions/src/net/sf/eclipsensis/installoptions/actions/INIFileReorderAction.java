@@ -29,15 +29,14 @@ public class INIFileReorderAction extends INIFileAction
         setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("reorder.action.disabled.icon"))); //$NON-NLS-1$
     }
 
-    protected boolean doRun(INIFile iniFile)
+    @Override
+	protected boolean doRun(INIFile iniFile)
     {
-        final List original = iniFile.getChildren();
-        List sorted = new ArrayList(original);
-        Collections.sort(sorted,new Comparator() {
-            public int compare(Object o1, Object o2)
+        final List<INILine> original = iniFile.getChildren();
+        List<INILine> sorted = new ArrayList<INILine>(original);
+        Collections.sort(sorted,new Comparator<INILine>() {
+            public int compare(INILine line1, INILine line2)
             {
-                INILine line1 = (INILine)o1;
-                INILine line2 = (INILine)o2;
                 if(line1 instanceof INISection && line2 instanceof INISection) {
                     INISection sec1 = (INISection)line1;
                     INISection sec2 = (INISection)line2;
@@ -85,19 +84,19 @@ public class INIFileReorderAction extends INIFileAction
         });
 
         if(!original.equals(sorted)) {
-            for (Iterator iter = sorted.iterator(); iter.hasNext();) {
-                INILine line = (INILine)iter.next();
+            for (Iterator<INILine> iter = sorted.iterator(); iter.hasNext();) {
+                INILine line = iter.next();
                 boolean lastLine = !iter.hasNext();
                 if(line instanceof INISection) {
                     INISection sec = (INISection)line;
-                    List children = sec.getChildren();
+                    List<INILine> children = sec.getChildren();
                     INILine lastChild = null;
-                    ListIterator iter2=children.listIterator(children.size());
+                    ListIterator<INILine> iter2=children.listIterator(children.size());
                     if(iter2.hasPrevious()) {
-                        lastChild = (INILine)iter2.previous();
+                        lastChild = iter2.previous();
                         if(lastChild.isBlank()) {
                             for(; iter2.hasPrevious(); ) {
-                                INILine child = (INILine)iter2.previous();
+                                INILine child = iter2.previous();
                                 if(child.isBlank()) {
                                     iter2.remove();
                                 }

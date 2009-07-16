@@ -33,16 +33,16 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
 
     public static final String INIFILE_CATEGORY = "__installoptions_inifile"; //$NON-NLS-1$
 
-    private List mChildren = new ArrayList();
+    private List<INILine> mChildren = new ArrayList<INILine>();
     private IPositionUpdater mPositionUpdater = new DefaultPositionUpdater(INIFILE_CATEGORY);
-    private List mLines = new ArrayList();
-    private List mListeners = new ArrayList();
+    private List<INILine> mLines = new ArrayList<INILine>();
+    private List<IINIFileListener> mListeners = new ArrayList<IINIFileListener>();
     private int mChangeStartLine = -1;
     private int mChangeEndLine = -1;
     private IDocument mDocument = null;
 
     private boolean mDirty = false;
-    private List mProblems = new ArrayList();
+    private List<INIProblem> mProblems = new ArrayList<INIProblem>();
     private boolean mErrors = false;
     private boolean mWarnings = false;
     private boolean mUpdatingDocument = false;
@@ -62,8 +62,8 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
     public INIFile copy()
     {
         INIFile copy = new INIFile();
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-            INILine line = ((INILine)iter.next()).copy();
+        for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+            INILine line = iter.next().copy();
             copy.addChild(line);
         }
         return copy;
@@ -83,7 +83,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
 
     private void notifyListeners(int event)
     {
-        IINIFileListener[] listeners = (IINIFileListener[])mListeners.toArray(new IINIFileListener[mListeners.size()]);
+        IINIFileListener[] listeners = mListeners.toArray(new IINIFileListener[mListeners.size()]);
         for (int i = 0; i < listeners.length; i++) {
             listeners[i].iniFileChanged(this, event);
         }
@@ -92,8 +92,8 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
     public INILine getLineAtOffset(int offset)
     {
         int start = 0;
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-            INILine line = (INILine)iter.next();
+        for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+            INILine line = iter.next();
             if(line instanceof INISection) {
                 Position pos = ((INISection)line).getPosition();
                 line = ((INISection)line).getLineAtOffset(offset);
@@ -121,8 +121,8 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
             }
             else {
                 int offset = 0;
-                for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                    INILine line = (INILine)iter.next();
+                for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+                    INILine line = iter.next();
                     if(line instanceof INISection) {
                         break;
                     }
@@ -145,7 +145,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
             Position pos = ((INISection)line).getPosition();
             if(pos != null) {
                 for(int i=0; i<mChildren.size(); i++) {
-                    INILine child = (INILine)mChildren.get(i);
+                    INILine child = mChildren.get(i);
                     if(child instanceof INISection) {
                         Position pos2 = ((INISection)child).getPosition();
                         if(pos2 == null || pos.getOffset() < pos2.getOffset() ||
@@ -174,33 +174,33 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
         setDirty(true);
     }
 
-    public List getChildren()
+    public List<INILine> getChildren()
     {
         return mChildren;
     }
 
     public INISection[] findSections(String name)
     {
-        List list = new ArrayList();
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-            INILine line = (INILine)iter.next();
+        List<INILine> list = new ArrayList<INILine>();
+        for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+            INILine line = iter.next();
             if(line instanceof INISection && ((INISection)line).getName().equalsIgnoreCase(name)) {
                 list.add(line);
             }
         }
-        return (INISection[])list.toArray(new INISection[0]);
+        return list.toArray(new INISection[0]);
     }
 
     public INISection[] getSections()
     {
-        List list = new ArrayList();
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-            INILine line = (INILine)iter.next();
+        List<INILine> list = new ArrayList<INILine>();
+        for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+            INILine line = iter.next();
             if(line instanceof INISection) {
                 list.add(line);
             }
         }
-        return (INISection[])list.toArray(new INISection[0]);
+        return list.toArray(new INISection[0]);
     }
 
     public IDocument getDocument()
@@ -255,8 +255,8 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
     public void update(int fixFlag)
     {
         mLines.clear();
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-            INILine child = (INILine)iter.next();
+        for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+            INILine child = iter.next();
             mLines.add(child);
             if(child instanceof INISection) {
                 mLines.addAll(((INISection)child).getChildren());
@@ -295,9 +295,9 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
         doc.addPositionUpdater(mPositionUpdater);
         int lineCount = doc.getNumberOfLines();
         IINIContainer container = this;
-        List lines = parseLines(doc,0,lineCount-1);
-        for(Iterator iter=lines.iterator(); iter.hasNext();) {
-            INILine line = (INILine)iter.next();
+        List<INILine> lines = parseLines(doc,0,lineCount-1);
+        for(Iterator<INILine> iter=lines.iterator(); iter.hasNext();) {
+            INILine line = iter.next();
             mLines.add(line);
             if(line instanceof IINIContainer) {
                 addChild(line);
@@ -404,9 +404,9 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
         return container;
     }
 
-    private List parseLines(IDocument doc, int startLine, int endLine)
+    private List<INILine> parseLines(IDocument doc, int startLine, int endLine)
     {
-        List lines = new ArrayList();
+        List<INILine> lines = new ArrayList<INILine>();
         for(int i=startLine; i<= endLine; i++) {
             try {
                 IRegion region = doc.getLineInformation(i);
@@ -513,7 +513,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
             int start = mChangeStartLine;
             int end = mChangeEndLine;
             for(int i=start; i <= end; i++) {
-                INILine line = (INILine)mLines.get(i);
+                INILine line = mLines.get(i);
                 mLines.remove(i);
                 line.getParent().removeChild(line);
                 i--;
@@ -523,7 +523,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
             int childIndex = 0;
             IINIContainer container = this;
             if(mChangeStartLine > 0) {
-                INILine previous = (INILine)mLines.get(mChangeStartLine-1);
+                INILine previous = mLines.get(mChangeStartLine-1);
                 if(previous instanceof IINIContainer) {
                     childIndex = 0;
                     index = mChildren.indexOf(previous)+1;
@@ -538,9 +538,9 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
 
             String text = event.getText();
             int[] lineRange = getLineRange(event.getDocument(),event.getOffset(),(text==null?0:text.length()));
-            List newLines = parseLines(event.getDocument(),lineRange[0],lineRange[1]);
-            for (Iterator iter = newLines.iterator(); iter.hasNext();) {
-                INILine line = (INILine)iter.next();
+            List<INILine> newLines = parseLines(event.getDocument(),lineRange[0],lineRange[1]);
+            for (Iterator<INILine> iter = newLines.iterator(); iter.hasNext();) {
+                INILine line = iter.next();
                 if(line instanceof IINIContainer) {
                     addChild(index++,line);
                     container = (IINIContainer)line;
@@ -557,7 +557,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                 mLines.add(mChangeStartLine++,line);
             }
             for(int i=mChangeStartLine; i<mLines.size(); i++) {
-                INILine line = (INILine)mLines.get(i);
+                INILine line = mLines.get(i);
                 if(line instanceof IINIContainer) {
                     break;
                 }
@@ -570,10 +570,11 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
         }
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
+        for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
             buf.append(iter.next());
         }
         return buf.toString();
@@ -651,33 +652,33 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
             mErrors = false;
             mWarnings = false;
             for (int i=0; i < mChildren.size(); i++) {
-                ((INILine)mChildren.get(i)).validate(fixFlag);
+                mChildren.get(i).validate(fixFlag);
             }
             INISection[] sections = getSections();
             INISection[] fieldSections;
             int[] indexes;
             if(!Common.isEmptyArray(sections)) {
-                Map map = new HashMap();
+                Map<INISection, Integer> map = new HashMap<INISection, Integer>();
                 for (int i = 0; i < sections.length; i++) {
                     Matcher m = InstallOptionsModel.SECTION_FIELD_PATTERN.matcher(sections[i].getName());
                     if(m.matches()) {
                         map.put(sections[i],Integer.valueOf(m.group(1)));
                     }
                 }
-                Map.Entry[] entries = (Map.Entry[])map.entrySet().toArray(new Map.Entry[map.size()]);
-                Arrays.sort(entries, new Comparator(){
-                    public int compare(Object o1, Object o2)
+                List<Map.Entry<INISection, Integer>> entries = new ArrayList<Map.Entry<INISection, Integer>>(map.entrySet());
+                Collections.sort(entries, new Comparator<Map.Entry<INISection, Integer>>(){
+                    public int compare(Map.Entry<INISection, Integer> e1, Map.Entry<INISection, Integer> e2)
                     {
-                        Map.Entry e1 = (Map.Entry)o1;
-                        Map.Entry e2 = (Map.Entry)o2;
-                        return ((Integer)e1.getValue()).compareTo((Integer)e2.getValue());
+                        return (e1.getValue()).compareTo(e2.getValue());
                     }
                 });
-                fieldSections = new INISection[entries.length];
-                indexes = new int[entries.length];
-                for (int i = 0; i < entries.length; i++) {
-                    fieldSections[i] = (INISection)entries[i].getKey();
-                    indexes[i] = ((Integer)entries[i].getValue()).intValue();
+                fieldSections = new INISection[entries.size()];
+                indexes = new int[entries.size()];
+                int i=0;
+                for(Map.Entry<INISection, Integer> entry : entries) {
+                    fieldSections[i] = entry.getKey();
+                    indexes[i] = (entry.getValue()).intValue();
+                    i++;
                 }
             }
             else {
@@ -692,8 +693,8 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                 if(n > 0) {
                     INILine line = null;
                     int index = 0;
-                    for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                        INILine l = (INILine)iter.next();
+                    for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+                        INILine l = iter.next();
                         if(l instanceof INISection) {
                             break;
                         }
@@ -722,7 +723,8 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                         final INISection section = sections[0];
                         final INILine line2 = line;
                         problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.add.settings.section")) { //$NON-NLS-1$
-                            protected INIProblemFix[] createFixes()
+                            @Override
+							protected INIProblemFix[] createFixes()
                             {
                                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                                 buf.append(section.buildText(section.getName())).append(section.getDelimiter()==null?INSISConstants.LINE_SEPARATOR:section.getDelimiter());
@@ -758,14 +760,15 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                         keyValues[0].setValue(Integer.toString(n));
                         sections[0].addChild(0,keyValues[0]);
                         int index = mLines.indexOf(sections[0]);
-                        mLines.add(index+1,keyValues);
+                        mLines.add(index+1,keyValues[0]);
                     }
                     else {
                         final INISection section = sections[0];
                         INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("numfields.section.missing", //$NON-NLS-1$
                                                                         new String[]{InstallOptionsModel.PROPERTY_NUMFIELDS}));
                         problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.add.numfields.value")) { //$NON-NLS-1$
-                            protected INIProblemFix[] createFixes()
+                            @Override
+							protected INIProblemFix[] createFixes()
                             {
                                 StringBuffer buf = new StringBuffer(section.getText()).append(section.getDelimiter()==null?INSISConstants.LINE_SEPARATOR:section.getDelimiter());
                                 buf.append(keyValue.buildText(Integer.toString(n))).append(section.getDelimiter()==null?"":section.getDelimiter()); //$NON-NLS-1$
@@ -796,7 +799,8 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                                                                                                  InstallOptionsModel.SECTION_FIELD_PREFIX}));
                             final INIKeyValue keyValue = keyValues[0];
                             problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.numfields.value")) { //$NON-NLS-1$
-                                protected INIProblemFix[] createFixes()
+                                @Override
+								protected INIProblemFix[] createFixes()
                                 {
                                     return new INIProblemFix[] {new INIProblemFix(keyValue, keyValue.buildText(Integer.toString(n))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                                 }
@@ -849,19 +853,20 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                                                                                 InstallOptionsModel.PROPERTY_NUMFIELDS,
                                                                                 numFields2}));
                         problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString(nextIndex > bitsSize?"quick.fix.remove.field":"quick.fix.correct.field.index")) { //$NON-NLS-1$ //$NON-NLS-2$
-                            protected INIProblemFix[] createFixes()
+                            @Override
+							protected INIProblemFix[] createFixes()
                             {
                                 if(nextIndex > bitsSize) {
-                                    List fixes = new ArrayList();
-                                    List children = sec.getChildren();
+                                    List<INIProblemFix> fixes = new ArrayList<INIProblemFix>();
+                                    List<INILine> children = sec.getChildren();
                                     if(!Common.isEmptyCollection(children)) {
-                                        ListIterator iter = children.listIterator(children.size());
+                                        ListIterator<INILine> iter = children.listIterator(children.size());
                                         while(iter.hasPrevious()) {
-                                            fixes.add(new INIProblemFix((INILine)iter.previous()));
+                                            fixes.add(new INIProblemFix(iter.previous()));
                                         }
                                     }
                                     fixes.add(new INIProblemFix(sec));
-                                    return (INIProblemFix[])fixes.toArray(new INIProblemFix[fixes.size()]);
+                                    return fixes.toArray(new INIProblemFix[fixes.size()]);
                                 }
                                 else {
                                     String newName = InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[] {new Integer(nextIndex)});
@@ -904,11 +909,12 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("field.sections.missing", //$NON-NLS-1$
                             new Object[]{InstallOptionsModel.SECTION_FIELD_PREFIX, new Integer(missing), missingBuf.toString()}));
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.add.missing.fields")) { //$NON-NLS-1$
-                        protected INIProblemFix[] createFixes()
+                        @Override
+						protected INIProblemFix[] createFixes()
                         {
-                            List fixes = new ArrayList();
+                            List<INIProblemFix> fixes = new ArrayList<INIProblemFix>();
                             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                            INILine lastLine = (INILine)(mLines.size() == 0?null:mLines.get(mLines.size() - 1));
+                            INILine lastLine = (mLines.size() == 0?null:mLines.get(mLines.size() - 1));
                             INILine previous = lastLine;
                             if (previous != null) {
                                 buf.append(previous.getText());
@@ -918,23 +924,23 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                                     buf.append(previous.getText());
                                 }
                             }
-                            final Map requiredSettings = InstallOptionsModel.INSTANCE.getControlRequiredSettings();
+                            final Map<String,String> requiredSettings = InstallOptionsModel.INSTANCE.getControlRequiredSettings();
                             String[] indexes = Common.tokenize(missingBuf.toString(), ',', true);
                             for (int i = 0; i < indexes.length; i++) {
                                 INISection section = new INISection();
                                 section.setName(InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[]{new Integer(indexes[i])}));
-                                buf.append(previous.getDelimiter() == null?INSISConstants.LINE_SEPARATOR:previous.getDelimiter());
+                                buf.append(previous == null || previous.getDelimiter() == null?INSISConstants.LINE_SEPARATOR:previous.getDelimiter());
                                 buf.append(section.buildText(section.getName()));
                                 previous = section;
                                 INIKeyValue keyValue = new INIKeyValue(InstallOptionsModel.PROPERTY_TYPE);
                                 buf.append(previous.getDelimiter() == null?INSISConstants.LINE_SEPARATOR:previous.getDelimiter());
                                 buf.append(keyValue.buildText(InstallOptionsModel.TYPE_UNKNOWN));
                                 previous = keyValue;
-                                for (Iterator iter = requiredSettings.keySet().iterator(); iter.hasNext();) {
-                                    String name = (String)iter.next();
+                                for (Iterator<String> iter = requiredSettings.keySet().iterator(); iter.hasNext();) {
+                                    String name = iter.next();
                                     keyValue = new INIKeyValue(name);
                                     buf.append(previous.getDelimiter() == null?INSISConstants.LINE_SEPARATOR:previous.getDelimiter());
-                                    buf.append(keyValue.buildText((String)requiredSettings.get(name)));
+                                    buf.append(keyValue.buildText(requiredSettings.get(name)));
                                     previous = keyValue;
                                 }
                                 if (i < indexes.length - 1) {
@@ -968,7 +974,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                                     }
                                 }
                             }
-                            return (INIProblemFix[])fixes.toArray(new INIProblemFix[fixes.size()]);
+                            return fixes.toArray(new INIProblemFix[fixes.size()]);
                         }
                     });
                     mProblems.add(problem);
@@ -982,24 +988,24 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
 
     public INIProblem[] getProblems()
     {
-        List problems = getProblems(true);
-        return (INIProblem[])problems.toArray(new INIProblem[problems.size()]);
+        List<INIProblem> problems = getProblems(true);
+        return problems.toArray(new INIProblem[problems.size()]);
     }
 
     /**
      * @param recurse
      * @return
      */
-    public List getProblems(boolean recurse)
+    public List<INIProblem> getProblems(boolean recurse)
     {
         validate();
-        List problems = new ArrayList(mProblems);
+        List<INIProblem> problems = new ArrayList<INIProblem>(mProblems);
         if(recurse) {
             int n=1;
-            INILine[] lines = (INILine[])mLines.toArray(new INILine[mLines.size()]);
+            INILine[] lines = mLines.toArray(new INILine[mLines.size()]);
             for (int i=0; i<lines.length; i++) {
-                for (Iterator iterator = lines[i].getProblems().iterator(); iterator.hasNext();) {
-                    INIProblem problem = (INIProblem)iterator.next();
+                for (Iterator<INIProblem> iterator = lines[i].getProblems().iterator(); iterator.hasNext();) {
+                    INIProblem problem = iterator.next();
                     problem.setLine(n);
                     problems.add(problem);
                 }
@@ -1013,8 +1019,8 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
     {
         validate();
         if(!mErrors) {
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                if(((INILine)iter.next()).hasErrors()) {
+            for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+                if(iter.next().hasErrors()) {
                     return true;
                 }
             }
@@ -1027,8 +1033,8 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
     {
         validate();
         if(!mWarnings) {
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                if(((INILine)iter.next()).hasWarnings()) {
+            for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
+                if(iter.next().hasWarnings()) {
                     return true;
                 }
             }

@@ -13,6 +13,6 @@ import java.util.List;
 
 public interface IListItemsFigure extends IEditableElementFigure
 {
-    public void setListItems(List listItems);
+    public void setListItems(List<String> listItems);
     public void setState(String state);
 }

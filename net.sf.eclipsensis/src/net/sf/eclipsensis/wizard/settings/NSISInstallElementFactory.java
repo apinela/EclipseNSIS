@@ -27,10 +27,10 @@ public class NSISInstallElementFactory
     private static final String VALID_TYPES = "valid.types"; //$NON-NLS-1$
 
     private static final ResourceBundle cBundle;
-    private static final Map cTypeAliases = new HashMap();
-    private static final Set cValidTypes = new HashSet();
-    private static final Map cElementMap = new HashMap();
-    private static final Class[] EMPTY_CLASS_ARRAY = new Class[0];
+    private static final Map<String, String> cTypeAliases = new HashMap<String, String>();
+    private static final Set<String> cValidTypes = new HashSet<String>();
+    private static final Map<String, NSISInstallElementDescriptor<? extends INSISInstallElement>> cElementMap = new HashMap<String, NSISInstallElementDescriptor<? extends INSISInstallElement>>();
+    private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class[0];
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
     private static INSISHomeListener cNSISHomeListener  = new INSISHomeListener() {
         public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
@@ -113,7 +113,7 @@ public class NSISInstallElementFactory
 
     public static String getAlias(String type)
     {
-        return (String)cTypeAliases.get(type);
+        return cTypeAliases.get(type);
     }
 
     private static void loadTypes(IProgressMonitor monitor)
@@ -123,7 +123,7 @@ public class NSISInstallElementFactory
         if(cBundle != null) {
             Version maxVersion = null;
             String validTypes = null;
-            for(Enumeration e=cBundle.getKeys(); e.hasMoreElements();) {
+            for(Enumeration<String> e=cBundle.getKeys(); e.hasMoreElements();) {
                 String key = (String)e.nextElement();
                 if(key.startsWith(VALID_TYPES)) {
                     int n = key.indexOf('#');
@@ -146,11 +146,11 @@ public class NSISInstallElementFactory
     {
     }
 
-    public static void register(String type, String typeName, Image image, Class clasz)
+    public static void register(String type, String typeName, Image image, Class<? extends INSISInstallElement> clasz)
     {
         if(!cElementMap.containsKey(type)) {
             try {
-                NSISInstallElementDescriptor descriptor = new NSISInstallElementDescriptor(clasz, typeName, image);
+                NSISInstallElementDescriptor<? extends INSISInstallElement> descriptor = createDescriptor(clasz, typeName, image);
                 cElementMap.put(type, descriptor);
             }
             catch(Exception ex) {
@@ -158,30 +158,35 @@ public class NSISInstallElementFactory
         }
     }
 
-    public static void unregister(String type, Class clasz)
+	private static <T extends INSISInstallElement > NSISInstallElementDescriptor<T> createDescriptor(Class<T> clasz, String typeName,Image image) throws NoSuchMethodException {
+		return new NSISInstallElementDescriptor<T>(clasz, typeName, image);
+	}
+
+    public static void unregister(String type, Class<? extends INSISInstallElement> clasz)
     {
-        if(cElementMap.containsKey(type) && ((NSISInstallElementDescriptor)cElementMap.get(type)).getElementClass().equals(clasz)) {
+        if(cElementMap.containsKey(type) && cElementMap.get(type).getElementClass().equals(clasz)) {
             cElementMap.remove(type);
         }
     }
 
-    private static NSISInstallElementDescriptor getDescriptor(String type)
+    @SuppressWarnings("unchecked")
+	private static <T extends INSISInstallElement> NSISInstallElementDescriptor<T> getDescriptor(String type)
     {
         if(!cValidTypes.contains(type)) {
-            type = (String)cTypeAliases.get(type);
+            type = cTypeAliases.get(type);
             if(type == null || !cValidTypes.contains(type)) {
                 return null;
             }
         }
-        return (NSISInstallElementDescriptor)cElementMap.get(type);
+        return (NSISInstallElementDescriptor<T>)cElementMap.get(type);
     }
 
     public static INSISInstallElement create(String type)
     {
-        NSISInstallElementDescriptor descriptor = getDescriptor(type);
+        NSISInstallElementDescriptor<? extends INSISInstallElement> descriptor = getDescriptor(type);
         if(descriptor != null) {
             try {
-                return (INSISInstallElement)descriptor.getConstructor().newInstance(EMPTY_OBJECT_ARRAY);
+                return descriptor.getConstructor().newInstance(EMPTY_OBJECT_ARRAY);
             }
             catch (Exception e) {
             }
@@ -211,7 +216,7 @@ public class NSISInstallElementFactory
 
     public static Image getImage(String type)
     {
-        NSISInstallElementDescriptor descriptor = getDescriptor(type);
+        NSISInstallElementDescriptor<? extends INSISInstallElement> descriptor = getDescriptor(type);
         if(descriptor != null) {
             return descriptor.getImage();
         }
@@ -220,7 +225,7 @@ public class NSISInstallElementFactory
 
     public static String getTypeName(String type)
     {
-        NSISInstallElementDescriptor descriptor = getDescriptor(type);
+        NSISInstallElementDescriptor<? extends INSISInstallElement> descriptor = getDescriptor(type);
         if(descriptor != null) {
             return descriptor.getTypeName();
         }
@@ -234,7 +239,7 @@ public class NSISInstallElementFactory
 
     static void setImage(String type, Image image)
     {
-        NSISInstallElementDescriptor descriptor = getDescriptor(type);
+        NSISInstallElementDescriptor<? extends INSISInstallElement> descriptor = getDescriptor(type);
         if(descriptor != null) {
             descriptor.setImage(image);
         }
@@ -242,20 +247,20 @@ public class NSISInstallElementFactory
 
     static void setTypeName(String type, String typeName)
     {
-        NSISInstallElementDescriptor descriptor = getDescriptor(type);
+        NSISInstallElementDescriptor<? extends INSISInstallElement> descriptor = getDescriptor(type);
         if(descriptor != null) {
             descriptor.setTypeName(typeName);
         }
     }
 
-    private static class NSISInstallElementDescriptor
+    private static class NSISInstallElementDescriptor<T extends INSISInstallElement>
     {
         public String mTypeName;
         public Image mImage;
-        public Class mElementClass;
-        public Constructor mConstructor;
+        public Class<T> mElementClass;
+        public Constructor<T> mConstructor;
 
-        public NSISInstallElementDescriptor(Class clasz, String typeName, Image image) throws SecurityException, NoSuchMethodException, IllegalArgumentException
+        public NSISInstallElementDescriptor(Class<T> clasz, String typeName, Image image) throws SecurityException, NoSuchMethodException, IllegalArgumentException
         {
             mElementClass = clasz;
             mConstructor = clasz.getConstructor(EMPTY_CLASS_ARRAY);
@@ -266,7 +271,7 @@ public class NSISInstallElementFactory
         /**
          * @return Returns the class.
          */
-        public Class getElementClass()
+        public Class<T> getElementClass()
         {
             return mElementClass;
         }
@@ -274,7 +279,7 @@ public class NSISInstallElementFactory
         /**
          * @return Returns the constructor.
          */
-        public Constructor getConstructor()
+        public Constructor<T> getConstructor()
         {
             return mConstructor;
         }

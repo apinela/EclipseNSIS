@@ -21,6 +21,7 @@ public class NSISCompileAction extends NSISScriptAction
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
+	@Override
 	final public void run(IAction action) {
         if(mPlugin != null && NSISPreferences.INSTANCE.getNSISExe() != null) {
             action.setEnabled(false);
@@ -30,14 +31,16 @@ public class NSISCompileAction extends NSISScriptAction
         }
 	}
 
-    protected void started(IPath script)
+    @Override
+	protected void started(IPath script)
     {
         if(mAction != null && mAction.isEnabled()) {
             mAction.setEnabled(false);
         }
     }
 
-    protected void stopped(IPath script, MakeNSISResults results)
+    @Override
+	protected void stopped(IPath script, MakeNSISResults results)
     {
         if(mAction != null && !mAction.isEnabled()) {
             mAction.setEnabled(true);
@@ -47,7 +50,8 @@ public class NSISCompileAction extends NSISScriptAction
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.actions.NSISAction#isEnabled()
      */
-    public boolean isEnabled()
+    @Override
+	public boolean isEnabled()
     {
         if(super.isEnabled()) {
             return (!MakeNSISRunner.isCompiling());

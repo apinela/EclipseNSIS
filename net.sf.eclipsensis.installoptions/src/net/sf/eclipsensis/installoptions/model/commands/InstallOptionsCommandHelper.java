@@ -82,16 +82,16 @@ public abstract class InstallOptionsCommandHelper
                         section.validate(iniFile.getValidateFixMode());
                         if(section.hasErrors()) {
                             Display.getDefault().syncExec(new Runnable() {
-                                private int getErrorsAndMaxLength(List list, INILine line)
+                                private int getErrorsAndMaxLength(List<INIProblem> list, INILine line)
                                 {
                                     int maxLength = 0;
-                                    for(Iterator iter=line.getErrors().iterator(); iter.hasNext(); ) {
-                                        INIProblem error = (INIProblem)iter.next();
+                                    for(Iterator<INIProblem> iter=line.getErrors().iterator(); iter.hasNext(); ) {
+                                        INIProblem error = iter.next();
                                         maxLength = Math.max(maxLength, error.getMessage().length());
                                         list.add(error);
                                         if(line instanceof INISection) {
-                                            for(Iterator iter2=section.getChildren().iterator(); iter2.hasNext(); ) {
-                                                maxLength = Math.max(maxLength, getErrorsAndMaxLength(list,(INILine)iter2.next()));
+                                            for(Iterator<INILine> iter2=section.getChildren().iterator(); iter2.hasNext(); ) {
+                                                maxLength = Math.max(maxLength, getErrorsAndMaxLength(list,iter2.next()));
                                             }
                                         }
                                     }
@@ -104,14 +104,15 @@ public abstract class InstallOptionsCommandHelper
                                         {
                                             setShellStyle(getShellStyle()|SWT.RESIZE);
                                         }
-                                        protected int getTableStyle()
+                                        @Override
+										protected int getTableStyle()
                                         {
                                             return super.getTableStyle() | SWT.READ_ONLY;
                                         }
                                     };
                                     dialog.setHelpAvailable(false);
                                     dialog.setAddCancelButton(false);
-                                    ArrayList list = new ArrayList();
+                                    ArrayList<INIProblem> list = new ArrayList<INIProblem>();
                                     int maxLength = getErrorsAndMaxLength(list, section);
                                     dialog.setWidthInChars(maxLength);
                                     dialog.setHeightInChars(list.size());

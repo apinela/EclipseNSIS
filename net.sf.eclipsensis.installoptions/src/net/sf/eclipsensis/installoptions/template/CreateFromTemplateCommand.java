@@ -30,12 +30,14 @@ public class CreateFromTemplateCommand extends org.eclipse.gef.commands.Command
         super(InstallOptionsPlugin.getResourceString("create.from.template.command.name")); //$NON-NLS-1$
     }
 
-    public boolean canExecute()
+    @Override
+	public boolean canExecute()
     {
         return mRect != null && mRect.x >= 0 && mRect.y >= 0;
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         if (mRect != null) {
             int minX = Integer.MAX_VALUE;
@@ -94,7 +96,8 @@ public class CreateFromTemplateCommand extends org.eclipse.gef.commands.Command
         return mParent;
     }
 
-    public void redo()
+    @Override
+	public void redo()
     {
         for (int i = 0; i < mChildren.length; i++) {
             mParent.addChild(mChildren[i]);
@@ -117,7 +120,8 @@ public class CreateFromTemplateCommand extends org.eclipse.gef.commands.Command
         mParent = newParent;
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         for (int i = 0; i < mChildren.length; i++) {
             mParent.removeChild(mChildren[i]);

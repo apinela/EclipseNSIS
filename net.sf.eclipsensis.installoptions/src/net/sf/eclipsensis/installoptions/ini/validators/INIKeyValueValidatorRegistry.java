@@ -17,10 +17,16 @@ import net.sf.eclipsensis.util.CaseInsensitiveMap;
 
 public class INIKeyValueValidatorRegistry
 {
-    private static Map mRegistry = new CaseInsensitiveMap();
+    private static Map<String, IINIKeyValueValidator> mRegistry = new CaseInsensitiveMap<IINIKeyValueValidator>();
 
     static {
-        ResourceBundle bundle;
+        init();
+    }
+
+	@SuppressWarnings("unchecked")
+	private static void init() 
+	{
+		ResourceBundle bundle;
         try {
             bundle = ResourceBundle.getBundle(INIKeyValueValidatorRegistry.class.getName());
         } catch (MissingResourceException x) {
@@ -28,20 +34,20 @@ public class INIKeyValueValidatorRegistry
         }
 
         if(bundle != null) {
-            HashMap map = new HashMap();
-            for(Enumeration e=bundle.getKeys(); e.hasMoreElements();) {
+            HashMap<Class<? extends IINIKeyValueValidator>, IINIKeyValueValidator> map = new HashMap<Class<? extends IINIKeyValueValidator>, IINIKeyValueValidator>();
+            for(Enumeration<String> e=bundle.getKeys(); e.hasMoreElements();) {
                 try {
                     IINIKeyValueValidator validator;
 
                     String key = (String)e.nextElement();
                     String className = bundle.getString(key);
-                    Class clasz = Class.forName(className);
+                    Class<? extends IINIKeyValueValidator> clasz = (Class<? extends IINIKeyValueValidator>) Class.forName(className);
                     if(map.containsKey(clasz)) {
-                        validator = (IINIKeyValueValidator)map.get(clasz);
+                        validator = map.get(clasz);
                     }
                     else {
-                        Constructor c = clasz.getConstructor(null);
-                        validator = (IINIKeyValueValidator)c.newInstance(null);
+                        Constructor<? extends IINIKeyValueValidator> c = clasz.getConstructor((Class[])null);
+                        validator = (IINIKeyValueValidator)c.newInstance((Object[])null);
                         map.put(clasz,validator);
                     }
                     mRegistry.put(key,validator);
@@ -51,7 +57,7 @@ public class INIKeyValueValidatorRegistry
                 }
             }
         }
-    }
+	}
 
     private INIKeyValueValidatorRegistry()
     {
@@ -59,6 +65,6 @@ public class INIKeyValueValidatorRegistry
 
     public static IINIKeyValueValidator getKeyValueValidator(String name)
     {
-        return (IINIKeyValueValidator)mRegistry.get(name);
+        return mRegistry.get(name);
     }
 }

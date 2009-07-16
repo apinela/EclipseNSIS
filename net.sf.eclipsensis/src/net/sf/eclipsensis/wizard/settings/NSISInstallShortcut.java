@@ -196,14 +196,16 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#setSettings(net.sf.eclipsensis.wizard.settings.NSISWizardSettings)
      */
-    public void setSettings(NSISWizardSettings settings)
+    @Override
+	public void setSettings(NSISWizardSettings settings)
     {
         super.setSettings(settings);
         if(settings != null && !Common.isEmpty(getSettings().getStartMenuGroup()) && Common.isEmpty(mLocation)) {
             setLocationAndCreateInStartMenuGroup(mLocation, true);
         }
     }
-    public String doValidate()
+    @Override
+	public String doValidate()
     {
         if(isCreateInStartMenuGroup()) {
             if(!getSettings().isCreateStartMenuGroup()) {
@@ -228,14 +230,16 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
         }
     }
 
-    public void setTargetPlatform(int targetPlatform)
+    @Override
+	public void setTargetPlatform(int targetPlatform)
     {
         super.setTargetPlatform(targetPlatform);
         setLocation(NSISWizardUtil.convertPath(targetPlatform, getLocation()));
         setPath(NSISWizardUtil.convertPath(targetPlatform, getPath()));
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -248,7 +252,8 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
         return result;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;

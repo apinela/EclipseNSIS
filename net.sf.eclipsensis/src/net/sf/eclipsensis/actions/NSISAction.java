@@ -34,7 +34,8 @@ public abstract class NSISAction extends ActionDelegate implements IObjectAction
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
-    public void init(IAction action)
+    @Override
+	public void init(IAction action)
     {
         super.init(action);
         mAction = action;
@@ -43,7 +44,8 @@ public abstract class NSISAction extends ActionDelegate implements IObjectAction
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
-    public void dispose()
+    @Override
+	public void dispose()
     {
         super.dispose();
         mAction = null;

@@ -10,128 +10,99 @@
 package net.sf.eclipsensis.util;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-public class CaseInsensitiveSet implements Set, Serializable
+/**
+ * An implementation of the Set interface that supports storing of
+ * String values in case-insensitive form. The case in which the key is stored
+ * is that in which it was originally added to the Set. The operation will
+ * be ignored if the value is added subsequently in a different case.
+ * <p>
+ * The value may be <code>null</code>.
+ * 
+ * @param <T> The types of values being stored in the Set.
+ */
+public class CaseInsensitiveSet extends AbstractSet<String> implements Serializable
 {
-	private static final long serialVersionUID = -3353276139904582714L;
+    /**
+     * Serialization version
+     */
+    private static final long serialVersionUID = 1L;
 
-    private Map mValueMap = new HashMap();
-    private Set mSet = new LinkedHashSet();
+    /**
+     * The mapping of the uppercase value to the original value.
+     */
+    private Map<String,String> mValueMap;
 
+    /**
+     * Constructs a new, empty set with default initial capacity.
+     */
     public CaseInsensitiveSet()
     {
+        mValueMap = new LinkedHashMap<String,String>();
     }
 
-    public CaseInsensitiveSet(Collection coll)
+    /**
+     * Constructs a new, empty set with the specified initial capacity.
+     * 
+     * @param initialCapacity The initial capacity of the hash table.
+     * @throws IllegalArgumentException if the initial capacity is negative
+     */
+    public CaseInsensitiveSet(int initialCapacity)
     {
-        for(Iterator iter=coll.iterator(); iter.hasNext(); ) {
-            Object value = iter.next();
+        if (initialCapacity < 0)
+        {
+            throw new IllegalArgumentException("Illegal initial capacity: " + initialCapacity);
+        }
+        mValueMap = new LinkedHashMap<String,String>(initialCapacity);
+    }
+
+    /**
+     * Constructs a new set containing the elements in the specified collection.
+     * 
+     * @param c The collection whose elements are to be placed into this set.
+     */
+    public CaseInsensitiveSet(Collection<String> c)
+    {
+        this(c.size());
+        for(Iterator<String> iter=c.iterator(); iter.hasNext(); ) {
+            String value = iter.next();
             add(value);
         }
     }
 
-    private Object fixValue(Object value)
+    /**
+     * Convert the value to uppercase.
+     * @param value The original value.
+     * @return The converted value.
+     */
+    private String toUpperCase(String value)
     {
-        return (value !=null && value instanceof String?((String)value).toUpperCase():value);
+        return (value !=null?value.toUpperCase():value);
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Set#size()
-     */
-    public int size()
+    @Override
+	public int size()
     {
-        return mSet.size();
+        return mValueMap.size();
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Set#clear()
-     */
-    public void clear()
+    @Override
+	public boolean contains(Object value)
     {
-        mValueMap.clear();
-        mSet.clear();
+        return (value != null && !(value instanceof String)?false:mValueMap.containsKey(toUpperCase((String)value)));
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Set#isEmpty()
-     */
-    public boolean isEmpty()
+    @Override
+	public boolean add(String value)
     {
-        return mSet.isEmpty();
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Set#contains(java.lang.Object)
-     */
-    public boolean contains(Object value)
-    {
-        return mValueMap.containsKey(fixValue(value));
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Set#addAll(java.util.Collection)
-     */
-    public boolean addAll(Collection coll)
-    {
-        boolean rv = false;
-        for(Iterator iter=coll.iterator(); iter.hasNext(); ) {
-            if(add(iter.next())) {
-                rv = true;
-            }
-        }
-        return rv;
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Set#remove(java.lang.Object)
-     */
-    public boolean remove(Object value)
-    {
-        Object fixedVal = fixValue(value);
-        if(mValueMap.containsKey(fixedVal)) {
-            value = mValueMap.remove(fixedVal);
-            return mSet.remove(value);
-        }
-        else {
-            return false;
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Set#add(java.lang.Object)
-     */
-    public boolean add(Object value)
-    {
-        Object fixedVal = fixValue(value);
-        if(!mValueMap.containsKey(fixedVal)) {
-            mValueMap.put(fixedVal,value);
-            return mSet.add(value);
-        }
-        else {
-            return false;
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Set#toArray()
-     */
-    public Object[] toArray()
-    {
-        return mSet.toArray();
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Set#containsAll(java.util.Collection)
-     */
-    public boolean containsAll(Collection c)
-    {
-        if(!Common.isEmptyCollection(c)) {
-            for (Iterator iter = c.iterator(); iter.hasNext();) {
-                if(!mValueMap.containsKey(fixValue(iter.next()))) {
-                    return false;
-                }
-            }
+        String uppercaseValue = toUpperCase(value);
+        if(!mValueMap.containsKey(uppercaseValue)) {
+            mValueMap.put(uppercaseValue,value);
             return true;
         }
         else {
@@ -139,38 +110,16 @@ public class CaseInsensitiveSet implements Set, Serializable
         }
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Set#removeAll(java.util.Collection)
-     */
-    public boolean removeAll(Collection c)
+    @Override
+	public boolean remove(Object value)
     {
-        boolean rv = false;
-        for (Iterator iter = c.iterator(); iter.hasNext();) {
-            Object element = fixValue(iter.next());
-            if(mValueMap.containsKey(element)) {
-                element = mValueMap.remove(element);
-                mSet.remove(element);
-                rv = true;
-            }
+        if(value != null && !(value instanceof String))
+        {
+            return false;
         }
-        return rv;
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Set#retainAll(java.util.Collection)
-     */
-    public boolean retainAll(Collection c)
-    {
-        HashSet set = new HashSet();
-        for (Iterator iter = c.iterator(); iter.hasNext();) {
-            Object element = fixValue(iter.next());
-            if(mValueMap.containsKey(element)) {
-                set.add(mValueMap.get(element));
-            }
-        }
-        if(set.size() != mSet.size()) {
-            clear();
-            addAll(set);
+        String uppercaseValue = toUpperCase((String)value);
+        if(mValueMap.containsKey(uppercaseValue)) {
+            mValueMap.remove(uppercaseValue);
             return true;
         }
         else {
@@ -178,27 +127,9 @@ public class CaseInsensitiveSet implements Set, Serializable
         }
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Set#iterator()
-     */
-    public Iterator iterator()
+    @Override
+	public Iterator<String> iterator()
     {
-        return mSet.iterator();
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Set#toArray(java.lang.Object[])
-     */
-    public Object[] toArray(Object[] a)
-    {
-        return mSet.toArray(a);
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    public String toString()
-    {
-        return mSet.toString();
+        return mValueMap.values().iterator();
     }
 }

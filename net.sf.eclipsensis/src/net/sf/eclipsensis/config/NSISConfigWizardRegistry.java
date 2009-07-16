@@ -25,7 +25,7 @@ public class NSISConfigWizardRegistry implements IExtensionChangeHandler
 
     public static final NSISConfigWizardRegistry INSTANCE = new NSISConfigWizardRegistry();
 
-    private Map mExtensions = new LinkedHashMap();
+    private Map<String, List<NSISConfigWizardDescriptor>> mExtensions = new LinkedHashMap<String, List<NSISConfigWizardDescriptor>>();
     private Object mLock = new Object();
 
     private NSISConfigWizardRegistry()
@@ -61,7 +61,7 @@ public class NSISConfigWizardRegistry implements IExtensionChangeHandler
         synchronized (mLock) {
             if (!mExtensions.containsKey(extension.getUniqueIdentifier())) {
                 IConfigurationElement[] elements = extension.getConfigurationElements();
-                List wizards = new ArrayList();
+                List<NSISConfigWizardDescriptor> wizards = new ArrayList<NSISConfigWizardDescriptor>();
                 for (int i = 0; i < elements.length; i++) {
                     if (WIZARD.equals(elements[i].getName())) {
                         try {
@@ -97,18 +97,18 @@ public class NSISConfigWizardRegistry implements IExtensionChangeHandler
     public NSISConfigWizardDescriptor[] getWizardDescriptors()
     {
         synchronized (mLock) {
-            List descriptors = new ArrayList();
-            for (Iterator iter = mExtensions.keySet().iterator(); iter.hasNext();) {
-                String extensionId = (String)iter.next();
+            List<NSISConfigWizardDescriptor> descriptors = new ArrayList<NSISConfigWizardDescriptor>();
+            for (Iterator<String> iter = mExtensions.keySet().iterator(); iter.hasNext();) {
+                String extensionId = iter.next();
                 IExtension extension = getExtensionPointFilter().getExtension(extensionId);
                 if (extension == null) {
                     iter.remove();
                 }
                 else {
-                    descriptors.addAll((List)mExtensions.get(extensionId));
+                    descriptors.addAll(mExtensions.get(extensionId));
                 }
             }
-            return (NSISConfigWizardDescriptor[])descriptors.toArray(new NSISConfigWizardDescriptor[descriptors.size()]);
+            return descriptors.toArray(new NSISConfigWizardDescriptor[descriptors.size()]);
         }
     }
 }

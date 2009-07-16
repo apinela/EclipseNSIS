@@ -28,7 +28,8 @@ public class ToggleEnablementCommand extends Command
         setLabel(InstallOptionsPlugin.getResourceString((mShouldEnable?"enable.command.name":"disable.command.name"))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         setEnablement(mShouldEnable);
     }
@@ -36,7 +37,7 @@ public class ToggleEnablementCommand extends Command
     private void setEnablement(boolean shouldEnable)
     {
         for (int i = 0; i < mWidgets.length; i++) {
-            List flags = new ArrayList(mWidgets[i].getFlags());
+            List<String> flags = new ArrayList<String>(mWidgets[i].getFlags());
             if(shouldEnable) {
                 flags.remove(InstallOptionsModel.FLAGS_DISABLED);
             }
@@ -49,7 +50,8 @@ public class ToggleEnablementCommand extends Command
         }
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         setEnablement(!mShouldEnable);
     }

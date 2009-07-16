@@ -39,7 +39,8 @@ public class NSISScriptWizard extends NSISWizard
         setWindowTitle(EclipseNSISPlugin.getResourceString("wizard.window.title")); //$NON-NLS-1$
     }
 
-    public String getHelpContextId()
+    @Override
+	public String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizard_context"; //$NON-NLS-1$
     }
@@ -82,7 +83,8 @@ public class NSISScriptWizard extends NSISWizard
         setSettings(template.getSettings());
     }
 
-    public boolean performFinish()
+    @Override
+	public boolean performFinish()
     {
         IPath path = new Path(getSettings().getSavePath());
         if(Common.isEmpty(path.getFileExtension())) {
@@ -106,8 +108,10 @@ public class NSISScriptWizard extends NSISWizard
             file = null;
             ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
             exists = ifile != null && ifile.exists();
-            path = ifile.getLocation();
-            if(path == null) {
+            if (ifile != null) {
+				path = ifile.getLocation();
+			}
+			if(path == null) {
                 Common.openError(getShell(),EclipseNSISPlugin.getResourceString("local.filesystem.error"),EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
                 return false;
             }
@@ -126,10 +130,10 @@ public class NSISScriptWizard extends NSISWizard
                 return false;
             }
         }
-        java.util.List editors = NSISEditorUtilities.findEditors(path);
+        java.util.List<IEditorPart> editors = NSISEditorUtilities.findEditors(path);
         if(!Common.isEmptyCollection(editors)) {
-            java.util.List dirtyEditors = new ArrayList();
-            for (Iterator iter = editors.iterator(); iter.hasNext();) {
+            java.util.List<IEditorPart> dirtyEditors = new ArrayList<IEditorPart>();
+            for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
                 IEditorPart editor = (IEditorPart)iter.next();
                 if(editor.isDirty()) {
                     dirtyEditors.add(editor);
@@ -140,14 +144,14 @@ public class NSISScriptWizard extends NSISWizard
                     EclipseNSISPlugin.getShellImage())) {
                     return false;
                 }
-                for (Iterator iter = dirtyEditors.iterator(); iter.hasNext();) {
-                    IEditorPart editor = (IEditorPart)iter.next();
+                for (Iterator<IEditorPart> iter = dirtyEditors.iterator(); iter.hasNext();) {
+                    IEditorPart editor = iter.next();
                     editor.getSite().getPage().closeEditor(editor,false);
                     editors.remove(editor);
                 }
 
                 if(saveExternal) {
-                    for (Iterator iter = editors.iterator(); iter.hasNext();) {
+                    for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
                         IEditorPart editor = (IEditorPart)iter.next();
                         editor.getSite().getPage().closeEditor(editor,false);
                     }
@@ -160,10 +164,14 @@ public class NSISScriptWizard extends NSISWizard
     			try {
                     if(exists) {
                         if(saveExternal) {
-                            file.delete();
+                            if (file != null) {
+								file.delete();
+							}
                         }
                         else {
-                            ifile.delete(true,true,null);
+                            if (ifile != null) {
+								ifile.delete(true, true, null);
+							}
                         }
                     }
                     new NSISWizardScriptGenerator(getSettings()).generate(getShell(),monitor);
@@ -187,7 +195,8 @@ public class NSISScriptWizard extends NSISWizard
     	return true;
     }
 
-    public boolean performCancel()
+    @Override
+	public boolean performCancel()
     {
         if(Common.openQuestion(getShell(),EclipseNSISPlugin.getResourceString("wizard.cancel.question"), //$NON-NLS-1$
                 EclipseNSISPlugin.getShellImage())) {
@@ -217,7 +226,8 @@ public class NSISScriptWizard extends NSISWizard
     /**
      *
      */
-    protected void addStartPage()
+    @Override
+	protected void addStartPage()
     {
         addPage(new NSISWizardWelcomePage());
     }
@@ -225,7 +235,8 @@ public class NSISScriptWizard extends NSISWizard
     /**
      * @return Returns the template.
      */
-    protected NSISWizardTemplate getTemplate()
+    @Override
+	protected NSISWizardTemplate getTemplate()
     {
         return mTemplate;
     }
@@ -233,7 +244,8 @@ public class NSISScriptWizard extends NSISWizard
     /**
      * @param template The template to set.
      */
-    protected void setTemplate(NSISWizardTemplate template)
+    @Override
+	protected void setTemplate(NSISWizardTemplate template)
     {
         mTemplate = template;
     }

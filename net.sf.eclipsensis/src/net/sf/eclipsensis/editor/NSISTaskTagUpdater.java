@@ -57,7 +57,7 @@ public class NSISTaskTagUpdater implements INSISConstants
                     if(NSISPartitionScanner.NSIS_MULTILINE_COMMENT.equals(type) ||
                        NSISPartitionScanner.NSIS_SINGLELINE_COMMENT.equals(type)) {
                         scanner.setRegion(typedRegions[i]);
-                        LinkedHashMap map = new LinkedHashMap();
+                        LinkedHashMap<Region, IToken> map = new LinkedHashMap<Region, IToken>();
                         while(true) {
                             int offset = scanner.getOffset();
                             IToken token = taskTagRule.evaluate(scanner);
@@ -72,7 +72,7 @@ public class NSISTaskTagUpdater implements INSISConstants
                             }
                         }
                         if(map.size() > 0) {
-                            Region[] regions = (Region[])map.keySet().toArray(new Region[map.size()]);
+                            Region[] regions = map.keySet().toArray(new Region[map.size()]);
                             for (int j = 0; j < regions.length; j++) {
                                 try {
                                     int line = document.getLineOfOffset(regions[j].getOffset());
@@ -102,9 +102,9 @@ public class NSISTaskTagUpdater implements INSISConstants
     }
 
 
-    private void createTaskMarker(Map regionMap, IRegion region, IFile file, IDocument document, int line, int start, int length) throws BadLocationException, CoreException
+    private void createTaskMarker(Map<Region, IToken> regionMap, IRegion region, IFile file, IDocument document, int line, int start, int length) throws BadLocationException, CoreException
     {
-        IToken token = (IToken)regionMap.get(region);
+        IToken token = regionMap.get(region);
         NSISTaskTag taskTag = (NSISTaskTag)token.getData();
         String message = document.get(start,length).trim();
 
@@ -131,7 +131,7 @@ public class NSISTaskTagUpdater implements INSISConstants
                         for (int i = 0; i < extensions.length; i++) {
                             extensions[i]=extensions[i].toLowerCase();
                         }
-                        final HashMap filesMap = new HashMap();
+                        final HashMap<IResource, IDocument> filesMap = new HashMap<IResource, IDocument>();
                         IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
                         for (int i = 0; i < windows.length; i++) {
                             if(monitor.isCanceled()) {
@@ -196,12 +196,12 @@ public class NSISTaskTagUpdater implements INSISConstants
                         NestedProgressMonitor subMonitor = new NestedProgressMonitor(monitor,mainTaskName,1);
                         try {
                             subMonitor.beginTask(taskName2,filesMap.size());
-                            for (Iterator iter = filesMap.keySet().iterator(); iter.hasNext();) {
+                            for (Iterator<IResource> iter = filesMap.keySet().iterator(); iter.hasNext();) {
                                 if(monitor.isCanceled()) {
                                     return Status.CANCEL_STATUS;
                                 }
                                 IFile file = (IFile)iter.next();
-                                IDocument document = (IDocument)filesMap.get(file);
+                                IDocument document = filesMap.get(file);
                                 subMonitor.subTask(EclipseNSISPlugin.getFormattedString("task.tags.update.file.task.name",new String[]{file.getFullPath().toString()})); //$NON-NLS-1$
                                 if(document == null) {
                                     updateTaskTags(file);

@@ -30,18 +30,18 @@ import org.eclipse.swt.widgets.*;
 
 public class FileFilterDialog extends Dialog
 {
-    private List mFilter;
+    private List<FileFilter> mFilter;
     private FileFilter mCurrent = null;
     private ICellEditorValidator mValidator;
 
     /**
      * @param parentShell
      */
-    public FileFilterDialog(Shell parentShell, List filter)
+    public FileFilterDialog(Shell parentShell, List<FileFilter> filter)
     {
         super(parentShell);
         setShellStyle(getShellStyle()|SWT.RESIZE);
-        mFilter = (List)InstallOptionsFileRequest.FILEFILTER_LIST_CONVERTER.makeCopy(filter);
+        mFilter = InstallOptionsFileRequest.FILEFILTER_LIST_CONVERTER.makeCopy(filter);
     }
 
     public ICellEditorValidator getValidator()
@@ -54,19 +54,21 @@ public class FileFilterDialog extends Dialog
         mValidator = validator;
     }
 
-    public List getFilter()
+    public List<FileFilter> getFilter()
     {
         return mFilter;
     }
 
-    protected void configureShell(Shell newShell)
+    @Override
+	protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(InstallOptionsPlugin.getResourceString("filter.dialog.name")); //$NON-NLS-1$
         newShell.setImage(InstallOptionsPlugin.getShellImage());
     }
 
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         ICellEditorValidator validator = getValidator();
         if(validator != null) {
@@ -80,7 +82,9 @@ public class FileFilterDialog extends Dialog
         super.okPressed();
     }
 
-    protected Control createDialogArea(Composite parent)
+    @Override
+	@SuppressWarnings("unchecked")
+	protected Control createDialogArea(Composite parent)
     {
         GridLayout layout;
         Composite composite = (Composite)super.createDialogArea(parent);
@@ -117,13 +121,13 @@ public class FileFilterDialog extends Dialog
         summaryAdd.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
         summaryAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         summaryAdd.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                List list = (List)summaryViewer.getInput();
+			public void handleEvent(Event e) {
+                List<FileFilter> list = (List<FileFilter>)summaryViewer.getInput();
                 if(list != null) {
                     String desc = InstallOptionsPlugin.getFormattedString("default.filter.description",new Object[]{""}).trim(); //$NON-NLS-1$ //$NON-NLS-2$
                     int counter = 1;
-                    for(ListIterator iter=list.listIterator(); iter.hasNext(); ) {
-                        if(((FileFilter)iter.next()).getDescription().equals(desc)) {
+                    for(ListIterator<FileFilter> iter=list.listIterator(); iter.hasNext(); ) {
+                        if((iter.next()).getDescription().equals(desc)) {
                             while(iter.hasPrevious()) {
                                 iter.previous();
                             }
@@ -145,12 +149,12 @@ public class FileFilterDialog extends Dialog
         summaryDel.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
         summaryDel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         summaryDel.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                List list = (List)summaryViewer.getInput();
+			public void handleEvent(Event e) {
+                List<FileFilter> list = (List<FileFilter>)summaryViewer.getInput();
                 if(list != null) {
                     IStructuredSelection selection= (IStructuredSelection) summaryViewer.getSelection();
                     if(!selection.isEmpty()) {
-                        for(Iterator iter=selection.toList().iterator(); iter.hasNext(); ) {
+                        for(Iterator<?> iter=selection.toList().iterator(); iter.hasNext(); ) {
                             list.remove(iter.next());
                         }
                         summaryViewer.refresh(false);
@@ -160,16 +164,18 @@ public class FileFilterDialog extends Dialog
         });
         summaryDel.setEnabled(!summaryViewer.getSelection().isEmpty());
 
-        final TableViewerUpDownMover summaryMover = new TableViewerUpDownMover() {
-            protected List getAllElements()
+        final TableViewerUpDownMover<List<FileFilter>, FileFilter> summaryMover = new TableViewerUpDownMover<List<FileFilter>, FileFilter>() {
+			@Override
+			protected List<FileFilter> getAllElements()
             {
-                return (List)((TableViewer)getViewer()).getInput();
+                return (List<FileFilter>)((TableViewer)getViewer()).getInput();
             }
 
-            protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
+            @Override
+			protected void updateStructuredViewerInput(List<FileFilter> input, List<FileFilter> elements, List<FileFilter> move, boolean isDown)
             {
-                ((List)input).clear();
-                ((List)input).addAll(elements);
+                (input).clear();
+                (input).addAll(elements);
             }
         };
         summaryMover.setViewer(summaryViewer);
@@ -180,7 +186,8 @@ public class FileFilterDialog extends Dialog
         summaryUp.setEnabled(summaryMover.canMoveUp());
         summaryUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         summaryUp.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 summaryMover.moveUp();
             }
@@ -192,7 +199,8 @@ public class FileFilterDialog extends Dialog
         summaryDown.setEnabled(summaryMover.canMoveDown());
         summaryDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         summaryDown.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 summaryMover.moveDown();
             }
@@ -360,21 +368,22 @@ public class FileFilterDialog extends Dialog
         int len = (Common.isEmptyArray(patterns)?0:patterns.length);
         patternsDel.setEnabled(!isNull && !sel.isEmpty() && sel.size() != len && len > 1);
 
-        final TableViewerUpDownMover patternsMover = new TableViewerUpDownMover() {
-            protected List getAllElements()
+        final TableViewerUpDownMover<FilePattern[], FilePattern> patternsMover = new TableViewerUpDownMover<FilePattern[], FilePattern>() {
+			@Override
+			protected List<FilePattern> getAllElements()
             {
                 if(mCurrent != null) {
                     return Common.makeList((FilePattern[])((TableViewer)getViewer()).getInput());
                 }
-                return Collections.EMPTY_LIST;
+                return Collections.<FilePattern>emptyList();
             }
 
-            protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
+            @Override
+			protected void updateStructuredViewerInput(FilePattern[] input, List elements, List move, boolean isDown)
             {
                 if(mCurrent != null) {
-                    FilePattern[] patterns = (FilePattern[])input;
-                    for (int i = 0; i < patterns.length; i++) {
-                        patterns[i] = (FilePattern)elements.get(i);
+                    for (int i = 0; i < input.length; i++) {
+                        input[i] = (FilePattern)elements.get(i);
                     }
                     patternsViewer.refresh();
                     summaryViewer.update(mCurrent,null);
@@ -389,7 +398,8 @@ public class FileFilterDialog extends Dialog
         patternsUp.setEnabled(!isNull && patternsMover.canMoveUp());
         patternsUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         patternsUp.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 patternsMover.moveUp();
             }
@@ -401,7 +411,8 @@ public class FileFilterDialog extends Dialog
         patternsDown.setEnabled(!isNull && patternsMover.canMoveDown());
         patternsDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         patternsDown.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 patternsMover.moveDown();
             }

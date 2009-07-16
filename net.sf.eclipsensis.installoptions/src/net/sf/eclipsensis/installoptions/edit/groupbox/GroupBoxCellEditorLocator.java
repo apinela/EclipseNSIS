@@ -26,7 +26,8 @@ public class GroupBoxCellEditorLocator extends InstallOptionsCellEditorLocator
         super(groupBox);
     }
 
-    protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
+    @Override
+	protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
         return new Rectangle(editArea.x + X_OFFSET, editArea.y, editArea.width + W_OFFSET, preferredSize.y);
     }

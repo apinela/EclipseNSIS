@@ -35,7 +35,8 @@ public class CopyAction extends SelectionAction
     /**
      * Initializes this action's text and images.
      */
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
@@ -48,13 +49,13 @@ public class CopyAction extends SelectionAction
         setEnabled(false);
     }
 
-    public Command createCopyCommand(List objects) {
+    public Command createCopyCommand(List<?> objects) {
         if (objects.isEmpty()) {
             return null;
         }
 
         CopyCommand copyCommand = new CopyCommand();
-        for (Iterator iter = objects.iterator(); iter.hasNext();) {
+        for (Iterator<?> iter = objects.iterator(); iter.hasNext();) {
             Object object = iter.next();
             if(object instanceof InstallOptionsWidgetEditPart) {
                 copyCommand.addWidget((InstallOptionsWidget)((InstallOptionsWidgetEditPart)object).getModel());
@@ -67,7 +68,8 @@ public class CopyAction extends SelectionAction
         return copyCommand;
     }
 
-    protected boolean calculateEnabled() {
+    @Override
+	protected boolean calculateEnabled() {
         Command cmd = createCopyCommand(getSelectedObjects());
         if (cmd == null) {
             return false;
@@ -75,7 +77,8 @@ public class CopyAction extends SelectionAction
         return cmd.canExecute();
     }
 
-    public void run() {
+    @Override
+	public void run() {
         createCopyCommand(getSelectedObjects()).execute();
     }
 }

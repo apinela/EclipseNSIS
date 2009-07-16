@@ -25,7 +25,8 @@ public abstract class SubstitutableParam extends PrefixableParam
         super(node);
     }
 
-    protected void init(Node node)
+    @Override
+	protected void init(Node node)
     {
         super.init(node);
         NamedNodeMap attributes = node.getAttributes();

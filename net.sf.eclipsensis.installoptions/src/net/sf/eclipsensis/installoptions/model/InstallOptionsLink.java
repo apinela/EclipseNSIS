@@ -30,7 +30,8 @@ public class InstallOptionsLink extends InstallOptionsLabel
     private static final long serialVersionUID = -6806110942403416762L;
     public static final RGB DEFAULT_TXTCOLOR = new RGB(0,0,255);
     private static ILabelProvider cLabelProvider = new LabelProvider(){
-        public String getText(Object element)
+        @Override
+		public String getText(Object element)
         {
             RGB rgb = null;
             if(element instanceof RGB) {
@@ -59,12 +60,14 @@ public class InstallOptionsLink extends InstallOptionsLabel
         super(section);
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_LINK;
     }
 
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
         mState = ""; //$NON-NLS-1$
@@ -74,7 +77,8 @@ public class InstallOptionsLink extends InstallOptionsLabel
     /**
      * @return
      */
-    protected String getDefaultText()
+    @Override
+	protected String getDefaultText()
     {
         return InstallOptionsPlugin.getResourceString("link.text.default"); //$NON-NLS-1$
     }
@@ -82,7 +86,8 @@ public class InstallOptionsLink extends InstallOptionsLabel
     /**
      * @return
      */
-    protected Position getDefaultPosition()
+    @Override
+	protected Position getDefaultPosition()
     {
         return new Position(0,0,15,9);
     }
@@ -117,7 +122,8 @@ public class InstallOptionsLink extends InstallOptionsLabel
         }
     }
 
-    protected TypeConverter loadTypeConverter(String property, Object value)
+    @Override
+	protected TypeConverter<?> loadTypeConverter(String property, Object value)
     {
         if(property.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TXTCOLOR)) {
             return TypeConverter.RGB_CONVERTER;
@@ -127,7 +133,8 @@ public class InstallOptionsLink extends InstallOptionsLabel
         }
     }
 
-    protected void addPropertyName(List list, String setting)
+    @Override
+	protected void addPropertyName(List<String> list, String setting)
     {
         if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
             list.add(InstallOptionsModel.PROPERTY_STATE);
@@ -140,7 +147,8 @@ public class InstallOptionsLink extends InstallOptionsLabel
         }
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    @Override
+	protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$;
@@ -164,7 +172,8 @@ public class InstallOptionsLink extends InstallOptionsLabel
         }
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         InstallOptionsLink clone = (InstallOptionsLink)super.clone();
         clone.setState(getState());
@@ -174,7 +183,8 @@ public class InstallOptionsLink extends InstallOptionsLabel
         return clone;
     }
 
-    public Object getPropertyValue(Object propName)
+    @Override
+	public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_STATE.equals(propName)) {
             return getState();
@@ -185,7 +195,8 @@ public class InstallOptionsLink extends InstallOptionsLabel
         return super.getPropertyValue(propName);
     }
 
-    public void setPropertyValue(Object id, Object value)
+    @Override
+	public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_STATE)) {
             setState((String)value);
@@ -198,12 +209,14 @@ public class InstallOptionsLink extends InstallOptionsLabel
         }
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    @Override
+	protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new LinkPropertySectionCreator(this);
     }
 
-    public boolean isMultiLine()
+    @Override
+	public boolean isMultiLine()
     {
         return mMultiLine;
     }
@@ -218,7 +231,8 @@ public class InstallOptionsLink extends InstallOptionsLabel
         }
     }
 
-    public void modelChanged()
+    @Override
+	public void modelChanged()
     {
         super.modelChanged();
         setMultiLine(checkMultiLine());

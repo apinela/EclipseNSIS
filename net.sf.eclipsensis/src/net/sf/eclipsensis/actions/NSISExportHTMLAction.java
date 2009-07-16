@@ -14,12 +14,14 @@ import org.eclipse.jface.viewers.ISelection;
 
 public class NSISExportHTMLAction extends NSISAction
 {
-    public void run(IAction action)
+    @Override
+	public void run(IAction action)
     {
         mEditor.exportHTML();
     }
 
-    public void selectionChanged(IAction action, ISelection selection)
+    @Override
+	public void selectionChanged(IAction action, ISelection selection)
     {
 
     }

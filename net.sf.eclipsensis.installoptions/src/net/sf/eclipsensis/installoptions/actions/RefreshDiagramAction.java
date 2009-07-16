@@ -35,14 +35,16 @@ public class RefreshDiagramAction extends Action implements IUpdate
         setEnabled(isEnabled());
     }
 
-    public void run()
+    @Override
+	public void run()
     {
         if(isEnabled()) {
             ((InstallOptionsDialogEditPart)mEditor.getGraphicalViewer().getContents()).refreshDiagram();
         }
     }
 
-    public boolean isEnabled()
+    @Override
+	public boolean isEnabled()
     {
         if (mEditor != null && !mEditor.isDisposed() && mEditor.getGraphicalViewer() != null
             && mEditor.getGraphicalViewer().getContents() != null) {

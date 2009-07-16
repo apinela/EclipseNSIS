@@ -36,7 +36,8 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
     /*
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
      */
-    public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer)
+    @Override
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer)
     {
         return NSISPartitionScanner.NSIS_PARTITIONING;
     }
@@ -44,7 +45,8 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
     /*
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
-    public String[] getConfiguredContentTypes(ISourceViewer sourceViewer)
+    @Override
+	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer)
     {
         return NSISSourceViewerConfigurationTools.CONFIGURED_CONTENT_TYPES;
     }
@@ -61,7 +63,8 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
     /*
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
-    public ITextDoubleClickStrategy getDoubleClickStrategy(
+    @Override
+	public ITextDoubleClickStrategy getDoubleClickStrategy(
             ISourceViewer sourceViewer, String contentType)
     {
         return mDoubleClickStrategy;
@@ -70,7 +73,8 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
     /*
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
-    public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType)
+    @Override
+	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType)
     {
         if(sourceViewer instanceof NSISSourceViewer) {
             return ((NSISSourceViewer)sourceViewer).calculatePrefixes();
@@ -83,7 +87,8 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
     /*
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
-    public IPresentationReconciler getPresentationReconciler(
+    @Override
+	public IPresentationReconciler getPresentationReconciler(
             ISourceViewer sourceViewer)
     {
         return NSISSourceViewerConfigurationTools.createPresentationReconciler(sourceViewer,
@@ -99,7 +104,8 @@ public class NSISSourceViewerConfiguration extends SourceViewerConfiguration imp
     /* (non-Javadoc)
      * Method declared on SourceViewerConfiguration
      */
-    public int getTabWidth(ISourceViewer sourceViewer)
+    @Override
+	public int getTabWidth(ISourceViewer sourceViewer)
     {
         return mPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
     }

@@ -17,15 +17,16 @@ import org.eclipse.swt.SWT;
 
 public class InstallOptionsButtonEditManager extends InstallOptionsUneditableElementEditManager
 {
-    public InstallOptionsButtonEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
+    public InstallOptionsButtonEditManager(GraphicalEditPart source, CellEditorLocator locator)
     {
-        super(source, editorType, locator);
+        super(source, locator);
     }
 
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditManager#getCellEditorStyle()
      */
-    protected int getCellEditorStyle()
+    @Override
+	protected int getCellEditorStyle()
     {
         return SWT.SINGLE|SWT.CENTER;
     }

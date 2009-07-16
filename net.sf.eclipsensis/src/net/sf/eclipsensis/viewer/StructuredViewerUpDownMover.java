@@ -15,15 +15,17 @@ import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.viewers.*;
 
-public abstract class StructuredViewerUpDownMover extends UpDownMover
+public abstract class StructuredViewerUpDownMover<S, T> extends UpDownMover<T>
 {
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.util.UpDownMover#updateElements(java.util.List, java.util.List, boolean)
      */
-    protected final void updateElements(List elements, List move, boolean isDown)
+    @Override
+	@SuppressWarnings("unchecked")
+	protected final void updateElements(List<T> elements, List<T> move, boolean isDown)
     {
         StructuredViewer viewer = getViewer();
-        updateStructuredViewerInput(viewer.getInput(), elements, move, isDown);
+        updateStructuredViewerInput((S) viewer.getInput(), elements, move, isDown);
         refreshViewer(viewer, elements, move, isDown);
         if(!Common.isEmptyCollection(move)) {
             viewer.setSelection(new StructuredSelection(move));
@@ -34,12 +36,12 @@ public abstract class StructuredViewerUpDownMover extends UpDownMover
     /**
      * @param viewer
      */
-    protected void refreshViewer(StructuredViewer viewer, List elements, List move, boolean isDown)
+    protected void refreshViewer(StructuredViewer viewer, List<T> elements, List<T> move, boolean isDown)
     {
         viewer.refresh();
     }
 
-    protected abstract void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown);
+    protected abstract void updateStructuredViewerInput(S input, List<T> elements, List<T> move, boolean isDown);
 
     public abstract void setViewer(StructuredViewer viewer);
     public abstract StructuredViewer getViewer();

@@ -131,7 +131,8 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         mNeedsReScrape = needsReScrape;
     }
 
-    public void setBounds(Rectangle rect)
+    @Override
+	public void setBounds(Rectangle rect)
     {
         if(bounds.width != rect.width || bounds.height != rect.height) {
             setNeedsReScrape(true);
@@ -139,7 +140,8 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         super.setBounds(rect);
     }
 
-    protected void paintFigure(Graphics g)
+    @Override
+	protected void paintFigure(Graphics g)
     {
         super.paintFigure(g);
         if (mImage != null && !mImage.isDisposed()) {
@@ -158,7 +160,8 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
     /*
      * @see org.eclipse.draw2d.Figure#layout()
      */
-    protected synchronized void layout()
+    @Override
+	protected synchronized void layout()
     {
         if(isNeedsReScrape()) {
             if (mImage != null && !mImage.isDisposed()) {
@@ -209,7 +212,8 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         control.setBounds(x, y, width, height);
     }
 
-    protected boolean isTransparentAt(int x, int y)
+    @Override
+	protected boolean isTransparentAt(int x, int y)
     {
         int pixel = (mImageData != null?mImageData.transparentPixel:-1);
         if(pixel != -1) {

@@ -22,7 +22,8 @@ public class BeginningOfLineWordPatternRule extends BeginningOfLineRule
         mDetector= detector;
     }
 
-    protected boolean endSequenceDetected(ICharacterScanner scanner)
+    @Override
+	protected boolean endSequenceDetected(ICharacterScanner scanner)
     {
         mBuffer.setLength(0);
         int c= scanner.read();

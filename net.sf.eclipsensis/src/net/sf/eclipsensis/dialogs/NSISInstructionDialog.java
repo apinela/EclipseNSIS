@@ -45,7 +45,8 @@ public class NSISInstructionDialog extends StatusMessageDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(2,false);
@@ -101,7 +102,8 @@ public class NSISInstructionDialog extends StatusMessageDialog
         return composite;
     }
 
-    public void create()
+    @Override
+	public void create()
     {
         super.create();
         validate();
@@ -170,7 +172,8 @@ public class NSISInstructionDialog extends StatusMessageDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         mInstruction = new StringBuffer(mInstructionCombo.getText().trim()).append(" ").append(mParametersText.getText().trim()).toString().trim(); //$NON-NLS-1$
         super.okPressed();
@@ -187,7 +190,8 @@ public class NSISInstructionDialog extends StatusMessageDialog
     /**
      * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(Composite)
      */
-    protected Control createButtonBar(Composite parent) {
+    @Override
+	protected Control createButtonBar(Composite parent) {
         Control control = super.createButtonBar(parent);
         Button okButton = getButton(OK_ID);
         okButton.setEnabled(!Common.isEmpty(mInstruction));

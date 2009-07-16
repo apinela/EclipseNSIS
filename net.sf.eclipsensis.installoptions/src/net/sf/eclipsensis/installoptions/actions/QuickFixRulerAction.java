@@ -25,7 +25,8 @@ import org.eclipse.ui.texteditor.*;
 
 public class QuickFixRulerAction extends AbstractRulerActionDelegate
 {
-    protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo)
+    @Override
+	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo)
     {
         return new SelectQuickFixRulerAction(InstallOptionsPlugin.getDefault().getResourceBundle(),
                 "quick.fix.ruler.action.",editor,rulerInfo); //$NON-NLS-1$
@@ -50,12 +51,14 @@ public class QuickFixRulerAction extends AbstractRulerActionDelegate
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "installoptions_quickfix_context"); //$NON-NLS-1$
         }
 
-        public void run()
+        @Override
+		public void run()
         {
             runWithEvent(null);
         }
 
-        public void runWithEvent(Event event)
+        @Override
+		public void runWithEvent(Event event)
         {
             if (mCanFix) {
                 ITextOperationTarget operation= (ITextOperationTarget) mTextEditor.getAdapter(ITextOperationTarget.class);
@@ -70,7 +73,8 @@ public class QuickFixRulerAction extends AbstractRulerActionDelegate
             super.run();
         }
 
-        public void update()
+        @Override
+		public void update()
         {
             findAnnotation();
             setEnabled(true); // super.update() might change this later

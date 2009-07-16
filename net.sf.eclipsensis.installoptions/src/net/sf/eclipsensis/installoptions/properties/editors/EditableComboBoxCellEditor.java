@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.*;
 
 public class EditableComboBoxCellEditor extends CellEditor
 {
-    private List mItems;
+    private List<String> mItems;
     private String mSelection;
     private String mNewSelection;
     private Combo mCombo;
@@ -32,12 +32,13 @@ public class EditableComboBoxCellEditor extends CellEditor
     private boolean mAutoApplyEditorValue = false;
     private boolean mCaseInsensitive = false;
     private FocusAdapter mAutoDropDownFocusAdapter = new FocusAdapter(){
-        public void focusGained(FocusEvent e) {
+        @Override
+		public void focusGained(FocusEvent e) {
             WinAPI.SendMessage(mCombo.handle, WinAPI.CB_SHOWDROPDOWN,1,0);
         }
     };
 
-    public EditableComboBoxCellEditor(Composite parent, List items, int style)
+    public EditableComboBoxCellEditor(Composite parent, List<String> items, int style)
     {
         super(parent, style);
         setItems(items);
@@ -53,7 +54,8 @@ public class EditableComboBoxCellEditor extends CellEditor
         mCaseInsensitive = caseInsensitive;
     }
 
-    public void deactivate()
+    @Override
+	public void deactivate()
     {
         super.deactivate();
         mDownArrowPressed = false;
@@ -87,12 +89,12 @@ public class EditableComboBoxCellEditor extends CellEditor
         }
     }
 
-    public List getItems()
+    public List<String> getItems()
     {
-        return (mItems == null?Collections.EMPTY_LIST:mItems);
+        return (mItems == null?Collections.<String>emptyList():mItems);
     }
 
-    public void setItems(List items)
+    public void setItems(List<String> items)
     {
         mItems = items;
         populateComboBoxItems();
@@ -101,7 +103,8 @@ public class EditableComboBoxCellEditor extends CellEditor
     /*
      * (non-Javadoc) Method declared on CellEditor.
      */
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         mCombo = new Combo(parent, getStyle());
         mCombo.setFont(parent.getFont());
@@ -114,7 +117,8 @@ public class EditableComboBoxCellEditor extends CellEditor
         });
 
         mCombo.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e)
+            @Override
+			public void keyPressed(KeyEvent e)
             {
                 if(e.keyCode == SWT.ARROW_DOWN) {
                     mDownArrowPressed = true;
@@ -122,7 +126,8 @@ public class EditableComboBoxCellEditor extends CellEditor
                 keyReleaseOccured(e);
             }
 
-            public void keyReleased(KeyEvent e) {
+            @Override
+			public void keyReleased(KeyEvent e) {
                 if(e.keyCode == SWT.ARROW_DOWN) {
                     mDownArrowPressed = false;
                 }
@@ -130,12 +135,14 @@ public class EditableComboBoxCellEditor extends CellEditor
         });
 
         mCombo.addSelectionListener(new SelectionAdapter() {
-            public void widgetDefaultSelected(SelectionEvent event)
+            @Override
+			public void widgetDefaultSelected(SelectionEvent event)
             {
                 applyEditorValueAndDeactivate();
             }
 
-            public void widgetSelected(SelectionEvent event)
+            @Override
+			public void widgetSelected(SelectionEvent event)
             {
                 computeSelection();
                 if(isAutoApplyEditorValue()) {
@@ -158,7 +165,8 @@ public class EditableComboBoxCellEditor extends CellEditor
         });
 
         mCombo.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e)
+            @Override
+			public void focusLost(FocusEvent e)
             {
                 EditableComboBoxCellEditor.this.focusLost();
             }
@@ -181,7 +189,8 @@ public class EditableComboBoxCellEditor extends CellEditor
         }
     }
 
-    protected Object doGetValue()
+    @Override
+	protected Object doGetValue()
     {
         return mSelection;
     }
@@ -189,12 +198,14 @@ public class EditableComboBoxCellEditor extends CellEditor
     /*
      * (non-Javadoc) Method declared on CellEditor.
      */
-    protected void doSetFocus()
+    @Override
+	protected void doSetFocus()
     {
         mCombo.setFocus();
     }
 
-    public LayoutData getLayoutData()
+    @Override
+	public LayoutData getLayoutData()
     {
         LayoutData layoutData = super.getLayoutData();
         if ((mCombo == null) || mCombo.isDisposed()) {
@@ -211,7 +222,7 @@ public class EditableComboBoxCellEditor extends CellEditor
 
     private String checkValue(String value)
     {
-        for (Iterator iter = getItems().iterator(); iter.hasNext();) {
+        for (Iterator<String> iter = getItems().iterator(); iter.hasNext();) {
             String item = (String)iter.next();
             if(Common.stringsAreEqual(item, value, mCaseInsensitive)) {
                 return item;
@@ -220,7 +231,8 @@ public class EditableComboBoxCellEditor extends CellEditor
         return null;
     }
 
-    protected void doSetValue(Object value)
+    @Override
+	protected void doSetValue(Object value)
     {
         String val = (String)value;
         String selection = checkValue(val);
@@ -286,7 +298,8 @@ public class EditableComboBoxCellEditor extends CellEditor
      *  (non-Javadoc)
      * @see org.eclipse.jface.viewers.CellEditor#focusLost()
      */
-    protected void focusLost()
+    @Override
+	protected void focusLost()
     {
         if (isActivated()) {
             applyEditorValueAndDeactivate();
@@ -297,7 +310,8 @@ public class EditableComboBoxCellEditor extends CellEditor
      *  (non-Javadoc)
      * @see org.eclipse.jface.viewers.CellEditor#keyReleaseOccured(org.eclipse.swt.events.KeyEvent)
      */
-    protected void keyReleaseOccured(KeyEvent keyEvent)
+    @Override
+	protected void keyReleaseOccured(KeyEvent keyEvent)
     {
         if (keyEvent.character == '\u001b') { // Escape character
             fireCancelEditor();

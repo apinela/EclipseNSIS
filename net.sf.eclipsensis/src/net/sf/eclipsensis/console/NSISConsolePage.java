@@ -85,7 +85,8 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
         }
     }
 
-    protected TextConsoleViewer createViewer(Composite parent)
+    @Override
+	protected TextConsoleViewer createViewer(Composite parent)
     {
         return new NSISConsoleViewer(parent, (NSISConsole)getConsole());
     }
@@ -110,7 +111,8 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
         }
     }
 
-    public void createControl(Composite parent)
+    @Override
+	public void createControl(Composite parent)
     {
         super.createControl(parent);
         String id = "#ContextMenu"; //$NON-NLS-1$
@@ -150,7 +152,8 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
         return action;
     }
 
-    protected void createActions()
+    @Override
+	protected void createActions()
     {
         super.createActions();
         ImageManager imageManager = EclipseNSISPlugin.getImageManager();
@@ -180,7 +183,8 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
         final NSISCancelAction cancelActionDelegate = new NSISCancelAction();
         mCancelAction = makeAction(
                 new Action() {
-                    public void run()
+                    @Override
+					public void run()
                     {
                         cancelActionDelegate.init(this);
                         cancelActionDelegate.run(this);
@@ -199,7 +203,8 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
         setAutoScroll(!mScrollLockAction.isChecked());
     }
 
-    protected void contextMenuAboutToShow(IMenuManager menuManager)
+    @Override
+	protected void contextMenuAboutToShow(IMenuManager menuManager)
     {
         super.contextMenuAboutToShow(menuManager);
         menuManager.add(mRemoveAction);
@@ -209,7 +214,8 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
         menuManager.remove(ActionFactory.PASTE.getId());
     }
 
-    protected void configureToolBar(IToolBarManager mgr)
+    @Override
+	protected void configureToolBar(IToolBarManager mgr)
     {
         mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, mRemoveAction);
         mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, mCancelAction);
@@ -225,7 +231,8 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
         mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, mScrollLockAction);
     }
 
-    public void dispose()
+    @Override
+	public void dispose()
     {
         mDisposed = true;
         ((NSISConsole)getConsole()).getDocument().removeDocumentListener(this);
@@ -257,7 +264,8 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
             setChecked(checked);
         }
 
-        public void run()
+        @Override
+		public void run()
         {
             setAutoScroll(!isChecked());
         }
@@ -279,7 +287,8 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
             setDisabledImageDescriptor(EclipseNSISPlugin.getImageManager().getImageDescriptor(EclipseNSISPlugin.getResourceString("console.remove.action.disabled.image"))); //$NON-NLS-1$
         }
 
-        public void run()
+        @Override
+		public void run()
         {
             NSISConsoleFactory.closeConsole();
         }

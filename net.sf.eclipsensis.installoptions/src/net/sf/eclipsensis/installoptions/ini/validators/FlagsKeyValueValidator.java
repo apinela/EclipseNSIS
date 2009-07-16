@@ -28,12 +28,12 @@ public class FlagsKeyValueValidator implements IINIKeyValueValidator
                 if(!Common.isEmptyArray(types)) {
                     InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(types[0].getValue());
                     if(typeDef != null) {
-                        Collection availableFlags;
+                        Collection<String> availableFlags;
                         availableFlags = typeDef.getFlags();
                         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                        final List flags = Common.tokenizeToList(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
+                        final List<String> flags = Common.tokenizeToList(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
                         int n = 0;
-                        for (Iterator iter=flags.iterator(); iter.hasNext(); ) {
+                        for (Iterator<String> iter=flags.iterator(); iter.hasNext(); ) {
                             String flag = (String)iter.next();
                             if(!Common.isEmpty(flag) && !availableFlags.contains(flag)) {
                                 iter.remove();
@@ -56,7 +56,8 @@ public class FlagsKeyValueValidator implements IINIKeyValueValidator
                                                                             new Object[]{InstallOptionsModel.PROPERTY_TYPE,
                                                                                          types[0].getValue(),new Integer(n),buf.toString()}));
                                 problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.unrecognized.flags")) { //$NON-NLS-1$
-                                    protected INIProblemFix[] createFixes()
+                                    @Override
+									protected INIProblemFix[] createFixes()
                                     {
                                         return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(Common.flatten(flags, IInstallOptionsConstants.LIST_SEPARATOR))+(keyValue.getDelimiter()!=null?keyValue.getDelimiter():""))}; //$NON-NLS-1$
                                     }

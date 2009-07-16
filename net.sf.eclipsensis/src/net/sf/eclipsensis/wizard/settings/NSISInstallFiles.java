@@ -45,7 +45,8 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         private String mName = null;
 
-        public String doValidate()
+        @Override
+		public String doValidate()
         {
             if (!IOUtility.isValidFile(IOUtility.decodePath(getName())))
             {
@@ -105,7 +106,8 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
          * 
          * @see java.lang.Object#equals(java.lang.Object)
          */
-        public boolean equals(Object obj)
+        @Override
+		public boolean equals(Object obj)
         {
             if (obj instanceof FileItem)
             {
@@ -160,7 +162,8 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
          * 
          * @see java.lang.Object#hashCode()
          */
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             return mName.hashCode();
         }
@@ -214,13 +217,15 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     private boolean mPreserveAttributes = false;
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("files"); //$NON-NLS-1$
     }
 
-    public String doValidate()
+    @Override
+	public String doValidate()
     {
         if (!NSISWizardUtil.isValidNSISPathName(getSettings().getTargetPlatform(), getDestination()))
         {
@@ -237,7 +242,8 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         return new NSISInstallFilesDialog(wizard, this).open() == Window.OK;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj)
         {
@@ -325,7 +331,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if (getChildren().length > 0)
         {
-            Iterator iter = getChildrenIterator();
+            Iterator<INSISInstallElement> iter = getChildrenIterator();
             buf.append(((FileItem) iter.next()).getName());
             while (iter.hasNext())
             {
@@ -363,7 +369,8 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         return TYPE;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int PRIME = 31;
         int result = super.hashCode();
@@ -389,7 +396,8 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
      * net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes
      * ()
      */
-    public void setChildTypes()
+    @Override
+	public void setChildTypes()
     {
         clearChildTypes();
         addChildType(FileItem.TYPE);
@@ -416,7 +424,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     {
         String[] files = Common.tokenize(filenames, SEPARATOR);
         CaseInsensitiveSet newFiles = new CaseInsensitiveSet(Arrays.asList(files));
-        for (Iterator iter = getChildrenIterator(); iter.hasNext();)
+        for (Iterator<INSISInstallElement> iter = getChildrenIterator(); iter.hasNext();)
         {
             FileItem item = (FileItem) iter.next();
             if (!newFiles.contains(item.getName()))
@@ -429,7 +437,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
                 newFiles.remove(item.getName());
             }
         }
-        for (Iterator iter = newFiles.iterator(); iter.hasNext();)
+        for (Iterator<String> iter = newFiles.iterator(); iter.hasNext();)
         {
             FileItem fi = new FileItem();
             fi.setName((String) iter.next());
@@ -451,7 +459,8 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         }
     }
 
-    public void setTargetPlatform(int targetPlatform)
+    @Override
+	public void setTargetPlatform(int targetPlatform)
     {
         super.setTargetPlatform(targetPlatform);
         setDestination(NSISWizardUtil.convertPath(targetPlatform, getDestination()));

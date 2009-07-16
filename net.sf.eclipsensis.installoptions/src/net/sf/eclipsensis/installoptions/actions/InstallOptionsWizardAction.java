@@ -30,7 +30,8 @@ public class InstallOptionsWizardAction extends Action
         setToolTipText(InstallOptionsPlugin.getResourceString("wizard.action.tooltip")); //$NON-NLS-1$
     }
 
-    public void run()
+    @Override
+	public void run()
     {
         final IWorkbench workbench = PlatformUI.getWorkbench();
         final Shell shell = workbench.getActiveWorkbenchWindow().getShell();

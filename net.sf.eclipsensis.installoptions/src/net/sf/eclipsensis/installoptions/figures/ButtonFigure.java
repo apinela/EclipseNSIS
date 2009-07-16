@@ -28,7 +28,8 @@ public class ButtonFigure extends UneditableElementFigure
     /**
      * @return
      */
-    protected Control createUneditableSWTControl(Composite parent, int style)
+    @Override
+	protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Button button = new Button(parent, style);
         button.setText(getText());
@@ -38,7 +39,8 @@ public class ButtonFigure extends UneditableElementFigure
     /**
      * @return
      */
-    public int getDefaultStyle()
+    @Override
+	public int getDefaultStyle()
     {
         return SWT.CENTER|SWT.PUSH;
     }

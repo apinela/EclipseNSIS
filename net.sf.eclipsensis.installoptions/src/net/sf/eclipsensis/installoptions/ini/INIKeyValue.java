@@ -56,7 +56,8 @@ public class INIKeyValue extends INILine
         mValue = (value==null?"":value); //$NON-NLS-1$
     }
 
-    protected void checkProblems(int fixFlag)
+    @Override
+	protected void checkProblems(int fixFlag)
     {
         if(getParent() instanceof INISection) {
             final INIKeyValue[] keyValues = ((INISection)getParent()).findKeyValues(getKey());
@@ -72,7 +73,8 @@ public class INIKeyValue extends INILine
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("duplicate.key.name.error",new String[]{getKey()})); //$NON-NLS-1$
                     addProblem(problem);
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.dup.keys")) { //$NON-NLS-1$
-                        protected INIProblemFix[] createFixes()
+                        @Override
+						protected INIProblemFix[] createFixes()
                         {
                             INIProblemFix[] fixes = new INIProblemFix[keyValues.length-1];
                             for (int i = 0, j = 0; i < keyValues.length; i++) {
@@ -109,7 +111,8 @@ public class INIKeyValue extends INILine
                                                 new Object[]{getKey(),new Integer(maxLen)}));
                     addProblem(problem);
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.value.length")) { //$NON-NLS-1$
-                        protected INIProblemFix[] createFixes()
+                        @Override
+						protected INIProblemFix[] createFixes()
                         {
                             return new INIProblemFix[] {new INIProblemFix(INIKeyValue.this,buildText(getValue().substring(0,maxLen))+(getDelimiter()==null?"":getDelimiter()))}; //$NON-NLS-1$
                         }
@@ -125,7 +128,8 @@ public class INIKeyValue extends INILine
                 INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
                 addProblem(problem);
                 problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.line")) { //$NON-NLS-1$
-                    protected INIProblemFix[] createFixes()
+                    @Override
+					protected INIProblemFix[] createFixes()
                     {
                         return new INIProblemFix[] {new INIProblemFix(INIKeyValue.this)};
                     }
@@ -164,7 +168,8 @@ public class INIKeyValue extends INILine
         return buf.toString();
     }
 
-    public void update()
+    @Override
+	public void update()
     {
         if(Common.isEmpty(getText())|| !Common.stringsAreEqual(mValue,mOriginalValue))
         {
@@ -190,7 +195,8 @@ public class INIKeyValue extends INILine
         return new StringBuffer("\"").append(text).append("\"").toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public boolean isEqualTo(INILine line)
+    @Override
+	public boolean isEqualTo(INILine line)
     {
         if (this == line) {
             return true;

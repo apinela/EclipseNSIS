@@ -16,15 +16,20 @@ import net.sf.eclipsensis.installoptions.figures.IEditableElementFigure;
 import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.tools.CellEditorLocator;
+import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.jface.viewers.CellEditor;
 
-public abstract class InstallOptionsEditableElementEditPart extends InstallOptionsWidgetEditPart
+public abstract class InstallOptionsEditableElementEditPart<T extends CellEditor> extends InstallOptionsWidgetEditPart
 {
-    protected String getAccessibleControlEventResult()
+    @Override
+	protected String getAccessibleControlEventResult()
     {
         return getInstallOptionsEditableElement().getState();
     }
 
-    protected void createEditPolicies()
+    @Override
+	protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, createDirectEditPolicy());
@@ -43,7 +48,8 @@ public abstract class InstallOptionsEditableElementEditPart extends InstallOptio
         return (InstallOptionsEditableElement)getModel();
     }
 
-    protected void doPropertyChange(PropertyChangeEvent evt)
+    @Override
+	protected void doPropertyChange(PropertyChangeEvent evt)
     {
         if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
             IEditableElementFigure figure2 = (IEditableElementFigure)getFigure();
@@ -54,4 +60,19 @@ public abstract class InstallOptionsEditableElementEditPart extends InstallOptio
             super.doPropertyChange(evt);
         }
     }
+
+    @Override
+	protected final DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator) 
+    {
+		return creatDirectEditManager(part, getCellEditorClass(), locator);
+	}
+
+	@Override
+	protected String getTypeName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	protected abstract Class<T> getCellEditorClass();
+    protected abstract DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<T> clasz, CellEditorLocator locator);
 }

@@ -16,15 +16,19 @@ import net.sf.eclipsensis.installoptions.figures.IUneditableElementFigure;
 import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.gef.EditPolicy;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.TextCellEditor;
 
 public abstract class InstallOptionsUneditableElementEditPart extends InstallOptionsWidgetEditPart
 {
-    protected String getAccessibleControlEventResult()
+    @Override
+	protected String getAccessibleControlEventResult()
     {
         return getInstallOptionsUneditableElement().getText();
     }
 
-    protected void createEditPolicies()
+    @Override
+	protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, createDirectEditPolicy());
@@ -43,7 +47,13 @@ public abstract class InstallOptionsUneditableElementEditPart extends InstallOpt
         return (InstallOptionsUneditableElement)getModel();
     }
 
-    protected void doPropertyChange(PropertyChangeEvent evt)
+    protected Class<? extends CellEditor> getCellEditorClass()
+    {
+        return TextCellEditor.class;
+    }
+
+    @Override
+	protected void doPropertyChange(PropertyChangeEvent evt)
     {
         if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_TEXT)) {
             IUneditableElementFigure figure2 = (IUneditableElementFigure)getFigure();

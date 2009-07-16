@@ -13,19 +13,21 @@ import java.util.*;
 
 import org.w3c.dom.*;
 
-public class PrimitivesNodeConverter extends AbstractNodeConverter
+public class PrimitivesNodeConverter extends AbstractNodeConverter<Object>
 {
     private static final String VALUE_ATTR = "value"; //$NON-NLS-1$
 
-    private Map mClassNameMap = new HashMap();
+    private Map<Class<? extends Object>,String> mClassNameMap = new HashMap<Class<? extends Object>,String>();
 
-    public void addNameClassMapping(String name, Class clasz)
+    @Override
+	public void addNameClassMapping(String name, Class<? extends Object> clasz)
     {
         super.addNameClassMapping(name, clasz);
         mClassNameMap.put(clasz, name);
     }
 
-    public Object fromNode(Node node, Class clasz)
+    @Override
+	public Object fromNode(Node node, Class<? extends Object> clasz)
     {
         NamedNodeMap attr = node.getAttributes();
         if(Integer.class.equals(clasz) || Integer.TYPE.equals(clasz)) {

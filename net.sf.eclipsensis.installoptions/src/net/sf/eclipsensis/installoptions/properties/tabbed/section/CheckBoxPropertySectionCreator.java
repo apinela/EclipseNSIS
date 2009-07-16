@@ -10,11 +10,15 @@
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
 
-import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import org.eclipse.swt.widgets.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsCheckBox;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
+
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 public class CheckBoxPropertySectionCreator extends UneditableElementPropertySectionCreator
@@ -24,13 +28,14 @@ public class CheckBoxPropertySectionCreator extends UneditableElementPropertySec
         super(checkbox);
     }
 
-    protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
+    @Override
+	protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
         Composite composite = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
         InstallOptionsCheckBox checkbox = (InstallOptionsCheckBox)getWidget();
         Integer[] stateData = checkbox.getStateData();
         String[] stateDisplay = checkbox.getStateDisplay();
-        CaseInsensitiveMap map = new CaseInsensitiveMap();
+        Map<Integer,String> map = new LinkedHashMap<Integer,String>();
         for (int i = 0; i < Math.min(stateData.length,stateDisplay.length); i++) {
             map.put(stateData[i], stateDisplay[i]);
         }

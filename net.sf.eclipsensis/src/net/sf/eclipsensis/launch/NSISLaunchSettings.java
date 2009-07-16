@@ -81,14 +81,16 @@ public class NSISLaunchSettings extends NSISSettings
         mScript = script;
     }
 
-    public void load()
+    @Override
+	public void load()
     {
         mScript = getString(SCRIPT);
         mRunInstaller = getBoolean(RUN_INSTALLER);
         super.load();
     }
 
-    public void store()
+    @Override
+	public void store()
     {
         String file = null;
         try {
@@ -114,7 +116,8 @@ public class NSISLaunchSettings extends NSISSettings
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getBoolean(java.lang.String)
      */
-    public boolean getBoolean(String name)
+    @Override
+	public boolean getBoolean(String name)
     {
         if(mFilter == null || mFilter.select(name)) {
             boolean defaultValue = mParent.getBoolean(name);
@@ -134,7 +137,8 @@ public class NSISLaunchSettings extends NSISSettings
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getInt(java.lang.String)
      */
-    public int getInt(String name)
+    @Override
+	public int getInt(String name)
     {
         if (mFilter == null || mFilter.select(name)) {
             int defaultValue = mParent.getInt(name);
@@ -154,7 +158,8 @@ public class NSISLaunchSettings extends NSISSettings
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getString(java.lang.String)
      */
-    public String getString(String name)
+    @Override
+	public String getString(String name)
     {
         if (mFilter == null || mFilter.select(name)) {
             String defaultValue = mParent.getString(name);
@@ -174,7 +179,8 @@ public class NSISLaunchSettings extends NSISSettings
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, boolean)
      */
-    public void setValue(String name, boolean value)
+    @Override
+	public void setValue(String name, boolean value)
     {
         if (mFilter == null || mFilter.select(name)) {
             if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
@@ -186,7 +192,8 @@ public class NSISLaunchSettings extends NSISSettings
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, int)
      */
-    public void setValue(String name, int value)
+    @Override
+	public void setValue(String name, int value)
     {
         if (mFilter == null || mFilter.select(name)) {
             if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
@@ -198,7 +205,8 @@ public class NSISLaunchSettings extends NSISSettings
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, java.lang.String)
      */
-    public void setValue(String name, String value)
+    @Override
+	public void setValue(String name, String value)
     {
         if (mFilter == null || mFilter.select(name)) {
             if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
@@ -210,7 +218,8 @@ public class NSISLaunchSettings extends NSISSettings
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeBoolean(java.lang.String)
      */
-    public void removeBoolean(String name)
+    @Override
+	public void removeBoolean(String name)
     {
         remove(name);
     }
@@ -227,7 +236,8 @@ public class NSISLaunchSettings extends NSISSettings
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeInt(java.lang.String)
      */
-    public void removeInt(String name)
+    @Override
+	public void removeInt(String name)
     {
         remove(name);
     }
@@ -235,18 +245,19 @@ public class NSISLaunchSettings extends NSISSettings
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeString(java.lang.String)
      */
-    public void removeString(String name)
+    @Override
+	public void removeString(String name)
     {
         remove(name);
     }
 
-    private List storeSymbols(Map map)
+    private List<String> storeSymbols(Map<String,String> map)
     {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         if (!Common.isEmptyMap(map)) {
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-            for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry entry = (Map.Entry)iter.next();
+            for (Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry<String, String> entry = iter.next();
                 String key = (String)entry.getKey();
                 if (key != null) {
                     buf.append(key);
@@ -264,11 +275,11 @@ public class NSISLaunchSettings extends NSISSettings
         return list;
     }
 
-    private LinkedHashMap loadSymbols(List list)
+    private Map<String, String> loadSymbols(List<String> list)
     {
-        LinkedHashMap map = new LinkedHashMap();
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         if (!Common.isEmptyCollection(list)) {
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
+            for (Iterator<String> iter = list.iterator(); iter.hasNext();) {
                 String item = (String)iter.next();
                 if (item != null && item.length() > 0) {
                     String key;
@@ -289,23 +300,25 @@ public class NSISLaunchSettings extends NSISSettings
         return map;
     }
 
-    public void storeObject(String name, Object object)
+    @SuppressWarnings("unchecked")
+	@Override
+	public <T> void storeObject(String name, T object)
     {
         if (mFilter == null || mFilter.select(name)) {
             if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
                 if (object instanceof String) {
                     ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (String)object);
                 }
-                else if (object instanceof List) {
-                    ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (List)object);
+                else if (object instanceof List<?>) {
+                    ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (List<String>)object);
                 }
-                else if (object instanceof Map) {
+                else if (object instanceof Map<?,?>) {
                     if (name.equals(SYMBOLS)) {
-                        List list = storeSymbols((Map)object);
+                        List<String> list = storeSymbols((Map<String, String>)object);
                         ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, list);
                     }
                     else {
-                        ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (Map)object);
+                        ((ILaunchConfigurationWorkingCopy)mLaunchConfig).setAttribute(name, (Map<?,?>)object);
                     }
                 }
                 else if (object == null) {
@@ -315,20 +328,23 @@ public class NSISLaunchSettings extends NSISSettings
         }
     }
 
-    public void removeObject(String name)
+    @Override
+	public void removeObject(String name)
     {
         storeObject(name, null);
     }
 
-    public Object loadObject(String name)
+    @SuppressWarnings("unchecked")
+	@Override
+	public <T> T loadObject(String name)
     {
         if (mFilter == null || mFilter.select(name)) {
             if (mLaunchConfig != null) {
                 try {
-                    Map map = mLaunchConfig.getAttributes();
-                    Object object = map.get(name);
-                    if (name.equals(SYMBOLS) && object instanceof List) {
-                        object = loadSymbols((List)object);
+                    Map<?,?> map = mLaunchConfig.getAttributes();
+                    T object = (T) map.get(name);
+                    if (name.equals(SYMBOLS) && object instanceof List<?>) {
+                        object = (T) loadSymbols((List)object);
                     }
                     return object;
                 }

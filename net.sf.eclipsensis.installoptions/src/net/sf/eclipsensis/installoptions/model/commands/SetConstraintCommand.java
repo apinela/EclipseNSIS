@@ -65,17 +65,20 @@ public class SetConstraintCommand extends Command
         mNewPos = mModel.toModel(pos,false);
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         mModel.setPosition(mNewPos);
     }
 
-    public boolean canExecute()
+    @Override
+	public boolean canExecute()
     {
         return mGraphicalPos.left >= 0 && mGraphicalPos.top >= 0;
     }
 
-    public String getLabel()
+    @Override
+	public String getLabel()
     {
         if (mOldPos.getSize().equals(mNewPos.getSize())) {
             return InstallOptionsPlugin.getResourceString("set.constraint.command.location.name"); //$NON-NLS-1$
@@ -83,7 +86,8 @@ public class SetConstraintCommand extends Command
         return InstallOptionsPlugin.getResourceString("set.constraint.command.resize.name"); //$NON-NLS-1$
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         mModel.setPosition(mOldPos);
     }

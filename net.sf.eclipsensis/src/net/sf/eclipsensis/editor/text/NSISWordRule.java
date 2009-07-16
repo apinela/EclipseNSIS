@@ -31,7 +31,8 @@ public class NSISWordRule extends WordRule implements INSISConstants
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
      */
-    public IToken evaluate(ICharacterScanner scanner)
+    @Override
+	public IToken evaluate(ICharacterScanner scanner)
     {
         int offset = ((NSISScanner)scanner).getOffset();
         int c= scanner.read();

@@ -35,7 +35,8 @@ public class CreateTemplateAction extends SelectionAction
     /**
      * Initializes this action's text and images.
      */
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
         setText(InstallOptionsPlugin.getResourceString("create.template.action.label")); //$NON-NLS-1$
@@ -48,14 +49,15 @@ public class CreateTemplateAction extends SelectionAction
         setEnabled(false);
     }
 
-    protected boolean calculateEnabled()
+    @Override
+	protected boolean calculateEnabled()
     {
-        List objects = getSelectedObjects();
+        List<?> objects = getSelectedObjects();
         if (objects.isEmpty()) {
             return false;
         }
 
-        for (Iterator iter = objects.iterator(); iter.hasNext();) {
+        for (Iterator<?> iter = objects.iterator(); iter.hasNext();) {
             Object object = iter.next();
             if(!(object instanceof InstallOptionsWidgetEditPart)) {
                 return false;
@@ -65,16 +67,17 @@ public class CreateTemplateAction extends SelectionAction
         return true;
     }
 
-    public void run()
+    @Override
+	public void run()
     {
-        List objects = new ArrayList();
+        List<InstallOptionsWidget> objects = new ArrayList<InstallOptionsWidget>();
 
-        for (Iterator iter = getSelectedObjects().iterator(); iter.hasNext();) {
+        for (Iterator<?> iter = getSelectedObjects().iterator(); iter.hasNext();) {
             InstallOptionsWidgetEditPart object = (InstallOptionsWidgetEditPart)iter.next();
-            objects.add(object.getModel());
+            objects.add((InstallOptionsWidget)object.getModel());
         }
 
-        InstallOptionsTemplateDialog dialog = new InstallOptionsTemplateDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), (InstallOptionsWidget[])objects.toArray(new InstallOptionsWidget[objects.size()]));
+        InstallOptionsTemplateDialog dialog = new InstallOptionsTemplateDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), objects.toArray(new InstallOptionsWidget[objects.size()]));
         dialog.open();
     }
 }

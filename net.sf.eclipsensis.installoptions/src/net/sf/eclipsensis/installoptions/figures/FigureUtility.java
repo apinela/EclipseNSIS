@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.*;
 
 public class FigureUtility
 {
-    private static Map cFontSizes = new HashMap();
+    private static Map<Font, Dimension> cFontSizes = new HashMap<Font, Dimension>();
     private static long div(long dividend, long divisor)
     {
         if (dividend < 0) {
@@ -156,7 +156,7 @@ public class FigureUtility
 
     private static synchronized Dimension getFontSize(Font f)
     {
-        Dimension size = (Dimension)cFontSizes.get(f);
+        Dimension size = cFontSizes.get(f);
         if(size == null) {
             size = new Dimension(getFontAverageCharWidth(f),getFontHeight(f));
             cFontSizes.put(f,size);

@@ -22,8 +22,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
 {
     public static final String USE_PARENT = "useParent"; //$NON-NLS-1$
     public static final String USE_GLOBALS = "useGlobals"; //$NON-NLS-1$
-    private static Map cPropertiesCache = new HashMap();
-    private static Map cQualifiedNames = new HashMap();
+    private static Map<String, NSISProperties> cPropertiesCache = new HashMap<String, NSISProperties>();
+    private static Map<String, QualifiedName> cQualifiedNames = new HashMap<String, QualifiedName>();
 
     private IResource mResource = null;
     private boolean mUseParent = true;
@@ -61,7 +61,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
                 }
                 return props;
             }
-            return (NSISProperties)cPropertiesCache.get(fileName);
+            return cPropertiesCache.get(fileName);
         }
         return null;
     }
@@ -85,7 +85,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         return mResource;
     }
 
-    public void load()
+    @Override
+	public void load()
     {
         String temp = getPersistentProperty(getQualifiedName(USE_PARENT));
         if(temp == null) {
@@ -101,7 +102,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    public void store()
+    @Override
+	public void store()
     {
         setValue(USE_PARENT,getUseParent());
         if(getUseParent()) {
@@ -119,7 +121,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         super.store();
     }
 
-    public int getCompressor()
+    @Override
+	public int getCompressor()
     {
         if(getUseParent()) {
             return mParentSettings.getCompressor();
@@ -129,7 +132,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    public boolean getSolidCompression()
+    @Override
+	public boolean getSolidCompression()
     {
         if(getUseParent()) {
             return mParentSettings.getSolidCompression();
@@ -139,7 +143,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    public boolean getHdrInfo()
+    @Override
+	public boolean getHdrInfo()
     {
         if(getUseParent()) {
             return mParentSettings.getHdrInfo();
@@ -149,7 +154,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    public ArrayList getInstructions()
+    @Override
+	public List<String> getInstructions()
     {
         if(getUseParent()) {
             return mParentSettings.getInstructions();
@@ -159,7 +165,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    public boolean getLicense()
+    @Override
+	public boolean getLicense()
     {
         if(getUseParent()) {
             return mParentSettings.getLicense();
@@ -169,7 +176,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    public boolean getNoCD()
+    @Override
+	public boolean getNoCD()
     {
         if(getUseParent()) {
             return mParentSettings.getNoCD();
@@ -179,7 +187,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    public boolean getNoConfig()
+    @Override
+	public boolean getNoConfig()
     {
         if(getUseParent()) {
             return mParentSettings.getNoConfig();
@@ -189,7 +198,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    public LinkedHashMap getSymbols()
+    @Override
+	public Map<String,String> getSymbols()
     {
         if(getUseParent()) {
             return mParentSettings.getSymbols();
@@ -199,7 +209,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    public int getVerbosity()
+    @Override
+	public int getVerbosity()
     {
         if(getUseParent()) {
             return mParentSettings.getVerbosity();
@@ -209,7 +220,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    public int getProcessPriority()
+    @Override
+	public int getProcessPriority()
     {
         if(getUseParent()) {
             return mParentSettings.getProcessPriority();
@@ -221,7 +233,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
 
     private static synchronized QualifiedName getQualifiedName(String name)
     {
-        QualifiedName qname = (QualifiedName)cQualifiedNames.get(name);
+        QualifiedName qname = cQualifiedNames.get(name);
         if(qname == null) {
             qname = new QualifiedName(PLUGIN_ID,name);
             cQualifiedNames.put(name,qname);
@@ -248,9 +260,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         try {
             value = mResource.getPersistentProperty(qname);
         }
-        catch(CoreException ex){
-            value = null;
-        }
+        catch(CoreException ex){ }
         return value;
     }
 
@@ -266,7 +276,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getBoolean(java.lang.String)
      */
-    public boolean getBoolean(String name)
+    @Override
+	public boolean getBoolean(String name)
     {
         String value = getPersistentProperty(getQualifiedName(name));
         return (value !=null && Boolean.valueOf(value).booleanValue());
@@ -275,7 +286,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getInt(java.lang.String)
      */
-    public int getInt(String name)
+    @Override
+	public int getInt(String name)
     {
         String value = getPersistentProperty(getQualifiedName(name));
         if(value != null) {
@@ -294,7 +306,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#getString(java.lang.String)
      */
-    public String getString(String name)
+    @Override
+	public String getString(String name)
     {
         return getPersistentProperty(getQualifiedName(name));
     }
@@ -302,7 +315,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, boolean)
      */
-    public void setValue(String name, boolean value)
+    @Override
+	public void setValue(String name, boolean value)
     {
         setPersistentProperty(getQualifiedName(name), Boolean.toString(value));
     }
@@ -310,7 +324,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, int)
      */
-    public void setValue(String name, int value)
+    @Override
+	public void setValue(String name, int value)
     {
         setPersistentProperty(getQualifiedName(name), Integer.toString(value));
     }
@@ -318,7 +333,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, java.lang.String)
      */
-    public void setValue(String name, String value)
+    @Override
+	public void setValue(String name, String value)
     {
         setPersistentProperty(getQualifiedName(name), value);
     }
@@ -326,7 +342,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeBoolean(java.lang.String)
      */
-    public void removeBoolean(String name)
+    @Override
+	public void removeBoolean(String name)
     {
         setPersistentProperty(getQualifiedName(name), null);
     }
@@ -334,7 +351,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeInt(java.lang.String)
      */
-    public void removeInt(String name)
+    @Override
+	public void removeInt(String name)
     {
         setPersistentProperty(getQualifiedName(name), null);
     }
@@ -342,7 +360,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#removeString(java.lang.String)
      */
-    public void removeString(String name)
+    @Override
+	public void removeString(String name)
     {
         setPersistentProperty(getQualifiedName(name), null);
     }
@@ -350,7 +369,9 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#loadObject(java.lang.String)
      */
-    public Object loadObject(String name)
+    @Override
+	@SuppressWarnings("unchecked")
+	public <T> T loadObject(String name)
     {
         QualifiedName qname = getQualifiedName(name);
         ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
@@ -361,7 +382,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
             if(!Common.isEmptyArray(bytes)) {
                 ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
                 is = new BufferedInputStream(bais);
-                Object object = IOUtility.readObject(is);
+                T object = (T) IOUtility.readObject(is);
                 return object;
             }
         }
@@ -377,7 +398,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.settings.NSISSettings#storeObject(java.lang.String, java.lang.Object)
      */
-    public void storeObject(String name, Object object)
+    @Override
+	public <T> void storeObject(String name, T object)
     {
         try {
             QualifiedName qname = getQualifiedName(name);
@@ -407,7 +429,8 @@ public class NSISProperties extends NSISSettings implements INSISConstants
         }
     }
 
-    public void removeObject(String name)
+    @Override
+	public void removeObject(String name)
     {
         storeObject(name, null);
     }

@@ -34,7 +34,7 @@ public class NSISCompileTestUtility
     private static final long cEclipseStartTime = Long.parseLong(System.getProperty("eclipse.startTime",String.valueOf(System.currentTimeMillis()))); //$NON-NLS-1$
 
     private NSISHeaderAssociationManager mHeaderAssociationManager = NSISHeaderAssociationManager.getInstance();
-    private Map mResultsMap;
+    private Map<File, MakeNSISResults> mResultsMap;
     private Pattern mNSISExtPattern = Pattern.compile(INSISConstants.NSI_WILDCARD_EXTENSION,Pattern.CASE_INSENSITIVE);
 
     private NSISCompileTestUtility()
@@ -49,9 +49,10 @@ public class NSISCompileTestUtility
                 return mStarted;
             }
 
-            private Map loadMap(File file)
+            @SuppressWarnings("unchecked")
+			private Map<File, MakeNSISResults> loadMap(File file)
             {
-                Map map = null;
+                Map<File, MakeNSISResults> map = null;
                 if(IOUtility.isValidFile(file)) {
                     Object obj = null;
                     try {
@@ -62,21 +63,21 @@ public class NSISCompileTestUtility
                         EclipseNSISPlugin.getDefault().log(e);
                     }
                     if (obj != null && Map.class.isAssignableFrom(obj.getClass())) {
-                        map = (Map)obj;
+                        map = (Map<File, MakeNSISResults>)obj;
                     }
                 }
                 if(map == null) {
-                    map = new MRUMap(20);
+                    map = new MRUMap<File, MakeNSISResults>(20);
                 }
                 else {
                     if(!(map instanceof MRUMap)) {
-                        map = new MRUMap(20, map);
+                        map = new MRUMap<File, MakeNSISResults>(20, map);
                     }
                 }
                 return map;
             }
 
-            private void storeMap(File file, Map map)
+            private void storeMap(File file, Map<File, MakeNSISResults> map)
             {
                 if(Common.isEmptyMap(map)) {
                     file.delete();
@@ -129,7 +130,7 @@ public class NSISCompileTestUtility
     {
         if(IOUtility.isValidFile(script)) {
             if (!MakeNSISRunner.isCompiling()) {
-                MakeNSISResults results = (MakeNSISResults)mResultsMap.get(script);
+                MakeNSISResults results = mResultsMap.get(script);
                 if(results != null) {
                     if(script.lastModified() > results.getCompileTimestamp()) {
                         if(script.lastModified() < cEclipseStartTime) {
@@ -164,8 +165,8 @@ public class NSISCompileTestUtility
         if(nsisScript != null && script != null) {
             IFile scriptFile = (script.getDevice() == null?ResourcesPlugin.getWorkspace().getRoot().getFile(script):null);
             IFile nsisScriptFile = (nsisScript.getDevice() == null?ResourcesPlugin.getWorkspace().getRoot().getFile(nsisScript):null);
-            List associatedHeaders = (nsisScriptFile == null?null:NSISHeaderAssociationManager.getInstance().getAssociatedHeaders(nsisScriptFile));
-            List editorList = new ArrayList();
+            List<IFile> associatedHeaders = (nsisScriptFile == null?null:NSISHeaderAssociationManager.getInstance().getAssociatedHeaders(nsisScriptFile));
+            List<IEditorPart> editorList = new ArrayList<IEditorPart>();
             int beforeCompileSave = NSISPreferences.INSTANCE.getPreferenceStore().getInt(INSISPreferenceConstants.BEFORE_COMPILE_SAVE);
             IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
             outer:
@@ -183,13 +184,14 @@ public class NSISCompileTestUtility
                                     //If not, this will drop through to the next case.
                                     if(input instanceof IFileEditorInput) {
                                         IFile file = ((IFileEditorInput)input).getFile();
-                                        if(associatedHeaders.contains(file) || nsisScriptFile.equals(file)) {
+                                        if(associatedHeaders.contains(file) || (nsisScriptFile != null && nsisScriptFile.equals(file))) {
                                             editorList.add(editors[k]);
                                         }
                                     }
                                     continue;
                                 }
-                            case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
+	                            //$FALL-THROUGH$
+							case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
                             case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_AUTO:
                                 if(scriptFile != null && input instanceof IFileEditorInput) {
                                     if(!scriptFile.equals(((IFileEditorInput)input).getFile())) {
@@ -234,7 +236,7 @@ public class NSISCompileTestUtility
         return false;
     }
 
-    private boolean saveEditors(List editors, int beforeCompileSave)
+    private boolean saveEditors(List<IEditorPart> editors, int beforeCompileSave)
     {
         if (!Common.isEmptyCollection(editors)) {
             boolean ok = false;
@@ -243,16 +245,17 @@ public class NSISCompileTestUtility
                 case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ASSOCIATED_CONFIRM:
                     if(editors.size() > 1) {
                         StringBuffer buf = new StringBuffer();
-                        for (Iterator iter = editors.iterator(); iter.hasNext();) {
-                            IEditorPart editor = (IEditorPart)iter.next();
+                        for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
+                            IEditorPart editor = iter.next();
                             buf.append(INSISConstants.LINE_SEPARATOR).append(((IFileEditorInput)editor.getEditorInput()).getFile().getFullPath().toString());
                         }
                         message = EclipseNSISPlugin.getFormattedString("compile.save.associated.confirmation", //$NON-NLS-1$
                                 new String[]{buf.toString()});
                         break;
                     }
-                case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
-                    IEditorPart editor = (IEditorPart)editors.get(0);
+	                //$FALL-THROUGH$
+				case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
+                    IEditorPart editor = editors.get(0);
                     if(editors.size() > 1) {
                         editors = editors.subList(0,1);
                     }
@@ -289,8 +292,8 @@ public class NSISCompileTestUtility
                 IProgressMonitor progressMonitor = dialog.getProgressMonitor();
                 if(editors.size() > 1) {
                     progressMonitor.beginTask(EclipseNSISPlugin.getResourceString("saving.before.compilation.task.name"),editors.size()); //$NON-NLS-1$
-                    for (Iterator iter = editors.iterator(); iter.hasNext();) {
-                        IEditorPart editor = (IEditorPart)iter.next();
+                    for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
+                        IEditorPart editor = iter.next();
                         SubProgressMonitor monitor = new SubProgressMonitor(progressMonitor, 1);
                         editor.doSave(monitor);
                         if(monitor.isCanceled()) {
@@ -299,7 +302,7 @@ public class NSISCompileTestUtility
                     }
                 }
                 else {
-                    ((IEditorPart)editors.get(0)).doSave(progressMonitor);
+                    editors.get(0).doSave(progressMonitor);
                 }
                 dialog.close();
                 if (progressMonitor.isCanceled()) {
@@ -353,11 +356,11 @@ public class NSISCompileTestUtility
         return null;
     }
 
-    private boolean validateHeadersTimestamps(long exeTimestamp, Collection headers)
+    private boolean validateHeadersTimestamps(long exeTimestamp, Collection<IFile> headers)
     {
         if(!Common.isEmptyCollection(headers)) {
-            for (Iterator iter = headers.iterator(); iter.hasNext();) {
-                IFile header = (IFile)iter.next();
+            for (Iterator<IFile> iter = headers.iterator(); iter.hasNext();) {
+                IFile header = iter.next();
                 if(header != null && header.exists()) {
                     if(!header.isSynchronized(IResource.DEPTH_ZERO) || header.getLocalTimeStamp() > exeTimestamp) {
                         return false;

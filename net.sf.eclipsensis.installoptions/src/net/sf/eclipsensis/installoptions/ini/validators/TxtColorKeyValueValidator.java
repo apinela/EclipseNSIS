@@ -23,7 +23,7 @@ public class TxtColorKeyValueValidator implements IINIKeyValueValidator
     {
         String value = keyValue.getValue();
         if(!Common.isEmpty(value)) {
-            RGB rgb = (RGB)TypeConverter.RGB_CONVERTER.asType(value);
+            RGB rgb = TypeConverter.RGB_CONVERTER.asType(value);
             if(rgb != null) {
                 return true;
             }
@@ -35,7 +35,8 @@ public class TxtColorKeyValueValidator implements IINIKeyValueValidator
                                                     InstallOptionsPlugin.getFormattedString("txtcolor.value.error", //$NON-NLS-1$
                                                             new String[]{keyValue.getKey()}));
                 problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.set.valid.rgb.value")) { //$NON-NLS-1$
-                    protected INIProblemFix[] createFixes()
+                    @Override
+					protected INIProblemFix[] createFixes()
                     {
                         return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(TypeConverter.RGB_CONVERTER.asString(InstallOptionsLink.DEFAULT_TXTCOLOR))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                     }

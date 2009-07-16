@@ -13,21 +13,22 @@ import net.sf.eclipsensis.util.AbstractNodeConverter;
 
 import org.w3c.dom.*;
 
-public class NSISInstallElementNodeConverter extends AbstractNodeConverter
+public class NSISInstallElementNodeConverter extends AbstractNodeConverter<INSISInstallElement>
 {
-    public Object fromNode(Node node, Class clasz)
+    @Override
+	public INSISInstallElement fromNode(Node node, Class<?> clasz)
     {
-        if(INSISInstallElement.class.isAssignableFrom(clasz)) {
-            if(node.getNodeName().equals(INSISInstallElement.NODE)) {
-                return NSISInstallElementFactory.createFromNode(node);
-            }
-        }
-        throw new IllegalArgumentException(clasz.getName());
+        if (INSISInstallElement.class.isAssignableFrom(clasz)) {
+			if (node.getNodeName().equals(INSISInstallElement.NODE)) {
+				return NSISInstallElementFactory.createFromNode(node);
+			}
+		}
+		throw new IllegalArgumentException(clasz.getName());
     }
 
-    public Node toNode(Document document, Object object)
+    public Node toNode(Document document, INSISInstallElement object)
     {
-        if(object instanceof INSISInstallElement) {
+        if(object != null) {
             return ((INSISInstallElement)object).toNode(document);
         }
         throw new IllegalArgumentException(String.valueOf(object));

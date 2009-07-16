@@ -36,12 +36,12 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
                                                     "PageExEnd","Name"}; //$NON-NLS-1$ //$NON-NLS-2$
     private static final File cFilterCacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),NSISOutlineContentResources.class.getName()+".Filter.ser"); //$NON-NLS-1$
 
-    private List mTypeList = null;
-    private Map mTypes = null;
-    private Map mTypeNames = null;
-    private Map mImages = null;
-    private List mPages = null;
-    private Collection mFilteredTypes = null;
+    private List<String> mTypeList = null;
+    private Map<String, String> mTypes = null;
+    private Map<String, String> mTypeNames = null;
+    private Map<String, Image> mImages = null;
+    private List<NSISContentOutlinePage> mPages = null;
+    private Collection<String> mFilteredTypes = null;
 
     public static NSISOutlineContentResources getInstance()
     {
@@ -69,20 +69,20 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
         return cInstance != null;
     }
 
-    public void start(IProgressMonitor monitor)
+	public void start(IProgressMonitor monitor)
     {
         if (cInstance == null) {
             try {
                 monitor.beginTask("", 1); //$NON-NLS-1$
                 monitor.subTask(EclipseNSISPlugin.getResourceString("loading.outline.message")); //$NON-NLS-1$
                 mTypeList = Arrays.asList(cTypes);
-                mTypes = new CaseInsensitiveMap();
-                mTypeNames = new HashMap();
-                mImages = new HashMap();
-                mPages = new ArrayList();
+                mTypes = new CaseInsensitiveMap<String>();
+                mTypeNames = new HashMap<String, String>();
+                mImages = new HashMap<String, Image>();
+                mPages = new ArrayList<NSISContentOutlinePage>();
                 if(IOUtility.isValidFile(cFilterCacheFile)) {
                     try {
-                        mFilteredTypes = (Collection)IOUtility.readObject(cFilterCacheFile);
+                        mFilteredTypes = IOUtility.readObject(cFilterCacheFile);
                     }
                     catch (Exception e) {
                         EclipseNSISPlugin.getDefault().log(e);
@@ -159,19 +159,19 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
 
     private void refreshPages()
     {
-        for(Iterator iter=mPages.iterator(); iter.hasNext(); ) {
-            ((NSISContentOutlinePage)iter.next()).refresh();
+        for(Iterator<NSISContentOutlinePage> iter=mPages.iterator(); iter.hasNext(); ) {
+            iter.next().refresh();
         }
     }
 
-    public Collection getTypes()
+    public Collection<String> getTypes()
     {
         return Collections.unmodifiableSet(mTypeNames.keySet());
     }
 
     public String getType(String typeName)
     {
-        return (String)mTypes.get(typeName);
+        return mTypes.get(typeName);
     }
 
     public int getTypeIndex(String type)
@@ -181,20 +181,20 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
 
     public String getTypeName(String type)
     {
-        return (String)mTypeNames.get(type);
+        return mTypeNames.get(type);
     }
 
     public Image getImage(String type)
     {
-        return (Image)mImages.get(type);
+        return mImages.get(type);
     }
 
-    public Collection getFilteredTypes()
+    public Collection<String> getFilteredTypes()
     {
         return Collections.unmodifiableCollection(mFilteredTypes);
     }
 
-    public void setFilteredTypes(Collection collection)
+    public void setFilteredTypes(Collection<String> collection)
     {
         mFilteredTypes.clear();
         if(collection != null) {

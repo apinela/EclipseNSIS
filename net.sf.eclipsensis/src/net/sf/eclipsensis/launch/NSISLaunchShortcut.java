@@ -89,7 +89,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
     private ILaunchConfiguration findConfiguration(IPath path)
     {
         String fullname = getLocation(path);
-        List candidateConfigs = new ArrayList();
+        List<ILaunchConfiguration> candidateConfigs = new ArrayList<ILaunchConfiguration>();
         try {
             if (mConfigType != null) {
                 ILaunchConfiguration[] configs = mLaunchManager.getLaunchConfigurations(mConfigType);
@@ -121,7 +121,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
                 return chooseConfiguration(candidateConfigs);
             }
             else {
-                return (ILaunchConfiguration)candidateConfigs.get(0);
+                return candidateConfigs.get(0);
             }
         }
         else {
@@ -181,7 +181,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         });
     }
 
-    private ILaunchConfiguration chooseConfiguration(List configList)
+    private ILaunchConfiguration chooseConfiguration(List<ILaunchConfiguration> configList)
     {
         IDebugModelPresentation labelProvider = DebugUITools.newDebugModelPresentation();
         ElementListSelectionDialog dialog= new ElementListSelectionDialog(getShell(), labelProvider);
@@ -220,7 +220,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
                 if(location == null) {
                     throw new IllegalArgumentException(EclipseNSISPlugin.getResourceString("local.filesystem.error")); //$NON-NLS-1$
                 }
-                fullname = (location != null?location.toOSString():null);
+                fullname = location.toOSString();
             }
         }
         else {

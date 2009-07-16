@@ -32,7 +32,8 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
         super("symbols",settings); //$NON-NLS-1$
     }
 
-    public void enableControls(boolean state)
+    @Override
+	public void enableControls(boolean state)
     {
         if(state) {
             //Hack to properly enable the buttons
@@ -40,59 +41,71 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
         }
     }
 
-    protected Control createControl(final Composite parent)
+    @Override
+	protected Control createControl(final Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         SelectionAdapter addAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 addOrEditSymbol(parent.getShell(),"",""); //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
         SelectionAdapter editAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			@SuppressWarnings("unchecked")
+			public void widgetSelected(SelectionEvent e)
             {
-                Map.Entry entry = (Map.Entry)((IStructuredSelection)mSymbols.getSelection()).getFirstElement();
-                addOrEditSymbol(parent.getShell(),(String)entry.getKey(),(String)entry.getValue());
+                Map.Entry<String, String> entry = (Map.Entry<String, String>)((IStructuredSelection)mSymbols.getSelection()).getFirstElement();
+                addOrEditSymbol(parent.getShell(),entry.getKey(),entry.getValue());
             }
         };
         SelectionAdapter removeAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			@SuppressWarnings("unchecked")
+			public void widgetSelected(SelectionEvent e)
             {
-                Map map = (Map)mSymbols.getInput();
+                Map<String, String> map = (Map<String, String>)mSymbols.getInput();
                 IStructuredSelection selection = (IStructuredSelection)mSymbols.getSelection();
-                for(Iterator iter = selection.iterator(); iter.hasNext(); ) {
-                    map.remove(((Map.Entry)iter.next()).getKey());
+                for(Iterator<?> iter = selection.iterator(); iter.hasNext(); ) {
+                    map.remove(((Map.Entry<String, String>)iter.next()).getKey());
                     fireChanged();
                 }
                 mSymbols.refresh();
             }
         };
 
-        TableViewerUpDownMover mover = new TableViewerUpDownMover() {
-
-            protected List getAllElements()
-            {
-                return new ArrayList(((LinkedHashMap)((TableViewer)getViewer()).getInput()).entrySet());
-            }
-
-            protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
-            {
-                ((LinkedHashMap)input).clear();
-                for(Iterator iter=elements.iterator(); iter.hasNext(); ) {
-                    Map.Entry entry = (Map.Entry)iter.next();
-                    ((LinkedHashMap)input).put(entry.getKey(),entry.getValue());
-                    fireChanged();
-                }
-            }
-
-        };
+        TableViewerUpDownMover<Map<String, String>, Map.Entry<String, String>> mover = 
+        	new TableViewerUpDownMover<Map<String, String>, Map.Entry<String, String>>() {
+	
+	            @Override
+				@SuppressWarnings("unchecked")
+				protected List<Map.Entry<String, String>> getAllElements()
+	            {
+	                return new ArrayList<Map.Entry<String, String>>(((Map<String, String>)((TableViewer)getViewer()).getInput()).entrySet());
+	            }
+	
+	            @Override
+				protected void updateStructuredViewerInput(Map<String, String> input, List<Map.Entry<String, String>> elements, 
+	            		List<Map.Entry<String, String>> move, boolean isDown)
+	            {
+	                input.clear();
+	                for(Iterator<Map.Entry<String, String>> iter=elements.iterator(); iter.hasNext(); ) {
+	                    Map.Entry<String, String> entry = iter.next();
+	                    input.put(entry.getKey(),entry.getValue());
+	                    fireChanged();
+	                }
+	            }
+	
+	        };
 
         IDoubleClickListener doubleClickListener = new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event)
+            @SuppressWarnings("unchecked")
+			public void doubleClick(DoubleClickEvent event)
             {
-                Map.Entry entry = (Map.Entry)((IStructuredSelection)event.getSelection()).getFirstElement();
-                addOrEditSymbol(parent.getShell(),(String)entry.getKey(),(String)entry.getValue());
+                Map.Entry<String, String> entry = (Map.Entry<String, String>)((IStructuredSelection)event.getSelection()).getFirstElement();
+                addOrEditSymbol(parent.getShell(),entry.getKey(),entry.getValue());
             }
         };
 
@@ -109,29 +122,34 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
         return composite;
     }
 
-    protected boolean performApply(NSISSettings settings)
+    @Override
+	@SuppressWarnings("unchecked")
+	protected boolean performApply(NSISSettings settings)
     {
         if (getControl() != null) {
-            mSettings.setSymbols((LinkedHashMap)mSymbols.getInput());
+            mSettings.setSymbols((Map<String, String>)mSymbols.getInput());
         }
         return true;
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
         mSymbols.setInput(mSettings.getSymbols());
     }
 
-    public void setDefaults()
+    @Override
+	public void setDefaults()
     {
         mSymbols.setInput(mSettings.getDefaultSymbols());
     }
 
-    private void addOrEditSymbol(Shell shell, String oldName, String oldValue)
+    @SuppressWarnings("unchecked")
+	private void addOrEditSymbol(Shell shell, String oldName, String oldValue)
     {
-        Map map = (Map)mSymbols.getInput();
+        Map<String, String> map = (Map<String, String>)mSymbols.getInput();
         NSISSymbolDialog dialog = new NSISSymbolDialog(shell,oldName, oldValue);
-        Collection coll = new HashSet(map.keySet());
+        Collection<String> coll = new HashSet<String>(map.keySet());
         coll.remove(oldName);
         dialog.setExistingSymbols(coll);
         if(dialog.open() == Window.OK) {
@@ -158,7 +176,8 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
         }
     }
 
-    public boolean canEnableControls()
+    @Override
+	public boolean canEnableControls()
     {
         return true;
     }

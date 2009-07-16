@@ -15,7 +15,8 @@ import org.eclipse.gef.editpolicies.AbstractEditPolicy;
 
 public class InstallOptionsTreeEditPolicy extends AbstractEditPolicy
 {
-    public Command getCommand(Request req)
+    @Override
+	public Command getCommand(Request req)
     {
         if (REQ_MOVE.equals(req.getType())) {
             return getMoveCommand(req);

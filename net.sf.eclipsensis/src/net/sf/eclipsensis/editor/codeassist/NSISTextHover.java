@@ -26,7 +26,8 @@ public class NSISTextHover extends NSISAnnotationHover
     /*
      * (non-Javadoc) Method declared on ITextHover
      */
-    public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion)
+    @Override
+	public Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion)
     {
         Object info1 = super.getHoverInfo2(textViewer, hoverRegion);
         Object info2 = mInformationProvider.getInformation2(textViewer, hoverRegion);
@@ -37,7 +38,8 @@ public class NSISTextHover extends NSISAnnotationHover
     /*
      * (non-Javadoc) Method declared on ITextHover
      */
-    public IRegion getHoverRegion(ITextViewer textViewer, int offset)
+    @Override
+	public IRegion getHoverRegion(ITextViewer textViewer, int offset)
     {
         IRegion region1 = super.getHoverRegion(textViewer, offset);
         IRegion region2 = mInformationProvider.getSubject(textViewer, offset);
@@ -47,7 +49,8 @@ public class NSISTextHover extends NSISAnnotationHover
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
      */
-    public IInformationControlCreator getHoverControlCreator()
+    @Override
+	public IInformationControlCreator getHoverControlCreator()
     {
         if(mUseSuper) {
             mUseSuper = false;

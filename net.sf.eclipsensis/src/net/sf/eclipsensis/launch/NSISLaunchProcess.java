@@ -108,7 +108,8 @@ class NSISLaunchProcess implements IProcess, IMakeNSISRunListener, IWorkbenchAda
         throw new DebugException(new Status(IStatus.ERROR,INSISConstants.PLUGIN_ID,IStatus.ERROR,EclipseNSISPlugin.getResourceString("launch.process.exitvalue.error"),null)); //$NON-NLS-1$
     }
 
-    public Object getAdapter(Class adapter)
+    @SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter)
     {
         if(IWorkbenchAdapter.class.equals(adapter)) {
             return this;

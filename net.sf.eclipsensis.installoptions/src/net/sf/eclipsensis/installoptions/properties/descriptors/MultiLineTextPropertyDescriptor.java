@@ -95,14 +95,16 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         }
     }
 
-    public void setLabelProvider(ILabelProvider provider)
+    @Override
+	public void setLabelProvider(ILabelProvider provider)
     {
         ILabelProvider oldProvider = getLabelProvider();
         super.setLabelProvider(provider);
         mPropertyChangeSupport.firePropertyChange(PROPERTY_LABEL_PROVIDER,oldProvider,getLabelProvider());
     }
 
-    public CellEditor createPropertyEditor(Composite parent)
+    @Override
+	public CellEditor createPropertyEditor(Composite parent)
     {
         final ProxyTextCellEditor editor = new ProxyTextCellEditor(parent, isMultiLine(), getLabelProvider());
         final PropertyChangeListener listener = new PropertyChangeListener(){
@@ -221,7 +223,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.CellEditor#createControl(org.eclipse.swt.widgets.Composite)
          */
-        protected Control createControl(Composite parent)
+        @Override
+		protected Control createControl(Composite parent)
         {
             createInnerEditor(parent,getStyle()==1);
             return mDelegate.getControl();
@@ -262,7 +265,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             mDelegate.setValue(value==null?"":value); //$NON-NLS-1$
         }
 
-        public void activate()
+        @Override
+		public void activate()
         {
             if(mDelegate != null) {
                 mDelegate.activate();
@@ -271,7 +275,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             super.activate();
         }
 
-        public void deactivate()
+        @Override
+		public void deactivate()
         {
             if(mDelegate != null) {
                 mDelegate.deactivate();
@@ -279,7 +284,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             super.deactivate();
         }
 
-        public void addListener(ICellEditorListener listener)
+        @Override
+		public void addListener(ICellEditorListener listener)
         {
             mListeners.add(listener);
             if(mDelegate != null) {
@@ -287,7 +293,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public void addPropertyChangeListener(IPropertyChangeListener listener)
+        @Override
+		public void addPropertyChangeListener(IPropertyChangeListener listener)
         {
             mPropertyChangeListeners.add(listener);
             if(mDelegate != null) {
@@ -295,7 +302,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public void dispose()
+        @Override
+		public void dispose()
         {
             if(mDelegate != null) {
                 mDelegate.dispose();
@@ -303,7 +311,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             super.dispose();
         }
 
-        public String getErrorMessage()
+        @Override
+		public String getErrorMessage()
         {
             if(mDelegate != null) {
                 return mDelegate.getErrorMessage();
@@ -313,12 +322,14 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public ICellEditorValidator getValidator()
+        @Override
+		public ICellEditorValidator getValidator()
         {
             return mValidator;
         }
 
-        public boolean isCopyEnabled()
+        @Override
+		public boolean isCopyEnabled()
         {
             if(mDelegate != null) {
                 return mDelegate.isCopyEnabled();
@@ -328,7 +339,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public boolean isCutEnabled()
+        @Override
+		public boolean isCutEnabled()
         {
             if(mDelegate != null) {
                 return mDelegate.isCutEnabled();
@@ -338,7 +350,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public boolean isDeleteEnabled()
+        @Override
+		public boolean isDeleteEnabled()
         {
             if(mDelegate != null) {
                 return mDelegate.isDeleteEnabled();
@@ -348,7 +361,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public boolean isDirty()
+        @Override
+		public boolean isDirty()
         {
             if(mDelegate != null) {
                 return mDelegate.isDirty();
@@ -358,7 +372,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public boolean isFindEnabled()
+        @Override
+		public boolean isFindEnabled()
         {
             if(mDelegate != null) {
                 return mDelegate.isFindEnabled();
@@ -368,7 +383,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public boolean isPasteEnabled()
+        @Override
+		public boolean isPasteEnabled()
         {
             if(mDelegate != null) {
                 return mDelegate.isPasteEnabled();
@@ -378,7 +394,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public boolean isRedoEnabled()
+        @Override
+		public boolean isRedoEnabled()
         {
             if(mDelegate != null) {
                 return mDelegate.isRedoEnabled();
@@ -388,7 +405,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public boolean isSelectAllEnabled()
+        @Override
+		public boolean isSelectAllEnabled()
         {
             if(mDelegate != null) {
                 return mDelegate.isSelectAllEnabled();
@@ -398,7 +416,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public boolean isUndoEnabled()
+        @Override
+		public boolean isUndoEnabled()
         {
             if(mDelegate != null) {
                 return mDelegate.isUndoEnabled();
@@ -408,7 +427,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public boolean isValueValid()
+        @Override
+		public boolean isValueValid()
         {
             if(mDelegate != null) {
                 return mDelegate.isValueValid();
@@ -418,63 +438,72 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public void performCopy()
+        @Override
+		public void performCopy()
         {
             if(mDelegate != null) {
                 mDelegate.performCopy();
             }
         }
 
-        public void performCut()
+        @Override
+		public void performCut()
         {
             if(mDelegate != null) {
                 mDelegate.performCut();
             }
         }
 
-        public void performDelete()
+        @Override
+		public void performDelete()
         {
             if(mDelegate != null) {
                 mDelegate.performDelete();
             }
         }
 
-        public void performFind()
+        @Override
+		public void performFind()
         {
             if(mDelegate != null) {
                 mDelegate.performFind();
             }
         }
 
-        public void performPaste()
+        @Override
+		public void performPaste()
         {
             if(mDelegate != null) {
                 mDelegate.performPaste();
             }
         }
 
-        public void performRedo()
+        @Override
+		public void performRedo()
         {
             if(mDelegate != null) {
                 mDelegate.performRedo();
             }
         }
 
-        public void performSelectAll()
+        @Override
+		public void performSelectAll()
         {
             if(mDelegate != null) {
                 mDelegate.performSelectAll();
             }
         }
 
-        public void performUndo()
+        @Override
+		public void performUndo()
         {
             if(mDelegate != null) {
                 mDelegate.performUndo();
             }
         }
 
-        public void removeListener(ICellEditorListener listener)
+        @Override
+		public void removeListener(ICellEditorListener listener)
         {
             mListeners.remove(listener);
             if(mDelegate != null) {
@@ -482,7 +511,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public void removePropertyChangeListener(
+        @Override
+		public void removePropertyChangeListener(
                 IPropertyChangeListener listener)
         {
             mPropertyChangeListeners.remove(listener);
@@ -491,14 +521,16 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
             }
         }
 
-        public void setFocus()
+        @Override
+		public void setFocus()
         {
             if(mDelegate != null) {
                 mDelegate.setFocus();
             }
         }
 
-        public void setValidator(ICellEditorValidator validator)
+        @Override
+		public void setValidator(ICellEditorValidator validator)
         {
             mValidator = validator;
             if(mDelegate != null) {
@@ -509,7 +541,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.CellEditor#doGetValue()
          */
-        protected Object doGetValue()
+        @Override
+		protected Object doGetValue()
         {
             if(mDelegate != null) {
                 mValue = mDelegate.getValue();
@@ -524,7 +557,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.CellEditor#doSetValue(java.lang.Object)
          */
-        protected void doSetValue(Object value)
+        @Override
+		protected void doSetValue(Object value)
         {
             if(value == null) {
                 value = ""; //$NON-NLS-1$
@@ -538,7 +572,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.CellEditor#doSetFocus()
          */
-        protected void doSetFocus()
+        @Override
+		protected void doSetFocus()
         {
         }
     }

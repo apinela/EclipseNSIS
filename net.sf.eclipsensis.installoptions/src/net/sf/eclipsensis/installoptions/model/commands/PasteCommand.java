@@ -23,9 +23,9 @@ import org.eclipse.gef.commands.Command;
 public class PasteCommand extends Command
 {
     private InstallOptionsDialog mParent;
-    private List mSelection = null;
+    private List<InstallOptionsWidget> mSelection = null;
     private Rectangle mPasteBounds;
-    private List mPasteList = new ArrayList();
+    private List<InstallOptionsWidget> mPasteList = new ArrayList<InstallOptionsWidget>();
     private Rectangle mClientArea;
 
     public PasteCommand()
@@ -38,9 +38,9 @@ public class PasteCommand extends Command
         mParent = parent;
     }
 
-    public void setSelection(List selection)
+    public void setSelection(List<InstallOptionsWidget> selection)
     {
-        mSelection = (selection != null?selection:Collections.EMPTY_LIST);
+        mSelection = (selection != null?selection:Collections.<InstallOptionsWidget>emptyList());
     }
 
     public void setClientArea(org.eclipse.swt.graphics.Rectangle clientArea)
@@ -48,14 +48,15 @@ public class PasteCommand extends Command
         mClientArea = FigureUtility.pixelsToDialogUnits(new Rectangle(clientArea.x,clientArea.y,clientArea.width,clientArea.height),FontUtility.getInstallOptionsFont());
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         CopyCommand.CopyContents mCopyContents = (CopyCommand.CopyContents)Clipboard.getDefault().getContents();
         if(mCopyContents != null) {
             mPasteBounds = new Rectangle(mCopyContents.getBounds());
             mPasteList.clear();
-            for (Iterator iter = mCopyContents.getChildren().iterator(); iter.hasNext();) {
-                mPasteList.add(((InstallOptionsWidget)iter.next()).clone());
+            for (Iterator<InstallOptionsWidget> iter = mCopyContents.getChildren().iterator(); iter.hasNext();) {
+                mPasteList.add((InstallOptionsWidget) (iter.next()).clone());
             }
         }
         redo();
@@ -73,8 +74,8 @@ public class PasteCommand extends Command
         }
         int delX = p.x-mPasteBounds.x;
         int delY = p.y-mPasteBounds.y;
-        for (Iterator iter = mPasteList.iterator(); iter.hasNext();) {
-            InstallOptionsWidget model = (InstallOptionsWidget)iter.next();
+        for (Iterator<InstallOptionsWidget> iter = mPasteList.iterator(); iter.hasNext();) {
+            InstallOptionsWidget model = iter.next();
             Position pos = model.getPosition();
             pos = model.toGraphical(pos, size);
             if(!model.isLocked()) {
@@ -87,21 +88,23 @@ public class PasteCommand extends Command
         mPasteBounds.y = p.y;
     }
 
-    public void redo()
+    @Override
+	public void redo()
     {
         calculatePasteBounds(mParent.getDialogSize().getSize());
-        for (Iterator iter = mPasteList.iterator(); iter.hasNext();) {
-            mParent.addChild((InstallOptionsWidget)iter.next());
+        for (Iterator<InstallOptionsWidget> iter = mPasteList.iterator(); iter.hasNext();) {
+            mParent.addChild(iter.next());
         }
-        List list = mParent.getChildren();
+        List<InstallOptionsWidget> list = mParent.getChildren();
         mPasteList.retainAll(list);
         mParent.setSelection(mPasteList);
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
-        for (Iterator iter = mPasteList.iterator(); iter.hasNext();) {
-            mParent.removeChild((InstallOptionsWidget)iter.next());
+        for (Iterator<InstallOptionsWidget> iter = mPasteList.iterator(); iter.hasNext();) {
+            mParent.removeChild(iter.next());
         }
         if(mSelection != null) {
             mParent.setSelection(mSelection);

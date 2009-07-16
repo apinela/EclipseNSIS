@@ -60,7 +60,8 @@ public class DialogSize
         mSize = size;
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if(o instanceof DialogSize) {
             DialogSize ds = (DialogSize)o;
@@ -69,7 +70,8 @@ public class DialogSize
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return mName.hashCode()+mSize.hashCode();
     }

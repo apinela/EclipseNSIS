@@ -9,14 +9,20 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import net.sf.eclipsensis.installoptions.*;
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.model.commands.ArrangeCommand;
 
-import org.eclipse.gef.*;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.GraphicalViewer;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -85,11 +91,14 @@ public class ArrangeAction extends SelectionAction
             command = new ArrangeCommand(mType);
             GraphicalViewer viewer = editor.getGraphicalViewer();
             command.setParent((InstallOptionsDialog)viewer.getContents().getModel());
-            List selection = ((IStructuredSelection)viewer.getSelection()).toList();
-            List modelSelection = new ArrayList();
-            for (Iterator iter = selection.iterator(); iter.hasNext();) {
+            List<?> selection = ((IStructuredSelection)viewer.getSelection()).toList();
+            List<InstallOptionsWidget> modelSelection = new ArrayList<InstallOptionsWidget>();
+            for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
                 EditPart element = (EditPart)iter.next();
-                modelSelection.add(element.getModel());
+                if(element instanceof InstallOptionsWidgetEditPart)
+                {
+                	modelSelection.add((InstallOptionsWidget) element.getModel());
+                }
             }
             command.setSelection(modelSelection);
         }
@@ -97,7 +106,8 @@ public class ArrangeAction extends SelectionAction
         return command;
     }
 
-    protected boolean calculateEnabled() {
+    @Override
+	protected boolean calculateEnabled() {
         Command cmd = createArrangeCommand();
         if (cmd == null) {
             return false;
@@ -105,7 +115,8 @@ public class ArrangeAction extends SelectionAction
         return cmd.canExecute();
     }
 
-    public void run() {
+    @Override
+	public void run() {
         execute(createArrangeCommand());
     }
 }

@@ -12,6 +12,8 @@ package net.sf.eclipsensis.makensis;
 import java.io.*;
 import java.util.*;
 
+import net.sf.eclipsensis.script.NSISScriptProblem;
+
 public class MakeNSISResults implements Serializable
 {
     private static final long serialVersionUID = -5087200320522747802L;
@@ -23,7 +25,7 @@ public class MakeNSISResults implements Serializable
     private int mReturnCode = RETURN_SUCCESS;
     private String mOutputFileName = null;
     private File mScriptFile = null;
-    private List mProblems = null;
+    private List<NSISScriptProblem> mProblems = null;
     private boolean mCanceled = false;
 
 
@@ -39,14 +41,14 @@ public class MakeNSISResults implements Serializable
     /**
      * @return Returns the problems.
      */
-    public List getProblems()
+    public List<NSISScriptProblem> getProblems()
     {
         return (mProblems==null?null:Collections.unmodifiableList(mProblems));
     }
     /**
      * @param errors The error to set.
      */
-    void setProblems(List errors)
+    void setProblems(List<NSISScriptProblem> errors)
     {
         mProblems = errors;
     }

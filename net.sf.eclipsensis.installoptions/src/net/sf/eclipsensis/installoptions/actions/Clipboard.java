@@ -40,10 +40,12 @@ public class Clipboard
         mTransfer = new ObjectTransfer() {
             private final String TYPE_NAME = "net.sf.eclipsensis.clipboard.transfer"; //$NON-NLS-1$
             private final int TYPE_ID = registerType(TYPE_NAME);
-            protected int[] getTypeIds() {
+            @Override
+			protected int[] getTypeIds() {
                 return new int[] {TYPE_ID};
             }
-            protected String[] getTypeNames() {
+            @Override
+			protected String[] getTypeNames() {
                 return new String[] {TYPE_NAME};
             }
         };
@@ -57,7 +59,8 @@ public class Clipboard
                 }
             };
 
-            public void run()
+            @Override
+			public void run()
             {
                 Thread.currentThread().setName(InstallOptionsPlugin.getResourceString("clipboard.monitor.thread.name")); //$NON-NLS-1$
 				try {

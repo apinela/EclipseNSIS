@@ -12,152 +12,87 @@ package net.sf.eclipsensis.util;
 import java.io.Serializable;
 import java.util.*;
 
-public class CaseInsensitiveMap implements Map, Serializable
+public class CaseInsensitiveMap<T> extends AbstractMap<String, T> implements Serializable
 {
 	private static final long serialVersionUID = 7710930539504135243L;
 
-    private Map mValueMap = new LinkedHashMap();
-    private Map mKeyMap = new HashMap();
+    private Map<String, T> mValueMap = new LinkedHashMap<String, T>();
+    private Map<String, String> mKeyMap = new HashMap<String, String>();
 
     public CaseInsensitiveMap()
     {
     }
 
-    public CaseInsensitiveMap(Map map)
+    public CaseInsensitiveMap(Map<String, T> map)
     {
-        for(Iterator iter=map.keySet().iterator(); iter.hasNext(); ) {
-            Object key = iter.next();
+        for(Iterator<String> iter=map.keySet().iterator(); iter.hasNext(); ) {
+        	String key = iter.next();
             put(key,  map.get(key));
         }
     }
 
-    private Object fixKey(Object key)
+    private String toUpperCase(String key)
     {
-        return (key !=null && key instanceof String?((String)key).toUpperCase():key);
+        return (key !=null?key.toUpperCase():key);
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map#size()
-     */
-    public int size()
-    {
-        return mValueMap.size();
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Map#clear()
-     */
-    public void clear()
+    @Override
+	public void clear()
     {
         mValueMap.clear();
         mKeyMap.clear();
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map#isEmpty()
-     */
-    public boolean isEmpty()
+    @Override
+	public boolean containsKey(Object key)
     {
-        return mValueMap.isEmpty();
+        return key == null || key instanceof String?mKeyMap.containsKey(toUpperCase((String)key)):false;
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map#containsKey(java.lang.Object)
-     */
-    public boolean containsKey(Object key)
-    {
-        return mKeyMap.containsKey(fixKey(key));
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Map#containsValue(java.lang.Object)
-     */
-    public boolean containsValue(Object value)
-    {
-        return mValueMap.containsValue(value);
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Map#values()
-     */
-    public Collection values()
-    {
-        return mValueMap.values();
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Map#putAll(java.util.Map)
-     */
-    public void putAll(Map t)
-    {
-        for(Iterator iter=t.keySet().iterator(); iter.hasNext(); ) {
-            Object key = iter.next();
-            put(key,t.get(key));
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Map#entrySet()
-     */
-    public Set entrySet()
+    @Override
+	public Set<Map.Entry<String, T>> entrySet()
     {
         return mValueMap.entrySet();
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map#keySet()
-     */
-    public Set keySet()
+    @Override
+	public T get(Object key)
     {
-        return mValueMap.keySet();
+    	if (key == null || key instanceof String) {
+			String uppercaseKey = toUpperCase((String) key);
+			if (mKeyMap.containsKey(uppercaseKey)) {
+				key = mKeyMap.get(uppercaseKey);
+				return mValueMap.get(key);
+			}
+		}
+		return null;
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map#get(java.lang.Object)
-     */
-    public Object get(Object key)
+    @Override
+	public T remove(Object key)
     {
-        Object fixedKey = fixKey(key);
-        if(mKeyMap.containsKey(fixedKey)) {
-            key = mKeyMap.get(fixedKey);
-            return mValueMap.get(key);
-        }
-        else {
-            return null;
-        }
+    	if (key == null || key instanceof String) {
+			String fixedKey = toUpperCase((String) key);
+			if (mKeyMap.containsKey(fixedKey)) {
+				key = mKeyMap.remove(fixedKey);
+				return mValueMap.remove(key);
+			}
+		}
+		return null;
     }
 
-    /* (non-Javadoc)
-     * @see java.util.Map#remove(java.lang.Object)
-     */
-    public Object remove(Object key)
+    @Override
+	public T put(String key, T value)
     {
-        Object fixedKey = fixKey(key);
-        if(mKeyMap.containsKey(fixedKey)) {
-            key = mKeyMap.remove(fixedKey);
-            return mValueMap.remove(key);
-        }
-        else {
-            return null;
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
-     */
-    public Object put(Object key, Object value)
-    {
-        Object oldKey = mKeyMap.put(fixKey(key),key);
+    	String oldKey = mKeyMap.put(toUpperCase(key),key);
         if(oldKey != null) {
             mValueMap.remove(oldKey);
         }
         return mValueMap.put(key,value);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    public String toString()
+    @Override
+	public String toString()
     {
         return mValueMap.toString();
     }

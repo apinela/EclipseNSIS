@@ -85,7 +85,8 @@ public class InstallOptionsXYStatusContribution extends StatusLineContributionIt
         private boolean mMouseDown = false;
         private Point mOrigin = null;
 
-        public void mouseDown(MouseEvent e)
+        @Override
+		public void mouseDown(MouseEvent e)
         {
             mMouseDown = true;
             Rectangle r = mViewport.getClientArea();
@@ -100,7 +101,8 @@ public class InstallOptionsXYStatusContribution extends StatusLineContributionIt
             }
         }
 
-        public void mouseUp(MouseEvent e)
+        @Override
+		public void mouseUp(MouseEvent e)
         {
             mMouseDown = false;
             mOrigin = null;

@@ -23,7 +23,8 @@ public class INIComment extends INILine
         super(text);
     }
 
-    protected void checkProblems(int fixFlag)
+    @Override
+	protected void checkProblems(int fixFlag)
     {
     }
 }

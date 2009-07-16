@@ -13,10 +13,10 @@ import java.util.Map;
 
 import org.w3c.dom.*;
 
-public interface INodeConverter
+public interface INodeConverter<T>
 {
-    public Map getNameClassMappings();
-    public void addNameClassMapping(String name, Class clasz);
-    public Node toNode(Document document, Object object);
-    public Object fromNode(Node node);
+    public Map<String,Class<?>> getNameClassMappings();
+    public void addNameClassMapping(String name, Class<?> clasz);
+    public Node toNode(Document document, T object);
+    public T fromNode(Node node);
 }

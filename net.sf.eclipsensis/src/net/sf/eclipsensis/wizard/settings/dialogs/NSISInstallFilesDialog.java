@@ -53,8 +53,8 @@ import org.eclipse.swt.widgets.TableColumn;
 
 public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 {
-    private static ArrayList cProperties = new ArrayList();
-    private Collection mFiles = null;
+    private static List<String> cProperties = new ArrayList<String>();
+    private Collection<String> mFiles = null;
 
     static
     {
@@ -72,7 +72,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         mStore.setDefault("nonFatal", false); //$NON-NLS-1$
         mStore.setDefault("preserveAttributes", false); //$NON-NLS-1$
         setShellStyle(getShellStyle() | SWT.RESIZE);
-        mFiles = new LinkedHashSet(Arrays.asList(Common.tokenize(mStore.getString("files"), '\0'))); //$NON-NLS-1$
+        mFiles = new LinkedHashSet<String>(Arrays.asList(Common.tokenize(mStore.getString("files"), '\0'))); //$NON-NLS-1$
     }
 
     /*
@@ -82,12 +82,14 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
      * net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog
      * #getProperties()
      */
-    protected List getProperties()
+    @Override
+	protected List<String> getProperties()
     {
         return cProperties;
     }
 
-    protected String getHelpContextId()
+    @Override
+	protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_filesetdlg_context"; //$NON-NLS-1$
     }
@@ -99,7 +101,8 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
      * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
      * .Composite)
      */
-    protected Control createControlContents(Composite parent)
+    @Override
+	protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         Dialog.applyDialogFont(composite);
@@ -142,24 +145,27 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         viewer.setLabelProvider(new CollectionLabelProvider());
         viewer.setInput(mFiles);
 
-        final TableViewerUpDownMover mover = new TableViewerUpDownMover() {
-            protected List getAllElements()
+        final TableViewerUpDownMover<Collection<String>, String> mover = new TableViewerUpDownMover<Collection<String>, String>() {
+            @Override
+			@SuppressWarnings("unchecked")
+			protected List<String> getAllElements()
             {
-                Collection collection = (Collection) ((TableViewer) getViewer()).getInput();
-                if (collection instanceof List)
+            	Collection<String> collection = (Collection<String>) ((TableViewer) getViewer()).getInput();
+                if (collection instanceof List<?>)
                 {
-                    return (List) collection;
+                    return (List<String>) collection;
                 }
                 else
                 {
-                    return new ArrayList(collection);
+                    return new ArrayList<String>(collection);
                 }
             }
 
-            protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
+            @Override
+			protected void updateStructuredViewerInput(Collection<String> input, List<String> elements, List<String> move, boolean isDown)
             {
-                ((Collection) input).clear();
-                ((Collection) input).addAll(elements);
+                input.clear();
+                input.addAll(elements);
             }
         };
 
@@ -206,7 +212,8 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         addButton.addSelectionListener(new SelectionAdapter() {
             String filterPath = ""; //$NON-NLS-1$
 
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.MULTI | SWT.PRIMARY_MODAL);
                 dialog.setText(EclipseNSISPlugin.getResourceString("wizard.files.dialog.title")); //$NON-NLS-1$
@@ -232,10 +239,11 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         });
 
         removeButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-                for (Iterator iter = selection.iterator(); iter.hasNext();)
+                for (Iterator<?> iter = selection.iterator(); iter.hasNext();)
                 {
                     mFiles.remove(iter.next());
                 }
@@ -245,14 +253,16 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         });
 
         upButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent se)
+            @Override
+			public void widgetSelected(SelectionEvent se)
             {
                 mover.moveUp();
             }
         });
 
         downButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent se)
+            @Override
+			public void widgetSelected(SelectionEvent se)
             {
                 mover.moveDown();
             }
@@ -286,7 +296,8 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                 mStore.getInt("overwriteMode"), //$NON-NLS-1$
                 true, "wizard.overwrite.label", true, null, false); //$NON-NLS-1$
         c2.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("overwriteMode", c2.getSelectionIndex()); //$NON-NLS-1$
             }
@@ -308,7 +319,8 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         gd.horizontalSpan = 1;
         gd.grabExcessHorizontalSpace = true;
         b1.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("preserveAttributes", b1.getSelection()); //$NON-NLS-1$
             }
@@ -320,7 +332,8 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         gd.horizontalSpan = 1;
         gd.grabExcessHorizontalSpace = true;
         b2.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("nonFatal", b2.getSelection()); //$NON-NLS-1$
             }
@@ -329,7 +342,8 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         return composite;
     }
 
-    protected boolean hasRequiredFields()
+    @Override
+	protected boolean hasRequiredFields()
     {
         return true;
     }
@@ -339,12 +353,13 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
      * 
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if (mFiles.size() > 0)
         {
-            Iterator iter = mFiles.iterator();
+            Iterator<String> iter = mFiles.iterator();
             buf.append(iter.next());
             for (; iter.hasNext();)
             {
@@ -355,7 +370,8 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         super.okPressed();
     }
 
-    protected String checkForErrors()
+    @Override
+	protected String checkForErrors()
     {
         if (mFiles.size() == 0)
         {

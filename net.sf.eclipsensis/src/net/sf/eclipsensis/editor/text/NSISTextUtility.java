@@ -284,11 +284,11 @@ public class NSISTextUtility implements INSISConstants
 
     public static ITypedRegion[][] getNSISLines(IDocument doc, ITypedRegion[] typedRegions)
     {
-        ArrayList regions = new ArrayList();
+        List<ITypedRegion[]> regions = new ArrayList<ITypedRegion[]>();
         if(doc != null && doc.getLength() > 0) {
             try {
                 if(!Common.isEmptyArray(typedRegions)) {
-                    String[] delims = (String[])doc.getLegalLineDelimiters().clone();
+                    String[] delims = doc.getLegalLineDelimiters().clone();
                     for(int i=0; i<delims.length; i++) {
                         delims[i] = "\\"+delims[i]; //$NON-NLS-1$
                     }
@@ -297,7 +297,7 @@ public class NSISTextUtility implements INSISConstants
                     ITypedRegion lastRegion = typedRegions[typedRegions.length-1];
                     int lastLine = doc.getLineOfOffset(lastRegion.getOffset()+lastRegion.getLength()-1);
                     for(int i=firstLine, index = 0; index < typedRegions.length && i<= lastLine; i++) {
-                        ArrayList lineRegions = new ArrayList();
+                        List<TypedRegion> lineRegions = new ArrayList<TypedRegion>();
                         IRegion line = doc.getLineInformation(i);
                         String lineDelim = doc.getLineDelimiter(i);
 //                        int start = line.getOffset();
@@ -369,7 +369,7 @@ public class NSISTextUtility implements INSISConstants
             catch(BadLocationException e) {
             }
         }
-        return (ITypedRegion[][])regions.toArray(new ITypedRegion[0][]);
+        return regions.toArray(new ITypedRegion[0][]);
     }
 
     /**
@@ -547,26 +547,26 @@ public class NSISTextUtility implements INSISConstants
         }
     }
 
-    public static String flattenSyntaxStylesMap(Map map)
+    public static String flattenSyntaxStylesMap(Map<String,NSISSyntaxStyle> map)
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(!Common.isEmptyMap(map)) {
-            Iterator iter = map.keySet().iterator();
-            String key = (String)iter.next();
-            NSISSyntaxStyle style = (NSISSyntaxStyle)map.get(key);
+            Iterator<String> iter = map.keySet().iterator();
+            String key = iter.next();
+            NSISSyntaxStyle style = map.get(key);
             buf.append(key).append('#').append(style.toString());
             while(iter.hasNext()) {
-                key = (String)iter.next();
-                style = (NSISSyntaxStyle)map.get(key);
+                key = iter.next();
+                style = map.get(key);
                 buf.append('\u00FF').append(key).append('#').append(style.toString());
             }
         }
         return buf.toString();
     }
 
-    public static Map parseSyntaxStylesMap(String text)
+    public static Map<String, NSISSyntaxStyle> parseSyntaxStylesMap(String text)
     {
-        Map map = new LinkedHashMap();
+        Map<String, NSISSyntaxStyle> map = new LinkedHashMap<String, NSISSyntaxStyle>();
         String[] pairs = Common.tokenize(text,'\u00FF');
         if(!Common.isEmptyArray(pairs)) {
             for (int i = 0; i < pairs.length; i++) {
@@ -607,7 +607,7 @@ public class NSISTextUtility implements INSISConstants
         fontRegistry.addListener(fontListener);
 
         final Display display = textWidget.getDisplay();
-        final HashMap map = new HashMap();
+        final HashMap<String, Color> map = new HashMap<String, Color>();
         final IPreferenceStore store = EditorsUI.getPreferenceStore();
 
         textWidget.setBackground(createColor(map, store, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND,
@@ -636,8 +636,8 @@ public class NSISTextUtility implements INSISConstants
             {
                 fontRegistry.removeListener(fontListener);
                 store.removePropertyChangeListener(colorListener);
-                for(Iterator iter=map.values().iterator(); iter.hasNext(); ) {
-                    Color color = (Color)iter.next();
+                for(Iterator<Color> iter=map.values().iterator(); iter.hasNext(); ) {
+                    Color color = iter.next();
                     if(color != null && !color.isDisposed()) {
                         color.dispose();
                     }
@@ -646,7 +646,7 @@ public class NSISTextUtility implements INSISConstants
         });
     }
 
-    private static Color createColor(Map map, IPreferenceStore store, String key, String defaultKey, Display display)
+    private static Color createColor(Map<String, Color> map, IPreferenceStore store, String key, String defaultKey, Display display)
     {
         if(!store.getBoolean(defaultKey)) {
             if (store.contains(key)) {
@@ -658,7 +658,7 @@ public class NSISTextUtility implements INSISConstants
                     rgb= PreferenceConverter.getColor(store, key);
                 }
                 Color color = new Color(display, rgb);
-                Color oldColor = (Color)map.put(key,color);
+                Color oldColor = map.put(key,color);
                 if(oldColor != null) {
                     oldColor.dispose();
                 }

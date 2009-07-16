@@ -21,7 +21,8 @@ public class LocalSaveFileParam extends LocalFileParam
         super(node);
     }
 
-    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new LocalSaveFileParamEditor(command, parentEditor);
     }
@@ -33,12 +34,14 @@ public class LocalSaveFileParam extends LocalFileParam
             super(command, parentEditor);
         }
 
-        protected boolean isSave()
+        @Override
+		protected boolean isSave()
         {
             return true;
         }
 
-        protected String validateLocalFilesystemObjectParam()
+        @Override
+		protected String validateLocalFilesystemObjectParam()
         {
             if(Common.isValid(mFileText)) {
                 String file = IOUtility.decodePath(mFileText.getText());

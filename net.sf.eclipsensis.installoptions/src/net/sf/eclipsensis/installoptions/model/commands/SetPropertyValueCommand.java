@@ -27,12 +27,14 @@ public class SetPropertyValueCommand extends Command
         super(InstallOptionsPlugin.getFormattedString("set.property.value.label", new Object[]{propLabel})); //$NON-NLS-1$
     }
 
-    public boolean canExecute()
+    @Override
+	public boolean canExecute()
     {
         return true;
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         boolean wasPropertySet = getTarget().isPropertySet(mPropertyName);
         mUndoValue = getTarget().getPropertyValue(mPropertyName);
@@ -59,7 +61,8 @@ public class SetPropertyValueCommand extends Command
         mTarget = aTarget;
     }
 
-    public void redo()
+    @Override
+	public void redo()
     {
         execute();
     }
@@ -74,7 +77,8 @@ public class SetPropertyValueCommand extends Command
         mPropertyValue = val;
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         if (mResetOnUndo) {
             getTarget().resetPropertyValue(mPropertyName);

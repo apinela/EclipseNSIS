@@ -36,11 +36,9 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     private static final Image OPEN_CATEGORY_IMAGE;
     private static final Image COMMAND_IMAGE;
     private static final String DEFAULT_CATEGORY = EclipseNSISPlugin.getResourceString("other.category"); //$NON-NLS-1$
-    private static Comparator cComparator = new Comparator() {
-        public int compare(Object o1, Object o2)
+    private static Comparator<TreeNode> cComparator = new Comparator<TreeNode>() {
+        public int compare(TreeNode node1, TreeNode node2)
         {
-            TreeNode node1 = (TreeNode)o1;
-            TreeNode node2 = (TreeNode)o2;
             return node1.getName().compareTo(node2.getName());
         }
     };
@@ -70,7 +68,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         COMMAND_IMAGE = images[2];
     }
 
-    public void dispose()
+    @Override
+	public void dispose()
     {
         NSISPreferences.INSTANCE.removeListener(this);
         super.dispose();
@@ -81,7 +80,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
         IMenuManager menu = getViewSite().getActionBars().getMenuManager();
         mHierarchicalLayoutAction = new Action() {
-            public void run()
+            @Override
+			public void run()
             {
                 setFlatMode(false);
             }
@@ -94,7 +94,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         menu.add(mHierarchicalLayoutAction);
 
         mFlatLayoutAction = new Action() {
-            public void run()
+            @Override
+			public void run()
             {
                 setFlatMode(true);
             }
@@ -107,7 +108,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         menu.add(mFlatLayoutAction);
 
         mExpandAllAction = new Action() {
-            public void run()
+            @Override
+			public void run()
             {
                 expandAll(true);
             }
@@ -120,7 +122,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         tbm.add(mExpandAllAction);
 
         mCollapseAllAction = new Action() {
-            public void run()
+            @Override
+			public void run()
             {
                 expandAll(false);
             }
@@ -133,7 +136,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         tbm.add(mCollapseAllAction);
     }
 
-    public void createPartControl(Composite parent)
+    @Override
+	public void createPartControl(Composite parent)
     {
         mFlatMode = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_COMMAND_VIEW_FLAT_MODE);
 
@@ -143,7 +147,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         mViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
         mViewer.setContentProvider(new TreeContentProvider());
         mViewer.setLabelProvider(new LabelProvider() {
-            public String getText(Object element)
+            @Override
+			public String getText(Object element)
             {
                 if(element instanceof TreeNode) {
                     return ((TreeNode)element).getName();
@@ -151,7 +156,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                 return super.getText(element);
             }
 
-            public Image getImage(Object element)
+            @Override
+			public Image getImage(Object element)
             {
                 if(element instanceof TreeNode) {
                     if(((TreeNode)element).getCommand() != null) {
@@ -197,7 +203,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         mViewer.addDragSupport(DND.DROP_COPY,
             new Transfer[]{NSISCommandTransfer.INSTANCE},
             new DragSourceAdapter() {
-                public void dragStart(DragSourceEvent e)
+                @Override
+				public void dragStart(DragSourceEvent e)
                 {
                     IEditorPart editor = getSite().getWorkbenchWindow().getActivePage().getActiveEditor();
                     if (!(editor instanceof NSISEditor)) {
@@ -210,7 +217,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                     }
                 }
 
-                public void dragSetData(DragSourceEvent e)
+                @Override
+				public void dragSetData(DragSourceEvent e)
                 {
                     IStructuredSelection sel = (IStructuredSelection)mViewer.getSelection();
                     if(sel != null && !sel.isEmpty() && sel.getFirstElement() instanceof TreeNode &&
@@ -224,7 +232,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
             }
         );
         mViewer.getTree().addKeyListener(new KeyAdapter() {
-            public void keyReleased(KeyEvent e)
+            @Override
+			public void keyReleased(KeyEvent e)
             {
                 if( (e.character == SWT.CR || e.character == SWT.LF) && e.stateMask == 0) {
                     insertCommand(mViewer.getSelection());
@@ -253,15 +262,16 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     private void updateIcon(TreeNode node)
     {
         mViewer.update(node,null);
-        for(Iterator iter = node.getChildren().iterator(); iter.hasNext(); ) {
-            node = (TreeNode)iter.next();
+        for(Iterator<TreeNode> iter = node.getChildren().iterator(); iter.hasNext(); ) {
+            node = iter.next();
             if(node.getCommand() == null) {
                 updateIcon(node);
             }
         }
     }
 
-    public void setFocus()
+    @Override
+	public void setFocus()
     {
         mViewer.getControl().setFocus();
     }
@@ -292,15 +302,18 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                 mFlatRootNode = (mFlatMode?new TreeNode(""):null); //$NON-NLS-1$
                 mHierarchicalRootNode = (mFlatMode?null:new TreeNode("")); //$NON-NLS-1$
                 TreeNode rootNode = (mFlatMode?mFlatRootNode:mHierarchicalRootNode);
-                for (int i = 0; i < commands.length; i++) {
-                    TreeNode parent = rootNode;
+                if (commands != null) {
+					for (int i = 0; i < commands.length; i++) {
+						TreeNode parent = rootNode;
 
-                    if(!mFlatMode) {
-                        parent = findParent(parent, commands[i]);
-                    }
-                    parent.addChild(new TreeNode(commands[i].getName(),commands[i]));
-                }
-                rootNode.sort();
+						if (!mFlatMode) {
+							parent = findParent(parent, commands[i]);
+						}
+						parent.addChild(new TreeNode(commands[i].getName(),
+								commands[i]));
+					}
+				}
+				rootNode.sort();
                 updateInput(rootNode);
             }
         }
@@ -346,7 +359,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                     isNew = true;
                 }
                 for(int i=0; i<mFlatRootNode.getChildren().size(); i++) {
-                    TreeNode child = (TreeNode)mFlatRootNode.getChildren().get(i);
+                    TreeNode child = mFlatRootNode.getChildren().get(i);
                     mFlatRootNode.removeChild(child);
                     TreeNode parent = findParent(mHierarchicalRootNode, child.getCommand());
                     parent.addChild(child);
@@ -379,7 +392,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     {
         if(source.getChildren().size() > 0) {
             for(int i=0; i<source.getChildren().size(); i++) {
-                TreeNode child = (TreeNode)source.getChildren().get(i);
+                TreeNode child = source.getChildren().get(i);
                 if(moveCommandChild(target, child)) {
                     i--;
                 }
@@ -400,8 +413,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         }
         String[] cats = Common.tokenize(category, '/');
         for(int j=0; j<cats.length; j++) {
-            for (Iterator iter = parent.getChildren().iterator(); iter.hasNext();) {
-                TreeNode node = (TreeNode)iter.next();
+            for (Iterator<TreeNode> iter = parent.getChildren().iterator(); iter.hasNext();) {
+                TreeNode node = iter.next();
                 if(node.getName().equals(cats[j])) {
                     parent = node;
                     break;
@@ -471,7 +484,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         private TreeNode mParent;
         private String mName;
         private NSISCommand mCommand;
-        private List mChildren;
+        private List<TreeNode> mChildren;
 
         public TreeNode(String name)
         {
@@ -484,9 +497,9 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
             mCommand = data;
         }
 
-        public List getChildren()
+        public List<TreeNode> getChildren()
         {
-            return (mChildren==null?Collections.EMPTY_LIST:mChildren);
+            return (mChildren==null?Collections.<TreeNode>emptyList():mChildren);
         }
 
         public NSISCommand getCommand()
@@ -520,7 +533,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         public void addChild(TreeNode child)
         {
             if(mChildren == null) {
-                mChildren = new ArrayList();
+                mChildren = new ArrayList<TreeNode>();
             }
             if(!mChildren.contains(child)) {
                 mChildren.add(child);
@@ -539,8 +552,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         {
             if(mChildren != null) {
                 Collections.sort(mChildren, cComparator);
-                for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                    ((TreeNode)iter.next()).sort();
+                for (Iterator<TreeNode> iter = mChildren.iterator(); iter.hasNext();) {
+                    iter.next().sort();
                 }
             }
         }
@@ -548,16 +561,18 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
 
     private class TreeContentProvider extends EmptyContentProvider
     {
-        public Object[] getChildren(Object parentElement)
+		@Override
+		public Object[] getChildren(Object parentElement)
         {
             if(parentElement instanceof TreeNode) {
-                List children = ((TreeNode)parentElement).getChildren();
+                List<TreeNode> children = ((TreeNode)parentElement).getChildren();
                 return (children==null?null:children.toArray());
             }
             return null;
         }
 
-        public Object getParent(Object element)
+        @Override
+		public Object getParent(Object element)
         {
             if(element instanceof TreeNode) {
                 return ((TreeNode)element).getParent();
@@ -565,12 +580,14 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
             return null;
         }
 
-        public boolean hasChildren(Object element)
+        @Override
+		public boolean hasChildren(Object element)
         {
             return !Common.isEmptyArray(getChildren(element));
         }
 
-        public Object[] getElements(Object inputElement)
+        @Override
+		public Object[] getElements(Object inputElement)
         {
             if(inputElement == (mFlatMode?mFlatRootNode:mHierarchicalRootNode)) {
                return getChildren(inputElement);

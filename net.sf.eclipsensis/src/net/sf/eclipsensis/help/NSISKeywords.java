@@ -56,11 +56,11 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     public static final String PREDEFINES="PREDEFINES"; //$NON-NLS-1$
     public static final String PLUGINS="PLUGINS"; //$NON-NLS-1$
 
-    private List mShellConstants = null;
-    private Map mKeywordGroupsMap = null;
-    private Map mNewerKeywordsMap = null;
-    private Set mAllKeywordsSet = null;
-    private ArrayList mListeners = null;
+    private List<ShellConstant> mShellConstants = null;
+    private Map<String, String[]> mKeywordGroupsMap = null;
+    private Map<String, List<String>> mNewerKeywordsMap = null;
+    private Set<String> mAllKeywordsSet = null;
+    private List<INSISKeywordsListener> mListeners = null;
     private INSISHomeListener mNSISHomeListener = null;
 
     public static NSISKeywords getInstance()
@@ -71,10 +71,10 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     public void start(IProgressMonitor monitor)
     {
         if (cInstance == null) {
-            mKeywordGroupsMap = new HashMap();
-            mNewerKeywordsMap = new CaseInsensitiveMap();
+            mKeywordGroupsMap = new HashMap<String, String[]>();
+            mNewerKeywordsMap = new CaseInsensitiveMap<List<String>>();
             mAllKeywordsSet = new CaseInsensitiveSet();
-            mListeners = new ArrayList();
+            mListeners = new ArrayList<INSISKeywordsListener>();
             mNSISHomeListener  = new INSISHomeListener() {
                 public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
                 {
@@ -122,38 +122,38 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             } catch (MissingResourceException x) {
                 bundle = null;
             }
-            Set registers = new CaseInsensitiveSet();
-            Set pathVariables = new CaseInsensitiveSet();
-            Set variables = new CaseInsensitiveSet();
-            Set shellConstants = new CaseInsensitiveSet();
-            Set pathConstants = new CaseInsensitiveSet();
-            Set stringConstants = new CaseInsensitiveSet();
-            Set predefines = new CaseInsensitiveSet();
-            Set singlelineCompiletimeCommands = new CaseInsensitiveSet();
-            Set multilineCompiletimeCommands = new CaseInsensitiveSet();
-            Set installerAttributes = new CaseInsensitiveSet();
-            Set commands = new CaseInsensitiveSet();
-            Set instructions = new CaseInsensitiveSet();
-            Set installerPages = new CaseInsensitiveSet();
-            Set hkeyLongParameters = new CaseInsensitiveSet();
-            Set hkeyShortParameters = new CaseInsensitiveSet();
-            Set messageboxOptionButtonParameters = new CaseInsensitiveSet();
-            Set messageboxOptionIconParameters = new CaseInsensitiveSet();
-            Set messageboxOptionDefaultParameters = new CaseInsensitiveSet();
-            Set messageboxOptionOtherParameters = new CaseInsensitiveSet();
-            Set messageboxReturnParameters = new CaseInsensitiveSet();
-            Set instructionParameters = new CaseInsensitiveSet();
-            Set instructionOptions = new CaseInsensitiveSet();
-            Set callbacks = new CaseInsensitiveSet();
+            Set<String> registers = new CaseInsensitiveSet();
+            Set<String> pathVariables = new CaseInsensitiveSet();
+            Set<String> variables = new CaseInsensitiveSet();
+            Set<String> shellConstants = new CaseInsensitiveSet();
+            Set<String> pathConstants = new CaseInsensitiveSet();
+            Set<String> stringConstants = new CaseInsensitiveSet();
+            Set<String> predefines = new CaseInsensitiveSet();
+            Set<String> singlelineCompiletimeCommands = new CaseInsensitiveSet();
+            Set<String> multilineCompiletimeCommands = new CaseInsensitiveSet();
+            Set<String> installerAttributes = new CaseInsensitiveSet();
+            Set<String> commands = new CaseInsensitiveSet();
+            Set<String> instructions = new CaseInsensitiveSet();
+            Set<String> installerPages = new CaseInsensitiveSet();
+            Set<String> hkeyLongParameters = new CaseInsensitiveSet();
+            Set<String> hkeyShortParameters = new CaseInsensitiveSet();
+            Set<String> messageboxOptionButtonParameters = new CaseInsensitiveSet();
+            Set<String> messageboxOptionIconParameters = new CaseInsensitiveSet();
+            Set<String> messageboxOptionDefaultParameters = new CaseInsensitiveSet();
+            Set<String> messageboxOptionOtherParameters = new CaseInsensitiveSet();
+            Set<String> messageboxReturnParameters = new CaseInsensitiveSet();
+            Set<String> instructionParameters = new CaseInsensitiveSet();
+            Set<String> instructionOptions = new CaseInsensitiveSet();
+            Set<String> callbacks = new CaseInsensitiveSet();
 
-            Map generalShellConstants = null;
-            Map userShellConstants = null;
-            Map commonShellConstants = null;
+            Map<String,String> generalShellConstants = null;
+            Map<String,String> userShellConstants = null;
+            Map<String,String> commonShellConstants = null;
 
             if(bundle != null && nsisVersion != null) {
-                HashMap versionMap = new HashMap();
-                for(Enumeration e=bundle.getKeys(); e.hasMoreElements();) {
-                    String key = (String)e.nextElement();
+                HashMap<Version, ArrayList<String[]>> versionMap = new HashMap<Version, ArrayList<String[]>>();
+                for(Enumeration<String> e=bundle.getKeys(); e.hasMoreElements();) {
+                    String key = e.nextElement();
                     if(key.equals("general.shell.constants")) { //$NON-NLS-1$
                         generalShellConstants = Common.loadMapProperty(bundle, key);
                     }
@@ -168,9 +168,9 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                         String name = (n >= 0?key.substring(0,n):key);
                         Version version = (n >= 0?new Version(key.substring(n+1)):INSISVersions.MINIMUM_VERSION);
                         if(nsisVersion.compareTo(version) >= 0) {
-                            ArrayList list = (ArrayList)versionMap.get(version);
+                            ArrayList<String[]> list = versionMap.get(version);
                             if(list == null) {
-                                list = new ArrayList();
+                                list = new ArrayList<String[]>();
                                 versionMap.put(version, list);
                             }
                             list.add(new String[]{name,key});
@@ -182,19 +182,19 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                     monitor.worked(20);
                 }
 
-                ArrayList versionList = new ArrayList(versionMap.keySet());
+                List<Version> versionList = new ArrayList<Version>(versionMap.keySet());
                 Collections.sort(versionList);
 
-                for (Iterator iter = versionList.iterator(); iter.hasNext();) {
-                    Version version = (Version)iter.next();
-                    ArrayList list = (ArrayList)versionMap.get(version);
-                    for (Iterator iter2 = list.iterator(); iter2.hasNext();) {
-                        String[] element = (String[])iter2.next();
+                for (Iterator<Version> iter = versionList.iterator(); iter.hasNext();) {
+                    Version version = iter.next();
+                    List<String[]> list = versionMap.get(version);
+                    for (Iterator<String[]> iter2 = list.iterator(); iter2.hasNext();) {
+                        String[] element = iter2.next();
                         String name = element[0];
                         String key = element[1];
                         String[] values = Common.loadArrayProperty(bundle,key);
                         if(!Common.isEmptyArray(values)) {
-                            Set set = null;
+                            Set<String> set = null;
                             if(name.equals("registers")) { //$NON-NLS-1$
                                 set = registers;
                             }
@@ -265,51 +265,57 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                                 set = callbacks;
                             }
 
-                            for (int i = 0; i < values.length; i++) {
-                                int m = values[i].indexOf('^');
-                                int n = values[i].indexOf('~');
-                                if(values[i].charAt(0) == '-') {
-                                    set.remove(values[i].substring(1));
-                                }
-                                else if(m > 0) {
-                                    String oldValue = values[i].substring(0,m);
-                                    String newValue = values[i].substring(m+1);
-                                    List list2 = (List)mNewerKeywordsMap.get(oldValue);
-                                    if(list2 == null) {
-                                        list2 = new ArrayList();
-                                        list2.add(oldValue);
-                                        mNewerKeywordsMap.put(oldValue,list2);
-                                    }
-                                    if(!list2.contains(newValue)) {
-                                        list2.add(newValue);
-                                    }
-                                    set.add(oldValue);
-                                    set.add(newValue);
-                                }
-                                else if(n > 0) {
-                                    String oldValue = values[i].substring(0,n);
-                                    String newValue = values[i].substring(n+1);
-                                    List list2 = (List)mNewerKeywordsMap.get(oldValue);
-                                    if(list2 == null) {
-                                        list2 = new ArrayList();
-                                        mNewerKeywordsMap.put(oldValue,list2);
-                                    }
-                                    else {
-                                        list2.remove(oldValue);
-                                    }
-                                    if(!list2.contains(newValue)) {
-                                        list2.add(newValue);
-                                    }
-                                    set.remove(oldValue);
-                                    set.add(newValue);
-                                }
-                                else {
-                                    if(values[i].charAt(0) == '+') {
-                                        values[i] = values[i].substring(1);
-                                    }
-                                    set.add(values[i]);
-                                }
-                            }
+                            if (set != null) {
+								for (int i = 0; i < values.length; i++) {
+									int m = values[i].indexOf('^');
+									int n = values[i].indexOf('~');
+									if (values[i].charAt(0) == '-') {
+										set.remove(values[i].substring(1));
+									} else if (m > 0) {
+										String oldValue = values[i].substring(
+												0, m);
+										String newValue = values[i]
+												.substring(m + 1);
+										List<String> list2 = mNewerKeywordsMap
+												.get(oldValue);
+										if (list2 == null) {
+											list2 = new ArrayList<String>();
+											list2.add(oldValue);
+											mNewerKeywordsMap.put(oldValue,
+													list2);
+										}
+										if (!list2.contains(newValue)) {
+											list2.add(newValue);
+										}
+										set.add(oldValue);
+										set.add(newValue);
+									} else if (n > 0) {
+										String oldValue = values[i].substring(
+												0, n);
+										String newValue = values[i]
+												.substring(n + 1);
+										List<String> list2 = mNewerKeywordsMap
+												.get(oldValue);
+										if (list2 == null) {
+											list2 = new ArrayList<String>();
+											mNewerKeywordsMap.put(oldValue,
+													list2);
+										} else {
+											list2.remove(oldValue);
+										}
+										if (!list2.contains(newValue)) {
+											list2.add(newValue);
+										}
+										set.remove(oldValue);
+										set.add(newValue);
+									} else {
+										if (values[i].charAt(0) == '+') {
+											values[i] = values[i].substring(1);
+										}
+										set.add(values[i]);
+									}
+								}
+							}
                         }
                     }
                 }
@@ -320,60 +326,60 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
             String[] temp;
 
-            Set set = getValidKeywords(registers);
+            Set<String> set = getValidKeywords(registers);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(REGISTERS,temp);
 
             set = getValidKeywords(pathVariables);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(PATH_VARIABLES,temp);
 
             set = getValidKeywords(variables);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(VARIABLES,temp);
 
             set = getValidKeywords(shellConstants);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(SHELL_CONSTANTS,temp);
 
             set = getValidKeywords(pathConstants);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])Common.joinArrays(new Object[] {(String[])mKeywordGroupsMap.get(SHELL_CONSTANTS),
-                                                      (String[])set.toArray(Common.EMPTY_STRING_ARRAY)});
+            temp = (String[])Common.joinArrays(new Object[] {mKeywordGroupsMap.get(SHELL_CONSTANTS),
+                                                      set.toArray(Common.EMPTY_STRING_ARRAY)});
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(PATH_CONSTANTS,temp);
 
             set = getValidKeywords(stringConstants);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(STRING_CONSTANTS,temp);
 
             set = new CaseInsensitiveSet();
             if(!Common.isEmpty(NSISPreferences.INSTANCE.getNSISHome())) {
-                Set keySet = NSISPreferences.INSTANCE.getNSISDefaultSymbols().keySet();
+                Set<Object> keySet = NSISPreferences.INSTANCE.getNSISDefaultSymbols().keySet();
                 StringBuffer buf = new StringBuffer("${"); //$NON-NLS-1$
-                for (Iterator iter = keySet.iterator(); iter.hasNext();) {
-                    set.add(buf.append((String)iter.next()).append("}").toString()); //$NON-NLS-1$
+                for (Iterator<Object> iter = keySet.iterator(); iter.hasNext();) {
+                    set.add(buf.append(String.valueOf(iter.next())).append("}").toString()); //$NON-NLS-1$
                     buf.setLength(2);
                 }
             }
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(SYMBOLS,temp);
 
             set = getValidKeywords(predefines);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(PREDEFINES,temp);
 
@@ -401,49 +407,49 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
             set = getValidKeywords(singlelineCompiletimeCommands);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(SINGLELINE_COMPILETIME_COMMANDS,temp);
 
             set = getValidKeywords(multilineCompiletimeCommands);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MULTILINE_COMPILETIME_COMMANDS, temp);
 
             set = getValidKeywords(installerAttributes);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(INSTALLER_ATTRIBUTES,temp);
 
             set = getValidKeywords(commands);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(COMMANDS,temp);
 
             set = getValidKeywords(instructions);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(INSTRUCTIONS,temp);
 
             set = getValidKeywords(installerPages);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(INSTALLER_PAGES,temp);
 
             set = getValidKeywords(hkeyLongParameters);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(HKEY_LONG_PARAMETERS,temp);
 
             set = getValidKeywords(hkeyShortParameters);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(HKEY_SHORT_PARAMETERS,temp);
 
@@ -453,25 +459,25 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
             set = getValidKeywords(messageboxOptionButtonParameters);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MESSAGEBOX_OPTION_BUTTON_PARAMETERS,temp);
 
             set = getValidKeywords(messageboxOptionIconParameters);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MESSAGEBOX_OPTION_ICON_PARAMETERS,temp);
 
             set = getValidKeywords(messageboxOptionDefaultParameters);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MESSAGEBOX_OPTION_DEFAULT_PARAMETERS,temp);
 
             set = getValidKeywords(messageboxOptionOtherParameters);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MESSAGEBOX_OPTION_OTHER_PARAMETERS,temp);
 
@@ -483,13 +489,13 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
             set = getValidKeywords(messageboxReturnParameters);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(MESSAGEBOX_RETURN_PARAMETERS,temp);
 
             set = getValidKeywords(instructionParameters);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             temp = (String[])Common.appendArray(temp, getKeywordsGroup(HKEY_PARAMETERS));
             temp = (String[])Common.appendArray(temp, getKeywordsGroup(MESSAGEBOX_OPTION_PARAMETERS));
             temp = (String[])Common.appendArray(temp, getKeywordsGroup(MESSAGEBOX_RETURN_PARAMETERS));
@@ -499,17 +505,17 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
             set = getValidKeywords(instructionOptions);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(INSTRUCTION_OPTIONS,temp);
 
             set = getValidKeywords(callbacks);
             mAllKeywordsSet.addAll(set);
-            temp = (String[])set.toArray(Common.EMPTY_STRING_ARRAY);
+            temp = set.toArray(Common.EMPTY_STRING_ARRAY);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(CALLBACKS,temp);
 
-            temp = (String[])mAllKeywordsSet.toArray(new String[mAllKeywordsSet.size()]);
+            temp = mAllKeywordsSet.toArray(new String[mAllKeywordsSet.size()]);
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(ALL_KEYWORDS,temp);
 
@@ -550,17 +556,17 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         }
     }
 
-    private List loadShellConstants(Map generalShellConstants, Map userShellConstants, Map commonShellConstants)
+    private List<ShellConstant> loadShellConstants(Map<String,String> generalShellConstants, Map<String,String> userShellConstants, Map<String,String> commonShellConstants)
     {
-        List list = new ArrayList();
+        List<ShellConstant> list = new ArrayList<ShellConstant>();
         loadShellConstants(generalShellConstants, list, ShellConstant.CONTEXT_GENERAL);
         loadShellConstants(userShellConstants, list, ShellConstant.CONTEXT_USER);
         loadShellConstants(commonShellConstants, list, ShellConstant.CONTEXT_COMMON);
         if(list.size() > 0) {
-            Collections.sort(list, new Comparator() {
-                public int compare(Object o1, Object o2)
+            Collections.sort(list, new Comparator<ShellConstant>() {
+                public int compare(ShellConstant o1, ShellConstant o2)
                 {
-                    return ((ShellConstant)o2).value.length()-((ShellConstant)o1).value.length();
+                    return (o2).value.length()-(o1).value.length();
                 }
             });
         }
@@ -568,15 +574,15 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         return list;
     }
 
-    private void loadShellConstants(Map shellConstants, List list, String context)
+    private void loadShellConstants(Map<String,String> shellConstants, List<ShellConstant> list, String context)
     {
         if (!Common.isEmptyMap(shellConstants)) {
-            for (Iterator iter = shellConstants.entrySet().iterator(); iter.hasNext();) {
+            for (Iterator<Map.Entry<String,String>> iter = shellConstants.entrySet().iterator(); iter.hasNext();) {
                 try {
-                    Map.Entry entry = (Map.Entry)iter.next();
-                    String name = (String)entry.getKey();
+                    Map.Entry<String,String> entry = iter.next();
+                    String name = entry.getKey();
                     if (isValidKeyword(name)) {
-                        String shellFolder = WinAPI.GetShellFolder(Integer.parseInt((String)entry.getValue()));
+                        String shellFolder = WinAPI.GetShellFolder(Integer.parseInt(entry.getValue()));
                         if (!Common.isEmpty(shellFolder)) {
                             if (entry.getKey().equals(getKeyword("$QUICKLAUNCH"))) { //$NON-NLS-1$
                                 shellFolder = shellFolder + "\\Microsoft\\Internet Explorer\\Quick Launch"; //$NON-NLS-1$
@@ -598,16 +604,16 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         }
     }
 
-    public List getShellConstants()
+    public List<ShellConstant> getShellConstants()
     {
-        List list = new ArrayList();
+        List<ShellConstant> list = new ArrayList<ShellConstant>();
         ShellConstant temp = null;
         if(isValidKeyword("$TEMP")) { //$NON-NLS-1$
             temp = new ShellConstant(getKeyword("$TEMP"),WinAPI.GetEnvironmentVariable("TEMP"),ShellConstant.CONTEXT_GENERAL); //$NON-NLS-1$ //$NON-NLS-2$
         }
         if (!Common.isEmptyCollection(mShellConstants)) {
-            for (Iterator iter = mShellConstants.iterator(); iter.hasNext();) {
-                ShellConstant constant = (ShellConstant)iter.next();
+            for (Iterator<ShellConstant> iter = mShellConstants.iterator(); iter.hasNext();) {
+                ShellConstant constant = iter.next();
                 if (temp != null && temp.value.length() >= constant.value.length()) {
                     list.add(temp);
                     temp = null;
@@ -621,11 +627,11 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         return list;
     }
 
-    private Set getValidKeywords(Set keywordSet)
+    private Set<String> getValidKeywords(Set<String> keywordSet)
     {
-        HashSet set = new HashSet();
-        for (Iterator iter = keywordSet.iterator(); iter.hasNext();) {
-            String keyword = (String)iter.next();
+        HashSet<String> set = new HashSet<String>();
+        for (Iterator<String> iter = keywordSet.iterator(); iter.hasNext();) {
+            String keyword = iter.next();
             String mappedKeyword = getKeyword(keyword, false);
             if(mappedKeyword.equalsIgnoreCase(keyword)) {
                 set.add(keyword);
@@ -636,7 +642,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
     public String[] getKeywordsGroup(String group)
     {
-        return (String[])mKeywordGroupsMap.get(group);
+        return mKeywordGroupsMap.get(group);
     }
 
     public boolean isValidKeyword(String keyword)
@@ -650,7 +656,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             if(monitor != null) {
                 monitor.subTask(EclipseNSISPlugin.getResourceString("updating.keywords.message")); //$NON-NLS-1$
             }
-            INSISKeywordsListener[] listeners = (INSISKeywordsListener[])mListeners.toArray(new INSISKeywordsListener[mListeners.size()]);
+            INSISKeywordsListener[] listeners = mListeners.toArray(new INSISKeywordsListener[mListeners.size()]);
             for (int i = 0; i < listeners.length; i++) {
                 listeners[i].keywordsChanged();
                 if(monitor != null) {
@@ -682,13 +688,13 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     public String getKeyword(String name, boolean getNewest)
     {
         if((!mAllKeywordsSet.contains(name) || getNewest) && mNewerKeywordsMap.containsKey(name)) {
-            List list = (List)mNewerKeywordsMap.get(name);
+            List<String> list = mNewerKeywordsMap.get(name);
             if(list.size() > 0) {
                 if(getNewest) {
-                    return getKeyword((String)list.get(list.size()-1), getNewest);
+                    return getKeyword(list.get(list.size()-1), getNewest);
                 }
                 else {
-                    return (String)list.get(0);
+                    return list.get(0);
                 }
             }
         }

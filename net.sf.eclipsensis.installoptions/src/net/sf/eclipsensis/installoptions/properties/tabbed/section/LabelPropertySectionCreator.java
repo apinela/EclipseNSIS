@@ -18,7 +18,8 @@ public class LabelPropertySectionCreator extends UneditableElementPropertySectio
         super(label);
     }
 
-    protected boolean isTextPropertyMultiline()
+    @Override
+	protected boolean isTextPropertyMultiline()
     {
         return true;
     }

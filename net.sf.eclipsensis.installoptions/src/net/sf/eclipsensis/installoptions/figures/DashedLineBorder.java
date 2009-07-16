@@ -24,7 +24,8 @@ public class DashedLineBorder extends LineBorder
         super(ColorManager.getColor(ColorManager.BLACK),1);
     }
 
-    public void paint(IFigure figure, Graphics graphics, Insets insets)
+    @Override
+	public void paint(IFigure figure, Graphics graphics, Insets insets)
     {
         int oldStyle = graphics.getLineStyle();
         graphics.setLineStyle(SWT.LINE_CUSTOM);

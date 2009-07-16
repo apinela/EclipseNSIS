@@ -56,17 +56,17 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     };
     private static final String[] cPreferenceKeys;
 
-    private Map mStyleMap = new HashMap();
+    private Map<String, NSISSyntaxStyle> mStyleMap = new HashMap<String, NSISSyntaxStyle>();
     private PreferenceStoreWrapper mPreferenceStore;
     private NSISSourceViewer mPreviewer;
 
-    private Map mCheckBoxes= new HashMap();
+    private Map<Button, String> mCheckBoxes= new HashMap<Button, String>();
     private SelectionListener mCheckBoxListener= new SelectionListener() {
         public void widgetDefaultSelected(SelectionEvent e) {
         }
         public void widgetSelected(SelectionEvent e) {
             Button button= (Button) e.widget;
-            mPreferenceStore.setValue((String) mCheckBoxes.get(button), button.getSelection());
+            mPreferenceStore.setValue(mCheckBoxes.get(button), button.getSelection());
         }
     };
 
@@ -85,11 +85,9 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
     static
     {
-        Comparator comparator = new Comparator() {
-            public int compare(Object o1, Object o2)
+        Comparator<String[]> comparator = new Comparator<String[]>() {
+            public int compare(String[] first, String[] second)
             {
-                String[] first = (String[])o1;
-                String[] second = (String[])o2;
                 int n = first[0].compareToIgnoreCase(second[0]);
                 if(n == 0) {
                     n = first[1].compareToIgnoreCase(second[1]);
@@ -125,7 +123,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     /*
      * @see PreferencePage#createControl(Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         super.createControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_editorprefs_context"); //$NON-NLS-1$
     }
@@ -144,7 +143,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
     private NSISSyntaxStyle getStyle(String key)
     {
-        NSISSyntaxStyle style = (NSISSyntaxStyle)mStyleMap.get(key);
+        NSISSyntaxStyle style = mStyleMap.get(key);
         if(style == null) {
             style = NSISSyntaxStyle.parse(mPreferenceStore.getString(key));
             mStyleMap.put(key,style);
@@ -171,7 +170,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         Button button = mMatchingDelimsColorEditor.getButton();
         button.setLayoutData(new GridData());
         button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 PreferenceConverter.setValue(mPreferenceStore, MATCHING_DELIMITERS_COLOR, mMatchingDelimsColorEditor.getRGB());
             }
         });
@@ -216,7 +216,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         gd.horizontalSpan= 2;
         styleButton.setLayoutData(gd);
         styleButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 boolean state = styleButton.getSelection();
 
                 int i= mSyntaxStyleList.getSelectionIndex();
@@ -270,12 +271,14 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         foregroundColorButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
 
         mSyntaxStyleList.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 handleSyntaxStyleListSelection();
             }
         });
         foregroundColorButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 int i= mSyntaxStyleList.getSelectionIndex();
                 String key= cSyntaxStyleListModel[i][1];
                 NSISSyntaxStyle style = getStyle(key);
@@ -340,7 +343,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     /*
      * @see PreferencePage#createContents(Composite)
      */
-    protected Control createContents(Composite parent)
+    @Override
+	protected Control createContents(Composite parent)
     {
         parent = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -351,7 +355,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         Link link= new Link(parent, SWT.NONE);
         link.setText(EclipseNSISPlugin.getResourceString("editor.preferences.note")); //$NON-NLS-1$
         link.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.ui.preferencePages.GeneralTextEditor", null, null); //$NON-NLS-1$
             }
         });
@@ -408,10 +413,10 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
     private void initializeFields()
     {
-        Iterator e= mCheckBoxes.keySet().iterator();
+        Iterator<Button> e= mCheckBoxes.keySet().iterator();
         while (e.hasNext()) {
-            Button b= (Button) e.next();
-            String key= (String) mCheckBoxes.get(b);
+            Button b= e.next();
+            String key= mCheckBoxes.get(b);
             b.setSelection(mPreferenceStore.getBoolean(key));
         }
         mMatchingDelimsColorEditor.setRGB(PreferenceConverter.getColor(mPreferenceStore, MATCHING_DELIMITERS_COLOR));
@@ -422,7 +427,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     /*
      * @see PreferencePage#performOk()
      */
-    public boolean performOk() {
+    @Override
+	public boolean performOk() {
         mPreferenceStore.update();
         NSISEditorUtilities.updatePresentations();
         NSISPreferences.INSTANCE.getPreferenceStore().setValue(DROP_EXTERNAL_FILES_ACTION,mDropExternalFilesCombo.getSelectionIndex());
@@ -433,7 +439,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     /*
      * @see PreferencePage#performDefaults()
      */
-    protected void performDefaults() {
+    @Override
+	protected void performDefaults() {
 
         mPreferenceStore.loadDefaults();
 
@@ -451,7 +458,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     /*
      * @see DialogPage#dispose()
      */
-    public void dispose() {
+    @Override
+	public void dispose() {
 
         if (mPreferenceStore != null) {
             mPreferenceStore.dispose();

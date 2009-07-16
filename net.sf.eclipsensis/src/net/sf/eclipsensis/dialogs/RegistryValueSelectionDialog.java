@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.dialogs.RegistryKeyBrowser.RegistryKey;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.*;
 
@@ -51,7 +50,8 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
         mText = text;
     }
 
-    protected int getMessageLabelStyle()
+    @Override
+	protected int getMessageLabelStyle()
     {
         return SWT.NONE;
     }
@@ -88,12 +88,13 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
     {
         if(mRegValue != null) {
             if(mBrowser != null && !mBrowser.isDisposed()) {
-                mBrowser.select(mRegValue.getRegKey());
+                mBrowser.select(mRegValue.getRegKey().toString());
             }
         }
     }
 
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -129,7 +130,8 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
         mValuesViewer = new TableViewer(table);
         mValuesViewer.setContentProvider(new CollectionContentProvider());
         mValuesViewer.setLabelProvider(new CollectionLabelProvider() {
-            public Image getColumnImage(Object element, int columnIndex)
+            @Override
+			public Image getColumnImage(Object element, int columnIndex)
             {
                 if(element instanceof RegistryValue && columnIndex == 0) {
                     switch(((RegistryValue)element).getType()) {
@@ -143,7 +145,8 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                 return super.getColumnImage(element, columnIndex);
             }
 
-            public String getColumnText(Object element, int columnIndex)
+            @Override
+			public String getColumnText(Object element, int columnIndex)
             {
                 if(element instanceof RegistryValue) {
                     RegistryValue regValue = (RegistryValue)element;
@@ -165,7 +168,8 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                                 case WinAPI.REG_EXPAND_SZ:
                                     return "REG_EXPAND_SZ"; //$NON-NLS-1$
                             }
-                        case 2:
+	                        //$FALL-THROUGH$
+						case 2:
                             switch(type) {
                                 case WinAPI.REG_BINARY:
                                     if(data == null) {
@@ -206,7 +210,8 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
             }
         });
         mBrowser.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 loadRegistryValues();
                 if(mRegValue != null) {
@@ -226,20 +231,23 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
         return composite;
     }
 
-    public void create()
+    @Override
+	public void create()
     {
         super.create();
         ISelection selection = mValuesViewer.getSelection();
         getButton(IDialogConstants.OK_ID).setEnabled(selection != null && !selection.isEmpty());
     }
 
-    protected void cancelPressed()
+    @Override
+	protected void cancelPressed()
     {
         mRegValue = null;
         super.cancelPressed();
     }
 
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         saveSelection();
         super.okPressed();
@@ -251,19 +259,18 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
     private void loadRegistryValues()
     {
         RegistryKey regKey = mBrowser.getSelectedKey();
-        List list;
+        List<RegistryValue> list;
         if(regKey != null) {
-            list = (List)regKey.getAttribute("REG_VALUES"); //$NON-NLS-1$
-            if(list == null) {
-                String regkeyName = mBrowser.getSelection();
-                list = new ArrayList();
+            list = regKey.getValues(); //$NON-NLS-1$
+            if(Common.isEmptyCollection(list)) {
+                list = new ArrayList<RegistryValue>();
                 int hKey = regKey.getHandle();
                 if(hKey != 0) {
                     boolean gotDefault = false;
                     int count = WinAPI.GetRegValuesCount(hKey);
                     if(count > 0) {
                         for(int i=0; i<count; i++) {
-                            RegistryValue regValue = new RegistryValue(regkeyName, null);
+                            RegistryValue regValue = new RegistryValue(regKey.toString(), null);
                             if(WinAPI.RegEnumValue(hKey,i,regValue)) {
                                 switch(regValue.getType()) {
                                     case WinAPI.REG_SZ:
@@ -273,7 +280,8 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                                             list.add(0,regValue);
                                             break;
                                         }
-                                    case WinAPI.REG_BINARY:
+	                                    //$FALL-THROUGH$
+									case WinAPI.REG_BINARY:
                                     case WinAPI.REG_DWORD:
                                     case WinAPI.REG_EXPAND_SZ:
                                         list.add(regValue);
@@ -282,150 +290,17 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                         }
                     }
                     if(!gotDefault) {
-                        list.add(0,new RegistryValue(regkeyName,null,WinAPI.REG_SZ,null));
+                        list.add(0,new RegistryValue(regKey.toString(),null,WinAPI.REG_SZ,null));
                     }
                 }
-                regKey.setAttribute("REG_VALUES", list); //$NON-NLS-1$
+                regKey.setValues(list); //$NON-NLS-1$
             }
         }
         else {
-            list = Collections.EMPTY_LIST;
+            list = Collections.emptyList();
         }
         if(!Common.objectsAreEqual(list, mValuesViewer.getInput())) {
             mValuesViewer.setInput(list);
-        }
-    }
-
-    public static class RegistryValue
-    {
-        private String mRegKey;
-        private String mValue;
-        private int mType = WinAPI.REG_SZ;
-        private String mData = ""; //$NON-NLS-1$
-
-        public RegistryValue(String regKey, String value)
-        {
-            mRegKey = regKey;
-            setValue(value);
-        }
-
-        private RegistryValue(String regKey, String value, int type, String data)
-        {
-            this(regKey, value);
-            setType(type);
-            mData = data;
-        }
-
-        protected void set(String value, int type, byte[] data)
-        {
-            setValue(value);
-            setType(type);
-            switch(type) {
-                case WinAPI.REG_BINARY:
-                    if(Common.isEmptyArray(data)) {
-                        mData = null;
-                    }
-                    else {
-                        mData = bytesToHexString(data);
-                    }
-                    break;
-                case WinAPI.REG_DWORD:
-                    if(Common.isEmptyArray(data) || data.length > 8) {
-                        mData = "0"; //$NON-NLS-1$
-                    }
-                    else {
-                        mData = String.valueOf(Integer.parseInt(bytesToHexString((byte[])Common.flipArray(data)),16));
-                    }
-                    break;
-                case WinAPI.REG_SZ:
-                case WinAPI.REG_EXPAND_SZ:
-                case WinAPI.REG_MULTI_SZ:
-                    if(Common.isEmptyArray(data)) {
-                        mData = ""; //$NON-NLS-1$
-                    }
-                    else {
-                        mData = new String(data,0,(data[data.length-1]==0?data.length-1:data.length));
-                    }
-                    break;
-            }
-        }
-
-        /**
-         * @param value
-         */
-        private void setValue(String value)
-        {
-            mValue = value;
-        }
-
-        /**
-         * @param type
-         */
-        private void setType(int type)
-        {
-            switch(type) {
-                case WinAPI.REG_SZ:
-                case WinAPI.REG_BINARY:
-                case WinAPI.REG_DWORD:
-                case WinAPI.REG_EXPAND_SZ:
-                case WinAPI.REG_MULTI_SZ:
-                    mType = type;
-                    break;
-                default:
-                    mType = WinAPI.REG_SZ;
-            }
-        }
-
-        private String bytesToHexString(byte[] data)
-        {
-            StringBuffer buf = new StringBuffer();
-            for (int i = 0; i < data.length; i++) {
-                int b = data[i]<0?256+data[i]:(int)data[i];
-                int hi = b/16;
-                int lo = b%16;
-                buf.append((char)(hi>9?'a'+hi-10:'0'+hi-0));
-                buf.append((char)(lo>9?'a'+lo-10:'0'+lo-0));
-            }
-            return buf.toString();
-        }
-
-        public String getData()
-        {
-            return mData;
-        }
-
-        public String getRegKey()
-        {
-            return mRegKey;
-        }
-
-        public int getType()
-        {
-            return mType;
-        }
-
-        public String getValue()
-        {
-            return mValue;
-        }
-
-        public int hashCode()
-        {
-            int result = 31 + ((mRegKey == null)?0:mRegKey.hashCode());
-            result = 31 * result + ((mValue == null)?0:mValue.hashCode());
-            return result;
-        }
-
-        public boolean equals(Object obj)
-        {
-            if(this != obj) {
-                if(obj instanceof RegistryValue) {
-                    RegistryValue rv = (RegistryValue)obj;
-                    return Common.stringsAreEqual(mRegKey,rv.getRegKey(),true) && Common.stringsAreEqual(mValue,rv.getValue(),true);
-                }
-                return false;
-            }
-            return true;
         }
     }
 }

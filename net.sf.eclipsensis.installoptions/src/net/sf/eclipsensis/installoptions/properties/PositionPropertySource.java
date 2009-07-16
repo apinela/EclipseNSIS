@@ -139,7 +139,8 @@ public class PositionPropertySource implements IPropertySource
             ID_RIGHT.equals(propName) || ID_BOTTOM.equals(propName));
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return new StringBuffer("(").append(mPosition.left).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
             mPosition.top).append(",").append(mPosition.right).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
@@ -180,7 +181,8 @@ public class PositionPropertySource implements IPropertySource
             super(id, displayName);
         }
 
-        public CellEditor createPropertyEditor(Composite parent)
+        @Override
+		public CellEditor createPropertyEditor(Composite parent)
         {
             if(mWidget.isLocked()) {
                 return null;

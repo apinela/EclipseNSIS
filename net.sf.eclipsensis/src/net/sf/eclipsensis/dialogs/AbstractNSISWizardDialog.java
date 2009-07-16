@@ -22,13 +22,15 @@ public abstract class AbstractNSISWizardDialog extends WizardDialog
         super(parentShell, wizard);
     }
 
-    protected void configureShell(Shell newShell)
+    @Override
+	protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setImage(EclipseNSISPlugin.getShellImage());
     }
 
-    public void create()
+    @Override
+	public void create()
     {
         super.create();
         String helpContextId = getHelpContextId();

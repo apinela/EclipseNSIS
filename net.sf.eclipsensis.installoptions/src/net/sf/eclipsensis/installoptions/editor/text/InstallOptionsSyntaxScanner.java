@@ -19,7 +19,7 @@ import org.eclipse.jface.text.rules.*;
 
 public abstract class InstallOptionsSyntaxScanner extends BufferedRuleBasedScanner implements IInstallOptionsScanner
 {
-    private Map mSyntaxStylesMap;
+    private Map<String, NSISSyntaxStyle> mSyntaxStylesMap;
 
     public InstallOptionsSyntaxScanner()
     {
@@ -27,7 +27,7 @@ public abstract class InstallOptionsSyntaxScanner extends BufferedRuleBasedScann
         setSyntaxStyles(NSISTextUtility.parseSyntaxStylesMap(InstallOptionsPlugin.getDefault().getPreferenceStore().getString(IInstallOptionsConstants.PREFERENCE_SYNTAX_STYLES)));
     }
 
-    public void setSyntaxStyles(Map syntaxStylesMap)
+    public void setSyntaxStyles(Map<String, NSISSyntaxStyle> syntaxStylesMap)
     {
         mSyntaxStylesMap = syntaxStylesMap;
         reset();

@@ -49,7 +49,8 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
         return mDialog;
     }
 
-    public final Control createControl(Composite parent)
+    @Override
+	public final Control createControl(Composite parent)
     {
         if(mDialog != null) {
             Integer rtl = mDialog.getRTL();
@@ -136,7 +137,8 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
         }
     }
 
-    public void reveal(EditPart part)
+    @Override
+	public void reveal(EditPart part)
     {
         super.reveal(part);
         Viewport port = getFigureCanvas().getViewport();
@@ -171,18 +173,21 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
         getFigureCanvas().scrollSmoothTo(finalLocation.x, finalLocation.y);
     }
 
-    protected IFigure getRootFigure()
+    @Override
+	protected IFigure getRootFigure()
     {
         return mRootFigure;
     }
 
-    protected void setRootFigure(IFigure figure)
+    @Override
+	protected void setRootFigure(IFigure figure)
     {
         mRootFigure = figure;
         installRootFigure();
     }
 
-    public void addDropTargetListener(final TransferDropTargetListener listener)
+    @Override
+	public void addDropTargetListener(final TransferDropTargetListener listener)
     {
         if(listener.getTransfer() instanceof TemplateTransfer) {
             super.addDropTargetListener(new TransferDropTargetListener() {

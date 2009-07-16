@@ -34,14 +34,15 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
      */
     private static final long serialVersionUID = -5321738343148820961L;
     protected static LabelProvider cListItemsLabelProvider = new ListLabelProvider();
-    private List mListItems;
+    private List<String> mListItems;
 
     protected InstallOptionsListItems(INISection section)
     {
         super(section);
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("multiSelect"); //$NON-NLS-1$
@@ -49,18 +50,21 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         skippedProperties.add("maxLen"); //$NON-NLS-1$
     }
 
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
-        mListItems = new ArrayList();
+        mListItems = new ArrayList<String>();
     }
 
-    protected Position getDefaultPosition()
+    @Override
+	protected Position getDefaultPosition()
     {
         return new Position(0,0,99,99);
     }
 
-    protected void addPropertyName(List list, String setting)
+    @Override
+	protected void addPropertyName(List<String> list, String setting)
     {
         if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_LISTITEMS)) {
             list.add(InstallOptionsModel.PROPERTY_LISTITEMS);
@@ -70,7 +74,8 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         }
     }
 
-    protected TypeConverter loadTypeConverter(String property, Object value)
+    @Override
+	protected TypeConverter<?> loadTypeConverter(String property, Object value)
     {
         if(InstallOptionsModel.PROPERTY_LISTITEMS.equals(property)) {
             return TypeConverter.STRING_LIST_CONVERTER;
@@ -80,7 +85,8 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         }
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    @Override
+	protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
             return new ListItemsPropertyDescriptor();
@@ -88,7 +94,8 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         return super.createPropertyDescriptor(name);
     }
 
-    public Object getPropertyValue(Object propName)
+    @Override
+	public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_LISTITEMS.equals(propName)) {
             return getListItems();
@@ -96,40 +103,44 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         return super.getPropertyValue(propName);
     }
 
-    public void setPropertyValue(Object id, Object value)
+    @Override
+	@SuppressWarnings("unchecked")
+	public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
-            setListItems((List)value);
+            setListItems((List<String>)value);
         }
         else {
             super.setPropertyValue(id, value);
         }
     }
 
-    public List getListItems()
+    public List<String> getListItems()
     {
-        return (mListItems == null?Collections.EMPTY_LIST:mListItems);
+        return (mListItems == null?Collections.<String>emptyList():mListItems);
     }
 
-    public void setListItems(List listItems)
+    public void setListItems(List<String> listItems)
     {
         if(!mListItems.equals(listItems)) {
-            List oldListItems = mListItems;
-            mListItems = new ArrayList(listItems);
+            List<String> oldListItems = mListItems;
+            mListItems = new ArrayList<String>(listItems);
             firePropertyChange(InstallOptionsModel.PROPERTY_LISTITEMS, oldListItems, mListItems);
             setDirty(true);
         }
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    @Override
+	protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new ListItemsPropertySectionCreator(this);
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         InstallOptionsListItems clone = (InstallOptionsListItems)super.clone();
-        clone.setListItems(new ArrayList(mListItems));
+        clone.setListItems(new ArrayList<String>(mListItems));
         return clone;
     }
 
@@ -147,7 +158,8 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
             setValidator(new NSISStringLengthValidator(getDisplayName()));
         }
 
-        public CellEditor createPropertyEditor(Composite parent)
+        @Override
+		public CellEditor createPropertyEditor(Composite parent)
         {
             final ListItemsCellEditor cellEditor = new ListItemsCellEditor(parent);
             ICellEditorValidator validator = getValidator();
@@ -166,7 +178,8 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
             InstallOptionsListItems.this.addPropertyChangeListener(this);
         }
 
-        public void dispose()
+        @Override
+		public void dispose()
         {
             InstallOptionsListItems.this.removePropertyChangeListener(this);
             super.dispose();
@@ -179,7 +192,8 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
             }
         }
 
-        protected void updateContents(Object value)
+        @Override
+		protected void updateContents(Object value)
         {
             Label label = getDefaultLabel();
             if (label != null) {
@@ -187,10 +201,12 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
             }
         }
 
-        protected Object openDialogBox(Control cellEditorWindow)
+        @Override
+		@SuppressWarnings("unchecked")
+		protected Object openDialogBox(Control cellEditorWindow)
         {
             Object oldValue = getValue();
-            ListItemsDialog dialog = new ListItemsDialog(cellEditorWindow.getShell(), (List)oldValue, getType());
+            ListItemsDialog dialog = new ListItemsDialog(cellEditorWindow.getShell(), (List<String>)oldValue, getType());
             dialog.setValidator(getValidator());
             int result = dialog.open();
             return (result == Window.OK?dialog.getValues():oldValue);

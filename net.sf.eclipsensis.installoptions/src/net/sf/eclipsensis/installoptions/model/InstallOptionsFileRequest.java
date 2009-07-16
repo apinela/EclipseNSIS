@@ -32,15 +32,17 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
 
     public  static final char FILTER_SEPARATOR = ';';
 
-    public static final TypeConverter FILEFILTER_LIST_CONVERTER = new TypeConverter(){
-        public String asString(Object o)
+    public static final TypeConverter<List<FileFilter>> FILEFILTER_LIST_CONVERTER = new TypeConverter<List<FileFilter>>(){
+        @Override
+		public String asString(List<FileFilter> o)
         {
-            return Common.flatten(((List)o).toArray(),IInstallOptionsConstants.LIST_SEPARATOR);
+            return Common.flatten(o.toArray(new FileFilter[o.size()]),IInstallOptionsConstants.LIST_SEPARATOR);
         }
 
-        public Object asType(String s)
+        @Override
+		public List<FileFilter> asType(String s)
         {
-            List list = new ArrayList();
+        	List<FileFilter> list = new ArrayList<FileFilter>();
             String[] tokens = Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR,false);
             for (int i = 0; i < (tokens.length-1); i+= 2) {
                 String description = tokens[i];
@@ -54,21 +56,24 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
             return list;
         }
 
-        public Object makeCopy(Object o)
+        @Override
+		public List<FileFilter> makeCopy(List<FileFilter> o)
         {
-            List list = new ArrayList();
-            for(Iterator iter=((List)o).iterator(); iter.hasNext(); ) {
-                list.add(((FileFilter)iter.next()).clone());
+        	List<FileFilter> list = new ArrayList<FileFilter>();
+            for(Iterator<FileFilter> iter=o.iterator(); iter.hasNext(); ) {
+                list.add((FileFilter) iter.next().clone());
             }
             return list;
         }
     };
 
     public static final LabelProvider FILTER_LABEL_PROVIDER = new LabelProvider(){
-        public String getText(Object element)
+        @Override
+		@SuppressWarnings("unchecked")
+		public String getText(Object element)
         {
             if(element instanceof List) {
-                return FILEFILTER_LIST_CONVERTER.asString(element);
+                return FILEFILTER_LIST_CONVERTER.asString((List<FileFilter>) element);
             }
             else {
                 return super.getText(element);
@@ -76,39 +81,44 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         }
     };
 
-    private List mFilter;
+    private List<FileFilter> mFilter;
 
     protected InstallOptionsFileRequest(INISection section)
     {
         super(section);
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("text"); //$NON-NLS-1$
     }
 
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
-        mFilter = new ArrayList();
+        mFilter = new ArrayList<FileFilter>();
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_FILEREQUEST;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         InstallOptionsFileRequest clone = (InstallOptionsFileRequest)super.clone();
-        clone.mFilter = new ArrayList();
+        clone.mFilter = new ArrayList<FileFilter>();
         clone.setFilter(mFilter);
         return clone;
     }
 
-    protected void addPropertyName(List list, String setting)
+    @Override
+	protected void addPropertyName(List<String> list, String setting)
     {
         if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_FILTER)) {
             list.add(InstallOptionsModel.PROPERTY_FILTER);
@@ -118,7 +128,8 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         }
     }
 
-    protected TypeConverter loadTypeConverter(String property, Object value)
+    @Override
+	protected TypeConverter<?> loadTypeConverter(String property, Object value)
     {
         if(property.equals(InstallOptionsModel.PROPERTY_FILTER)) {
             return FILEFILTER_LIST_CONVERTER;
@@ -128,17 +139,20 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         }
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    @Override
+	protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new PathRequestPropertySectionCreator(this);
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    @Override
+	protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_FILTER)) {
             String propertyName = InstallOptionsPlugin.getResourceString("filter.property.name"); //$NON-NLS-1$
             PropertyDescriptor descriptor = new PropertyDescriptor(InstallOptionsModel.PROPERTY_FILTER, propertyName){
-                public CellEditor createPropertyEditor(Composite parent)
+                @Override
+				public CellEditor createPropertyEditor(Composite parent)
                 {
                     final FileFilterCellEditor editor = new FileFilterCellEditor(InstallOptionsFileRequest.this, parent);
                     editor.setValidator(getValidator());
@@ -169,7 +183,8 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         }
     }
 
-    public Object getPropertyValue(Object propName)
+    @Override
+	public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_FILTER.equals(propName)) {
             return getFilter();
@@ -177,26 +192,28 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         return super.getPropertyValue(propName);
     }
 
-    public void setPropertyValue(Object id, Object value)
+    @Override
+	@SuppressWarnings("unchecked")
+	public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_FILTER)) {
-            setFilter((List)value);
+            setFilter((List<FileFilter>)value);
         }
         else {
             super.setPropertyValue(id, value);
         }
     }
 
-    public List getFilter()
+    public List<FileFilter> getFilter()
     {
         return mFilter;
     }
 
-    public void setFilter(List filter)
+    public void setFilter(List<FileFilter> filter)
     {
         if(!mFilter.equals(filter)) {
-            List oldFilter = mFilter;
-            mFilter = (List)FILEFILTER_LIST_CONVERTER.makeCopy(filter);
+            List<FileFilter> oldFilter = mFilter;
+            mFilter = FILEFILTER_LIST_CONVERTER.makeCopy(filter);
             firePropertyChange(InstallOptionsModel.PROPERTY_FILTER, oldFilter, mFilter);
             setDirty(true);
         }

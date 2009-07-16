@@ -28,8 +28,8 @@ public class INILine implements Cloneable, Serializable
     private String mText = ""; //$NON-NLS-1$
     private String mDelimiter = INSISConstants.LINE_SEPARATOR;
     private IINIContainer mParent;
-    private List mErrors = new ArrayList();
-    private List mWarnings = new ArrayList();
+    private List<INIProblem> mErrors = new ArrayList<INIProblem>();
+    private List<INIProblem> mWarnings = new ArrayList<INIProblem>();
 
     public INILine(String text, String delimiter)
     {
@@ -101,7 +101,8 @@ public class INILine implements Cloneable, Serializable
     {
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return (mText != null?mText:"")+(mDelimiter != null?mDelimiter:""); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -137,7 +138,8 @@ public class INILine implements Cloneable, Serializable
             else {
                 INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
                 problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.line")) { //$NON-NLS-1$
-                    protected INIProblemFix[] createFixes()
+                    @Override
+					protected INIProblemFix[] createFixes()
                     {
                         return new INIProblemFix[] {new INIProblemFix(INILine.this)};
                     }
@@ -147,19 +149,19 @@ public class INILine implements Cloneable, Serializable
         }
     }
 
-    public List getErrors()
+    public List<INIProblem> getErrors()
     {
         return Collections.unmodifiableList(mErrors);
     }
 
-    public List getWarnings()
+    public List<INIProblem> getWarnings()
     {
         return Collections.unmodifiableList(mWarnings);
     }
 
-    public List getProblems()
+    public List<INIProblem> getProblems()
     {
-        List list = new ArrayList();
+        List<INIProblem> list = new ArrayList<INIProblem>();
         list.addAll(mErrors);
         list.addAll(mWarnings);
         return list;
@@ -184,12 +186,13 @@ public class INILine implements Cloneable, Serializable
         return (INILine)clone();
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         try {
             INILine line = (INILine)super.clone();
-            line.mWarnings = new ArrayList();
-            line.mErrors = new ArrayList();
+            line.mWarnings = new ArrayList<INIProblem>();
+            line.mErrors = new ArrayList<INIProblem>();
             return line;
         }
         catch (CloneNotSupportedException e) {

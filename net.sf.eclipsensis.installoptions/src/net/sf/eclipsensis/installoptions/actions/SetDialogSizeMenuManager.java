@@ -22,7 +22,7 @@ import org.eclipse.ui.IEditorPart;
 public class SetDialogSizeMenuManager extends MenuManager implements IPropertyChangeListener
 {
     private IEditorPart mEditor = null;
-    private Map mActionMap = new LinkedHashMap();
+    private Map<DialogSize, SetDialogSizeAction> mActionMap = new LinkedHashMap<DialogSize, SetDialogSizeAction>();
     private boolean mNeedsRebuild = true;
     private static final Action DUMMY_ACTION = new SetDialogSizeAction(null);
 
@@ -47,24 +47,24 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
     public void setEditor(IEditorPart editor)
     {
         mEditor = editor;
-        for(Iterator iter=mActionMap.values().iterator(); iter.hasNext(); ) {
-            ((SetDialogSizeAction)iter.next()).setEditor(mEditor);
+        for(Iterator<SetDialogSizeAction> iter=mActionMap.values().iterator(); iter.hasNext(); ) {
+            iter.next().setEditor(mEditor);
         }
     }
 
     public void updateActions()
     {
-        for(Iterator iter=mActionMap.values().iterator(); iter.hasNext(); ) {
-            ((SetDialogSizeAction)iter.next()).update();
+        for(Iterator<SetDialogSizeAction> iter=mActionMap.values().iterator(); iter.hasNext(); ) {
+            iter.next().update();
         }
     }
 
     public synchronized void rebuild()
     {
         if(mNeedsRebuild) {
-            List dialogSizes = DialogSizeManager.getDialogSizes();
+            List<DialogSize> dialogSizes = DialogSizeManager.getDialogSizes();
             mActionMap.keySet().retainAll(dialogSizes);
-            for (Iterator iter = dialogSizes.iterator(); iter.hasNext();) {
+            for (Iterator<DialogSize> iter = dialogSizes.iterator(); iter.hasNext();) {
                 DialogSize element = (DialogSize)iter.next();
                 if(!mActionMap.containsKey(element)) {
                     SetDialogSizeAction action = new SetDialogSizeAction(element);
@@ -82,8 +82,8 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
                 add(DUMMY_ACTION);
             }
             else {
-                for (Iterator iter = dialogSizes.iterator(); iter.hasNext();) {
-                    add((IAction)mActionMap.get(iter.next()));
+                for (Iterator<DialogSize> iter = dialogSizes.iterator(); iter.hasNext();) {
+                    add(mActionMap.get(iter.next()));
                 }
             }
             mNeedsRebuild = false;
@@ -108,7 +108,8 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
         return mNeedsRebuild;
     }
 
-    public boolean isDynamic()
+    @Override
+	public boolean isDynamic()
     {
         return true;
     }

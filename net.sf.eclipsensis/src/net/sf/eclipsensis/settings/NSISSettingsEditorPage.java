@@ -31,7 +31,7 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
 
     private String mName;
     protected NSISSettings mSettings = null;
-    private List mListeners = new ArrayList();
+    private List<INSISSettingsEditorPageListener> mListeners = new ArrayList<INSISSettingsEditorPageListener>();
     private Control mControl = null;
 
     public NSISSettingsEditorPage(String name, NSISSettings settings)
@@ -59,7 +59,7 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
 
     protected void fireChanged()
     {
-        INSISSettingsEditorPageListener[] listeners = (INSISSettingsEditorPageListener[])mListeners.toArray(new INSISSettingsEditorPageListener[mListeners.size()]);
+        INSISSettingsEditorPageListener[] listeners = mListeners.toArray(new INSISSettingsEditorPageListener[mListeners.size()]);
         for (int i = 0; i < listeners.length; i++) {
             listeners[i].settingsChanged();
         }
@@ -86,7 +86,8 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
         GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         button.setLayoutData(data);
         button.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 fireChanged();
             }
@@ -133,12 +134,12 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
         return combo;
     }
 
-    protected TableViewer createTableViewer(Composite composite, final Object input, IContentProvider contentProvider,
+    protected <S, T> TableViewer createTableViewer(Composite composite, final S input, IContentProvider contentProvider,
                                             ILabelProvider labelProvider, String description, String[] columnNames,
                                             String addTooltip, String editTooltip, String removeTooltip,
                                             SelectionListener addAdapter, SelectionListener editAdapter,
                                             SelectionListener removeAdapter, IDoubleClickListener doubleClickListener,
-                                            final TableViewerUpDownMover mover)
+                                            final TableViewerUpDownMover<S, T> mover)
     {
         GridLayout layout = new GridLayout(2,false);
         composite.setLayout(layout);
@@ -189,7 +190,8 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
                                              EclipseNSISPlugin.getResourceString("up.tooltip")); //$NON-NLS-1$
         upButton.setEnabled(mover.canMoveUp());
         upButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mover.moveUp();
             }
@@ -199,7 +201,8 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
                                                EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         downButton.setEnabled(mover.canMoveDown());
         downButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mover.moveDown();
             }

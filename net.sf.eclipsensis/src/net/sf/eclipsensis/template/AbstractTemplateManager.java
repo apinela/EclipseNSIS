@@ -19,14 +19,14 @@ import net.sf.eclipsensis.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
 
-public abstract class AbstractTemplateManager
+public abstract class AbstractTemplateManager<T extends ITemplate>
 {
     private File mUserTemplatesStore;
     private URL mDefaultTemplatesStore;
 
-    private List mTemplates;
-    private Map mDefaultTemplatesMap;
-    private AbstractTemplateReaderWriter mReaderWriter;
+    private List<T> mTemplates;
+    private Map<String, T> mDefaultTemplatesMap;
+    private AbstractTemplateReaderWriter<T> mReaderWriter;
 
     public AbstractTemplateManager()
     {
@@ -55,15 +55,15 @@ public abstract class AbstractTemplateManager
         }
         catch (Exception e1) {
             EclipseNSISPlugin.getDefault().log(e1);
-            mDefaultTemplatesMap = new HashMap();
+            mDefaultTemplatesMap = new HashMap<String, T>();
         }
         finally {
             if(mDefaultTemplatesMap == null) {
-                mDefaultTemplatesMap = new HashMap();
+                mDefaultTemplatesMap = new HashMap<String, T>();
             }
         }
 
-        mTemplates = new ArrayList();
+        mTemplates = new ArrayList<T>();
         loadTemplates();
     }
 
@@ -73,13 +73,13 @@ public abstract class AbstractTemplateManager
     protected final void loadTemplates()
     {
         mTemplates.clear();
-        Map map = new HashMap(mDefaultTemplatesMap);
+        Map<Object, T> map = new HashMap<Object, T>(mDefaultTemplatesMap);
 
         try {
-            List list = loadUserTemplateStore();
+            List<T> list = loadUserTemplateStore();
             if(list != null) {
-                for (Iterator iter = list.iterator(); iter.hasNext();) {
-                    ITemplate template = (ITemplate)iter.next();
+                for (Iterator<T> iter = list.iterator(); iter.hasNext();) {
+                    T template = iter.next();
                     if(template.getType() == ITemplate.TYPE_CUSTOM) {
                         map.remove(template.getName());
                     }
@@ -93,44 +93,45 @@ public abstract class AbstractTemplateManager
         mTemplates.addAll(map.values());
     }
 
-    public AbstractTemplateReaderWriter getReaderWriter()
+    public AbstractTemplateReaderWriter<T> getReaderWriter()
     {
         return mReaderWriter;
     }
 
-    protected Map loadDefaultTemplateStore() throws IOException, ClassNotFoundException
+	protected Map<String, T> loadDefaultTemplateStore() throws IOException, ClassNotFoundException
     {
-        Map map = null;
+        Map<String, T> map = null;
         if(mDefaultTemplatesStore != null) {
             InputStream stream = mDefaultTemplatesStore.openStream();
-            map = (Map)IOUtility.readObject(stream, getClass().getClassLoader());
+            map = IOUtility.readObject(stream, getClass().getClassLoader());
         }
 
         return  map;
     }
 
-    protected List loadUserTemplateStore() throws IOException, ClassNotFoundException
+    @SuppressWarnings("unchecked")
+	protected List<T> loadUserTemplateStore() throws IOException, ClassNotFoundException
     {
-        List list = null;
+        List<T> list = null;
         if(IOUtility.isValidFile(mUserTemplatesStore)) {
             Object obj = IOUtility.readObject(mUserTemplatesStore, getClass().getClassLoader());
-            if(obj instanceof Map) {
+            if(obj instanceof Map<?, ?>) {
                 //migrate
-                Map defaults = new HashMap();
+                Map<String, T> defaults = new HashMap<String, T>();
                 if(mDefaultTemplatesMap != null) {
-                    for (Iterator iter = mDefaultTemplatesMap.values().iterator(); iter.hasNext();) {
-                        ITemplate template = (ITemplate)iter.next();
+                    for (Iterator<T> iter = mDefaultTemplatesMap.values().iterator(); iter.hasNext();) {
+                        T template = iter.next();
                         defaults.put(template.getName(),template);
                     }
                 }
-                list = new ArrayList();
-                for(Iterator iter = ((Map)obj).values().iterator(); iter.hasNext(); ) {
-                    ITemplate template = (ITemplate)iter.next();
+                list = new ArrayList<T>();
+                for(Iterator<T> iter = ((Map<String, T>)obj).values().iterator(); iter.hasNext(); ) {
+                    T template = iter.next();
                     switch(template.getType()) {
                         case ITemplate.TYPE_DEFAULT:
                             continue;
                         case ITemplate.TYPE_CUSTOM:
-                            ITemplate t = (ITemplate)defaults.get(template.getName());
+                            T t = defaults.get(template.getName());
                             if(t == null) {
                                 template.setType(ITemplate.TYPE_USER);
                             }
@@ -140,17 +141,18 @@ public abstract class AbstractTemplateManager
                                    continue;
                                 }
                             }
-                        case ITemplate.TYPE_USER:
+                            //$FALL-THROUGH$
+					    case ITemplate.TYPE_USER:
                             list.add(template);
                     }
                 }
                 IOUtility.writeObject(mUserTemplatesStore, list);
             }
-            else if(obj instanceof List) {
-                list = (List)obj;
+            else if(obj instanceof List<?>) {
+                list = (List<T>)obj;
             }
-            else if(obj instanceof Collection) {
-                list = new ArrayList((Collection)obj);
+            else if(obj instanceof Collection<?>) {
+                list = new ArrayList<T>((Collection<T>)obj);
             }
         }
         return list;
@@ -166,10 +168,10 @@ public abstract class AbstractTemplateManager
         return mUserTemplatesStore;
     }
 
-    public ITemplate getTemplate(String id)
+    public T getTemplate(String id)
     {
-        for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-            ITemplate template = (ITemplate)iter.next();
+        for (Iterator<T> iter = mTemplates.iterator(); iter.hasNext();) {
+            T template = iter.next();
             if(Common.stringsAreEqual(template.getId(),id)) {
                 return template;
             }
@@ -177,17 +179,17 @@ public abstract class AbstractTemplateManager
         return null;
     }
 
-    public Collection getTemplates()
+    public Collection<T> getTemplates()
     {
         return Collections.unmodifiableCollection(mTemplates);
     }
 
-    public Collection getDefaultTemplates()
+    public Collection<T> getDefaultTemplates()
     {
         return Collections.unmodifiableCollection(mDefaultTemplatesMap.values());
     }
 
-    public boolean addTemplate(final ITemplate template)
+    public boolean addTemplate(final T template)
     {
         checkClass(template);
         template.setId(null);
@@ -197,10 +199,10 @@ public abstract class AbstractTemplateManager
         return true;
     }
 
-    protected boolean containsTemplate(ITemplate template)
+    protected boolean containsTemplate(T template)
     {
-        for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-            ITemplate t = (ITemplate)iter.next();
+        for (Iterator<T> iter = mTemplates.iterator(); iter.hasNext();) {
+            T t = iter.next();
             if(templatesAreEqual(t,template)) {
                 return true;
             }
@@ -208,18 +210,20 @@ public abstract class AbstractTemplateManager
         return false;
     }
 
-    public boolean removeTemplate(ITemplate template)
+    @SuppressWarnings("unchecked")
+	public boolean removeTemplate(T template)
     {
         checkClass(template);
         if(containsTemplate(template)) {
             switch(template.getType()) {
                 case ITemplate.TYPE_DEFAULT:
                 case ITemplate.TYPE_CUSTOM:
-                    ITemplate t = (ITemplate)template.clone();
+                    T t = (T)template.clone();
                     t.setType(ITemplate.TYPE_CUSTOM);
                     t.setDeleted(true);
                     mTemplates.add(t);
-                case ITemplate.TYPE_USER:
+                    //$FALL-THROUGH$
+			    case ITemplate.TYPE_USER:
                     mTemplates.remove(template);
             }
             return true;
@@ -227,7 +231,7 @@ public abstract class AbstractTemplateManager
         return false;
     }
 
-    public boolean updateTemplate(ITemplate oldTemplate, final ITemplate template)
+    public boolean updateTemplate(T oldTemplate, final T template)
     {
         checkClass(oldTemplate);
         checkClass(template);
@@ -235,7 +239,7 @@ public abstract class AbstractTemplateManager
             mTemplates.remove(oldTemplate);
 
             if(oldTemplate.getType() != ITemplate.TYPE_USER) {
-                ITemplate defaultTemplate = (ITemplate)mDefaultTemplatesMap.get(oldTemplate.getId());
+                T defaultTemplate = mDefaultTemplatesMap.get(oldTemplate.getId());
                 if(defaultTemplate != null) {
                     template.setType(templatesAreEqual(template,defaultTemplate)?ITemplate.TYPE_DEFAULT:ITemplate.TYPE_CUSTOM);
                 }
@@ -252,17 +256,17 @@ public abstract class AbstractTemplateManager
 
     public void restore()
     {
-        for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-            restore((ITemplate)iter.next());
+        for (Iterator<T> iter = mTemplates.iterator(); iter.hasNext();) {
+            restore(iter.next());
         }
     }
 
-    protected boolean restore(ITemplate template)
+    protected boolean restore(T template)
     {
         checkClass(template);
         if(template.getType() == ITemplate.TYPE_CUSTOM && template.isDeleted()) {
             template.setDeleted(false);
-            ITemplate defaultTemplate = (ITemplate)mDefaultTemplatesMap.get(template.getId());
+            T defaultTemplate = mDefaultTemplatesMap.get(template.getId());
             if(templatesAreEqual(template,defaultTemplate)) {
                 template.setType(ITemplate.TYPE_DEFAULT);
             }
@@ -273,8 +277,8 @@ public abstract class AbstractTemplateManager
 
     public boolean canRestore()
     {
-        for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-            ITemplate template = (ITemplate)iter.next();
+        for (Iterator<T> iter = mTemplates.iterator(); iter.hasNext();) {
+            T template = iter.next();
             checkClass(template);
             if(template.getType() == ITemplate.TYPE_CUSTOM && template.isDeleted()) {
                 return true;
@@ -289,11 +293,11 @@ public abstract class AbstractTemplateManager
         mTemplates.addAll(mDefaultTemplatesMap.values());
     }
 
-    public ITemplate revert(ITemplate template)
+    public T revert(T template)
     {
         checkClass(template);
         if(template.getType() == ITemplate.TYPE_CUSTOM) {
-            ITemplate defaultTemplate = (ITemplate)mDefaultTemplatesMap.get(template.getId());
+            T defaultTemplate = mDefaultTemplatesMap.get(template.getId());
             checkClass(defaultTemplate);
             mTemplates.remove(template);
             mTemplates.add(defaultTemplate);
@@ -302,7 +306,7 @@ public abstract class AbstractTemplateManager
         return null;
     }
 
-    public boolean canRevert(ITemplate template)
+    public boolean canRevert(T template)
     {
         checkClass(template);
         return (containsTemplate(template) && (template.getType() == ITemplate.TYPE_CUSTOM));
@@ -319,9 +323,9 @@ public abstract class AbstractTemplateManager
      */
     public void save() throws IOException
     {
-        Map map = new LinkedHashMap();
-        for (Iterator iter = mTemplates.iterator(); iter.hasNext();) {
-            ITemplate template = (ITemplate)iter.next();
+        Map<String, T> map = new LinkedHashMap<String, T>();
+        for (Iterator<T> iter = mTemplates.iterator(); iter.hasNext();) {
+            T template = iter.next();
             checkClass(template);
 
             if(System.getProperty("manage.default.templates") != null) { //$NON-NLS-1$
@@ -330,7 +334,7 @@ public abstract class AbstractTemplateManager
             }
             else {
                 if(template.getType() != ITemplate.TYPE_DEFAULT) {
-                    map.put(template,template);
+                    map.put(template.getName(),template);
                 }
             }
         }
@@ -341,25 +345,25 @@ public abstract class AbstractTemplateManager
                 mTemplates.clear();
                 URI uri = new URI(FileLocator.toFileURL(mDefaultTemplatesStore).toExternalForm());
                 File file = new File(uri);
-                IOUtility.writeObject(file, new HashMap(mDefaultTemplatesMap));
+                IOUtility.writeObject(file, new HashMap<Object, T>(mDefaultTemplatesMap));
             }
             catch (URISyntaxException e) {
                 throw new IOException(e.getMessage());
             }
         }
         else {
-            IOUtility.writeObject(mUserTemplatesStore, new ArrayList(map.values()));
+            IOUtility.writeObject(mUserTemplatesStore, new ArrayList<T>(map.values()));
         }
     }
 
-    private final void checkClass(ITemplate template)
+    private final void checkClass(T template)
     {
         if(template != null && !getTemplateClass().isAssignableFrom(template.getClass())) {
             throw new IllegalArgumentException(template.getClass().getName());
         }
     }
 
-    private boolean templatesAreEqual(ITemplate t1, ITemplate t2)
+    private boolean templatesAreEqual(T t1, T t2)
     {
         checkClass(t1);
         checkClass(t2);
@@ -375,6 +379,6 @@ public abstract class AbstractTemplateManager
     protected abstract Plugin getPlugin();
     protected abstract Image getShellImage();
     protected abstract IPath getTemplatesPath();
-    protected abstract Class getTemplateClass();
-    protected abstract AbstractTemplateReaderWriter createReaderWriter();
+    protected abstract Class<T> getTemplateClass();
+    protected abstract AbstractTemplateReaderWriter<T> createReaderWriter();
 }

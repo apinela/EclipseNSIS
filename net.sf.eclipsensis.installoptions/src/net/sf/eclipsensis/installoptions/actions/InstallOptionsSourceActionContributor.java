@@ -26,7 +26,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class InstallOptionsSourceActionContributor extends TextEditorActionContributor implements IInstallOptionsConstants
 {
     private MenuManager mInstallOptionsMenu;
-    private List mRetargetActions = new ArrayList();
+    private List<RetargetAction> mRetargetActions = new ArrayList<RetargetAction>();
     private RetargetAction mExportHTMLAction;
     private RetargetAction mReorderAction;
     private RetargetAction mCreateControlAction;
@@ -161,13 +161,15 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         mRetargetActions.add(action);
     }
 
-    public void contributeToMenu(IMenuManager menu)
+    @Override
+	public void contributeToMenu(IMenuManager menu)
     {
         super.contributeToMenu(menu);
         menu.insertBefore(IWorkbenchActionConstants.M_WINDOW, mInstallOptionsMenu);
     }
 
-    public void contributeToToolBar(IToolBarManager tbm)
+    @Override
+	public void contributeToToolBar(IToolBarManager tbm)
     {
         tbm.add(mWizardAction);
         tbm.add(new Separator());
@@ -187,28 +189,31 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
         tbm.add(mHelpAction);
     }
 
-    public void init(IActionBars bars)
+    @Override
+	public void init(IActionBars bars)
     {
         buildActions();
         super.init(bars);
     }
 
-    public void setActiveEditor(IEditorPart part)
+    @Override
+	public void setActiveEditor(IEditorPart part)
     {
         super.setActiveEditor(part);
         IActionBars bars = getActionBars();
         ITextEditor editor = (part instanceof ITextEditor?(ITextEditor)part:null);
-        for (Iterator iter = mRetargetActions.iterator(); iter.hasNext();) {
-            String id = ((IAction)iter.next()).getId();
+        for (Iterator<RetargetAction> iter = mRetargetActions.iterator(); iter.hasNext();) {
+            String id = iter.next().getId();
 			bars.setGlobalActionHandler(id,(editor == null?null:editor.getAction(id)));
         }
         bars.updateActionBars();
     }
 
-    public void dispose()
+    @Override
+	public void dispose()
     {
-        for (Iterator iter = mRetargetActions.iterator(); iter.hasNext();) {
-            RetargetAction action = (RetargetAction)iter.next();
+        for (Iterator<RetargetAction> iter = mRetargetActions.iterator(); iter.hasNext();) {
+            RetargetAction action = iter.next();
             getPage().removePartListener(action);
             action.dispose();
         }

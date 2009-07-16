@@ -39,7 +39,8 @@ public class ResetValueCommand extends Command
      * 3) the value set for that property is not the default
      * @see org.eclipse.gef.commands.Command#canExecute()
      */
-    public boolean canExecute()
+    @Override
+	public boolean canExecute()
     {
         boolean answer = false;
         if (target != null && propertyName != null) {
@@ -55,7 +56,8 @@ public class ResetValueCommand extends Command
      * Caches the undo value and invokes redo()
      * @see org.eclipse.gef.commands.Command#execute()
      */
-    public void execute()
+    @Override
+	public void execute()
     {
         undoValue = target.getPropertyValue(propertyName);
         if (undoValue instanceof IPropertySource) {
@@ -77,7 +79,8 @@ public class ResetValueCommand extends Command
      * Resets the specified property on the specified IPropertySource
      * @see org.eclipse.gef.commands.Command#redo()
      */
-    public void redo()
+    @Override
+	public void redo()
     {
         target.resetPropertyValue(propertyName);
     }
@@ -95,7 +98,8 @@ public class ResetValueCommand extends Command
      * Restores the non-default value that was reset.
      * @see org.eclipse.gef.commands.Command#undo()
      */
-    public void undo()
+    @Override
+	public void undo()
     {
         target.setPropertyValue(propertyName, undoValue);
     }

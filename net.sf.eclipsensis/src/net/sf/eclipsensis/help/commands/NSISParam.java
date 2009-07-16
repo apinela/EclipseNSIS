@@ -137,9 +137,9 @@ public abstract class NSISParam
         protected Control mControl = null;
         protected Button mOptionalButton = null;
         protected Label mNameLabel = null;
-        protected List mDependents = null;
+        protected List<INSISParamEditor> mDependents = null;
         private boolean mEnabled = true;
-        private Map mSettings = null;
+        private Map<String,Object> mSettings = null;
         private INSISParamEditor mParentEditor;
         private boolean mRequiredFields = false;
 
@@ -158,12 +158,12 @@ public abstract class NSISParam
         {
             if (!mRequiredFields)
             {
-                List childEditors = getChildEditors();
+                List<INSISParamEditor> childEditors = getChildEditors();
                 if (!Common.isEmptyCollection(childEditors))
                 {
-                    for (Iterator iter = childEditors.iterator(); iter.hasNext();)
+                    for (Iterator<INSISParamEditor> iter = childEditors.iterator(); iter.hasNext();)
                     {
-                        INSISParamEditor child = (INSISParamEditor) iter.next();
+                        INSISParamEditor child = iter.next();
                         if (child.hasRequiredFields())
                         {
                             return true;
@@ -202,12 +202,12 @@ public abstract class NSISParam
                 mOptionalButton.dispose();
             }
             mParentEditor = null;
-            List children = getChildEditors();
+            List<INSISParamEditor> children = getChildEditors();
             if (!Common.isEmptyCollection(children))
             {
-                for (Iterator iter = children.iterator(); iter.hasNext();)
+                for (Iterator<INSISParamEditor> iter = children.iterator(); iter.hasNext();)
                 {
-                    ((INSISParamEditor) iter.next()).dispose();
+                    iter.next().dispose();
                 }
             }
             mRequiredFields = false;
@@ -218,9 +218,9 @@ public abstract class NSISParam
             return mParentEditor;
         }
 
-        public List getChildEditors()
+        public List<INSISParamEditor> getChildEditors()
         {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         public boolean isEnabled()
@@ -254,7 +254,7 @@ public abstract class NSISParam
             return true;
         }
 
-        protected Object getSettingValue(String name, Class clasz, Object defaultValue)
+        protected Object getSettingValue(String name, Class<?>clasz, Object defaultValue)
         {
             Object value;
             if (getSettings() != null)
@@ -384,7 +384,8 @@ public abstract class NSISParam
                 if (mOptionalButton != null)
                 {
                     mOptionalButton.addSelectionListener(new SelectionAdapter() {
-                        public void widgetSelected(SelectionEvent e)
+                        @Override
+						public void widgetSelected(SelectionEvent e)
                         {
                             updateState(mOptionalButton.getSelection());
                         }
@@ -453,12 +454,12 @@ public abstract class NSISParam
             }
         }
 
-        public final List getDependents()
+        public final List<INSISParamEditor> getDependents()
         {
             return mDependents;
         }
 
-        public final void setDependents(List dependents)
+        public final void setDependents(List<INSISParamEditor> dependents)
         {
             mDependents = dependents;
             updateDependents(mEnabled && isSelected());
@@ -484,9 +485,9 @@ public abstract class NSISParam
         {
             if (!Common.isEmptyCollection(mDependents))
             {
-                for (Iterator iter = mDependents.iterator(); iter.hasNext();)
+                for (Iterator<INSISParamEditor> iter = mDependents.iterator(); iter.hasNext();)
                 {
-                    ((INSISParamEditor) iter.next()).setEnabled(state);
+                    iter.next().setEnabled(state);
                 }
             }
         }
@@ -533,13 +534,13 @@ public abstract class NSISParam
                 INSISParamEditor parentEditor = getParentEditor();
                 if (parentEditor != null)
                 {
-                    List children = parentEditor.getChildEditors();
+                    List<INSISParamEditor> children = parentEditor.getChildEditors();
                     if (!Common.isEmptyCollection(children))
                     {
                         int n = children.indexOf(this);
                         if (n > 0)
                         {
-                            INSISParamEditor child = (INSISParamEditor) children.get(n - 1);
+                            INSISParamEditor child = children.get(n - 1);
                             if (child instanceof NSISParamEditor && !child.isSelected())
                             {
                                 ((NSISParamEditor) child).internalAppendText(buf);
@@ -589,13 +590,13 @@ public abstract class NSISParam
                     INSISParamEditor parentEditor = getParentEditor();
                     if (parentEditor != null)
                     {
-                        List children = parentEditor.getChildEditors();
+                        List<INSISParamEditor> children = parentEditor.getChildEditors();
                         if (!Common.isEmptyCollection(children))
                         {
                             int n = children.indexOf(this);
                             if (n > 1)
                             {
-                                INSISParamEditor child = (INSISParamEditor) children.get(n - 1);
+                                INSISParamEditor child = children.get(n - 1);
                                 if (child instanceof NSISParamEditor && !child.isSelected())
                                 {
                                     return ((NSISParamEditor) child).internalValidate();
@@ -613,12 +614,12 @@ public abstract class NSISParam
             return NSISParam.this;
         }
 
-        public Map getSettings()
+        public Map<String,Object> getSettings()
         {
             return mSettings;
         }
 
-        public void setSettings(Map settings)
+        public void setSettings(Map<String,Object> settings)
         {
             mSettings = settings;
         }

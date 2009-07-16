@@ -32,17 +32,20 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
         NSISInstallElementFactory.register(TYPE, EclipseNSISPlugin.getResourceString("wizard.regvalue.type.name"), CommonImages.REG_SZ_IMAGE, NSISInstallRegistryValue.class); //$NON-NLS-1$
     }
 
-    protected int getRootKeyInternal()
+    @Override
+	protected int getRootKeyInternal()
     {
         return mRootKey;
     }
 
-    protected String getSubKeyInternal()
+    @Override
+	protected String getSubKeyInternal()
     {
         return mSubKey;
     }
 
-    protected void setRootKeyInternal(int rootKey)
+    @Override
+	protected void setRootKeyInternal(int rootKey)
     {
         if(mRootKey != rootKey) {
             setDirty();
@@ -50,7 +53,8 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
         }
     }
 
-    protected void setSubKeyInternal(String subKey)
+    @Override
+	protected void setSubKeyInternal(String subKey)
     {
         if(!Common.stringsAreEqual(mSubKey, subKey)) {
             setDirty();
@@ -66,7 +70,8 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
         return TYPE;
     }
 
-    protected void makeDisplayName(StringBuffer buf)
+    @Override
+	protected void makeDisplayName(StringBuffer buf)
     {
         super.makeDisplayName(buf);
         buf.append("\\").append(mValue).toString(); //$NON-NLS-1$
@@ -157,7 +162,8 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
         }
     }
 
-    public String doValidate()
+    @Override
+	public String doValidate()
     {
         String error = super.doValidate();
         if(Common.isEmpty(error)) {
@@ -177,7 +183,8 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
         return error;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -189,7 +196,8 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
         return result;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;

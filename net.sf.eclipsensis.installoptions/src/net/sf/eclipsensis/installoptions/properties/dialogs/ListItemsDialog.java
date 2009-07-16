@@ -27,15 +27,15 @@ import org.eclipse.swt.widgets.*;
 
 public class ListItemsDialog extends Dialog
 {
-    private List mValues;
+    private List<String> mValues;
     private String mType;
     private ICellEditorValidator mValidator;
 
-    public ListItemsDialog(Shell parent, List values, String type)
+    public ListItemsDialog(Shell parent, List<String> values, String type)
     {
         super(parent);
         setShellStyle(getShellStyle()|SWT.RESIZE);
-        mValues = new ArrayList(values);
+        mValues = new ArrayList<String>(values);
         mType = type;
     }
 
@@ -49,19 +49,21 @@ public class ListItemsDialog extends Dialog
         mValidator = validator;
     }
 
-    protected void configureShell(Shell newShell)
+    @Override
+	protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(InstallOptionsPlugin.getFormattedString("listitems.dialog.name", new String[]{mType})); //$NON-NLS-1$
         newShell.setImage(InstallOptionsPlugin.getShellImage());
     }
 
-    public List getValues()
+    public List<String> getValues()
     {
         return mValues;
     }
 
-    protected Control createDialogArea(Composite parent)
+    @Override
+	protected Control createDialogArea(Composite parent)
     {
         final Composite composite = (Composite)super.createDialogArea(parent);
         GridLayout layout = (GridLayout)composite.getLayout();
@@ -102,7 +104,8 @@ public class ListItemsDialog extends Dialog
                 return element;
             }
 
-            public void modify(Object element, String property, Object value)
+            @SuppressWarnings("unchecked")
+			public void modify(Object element, String property, Object value)
             {
                 if(value == null) {
                     Common.openError(getShell(),textEditor.getErrorMessage(), InstallOptionsPlugin.getShellImage());
@@ -111,12 +114,12 @@ public class ListItemsDialog extends Dialog
                     TableItem ti = (TableItem)element;
                     Table t = ti.getParent();
                     int n = t.getSelectionIndex();
-                    List list = (List)viewer.getInput();
+                    List<String> list = (List<String>)viewer.getInput();
                     if(n < list.size()) {
-                        list.set(n,value);
+                        list.set(n,(String) value);
                     }
                     else {
-                        list.add(value);
+                        list.add((String) value);
                     }
                     viewer.refresh(true);
                     viewer.setSelection(new StructuredSelection(value));
@@ -136,8 +139,9 @@ public class ListItemsDialog extends Dialog
         add.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
         add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         add.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                List list = (List)viewer.getInput();
+            @SuppressWarnings("unchecked")
+			public void handleEvent(Event e) {
+                List<String> list = (List<String>)viewer.getInput();
                 if(list != null) {
                     int counter = 1;
                     String item = InstallOptionsPlugin.getFormattedString("default.listitem.label", new Object[]{new Integer(counter++)}); //$NON-NLS-1$
@@ -150,7 +154,6 @@ public class ListItemsDialog extends Dialog
                     viewer.editElement(item,0);
                     Text t = (Text)textEditor.getControl();
                     t.setSelection(item.length());
-//                    viewer.se
                 }
             }
         });
@@ -160,12 +163,13 @@ public class ListItemsDialog extends Dialog
         del.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
         del.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         del.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                List list = (List)viewer.getInput();
+            @SuppressWarnings("unchecked")
+			public void handleEvent(Event e) {
+                List<String> list = (List<String>)viewer.getInput();
                 if(list != null) {
                     IStructuredSelection selection= (IStructuredSelection) viewer.getSelection();
                     if(!selection.isEmpty()) {
-                        for(Iterator iter=selection.toList().iterator(); iter.hasNext(); ) {
+                        for(Iterator<?> iter=selection.toList().iterator(); iter.hasNext(); ) {
                             list.remove(iter.next());
                         }
                         viewer.refresh(false);
@@ -175,16 +179,19 @@ public class ListItemsDialog extends Dialog
         });
         del.setEnabled(!viewer.getSelection().isEmpty());
 
-        final TableViewerUpDownMover mover = new TableViewerUpDownMover() {
-            protected List getAllElements()
+        final TableViewerUpDownMover<List<String>, String> mover = new TableViewerUpDownMover<List<String>, String>() {
+            @Override
+			@SuppressWarnings("unchecked")
+			protected List<String> getAllElements()
             {
-                return (List)((TableViewer)getViewer()).getInput();
+                return (List<String>)((TableViewer)getViewer()).getInput();
             }
 
-            protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
+			@Override
+			protected void updateStructuredViewerInput(List<String> input, List<String> elements, List<String> move, boolean isDown)
             {
-                ((List)input).clear();
-                ((List)input).addAll(elements);
+                (input).clear();
+                (input).addAll(elements);
             }
         };
         mover.setViewer(viewer);
@@ -195,7 +202,8 @@ public class ListItemsDialog extends Dialog
         up.setEnabled(mover.canMoveUp());
         up.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         up.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mover.moveUp();
             }
@@ -207,7 +215,8 @@ public class ListItemsDialog extends Dialog
         down.setEnabled(mover.canMoveDown());
         down.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         down.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mover.moveDown();
             }
@@ -229,7 +238,8 @@ public class ListItemsDialog extends Dialog
         return composite;
     }
 
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         ICellEditorValidator validator = getValidator();
         if(validator != null) {

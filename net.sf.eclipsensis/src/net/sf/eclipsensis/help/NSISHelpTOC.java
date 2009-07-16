@@ -18,8 +18,8 @@ public class NSISHelpTOC implements Serializable
 {
     private static final long serialVersionUID = -7260019864838868104L;
 
-    private Map mNodeMap = null;
-    private List mChildren = null;
+    private Map<String, NSISHelpTOCNode> mNodeMap = null;
+    private List<NSISHelpTOCNode> mChildren = null;
 
     NSISHelpTOC()
     {
@@ -30,7 +30,7 @@ public class NSISHelpTOC implements Serializable
         return new NSISHelpTOCNode(name, url);
     }
 
-    public List getChildren()
+    public List<NSISHelpTOCNode> getChildren()
     {
         return (mChildren != null?Collections.unmodifiableList(mChildren):null);
     }
@@ -38,7 +38,7 @@ public class NSISHelpTOC implements Serializable
     private void mapNode(NSISHelpTOCNode node)
     {
         if(mNodeMap == null) {
-            mNodeMap = new CaseInsensitiveMap();
+            mNodeMap = new CaseInsensitiveMap<NSISHelpTOCNode>();
         }
         String url = node.getURL();
         mNodeMap.put(url,node);
@@ -66,7 +66,7 @@ public class NSISHelpTOC implements Serializable
 
     public NSISHelpTOCNode getNode(String urlOrName)
     {
-        return (NSISHelpTOCNode)mNodeMap.get(urlOrName);
+        return mNodeMap.get(urlOrName);
     }
 
     void addNode(NSISHelpTOCNode node)
@@ -75,7 +75,7 @@ public class NSISHelpTOC implements Serializable
             throw new IllegalArgumentException();
         }
         if(mChildren == null) {
-            mChildren = new ArrayList();
+            mChildren = new ArrayList<NSISHelpTOCNode>();
         }
         mChildren.add(node);
         mapNode(node);
@@ -87,7 +87,7 @@ public class NSISHelpTOC implements Serializable
 
         private String mName;
         private String mURL;
-        private List mChildren;
+        private List<NSISHelpTOCNode> mChildren;
         private NSISHelpTOCNode mParent = null;
 
         private NSISHelpTOCNode(String name, String url)
@@ -103,7 +103,7 @@ public class NSISHelpTOC implements Serializable
                 throw new IllegalArgumentException();
             }
             if(mChildren == null) {
-                mChildren = new ArrayList();
+                mChildren = new ArrayList<NSISHelpTOCNode>();
             }
             mChildren.add(node);
             mapNode(node);
@@ -115,7 +115,7 @@ public class NSISHelpTOC implements Serializable
             return NSISHelpTOC.this;
         }
 
-        public List getChildren()
+        public List<NSISHelpTOCNode> getChildren()
         {
             return (mChildren != null?Collections.unmodifiableList(mChildren):null);
         }
@@ -140,7 +140,8 @@ public class NSISHelpTOC implements Serializable
             return mURL;
         }
 
-        public String toString()
+        @Override
+		public String toString()
         {
             return new StringBuffer(mName).append(" - ").append(mURL).toString(); //$NON-NLS-1$
         }

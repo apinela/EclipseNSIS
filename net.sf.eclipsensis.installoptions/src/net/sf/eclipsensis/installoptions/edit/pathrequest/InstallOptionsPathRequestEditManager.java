@@ -9,20 +9,22 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.pathrequest;
 
-import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditManager;
+import net.sf.eclipsensis.installoptions.edit.text.InstallOptionsGenericTextEditManager;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 
-public class InstallOptionsPathRequestEditManager extends InstallOptionsEditableElementEditManager
+public class InstallOptionsPathRequestEditManager extends InstallOptionsGenericTextEditManager
 {
-    public InstallOptionsPathRequestEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
+    public InstallOptionsPathRequestEditManager(GraphicalEditPart source, Class<TextCellEditor> editorType, CellEditorLocator locator)
     {
         super(source, editorType, locator);
     }
 
-    protected int getCellEditorStyle()
+    @Override
+	protected int getCellEditorStyle()
     {
         return SWT.SINGLE|SWT.LEFT;
     }

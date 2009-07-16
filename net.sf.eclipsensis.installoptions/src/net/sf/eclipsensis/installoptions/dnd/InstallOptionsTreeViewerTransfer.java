@@ -27,12 +27,14 @@ public class InstallOptionsTreeViewerTransfer extends ObjectTransfer
     {
     }
 
-    protected int[] getTypeIds()
+    @Override
+	protected int[] getTypeIds()
     {
         return TYPE_IDS;
     }
 
-    protected String[] getTypeNames()
+    @Override
+	protected String[] getTypeNames()
     {
         return TYPE_NAMES;
     }

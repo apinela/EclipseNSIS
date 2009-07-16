@@ -34,7 +34,8 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
         super(link);
     }
 
-    protected Control createAppearancePropertySection(final Composite parent, final TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
+    @Override
+	protected Control createAppearancePropertySection(final Composite parent, final TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
         final Composite composite = widgetFactory.createComposite(parent);
         GridLayout layout = new GridLayout(2,false);
@@ -90,7 +91,8 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
         colorEditor.setRGB(rgb==null?InstallOptionsLink.DEFAULT_TXTCOLOR:rgb);
         colorEditor.getButton().setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         colorEditor.getButton().addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 RGB newRGB = colorEditor.getRGB();
                 if(validator != null) {
@@ -106,7 +108,8 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
 
         //Reject focus
         colorText.addFocusListener(new FocusAdapter() {
-            public void focusGained(FocusEvent e)
+            @Override
+			public void focusGained(FocusEvent e)
             {
                 colorEditor.getButton().setFocus();
             }
@@ -116,7 +119,8 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
                                 InstallOptionsPlugin.getResourceString("restore.default.label"),SWT.PUSH); //$NON-NLS-1$
         resetButton.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         resetButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 updateRGB(commandHelper, descriptor, labelProvider, colorText, null);
             }
@@ -191,7 +195,8 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
         }
     }
 
-    protected boolean isTextPropertyMultiline()
+    @Override
+	protected boolean isTextPropertyMultiline()
     {
         return ((InstallOptionsLink)getWidget()).isMultiLine();
     }

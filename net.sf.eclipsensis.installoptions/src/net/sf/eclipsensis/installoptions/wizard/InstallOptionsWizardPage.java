@@ -142,7 +142,8 @@ public class InstallOptionsWizardPage extends WizardPage
             }
         });
         SelectionAdapter selectionAdapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mSaveLocation.setText(""); //$NON-NLS-1$
             }
@@ -154,7 +155,8 @@ public class InstallOptionsWizardPage extends WizardPage
         b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         b.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 String savePath = mSaveLocation.getText();
                 if(Common.isEmpty(savePath)) {
                     savePath = InstallOptionsPlugin.getResourceString("wizard.default.file.name"); //$NON-NLS-1$
@@ -287,7 +289,8 @@ public class InstallOptionsWizardPage extends WizardPage
         viewer.setSorter(new ViewerSorter(collator));
 
         ViewerFilter filter = new ViewerFilter() {
-            public boolean select(Viewer viewer, Object parentElement, Object element)
+            @Override
+			public boolean select(Viewer viewer, Object parentElement, Object element)
             {
                 if(element instanceof IInstallOptionsTemplate) {
                     IInstallOptionsTemplate template = (IInstallOptionsTemplate)element;
@@ -317,7 +320,8 @@ public class InstallOptionsWizardPage extends WizardPage
             }
         });
         viewer.getList().addSelectionListener(new SelectionAdapter() {
-            public void widgetDefaultSelected(SelectionEvent e)
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e)
             {
                 if(canFlipToNextPage()) {
                     IWizardPage nextPage = getNextPage();
@@ -329,7 +333,8 @@ public class InstallOptionsWizardPage extends WizardPage
         });
 
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mCreateFromTemplate = b.getSelection();
                 setPageComplete(validatePage());
@@ -340,7 +345,8 @@ public class InstallOptionsWizardPage extends WizardPage
         return group;
     }
 
-    public void setErrorMessage(String message)
+    @Override
+	public void setErrorMessage(String message)
     {
         super.setMessage(message,ERROR);
     }
@@ -404,7 +410,7 @@ public class InstallOptionsWizardPage extends WizardPage
             file = null;
             ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
             exists = ifile != null && ifile.exists();
-            path = ifile.getLocation();
+            path = ifile != null?ifile.getLocation():null;
             if(path == null) {
                 Common.openError(getShell(),EclipseNSISPlugin.getResourceString("local.filesystem.error"),InstallOptionsPlugin.getShellImage()); //$NON-NLS-1$
                 return false;
@@ -418,11 +424,11 @@ public class InstallOptionsWizardPage extends WizardPage
             }
             mCheckOverwrite = false;
         }
-        java.util.List editors = NSISEditorUtilities.findEditors(path);
+        java.util.List<IEditorPart> editors = NSISEditorUtilities.findEditors(path);
         if(!Common.isEmptyCollection(editors)) {
-            java.util.List dirtyEditors = new ArrayList();
-            for (Iterator iter = editors.iterator(); iter.hasNext();) {
-                IEditorPart editor = (IEditorPart)iter.next();
+            java.util.List<IEditorPart> dirtyEditors = new ArrayList<IEditorPart>();
+            for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
+                IEditorPart editor = iter.next();
                 if(editor.isDirty()) {
                     dirtyEditors.add(editor);
                 }
@@ -432,15 +438,15 @@ public class InstallOptionsWizardPage extends WizardPage
                     InstallOptionsPlugin.getShellImage())) {
                     return false;
                 }
-                for (Iterator iter = dirtyEditors.iterator(); iter.hasNext();) {
-                    IEditorPart editor = (IEditorPart)iter.next();
+                for (Iterator<IEditorPart> iter = dirtyEditors.iterator(); iter.hasNext();) {
+                    IEditorPart editor = iter.next();
                     editor.getSite().getPage().closeEditor(editor,false);
                     editors.remove(editor);
                 }
 
                 if(saveExternal) {
-                    for (Iterator iter = editors.iterator(); iter.hasNext();) {
-                        IEditorPart editor = (IEditorPart)iter.next();
+                    for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
+                        IEditorPart editor = iter.next();
                         editor.getSite().getPage().closeEditor(editor,false);
                     }
                 }
@@ -454,10 +460,14 @@ public class InstallOptionsWizardPage extends WizardPage
 
                     if(exists) {
                         if(saveExternal) {
-                            file.delete();
+                            if(file != null) {
+                            	file.delete();
+                            }
                         }
                         else {
-                            ifile.delete(true,true,null);
+                            if(ifile != null) {
+                            	ifile.delete(true,true,null);
+                            }
                         }
                     }
                     if(saveExternal) {
@@ -470,15 +480,19 @@ public class InstallOptionsWizardPage extends WizardPage
                             IOUtility.closeIO(writer);
                         }
 
-                        IFile[] files = root.findFilesForLocationURI(file.toURI());
-                        if(!Common.isEmptyArray(files)) {
-                            for (int i = 0; i < files.length; i++) {
-                                files[i].refreshLocal(IResource.DEPTH_ZERO, null);
-                            }
-                        }
+                        if (file != null) {
+							IFile[] files = root.findFilesForLocationURI(file.toURI());
+							if (!Common.isEmptyArray(files)) {
+								for (int i = 0; i < files.length; i++) {
+									files[i].refreshLocal(IResource.DEPTH_ZERO, null);
+								}
+							}
+						}
                     }
                     else {
-                        ifile.create(new ByteArrayInputStream(getContents().getBytes()),true,null);
+                        if(ifile != null) {
+                        	ifile.create(new ByteArrayInputStream(getContents().getBytes()),true,null);
+                        }
                     }
                 }
                 catch (Exception e) {

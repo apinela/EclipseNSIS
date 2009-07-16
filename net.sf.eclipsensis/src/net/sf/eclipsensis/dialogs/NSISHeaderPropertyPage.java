@@ -45,7 +45,8 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
     {
     }
 
-    protected Control createContents(Composite parent)
+    @Override
+	protected Control createContents(Composite parent)
     {
         setDescription(EclipseNSISPlugin.getResourceString("header.properties.description")); //$NON-NLS-1$
 
@@ -68,7 +69,8 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
         mBrowseButton.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         mBrowseButton.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         mBrowseButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 String scriptName = mNSISScriptName.getText();
                 IFile file = null;
@@ -99,7 +101,8 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
         return composite;
     }
 
-    protected void performDefaults()
+    @Override
+	protected void performDefaults()
     {
         super.performDefaults();
         mNSISScriptName.setText(""); //$NON-NLS-1$
@@ -116,7 +119,8 @@ public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPr
         return false;
     }
 
-    public boolean performOk()
+    @Override
+	public boolean performOk()
     {
         if(super.performOk()) {
             String nsisScriptName = mNSISScriptName.getText();

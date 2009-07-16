@@ -32,7 +32,8 @@ public class TypeKeyValueValidator implements IINIKeyValueValidator
                                             InstallOptionsPlugin.getFormattedString("type.value.warning", //$NON-NLS-1$
                                                     new Object[]{InstallOptionsModel.PROPERTY_TYPE}));
             problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.set.valid.type.value")) { //$NON-NLS-1$
-                protected INIProblemFix[] createFixes()
+                @Override
+				protected INIProblemFix[] createFixes()
                 {
                     return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(InstallOptionsModel.TYPE_UNKNOWN)+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                 }

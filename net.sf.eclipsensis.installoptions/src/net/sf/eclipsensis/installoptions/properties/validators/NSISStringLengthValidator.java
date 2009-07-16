@@ -47,8 +47,8 @@ public class NSISStringLengthValidator implements ICellEditorValidator
         if(value instanceof String) {
             return isValid((String)value);
         }
-        else if(value instanceof Collection) {
-            return isValid(Common.flatten(((Collection)value).toArray(),IInstallOptionsConstants.LIST_SEPARATOR));
+        else if(value instanceof Collection<?>) {
+            return isValid(Common.flatten(((Collection<?>)value).toArray(),IInstallOptionsConstants.LIST_SEPARATOR));
         }
         return null;
     }

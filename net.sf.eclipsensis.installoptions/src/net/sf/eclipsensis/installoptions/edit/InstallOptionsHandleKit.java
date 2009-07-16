@@ -22,18 +22,18 @@ import org.eclipse.swt.graphics.*;
 
 public class InstallOptionsHandleKit
 {
-    public static void addResizableHandle(GraphicalEditPart part, List handles, int direction)
+    public static void addResizableHandle(GraphicalEditPart part, List<Handle> handles, int direction)
     {
         handles.add(createResizableHandle(part, direction));
     }
 
-    public static void addResizableHandle(GraphicalEditPart part, List handles, int direction,
+    public static void addResizableHandle(GraphicalEditPart part, List<Handle> handles, int direction,
                                  DragTracker tracker, Cursor cursor)
     {
         handles.add(createResizableHandle(part, direction, tracker, cursor));
     }
 
-    public static void addResizableHandles(GraphicalEditPart part, List handles)
+    public static void addResizableHandles(GraphicalEditPart part, List<Handle> handles)
     {
         addMoveHandle(part, handles);
         handles.add(createResizableHandle(part, PositionConstants.EAST));
@@ -46,15 +46,17 @@ public class InstallOptionsHandleKit
         handles.add(createResizableHandle(part, PositionConstants.NORTH_EAST));
     }
 
-    public static void addLockHandles(GraphicalEditPart part, List handles)
+    public static void addLockHandles(GraphicalEditPart part, List<Handle> handles)
     {
         handles.add(new MoveHandle(part) {
-            protected DragTracker createDragTracker()
+            @Override
+			protected DragTracker createDragTracker()
             {
                 return null;
             }
 
-            protected void initialize()
+            @Override
+			protected void initialize()
             {
                 super.initialize();
                 setCursor(null);
@@ -91,7 +93,7 @@ public class InstallOptionsHandleKit
         return handle;
     }
 
-    public static void addCornerHandles(GraphicalEditPart part, List handles,
+    public static void addCornerHandles(GraphicalEditPart part, List<Handle> handles,
             DragTracker tracker, Cursor cursor)
     {
         handles.add(createNonResizableHandle(part, PositionConstants.SOUTH_EAST, tracker, cursor));
@@ -100,7 +102,7 @@ public class InstallOptionsHandleKit
         handles.add(createNonResizableHandle(part, PositionConstants.NORTH_EAST, tracker, cursor));
     }
 
-    public static void addCornerHandles(GraphicalEditPart part, List handles)
+    public static void addCornerHandles(GraphicalEditPart part, List<Handle> handles)
     {
         handles.add(createNonResizableHandle(part, PositionConstants.SOUTH_EAST));
         handles.add(createNonResizableHandle(part, PositionConstants.SOUTH_WEST));
@@ -108,23 +110,23 @@ public class InstallOptionsHandleKit
         handles.add(createNonResizableHandle(part, PositionConstants.NORTH_EAST));
     }
 
-    public static void addNonResizableHandle(GraphicalEditPart part, List handles, int direction)
+    public static void addNonResizableHandle(GraphicalEditPart part, List<Handle> handles, int direction)
     {
         handles.add(createNonResizableHandle(part, direction));
     }
 
-    public static void addNonResizableHandle(GraphicalEditPart part, List handles, int direction, DragTracker tracker, Cursor cursor)
+    public static void addNonResizableHandle(GraphicalEditPart part, List<Handle> handles, int direction, DragTracker tracker, Cursor cursor)
     {
         handles.add(createNonResizableHandle(part, direction, tracker, cursor));
     }
 
-    public static void addNonResizableHandles(GraphicalEditPart part, List handles)
+    public static void addNonResizableHandles(GraphicalEditPart part, List<Handle> handles)
     {
         addMoveHandle(part, handles);
         addCornerHandles(part, handles);
     }
 
-    public static void addNonResizableHandles(GraphicalEditPart part, List handles, DragTracker tracker, Cursor cursor)
+    public static void addNonResizableHandles(GraphicalEditPart part, List<Handle> handles, DragTracker tracker, Cursor cursor)
     {
         addMoveHandle(part, handles, tracker, cursor);
         addCornerHandles(part, handles, tracker, cursor);
@@ -146,12 +148,12 @@ public class InstallOptionsHandleKit
         return handle;
     }
 
-    public static void addMoveHandle(GraphicalEditPart f, List handles)
+    public static void addMoveHandle(GraphicalEditPart f, List<Handle> handles)
     {
         handles.add(moveHandle(f));
     }
 
-    public static void addMoveHandle(GraphicalEditPart f, List handles, DragTracker tracker,
+    public static void addMoveHandle(GraphicalEditPart f, List<Handle> handles, DragTracker tracker,
                                      Cursor cursor)
     {
         handles.add(moveHandle(f, tracker, cursor));
@@ -191,7 +193,8 @@ public class InstallOptionsHandleKit
 
         }
 
-        protected DragTracker createDragTracker()
+        @Override
+		protected DragTracker createDragTracker()
         {
             return null;
         }

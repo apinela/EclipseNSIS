@@ -51,7 +51,8 @@ public class InstallOptionsRootEditPart extends ScalableFreeformRootEditPart imp
     }
 
 
-    protected void refreshGridLayer()
+    @Override
+	protected void refreshGridLayer()
     {
         InstallOptionsGridLayer grid = (InstallOptionsGridLayer)getLayer(GRID_LAYER);
         String val = (String)getViewer().getProperty(InstallOptionsGridLayer.PROPERTY_GRID_STYLE);
@@ -61,7 +62,8 @@ public class InstallOptionsRootEditPart extends ScalableFreeformRootEditPart imp
         super.refreshGridLayer();
     }
 
-    protected void register()
+    @Override
+	protected void register()
     {
         if (getLayer(GRID_LAYER) != null) {
             getViewer().addPropertyChangeListener(mGridListener);
@@ -72,18 +74,21 @@ public class InstallOptionsRootEditPart extends ScalableFreeformRootEditPart imp
         super.register();
     }
 
-    protected void unregister()
+    @Override
+	protected void unregister()
     {
         getViewer().removePropertyChangeListener(mGridListener);
         super.unregister();
     }
 
-    protected GridLayer createGridLayer()
+    @Override
+	protected GridLayer createGridLayer()
     {
         return new InstallOptionsGridLayer();
     }
 
-    protected void createLayers(LayeredPane layeredPane)
+    @Override
+	protected void createLayers(LayeredPane layeredPane)
     {
         super.createLayers(layeredPane);
         layeredPane.add(new ResizeFeedbackLayer(), RESIZE_FEEDBACK_LAYER);

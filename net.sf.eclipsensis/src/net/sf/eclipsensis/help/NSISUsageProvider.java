@@ -23,7 +23,7 @@ public class NSISUsageProvider implements IEclipseNSISService
 {
     private static NSISUsageProvider cInstance = null;
 
-    private Map mUsages = null;
+    private Map<String, String> mUsages = null;
     private String mLineSeparator;
     private INSISHomeListener mNSISHomeListener = null;
 
@@ -35,7 +35,7 @@ public class NSISUsageProvider implements IEclipseNSISService
     public void start(IProgressMonitor monitor)
     {
         if (cInstance == null) {
-            mUsages = new CaseInsensitiveMap();
+            mUsages = new CaseInsensitiveMap<String>();
             mNSISHomeListener = new INSISHomeListener() {
                 public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
                 {
@@ -68,7 +68,7 @@ public class NSISUsageProvider implements IEclipseNSISService
     public String getUsage(String keyWord)
     {
         if(!Common.isEmpty(keyWord)) {
-            return (String)mUsages.get(keyWord);
+            return mUsages.get(keyWord);
         }
         else {
             return null;
@@ -131,7 +131,7 @@ public class NSISUsageProvider implements IEclipseNSISService
                 }
                 else {
                     try {
-                        mUsages = (Map)IOUtility.readObject(cacheFile);
+                        mUsages = IOUtility.readObject(cacheFile);
                     }
                     catch (Exception e) {
                         EclipseNSISPlugin.getDefault().log(e);

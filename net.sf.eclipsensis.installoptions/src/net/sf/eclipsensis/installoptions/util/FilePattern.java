@@ -18,7 +18,8 @@ public class FilePattern implements Cloneable
         mPattern = pattern;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return getPattern();
     }
@@ -33,7 +34,8 @@ public class FilePattern implements Cloneable
         mPattern = pattern;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new FilePattern(mPattern);
     }

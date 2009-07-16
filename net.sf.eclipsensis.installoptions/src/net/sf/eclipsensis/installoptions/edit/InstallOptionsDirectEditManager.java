@@ -19,36 +19,41 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.views.properties.*;
 
-public abstract class InstallOptionsDirectEditManager extends DirectEditManager
+public abstract class InstallOptionsDirectEditManager<T extends CellEditor> extends DirectEditManager
 {
+	private Class<T> mEditorType;
+	
     /**
      * @param source
      * @param editorType
      * @param locator
      */
     public InstallOptionsDirectEditManager(GraphicalEditPart source,
-            Class editorType, CellEditorLocator locator)
+            Class<T> editorType, CellEditorLocator locator)
     {
         super(source, editorType, locator);
+        mEditorType = editorType;
     }
 
-    protected final CellEditor createCellEditorOn(Composite composite)
+    @Override
+	protected final T createCellEditorOn(Composite composite)
     {
         InstallOptionsModelTypeDef typeDef = ((InstallOptionsWidget)getEditPart().getModel()).getTypeDef();
         if(typeDef == null || !typeDef.getSettings().contains(getDirectEditProperty())) {
             return null;
         }
         else {
-            return createCellEditor(composite);
+            return mEditorType.cast(createCellEditor(composite));
         }
     }
 
-    protected CellEditor createCellEditor(Composite composite)
+    protected T createCellEditor(Composite composite)
     {
-        return super.createCellEditorOn(composite);
+        return mEditorType.cast(super.createCellEditorOn(composite));
     }
 
-    protected final void initCellEditor()
+    @Override
+	protected final void initCellEditor()
     {
         InstallOptionsWidget control = (InstallOptionsWidget)getEditPart().getModel();
         IPropertyDescriptor descriptor = control.getPropertyDescriptor(getDirectEditProperty());

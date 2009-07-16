@@ -9,30 +9,37 @@
  *******************************************************************************/
 package net.sf.eclipsensis.lang;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.Map;
 
-import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.CaseInsensitiveMap;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.IOUtility;
 
 public class NSISLanguage implements Serializable
 {
 	private static final long serialVersionUID = -3444530357264653581L;
-
+ 
     private String mName;
     private String mDisplayName;
     private int mLangId;
     private String mLangDef;
 
-    private transient Map mLangStrings = null;
+    private transient Map<String, String> mLangStrings = null;
 
     /**
      * @param name
      * @param displayName
      * @param langId
      */
-    NSISLanguage(String name, String displayName, int langId)
+    public NSISLanguage(String name, String displayName, int langId)
     {
         mName = name;
         mDisplayName = displayName;
@@ -72,17 +79,20 @@ public class NSISLanguage implements Serializable
         return mLangDef;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return getDisplayName();
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return mName.hashCode() | mLangId << 16;
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if(o instanceof NSISLanguage) {
             NSISLanguage language = (NSISLanguage)o;
@@ -96,7 +106,7 @@ public class NSISLanguage implements Serializable
         String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
         if(!Common.isEmpty(nsisHome)) {
             if(mLangStrings == null) {
-                mLangStrings = new CaseInsensitiveMap();
+                mLangStrings = new CaseInsensitiveMap<String>();
                 File langFile = new File(new File(nsisHome,INSISConstants.LANGUAGE_FILES_LOCATION),mName+INSISConstants.LANGUAGE_FILES_EXTENSION);
                 if(langFile.exists()) {
                     BufferedReader br = null;
@@ -109,9 +119,7 @@ public class NSISLanguage implements Serializable
                                 line = line.substring(1).trim();
                                 if(line.charAt(0) == '^') {
                                     String name = line;
-                                    if(line != null) {
-                                        mLangStrings.put(name,line);
-                                    }
+                                    mLangStrings.put(name,line);
                                 }
                             }
                             line = br.readLine();
@@ -125,7 +133,7 @@ public class NSISLanguage implements Serializable
                     }
                 }
             }
-            return (String)mLangStrings.get(key);
+            return mLangStrings.get(key);
         }
         return null;
     }

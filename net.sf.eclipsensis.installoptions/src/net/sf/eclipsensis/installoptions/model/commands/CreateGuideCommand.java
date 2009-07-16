@@ -32,12 +32,14 @@ public class CreateGuideCommand extends Command
         this.mPosition = position;
     }
 
-    public boolean canUndo()
+    @Override
+	public boolean canUndo()
     {
         return true;
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         if (mGuide == null) {
             mGuide = new InstallOptionsGuide(!mParent.isHorizontal());
@@ -47,7 +49,8 @@ public class CreateGuideCommand extends Command
         mParent.addGuide(mGuide);
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         mParent.removeGuide(mGuide);
     }

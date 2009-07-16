@@ -25,7 +25,8 @@ public class RadioButtonFigure extends CheckBoxFigure
         super(parent, propertySource);
     }
 
-    public int getDefaultStyle()
+    @Override
+	public int getDefaultStyle()
     {
         return SWT.LEFT|SWT.RADIO;
     }

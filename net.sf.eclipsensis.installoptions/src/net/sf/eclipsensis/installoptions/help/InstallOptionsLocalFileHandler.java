@@ -20,12 +20,14 @@ import org.eclipse.ui.ide.IDE;
 
 public class InstallOptionsLocalFileHandler extends NSISLocalFileHandler
 {
-    protected String getEditorID(File file)
+    @Override
+	protected String getEditorID(File file)
     {
         return IInstallOptionsConstants.INSTALLOPTIONS_DESIGN_EDITOR_ID;
     }
 
-    protected String getEditorID(IFile file)
+    @Override
+	protected String getEditorID(IFile file)
     {
         try {
             String id = file.getPersistentProperty(IDE.EDITOR_KEY);

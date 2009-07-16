@@ -28,7 +28,8 @@ public class NSISHTMLHelpAction extends ActionDelegate implements IEditorActionD
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    public void run(IAction action)
+    @Override
+	public void run(IAction action)
     {
         NSISHelpURLProvider.getInstance().showHelp();
     }

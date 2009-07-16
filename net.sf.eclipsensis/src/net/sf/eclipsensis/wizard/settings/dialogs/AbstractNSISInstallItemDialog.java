@@ -47,7 +47,8 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog 
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected final Control createControl(Composite parent)
+    @Override
+	protected final Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -77,7 +78,8 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog 
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#create()
      */
-    public void create()
+    @Override
+	public void create()
     {
         super.create();
         validate();
@@ -86,7 +88,8 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog 
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         if(validate()) {
             Common.storeToBean(mItem, mStore, getProperties());
@@ -110,6 +113,6 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog 
     protected abstract boolean hasRequiredFields();
     protected abstract String checkForErrors();
     protected abstract Control createControlContents(Composite parent);
-    protected abstract List getProperties();
+    protected abstract List<String> getProperties();
     protected abstract String getHelpContextId();
 }

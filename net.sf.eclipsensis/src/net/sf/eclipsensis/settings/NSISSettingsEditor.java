@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.*;
 public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListener
 {
     private NSISSettings mSettings = null;
-    private Collection mPages = new ArrayList();
+    private Collection<NSISSettingsEditorPage> mPages = new ArrayList<NSISSettingsEditorPage>();
     private TabFolder mFolder = null;
     private boolean mEnabledState;
 
@@ -40,8 +40,8 @@ public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListe
     private boolean getEnabledState()
     {
         boolean enabledState = true;
-        for (Iterator iter=mPages.iterator(); iter.hasNext(); ) {
-            NSISSettingsEditorPage page = (NSISSettingsEditorPage)iter.next();
+        for (Iterator<NSISSettingsEditorPage> iter=mPages.iterator(); iter.hasNext(); ) {
+            NSISSettingsEditorPage page = iter.next();
             if(page != null && page.supportsEnablement()) {
                 enabledState = enabledState && page.canEnableControls();
             }
@@ -51,8 +51,8 @@ public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListe
 
     private void enableControls()
     {
-        for (Iterator iter=mPages.iterator(); iter.hasNext(); ) {
-            NSISSettingsEditorPage page = (NSISSettingsEditorPage)iter.next();
+        for (Iterator<NSISSettingsEditorPage> iter=mPages.iterator(); iter.hasNext(); ) {
+            NSISSettingsEditorPage page = iter.next();
             if(page != null && page.supportsEnablement()) {
                 page.enableControls(mEnabledState);
                 TabItem tabItem = (TabItem)mFolder.getData(page.getName());
@@ -84,7 +84,8 @@ public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListe
 
         folder.addSelectionListener(new SelectionAdapter()
         {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 try {
                     TabItem item = folder.getSelection()[0];
@@ -127,8 +128,8 @@ public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListe
      */
     public final boolean performApply()
     {
-        for (Iterator iter=mPages.iterator(); iter.hasNext(); ) {
-            NSISSettingsEditorPage page = (NSISSettingsEditorPage)iter.next();
+        for (Iterator<NSISSettingsEditorPage> iter=mPages.iterator(); iter.hasNext(); ) {
+            NSISSettingsEditorPage page = iter.next();
             if(page != null) {
                 if(!page.performApply()) {
                     return false;
@@ -141,8 +142,8 @@ public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListe
 
     public final void performDefaults()
     {
-        for (Iterator iter=mPages.iterator(); iter.hasNext(); ) {
-            NSISSettingsEditorPage page = (NSISSettingsEditorPage)iter.next();
+        for (Iterator<NSISSettingsEditorPage> iter=mPages.iterator(); iter.hasNext(); ) {
+            NSISSettingsEditorPage page = iter.next();
             if(page != null) {
                 page.setDefaults();
             }

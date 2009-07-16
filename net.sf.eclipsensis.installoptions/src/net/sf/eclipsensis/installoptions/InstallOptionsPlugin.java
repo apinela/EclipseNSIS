@@ -11,23 +11,42 @@ package net.sf.eclipsensis.installoptions;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import net.sf.eclipsensis.editor.text.*;
+import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
+import net.sf.eclipsensis.editor.text.NSISTextUtility;
 import net.sf.eclipsensis.installoptions.builder.InstallOptionsBuilder;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.job.JobScheduler;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.CompoundResourceBundle;
+import net.sf.eclipsensis.util.ImageManager;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.gef.ui.palette.PaletteViewerPreferences;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
-import org.osgi.framework.*;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOptionsConstants
 {
@@ -39,13 +58,14 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     private static File cStateLocation = null;
 
     private static InstallOptionsPlugin cPlugin;
-    private Map mResourceBundles = new HashMap();
+    private Map<Locale, CompoundResourceBundle> mResourceBundles = new HashMap<Locale, CompoundResourceBundle>();
     public static final String[] BUNDLE_NAMES = new String[]{RESOURCE_BUNDLE,MESSAGE_BUNDLE};
     private ImageManager mImageManager;
     private String mName = null;
     private JobScheduler mJobScheduler = new JobScheduler();
     private ChainedPreferenceStore mCombinedPreferenceStore;
-
+    private IEclipsePreferences mPreferences;
+    
     /**
      *
      */
@@ -138,7 +158,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         if(!mResourceBundles.containsKey(locale)) {
             mResourceBundles.put(locale,new CompoundResourceBundle(getClass().getClassLoader(),locale, BUNDLE_NAMES));
         }
-        return (ResourceBundle)mResourceBundles.get(locale);
+        return mResourceBundles.get(locale);
     }
 
     private void initializePreference(IPreferenceStore store, String name, String defaultValue)
@@ -165,12 +185,12 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         initializePreference(store,PREFERENCE_GRID_STYLE,GRID_STYLE_DEFAULT);
 
         String preference = store.getString(IInstallOptionsConstants.PREFERENCE_SYNTAX_STYLES);
-        Map map;
+        Map<String, NSISSyntaxStyle> map;
         if(!Common.isEmpty(preference)) {
             map = NSISTextUtility.parseSyntaxStylesMap(preference);
         }
         else {
-            map = new LinkedHashMap();
+            map = new LinkedHashMap<String, NSISSyntaxStyle>();
         }
         boolean changed = setSyntaxStyles(map);
         if(changed) {
@@ -209,7 +229,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         }
     }
 
-    public boolean setSyntaxStyles(Map map)
+    public boolean setSyntaxStyles(Map<String, NSISSyntaxStyle> map)
     {
         boolean changed = setSyntaxStyle(map,IInstallOptionsConstants.COMMENT_STYLE,new NSISSyntaxStyle(SYNTAX_COMMENTS,null,false,true,false,false));
         changed |= setSyntaxStyle(map,IInstallOptionsConstants.SECTION_STYLE,new NSISSyntaxStyle(SYNTAX_SECTIONS,null,true,false,false,false));
@@ -219,7 +239,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         return changed;
     }
 
-    private boolean setSyntaxStyle(Map map, String name, NSISSyntaxStyle style)
+    private boolean setSyntaxStyle(Map<String, NSISSyntaxStyle> map, String name, NSISSyntaxStyle style)
     {
         if(!map.containsKey(name) || map.get(name) == null) {
             map.put(name,style);
@@ -236,10 +256,12 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         return mName;
     }
 
-    public void start(BundleContext context) throws Exception
+    @Override
+	public void start(BundleContext context) throws Exception
     {
         super.start(context);
         mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
+        mPreferences = new InstanceScope().getNode(mName);
         mImageManager = new ImageManager(this);
         cShellImage = mImageManager.getImage(getResourceString("installoptions.icon")); //$NON-NLS-1$
         initializePreferences();
@@ -252,7 +274,8 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         }, InstallOptionsPlugin.getResourceString("workspace.build.thread.name")).start(); //$NON-NLS-1$
     }
 
-    public void stop(BundleContext context) throws Exception
+    @Override
+	public void stop(BundleContext context) throws Exception
     {
         mJobScheduler.stop();
         mImageManager = null;
@@ -297,5 +320,15 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
             }
         }
         return cStateLocation;
+    }
+    
+    public void savePreferences()
+    {
+    	try {
+			mPreferences.flush();
+		} 
+    	catch (BackingStoreException e) {
+			log(e);
+		}    	
     }
 }

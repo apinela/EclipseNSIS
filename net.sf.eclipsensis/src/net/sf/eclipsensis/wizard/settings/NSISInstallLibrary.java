@@ -57,7 +57,8 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     private boolean mX64 = false;
 
-    public String doValidate()
+    @Override
+	public String doValidate()
     {
         if (!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
@@ -75,7 +76,8 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
         return new NSISInstallLibraryDialog(wizard, this).open() == Window.OK;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;
@@ -157,7 +159,8 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
         return TYPE;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -304,7 +307,8 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
         }
     }
 
-    public void setTargetPlatform(int targetPlatform)
+    @Override
+	public void setTargetPlatform(int targetPlatform)
     {
         super.setTargetPlatform(targetPlatform);
         setDestination(NSISWizardUtil.convertPath(targetPlatform, getDestination()));

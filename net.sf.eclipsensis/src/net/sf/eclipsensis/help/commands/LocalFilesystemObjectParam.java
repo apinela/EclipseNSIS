@@ -20,7 +20,8 @@ public abstract class LocalFilesystemObjectParam extends SubstitutableParam
         super(node);
     }
 
-    protected final PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected final PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return createLocalFilesystemObjectParamEditor(command, parentEditor);
     }
@@ -91,7 +92,8 @@ public abstract class LocalFilesystemObjectParam extends SubstitutableParam
             return false;
         }
 
-        protected final String validateParam()
+        @Override
+		protected final String validateParam()
         {
             String error = validateLocalFilesystemObjectParam();
             if(error != null) {

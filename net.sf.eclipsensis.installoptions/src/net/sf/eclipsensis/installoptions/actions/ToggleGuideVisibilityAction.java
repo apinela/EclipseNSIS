@@ -41,7 +41,8 @@ public class ToggleGuideVisibilityAction extends Action
     /**
      * @see org.eclipse.jface.action.IAction#isChecked()
      */
-    public boolean isChecked() {
+    @Override
+	public boolean isChecked() {
         Boolean val = (Boolean)diagramViewer.getProperty(PROPERTY_GUIDE_VISIBILITY);
         if (val != null) {
             return val.booleanValue();
@@ -52,7 +53,8 @@ public class ToggleGuideVisibilityAction extends Action
     /**
      * @see org.eclipse.jface.action.IAction#run()
      */
-    public void run()
+    @Override
+	public void run()
     {
         diagramViewer.setProperty(PROPERTY_GUIDE_VISIBILITY, (isChecked()?Boolean.FALSE:Boolean.TRUE));
     }

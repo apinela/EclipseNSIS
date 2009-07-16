@@ -9,22 +9,27 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import net.sf.eclipsensis.*;
-import net.sf.eclipsensis.template.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.template.AbstractTemplateSettings;
 import net.sf.eclipsensis.wizard.NSISTemplateWizard;
-import net.sf.eclipsensis.wizard.template.*;
+import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
+import net.sf.eclipsensis.wizard.template.NSISWizardTemplateManager;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 public class NSISWizardTemplatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
-    private AbstractTemplateSettings mTemplateSettings;
+    private AbstractTemplateSettings<NSISWizardTemplate> mTemplateSettings;
 
     /**
      *
@@ -38,7 +43,8 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
     /*
      * @see PreferencePage#createControl(Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         super.createControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_scrtmpltprefs_context"); //$NON-NLS-1$
     }
@@ -46,22 +52,26 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createContents(Composite ancestor)
+    @Override
+	protected Control createContents(Composite ancestor)
     {
-        mTemplateSettings =  new AbstractTemplateSettings(ancestor, SWT.NONE, new NSISWizardTemplateManager()) {
-            protected boolean canAdd()
+        mTemplateSettings =  new AbstractTemplateSettings<NSISWizardTemplate>(ancestor, SWT.NONE, new NSISWizardTemplateManager()) {
+            @Override
+			protected boolean canAdd()
             {
                 return true;
             }
 
-            protected ITemplate createTemplate(String name)
+            @Override
+			protected NSISWizardTemplate createTemplate(String name)
             {
                 return new NSISWizardTemplate(name);
             }
 
-            protected Dialog createDialog(ITemplate template)
+            @Override
+			protected Dialog createDialog(NSISWizardTemplate template)
             {
-                final NSISWizardTemplate wizardTemplate = (NSISWizardTemplate)template;
+                final NSISWizardTemplate wizardTemplate = template;
                 final NSISTemplateWizardDialog[] wizardDialog = new NSISTemplateWizardDialog[1];
                 BusyIndicator.showWhile(getShell().getDisplay(),new Runnable() {
                     public void run()
@@ -75,7 +85,8 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
                 return wizardDialog[0];
             }
 
-            protected Image getShellImage()
+            @Override
+			protected Image getShellImage()
             {
                 return EclipseNSISPlugin.getShellImage();
             }
@@ -94,7 +105,8 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
     /*
      * @see PreferencePage#performDefaults()
      */
-    protected void performDefaults()
+    @Override
+	protected void performDefaults()
     {
         mTemplateSettings.performDefaults();
     }
@@ -102,7 +114,8 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
     /*
      * @see PreferencePage#performOk()
      */
-    public boolean performOk()
+    @Override
+	public boolean performOk()
     {
         if(mTemplateSettings.performOk()) {
             return super.performOk();
@@ -110,7 +123,8 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
         return false;
     }
 
-    public boolean performCancel()
+    @Override
+	public boolean performCancel()
     {
         return mTemplateSettings.performCancel();
     }

@@ -33,6 +33,7 @@ public class NSISConfigWizardDescriptor implements IAdaptable, IPluginContributi
         mId = configurationElement.getAttribute(WIZARD_ID);
     }
 
+    @SuppressWarnings("unchecked")
     public Object getAdapter(Class adapter)
     {
         if (adapter == IPluginContribution.class) {

@@ -33,9 +33,11 @@ public class CheckBoxFigure extends ButtonFigure
         super(parent, propertySource);
     }
 
-    protected void init(IPropertySource propertySource)
+    @SuppressWarnings("unchecked")
+	@Override
+	protected void init(IPropertySource propertySource)
     {
-        List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
+        List<String> flags = (List<String>)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
         setLeftText(flags != null && flags.contains(InstallOptionsModel.FLAGS_RIGHT));
         setState(InstallOptionsModel.STATE_CHECKED.equals(propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_STATE)));
         super.init(propertySource);
@@ -56,7 +58,8 @@ public class CheckBoxFigure extends ButtonFigure
         return mLeftText;
     }
 
-    public int getDefaultStyle()
+    @Override
+	public int getDefaultStyle()
     {
         return SWT.LEFT|SWT.CHECK;
     }
@@ -64,7 +67,8 @@ public class CheckBoxFigure extends ButtonFigure
     /**
      * @return
      */
-    protected Control createUneditableSWTControl(Composite parent, int style)
+    @Override
+	protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Button button = (Button)super.createUneditableSWTControl(parent, style);
         button.setSelection(mState);

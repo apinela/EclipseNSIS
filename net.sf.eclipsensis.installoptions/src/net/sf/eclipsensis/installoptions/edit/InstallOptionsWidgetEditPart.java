@@ -10,22 +10,44 @@
 package net.sf.eclipsensis.installoptions.edit;
 
 import java.beans.PropertyChangeEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import net.sf.eclipsensis.installoptions.*;
-import net.sf.eclipsensis.installoptions.figures.*;
-import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.installoptions.requests.*;
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
+import net.sf.eclipsensis.installoptions.figures.ScrollBarsFigure;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.Position;
+import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
+import net.sf.eclipsensis.installoptions.requests.ReorderPartRequest;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.WinAPI;
 
-import org.eclipse.draw2d.*;
-import org.eclipse.draw2d.geometry.*;
-import org.eclipse.gef.*;
+import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.FigureUtilities;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.MarginBorder;
+import org.eclipse.draw2d.ScrollBar;
+import org.eclipse.draw2d.XYLayout;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.gef.AccessibleEditPart;
+import org.eclipse.gef.DragTracker;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.GraphicalEditPart;
+import org.eclipse.gef.Request;
+import org.eclipse.gef.RequestConstants;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.tools.*;
-import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.swt.accessibility.*;
+import org.eclipse.gef.tools.CellEditorLocator;
+import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.DragEditPartsTracker;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPart implements IDirectEditLabelProvider, IExtendedEditLabelProvider
@@ -66,7 +88,8 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         setExtendedEditLabel(InstallOptionsPlugin.getResourceString(getExtendedEditLabelProperty()));
     }
 
-    public DragTracker getDragTracker(Request req)
+    @Override
+	public DragTracker getDragTracker(Request req)
     {
         return new InstallOptionsDragEditPartsTracker(this);
     }
@@ -81,7 +104,9 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         return ""; //$NON-NLS-1$
     }
 
-    public Object getAdapter(Class key)
+    @Override
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class key)
     {
         if(IDirectEditLabelProvider.class.equals(key)) {
             if(!Common.isEmpty(getDirectEditLabel())) {
@@ -116,13 +141,16 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         mExtendedEditLabel = extendedEditLabel;
     }
 
-    protected final AccessibleEditPart createAccessible() {
+    @Override
+	protected final AccessibleEditPart createAccessible() {
         return new AccessibleGraphicalEditPart(){
-            public void getValue(AccessibleControlEvent e) {
+            @Override
+			public void getValue(AccessibleControlEvent e) {
                 e.result = getAccessibleControlEventResult();
             }
 
-            public void getName(AccessibleEvent e) {
+            @Override
+			public void getName(AccessibleEvent e) {
                 e.result = getTypeName();
             }
         };
@@ -162,22 +190,23 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         }
     }
 
-    protected void doPropertyChange(PropertyChangeEvent evt)
+    @SuppressWarnings("unchecked")
+	protected void doPropertyChange(PropertyChangeEvent evt)
     {
         String prop = evt.getPropertyName();
         if(InstallOptionsModel.PROPERTY_FLAGS.equals(prop)) {
-            List oldFlags = new ArrayList((List)evt.getOldValue());
-            oldFlags.removeAll((List)evt.getNewValue());
-            for (Iterator iter = oldFlags.iterator(); iter.hasNext();) {
-                String flag = (String)iter.next();
+            List<String> oldFlags = new ArrayList<String>((List<String>)evt.getOldValue());
+            oldFlags.removeAll((List<String>)evt.getNewValue());
+            for (Iterator<String> iter = oldFlags.iterator(); iter.hasNext();) {
+                String flag = iter.next();
                 if(getInstallOptionsWidget().getTypeDef().getFlags().contains(flag)) {
                     handleFlagRemoved(flag);
                 }
             }
-            List newFlags = new ArrayList((List)evt.getNewValue());
-            newFlags.removeAll((List)evt.getOldValue());
-            for (Iterator iter = newFlags.iterator(); iter.hasNext();) {
-                String flag = (String)iter.next();
+            List<String> newFlags = new ArrayList<String>((List<String>)evt.getNewValue());
+            newFlags.removeAll((List<String>)evt.getOldValue());
+            for (Iterator<String> iter = newFlags.iterator(); iter.hasNext();) {
+                String flag = iter.next();
                 if(getInstallOptionsWidget().getTypeDef().getFlags().contains(flag)) {
                     handleFlagAdded(flag);
                 }
@@ -221,7 +250,8 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         }
     }
 
-    protected final IFigure createFigure()
+    @Override
+	protected final IFigure createFigure()
     {
         IInstallOptionsFigure figure2 = createInstallOptionsFigure();
         figure2.setFocusTraversable(true);
@@ -232,7 +262,8 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     /**
      * Updates the visual aspect of this.
      */
-    protected void refreshVisuals()
+    @Override
+	protected void refreshVisuals()
     {
         InstallOptionsWidget widget = (InstallOptionsWidget)getInstallOptionsElement();
         Position pos = widget.getPosition();
@@ -242,7 +273,8 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         ((GraphicalEditPart)getParent()).setLayoutConstraint(this, getFigure(), r);
     }
 
-    public void performRequest(Request request)
+    @Override
+	public void performRequest(Request request)
     {
         if(request.getType().equals(IInstallOptionsConstants.REQ_EXTENDED_EDIT)) {
             performExtendedEdit(request);
@@ -276,17 +308,11 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     protected void performDirectEdit()
     {
         if(mManager == null) {
-            mManager = creatDirectEditManager(this, getCellEditorClass(),
-                            createCellEditorLocator((IInstallOptionsFigure)getFigure()));
+            mManager = creatDirectEditManager(this, createCellEditorLocator((IInstallOptionsFigure)getFigure()));
         }
         if(mManager != null) {
             mManager.show();
         }
-    }
-
-    protected Class getCellEditorClass()
-    {
-        return TextCellEditor.class;
     }
 
     public InstallOptionsWidget getInstallOptionsWidget()
@@ -294,12 +320,14 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         return (InstallOptionsWidget)getModel();
     }
 
-    public void addNotify()
+    @Override
+	public void addNotify()
     {
         super.addNotify();
     }
 
-    public void removeNotify()
+    @Override
+	public void removeNotify()
     {
         super.removeNotify();
     }
@@ -316,11 +344,12 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             super(sourceEditPart);
         }
 
-        protected boolean handleDragStarted()
+        @Override
+		protected boolean handleDragStarted()
         {
-            List list = getSourceEditPart().getViewer().getSelectedEditParts();
+            List<?> list = getSourceEditPart().getViewer().getSelectedEditParts();
             if(!Common.isEmptyCollection(list)) {
-                for (Iterator iter = list.iterator(); iter.hasNext();) {
+                for (Iterator<?> iter = list.iterator(); iter.hasNext();) {
                     EditPart part = (EditPart)iter.next();
                     if(part instanceof InstallOptionsWidgetEditPart) {
                         if(((InstallOptionsWidget)part.getModel()).isLocked()) {
@@ -365,9 +394,10 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             init(propertySource);
         }
 
-        protected void init(IPropertySource propertySource)
+        @SuppressWarnings("unchecked")
+		protected void init(IPropertySource propertySource)
         {
-            List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
+            List<String> flags = (List<String>)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
             setDisabled(flags != null && flags.contains(InstallOptionsModel.FLAGS_DISABLED));
             setHScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_HSCROLL));
             setVScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_VSCROLL));
@@ -444,7 +474,8 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             }
         }
 
-        public void setBounds(Rectangle newBounds)
+        @Override
+		public void setBounds(Rectangle newBounds)
         {
             if(!bounds.getSize().equals(newBounds.getSize())) {
                 updateBounds(newBounds);
@@ -452,7 +483,8 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
             super.setBounds(newBounds);
         }
 
-        protected boolean supportsScrollBars()
+        @Override
+		protected boolean supportsScrollBars()
         {
             return true;
         }
@@ -461,7 +493,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         protected abstract void createChildFigures();
     }
 
-    protected abstract DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator);
+    protected abstract DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator);
     protected abstract CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure);
     protected abstract IInstallOptionsFigure createInstallOptionsFigure();
     protected abstract String getAccessibleControlEventResult();

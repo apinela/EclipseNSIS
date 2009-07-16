@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.installoptions.editor.text;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
@@ -18,9 +19,10 @@ import org.eclipse.jface.text.rules.*;
 
 public class InstallOptionsRuleBasedScanner extends InstallOptionsSyntaxScanner
 {
-    protected void reset()
+    @Override
+	protected void reset()
     {
-        ArrayList list = new ArrayList();
+        List<IRule> list = new ArrayList<IRule>();
         list.add(new BeginningOfLineWordPatternRule(new InstallOptionsWordDetector('[',']'),
             "[","]",createToken(IInstallOptionsConstants.SECTION_STYLE))); //$NON-NLS-1$ //$NON-NLS-2$
         list.add(new ExclusiveEndSequenceWordPatternRule(new InstallOptionsWordDetector('\0','='),null,"=", //$NON-NLS-1$
@@ -42,6 +44,6 @@ public class InstallOptionsRuleBasedScanner extends InstallOptionsSyntaxScanner
         list.add(new NSISHexNumberRule(numberToken));
         list.add(new NumberRule(numberToken));
         list.add(new WhitespaceRule(new NSISWhitespaceDetector()));
-        setRules((IRule[])list.toArray(new IRule[0]));
+        setRules(list.toArray(new IRule[0]));
     }
 }

@@ -24,9 +24,9 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
 {
     private static final Image TEMPLATE_IMAGE = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("template.icon")); //$NON-NLS-1$
     private boolean mInsertTemplatesMode = false;
-    protected static final Comparator PROPOSAL_COMPARATOR = new Comparator() {
+    protected static final Comparator<ICompletionProposal> PROPOSAL_COMPARATOR = new Comparator<ICompletionProposal>() {
 
-        public int compare(Object o1, Object o2)
+        public int compare(ICompletionProposal o1, ICompletionProposal o2)
         {
             TemplateProposal tp1 = (TemplateProposal)o1;
             TemplateProposal tp2 = (TemplateProposal)o2;
@@ -59,7 +59,8 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getTemplates(java.lang.String)
      */
-    protected Template[] getTemplates(String contextTypeId)
+    @Override
+	protected Template[] getTemplates(String contextTypeId)
     {
         return EclipseNSISPlugin.getDefault().getTemplateStore().getTemplates();
     }
@@ -67,7 +68,8 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createContext(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
      */
-    protected TemplateContext createContext(ITextViewer viewer, IRegion region)
+    @Override
+	protected TemplateContext createContext(ITextViewer viewer, IRegion region)
     {
         TemplateContextType contextType= getContextType(viewer, region);
         if (contextType != null) {
@@ -80,7 +82,8 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getContextType(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
      */
-    protected TemplateContextType getContextType(ITextViewer viewer, IRegion region)
+    @Override
+	protected TemplateContextType getContextType(ITextViewer viewer, IRegion region)
     {
         if(mInsertTemplatesMode || region.getLength() > 0) {
             return EclipseNSISPlugin.getDefault().getContextTypeRegistry().getContextType(NSISTemplateContextType.NSIS_TEMPLATE_CONTEXT_TYPE);
@@ -93,7 +96,8 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getImage(org.eclipse.jface.text.templates.Template)
      */
-    protected Image getImage(Template template)
+    @Override
+	protected Image getImage(Template template)
     {
         return TEMPLATE_IMAGE;
     }
@@ -101,18 +105,19 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
      */
-    public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
+    @Override
+	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
             int offset)
     {
         ICompletionProposal[] proposals = super.computeCompletionProposals(viewer, offset);
-        ArrayList list = new ArrayList();
+        List<ICompletionProposal> list = new ArrayList<ICompletionProposal>();
         for (int i = 0; i < proposals.length; i++) {
             if(((TemplateProposal)proposals[i]).getRelevance() > 0) {
                 list.add(proposals[i]);
             }
         }
         Collections.sort(list, PROPOSAL_COMPARATOR);
-        proposals = (ICompletionProposal[])list.toArray(NSISInformationUtility.EMPTY_COMPLETION_PROPOSAL_ARRAY);
+        proposals = list.toArray(NSISInformationUtility.EMPTY_COMPLETION_PROPOSAL_ARRAY);
         if(!mInsertTemplatesMode) {
             proposals = (ICompletionProposal[])Common.appendArray(proposals,
                                                                   NSISInformationUtility.getCompletionsAtOffset(viewer, offset));
@@ -123,7 +128,8 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getRelevance(org.eclipse.jface.text.templates.Template, java.lang.String)
      */
-    protected int getRelevance(Template template, String prefix)
+    @Override
+	protected int getRelevance(Template template, String prefix)
     {
         if( (mInsertTemplatesMode && Common.isEmpty(prefix)) ||
             (template.getName().toLowerCase().startsWith(prefix.toLowerCase()))) {
@@ -135,7 +141,8 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
      */
-    public char[] getCompletionProposalAutoActivationCharacters()
+    @Override
+	public char[] getCompletionProposalAutoActivationCharacters()
     {
         return NSISInformationUtility.getCompletionProposalAutoActivationCharacters();
     }

@@ -33,18 +33,21 @@ public class InstallOptionsText extends InstallOptionsEditableElement
         super(section);
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_TEXT;
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("text"); //$NON-NLS-1$
     }
 
-    protected ILabelProvider getDisplayLabelProvider()
+    @Override
+	protected ILabelProvider getDisplayLabelProvider()
     {
         if(getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) &&
            getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE)) {
@@ -56,12 +59,14 @@ public class InstallOptionsText extends InstallOptionsEditableElement
     /**
      * @return
      */
-    protected String getDefaultState()
+    @Override
+	protected String getDefaultState()
     {
         return InstallOptionsPlugin.getResourceString("text.state.default"); //$NON-NLS-1$
     }
 
-    public void setFlags(List flags)
+    @Override
+	public void setFlags(List<String> flags)
     {
         String oldState = getState();
         String newState = oldState;
@@ -90,7 +95,8 @@ public class InstallOptionsText extends InstallOptionsEditableElement
                                     i++;
                                 }
                             }
-                        case SWT.LF:
+	                        //$FALL-THROUGH$
+						case SWT.LF:
                             buf.append(SWT.CR).append(SWT.LF);
                             break;
                         default:
@@ -98,7 +104,7 @@ public class InstallOptionsText extends InstallOptionsEditableElement
                             break;
                     }
                 }
-                newState = (String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString());
+                newState = TypeConverter.ESCAPED_STRING_CONVERTER.asType(buf.toString());
             }
         }
         if(!Common.stringsAreEqual(newState,oldState)) {
@@ -107,12 +113,14 @@ public class InstallOptionsText extends InstallOptionsEditableElement
         super.setFlags(flags);
     }
 
-    protected Position getDefaultPosition()
+    @Override
+	protected Position getDefaultPosition()
     {
         return new Position(0,0,122,13);
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    @Override
+	protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$
@@ -152,7 +160,8 @@ public class InstallOptionsText extends InstallOptionsEditableElement
         }
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    @Override
+	protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new TextPropertySectionCreator(this);
     }

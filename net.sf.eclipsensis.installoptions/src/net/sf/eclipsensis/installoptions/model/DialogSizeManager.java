@@ -24,8 +24,8 @@ public class DialogSizeManager
     public static final String PROPERTY_DIALOGSIZES_PREFIX = PROPERTY_DIALOGSIZES+"."; //$NON-NLS-1$
     public static final String PROPERTY_DIALOGSIZES_COUNT = PROPERTY_DIALOGSIZES_PREFIX + "count"; //$NON-NLS-1$
     private static final String SEPARATOR = new String(new char[]{'\u00FF'});
-    private static List cPresetDialogSizes = null;
-    private static Map cDialogSizes = null;
+    private static List<DialogSize> cPresetDialogSizes = null;
+    private static Map<String, DialogSize> cDialogSizes = null;
     private static PropertyChangeSupport mListeners = new PropertyChangeSupport(DialogSizeManager.class);
 
     private DialogSizeManager()
@@ -46,8 +46,8 @@ public class DialogSizeManager
     {
         synchronized(DialogSizeManager.class) {
             loadDialogSizes();
-            for (Iterator iter = cDialogSizes.values().iterator(); iter.hasNext();) {
-                DialogSize element = (DialogSize)iter.next();
+            for (Iterator<DialogSize> iter = cDialogSizes.values().iterator(); iter.hasNext();) {
+                DialogSize element = iter.next();
                 if(element.isDefault()) {
                     return element;
                 }
@@ -60,7 +60,7 @@ public class DialogSizeManager
     {
         synchronized(DialogSizeManager.class) {
             loadDialogSizes();
-            return (DialogSize)cDialogSizes.get(name);
+            return cDialogSizes.get(name);
         }
     }
 
@@ -71,8 +71,8 @@ public class DialogSizeManager
             return dialogSize;
         }
         else {
-            for (Iterator iter = cDialogSizes.values().iterator(); iter.hasNext();) {
-                DialogSize element = (DialogSize)iter.next();
+            for (Iterator<DialogSize> iter = cDialogSizes.values().iterator(); iter.hasNext();) {
+                DialogSize element = iter.next();
                 if(element.getSize().equals(dim)) {
                     return element;
                 }
@@ -81,12 +81,12 @@ public class DialogSizeManager
         return null;
     }
 
-    public static List getDialogSizes()
+    public static List<DialogSize> getDialogSizes()
     {
         synchronized(DialogSizeManager.class) {
             loadDialogSizes();
 
-            return new ArrayList(cDialogSizes.values());
+            return new ArrayList<DialogSize>(cDialogSizes.values());
         }
     }
 
@@ -100,24 +100,24 @@ public class DialogSizeManager
         }
     }
 
-    public static synchronized void setDialogSizes(List dialogSizes)
+    public static synchronized void setDialogSizes(List<DialogSize> dialogSizes)
     {
         synchronized (DialogSizeManager.class) {
             if(cDialogSizes == null) {
-                cDialogSizes = new LinkedHashMap();
+                cDialogSizes = new LinkedHashMap<String, DialogSize>();
             }
             else {
                 cDialogSizes.clear();
             }
-            List oldList = new ArrayList(cDialogSizes.values());
+            List<DialogSize> oldList = new ArrayList<DialogSize>(cDialogSizes.values());
             boolean makeCopy = false;
             if(Common.isEmptyCollection(dialogSizes)) {
                 dialogSizes=getPresetDialogSizes();
                 makeCopy = true;
             }
             boolean foundDefault = false;
-            for(Iterator iter=dialogSizes.iterator(); iter.hasNext(); ) {
-                DialogSize dialogSize = (DialogSize)iter.next();
+            for(Iterator<DialogSize> iter=dialogSizes.iterator(); iter.hasNext(); ) {
+                DialogSize dialogSize = iter.next();
                 if(makeCopy) {
                     dialogSize = dialogSize.getCopy();
                 }
@@ -136,7 +136,7 @@ public class DialogSizeManager
                 }
             }
             if(!foundDefault) {
-                DialogSize dialogSize = (DialogSize)cDialogSizes.get(((DialogSize)dialogSizes.get(0)).getName());
+                DialogSize dialogSize = cDialogSizes.get(dialogSizes.get(0).getName());
                 dialogSize.setDefault(true);
             }
 
@@ -146,7 +146,7 @@ public class DialogSizeManager
         }
     }
 
-    public static synchronized List getPresetDialogSizes()
+    public static synchronized List<DialogSize> getPresetDialogSizes()
     {
         if(cPresetDialogSizes == null) {
             Object source;
@@ -174,9 +174,9 @@ public class DialogSizeManager
         }
     }
 
-    private static List loadDialogSizes(Object source)
+    private static List<DialogSize> loadDialogSizes(Object source)
     {
-        List result = new ArrayList();
+        List<DialogSize> result = new ArrayList<DialogSize>();
         if(source != null) {
             int count = 0;
             try {
@@ -215,10 +215,10 @@ public class DialogSizeManager
         catch(NumberFormatException nfe) {
             oldCount = 0;
         }
-        List list = getDialogSizes();
+        List<DialogSize> list = getDialogSizes();
         int newCount = list.size();
         for(int i=0; i<newCount; i++) {
-            DialogSize ds = (DialogSize)list.get(i);
+            DialogSize ds = list.get(i);
             store.setValue(PROPERTY_DIALOGSIZES_PREFIX+i,new StringBuffer(ds.getName()).append(SEPARATOR).append(
                     ds.isDefault()).append(SEPARATOR).append(ds.getSize().width).append(SEPARATOR).append(
                     ds.getSize().height).toString());

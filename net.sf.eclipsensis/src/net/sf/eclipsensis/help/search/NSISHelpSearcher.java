@@ -48,7 +48,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
         private INSISHelpSearchRequester mRequester;
         private String mField = null;
         private IndexSearcher mSearcher = null;
-        private List mHits = null;
+        private List<HitDoc> mHits = null;
 
         public NSISHelpSearcherJob(String field, INSISHelpSearchRequester requester)
         {
@@ -58,8 +58,8 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
 
         public IStatus run(final IProgressMonitor monitor)
         {
-            List results = Collections.EMPTY_LIST;
-            Collection highlightTerms = Collections.EMPTY_SET;
+            List<NSISHelpSearchResult> results = Collections.emptyList();
+            Collection<String> highlightTerms = Collections.emptySet();
             try {
                 monitor.beginTask(EclipseNSISPlugin.getResourceString("searching.help.task.name"),IProgressMonitor.UNKNOWN); //$NON-NLS-1$
                 if(!IOUtility.isValidDirectory(mIndexer.getIndexLocation())) {
@@ -92,7 +92,8 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
                     }
                     Filter filter = mRequester.getFilter();
                     HitCollector collector = new HitCollector() {
-                        public void collect(int doc, float score)
+                        @Override
+						public void collect(int doc, float score)
                         {
                             checkCanceled(monitor);
                             if(!monitor.isCanceled()) {
@@ -107,7 +108,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
                             }
                         }
                     };
-                    mHits = new ArrayList();
+                    mHits = new ArrayList<HitDoc>();
                     if(filter != null) {
                         mSearcher.search(query, filter, collector);
                     }
@@ -126,11 +127,11 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
                     if(!monitor.isCanceled() && !Common.isEmptyCollection(mHits)) {
                         Collections.sort(mHits);
                         int n = mHits.size();
-                        results = new ArrayList(n);
+                        results = new ArrayList<NSISHelpSearchResult>(n);
                         int rank = 1;
                         for(int i=0; i<n; i++) {
                             try {
-                                Document doc = mSearcher.doc(((HitDoc)mHits.get(i)).id);
+                                Document doc = mSearcher.doc(mHits.get(i).id);
                                 results.add(new NSISHelpSearchResult(doc.get(INDEX_FIELD_TITLE),doc.get(INDEX_FIELD_URL),rank++));
                             }
                             catch (IOException e) {
@@ -154,7 +155,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
                         }
                         catch (ParseException e) {
                             EclipseNSISPlugin.getDefault().log(e);
-                            highlightTerms = Collections.EMPTY_SET;
+                            highlightTerms = Collections.emptySet();
                         }
                     }
                 }
@@ -162,7 +163,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
             }
             finally {
                 monitor.done();
-                mRequester.searchCompleted((NSISHelpSearchResult[])results.toArray(new NSISHelpSearchResult[results.size()]), highlightTerms);
+                mRequester.searchCompleted(results.toArray(new NSISHelpSearchResult[results.size()]), highlightTerms);
             }
         }
 
@@ -179,7 +180,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
         }
     }
 
-    private class HitDoc implements Comparable
+    private class HitDoc implements Comparable<HitDoc>
     {
         float score;
         int id;
@@ -190,13 +191,14 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
             id = i;
         }
 
-        public int compareTo(Object o)
+        public int compareTo(HitDoc o)
         {
-            float diff = ((HitDoc)o).score - score;
+            float diff = o.score - score;
             return (diff >0?1:diff <0?-1:0);
         }
 
-        public boolean equals(Object obj)
+        @Override
+		public boolean equals(Object obj)
         {
             if(this != obj) {
                 if(obj instanceof HitDoc) {
@@ -207,7 +209,8 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
             return true;
         }
 
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             return (int)score;
         }

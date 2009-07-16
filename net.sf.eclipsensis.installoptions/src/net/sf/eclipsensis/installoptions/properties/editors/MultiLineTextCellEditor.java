@@ -48,7 +48,8 @@ public class MultiLineTextCellEditor extends DialogCellEditor
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.DialogCellEditor#openDialogBox(org.eclipse.swt.widgets.Control)
      */
-    protected Object openDialogBox(Control cellEditorWindow)
+    @Override
+	protected Object openDialogBox(Control cellEditorWindow)
     {
         Object oldValue = getValue();
         MultiLineTextDialog dialog = new MultiLineTextDialog(cellEditorWindow.getShell(),(String)oldValue);
@@ -57,7 +58,8 @@ public class MultiLineTextCellEditor extends DialogCellEditor
         return (result == Window.OK?dialog.getValue():oldValue);
     }
 
-    protected void updateContents(Object value)
+    @Override
+	protected void updateContents(Object value)
     {
         Label label = getDefaultLabel();
         if (label != null && !label.isDisposed()) {
@@ -106,7 +108,8 @@ public class MultiLineTextCellEditor extends DialogCellEditor
             mValidator = validator;
         }
 
-        protected void configureShell(Shell newShell)
+        @Override
+		protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
             newShell.setText(InstallOptionsPlugin.getResourceString("multiline.text.dialog.title")); //$NON-NLS-1$
@@ -115,10 +118,11 @@ public class MultiLineTextCellEditor extends DialogCellEditor
 
         public String getValue()
         {
-            return (String)TypeConverter.ESCAPED_STRING_CONVERTER.asType(mValue);
+            return TypeConverter.ESCAPED_STRING_CONVERTER.asType(mValue);
         }
 
-        protected Control createDialogArea(Composite parent)
+        @Override
+		protected Control createDialogArea(Composite parent)
         {
             Composite composite = (Composite)super.createDialogArea(parent);
             final Text text = new Text(composite,SWT.LEFT|SWT.BORDER|SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
@@ -140,7 +144,8 @@ public class MultiLineTextCellEditor extends DialogCellEditor
             return composite;
         }
 
-        protected void okPressed()
+        @Override
+		protected void okPressed()
         {
             ICellEditorValidator validator = getValidator();
             if(validator != null) {

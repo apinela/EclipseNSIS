@@ -47,7 +47,8 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
      */
-    public void setChildTypes()
+    @Override
+	public void setChildTypes()
     {
         clearChildTypes();
         addChildType(NSISSection.TYPE);
@@ -161,7 +162,8 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
         }
     }
 
-    protected Object getNodeValue(Node node, String name, Class clasz)
+    @Override
+	protected Object getNodeValue(Node node, String name, Class<?> clasz)
     {
         if(name.equals("description")) { //$NON-NLS-1$
             return XMLUtil.readTextNode(node);
@@ -171,7 +173,8 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
         }
     }
 
-    protected Node createChildNode(Document document, String name, Object value)
+    @Override
+	protected Node createChildNode(Document document, String name, Object value)
     {
         if(name.equals("description")) { //$NON-NLS-1$
             value = document.createTextNode((String)value);
@@ -179,7 +182,8 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
         return super.createChildNode(document, name, value);
     }
 
-    public String doValidate()
+    @Override
+	public String doValidate()
     {
         if(Common.isEmpty(getCaption())) {
             return EclipseNSISPlugin.getResourceString("wizard.missing.sectiongroup.caption.error"); //$NON-NLS-1$
@@ -189,7 +193,8 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
         }
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int PRIME = 31;
         int result = super.hashCode();
@@ -200,7 +205,8 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
         return result;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;

@@ -113,7 +113,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     protected static ICommandService cCommandService = (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
     protected static IHandlerService cHandlerService = (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 
-    private static Map cReservedSubKeysMap = new CaseInsensitiveMap();
+    private static Map<String, Pattern> cReservedSubKeysMap = new CaseInsensitiveMap<Pattern>();
 
     private boolean mNewRmDirUsage = false;
 
@@ -124,17 +124,17 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     private String mNsisDirKeyword;
 
     private NSISScript mScript;
-    private List mUnSectionList;
+    private List<NSISScriptSection> mUnSectionList;
     private NSISScriptFunction mOnInitFunction;
     private NSISScriptFunction mUnOnInitFunction;
     private int mSectionCounter = 0;
     private int mSectionGroupCounter = 0;
     private INSISScriptElement mSectionsPlaceHolder;
     private INSISScriptElement mUnsectionsPlaceHolder = null;
-    private List mIncludes = new ArrayList();
-    private List mVars = new ArrayList();
-    private List mReservedFiles = new ArrayList();
-    private Map mKeywordCache = new HashMap();
+    private List<String> mIncludes = new ArrayList<String>();
+    private List<String> mVars = new ArrayList<String>();
+    private List<String> mReservedFiles = new ArrayList<String>();
+    private Map<String,String> mKeywordCache = new HashMap<String,String>();
     private boolean mCreatedSMGroupShortcutFunctions = false;
     private INSISScriptElement mFunctionsPlaceHolder;
     private INSISScriptElement mUnfunctionsPlaceHolder = null;
@@ -294,9 +294,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     private void writeScript()
     {
         String defaultTaskTag = ""; //$NON-NLS-1$
-        Collection taskTags = NSISPreferences.INSTANCE.getTaskTags();
-        for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
-            NSISTaskTag taskTag = (NSISTaskTag)iter.next();
+        Collection<NSISTaskTag> taskTags = NSISPreferences.INSTANCE.getTaskTags();
+        for (Iterator<NSISTaskTag> iter = taskTags.iterator(); iter.hasNext();) {
+            NSISTaskTag taskTag = iter.next();
             if(taskTag.isDefault()) {
                 defaultTaskTag = taskTag.getTag();
                 break;
@@ -320,7 +320,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 break;
         }
 
-        List languages = mSettings.getLanguages();
+        List<NSISLanguage> languages = mSettings.getLanguages();
         mScript = new NSISScript(mSettings.getName());
 
         if(mSettings.getCompressorType() != MakeNSISRunner.COMPRESSOR_DEFAULT) {
@@ -540,7 +540,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     mReservedFiles.add("StartMenu.dll"); //$NON-NLS-1$
                     mScript.insertElement(pagesPlaceHolder,new NSISScriptAttribute("Page",new String[]{getKeyword("custom"),"StartMenuGroupSelect","", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                             Common.quote((mSettings.isEnableLanguageSupport()?": $(StartMenuPageTitle)": //$NON-NLS-1$
-                                MessageFormat.format(": {0}",new String[]{ //$NON-NLS-1$
+                                MessageFormat.format(": {0}",new Object[]{ //$NON-NLS-1$
                                         EclipseNSISPlugin.getResourceString("scriptgen.start.menu.page.title")})))})); //$NON-NLS-1$
                     NSISScriptFunction fn = (NSISScriptFunction)mScript.insertElement(mFunctionsPlaceHolder,new NSISScriptFunction("StartMenuGroupSelect")); //$NON-NLS-1$
                     fn.addElement(new NSISScriptInstruction("Push",getKeyword("$R1"))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -700,9 +700,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
             INSISScriptElement languagesPlaceHolder = mScript.insertAfterElement(pagesPlaceHolder,new NSISScriptBlankLine());
             mScript.insertAfterElement(pagesPlaceHolder,new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.languages.comment"))); //$NON-NLS-1$
-            defaultLanguage = (NSISLanguage)languages.get(0);
-            for (Iterator iter = languages.iterator(); iter.hasNext();) {
-                NSISLanguage language = (NSISLanguage) iter.next();
+            defaultLanguage = languages.get(0);
+            for (Iterator<NSISLanguage> iter = languages.iterator(); iter.hasNext();) {
+                NSISLanguage language = iter.next();
                 if(mIsMUI) {
                     mScript.insertElement(languagesPlaceHolder,new NSISScriptInsertMacro("MUI_LANGUAGE",language.getName())); //$NON-NLS-1$
                 }
@@ -804,8 +804,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 }
                 else {
                     mOnInitFunction.addElement(new NSISScriptInstruction("Push","")); //$NON-NLS-1$ //$NON-NLS-2$
-                    for (Iterator iter = languages.iterator(); iter.hasNext();) {
-                        NSISLanguage language = (NSISLanguage) iter.next();
+                    for (Iterator<NSISLanguage> iter = languages.iterator(); iter.hasNext();) {
+                        NSISLanguage language = iter.next();
                         mOnInitFunction.addElement(new NSISScriptInstruction("Push",language.getLangDef())); //$NON-NLS-1$
                         mOnInitFunction.addElement(new NSISScriptInstruction("Push",language.getDisplayName())); //$NON-NLS-1$
                     }
@@ -1000,11 +1000,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 unPostSection.addElement(0,new NSISScriptInstruction("DeleteRegKey",new String[]{getKeyword("HKLM"),Common.quote(cUninstallRegKey)})); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
-        mUnSectionList = unPostSection == null?null:new ArrayList();
+        mUnSectionList = unPostSection == null?null:new ArrayList<NSISScriptSection>();
         INSISInstallElement[] contents =  mSettings.getInstaller().getChildren();
         mSectionCounter = 0;
         mSectionGroupCounter = 0;
-        Map secDescMap = mIsMUI?new LinkedHashMap():null;
+        Map<String, String> secDescMap = mIsMUI?new LinkedHashMap<String,String>():null;
         for (int i = 0; i < contents.length; i++) {
             if(contents[i] instanceof NSISSection) {
                 mScript.insertElement(mSectionsPlaceHolder, buildSection((NSISSection)contents[i], secDescMap));
@@ -1016,31 +1016,34 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         }
         if(mSettings.isCreateUninstaller()) {
             String sectionId = MessageFormat.format("SEC{0,number,0000}",new Object[]{new Integer(mSectionCounter++)}); //$NON-NLS-1$
-            postSection.setIndex(sectionId);
-            mScript.insertElement(mSectionsPlaceHolder, postSection);
-
-            if(!Common.isEmptyCollection(mUnSectionList)) {
+            if (postSection != null) {
+				postSection.setIndex(sectionId);
+				mScript.insertElement(mSectionsPlaceHolder, postSection);
+			}
+			if(!Common.isEmptyCollection(mUnSectionList)) {
                 Collections.reverse(mUnSectionList);
-                for(Iterator iter=mUnSectionList.iterator(); iter.hasNext(); ) {
-                    mScript.insertElement(mUnsectionsPlaceHolder,(NSISScriptSection)iter.next());
+                for(Iterator<NSISScriptSection> iter=mUnSectionList.iterator(); iter.hasNext(); ) {
+                    mScript.insertElement(mUnsectionsPlaceHolder,iter.next());
                     mScript.insertElement(mUnsectionsPlaceHolder, new NSISScriptBlankLine());
                 }
             }
-            unPostSection.setIndex("UN"+sectionId); //$NON-NLS-1$
-            mScript.insertElement(mUnsectionsPlaceHolder,unPostSection);
+            if (unPostSection != null) {
+				unPostSection.setIndex("UN" + sectionId); //$NON-NLS-1$
+				mScript.insertElement(mUnsectionsPlaceHolder, unPostSection);
+			}
         }
 
         if(secDescMap != null && secDescMap.size() > 0) {
             mScript.addElement(new NSISScriptBlankLine());
             mScript.addElement(new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.section.desc.comment"))); //$NON-NLS-1$
             mScript.addElement(new NSISScriptInsertMacro("MUI_FUNCTION_DESCRIPTION_BEGIN")); //$NON-NLS-1$
-            for (Iterator iter = secDescMap.keySet().iterator(); iter.hasNext();) {
-                String id = (String)iter.next();
+            for (Iterator<String> iter = secDescMap.keySet().iterator(); iter.hasNext();) {
+                String id = iter.next();
                 mScript.addElement(new NSISScriptInsertMacro("MUI_DESCRIPTION_TEXT", //$NON-NLS-1$
                         new String[] {new StringBuffer("${").append(id).append("}").toString(), //$NON-NLS-1$ //$NON-NLS-2$
                         mSettings.isEnableLanguageSupport()?
                                 new StringBuffer("$(").append(id).append("_DESC)").toString(): //$NON-NLS-1$ //$NON-NLS-2$
-                                    (String)secDescMap.get(id)}));
+                                    secDescMap.get(id)}));
             }
             mScript.addElement(new NSISScriptInsertMacro("MUI_FUNCTION_DESCRIPTION_END")); //$NON-NLS-1$
         }
@@ -1053,8 +1056,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             NSISScriptlet unlinkScriptlet = new NSISScriptlet();
             NSISScriptlet disableSMScriptlet = new NSISScriptlet();
             NSISScriptlet secDescScriptlet = new NSISScriptlet();
-            for (Iterator iter = languages.iterator(); iter.hasNext();) {
-                NSISLanguage language = (NSISLanguage) iter.next();
+            for (Iterator<NSISLanguage> iter = languages.iterator(); iter.hasNext();) {
+                NSISLanguage language = iter.next();
                 Locale locale = NSISLanguageManager.getInstance().getLocaleForLangId(language.getLangId());
                 ResourceBundle bundle;
                 if(locale.equals(defaultLocale)) {
@@ -1088,11 +1091,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     if(secDescScriptlet.size() > 0) {
                         secDescScriptlet.addElement(new NSISScriptBlankLine());
                     }
-                    for (Iterator iter2 = secDescMap.keySet().iterator(); iter2.hasNext();) {
-                        String id = (String)iter2.next();
+                    for (Iterator<String> iter2 = secDescMap.keySet().iterator(); iter2.hasNext();) {
+                        String id = iter2.next();
                         secDescScriptlet.addElement(new NSISScriptAttribute("LangString", //$NON-NLS-1$
                                 new String[]{id+"_DESC",language.getLangDef(), //$NON-NLS-1$
-                                ((String)secDescMap.get(id))}));
+                                secDescMap.get(id)}));
                     }
                 }
             }
@@ -1126,8 +1129,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
         if(mReservedFiles.size() > 0) {
             mScript.insertElement(reservedFilesPlaceHolder,new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.reservedfiles.comment"))); //$NON-NLS-1$
-            for (Iterator iter = mReservedFiles.iterator(); iter.hasNext();) {
-                String item = (String)iter.next();
+            for (Iterator<String> iter = mReservedFiles.iterator(); iter.hasNext();) {
+                String item = iter.next();
                 if(item.startsWith(MUI_ITEM_PREFIX)) {
                     mScript.insertElement(reservedFilesPlaceHolder,new NSISScriptInsertMacro(item));
                 }
@@ -1143,8 +1146,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
         if(mIncludes.size() > 0) {
             mScript.insertElement(includePlaceHolder,new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.includes.comment"))); //$NON-NLS-1$
-            for (Iterator iter = mIncludes.iterator(); iter.hasNext();) {
-                mScript.insertElement(includePlaceHolder,new NSISScriptInclude(((String)iter.next())));
+            for (Iterator<String> iter = mIncludes.iterator(); iter.hasNext();) {
+                mScript.insertElement(includePlaceHolder,new NSISScriptInclude(iter.next()));
             }
         }
         else {
@@ -1153,7 +1156,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
         if(mVars.size() > 0) {
             mScript.insertElement(varsPlaceHolder,new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.variables.comment"))); //$NON-NLS-1$
-            for (Iterator iter = mVars.iterator(); iter.hasNext();) {
+            for (Iterator<String> iter = mVars.iterator(); iter.hasNext();) {
                 mScript.insertElement(varsPlaceHolder,new NSISScriptAttribute("Var",iter.next())); //$NON-NLS-1$
             }
         }
@@ -1190,7 +1193,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         return new NSISScriptAttribute("VIAddVersionKey",args); //$NON-NLS-1$
     }
 
-    private NSISScriptSectionGroup buildSectionGroup(NSISSectionGroup secGrp, Map sectionDescMap)
+    private NSISScriptSectionGroup buildSectionGroup(NSISSectionGroup secGrp, Map<String, String> sectionDescMap)
     {
         String secGrpId = MessageFormat.format("SECGRP{0,number,0000}",new Object[]{new Integer(mSectionGroupCounter++)}); //$NON-NLS-1$
         NSISScriptSectionGroup scriptSecgrp = new NSISScriptSectionGroup(secGrp.getCaption(),secGrp.isDefaultExpanded(),secGrp.isBold(),
@@ -1231,21 +1234,21 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         if(!mReservedFiles.contains("System.dll")) { //$NON-NLS-1$
             mReservedFiles.add("System.dll"); //$NON-NLS-1$
             mScript.insertElement(mSectionsPlaceHolder,new NSISScriptSingleLineComment(EclipseNSISPlugin.getResourceString("scriptgen.create.reg.key.comment"))); //$NON-NLS-1$
-            List list = new ArrayList();
+            List<NSISScriptDefine> list = new ArrayList<NSISScriptDefine>();
             for (int i = 0; i < NSISWizardDisplayValues.HKEY_NAMES.length; i++) {
                 String handle = RegistryImporter.rootKeyNameToHandle(NSISWizardDisplayValues.HKEY_NAMES[i]);
                 if(!Common.isEmpty(handle)) {
                     list.add(new NSISScriptDefine(NSISWizardDisplayValues.HKEY_NAMES[i], handle));
                 }
             }
-            Collections.sort(list, new Comparator() {
-                public int compare(Object o1, Object o2)
+            Collections.sort(list, new Comparator<NSISScriptDefine>() {
+                public int compare(NSISScriptDefine o1, NSISScriptDefine o2)
                 {
-                    return ((NSISScriptDefine)o1).getValue().compareTo(((NSISScriptDefine)o2).getValue());
+                    return o1.getValue().compareTo(o2.getValue());
                 }
             });
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                mScript.insertElement(mSectionsPlaceHolder,(NSISScriptDefine)iter.next());
+            for (Iterator<NSISScriptDefine> iter = list.iterator(); iter.hasNext();) {
+                mScript.insertElement(mSectionsPlaceHolder,iter.next());
             }
             mScript.insertElement(mSectionsPlaceHolder,new NSISScriptDefine("KEY_CREATE_SUB_KEY", "0x0004")); //$NON-NLS-1$ //$NON-NLS-2$
             NSISScriptMacro macro = (NSISScriptMacro)mScript.insertElement(mSectionsPlaceHolder,new NSISScriptMacro("CreateRegKey",new String[]{"ROOT_KEY","SUB_KEY"})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -1265,7 +1268,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         }
     }
 
-    private NSISScriptSection buildSection(NSISSection sec, Map sectionDescMap)
+    private NSISScriptSection buildSection(NSISSection sec, Map<String, String> sectionDescMap)
     {
         String sectionId = MessageFormat.format("SEC{0,number,0000}",new Object[]{new Integer(mSectionCounter++)}); //$NON-NLS-1$
         String unSectionId = "UN"+sectionId; //$NON-NLS-1$
@@ -1465,7 +1468,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         if(regKey.getRootKey() >= 0 && regKey.getRootKey() < NSISWizardDisplayValues.HKEY_NAMES.length) {
                             addCreateRegKeyMacro();
                             String rootKey = NSISWizardDisplayValues.HKEY_NAMES[regKey.getRootKey()];
-                            Pattern pattern = (Pattern)cReservedSubKeysMap.get(rootKey);
+                            Pattern pattern = cReservedSubKeysMap.get(rootKey);
                             section.addElement(new NSISScriptInsertMacro("CreateRegKey", //$NON-NLS-1$
                                     new String[]{
                                     new StringBuffer("${").append(rootKey).append("}").toString(), //$NON-NLS-1$ //$NON-NLS-2$
@@ -1525,7 +1528,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                                     libType = "REGEXE"; //$NON-NLS-1$
                                     break;
                                 }
-                            default:
+	                            //$FALL-THROUGH$
+							default:
                                 libType = "DLL"; //$NON-NLS-1$
                         }
                         String installType;
@@ -1687,11 +1691,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
 
     private String getKeyword(String keyword)
     {
-        Object object = mKeywordCache.get(keyword);
-        if(object == null) {
-            object = NSISKeywords.getInstance().getKeyword(keyword);
-            mKeywordCache.put(keyword, object);
+        String str = mKeywordCache.get(keyword);
+        if(str == null) {
+            str = NSISKeywords.getInstance().getKeyword(keyword);
+            mKeywordCache.put(keyword, str);
         }
-        return (String)object;
+        return str;
     }
 }

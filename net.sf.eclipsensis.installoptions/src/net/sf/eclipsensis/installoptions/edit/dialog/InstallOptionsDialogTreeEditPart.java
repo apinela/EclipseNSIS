@@ -11,10 +11,13 @@ package net.sf.eclipsensis.installoptions.edit.dialog;
 
 import java.util.List;
 
-import net.sf.eclipsensis.installoptions.edit.*;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsTreeContainerEditPolicy;
+import net.sf.eclipsensis.installoptions.edit.InstallOptionsTreeEditPart;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 
-import org.eclipse.gef.*;
+import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.RootEditPart;
 import org.eclipse.gef.editpolicies.RootComponentEditPolicy;
 
 public class InstallOptionsDialogTreeEditPart extends InstallOptionsTreeEditPart
@@ -30,7 +33,8 @@ public class InstallOptionsDialogTreeEditPart extends InstallOptionsTreeEditPart
     /**
      * Creates and installs pertinent EditPolicies.
      */
-    protected void createEditPolicies() {
+    @Override
+	protected void createEditPolicies() {
         super.createEditPolicies();
         installEditPolicy(EditPolicy.TREE_CONTAINER_ROLE, new InstallOptionsTreeContainerEditPolicy());
         //If this editpart is the contents of the viewer, then it is not deletable!
@@ -54,7 +58,8 @@ public class InstallOptionsDialogTreeEditPart extends InstallOptionsTreeEditPart
      *
      * @return  List of children.
      */
-    protected List getModelChildren() {
+    @Override
+	protected List<InstallOptionsWidget> getModelChildren() {
         return getInstallOptionsDialog().getChildren();
     }
 

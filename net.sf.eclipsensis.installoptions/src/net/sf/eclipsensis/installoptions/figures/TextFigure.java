@@ -35,7 +35,8 @@ public class TextFigure extends EditableElementFigure
         super(parent, propertySource);
     }
 
-    protected void init(IPropertySource propertySource)
+    @Override
+	protected void init(IPropertySource propertySource)
     {
         List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
         setOnlyNumbers(flags != null && flags.contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS));
@@ -88,7 +89,8 @@ public class TextFigure extends EditableElementFigure
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent, int style)
+    @Override
+	protected Control createSWTControl(Composite parent, int style)
     {
         if(!isMultiLine()) {
             if(isHScroll()) {
@@ -113,7 +115,8 @@ public class TextFigure extends EditableElementFigure
     /**
      * @return
      */
-    public int getDefaultStyle()
+    @Override
+	public int getDefaultStyle()
     {
         int style = SWT.BORDER;
         if(mMultiLine) {

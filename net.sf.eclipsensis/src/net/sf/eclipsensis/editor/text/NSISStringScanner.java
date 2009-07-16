@@ -34,7 +34,8 @@ public class NSISStringScanner extends NSISRuleBasedScanner
     /**
      * @return
      */
-    protected void addRules(List rules)
+    @Override
+	protected void addRules(List<IRule> rules)
     {
         rules.add(getSymbolsRule());
         rules.add(getVariablesRule());
@@ -45,7 +46,8 @@ public class NSISStringScanner extends NSISRuleBasedScanner
      * @param provider
      * @return
      */
-    protected synchronized IToken getDefaultToken()
+    @Override
+	protected synchronized IToken getDefaultToken()
     {
         if(mDefaultToken == null) {
             mDefaultToken= createTokenFromPreference(INSISEditorPreferenceConstants.STRINGS_STYLE);
@@ -67,7 +69,8 @@ public class NSISStringScanner extends NSISRuleBasedScanner
                     return (Character.isLetterOrDigit(character) || character == '_');
                 }
 
-                public boolean isWordPart(char character)
+                @Override
+				public boolean isWordPart(char character)
                 {
                     if(!mFoundEndSequence) {
                         if(character == '}') {
@@ -103,7 +106,8 @@ public class NSISStringScanner extends NSISRuleBasedScanner
                     return (Character.isLetterOrDigit(character) || character == '_' || character == '^');
                 }
 
-                public boolean isWordPart(char character)
+                @Override
+				public boolean isWordPart(char character)
                 {
                     if(!mFoundEndSequence) {
                         if(character == ')') {
@@ -161,7 +165,8 @@ public class NSISStringScanner extends NSISRuleBasedScanner
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#reset(boolean)
      */
-    public void reset(boolean full)
+    @Override
+	public void reset(boolean full)
     {
         if(full) {
             mDefaultToken = null;

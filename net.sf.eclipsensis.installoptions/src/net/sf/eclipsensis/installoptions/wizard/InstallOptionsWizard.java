@@ -38,7 +38,8 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
     /** (non-Javadoc)
      * Method declared on Wizard.
      */
-    public void addPages()
+    @Override
+	public void addPages()
     {
     	addPage(new InstallOptionsWizardPage());
     }
@@ -52,7 +53,8 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
     	setDefaultPageImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("wizard.title.image"))); //$NON-NLS-1$
     }
 
-    public void setContainer(IWizardContainer wizardContainer)
+    @Override
+	public void setContainer(IWizardContainer wizardContainer)
     {
         if(getContainer() instanceof IPageChangeProvider) {
             ((IPageChangeProvider)getContainer()).removePageChangedListener(mPageChangedListener);
@@ -76,7 +78,8 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
     /** (non-Javadoc)
      * Method declared on IWizard
      */
-    public boolean performFinish()
+    @Override
+	public boolean performFinish()
     {
     	return ((InstallOptionsWizardPage)getPages()[0]).finish();
     }

@@ -22,13 +22,15 @@ public abstract class RegexpParam extends StringParam
         super(node);
     }
 
-    protected void init(Node node)
+    @Override
+	protected void init(Node node)
     {
         super.init(node);
         mPattern = Pattern.compile(getRegexp(),Pattern.CASE_INSENSITIVE);
     }
 
-    protected final String validateText(String text)
+    @Override
+	protected final String validateText(String text)
     {
         if((isAllowBlank() && text.length() == 0) || mPattern.matcher(text).matches()) {
             return null;

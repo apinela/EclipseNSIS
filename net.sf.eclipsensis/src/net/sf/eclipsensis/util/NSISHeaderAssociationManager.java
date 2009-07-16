@@ -23,8 +23,8 @@ public class NSISHeaderAssociationManager implements IEclipseNSISService/*, IRes
     private static File cCacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),"net.sf.eclipsensis.NSISHeaderAssociations.ser"); //$NON-NLS-1$
     private static IWorkspaceRoot cRoot = ResourcesPlugin.getWorkspace().getRoot();
 
-    private HashMap mScriptMap;
-    private HashMap mHeaderMap;
+    private HashMap<IFile, List<IFile>> mScriptMap;
+    private HashMap<IFile, IFile> mHeaderMap;
 
     public static NSISHeaderAssociationManager getInstance()
     {
@@ -56,19 +56,19 @@ public class NSISHeaderAssociationManager implements IEclipseNSISService/*, IRes
 
     private void store()
     {
-        HashMap map = new HashMap();
-        for (Iterator iter = mScriptMap.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry entry = (Map.Entry)iter.next();
-            IFile script = (IFile)entry.getKey();
+        HashMap<String, List<String>> map = new HashMap<String, List<String>>();
+        for (Iterator<Map.Entry<IFile,List<IFile>>> iter = mScriptMap.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry<IFile,List<IFile>> entry = iter.next();
+            IFile script = entry.getKey();
             if(IOUtility.isValidFile(script)) {
-                List headers = (List)entry.getValue();
+                List<IFile> headers = entry.getValue();
                 if(Common.isEmptyCollection(headers)) {
                     iter.remove();
                 }
                 else {
-                    List list = new ArrayList();
-                    for (Iterator iterator = headers.iterator(); iterator.hasNext();) {
-                        IFile header = (IFile)iterator.next();
+                    List<String> list = new ArrayList<String>();
+                    for (Iterator<IFile> iterator = headers.iterator(); iterator.hasNext();) {
+                        IFile header = iterator.next();
                         if(IOUtility.isValidFile(header)) {
                             list.add(header.getFullPath().toString());
                         }
@@ -93,32 +93,33 @@ public class NSISHeaderAssociationManager implements IEclipseNSISService/*, IRes
         }
     }
 
-    private void load()
+	private void load()
     {
-        Map cache = null;
+        Map<String,List<String>> cache = null;
         if(IOUtility.isValidFile(cCacheFile)) {
             try {
-                cache = (HashMap)IOUtility.readObject(cCacheFile);
+                cache = IOUtility.readObject(cCacheFile);
             }
             catch (Exception e) {
                 cache = null;
             }
         }
-        mScriptMap = new HashMap();
-        mHeaderMap = new HashMap();
+        mScriptMap = new HashMap<IFile, List<IFile>>();
+        mHeaderMap = new HashMap<IFile, IFile>();
 
         if (cache != null) {
-            for (Iterator iter = cache.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry entry = (Map.Entry)iter.next();
+            for (Iterator<Map.Entry<String,List<String>>> iter = cache.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry<String,List<String>> entry = iter.next();
                 try {
-                    IFile script = cRoot.getFile(new Path((String)entry.getKey()));
+                    IFile script = cRoot.getFile(new Path(entry.getKey()));
                     if(IOUtility.isValidFile(script)) {
-                        List list = (List)entry.getValue();
-                        for (ListIterator iterator = list.listIterator(); iterator.hasNext();) {
+                        List<String> list = entry.getValue();
+                        List<IFile> headers = new ArrayList<IFile>();
+                        for (Iterator<String> iterator = list.iterator(); iterator.hasNext();) {
                             try {
-                                IFile header = cRoot.getFile(new Path((String)iterator.next()));
+                                IFile header = cRoot.getFile(new Path(iterator.next()));
                                 if(IOUtility.isValidFile(header)) {
-                                    iterator.set(header);
+                                	headers.add(header);
                                     mHeaderMap.put(header,script);
                                 }
                                 else {
@@ -129,7 +130,7 @@ public class NSISHeaderAssociationManager implements IEclipseNSISService/*, IRes
                             }
                         }
                         if(!list.isEmpty()) {
-                            mScriptMap.put(script,list);
+                            mScriptMap.put(script,headers);
                         }
                     }
                 }
@@ -139,10 +140,10 @@ public class NSISHeaderAssociationManager implements IEclipseNSISService/*, IRes
         }
     }
 
-    public List getAssociatedHeaders(IFile script)
+    public List<IFile> getAssociatedHeaders(IFile script)
     {
-        List list = (List)mScriptMap.get(script);
-        return list != null?Collections.unmodifiableList(list):Collections.EMPTY_LIST;
+        List<IFile> list = mScriptMap.get(script);
+        return list != null?Collections.unmodifiableList(list):Collections.<IFile>emptyList();
     }
 
     public void addAssociatedHeader(IFile script, IFile header)
@@ -158,10 +159,10 @@ public class NSISHeaderAssociationManager implements IEclipseNSISService/*, IRes
     public void associateWithScript(IFile header, IFile script)
     {
         if (header != null) {
-            IFile oldScript = (IFile)mHeaderMap.get(header);
+            IFile oldScript = mHeaderMap.get(header);
             if (!Common.objectsAreEqual(oldScript, script)) {
                 if (oldScript != null) {
-                    List list = (List)mScriptMap.get(oldScript);
+                    List<IFile> list = mScriptMap.get(oldScript);
                     if (list != null) {
                         list.remove(header);
                         if(list.isEmpty()) {
@@ -170,9 +171,9 @@ public class NSISHeaderAssociationManager implements IEclipseNSISService/*, IRes
                     }
                 }
                 if (script != null) {
-                    List list = (List)mScriptMap.get(script);
+                    List<IFile> list = mScriptMap.get(script);
                     if (list == null) {
-                        list = new ArrayList();
+                        list = new ArrayList<IFile>();
                         mScriptMap.put(script,list);
                     }
                     list.add(header);
@@ -195,7 +196,7 @@ public class NSISHeaderAssociationManager implements IEclipseNSISService/*, IRes
     public IFile getAssociatedScript(IFile header)
     {
         if(header != null) {
-            return (IFile)mHeaderMap.get(header);
+            return mHeaderMap.get(header);
         }
         return null;
     }

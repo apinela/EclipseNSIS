@@ -9,24 +9,44 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import java.beans.*;
-import java.util.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.installoptions.*;
-import net.sf.eclipsensis.installoptions.ini.*;
+import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
+import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
+import net.sf.eclipsensis.installoptions.ini.INIComment;
+import net.sf.eclipsensis.installoptions.ini.INIFile;
+import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
+import net.sf.eclipsensis.installoptions.ini.INILine;
+import net.sf.eclipsensis.installoptions.ini.INISection;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPropertyDescriptor;
-import net.sf.eclipsensis.installoptions.properties.validators.*;
-import net.sf.eclipsensis.installoptions.rulers.*;
+import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
+import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
+import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
+import net.sf.eclipsensis.installoptions.rulers.InstallOptionsRuler;
+import net.sf.eclipsensis.installoptions.rulers.InstallOptionsRulerProvider;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.UpDownMover;
 
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class InstallOptionsDialog extends InstallOptionsElement implements IInstallOptionsConstants
 {
@@ -48,7 +68,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                                  InstallOptionsPlugin.getResourceString("option.yes")}; //$NON-NLS-1$
     public static final Image INSTALLOPTIONS_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.dialog.icon")); //$NON-NLS-1$
     private static LabelProvider cDefaultLabelProvider = new LabelProvider(){
-        public String getText(Object element)
+        @Override
+		public String getText(Object element)
         {
             if(element instanceof String) {
                 if(Common.isEmpty((String)element)) {
@@ -62,7 +83,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
     };
 
-    protected List mChildren = new ArrayList();
+    protected List<InstallOptionsWidget> mChildren = new ArrayList<InstallOptionsWidget>();
     protected transient InstallOptionsRuler mVerticalRuler;
     protected transient InstallOptionsRuler mHorizontalRuler;
 
@@ -76,9 +97,9 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     private Integer mRect;
     private Integer mRTL;
     private transient int[] mSelectedIndices;
-    private transient UpDownMover mUpDownMover;
+    private transient UpDownMover<InstallOptionsWidget> mUpDownMover;
     private transient INIFile mINIFile;
-    private transient Map mINISectionMap;
+    private transient Map<INISection, InstallOptionsElement> mINISectionMap;
     private transient DialogSize mDialogSize;
     private transient boolean mShowDialogSize;
 
@@ -90,7 +111,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("dialogSize"); //$NON-NLS-1$
@@ -103,10 +125,11 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return NODE_NAME;
     }
 
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
-        mChildren = new ArrayList();
+        mChildren = new ArrayList<InstallOptionsWidget>();
         mTitle=""; //$NON-NLS-1$
         mCancelEnabled=null;
         mCancelShow=null;
@@ -118,7 +141,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         mRTL=null;
         mSelectedIndices = null;
         mINIFile = null;
-        mINISectionMap = new HashMap();
+        mINISectionMap = new HashMap<INISection, InstallOptionsElement>();
         mDialogSize = IInstallOptionsConstants.DEFAULT_DIALOG_SIZE;
         mShowDialogSize = true;
         reset();
@@ -154,25 +177,29 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         mVerticalRuler.addPropertyChangeListener(rulerListener);
         mHorizontalRuler = new InstallOptionsRuler(true, InstallOptionsRulerProvider.UNIT_DLU);
         mHorizontalRuler.addPropertyChangeListener(rulerListener);
-        mUpDownMover = new UpDownMover() {
-            protected int[] getSelectedIndices()
+        mUpDownMover = new UpDownMover<InstallOptionsWidget>() {
+            @Override
+			protected int[] getSelectedIndices()
             {
                 return mSelectedIndices;
             }
 
-            protected List getAllElements()
+            @Override
+			protected List<InstallOptionsWidget> getAllElements()
             {
                 return mChildren;
             }
 
-            protected void updateElements(List elements, List move, boolean isDown)
+            @Override
+			protected void updateElements(List<InstallOptionsWidget> elements, List<InstallOptionsWidget> move, boolean isDown)
             {
                 setChildren(elements);
             }
         };
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_DIALOG;
     }
@@ -197,7 +224,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         mShowDialogSize = showDialogSize;
     }
 
-    public boolean canMove(int type, List selection)
+    public boolean canMove(int type, List<InstallOptionsWidget> selection)
     {
         boolean flag = false;
         int[] oldSelection = mSelectedIndices;
@@ -243,7 +270,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
     }
 
-    public void setChildren(List children)
+    public void setChildren(List<InstallOptionsWidget> children)
     {
         mChildren.clear();
         mChildren.addAll(children);
@@ -292,10 +319,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         mUpDownMover.moveToTop();
     }
 
-    public void setSelection(Object selection)
+    public void setSelection(List<InstallOptionsWidget> selection)
     {
         mSelectedIndices = parseSelection(selection);
-        List list = new ArrayList();
+        List<InstallOptionsWidget> list = new ArrayList<InstallOptionsWidget>();
         if(!Common.isEmptyArray(mSelectedIndices)) {
             for (int i = 0; i < mSelectedIndices.length; i++) {
                 list.add(mChildren.get(mSelectedIndices[i]));
@@ -304,18 +331,13 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         firePropertyChange(PROPERTY_SELECTION,null,list);
     }
 
-    private int[] parseSelection(Object selection)
+	@SuppressWarnings("null")
+	private int[] parseSelection(List<InstallOptionsWidget> list)
     {
-        List list = null;
-        if(selection instanceof List) {
-            list = (List)selection;
-        }
-        else if(selection != null) {
-            list = new ArrayList();
-            list.add(selection);
-        }
-        list.retainAll(mChildren);
-        if(Common.isEmptyCollection(list)) {
+        if (list != null) {
+			list.retainAll(mChildren);
+		}
+		if(Common.isEmptyCollection(list)) {
             return new int[0];
         }
         int[] selectedIndices = new int[list.size()];
@@ -326,7 +348,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return selectedIndices;
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    @Override
+	protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         PropertyDescriptor descriptor = null;
         if(name.equals(InstallOptionsModel.PROPERTY_TITLE)) {
@@ -374,7 +397,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return descriptor;
     }
 
-    public void setPropertyValue(Object id, Object value)
+    @Override
+	public void setPropertyValue(Object id, Object value)
     {
         if(InstallOptionsModel.PROPERTY_TITLE.equals(id)) {
             setTitle((String)value);
@@ -524,7 +548,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
     }
 
-    public Object getPropertyValue(Object id)
+    @Override
+	public Object getPropertyValue(Object id)
     {
         if (InstallOptionsModel.PROPERTY_NUMFIELDS.equals(id)) {
             return new Integer(Common.isEmptyCollection(mChildren)?0:mChildren.size());
@@ -631,7 +656,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             addChild(child,index);
         }
         else {
-            InstallOptionsWidget oldChild = (InstallOptionsWidget)mChildren.get(index);
+            InstallOptionsWidget oldChild = mChildren.get(index);
             mChildren.set(index,child);
             child.setIndex(index);
             child.setParent(this);
@@ -656,7 +681,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     {
         if(startIndex <= endIndex) {
             for(int i=startIndex; i<=endIndex; i++) {
-                InstallOptionsWidget widget = (InstallOptionsWidget)mChildren.get(i);
+                InstallOptionsWidget widget = mChildren.get(i);
                 if(widget != null) {
                     widget.setIndex(i);
                 }
@@ -665,7 +690,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
     }
 
-    public List getChildren(){
+    public List<InstallOptionsWidget> getChildren(){
         return Collections.unmodifiableList(mChildren);
     }
 
@@ -692,10 +717,11 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     public void removeChild(int index){
-        removeChild((InstallOptionsWidget)mChildren.get(index));
+        removeChild(mChildren.get(index));
     }
 
-    public Image getIconImage()
+    @Override
+	public Image getIconImage()
     {
         return INSTALLOPTIONS_ICON;
     }
@@ -718,21 +744,22 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     public InstallOptionsElement getElement(INISection section)
     {
         if(mINISectionMap != null) {
-            return (InstallOptionsElement)mINISectionMap.get(section);
+            return mINISectionMap.get(section);
         }
         return null;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         InstallOptionsDialog dialog = (InstallOptionsDialog)super.clone();
         if(dialog.mSelectedIndices != null) {
-            dialog.mSelectedIndices = (int[])dialog.mSelectedIndices.clone();
+            dialog.mSelectedIndices = dialog.mSelectedIndices.clone();
         }
         dialog.reset();
-        ArrayList list = new ArrayList();
-        for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-            InstallOptionsWidget child = (InstallOptionsWidget)((InstallOptionsWidget)iter.next()).clone();
+        List<InstallOptionsWidget> list = new ArrayList<InstallOptionsWidget>();
+        for (Iterator<InstallOptionsWidget> iter = mChildren.iterator(); iter.hasNext();) {
+            InstallOptionsWidget child = (InstallOptionsWidget)iter.next().clone();
             child.setParent(dialog);
             list.add(child);
         }
@@ -749,16 +776,18 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         dialog.setDialogSize(getDialogSize().getCopy());
         dialog.setShowDialogSize(isShowDialogSize());
         dialog.mINIFile = null;
-        dialog.mINISectionMap = new HashMap();
+        dialog.mINISectionMap = new HashMap<INISection, InstallOptionsElement>();
         return dialog;
     }
 
-    protected Collection doGetPropertyNames()
+    @Override
+	protected Collection<String> doGetPropertyNames()
     {
         return InstallOptionsModel.INSTANCE.getDialogSettings();
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return InstallOptionsPlugin.getResourceString("install.options.dialog.name"); //$NON-NLS-1$
     }
@@ -773,7 +802,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         INISection[] sections = file.getSections();
         InstallOptionsDialog dialog  = null;
         if(!Common.isEmptyArray(sections)) {
-            ArrayList children = new ArrayList();
+            List<InstallOptionsWidget> children = new ArrayList<InstallOptionsWidget>();
             for (int i = 0; i < sections.length; i++) {
                 if(sections[i].getName().equalsIgnoreCase(InstallOptionsModel.SECTION_SETTINGS)) {
                     dialog = new InstallOptionsDialog(sections[i]);
@@ -807,8 +836,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 dialog = new InstallOptionsDialog(null);
             }
             int index = 0;
-            for (Iterator iter = children.iterator(); iter.hasNext(); index++) {
-                InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
+            for (Iterator<InstallOptionsWidget> iter = children.iterator(); iter.hasNext(); index++) {
+                InstallOptionsWidget widget = iter.next();
                 dialog.mChildren.add(null);
                 if(widget != null) {
                     dialog.setChild(widget,index);
@@ -844,8 +873,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                     }
                 }
             }
-            for(Iterator iter=dialog.getChildren().iterator(); iter.hasNext(); ) {
-                InstallOptionsWidget child = ((InstallOptionsWidget)iter.next());
+            for(Iterator<InstallOptionsWidget> iter=dialog.getChildren().iterator(); iter.hasNext(); ) {
+                InstallOptionsWidget child = iter.next();
                 if(child != null && child.getMetadataComment() != null) {
                     String comment = child.getMetadataComment().getText().trim();
                     if(comment != null) {
@@ -880,7 +909,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
 
             //Remove null entries
             int oldSize = dialog.mChildren.size();
-            for (Iterator iter = dialog.mChildren.iterator(); iter.hasNext(); ) {
+            for (Iterator<InstallOptionsWidget> iter = dialog.mChildren.iterator(); iter.hasNext(); ) {
                 if(iter.next() == null) {
                     iter.remove();
                 }
@@ -964,9 +993,9 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                                 }
                             }
                             if(Math.abs(alignment) <= 1) {
-                                List guides = parent.getRuler(orientation).getGuides();
+                                List<InstallOptionsGuide> guides = parent.getRuler(orientation).getGuides();
                                 if(!Common.isEmptyCollection(guides) && guides.size() > index) {
-                                    InstallOptionsGuide guide = (InstallOptionsGuide)guides.get(index);
+                                    InstallOptionsGuide guide = guides.get(index);
                                     int offset = guide.getPosition();
                                     Position p = child.toGraphical(child.getPosition(), false);
                                     int offset2 = -1;
@@ -995,8 +1024,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     public boolean canUpdateINIFile()
     {
         if(!isDirty()) {
-            for (Iterator iter = mChildren.iterator(); iter.hasNext();) {
-                InstallOptionsWidget child = (InstallOptionsWidget)iter.next();
+            for (Iterator<InstallOptionsWidget> iter = mChildren.iterator(); iter.hasNext();) {
+                InstallOptionsWidget child = iter.next();
                 if(child.isDirty()) {
                     return true;
                 }
@@ -1006,7 +1035,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         return true;
     }
 
-    public INISection getSection()
+    @Override
+	public INISection getSection()
     {
         INISection section = super.getSection();
         if(section.getPosition() == null) {
@@ -1019,11 +1049,11 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     public INIFile updateINIFile()
     {
         if(canUpdateINIFile()) {
-            HashMap tempMap = new HashMap();
+            HashMap<INISection, InstallOptionsElement> tempMap = new HashMap<INISection, InstallOptionsElement>();
             INISection previousSection = null;
-            List children = new ArrayList(mChildren);
+            List<InstallOptionsElement> children = new ArrayList<InstallOptionsElement>(mChildren);
             children.add(this);
-            Collections.sort(children,new Comparator() {
+            Collections.sort(children,new Comparator<InstallOptionsElement>() {
                 private org.eclipse.jface.text.Position getPosition(InstallOptionsElement element)
                 {
                     INISection sec = element.getSection();
@@ -1036,10 +1066,10 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                     return MAX_POSITION;
                 }
 
-                public int compare(Object o1, Object o2)
+                public int compare(InstallOptionsElement o1, InstallOptionsElement o2)
                 {
-                    org.eclipse.jface.text.Position p1 = getPosition((InstallOptionsElement)o1);
-                    org.eclipse.jface.text.Position p2 = getPosition((InstallOptionsElement)o2);
+                    org.eclipse.jface.text.Position p1 = getPosition(o1);
+                    org.eclipse.jface.text.Position p2 = getPosition(o2);
                     int n = p1.getOffset()-p2.getOffset();
                     if(n == 0) {
                         n = p1.getLength()-p2.getLength();
@@ -1048,7 +1078,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 }
             });
 
-            for (Iterator iter = children.iterator(); iter.hasNext();) {
+            for (Iterator<InstallOptionsElement> iter = children.iterator(); iter.hasNext();) {
                 if(previousSection != null) {
                     int n = previousSection.getSize();
                     if(n > 0) {
@@ -1069,7 +1099,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                         }
                     }
                 }
-                InstallOptionsElement element = (InstallOptionsElement)iter.next();
+                InstallOptionsElement element = iter.next();
                 INISection section = element.updateSection();
                 if(!mINISectionMap.containsKey(section)) {
                     mINISectionMap.put(section,element);
@@ -1089,8 +1119,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                     }
                 }
             }
-            for (Iterator iter = mINISectionMap.keySet().iterator(); iter.hasNext();) {
-                INISection section = (INISection)iter.next();
+            for (Iterator<INISection> iter = mINISectionMap.keySet().iterator(); iter.hasNext();) {
+                INISection section = iter.next();
                 if(!tempMap.containsKey(section)) {
                     iter.remove();
                     mINIFile.removeChild(section);
@@ -1098,8 +1128,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
             }
 
             boolean saveGuides = updateGuidesMetadata();
-            for(Iterator iter = getChildren().iterator(); iter.hasNext(); ) {
-                InstallOptionsWidget child = (InstallOptionsWidget)iter.next();
+            for(Iterator<InstallOptionsWidget> iter = getChildren().iterator(); iter.hasNext(); ) {
+                InstallOptionsWidget child = iter.next();
                 updateChildMetadata(child, saveGuides);
             }
 
@@ -1112,8 +1142,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     private boolean updateGuidesMetadata()
     {
         INISection section = getSection();
-        List verticalGuides = getRuler(PositionConstants.NORTH).getGuides();
-        List horizontalGuides = getRuler(PositionConstants.WEST).getGuides();
+        List<InstallOptionsGuide> verticalGuides = getRuler(PositionConstants.NORTH).getGuides();
+        List<InstallOptionsGuide> horizontalGuides = getRuler(PositionConstants.WEST).getGuides();
         INIComment comment = getMetadataComment();
         if(verticalGuides.size() > 0 || horizontalGuides.size() > 0) {
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -1129,16 +1159,16 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
                 buf.append(text.substring(0,n)).append(METADATA_PREFIX).append(" ").append(GUIDES_PREFIX); //$NON-NLS-1$
             }
             int count = 0;
-            for (Iterator iter = horizontalGuides.iterator(); iter.hasNext();) {
-                InstallOptionsGuide guide = (InstallOptionsGuide)iter.next();
+            for (Iterator<InstallOptionsGuide> iter = horizontalGuides.iterator(); iter.hasNext();) {
+                InstallOptionsGuide guide = iter.next();
                 if(count > 0) {
                     buf.append('#');
                 }
                 buf.append(PositionConstants.WEST).append('|').append(guide.getPosition());
                 count++;
             }
-            for (Iterator iter = verticalGuides.iterator(); iter.hasNext();) {
-                InstallOptionsGuide guide = (InstallOptionsGuide)iter.next();
+            for (Iterator<InstallOptionsGuide> iter = verticalGuides.iterator(); iter.hasNext();) {
+                InstallOptionsGuide guide = iter.next();
                 if(count > 0) {
                     buf.append('#');
                 }
@@ -1162,7 +1192,8 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
     }
 
-    protected TypeConverter loadTypeConverter(String property, Object value)
+    @Override
+	protected TypeConverter<?> loadTypeConverter(String property, Object value)
     {
         if (InstallOptionsModel.PROPERTY_NUMFIELDS.equals(property)||
         	InstallOptionsModel.PROPERTY_CANCEL_ENABLED.equals(property)||
@@ -1234,17 +1265,19 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         }
     }
 
-    protected String getSectionName()
+    @Override
+	protected String getSectionName()
     {
         return InstallOptionsModel.SECTION_SETTINGS;
     }
 
-    public void modelChanged()
+    @Override
+	public void modelChanged()
     {
         super.modelChanged();
         if(!Common.isEmptyCollection(mChildren)) {
-            for (ListIterator iter = mChildren.listIterator(); iter.hasNext();) {
-                InstallOptionsWidget child = (InstallOptionsWidget)iter.next();
+            for (ListIterator<InstallOptionsWidget> iter = mChildren.listIterator(); iter.hasNext();) {
+                InstallOptionsWidget child = iter.next();
                 InstallOptionsWidget newChild = null;
                 InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(child.getType());
                 boolean isDirty = isDirty();

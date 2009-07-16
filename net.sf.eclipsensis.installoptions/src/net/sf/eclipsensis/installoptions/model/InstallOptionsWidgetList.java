@@ -13,7 +13,7 @@ import java.util.*;
 
 public class InstallOptionsWidgetList
 {
-    private List mWidgets = new ArrayList();
+    private List<InstallOptionsWidget> mWidgets = new ArrayList<InstallOptionsWidget>();
 
     public void add(InstallOptionsWidget widget)
     {
@@ -25,6 +25,6 @@ public class InstallOptionsWidgetList
 
     public InstallOptionsWidget[] getWidgets()
     {
-        return (InstallOptionsWidget[])mWidgets.toArray(new InstallOptionsWidget[mWidgets.size()]);
+        return mWidgets.toArray(new InstallOptionsWidget[mWidgets.size()]);
     }
 }

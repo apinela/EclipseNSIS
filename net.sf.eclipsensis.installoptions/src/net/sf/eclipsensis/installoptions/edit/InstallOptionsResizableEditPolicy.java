@@ -36,7 +36,8 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         mEditPart = editPart;
     }
 
-    public Command getCommand(Request request)
+    @Override
+	public Command getCommand(Request request)
     {
         if((REQ_RESIZE.equals(request.getType()) || REQ_MOVE.equals(request.getType())) &&
                 ((InstallOptionsWidget)mEditPart.getModel()).isLocked()) {
@@ -47,7 +48,8 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         }
     }
 
-    public void showSourceFeedback(Request request)
+    @Override
+	public void showSourceFeedback(Request request)
     {
         if(!((InstallOptionsWidget)mEditPart.getModel()).isLocked()) {
             super.showSourceFeedback(request);
@@ -55,7 +57,8 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
     }
 
 
-    public void deactivate()
+    @Override
+	public void deactivate()
     {
         Object model = getHost().getModel();
         if(model instanceof InstallOptionsWidget) {
@@ -64,7 +67,8 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         super.deactivate();
     }
 
-    public void activate()
+    @Override
+	public void activate()
     {
         super.activate();
         Object model = getHost().getModel();
@@ -83,9 +87,10 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         }
     }
 
-    protected List createSelectionHandles()
+    @Override
+	protected List<Handle> createSelectionHandles()
     {
-        List list = new ArrayList();
+        List<Handle> list = new ArrayList<Handle>();
 
         Object model = getHost().getModel();
         if(model instanceof InstallOptionsWidget && ((InstallOptionsWidget)model).isLocked()) {
@@ -179,13 +184,12 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         return list;
     }
 
-    protected void showChangeBoundsFeedback(ChangeBoundsRequest request)
+    @Override
+	protected void showChangeBoundsFeedback(ChangeBoundsRequest request)
     {
         IFigure f = getDragSourceFeedbackFigure();
         if(f instanceof ResizeFeedbackFigure) {
             ResizeFeedbackFigure figure = (ResizeFeedbackFigure)f;
-            figure.setMoveDelta(request.getMoveDelta());
-            figure.setSizeDelta(request.getSizeDelta());
             figure.setResizeDirection(request.getResizeDirection());
         }
         super.showChangeBoundsFeedback(request);
@@ -196,7 +200,8 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
      *
      * @return the new feedback figure
      */
-    protected IFigure createDragSourceFeedbackFigure()
+    @Override
+	protected IFigure createDragSourceFeedbackFigure()
     {
         IFigure figure = createFigure((GraphicalEditPart)getHost());
 
@@ -225,7 +230,8 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
      *
      * @return the feedback layer
      */
-    protected IFigure getFeedbackLayer()
+    @Override
+	protected IFigure getFeedbackLayer()
     {
         return getLayer(LayerConstants.SCALED_FEEDBACK_LAYER);
     }
@@ -243,7 +249,8 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
     /**
      * @see org.eclipse.gef.editpolicies.NonResizableEditPolicy#initialFeedbackRectangle()
      */
-    protected Rectangle getInitialFeedbackBounds()
+    @Override
+	protected Rectangle getInitialFeedbackBounds()
     {
         return getHostFigure().getBounds();
     }
@@ -254,8 +261,6 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         private String mText = null;
         private InstallOptionsWidget mModel;
         private RectangleFigure mSizeFigure = null;
-        private Point mMoveDelta = IInstallOptionsConstants.EMPTY_POINT;
-        private Dimension mSizeDelta = IInstallOptionsConstants.EMPTY_DIMENSION;
         private Viewport mViewport = null;
         private int mResizeDirection = 0;
 
@@ -276,27 +281,8 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
             mResizeDirection = resizeDirection;
         }
 
-        public Point getMoveDelta()
-        {
-            return mMoveDelta;
-        }
-
-        public void setMoveDelta(Point moveDelta)
-        {
-            mMoveDelta = moveDelta;
-        }
-
-        public Dimension getSizeDelta()
-        {
-            return mSizeDelta;
-        }
-
-        public void setSizeDelta(Dimension sizeDelta)
-        {
-            mSizeDelta = sizeDelta;
-        }
-
-        public void setBounds(Rectangle rect)
+        @Override
+		public void setBounds(Rectangle rect)
         {
             if(mInit) {
                 if(mResizeDirection == 0) {
@@ -442,7 +428,8 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         {
             if (mSizeFigure == null) {
                 mSizeFigure = new RectangleFigure() {
-                    public void paintClientArea(Graphics graphics)
+                    @Override
+					public void paintClientArea(Graphics graphics)
                     {
                         super.paintClientArea(graphics);
                         if (mText != null) {
@@ -459,7 +446,8 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
             return mSizeFigure;
         }
 
-        public void removeNotify()
+        @Override
+		public void removeNotify()
         {
             if(mSizeFigure != null) {
                 getResizeFeedbackLayer().remove(mSizeFigure);

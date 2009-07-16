@@ -22,7 +22,8 @@ public class NSISScriptLabel extends AbstractNSISScriptElement
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.script.INSISScriptElement#write(net.sf.eclipsensis.script.NSISScriptWriter)
      */
-    public void write(NSISScriptWriter writer)
+    @Override
+	public void write(NSISScriptWriter writer)
     {
         boolean b = writer.isIndenting();
         writer.setIndenting(false);

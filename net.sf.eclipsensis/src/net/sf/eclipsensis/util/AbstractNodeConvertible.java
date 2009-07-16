@@ -37,24 +37,25 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
 
     public static final String NULL_NODE = "null"; //$NON-NLS-1$
 
-    private transient Collection mSkippedProperties = null;
+    private transient Collection<String> mSkippedProperties = null;
 
-    public Object clone() throws CloneNotSupportedException
+    @Override
+	public Object clone() throws CloneNotSupportedException
     {
-        return super.clone();
+		return super.clone();
     }
 
-    public synchronized Collection getSkippedProperties()
+    public synchronized Collection<String> getSkippedProperties()
     {
         if (mSkippedProperties == null)
         {
-            mSkippedProperties = new HashSet();
+            mSkippedProperties = new HashSet<String>();
             addSkippedProperties(mSkippedProperties);
         }
         return mSkippedProperties;
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         skippedProperties.add("class"); //$NON-NLS-1$
         skippedProperties.add("skippedProperties"); //$NON-NLS-1$
@@ -71,13 +72,13 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
             {
                 beanInfo = Introspector.getBeanInfo(getClass());
                 PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-                Map propertyMap = new HashMap();
+                Map<String, PropertyDescriptor> propertyMap = new HashMap<String, PropertyDescriptor>();
                 for (int i = 0; i < propertyDescriptors.length; i++)
                 {
                     propertyMap.put(propertyDescriptors[i].getName(), propertyDescriptors[i]);
 
                 }
-                Collection skippedProperties = getSkippedProperties();
+                Collection<String> skippedProperties = getSkippedProperties();
                 NodeList childNodes = node.getChildNodes();
                 int n = childNodes.getLength();
                 for (int i = 0; i < n; i++)
@@ -92,7 +93,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                             String propertyName = nameNode.getNodeValue();
                             if (!skippedProperties.contains(propertyName))
                             {
-                                PropertyDescriptor propertyDescriptor = (PropertyDescriptor) propertyMap
+                                PropertyDescriptor propertyDescriptor = propertyMap
                                         .get(propertyName);
                                 if (propertyDescriptor != null)
                                 {
@@ -113,7 +114,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
     protected void propertyFromNode(Node childNode, PropertyDescriptor propertyDescriptor)
     {
         Method writeMethod = propertyDescriptor.getWriteMethod();
-        Class[] paramTypes;
+        Class<?>[] paramTypes;
         if (writeMethod != null && (paramTypes = writeMethod.getParameterTypes()).length > 0)
         {
             try
@@ -133,7 +134,8 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
      * @param paramTypes
      * @return
      */
-    protected Object getNodeValue(Node node, String name, Class clasz)
+    @SuppressWarnings("unchecked")
+	protected Object getNodeValue(Node node, String name, Class<?> clasz)
     {
         if (clasz.isArray())
         {
@@ -141,7 +143,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         }
         else if (Collection.class.isAssignableFrom(clasz))
         {
-            return NodeConversionUtility.readCollectionNode(node, clasz);
+            return NodeConversionUtility.readCollectionNode(node, (Class<Collection>)clasz);
         }
         else if (String.class.equals(clasz))
         {
@@ -151,7 +153,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                 return str;
             }
         }
-        INodeConverter nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz);
+        INodeConverter<?> nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz);
         if (nodeConverter != null)
         {
             Node childNode = XMLUtil.findFirstChild(node);
@@ -175,7 +177,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         {
             BeanInfo beanInfo = Introspector.getBeanInfo(getClass());
             PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-            Collection skippedProperties = getSkippedProperties();
+            Collection<String> skippedProperties = getSkippedProperties();
             for (int i = 0; i < propertyDescriptors.length; i++)
             {
                 try
@@ -210,7 +212,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         Method readMethod = descriptor.getReadMethod();
         if (readMethod != null)
         {
-            Object obj = readMethod.invoke(this, null);
+            Object obj = readMethod.invoke(this, (Object)null);
 
             if (obj != null)
             {
@@ -229,7 +231,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         return obj == null ? null : obj.toString();
     }
 
-    protected Object convertFromString(String string, Class clasz)
+    protected Object convertFromString(String string, Class<?> clasz)
     {
         if (clasz.equals(String.class))
         {
@@ -277,64 +279,48 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         }
     }
 
-    protected Node createChildNode(Document document, String name, Object value)
+    @SuppressWarnings("unchecked")
+	protected Node createChildNode(Document document, String name, Object value)
     {
         Node childNode = document.createElement(getChildNodeName());
         XMLUtil.addAttribute(document, childNode, NAME_ATTRIBUTE, name);
-        if (value.getClass().isArray())
-        {
-            NodeConversionUtility.createArrayNode(document, childNode, value);
-        }
-        else if (value instanceof Collection)
-        {
-            NodeConversionUtility.createCollectionNode(document, childNode, (Collection) value);
-        }
-        else if (value instanceof INodeConvertible)
-        {
-            childNode.appendChild(((INodeConvertible) value).toNode(document));
-        }
-        else if (value instanceof Node)
-        {
-            childNode.appendChild((Node) value);
-        }
-        else if (value instanceof NodeList)
-        {
-            NodeList nodeList = (NodeList) value;
-            int n = nodeList.getLength();
-            for (int i = 0; i < n; i++)
-            {
-                childNode.appendChild(nodeList.item(i));
-            }
-        }
-        else if (value != null)
-        {
-            INodeConverter nodeConverter = null;
-            if (value instanceof String)
-            {
-                String str = (String) value;
-                for (int i = 0; i < XML_ESCAPE_CHARS.length; i++)
-                {
-                    if (str.indexOf(XML_ESCAPE_CHARS[i]) >= 0)
-                    {
-                        childNode.appendChild(document.createTextNode(str));
-                        return childNode;
-                    }
-                }
-            }
-            else if (!Common.isWrappedPrimitive(value))
-            {
-                nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(value.getClass());
-            }
-            if (nodeConverter != null)
-            {
-                childNode.appendChild(nodeConverter.toNode(document, value));
-            }
-            else
-            {
-                XMLUtil.addAttribute(document, childNode, VALUE_ATTRIBUTE, convertToString(name, value));
-            }
-        }
-        return childNode;
+        if (value != null) {
+			if (value.getClass().isArray()) {
+				NodeConversionUtility.createArrayNode(document, childNode,
+						value);
+			} else if (value instanceof Collection<?>) {
+				NodeConversionUtility.createCollectionNode(document, childNode,
+						(Collection<?>) value);
+			} else if (value instanceof INodeConvertible) {
+				childNode.appendChild(((INodeConvertible) value)
+						.toNode(document));
+			} else if (value instanceof Node) {
+				childNode.appendChild((Node) value);
+			} else if (value instanceof NodeList) {
+				NodeList nodeList = (NodeList) value;
+				int n = nodeList.getLength();
+				for (int i = 0; i < n; i++) {
+					childNode.appendChild(nodeList.item(i));
+				}
+			} else {
+				if (value instanceof String) {
+					String str = (String) value;
+					for (int i = 0; i < XML_ESCAPE_CHARS.length; i++) {
+						if (str.indexOf(XML_ESCAPE_CHARS[i]) >= 0) {
+							childNode.appendChild(document.createTextNode(str));
+							return childNode;
+						}
+					}
+				} else if (!Common.isWrappedPrimitive(value)) {
+					INodeConverter<Object> nodeConverter = (INodeConverter<Object>) NodeConverterFactory.INSTANCE.getNodeConverter(value.getClass());
+					childNode.appendChild(nodeConverter.toNode(document, value));
+					return childNode;
+				}
+				XMLUtil.addAttribute(document, childNode, VALUE_ATTRIBUTE,
+						convertToString(name, value));
+			}
+		}
+		return childNode;
     }
 
     protected abstract String getChildNodeName();

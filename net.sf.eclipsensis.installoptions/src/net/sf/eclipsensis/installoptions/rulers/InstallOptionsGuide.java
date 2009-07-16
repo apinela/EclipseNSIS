@@ -29,7 +29,7 @@ public class InstallOptionsGuide
 
     protected PropertyChangeSupport mListeners = new PropertyChangeSupport(this);
 
-    private Map mMap;
+    private Map<InstallOptionsWidget, Integer> mMap;
 
     private int mPosition;
 
@@ -118,7 +118,7 @@ public class InstallOptionsGuide
     public int getAlignment(InstallOptionsWidget widget)
     {
         if (getMap().get(widget) != null) {
-            return ((Integer)getMap().get(widget)).intValue();
+            return (getMap().get(widget)).intValue();
         }
         return -2;
     }
@@ -128,10 +128,10 @@ public class InstallOptionsGuide
      *         their alignments; the keys are IOElements and values are
      *         Integers
      */
-    public Map getMap()
+    public Map<InstallOptionsWidget, Integer> getMap()
     {
         if (mMap == null) {
-            mMap = new HashMap();
+            mMap = new HashMap<InstallOptionsWidget, Integer>();
         }
         return mMap;
     }
@@ -140,7 +140,7 @@ public class InstallOptionsGuide
      * @return the set of all the widgets attached to this guide; a set is used
      *         because a widget can only be attached to a guide along one edge.
      */
-    public Set getWidgets()
+    public Set<InstallOptionsWidget> getWidgets()
     {
         return getMap().keySet();
     }

@@ -41,12 +41,14 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         super(section);
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_LISTBOX;
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    @Override
+	protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             SelectListItemsPropertyDescriptor descriptor = new SelectListItemsPropertyDescriptor();
@@ -56,12 +58,14 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         return super.createPropertyDescriptor(name);
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    @Override
+	protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new ListboxPropertySectionCreator(this);
     }
 
-    public void setFlags(List flags)
+    @Override
+	public void setFlags(List<String> flags)
     {
         if(!flags.contains(InstallOptionsModel.FLAGS_MULTISELECT)&&
            !flags.contains(InstallOptionsModel.FLAGS_EXTENDEDSELECT)) {
@@ -77,13 +81,14 @@ public class InstallOptionsListbox extends InstallOptionsListItems
 
     private String validateState(String state)
     {
-        Collection listItems = new CaseInsensitiveSet(getListItems());
-        List selected = Common.tokenizeToList(state,IInstallOptionsConstants.LIST_SEPARATOR,false);
+        Collection<String> listItems = new CaseInsensitiveSet(getListItems());
+        List<String> selected = Common.tokenizeToList(state,IInstallOptionsConstants.LIST_SEPARATOR,false);
         selected.retainAll(listItems);
         return Common.flatten(selected.toArray(),IInstallOptionsConstants.LIST_SEPARATOR);
     }
 
-    public void setListItems(List listItems)
+    @Override
+	public void setListItems(List<String> listItems)
     {
         super.setListItems(listItems);
         String oldState = getState();
@@ -93,7 +98,8 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         }
     }
 
-    public boolean isMultiSelect()
+    @Override
+	public boolean isMultiSelect()
     {
         return hasFlag(InstallOptionsModel.FLAGS_MULTISELECT) ||
                hasFlag(InstallOptionsModel.FLAGS_EXTENDEDSELECT);
@@ -115,19 +121,20 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             setValidator(new NSISStringLengthValidator(getDisplayName()));
         }
 
-        public void propertyChange(PropertyChangeEvent evt)
+        @SuppressWarnings("unchecked")
+		public void propertyChange(PropertyChangeEvent evt)
         {
             if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
-                setListItems((List)evt.getNewValue());
+                setListItems((List<String>)evt.getNewValue());
             }
             else if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_FLAGS)) {
-                List list = (List)evt.getNewValue();
+                List<String> list = (List<String>)evt.getNewValue();
                 setMultiSelect(list.contains(InstallOptionsModel.FLAGS_MULTISELECT)||
                                list.contains(InstallOptionsModel.FLAGS_EXTENDEDSELECT));
             }
         }
 
-        public void setListItems(List listItems)
+        public void setListItems(List<String> listItems)
         {
             if(mEditor != null) {
                 mEditor.setListItems(listItems);
@@ -141,7 +148,8 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             }
         }
 
-        public CellEditor createPropertyEditor(Composite parent)
+        @Override
+		public CellEditor createPropertyEditor(Composite parent)
         {
             if(mEditor == null) {
                 mEditor = new SelectListItemsCellEditor(parent,getListItems(),
@@ -160,9 +168,9 @@ public class InstallOptionsListbox extends InstallOptionsListItems
     protected class SelectListItemsCellEditor extends DialogCellEditor implements PropertyChangeListener
     {
         private boolean mMultiSelect = false;
-        private List mListItems;
+        private List<String> mListItems;
 
-        protected SelectListItemsCellEditor(Composite parent, List listItems, boolean multiSelect)
+        protected SelectListItemsCellEditor(Composite parent, List<String> listItems, boolean multiSelect)
         {
             super(parent);
             InstallOptionsListbox.this.addPropertyChangeListener(this);
@@ -170,7 +178,8 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             setMultiSelect(multiSelect);
         }
 
-        public void dispose()
+        @Override
+		public void dispose()
         {
             InstallOptionsListbox.this.removePropertyChangeListener(this);
             super.dispose();
@@ -183,7 +192,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             }
         }
 
-        public void setListItems(List listItems)
+        public void setListItems(List<String> listItems)
         {
             mListItems = listItems;
         }
@@ -193,10 +202,11 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             mMultiSelect = multiSelect;
         }
 
-        protected Object openDialogBox(Control cellEditorWindow)
+        @Override
+		protected Object openDialogBox(Control cellEditorWindow)
         {
             Object oldValue = getValue();
-            List selected = Common.tokenizeToList((String)oldValue,IInstallOptionsConstants.LIST_SEPARATOR,false);
+            List<String> selected = Common.tokenizeToList((String)oldValue,IInstallOptionsConstants.LIST_SEPARATOR,false);
             SelectListItemsDialog dialog = new SelectListItemsDialog(cellEditorWindow.getShell(), mListItems, selected, mMultiSelect, getType());
             dialog.setValidator(getValidator());
             int result = dialog.open();
@@ -206,19 +216,19 @@ public class InstallOptionsListbox extends InstallOptionsListItems
 
     protected class SelectListItemsDialog extends Dialog
     {
-        private List mValues;
-        private List mSelection;
+        private List<String> mValues;
+        private List<String> mSelection;
         private boolean mMultiSelect;
         private String mType;
         private ICellEditorValidator mValidator;
         private TableViewer mViewer;
 
-        public SelectListItemsDialog(Shell parent, List values, List selection, boolean multiSelect, String type)
+        public SelectListItemsDialog(Shell parent, List<String> values, List<String> selection, boolean multiSelect, String type)
         {
             super(parent);
             setShellStyle(getShellStyle()|SWT.RESIZE);
-            mValues = new ArrayList(values);
-            mSelection = new ArrayList(selection);
+            mValues = new ArrayList<String>(values);
+            mSelection = new ArrayList<String>(selection);
             mMultiSelect = multiSelect;
             mType = type;
         }
@@ -232,19 +242,21 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         {
             mValidator = validator;
         }
-        protected void configureShell(Shell newShell)
+        @Override
+		protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
             newShell.setText(InstallOptionsPlugin.getFormattedString("select.listitems.dialog.name", new String[]{mType})); //$NON-NLS-1$
             newShell.setImage(InstallOptionsPlugin.getShellImage());
         }
 
-        public List getSelection()
+        public List<String> getSelection()
         {
             return mSelection;
         }
 
-        protected Control createDialogArea(Composite parent)
+        @Override
+		protected Control createDialogArea(Composite parent)
         {
             final Composite composite = (Composite)super.createDialogArea(parent);
             GridLayout layout = (GridLayout)composite.getLayout();
@@ -269,7 +281,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
                 {
                     IStructuredSelection sel = (IStructuredSelection)event.getSelection();
                     mSelection.clear();
-                    mSelection.addAll(sel.toList());
+                    mSelection.addAll(Common.makeGenericList(String.class, sel.toList()));
                 }
             });
             mViewer.setComparer(new IElementComparer() {
@@ -287,7 +299,8 @@ public class InstallOptionsListbox extends InstallOptionsListItems
                 }
             });
             mViewer.getTable().addSelectionListener(new SelectionAdapter() {
-                public void widgetDefaultSelected(SelectionEvent e)
+                @Override
+				public void widgetDefaultSelected(SelectionEvent e)
                 {
                     okPressed();
                 }
@@ -304,7 +317,8 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             selectAll.setText(InstallOptionsPlugin.getResourceString("select.all.label")); //$NON-NLS-1$
             selectAll.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             selectAll.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     mViewer.setSelection(new StructuredSelection(mValues));
                     mViewer.getTable().setFocus();
@@ -316,7 +330,8 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             deselectAll.setText(InstallOptionsPlugin.getResourceString("deselect.all.label")); //$NON-NLS-1$
             deselectAll.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             deselectAll.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     mViewer.setSelection(StructuredSelection.EMPTY);
                     mViewer.getTable().setFocus();
@@ -328,7 +343,8 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             return composite;
         }
 
-        public void create()
+        @Override
+		public void create()
         {
             super.create();
             // Set the initial selection here because of Windows bug which creates blank rows
@@ -336,7 +352,8 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             mViewer.setSelection(new StructuredSelection(mSelection));
         }
 
-        protected void okPressed()
+        @Override
+		protected void okPressed()
         {
             ICellEditorValidator validator = getValidator();
             if(validator != null) {

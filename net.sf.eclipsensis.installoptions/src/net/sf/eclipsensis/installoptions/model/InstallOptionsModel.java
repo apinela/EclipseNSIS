@@ -97,11 +97,11 @@ public class InstallOptionsModel implements IPropertyChangeListener
 
     public static final InstallOptionsModel INSTANCE = new InstallOptionsModel();
 
-    private List mListeners = new ArrayList();
-    private Set mDialogSettings = new CaseInsensitiveSet();
-    private Map mCachedControlTypes = new CaseInsensitiveMap();
-    private Map mControlTypes = new CaseInsensitiveMap();
-    private Map mControlRequiredSettings = new CaseInsensitiveMap();
+    private List<IModelListener> mListeners = new ArrayList<IModelListener>();
+    private Set<String> mDialogSettings = new CaseInsensitiveSet();
+    private Map<String, InstallOptionsModelTypeDef> mCachedControlTypes = new CaseInsensitiveMap<InstallOptionsModelTypeDef>();
+    private Map<String, InstallOptionsModelTypeDef> mControlTypes = new CaseInsensitiveMap<InstallOptionsModelTypeDef>();
+    private Map<String, String> mControlRequiredSettings = new CaseInsensitiveMap<String>();
     private int mMaxLength;
 
     /**
@@ -133,7 +133,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
 
     private void notifyListeners()
     {
-        IModelListener[] listeners = (IModelListener[])mListeners.toArray(new IModelListener[mListeners.size()]);
+        IModelListener[] listeners = mListeners.toArray(new IModelListener[mListeners.size()]);
         for (int i = 0; i < listeners.length; i++) {
             listeners[i].modelChanged();
         }
@@ -148,11 +148,11 @@ public class InstallOptionsModel implements IPropertyChangeListener
 
     private void loadModel()
     {
-        List controlRequiredSettings = new ArrayList();
-        List controlTypes = new ArrayList();
-        List dialogSettings = new ArrayList();
-        Map controlSettings = new CaseInsensitiveMap();
-        Map controlFlags = new CaseInsensitiveMap();
+        List<String> controlRequiredSettings = new ArrayList<String>();
+        List<String> controlTypes = new ArrayList<String>();
+        List<String> dialogSettings = new ArrayList<String>();
+        Map<String, List<String>> controlSettings = new CaseInsensitiveMap<List<String>>();
+        Map<String, List<String>> controlFlags = new CaseInsensitiveMap<List<String>>();
         ResourceBundle bundle;
         try {
             bundle = ResourceBundle.getBundle(getClass().getName());
@@ -162,36 +162,36 @@ public class InstallOptionsModel implements IPropertyChangeListener
 
         if(bundle != null) {
             Version nsisVersion = getNSISVersion();
-            HashMap versionMap = new HashMap();
-            for(Enumeration e=bundle.getKeys(); e.hasMoreElements();) {
-                String key = (String)e.nextElement();
+            HashMap<Version, ArrayList<String[]>> versionMap = new HashMap<Version, ArrayList<String[]>>();
+            for(Enumeration<String> e=bundle.getKeys(); e.hasMoreElements();) {
+                String key = e.nextElement();
                 int n = key.indexOf('#');
                 if(n > 1) {
                     String name = key.substring(0,n);
                     Version version = new Version(key.substring(n+1));
                     if(nsisVersion.compareTo(version) >= 0) {
-                        ArrayList list = (ArrayList)versionMap.get(version);
+                        ArrayList<String[]> list = versionMap.get(version);
                         if(list == null) {
-                            list = new ArrayList();
+                            list = new ArrayList<String[]>();
                             versionMap.put(version, list);
                         }
                         list.add(new String[]{name,key});
                     }
                 }
             }
-            ArrayList versionList = new ArrayList(versionMap.keySet());
+            List<Version> versionList = new ArrayList<Version>(versionMap.keySet());
             Collections.sort(versionList);
 
-            for (Iterator iter = versionList.iterator(); iter.hasNext();) {
-                Version version = (Version)iter.next();
-                ArrayList nameList = (ArrayList)versionMap.get(version);
-                for (Iterator iter2 = nameList.iterator(); iter2.hasNext();) {
-                    String[] element = (String[])iter2.next();
+            for (Iterator<Version> iter = versionList.iterator(); iter.hasNext();) {
+                Version version = iter.next();
+                List<String[]> nameList = versionMap.get(version);
+                for (Iterator<String[]> iter2 = nameList.iterator(); iter2.hasNext();) {
+                    String[] element = iter2.next();
                     String name = element[0];
                     String key = element[1];
 
                     String[] values = Common.loadArrayProperty(bundle,key);
-                    List list = null;
+                    List<String> list = null;
                     if(name.equals("Dialog.Settings")) { //$NON-NLS-1$
                         list = dialogSettings;
                     }
@@ -205,7 +205,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
                         int n = name.indexOf("."); //$NON-NLS-1$
                         if(n > 0) {
                             String type = name.substring(0,n);
-                            Map map;
+                            Map<String, List<String>> map;
                             if(name.endsWith(".Settings")) { //$NON-NLS-1$
                                 map = controlSettings;
                             }
@@ -216,9 +216,9 @@ public class InstallOptionsModel implements IPropertyChangeListener
                                 map = null;
                             }
                             if(map != null) {
-                                list = (List)map.get(type);
+                                list = map.get(type);
                                 if(list == null) {
-                                    list = new ArrayList();
+                                    list = new ArrayList<String>();
                                     map.put(type,list);
                                 }
                             }
@@ -235,8 +235,8 @@ public class InstallOptionsModel implements IPropertyChangeListener
         mDialogSettings.addAll(dialogSettings);
 
         mControlRequiredSettings.clear();
-        for (Iterator iter = controlRequiredSettings.iterator(); iter.hasNext();) {
-            String element = (String)iter.next();
+        for (Iterator<String> iter = controlRequiredSettings.iterator(); iter.hasNext();) {
+            String element = iter.next();
             int n = element.indexOf("="); //$NON-NLS-1$
             if(n > 0) {
                 mControlRequiredSettings.put(element.substring(0,n),element.substring(n+1));
@@ -248,30 +248,37 @@ public class InstallOptionsModel implements IPropertyChangeListener
 
         mCachedControlTypes.putAll(mControlTypes);
         mControlTypes.clear();
-        for (Iterator iter = controlTypes.iterator(); iter.hasNext();) {
-            String type = (String)iter.next();
-            InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)mCachedControlTypes.remove(type);
-            if(typeDef == null) {
-                String name = bundle.getString(type+".Name"); //$NON-NLS-1$
-                String description = bundle.getString(type+".Description"); //$NON-NLS-1$
-                String largeIcon = bundle.getString(type+".LargeIcon"); //$NON-NLS-1$
-                String smallIcon = bundle.getString(type+".SmallIcon"); //$NON-NLS-1$
-                String displayProperty = bundle.getString(type+".DisplayProperty"); //$NON-NLS-1$
-                String model = bundle.getString(type+".Model"); //$NON-NLS-1$
-                String part = bundle.getString(type+".Part"); //$NON-NLS-1$
-                typeDef = new InstallOptionsModelTypeDef(type, name, description, smallIcon, largeIcon, displayProperty, model, part);
-            }
-            mControlTypes.put(type,typeDef);
-            List list = (List)controlSettings.get(type);
-            if(list == null) {
-                list = new ArrayList();
-            }
-            list.addAll(0,mControlRequiredSettings.keySet());
-            typeDef.setSettings(list);
-            typeDef.setFlags((List)controlFlags.get(type));
-        }
-
-        InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)mControlTypes.remove(TYPE_UNKNOWN);
+        if (bundle != null) {
+			for (Iterator<String> iter = controlTypes.iterator(); iter
+					.hasNext();) {
+				String type = iter.next();
+				InstallOptionsModelTypeDef typeDef = mCachedControlTypes
+						.remove(type);
+				if (typeDef == null) {
+					String name = bundle.getString(type + ".Name"); //$NON-NLS-1$
+					String description = bundle
+							.getString(type + ".Description"); //$NON-NLS-1$
+					String largeIcon = bundle.getString(type + ".LargeIcon"); //$NON-NLS-1$
+					String smallIcon = bundle.getString(type + ".SmallIcon"); //$NON-NLS-1$
+					String displayProperty = bundle.getString(type
+							+ ".DisplayProperty"); //$NON-NLS-1$
+					String model = bundle.getString(type + ".Model"); //$NON-NLS-1$
+					String part = bundle.getString(type + ".Part"); //$NON-NLS-1$
+					typeDef = new InstallOptionsModelTypeDef(type, name,
+							description, smallIcon, largeIcon, displayProperty,
+							model, part);
+				}
+				mControlTypes.put(type, typeDef);
+				List<String> list = controlSettings.get(type);
+				if (list == null) {
+					list = new ArrayList<String>();
+				}
+				list.addAll(0, mControlRequiredSettings.keySet());
+				typeDef.setSettings(list);
+				typeDef.setFlags(controlFlags.get(type));
+			}
+		}
+		InstallOptionsModelTypeDef typeDef = mControlTypes.remove(TYPE_UNKNOWN);
         if(typeDef != null) {
             mControlTypes.put(typeDef.getType(),typeDef);
         }
@@ -298,7 +305,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
         return nsisVersion;
     }
 
-    private void processValues(List list, String[] values)
+    private void processValues(List<String> list, String[] values)
     {
         for (int i = 0; i < values.length; i++) {
             int n = values[i].indexOf('~');
@@ -328,24 +335,24 @@ public class InstallOptionsModel implements IPropertyChangeListener
 
     public InstallOptionsModelTypeDef getControlTypeDef(String type)
     {
-        InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)mControlTypes.get(type);
+        InstallOptionsModelTypeDef typeDef = mControlTypes.get(type);
         if(typeDef == null) {
             typeDef = getControlTypeDef(TYPE_UNKNOWN);
         }
         return typeDef;
     }
 
-    public Map getControlRequiredSettings()
+    public Map<String, String> getControlRequiredSettings()
     {
         return Collections.unmodifiableMap(mControlRequiredSettings);
     }
 
-    public Collection getControlTypeDefs()
+    public Collection<InstallOptionsModelTypeDef> getControlTypeDefs()
     {
         return Collections.unmodifiableCollection(mControlTypes.values());
     }
 
-    public Collection getDialogSettings()
+    public Collection<String> getDialogSettings()
     {
         return Collections.unmodifiableSet(mDialogSettings);
     }

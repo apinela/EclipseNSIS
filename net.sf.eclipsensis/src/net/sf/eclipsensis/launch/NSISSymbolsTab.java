@@ -30,12 +30,14 @@ class NSISSymbolsTab extends NSISTab
         mBuilder = builder;
     }
 
-    protected NSISSettingsEditorPage createPage()
+    @Override
+	protected NSISSettingsEditorPage createPage()
     {
         return new NSISSettingsEditorSymbolsPage(mSettings);
     }
 
-    protected IFilter createSettingsFilter()
+    @Override
+	protected IFilter createSettingsFilter()
     {
         return new IFilter() {
             public boolean select(Object toTest)
@@ -45,12 +47,14 @@ class NSISSymbolsTab extends NSISTab
         };
     }
 
-    public Image getImage()
+    @Override
+	public Image getImage()
     {
         return EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.symbols.tab.icon")); //$NON-NLS-1$
     }
 
-    public void createControl(Composite parent)
+    @Override
+	public void createControl(Composite parent)
     {
         super.createControl(parent);
         if (mBuilder) {

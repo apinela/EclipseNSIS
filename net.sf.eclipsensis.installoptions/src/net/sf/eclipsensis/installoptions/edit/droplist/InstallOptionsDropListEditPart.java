@@ -12,17 +12,21 @@ package net.sf.eclipsensis.installoptions.edit.droplist;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.combobox.InstallOptionsComboboxEditPart;
+import net.sf.eclipsensis.installoptions.properties.editors.EditableComboBoxCellEditor;
 
-import org.eclipse.gef.tools.*;
+import org.eclipse.gef.tools.CellEditorLocator;
+import org.eclipse.gef.tools.DirectEditManager;
 
 public class InstallOptionsDropListEditPart extends InstallOptionsComboboxEditPart
 {
-    protected String getDirectEditLabelProperty()
+    @Override
+	protected String getDirectEditLabelProperty()
     {
         return "droplist.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected String getExtendedEditLabelProperty()
+    @Override
+	protected String getExtendedEditLabelProperty()
     {
         return "droplist.extended.edit.label"; //$NON-NLS-1$
     }
@@ -30,12 +34,14 @@ public class InstallOptionsDropListEditPart extends InstallOptionsComboboxEditPa
     /**
      * @return
      */
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("droplist.type.name"); //$NON-NLS-1$
     }
 
-    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
+    @Override
+	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<EditableComboBoxCellEditor> clasz, CellEditorLocator locator)
     {
         return new InstallOptionsDropListEditManager(part,clasz,locator);
     }

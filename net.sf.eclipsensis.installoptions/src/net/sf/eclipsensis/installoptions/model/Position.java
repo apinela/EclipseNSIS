@@ -60,7 +60,8 @@ public class Position implements Cloneable, Serializable
         return new Position(left,top,right,bottom);
     }
 
-    protected Object clone()
+    @Override
+	protected Object clone()
     {
         try {
             return super.clone();
@@ -119,7 +120,8 @@ public class Position implements Cloneable, Serializable
         bottom = top + height - 1;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if(obj instanceof Position) {
             Position p = (Position)obj;
@@ -128,12 +130,14 @@ public class Position implements Cloneable, Serializable
         return false;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return left+top+right+bottom;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return new StringBuffer("Position(").append(left).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
             top).append(",").append(right).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$

@@ -27,17 +27,20 @@ public abstract class InstallOptionsPathRequest extends InstallOptionsEditableEl
         super(section);
     }
 
-    protected int getDefaultMaxLen()
+    @Override
+	protected int getDefaultMaxLen()
     {
         return 260;
     }
 
-    protected Position getDefaultPosition()
+    @Override
+	protected Position getDefaultPosition()
     {
         return new Position(0,0,122,13);
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    @Override
+	protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$;

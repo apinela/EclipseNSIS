@@ -36,7 +36,7 @@ public class NSISPartitionScanner extends RuleBasedPartitionScanner implements N
         IToken multilineComment = new Token(NSIS_MULTILINE_COMMENT);
         IToken string = new Token(NSIS_STRING);
 
-        List rules = new ArrayList();
+        List<IPredicateRule> rules = new ArrayList<IPredicateRule>();
         rules.add(new NSISEndOfLineRule("#", singlelineComment));  //$NON-NLS-1$
         rules.add(new NSISEndOfLineRule(";", singlelineComment));  //$NON-NLS-1$
         rules.add(new NSISStringRule('"', string));
@@ -55,14 +55,15 @@ public class NSISPartitionScanner extends RuleBasedPartitionScanner implements N
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.rules.IPartitionTokenScanner#setPartialRange(org.eclipse.jface.text.IDocument, int, int, java.lang.String, int)
      */
-    public void setPartialRange(IDocument document, int offset, int length,
+    @Override
+	public void setPartialRange(IDocument document, int offset, int length,
             String contentType, int partitionOffset)
     {
         super.setPartialRange(document, offset, length, contentType, partitionOffset);
-        Arrays.sort(fDelimiters,new Comparator() {
-            public int compare(Object a, Object b)
+        Arrays.sort(fDelimiters,new Comparator<char[]>() {
+            public int compare(char[] a, char[] b)
             {
-                return ((char[])b).length-((char[])a).length;
+                return b.length-a.length;
             }
         });
     }

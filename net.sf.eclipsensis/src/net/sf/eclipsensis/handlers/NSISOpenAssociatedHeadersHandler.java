@@ -18,12 +18,14 @@ import org.eclipse.core.resources.IFile;
 
 public class NSISOpenAssociatedHeadersHandler extends NSISHandler
 {
-    protected void handleScript(IFile file)
+    @Override
+	protected void handleScript(IFile file)
     {
         NSISEditorUtilities.openAssociatedFiles(null,file);
     }
 
-    protected Pattern createExtensionPattern()
+    @Override
+	protected Pattern createExtensionPattern()
     {
         return Pattern.compile(INSISConstants.NSI_EXTENSION,Pattern.CASE_INSENSITIVE);
     }

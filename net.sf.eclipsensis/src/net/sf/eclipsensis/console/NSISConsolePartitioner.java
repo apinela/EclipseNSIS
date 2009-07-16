@@ -29,9 +29,9 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
 {
     private PendingPartition mConsoleClosedPartition;
     private IDocument mDocument;
-    private ArrayList mPartitions;
-    private ArrayList mPendingPartitions;
-    private ArrayList mUpdatePartitions;
+    private List<NSISConsolePartition> mPartitions;
+    private List<PendingPartition> mPendingPartitions;
+    private List<PendingPartition> mUpdatePartitions;
     private NSISConsolePartition mLastPartition;
     private QueueProcessingJob mQueueJob;
     private boolean mUpdateInProgress;
@@ -59,8 +59,8 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
     {
         mDocument = doc;
         mDocument.setDocumentPartitioner(this);
-        mPartitions = new ArrayList();
-        mPendingPartitions = new ArrayList();
+        mPartitions = new ArrayList<NSISConsolePartition>();
+        mPendingPartitions = new ArrayList<PendingPartition>();
         mQueueJob = new QueueProcessingJob();
         mQueueJob.setSystem(true);
         mQueueJob.setPriority(Job.INTERACTIVE);
@@ -134,11 +134,11 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
         int mid= 0;
         NSISConsolePartition position= null;
         if (left == right) {
-            return new NSISConsolePartition[]{(NSISConsolePartition) mPartitions.get(0)};
+            return new NSISConsolePartition[]{mPartitions.get(0)};
         }
         while (left < right) {
             mid= (left + right) / 2;
-            position= (NSISConsolePartition) mPartitions.get(mid);
+            position= mPartitions.get(mid);
             if (rangeEnd < position.getOffset()) {
                 if (left == mid) {
                     right= left;
@@ -159,33 +159,33 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
                 left= right= mid;
             }
         }
-        List list = new ArrayList();
+        List<NSISConsolePartition> list = new ArrayList<NSISConsolePartition>();
         int index = left - 1;
         if (index >= 0) {
-            position= (NSISConsolePartition) mPartitions.get(index);
+            position= mPartitions.get(index);
             while (index >= 0 && (position.getOffset() + position.getLength()) > offset) {
                 index--;
                 if (index >= 0) {
-                    position= (NSISConsolePartition) mPartitions.get(index);
+                    position= mPartitions.get(index);
                 }
             }
         }
         index++;
-        position= (NSISConsolePartition) mPartitions.get(index);
+        position= mPartitions.get(index);
         while (index < mPartitions.size() && (position.getOffset() < rangeEnd)) {
             list.add(position);
             index++;
             if (index < mPartitions.size()) {
-                position= (NSISConsolePartition) mPartitions.get(index);
+                position= mPartitions.get(index);
             }
         }
-        return (ITypedRegion[]) list.toArray(new NSISConsolePartition[list.size()]);
+        return list.toArray(new NSISConsolePartition[list.size()]);
     }
 
     public ITypedRegion getPartition(int offset)
     {
         for (int i = 0; i < mPartitions.size(); i++) {
-            ITypedRegion partition = (ITypedRegion) mPartitions.get(i);
+            ITypedRegion partition = mPartitions.get(i);
             int start = partition.getOffset();
             int end = start + partition.getLength();
             if (offset >= start && offset < end) {
@@ -230,8 +230,8 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
         if (mUpdateInProgress) {
             synchronized(mPartitions) {
                 if (mUpdatePartitions != null) {
-                    for (Iterator i = mUpdatePartitions.iterator(); i.hasNext(); ) {
-                        PendingPartition pp = (PendingPartition) i.next();
+                    for (Iterator<PendingPartition> i = mUpdatePartitions.iterator(); i.hasNext(); ) {
+                        PendingPartition pp = i.next();
                         if (pp == mConsoleClosedPartition) {
                             continue;
                         }
@@ -267,7 +267,7 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
 
         synchronized(mPendingPartitions)
         {
-            PendingPartition last = (PendingPartition) (mPendingPartitions.size() > 0 ? mPendingPartitions.get(mPendingPartitions.size()-1) : null);
+            PendingPartition last = (mPendingPartitions.size() > 0 ? mPendingPartitions.get(mPendingPartitions.size()-1) : null);
             if (last != null && last.mStream == stream) {
                 last.append(s);
             }
@@ -337,11 +337,12 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
             super(EclipseNSISPlugin.getResourceString("console.queue.job.name")); //$NON-NLS-1$
         }
 
-        protected IStatus run(IProgressMonitor monitor)
+        @Override
+		protected IStatus run(IProgressMonitor monitor)
         {
             synchronized (mOverflowLock) {
                 Display display = ConsolePlugin.getStandardDisplay();
-                ArrayList pendingCopy = new ArrayList();
+                ArrayList<PendingPartition> pendingCopy = new ArrayList<PendingPartition>();
                 StringBuffer buffer = null;
                 boolean consoleClosed = false;
                 while (display != null && mPendingPartitions.size() > 0) {
@@ -352,8 +353,8 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
                         mPendingPartitions.notifyAll();
                     }
                     buffer = new StringBuffer();
-                    for (Iterator i = pendingCopy.iterator(); i.hasNext(); ) {
-                        PendingPartition pp = (PendingPartition) i.next();
+                    for (Iterator<PendingPartition> i = pendingCopy.iterator(); i.hasNext(); ) {
+                        PendingPartition pp = i.next();
                         if (pp != mConsoleClosedPartition) {
                             buffer.append(pp.mText);
                         }
@@ -362,34 +363,37 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
                         }
                     }
                 }
-                final ArrayList finalCopy = pendingCopy;
-                final String toAppend = buffer.toString();
-                final boolean notifyClosed = consoleClosed;
-                display.asyncExec(new Runnable() {
-                    public void run() {
-                        if (mConnected) {
-                            setUpdateInProgress(true);
-                            mUpdatePartitions = finalCopy;
-                            mFirstOffset = mDocument.getLength();
-                            try {
-                                mDocument.replace(mFirstOffset, 0, toAppend.toString());
-                            }
-                            catch (BadLocationException e) {
-                            }
-                            mUpdatePartitions = null;
-                            setUpdateInProgress(false);
-                        }
-                        if (notifyClosed) {
-                            mConsole.partitionerFinished();
-                        }
-                        checkBufferSize();
-                    }
-                });
+                if (display != null && buffer != null) {
+					final ArrayList<PendingPartition> finalCopy = pendingCopy;
+					final String toAppend = buffer.toString();
+					final boolean notifyClosed = consoleClosed;
+					display.asyncExec(new Runnable() {
+						public void run() {
+							if (mConnected) {
+								setUpdateInProgress(true);
+								mUpdatePartitions = finalCopy;
+								mFirstOffset = mDocument.getLength();
+								try {
+									mDocument.replace(mFirstOffset, 0, toAppend
+											.toString());
+								} catch (BadLocationException e) {
+								}
+								mUpdatePartitions = null;
+								setUpdateInProgress(false);
+							}
+							if (notifyClosed) {
+								mConsole.partitionerFinished();
+							}
+							checkBufferSize();
+						}
+					});
+				}
             }
             return Status.OK_STATUS;
         }
 
-        public boolean shouldRun()
+        @Override
+		public boolean shouldRun()
         {
             boolean shouldRun = mConnected && mPendingPartitions != null && mPendingPartitions.size() > 0;
             return shouldRun;
@@ -410,7 +414,8 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
             truncateOffset = offset;
         }
 
-        public IStatus runInUIThread(IProgressMonitor monitor)
+        @Override
+		public IStatus runInUIThread(IProgressMonitor monitor)
         {
             if (mDocument == null) {
                 return Status.OK_STATUS;
@@ -442,8 +447,8 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
                                 mPartitions.remove(0);
                             }
                             int offset = 0;
-                            for (Iterator i = mPartitions.iterator(); i.hasNext(); ) {
-                                NSISConsolePartition p = (NSISConsolePartition) i.next();
+                            for (Iterator<NSISConsolePartition> i = mPartitions.iterator(); i.hasNext(); ) {
+                                NSISConsolePartition p = i.next();
                                 p.setOffset(offset);
                                 offset += p.getLength();
                             }

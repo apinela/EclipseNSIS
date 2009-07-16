@@ -11,25 +11,28 @@ package net.sf.eclipsensis.util;
 
 import org.w3c.dom.*;
 
-public class NodeConvertibleNodeConverter extends AbstractNodeConverter
+public class NodeConvertibleNodeConverter extends AbstractNodeConverter<INodeConvertible>
 {
-    public Object fromNode(Node node, Class clasz)
+    @SuppressWarnings("unchecked")
+	@Override
+	public INodeConvertible fromNode(Node node, Class<?> clasz)
     {
-        Object obj = Common.createDefaultObject(clasz);
-        if(obj instanceof INodeConvertible) {
-            INodeConvertible nodeConvertible = (INodeConvertible)obj;
-            if(Common.stringsAreEqual(node.getNodeName(), nodeConvertible.getNodeName())) {
-                nodeConvertible.fromNode(node);
-                return nodeConvertible;
-            }
-        }
+    	if(INodeConvertible.class.isAssignableFrom(clasz))
+    	{
+    		Class<? extends INodeConvertible> clasz2 = (Class<? extends INodeConvertible>) clasz;
+	    	INodeConvertible nodeConvertible = Common.createDefaultObject(clasz2);
+	        if(Common.stringsAreEqual(node.getNodeName(), nodeConvertible.getNodeName())) {
+	            nodeConvertible.fromNode(node);
+	            return nodeConvertible;
+	        }
+    	}
         throw new IllegalArgumentException(clasz.getName());
     }
 
-    public Node toNode(Document document, Object object)
+    public Node toNode(Document document, INodeConvertible object)
     {
-        if(object instanceof INodeConvertible) {
-            return ((INodeConvertible)object).toNode(document);
+        if(object != null) {
+            return object.toNode(document);
         }
         throw new IllegalArgumentException(String.valueOf(object));
     }

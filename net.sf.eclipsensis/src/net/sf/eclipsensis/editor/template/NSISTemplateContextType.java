@@ -32,7 +32,8 @@ public class NSISTemplateContextType extends TemplateContextType
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.templates.TemplateContextType#validate(java.lang.String)
      */
-    public void validate(String pattern) throws TemplateException
+    @Override
+	public void validate(String pattern) throws TemplateException
     {
         TemplateTranslator translator= new NSISTemplateTranslator();
         TemplateBuffer buffer= translator.translate(pattern);

@@ -11,7 +11,7 @@ package net.sf.eclipsensis.wizard.template;
 
 import net.sf.eclipsensis.template.*;
 
-public class NSISWizardTemplateReaderWriter extends AbstractTemplateReaderWriter
+public class NSISWizardTemplateReaderWriter extends AbstractTemplateReaderWriter<NSISWizardTemplate>
 {
     static final NSISWizardTemplateReaderWriter INSTANCE = new NSISWizardTemplateReaderWriter();
 
@@ -20,7 +20,8 @@ public class NSISWizardTemplateReaderWriter extends AbstractTemplateReaderWriter
         super();
     }
 
-    protected ITemplate createTemplate()
+    @Override
+	protected NSISWizardTemplate createTemplate()
     {
         return new NSISWizardTemplate();
     }

@@ -24,7 +24,7 @@ public class MoveGuideCommand extends Command
 {
     private int mPositionDelta;
     private int mGuideOldPosition;
-    private Map mOldPositions = new HashMap();
+    private Map<InstallOptionsWidget, Position> mOldPositions = new HashMap<InstallOptionsWidget, Position>();
     private InstallOptionsGuide mGuide;
 
     public MoveGuideCommand(InstallOptionsGuide guide, int positionDelta)
@@ -34,7 +34,8 @@ public class MoveGuideCommand extends Command
         mPositionDelta = positionDelta;
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         boolean isHorizontal = mGuide.isHorizontal();
         mGuideOldPosition = mGuide.getPosition();
@@ -43,7 +44,7 @@ public class MoveGuideCommand extends Command
         int guidePos = (isHorizontal?FigureUtility.dialogUnitsToPixelsY(mGuideOldPosition,f):FigureUtility.dialogUnitsToPixelsX(mGuideOldPosition,f)) + mPositionDelta;
         guidePos = (isHorizontal?FigureUtility.pixelsToDialogUnitsY(guidePos,f):FigureUtility.pixelsToDialogUnitsX(guidePos,f));
         mGuide.setPosition(guidePos);
-        Iterator iter = mGuide.getWidgets().iterator();
+        Iterator<InstallOptionsWidget> iter = mGuide.getWidgets().iterator();
         while (iter.hasNext()) {
             InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
             Position pos = widget.getPosition();
@@ -61,7 +62,8 @@ public class MoveGuideCommand extends Command
         }
     }
 
-    public boolean canExecute()
+    @Override
+	public boolean canExecute()
     {
         boolean isHorizontal = mGuide.isHorizontal();
         Font f = FontUtility.getInstallOptionsFont();
@@ -69,7 +71,7 @@ public class MoveGuideCommand extends Command
         if(guidePos < 0) {
             return false;
         }
-        Iterator iter = mGuide.getWidgets().iterator();
+        Iterator<InstallOptionsWidget> iter = mGuide.getWidgets().iterator();
         while (iter.hasNext()) {
             InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
             Position pos = widget.toGraphical(widget.getPosition(), false);
@@ -82,13 +84,14 @@ public class MoveGuideCommand extends Command
         return super.canExecute();
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         mGuide.setPosition(mGuideOldPosition);
-        Iterator iter = mGuide.getWidgets().iterator();
+        Iterator<InstallOptionsWidget> iter = mGuide.getWidgets().iterator();
         while (iter.hasNext()) {
             InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
-            widget.setPosition((Position)mOldPositions.get(widget));
+            widget.setPosition(mOldPositions.get(widget));
         }
     }
 

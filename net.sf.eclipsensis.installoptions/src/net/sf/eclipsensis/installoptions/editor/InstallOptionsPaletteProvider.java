@@ -26,8 +26,8 @@ import org.eclipse.swt.events.*;
 public class InstallOptionsPaletteProvider
 {
     private static final ImageDescriptor cImageDescriptor = InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("templates.icon")); //$NON-NLS-1$
-    public static final Comparator cTemplateEntryComparator = new Comparator() {
-        public int compare(Object o1, Object o2)
+    public static final Comparator<ToolEntry> cTemplateEntryComparator = new Comparator<ToolEntry>() {
+        public int compare(ToolEntry o1, ToolEntry o2)
         {
             CombinedTemplateCreationEntry e1 = (CombinedTemplateCreationEntry)o1;
             CombinedTemplateCreationEntry e2 = (CombinedTemplateCreationEntry)o2;
@@ -37,7 +37,7 @@ public class InstallOptionsPaletteProvider
             else if(e1 != null && e2 == null) {
                 return 1;
             }
-            else {
+            else if(e1 != null && e2 != null) {
                 String l1 = e1.getLabel();
                 String l2 = e2.getLabel();
                 if(l1 == null && l2 != null) {
@@ -46,9 +46,15 @@ public class InstallOptionsPaletteProvider
                 else if(l1 != null && l2 == null) {
                     return 1;
                 }
-                else {
+                else if(l1 != null && l2 != null) {
                     return l1.compareTo(l2);
                 }
+                else {
+                	return 0;
+                }
+            }
+            else {
+            	return 0;
             }
         }
     };
@@ -57,9 +63,9 @@ public class InstallOptionsPaletteProvider
     {
     }
 
-    private static List createCategories(GraphicalViewer viewer, PaletteRoot root)
+    private static List<PaletteEntry> createCategories(GraphicalViewer viewer, PaletteRoot root)
     {
-        List categories = new ArrayList();
+        List<PaletteEntry> categories = new ArrayList<PaletteEntry>();
 
         categories.add(createControlGroup(root));
         categories.add(createComponentsDrawer(viewer));
@@ -70,16 +76,16 @@ public class InstallOptionsPaletteProvider
     private static PaletteContainer createComponentsDrawer(final GraphicalViewer viewer)
     {
         final PaletteDrawer drawer = new PaletteDrawer(InstallOptionsPlugin.getResourceString("palette.components.drawer.name"), InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("controls.icon"))); //$NON-NLS-1$ //$NON-NLS-2$
-        final Map entryMap = new HashMap();
+        final Map<String, ToolEntry> entryMap = new HashMap<String, ToolEntry>();
 
         final Runnable op = new Runnable() {
             public void run()
             {
                 Boolean unload = Boolean.valueOf(InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(IInstallOptionsConstants.PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED));
-                List entries = new ArrayList();
-                for (Iterator iter = InstallOptionsModel.INSTANCE.getControlTypeDefs().iterator(); iter.hasNext(); ) {
-                    InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)iter.next();
-                    ToolEntry entry = (ToolEntry)entryMap.get(typeDef.getType());
+                List<ToolEntry> entries = new ArrayList<ToolEntry>();
+                for (Iterator<InstallOptionsModelTypeDef> iter = InstallOptionsModel.INSTANCE.getControlTypeDefs().iterator(); iter.hasNext(); ) {
+                    InstallOptionsModelTypeDef typeDef = iter.next();
+                    ToolEntry entry = entryMap.get(typeDef.getType());
                     if(entry == null) {
                         entry = createComponentEntry(typeDef);
                         entry.setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, unload);
@@ -105,8 +111,8 @@ public class InstallOptionsPaletteProvider
             {
                 if(event.getProperty().equals(IInstallOptionsConstants.PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED)) {
                     Boolean newValue = (Boolean)event.getNewValue();
-                    for(Iterator iter=entryMap.values().iterator(); iter.hasNext(); ) {
-                        ((ToolEntry)iter.next()).setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, newValue);
+                    for(Iterator<ToolEntry> iter=entryMap.values().iterator(); iter.hasNext(); ) {
+                        iter.next().setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, newValue);
                     }
                 }
             }
@@ -141,10 +147,10 @@ public class InstallOptionsPaletteProvider
     {
         final PaletteDrawer drawer = new PaletteDrawer(InstallOptionsPlugin.getResourceString("palette.templates.drawer.name"),  //$NON-NLS-1$
                 cImageDescriptor);
-        final List entries = new ArrayList();
+        final List<ToolEntry> entries = new ArrayList<ToolEntry>();
         Boolean unload = Boolean.valueOf(InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(IInstallOptionsConstants.PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED));
-        for(Iterator iter = InstallOptionsTemplateManager.INSTANCE.getTemplates().iterator(); iter.hasNext(); ) {
-            IInstallOptionsTemplate template = (IInstallOptionsTemplate)iter.next();
+        for(Iterator<IInstallOptionsTemplate> iter = InstallOptionsTemplateManager.INSTANCE.getTemplates().iterator(); iter.hasNext(); ) {
+            IInstallOptionsTemplate template = iter.next();
             if(!template.isDeleted()) {
                 ToolEntry entry = createTemplateEntry(template);
                 entry.setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, unload);
@@ -152,12 +158,12 @@ public class InstallOptionsPaletteProvider
             }
         }
         Collections.sort(entries, cTemplateEntryComparator);
-        drawer.setChildren(new ArrayList(entries));
+        drawer.setChildren(new ArrayList<ToolEntry>(entries));
 
         final IInstallOptionsTemplateListener listener = new IInstallOptionsTemplateListener() {
             private ToolEntry findEntry(IInstallOptionsTemplate template)
             {
-                for (Iterator iter = entries.iterator(); iter.hasNext();) {
+                for (Iterator<ToolEntry> iter = entries.iterator(); iter.hasNext();) {
                     CombinedTemplateCreationEntry entry = (CombinedTemplateCreationEntry)iter.next();
                     if(Common.objectsAreEqual(template,entry.getTemplate())) {
                         return entry;
@@ -197,7 +203,7 @@ public class InstallOptionsPaletteProvider
                     }
                 }
                 Collections.sort(entries, cTemplateEntryComparator);
-                drawer.setChildren(new ArrayList(entries));
+                drawer.setChildren(new ArrayList<ToolEntry>(entries));
             }
         };
         InstallOptionsTemplateManager.INSTANCE.addTemplateListener(listener);
@@ -207,8 +213,8 @@ public class InstallOptionsPaletteProvider
             {
                 if(event.getProperty().equals(IInstallOptionsConstants.PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED)) {
                     Boolean newValue = (Boolean)event.getNewValue();
-                    for(Iterator iter=entries.iterator(); iter.hasNext(); ) {
-                        ((ToolEntry)iter.next()).setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, newValue);
+                    for(Iterator<ToolEntry> iter=entries.iterator(); iter.hasNext(); ) {
+                        iter.next().setToolProperty(AbstractTool.PROPERTY_UNLOAD_WHEN_FINISHED, newValue);
                     }
                 }
             }
@@ -245,7 +251,7 @@ public class InstallOptionsPaletteProvider
     {
         PaletteGroup controlGroup = new PaletteGroup(InstallOptionsPlugin.getResourceString("palette.control.group.name")); //$NON-NLS-1$
 
-        List entries = new ArrayList();
+        List<PaletteEntry> entries = new ArrayList<PaletteEntry>();
 
         ToolEntry tool = new PanningSelectionToolEntry();
         entries.add(tool);

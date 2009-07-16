@@ -37,13 +37,15 @@ public abstract class ComboParam extends PrefixableParam
         super(node);
     }
 
-    protected void init(Node node)
+    @Override
+	protected void init(Node node)
     {
         super.init(node);
         mDefaultIndex = XMLUtil.getIntValue(node.getAttributes(), ATTR_DEFAULT);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new ComboParamEditor(command, parentEditor);
     }
@@ -58,7 +60,8 @@ public abstract class ComboParam extends PrefixableParam
         return null;
     }
 
-    protected String getDefaultValue2()
+    @Override
+	protected String getDefaultValue2()
     {
         if (!isAllowBlank())
         {
@@ -95,14 +98,16 @@ public abstract class ComboParam extends PrefixableParam
             return mValue;
         }
 
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             int result = 31 + (mValue == null ? 0 : mValue.hashCode());
             result = 31 * result + (mDisplay == null ? 0 : mDisplay.hashCode());
             return result;
         }
 
-        public boolean equals(Object obj)
+        @Override
+		public boolean equals(Object obj)
         {
             if (obj instanceof ComboEntry)
             {
@@ -129,7 +134,8 @@ public abstract class ComboParam extends PrefixableParam
             super(command, parentEditor);
         }
 
-        protected String getPrefixableParamText()
+        @Override
+		protected String getPrefixableParamText()
         {
             if (mChoicesViewer != null && Common.isValid(mChoicesViewer.getCombo()))
             {
@@ -146,7 +152,8 @@ public abstract class ComboParam extends PrefixableParam
             return null;
         }
 
-        public void saveSettings()
+        @Override
+		public void saveSettings()
         {
             super.saveSettings();
             if (mChoicesViewer != null && Common.isValid(mChoicesViewer.getCombo()) && getSettings() != null)
@@ -167,13 +174,15 @@ public abstract class ComboParam extends PrefixableParam
             }
         }
 
-        public void clear()
+        @Override
+		public void clear()
         {
             selectDefault((ComboEntry[]) mChoicesViewer.getInput());
             super.clear();
         }
 
-        protected void initParamEditor()
+        @Override
+		protected void initParamEditor()
         {
             super.initParamEditor();
             Combo combo;
@@ -208,7 +217,8 @@ public abstract class ComboParam extends PrefixableParam
         /**
          * @param entries
          */
-        private void selectDefault(ComboEntry[] entries)
+        @SuppressWarnings("null")
+		private void selectDefault(ComboEntry[] entries)
         {
             int defaultIndex = entries != null && mDefaultIndex < entries.length ? mDefaultIndex : -1;
             if (defaultIndex >= 0)
@@ -221,7 +231,8 @@ public abstract class ComboParam extends PrefixableParam
             }
         }
 
-        protected Control createParamControl(Composite parent)
+        @Override
+		protected Control createParamControl(Composite parent)
         {
             Composite container = new Composite(parent, SWT.NONE);
             GridLayout layout = new GridLayout(1, false);
@@ -240,7 +251,8 @@ public abstract class ComboParam extends PrefixableParam
             mChoicesViewer = new ComboViewer(combo);
             mChoicesViewer.setContentProvider(new ArrayContentProvider());
             mChoicesViewer.setLabelProvider(new LabelProvider() {
-                public String getText(Object element)
+                @Override
+				public String getText(Object element)
                 {
                     if (element instanceof ComboEntry)
                     {
@@ -254,7 +266,8 @@ public abstract class ComboParam extends PrefixableParam
             return container;
         }
 
-        protected void updateState(boolean state)
+        @Override
+		protected void updateState(boolean state)
         {
             super.updateState(state);
             if (mChoicesViewer != null && Common.isValid(mChoicesViewer.getCombo()))
@@ -263,7 +276,8 @@ public abstract class ComboParam extends PrefixableParam
             }
         }
 
-        public String validateParam()
+        @Override
+		public String validateParam()
         {
             if (mChoicesViewer != null && Common.isValid(mChoicesViewer.getCombo()))
             {

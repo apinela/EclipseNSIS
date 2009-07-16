@@ -45,7 +45,8 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
      *
      * @see org.eclipse.gef.ContextMenuProvider#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
      */
-    public void buildContextMenu(IMenuManager manager)
+    @Override
+	public void buildContextMenu(IMenuManager manager)
     {
         GEFActionConstants.addStandardActionGroups(manager);
 
@@ -60,7 +61,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
         addContextMenu(manager, ToggleEnablementAction.ID, GEFActionConstants.GROUP_EDIT);
         addContextMenu(manager, ToggleLockAction.ID, GEFActionConstants.GROUP_EDIT);
 
-        List selected = getViewer().getSelectedEditParts();
+        List<?> selected = getViewer().getSelectedEditParts();
         if(selected.size() == 1) {
             EditPart editPart = (EditPart)selected.get(0);
             if(editPart instanceof InstallOptionsWidgetEditPart) {

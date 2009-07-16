@@ -13,7 +13,8 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
 public class InstallOptionsHLineEditPart extends InstallOptionsLineEditPart
 {
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("hline.type.name"); //$NON-NLS-1$
     }

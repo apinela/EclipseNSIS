@@ -32,7 +32,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
     private Object mSelectedPage = null;
     private boolean mCurrentPage = false;
     private boolean mPreviousPage = false;
-    private List mPageChangeRunnables = new ArrayList();
+    private List<Runnable> mPageChangeRunnables = new ArrayList<Runnable>();
 
     protected VerifyListener mNumberVerifyListener = new NumberVerifyListener();
 
@@ -44,7 +44,8 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         setDescription(description);
 	}
 
-    public void setErrorMessage(String message)
+    @Override
+	public void setErrorMessage(String message)
     {
         super.setMessage(message,ERROR);
     }
@@ -161,7 +162,8 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizardPage#setWizard(org.eclipse.jface.wizard.IWizard)
      */
-    public void setWizard(IWizard newWizard)
+    @Override
+	public void setWizard(IWizard newWizard)
     {
         if(mWizard != null) {
             IPageChangeProvider pageChangeProvider = (IPageChangeProvider)mWizard.getAdapter(IPageChangeProvider.class);
@@ -180,7 +182,8 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
     }
 
 
-    public final void setVisible(boolean visible)
+    @Override
+	public final void setVisible(boolean visible)
     {
         super.setVisible(visible);
         if(mWizard != null) {
@@ -205,8 +208,8 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         mPreviousPage = mCurrentPage;
         mCurrentPage = this.equals(event.getSelectedPage());
         mSelectedPage = event.getSelectedPage();
-        for (Iterator iter = mPageChangeRunnables.iterator(); iter.hasNext();) {
-            ((Runnable)iter.next()).run();
+        for (Iterator<Runnable> iter = mPageChangeRunnables.iterator(); iter.hasNext();) {
+            iter.next().run();
         }
     }
 
@@ -215,7 +218,8 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
         return mPreviousPage;
     }
 
-    protected boolean isCurrentPage()
+    @Override
+	protected boolean isCurrentPage()
     {
         return mCurrentPage;
     }

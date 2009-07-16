@@ -52,7 +52,8 @@ public class NSISFileMarkerAssistant implements INSISMarkerAssistant, INSISConst
     {
         WorkspaceModifyOperation op = new WorkspaceModifyOperation(mFile)
         {
-            protected void execute(IProgressMonitor monitor)
+            @Override
+			protected void execute(IProgressMonitor monitor)
             {
                 try {
                     mFile.deleteMarkers(INSISConstants.PROBLEM_MARKER_ID, false, IResource.DEPTH_ZERO);
@@ -86,7 +87,8 @@ public class NSISFileMarkerAssistant implements INSISMarkerAssistant, INSISConst
                         final Exception[] ex = {null};
                         WorkspaceModifyOperation op = new WorkspaceModifyOperation(mFile)
                         {
-                            protected void execute(IProgressMonitor monitor)
+                            @Override
+							protected void execute(IProgressMonitor monitor)
                             {
                                 try {
                                     List problems = results.getProblems();

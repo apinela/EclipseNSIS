@@ -24,7 +24,8 @@ public class NSISPropertyPage extends NSISSettingsPage
     /**
      * @return
      */
-    protected String getContextId()
+    @Override
+	protected String getContextId()
     {
         return PLUGIN_CONTEXT_PREFIX + "nsis_properties_context"; //$NON-NLS-1$
     }
@@ -43,7 +44,8 @@ public class NSISPropertyPage extends NSISSettingsPage
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.dialogs.NSISSettingsPage#getPageDescription()
      */
-    protected String getPageDescription()
+    @Override
+	protected String getPageDescription()
     {
         String label = null;
         IResource resource = getResource();
@@ -59,14 +61,16 @@ public class NSISPropertyPage extends NSISSettingsPage
         return EclipseNSISPlugin.getResourceString(label);
     }
 
-    protected NSISSettingsEditor createSettingsEditor()
+    @Override
+	protected NSISSettingsEditor createSettingsEditor()
     {
         return new PropertiesEditor();
     }
 
     private class PropertiesEditor extends NSISSettingsEditor
     {
-        protected void addPages(TabFolder folder)
+        @Override
+		protected void addPages(TabFolder folder)
         {
             super.addPages(folder);
             if(getResource() instanceof IFile) {
@@ -74,17 +78,20 @@ public class NSISPropertyPage extends NSISSettingsPage
             }
         }
 
-        protected NSISSettingsEditorGeneralPage createGeneralPage()
+        @Override
+		protected NSISSettingsEditorGeneralPage createGeneralPage()
         {
             return new PropertiesEditorGeneralPage(getSettings());
         }
 
-        protected NSISSettingsEditorSymbolsPage createSymbolsPage()
+        @Override
+		protected NSISSettingsEditorSymbolsPage createSymbolsPage()
         {
             return new PropertiesEditorSymbolsPage(getSettings());
         }
 
-        protected NSISSettings loadSettings()
+        @Override
+		protected NSISSettings loadSettings()
         {
             return NSISProperties.getProperties(getResource());
         }
@@ -96,7 +103,8 @@ public class NSISPropertyPage extends NSISSettingsPage
                 super(settings);
             }
 
-            protected boolean performApply(NSISSettings settings)
+            @Override
+			protected boolean performApply(NSISSettings settings)
             {
                 if (getControl() != null) {
                     if(!((NSISProperties)settings).getUseParent()) {
@@ -107,7 +115,8 @@ public class NSISPropertyPage extends NSISSettingsPage
                 return false;
             }
 
-            public void setDefaults()
+            @Override
+			public void setDefaults()
             {
                 if (getControl() != null) {
                     if(!((NSISProperties)getSettings()).getUseParent()) {
@@ -126,13 +135,15 @@ public class NSISPropertyPage extends NSISSettingsPage
                 super(settings);
             }
 
-            public void reset()
+            @Override
+			public void reset()
             {
                 mUseParent.setSelection(((NSISProperties)getSettings()).getUseParent());
                 super.reset();
             }
 
-            protected boolean performApply(NSISSettings settings)
+            @Override
+			protected boolean performApply(NSISSettings settings)
             {
                 if (getControl() != null) {
                     boolean useParent = mUseParent.getSelection();
@@ -144,7 +155,8 @@ public class NSISPropertyPage extends NSISSettingsPage
                 return false;
             }
 
-            public void setDefaults()
+            @Override
+			public void setDefaults()
             {
                 if (getControl() != null) {
                     if(mUseParent.getSelection()) {
@@ -153,12 +165,14 @@ public class NSISPropertyPage extends NSISSettingsPage
                 }
             }
 
-            public boolean canEnableControls()
+            @Override
+			public boolean canEnableControls()
             {
                 return !mUseParent.getSelection();
             }
 
-            protected Composite createMasterControl(Composite parent)
+            @Override
+			protected Composite createMasterControl(Composite parent)
             {
                 Composite composite = new Composite(parent,SWT.NONE);
                 GridLayout layout = new GridLayout(1,false);
@@ -190,7 +204,8 @@ public class NSISPropertyPage extends NSISSettingsPage
                                             EclipseNSISPlugin.getResourceString(tooltip),
                                             ((NSISProperties)getSettings()).getUseParent());
                 mUseParent.addSelectionListener(new SelectionAdapter() {
-                    public void widgetSelected(SelectionEvent e)
+                    @Override
+					public void widgetSelected(SelectionEvent e)
                     {
                         fireChanged();
                     }
@@ -199,7 +214,8 @@ public class NSISPropertyPage extends NSISSettingsPage
                 return composite;
             }
 
-            public void enableControls(boolean state)
+            @Override
+			public void enableControls(boolean state)
             {
                 Button button = getDefaultsButton();
                 if(button != null && !button.isDisposed()) {

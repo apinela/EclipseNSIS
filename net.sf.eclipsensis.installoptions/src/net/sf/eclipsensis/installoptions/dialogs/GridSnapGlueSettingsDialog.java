@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.*;
 public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOptionsConstants
 {
     private GraphicalViewer mViewer;
-    private Map mGridSettingsMap = new HashMap();
-    private Map mSnapGlueSettingsMap = new HashMap();
+    private Map<String, Object> mGridSettingsMap = new HashMap<String, Object>();
+    private Map<String, Boolean> mSnapGlueSettingsMap = new HashMap<String, Boolean>();
 
     /**
      * @param parentShell
@@ -44,29 +44,32 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
         loadViewerProperty(mSnapGlueSettingsMap, PREFERENCE_GLUE_TO_GUIDES, PROPERTY_GLUE_TO_GUIDES, GLUE_TO_GUIDES_DEFAULT);
     }
 
-    protected void configureShell(Shell newShell)
+    @Override
+	protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(InstallOptionsPlugin.getResourceString("grid.snap.glue.settings.dialog.name")); //$NON-NLS-1$
         newShell.setImage(InstallOptionsPlugin.getShellImage());
     }
 
-    private Object makeCopy(Object o)
+    @SuppressWarnings("unchecked")
+	private <T> T makeCopy(T o)
     {
         if(o instanceof Point) {
-            o = new Point((Point)o);
+            o = (T)new Point((Point)o);
         }
         else if(o instanceof Dimension) {
-            o = new Dimension((Dimension)o);
+            o = (T)new Dimension((Dimension)o);
         }
         return o;
     }
 
-    private void loadViewerProperty(Map map, String mapName, String name, Object defaultValue)
+    @SuppressWarnings("unchecked")
+	private <T> void loadViewerProperty(Map<String, ? super T> map, String mapName, String name, T defaultValue)
     {
-        Object o = null;
+        T o = null;
         try {
-            o = mViewer.getProperty(name);
+            o = (T)mViewer.getProperty(name);
         }
         catch(Exception e) {
         }
@@ -76,11 +79,12 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
         map.put(mapName,makeCopy(o));
     }
 
-    private void saveViewerProperty(Map map, String mapName, String name, Object defaultValue)
+    @SuppressWarnings("unchecked")
+	private <T> void saveViewerProperty(Map<String, ? super T> map, String mapName, String name, T defaultValue)
     {
-        Object o = null;
+        T o = null;
         try {
-            o = map.get(mapName);
+            o = (T) map.get(mapName);
         }
         catch(Exception e) {
         }
@@ -90,7 +94,8 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
         mViewer.setProperty(name,o);
     }
 
-    protected Control createDialogArea(Composite parent)
+    @Override
+	protected Control createDialogArea(Composite parent)
     {
         Composite composite = (Composite)super.createDialogArea(parent);
 
@@ -103,7 +108,8 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
         return composite;
     }
 
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         saveViewerProperty(mGridSettingsMap, PREFERENCE_GRID_ORIGIN, SnapToGrid.PROPERTY_GRID_ORIGIN, GRID_ORIGIN_DEFAULT);
         saveViewerProperty(mGridSettingsMap, PREFERENCE_GRID_SPACING, SnapToGrid.PROPERTY_GRID_SPACING, GRID_SPACING_DEFAULT);

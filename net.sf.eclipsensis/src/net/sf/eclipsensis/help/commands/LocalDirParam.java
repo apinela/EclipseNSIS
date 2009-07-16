@@ -29,7 +29,8 @@ public class LocalDirParam extends LocalFilesystemObjectParam
         super(node);
     }
 
-    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new LocalDirParamEditor(command, parentEditor);
     }
@@ -43,7 +44,8 @@ public class LocalDirParam extends LocalFilesystemObjectParam
             super(command, parentEditor);
         }
 
-        public void clear()
+        @Override
+		public void clear()
         {
             if(Common.isValid(mDirText)) {
                 mDirText.setText(""); //$NON-NLS-1$
@@ -51,7 +53,8 @@ public class LocalDirParam extends LocalFilesystemObjectParam
             super.clear();
         }
 
-        protected String validateLocalFilesystemObjectParam()
+        @Override
+		protected String validateLocalFilesystemObjectParam()
         {
             if(Common.isValid(mDirText)) {
                 String dir = IOUtility.decodePath(mDirText.getText());
@@ -73,7 +76,8 @@ public class LocalDirParam extends LocalFilesystemObjectParam
             return null;
         }
 
-        protected String getPrefixableParamText()
+        @Override
+		protected String getPrefixableParamText()
         {
             if(Common.isValid(mDirText)) {
                 String dir = IOUtility.decodePath(mDirText.getText());
@@ -82,7 +86,8 @@ public class LocalDirParam extends LocalFilesystemObjectParam
             return null;
         }
 
-        public void saveSettings()
+        @Override
+		public void saveSettings()
         {
             super.saveSettings();
             if(Common.isValid(mDirText) && getSettings() != null) {
@@ -90,7 +95,8 @@ public class LocalDirParam extends LocalFilesystemObjectParam
             }
         }
 
-        protected void initParamEditor()
+        @Override
+		protected void initParamEditor()
         {
             super.initParamEditor();
             if(Common.isValid(mDirText)) {
@@ -98,7 +104,8 @@ public class LocalDirParam extends LocalFilesystemObjectParam
             }
         }
 
-        protected Control createParamControl(Composite parent)
+        @Override
+		protected Control createParamControl(Composite parent)
         {
             parent = new Composite(parent,SWT.NONE);
             GridLayout layout = new GridLayout(2,false);
@@ -111,7 +118,8 @@ public class LocalDirParam extends LocalFilesystemObjectParam
             b.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
             b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
             b.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     DirectoryDialog dialog = new DirectoryDialog(b.getShell());
                     String dir = IOUtility.decodePath(mDirText.getText());

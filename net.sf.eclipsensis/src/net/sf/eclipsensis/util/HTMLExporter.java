@@ -108,7 +108,8 @@ public class HTMLExporter
         });
     }
 
-    private void writeHTML(File file, IProgressMonitor monitor)
+    @SuppressWarnings("restriction")
+	private void writeHTML(File file, IProgressMonitor monitor)
     {
         try {
             reset();
@@ -146,7 +147,7 @@ public class HTMLExporter
             int width1 = -1;
             if(ruler instanceof CompositeRuler) {
                 CompositeRuler c = (CompositeRuler)ruler;
-                for(Iterator iter = c.getDecoratorIterator();iter.hasNext();) {
+                for(Iterator<?> iter = c.getDecoratorIterator();iter.hasNext();) {
                     IVerticalRulerColumn col = (IVerticalRulerColumn)iter.next();
                     if(mLineNumbersVisible && col instanceof LineNumberRulerColumn) {
                         width1 = col.getWidth();
@@ -541,10 +542,11 @@ public class HTMLExporter
         mStyledText = mViewer.getTextWidget();
         mRanges = mStyledText.getStyleRanges();
         mProjectionEnabled = (mViewer instanceof ProjectionViewer && ((ProjectionViewer)mViewer).isProjectionMode());
+        List<int[]> list = new ArrayList<int[]>();
         if(mProjectionEnabled) {
             ProjectionAnnotationModel model = ((ProjectionViewer)mViewer).getProjectionAnnotationModel();
-            Iterator iter = model.getAnnotationIterator();
-            List projections = new ArrayList();
+            Iterator<?> iter = model.getAnnotationIterator();
+            List<Position> projections = new ArrayList<Position>();
             while(iter.hasNext()) {
                 Position pos = model.getPosition((Annotation)iter.next());
                 if(pos != null) {
@@ -552,11 +554,9 @@ public class HTMLExporter
                 }
             }
             if(projections.size() > 0) {
-                Collections.sort(projections, new Comparator() {
-                    public int compare(Object o1, Object o2)
+                Collections.sort(projections, new Comparator<Position>() {
+                    public int compare(Position p1, Position p2)
                     {
-                        Position p1 = (Position)o1;
-                        Position p2 = (Position)o2;
                         int n = p1.getOffset()-p2.getOffset();
                         if(n == 0) {
                             n = p1.getLength()-p2.getLength();
@@ -564,12 +564,12 @@ public class HTMLExporter
                         return n;
                     }
                 });
-                for (ListIterator iterator = projections.listIterator(); iterator.hasNext();) {
-                    Position pos = (Position)iterator.next();
-                    iterator.set(new int[]{mStyledText.getLineAtOffset(pos.getOffset())+1,mStyledText.getLineAtOffset(pos.getOffset()+pos.getLength()-1)+1});
+                for (ListIterator<Position> iterator = projections.listIterator(); iterator.hasNext();) {
+                    Position pos = iterator.next();
+                    list.add(new int[]{mStyledText.getLineAtOffset(pos.getOffset())+1,mStyledText.getLineAtOffset(pos.getOffset()+pos.getLength()-1)+1});
                 }
             }
-            mProjections = (int[][])projections.toArray(new int[projections.size()][]);
+            mProjections = list.toArray(new int[projections.size()][]);
         }
     }
 

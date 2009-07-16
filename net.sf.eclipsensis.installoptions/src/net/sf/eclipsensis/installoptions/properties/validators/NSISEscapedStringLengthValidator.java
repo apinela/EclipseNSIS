@@ -18,7 +18,8 @@ public class NSISEscapedStringLengthValidator extends NSISStringLengthValidator
         super(propertyName);
     }
 
-    public String isValid(String value)
+    @Override
+	public String isValid(String value)
     {
         return super.isValid(TypeConverter.ESCAPED_STRING_CONVERTER.asString(value));
     }

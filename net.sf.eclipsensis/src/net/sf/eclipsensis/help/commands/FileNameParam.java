@@ -20,12 +20,14 @@ public class FileNameParam extends RegexpParam
         super(node);
     }
 
-    protected String getRegexp()
+    @Override
+	protected String getRegexp()
     {
         return "(\\.?[a-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+"; //$NON-NLS-1$
     }
 
-    protected String getValidateErrorMessage()
+    @Override
+	protected String getValidateErrorMessage()
     {
         return EclipseNSISPlugin.getResourceString("file.name.param.error"); //$NON-NLS-1$
     }

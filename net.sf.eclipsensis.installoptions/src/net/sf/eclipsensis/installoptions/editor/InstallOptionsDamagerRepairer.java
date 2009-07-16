@@ -11,6 +11,7 @@ package net.sf.eclipsensis.installoptions.editor;
 
 import java.util.Map;
 
+import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
 import net.sf.eclipsensis.installoptions.editor.text.InstallOptionsSyntaxScanner;
 
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
@@ -22,7 +23,7 @@ public class InstallOptionsDamagerRepairer extends DefaultDamagerRepairer
         super(scanner);
     }
 
-    public void setSyntaxStyles(Map syntaxStyles)
+    public void setSyntaxStyles(Map<String, NSISSyntaxStyle> syntaxStyles)
     {
         ((InstallOptionsSyntaxScanner)fScanner).setSyntaxStyles(syntaxStyles);
     }

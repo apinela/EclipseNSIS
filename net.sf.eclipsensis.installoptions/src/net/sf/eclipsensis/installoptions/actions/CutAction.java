@@ -35,7 +35,8 @@ public class CutAction extends SelectionAction
     /**
      * Initializes this action's text and images.
      */
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
@@ -48,7 +49,7 @@ public class CutAction extends SelectionAction
         setEnabled(false);
     }
 
-    public Command createCutCommand(List objects) {
+    public Command createCutCommand(List<?> objects) {
         if (objects.isEmpty()) {
             return null;
         }
@@ -59,7 +60,7 @@ public class CutAction extends SelectionAction
             cutCommand = new CutCommand();
             cutCommand.setParent(dialog);
             //cutCommand.setParent(objects.get(0));
-            for (Iterator iter = objects.iterator(); iter.hasNext();) {
+            for (Iterator<?> iter = objects.iterator(); iter.hasNext();) {
                 Object object = iter.next();
                 if(object instanceof InstallOptionsWidgetEditPart) {
                     cutCommand.addWidget((InstallOptionsWidget)((InstallOptionsWidgetEditPart)object).getModel());
@@ -73,7 +74,8 @@ public class CutAction extends SelectionAction
         return cutCommand;
     }
 
-    protected boolean calculateEnabled() {
+    @Override
+	protected boolean calculateEnabled() {
         Command cmd = createCutCommand(getSelectedObjects());
         if (cmd == null) {
             return false;
@@ -81,7 +83,8 @@ public class CutAction extends SelectionAction
         return cmd.canExecute();
     }
 
-    public void run() {
+    @Override
+	public void run() {
         execute(createCutCommand(getSelectedObjects()));
     }
 }

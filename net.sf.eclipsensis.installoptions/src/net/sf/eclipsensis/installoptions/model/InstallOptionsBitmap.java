@@ -26,7 +26,8 @@ public class InstallOptionsBitmap extends InstallOptionsPicture
         super(section);
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_BITMAP;
     }
@@ -34,17 +35,20 @@ public class InstallOptionsBitmap extends InstallOptionsPicture
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.model.InstallOptionsPicture#getImageName()
      */
-    public Image getImage()
+    @Override
+	public Image getImage()
     {
         return BITMAP_IMAGE;
     }
 
-    public String getFileExtension()
+    @Override
+	public String getFileExtension()
     {
         return ".bmp"; //$NON-NLS-1$
     }
 
-    public int getSWTImageType()
+    @Override
+	public int getSWTImageType()
     {
         return SWT.IMAGE_BMP;
     }

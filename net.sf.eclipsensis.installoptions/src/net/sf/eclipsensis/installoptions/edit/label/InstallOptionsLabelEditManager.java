@@ -10,7 +10,9 @@
 package net.sf.eclipsensis.installoptions.edit.label;
 
 import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditManager;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsLabel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsUneditableElement;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.gef.GraphicalEditPart;
@@ -19,16 +21,17 @@ import org.eclipse.swt.SWT;
 
 public class InstallOptionsLabelEditManager extends InstallOptionsUneditableElementEditManager
 {
-    public InstallOptionsLabelEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
+    public InstallOptionsLabelEditManager(GraphicalEditPart source, CellEditorLocator locator)
     {
-        super(source, editorType, locator);
+        super(source, locator);
     }
 
     /**
      * @param control
      * @return
      */
-    protected String getInitialText(InstallOptionsWidget control)
+    @Override
+	protected String getInitialText(InstallOptionsWidget control)
     {
         if(((InstallOptionsLabel)control).isMultiLine()) {
             return TypeConverter.ESCAPED_STRING_CONVERTER.asString(((InstallOptionsUneditableElement)control).getText());
@@ -38,7 +41,8 @@ public class InstallOptionsLabelEditManager extends InstallOptionsUneditableElem
         }
     }
 
-    protected int getCellEditorStyle()
+    @Override
+	protected int getCellEditorStyle()
     {
         if(((InstallOptionsLabel)((InstallOptionsLabelEditPart)getEditPart()).getModel()).isMultiLine()) {
             return SWT.MULTI|SWT.LEFT|SWT.WRAP|SWT.V_SCROLL;

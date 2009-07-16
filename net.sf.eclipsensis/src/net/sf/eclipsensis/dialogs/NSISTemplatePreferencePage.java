@@ -50,7 +50,8 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
     /*
      * @see PreferencePage#createControl(Composite)
      */
-    public void createControl(Composite parent)
+    @Override
+	public void createControl(Composite parent)
     {
         super.createControl(parent);
         TableViewer viewer = getTableViewer();
@@ -70,7 +71,8 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
      * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#
      * isShowFormatterSetting()
      */
-    protected boolean isShowFormatterSetting()
+    @Override
+	protected boolean isShowFormatterSetting()
     {
         return false;
     }
@@ -79,7 +81,8 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
      * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#
      * getFormatterPreferenceKey()
      */
-    protected String getFormatterPreferenceKey()
+    @Override
+	protected String getFormatterPreferenceKey()
     {
         return null;
     }
@@ -91,7 +94,8 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
      * org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createViewer
      * (org.eclipse.swt.widgets.Composite)
      */
-    protected SourceViewer createViewer(Composite parent)
+    @Override
+	protected SourceViewer createViewer(Composite parent)
     {
         mViewer = new NSISTemplateSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         NSISTextUtility.hookSourceViewer(mViewer);
@@ -110,7 +114,8 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
     /*
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
-    public boolean performOk()
+    @Override
+	public boolean performOk()
     {
         boolean ok = super.performOk();
 
@@ -124,7 +129,8 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
      * 
      * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
      */
-    public void setVisible(boolean visible)
+    @Override
+	public void setVisible(boolean visible)
     {
         if (visible)
         {
@@ -136,7 +142,8 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
         super.setVisible(visible);
     }
 
-    protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable)
+    @Override
+	protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable)
     {
         NSISTemplateEditorDialog dialog = new NSISTemplateEditorDialog(getShell(), template, edit, isNameModifiable,
                 getContextTypeRegistry());

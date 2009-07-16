@@ -9,21 +9,29 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.views.properties.tabbed.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
+import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 public class DialogPropertySection extends InstallOptionsElementPropertySection
 {
-    protected Control createSection(InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, InstallOptionsCommandHelper commandHelper)
+    @Override
+	protected Control createSection(InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, InstallOptionsCommandHelper commandHelper)
     {
         if(element instanceof InstallOptionsDialog) {
             return new DialogPropertySectionCreator((InstallOptionsDialog)element).createPropertySection(parent, getWidgetFactory(), commandHelper);
@@ -45,7 +53,7 @@ public class DialogPropertySection extends InstallOptionsElementPropertySection
             group.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
 
             createTextSection(group, InstallOptionsModel.PROPERTY_TITLE, widgetFactory, commandHelper);
-            Map map = new CaseInsensitiveMap();
+            Map<Integer,String> map = new LinkedHashMap<Integer,String>();
             for (int i = 0; i < Math.min(InstallOptionsDialog.OPTION_DATA.length, InstallOptionsDialog.OPTION_DISPLAY.length); i++) {
                 map.put(InstallOptionsDialog.OPTION_DATA[i],InstallOptionsDialog.OPTION_DISPLAY[i]);
             }

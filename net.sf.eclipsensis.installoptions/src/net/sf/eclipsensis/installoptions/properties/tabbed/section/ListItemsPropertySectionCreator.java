@@ -39,14 +39,16 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         super(element);
     }
 
-    protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
+    @Override
+	protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
         parent = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
         createListItemsAndStateSection(parent, widgetFactory, commandHelper);
         return parent;
     }
 
-    protected boolean shouldCreateAppearancePropertySection()
+    @Override
+	protected boolean shouldCreateAppearancePropertySection()
     {
         return true;
     }
@@ -103,7 +105,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
 
             });
             final InstallOptionsListItems widget = (InstallOptionsListItems)getWidget();
-            final List listItems = new ArrayList(widget.getListItems());
+            final List<String> listItems = new ArrayList<String>(widget.getListItems());
             String[] state = Common.tokenize(widget.getState(), IInstallOptionsConstants.LIST_SEPARATOR);
             final ICellEditorValidator stateValidator = (ICellEditorValidator)Common.getObjectFieldValue(stateDescriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
             viewer.addCheckStateListener(new ICheckStateListener() {
@@ -139,16 +141,17 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
             viewer.setInput(listItems);
             viewer.setCheckedElements(state);
             final PropertyChangeListener listener = new PropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent evt)
+                @SuppressWarnings("unchecked")
+				public void propertyChange(PropertyChangeEvent evt)
                 {
                     nonUserChange[0]=true;
                     try {
                         if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
-                            List list = (List)evt.getNewValue();
-                            if (viewer != null && Common.isValid(viewer.getControl())) {
-                                List oldInput = (List)viewer.getInput();
+                            List <String>list = (List<String>)evt.getNewValue();
+                            if (Common.isValid(viewer.getControl())) {
+                                List<String> oldInput = (List<String>)viewer.getInput();
                                 if(!Common.objectsAreEqual(list, oldInput)) {
-                                    viewer.setInput(new ArrayList(list));
+                                    viewer.setInput(new ArrayList<String>(list));
                                     String state = ((InstallOptionsListItems)getWidget()).getState();
                                     viewer.setCheckedElements(Common.tokenize(state, IInstallOptionsConstants.LIST_SEPARATOR));
                                 }
@@ -156,7 +159,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                         }
                         else if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_STATE)) {
                             String state = (String)evt.getNewValue();
-                            if (viewer != null && Common.isValid(viewer.getControl())) {
+                            if (Common.isValid(viewer.getControl())) {
                                 viewer.setCheckedElements(Common.tokenize(state, IInstallOptionsConstants.LIST_SEPARATOR));
                             }
                         }
@@ -233,7 +236,8 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                 return element;
             }
 
-            public void modify(Object element, String property, Object value)
+            @SuppressWarnings("unchecked")
+			public void modify(Object element, String property, Object value)
             {
                 if(value == null) {
                     Common.openError(viewer.getTable().getShell(),textEditor.getErrorMessage(), InstallOptionsPlugin.getShellImage());
@@ -243,24 +247,24 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                     Table t = ti.getParent();
                     int n = t.getSelectionIndex();
                     String oldValue = null;
-                    List list = (List)viewer.getInput();
+                    List<String> list = (List<String>)viewer.getInput();
                     if(n < list.size()) {
-                        oldValue = (String)list.set(n,value);
+                        oldValue = list.set(n,String.valueOf(value));
                     }
                     else {
-                        list.add(value);
+                        list.add(String.valueOf(value));
                     }
                     String error = listItemsValidator.isValid(list);
                     if(Common.isEmpty(error)) {
                         CompoundCommand command = commandHelper.createPropertyChangedCommand(InstallOptionsModel.PROPERTY_LISTITEMS,
                                     listItemsDescriptor.getDisplayName(), getWidget(), list);
-                        List oldState = Common.tokenizeToList(((InstallOptionsListItems)getWidget()).getState(), IInstallOptionsConstants.LIST_SEPARATOR);
+                        List<String> oldState = Common.tokenizeToList(((InstallOptionsListItems)getWidget()).getState(), IInstallOptionsConstants.LIST_SEPARATOR);
                         if(Common.collectionContainsIgnoreCase(oldState, oldValue)) {
                             if(!Common.collectionContainsIgnoreCase(list, oldValue)) {
-                                for (ListIterator iter = oldState.listIterator(); iter.hasNext();) {
-                                    String str = (String)iter.next();
+                                for (ListIterator<String> iter = oldState.listIterator(); iter.hasNext();) {
+                                    String str = iter.next();
                                     if(Common.stringsAreEqual(str, oldValue, true)) {
-                                        iter.set(value);
+                                        iter.set(String.valueOf(value));
                                         String newState = Common.flatten(oldState,IInstallOptionsConstants.LIST_SEPARATOR);
                                         error = stateValidator.isValid(newState);
                                         if(Common.isEmpty(error)) {
@@ -302,8 +306,9 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         add.setToolTipText(EclipseNSISPlugin.getResourceString("new.tooltip")); //$NON-NLS-1$
         add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         add.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                List list = (List)viewer.getInput();
+            @SuppressWarnings("unchecked")
+			public void handleEvent(Event e) {
+                List<String> list = (List<String>)viewer.getInput();
                 if(list != null) {
                     int counter = 1;
                     String item = InstallOptionsPlugin.getFormattedString("default.listitem.label", new Object[]{new Integer(counter++)}); //$NON-NLS-1$
@@ -335,12 +340,13 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         del.setToolTipText(EclipseNSISPlugin.getResourceString("remove.tooltip")); //$NON-NLS-1$
         del.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         del.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event e) {
-                List list = (List)viewer.getInput();
+            @SuppressWarnings("unchecked")
+			public void handleEvent(Event e) {
+                List<String> list = (List<String>)viewer.getInput();
                 if(list != null) {
                     IStructuredSelection selection= (IStructuredSelection) viewer.getSelection();
                     if(!selection.isEmpty()) {
-                        for(Iterator iter=selection.toList().iterator(); iter.hasNext(); ) {
+                        for(Iterator<?> iter=selection.toList().iterator(); iter.hasNext(); ) {
                             list.remove(iter.next());
                         }
                         String error = listItemsValidator.isValid(list);
@@ -361,13 +367,16 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         });
         del.setEnabled(!viewer.getSelection().isEmpty());
 
-        final TableViewerUpDownMover mover = new TableViewerUpDownMover() {
-            protected List getAllElements()
+        final TableViewerUpDownMover<List<String>, String> mover = new TableViewerUpDownMover<List<String>, String>() {
+            @Override
+			@SuppressWarnings("unchecked")
+			protected List<String> getAllElements()
             {
-                return (List)((TableViewer)getViewer()).getInput();
+                return (List<String>)((TableViewer)getViewer()).getInput();
             }
 
-            protected void updateStructuredViewerInput(Object input, List elements, List move, boolean isDown)
+            @Override
+			protected void updateStructuredViewerInput(List<String> input, List<String> elements, List<String> move, boolean isDown)
             {
                 String error = listItemsValidator.isValid(elements);
                 if(Common.isEmpty(error)) {
@@ -387,7 +396,8 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         up.setEnabled(mover.canMoveUp());
         up.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         up.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mover.moveUp();
             }
@@ -399,7 +409,8 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         down.setEnabled(mover.canMoveDown());
         down.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         down.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mover.moveDown();
             }

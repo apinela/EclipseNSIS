@@ -26,24 +26,26 @@ public class NodeConversionUtility
     {
     }
 
-    public static final Object readArrayNode(Node node, Class clasz)
+    @SuppressWarnings("unchecked")
+	public static final Object readArrayNode(Node node, Class<?> clasz)
     {
         if (clasz.isArray())
         {
             Class clasz2 = clasz.getComponentType();
-            INodeConverter nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz2);
-            Node[] children = XMLUtil.findChildren(node);
-            Object array = Array.newInstance(clasz2, children.length);
-            for (int i = 0; i < children.length; i++)
-            {
-                Array.set(array, i, readComponentNode(children[i], nodeConverter, clasz2));
-            }
-            return array;
+	        INodeConverter nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz2);
+	        Node[] children = XMLUtil.findChildren(node);
+	        Object array = Array.newInstance(clasz2, children.length);
+	        for (int i = 0; i < children.length; i++)
+	        {
+	            Array.set(array, i, readComponentNode(children[i], nodeConverter, clasz2));
+	        }
+	        return array;
         }
         throw new IllegalArgumentException(clasz.getName());
     }
 
-    private static Object readComponentNode(Node node, INodeConverter nodeConverter, Class clasz)
+    @SuppressWarnings("unchecked")
+	private static <T> T readComponentNode(Node node, INodeConverter<T> nodeConverter, Class<T> clasz)
     {
         if (!AbstractNodeConvertible.NULL_NODE.equals(node.getNodeName()))
         {
@@ -53,7 +55,7 @@ public class NodeConversionUtility
             }
             else
             {
-                INodeConverter nodeConverter2 = NodeConverterFactory.INSTANCE.getNodeConverter(node.getNodeName());
+                INodeConverter<T> nodeConverter2 = (INodeConverter<T>) NodeConverterFactory.INSTANCE.getNodeConverter(node.getNodeName());
                 if (nodeConverter2 != null)
                 {
                     return nodeConverter2.fromNode(node);
@@ -64,18 +66,19 @@ public class NodeConversionUtility
         return null;
     }
 
-    public static final void createArrayNode(Document document, Node parent, Object value)
+    @SuppressWarnings("unchecked")
+	public static final <T> void createArrayNode(Document document, Node parent, Object value)
     {
         if (value.getClass().isArray())
         {
-            Class clasz = value.getClass().getComponentType();
-            INodeConverter nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz);
+            Class<T> clasz = (Class<T>) value.getClass().getComponentType();
+            INodeConverter<? super T> nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz);
             if (!Common.isEmptyArray(value))
             {
                 int length = Array.getLength(value);
                 for (int i = 0; i < length; i++)
                 {
-                    Object obj = Array.get(value, i);
+                    T obj = (T) Array.get(value, i);
                     createComponentNode(document, parent, nodeConverter, obj);
                 }
             }
@@ -86,20 +89,21 @@ public class NodeConversionUtility
         }
     }
 
-    public static final Collection readCollectionNode(Node node, Class clasz)
+    @SuppressWarnings("unchecked")
+	public static final <T extends Collection> T readCollectionNode(Node node, Class<T> clasz)
     {
-        Collection collection = null;
+        T collection = null;
         if (!Modifier.isAbstract(clasz.getModifiers()))
         {
-            collection = (Collection) Common.createDefaultObject(clasz);
+            collection = Common.createDefaultObject(clasz);
         }
         else if (List.class.equals(clasz))
         {
-            collection = new ArrayList();
+            collection = (T) new ArrayList<Object>();
         }
         else if (Set.class.equals(clasz))
         {
-            collection = new HashSet();
+            collection = (T) new HashSet<Object>();
         }
         if (collection != null)
         {
@@ -112,18 +116,19 @@ public class NodeConversionUtility
         return collection;
     }
 
-    public static final void createCollectionNode(Document document, Node parent, Collection collection)
+	public static final void createCollectionNode(Document document, Node parent, Collection<?> collection)
     {
         if (!Common.isEmptyCollection(collection))
         {
-            for (Iterator iterator = collection.iterator(); iterator.hasNext();)
+            for (Iterator<?> iterator = collection.iterator(); iterator.hasNext();)
             {
                 createComponentNode(document, parent, null, iterator.next());
             }
         }
     }
 
-    private static void createComponentNode(Document document, Node parent, INodeConverter nodeConverter, Object obj)
+    @SuppressWarnings("unchecked")
+	private static <T> void createComponentNode(Document document, Node parent, INodeConverter<? super T> nodeConverter, T obj)
     {
         if (obj != null)
         {
@@ -133,7 +138,7 @@ public class NodeConversionUtility
             }
             else
             {
-                INodeConverter nodeConverter2 = NodeConverterFactory.INSTANCE.getNodeConverter(obj.getClass());
+                INodeConverter<? super T> nodeConverter2 = NodeConverterFactory.INSTANCE.getNodeConverter((Class<T>)obj.getClass());
                 if (nodeConverter2 != null)
                 {
                     parent.appendChild(nodeConverter2.toNode(document, obj));

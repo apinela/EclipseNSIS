@@ -18,22 +18,23 @@ import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 
-public class InstallOptionsComboboxEditManager extends InstallOptionsEditableElementEditManager
+public class InstallOptionsComboboxEditManager extends InstallOptionsEditableElementEditManager<EditableComboBoxCellEditor>
 {
-    public InstallOptionsComboboxEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
+    public InstallOptionsComboboxEditManager(GraphicalEditPart source, Class<EditableComboBoxCellEditor> editorType, CellEditorLocator locator)
     {
         super(source, editorType, locator);
     }
 
-    protected CellEditor createCellEditor(Composite composite)
+    @Override
+	protected EditableComboBoxCellEditor createCellEditor(Composite composite)
     {
         InstallOptionsCombobox combobox = (InstallOptionsCombobox)getEditPart().getModel();
-        List items = combobox.getListItems();
+        List<String> items = combobox.getListItems();
         EditableComboBoxCellEditor cellEditor = new EditableComboBoxCellEditor(composite,items,getCellEditorStyle());
         cellEditor.setCaseInsensitive(true);
         cellEditor.setAutoApplyEditorValue(true);
@@ -41,7 +42,8 @@ public class InstallOptionsComboboxEditManager extends InstallOptionsEditableEle
         return cellEditor;
     }
 
-    protected void selectCellEditorText()
+    @Override
+	protected void selectCellEditorText()
     {
         Combo combo = (Combo)getCellEditor().getControl();
         String text = combo.getText();
@@ -50,7 +52,8 @@ public class InstallOptionsComboboxEditManager extends InstallOptionsEditableEle
         }
     }
 
-    protected int getCellEditorStyle()
+    @Override
+	protected int getCellEditorStyle()
     {
         return SWT.DROP_DOWN;
     }

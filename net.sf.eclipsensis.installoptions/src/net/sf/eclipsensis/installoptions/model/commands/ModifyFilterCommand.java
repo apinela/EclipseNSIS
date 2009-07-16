@@ -13,16 +13,17 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsFileRequest;
+import net.sf.eclipsensis.installoptions.util.FileFilter;
 
 import org.eclipse.gef.commands.Command;
 
 public class ModifyFilterCommand extends Command
 {
     private InstallOptionsFileRequest mModel;
-    private List mOldFilter;
-    private List mNewFilter;
+    private List<FileFilter> mOldFilter;
+    private List<FileFilter> mNewFilter;
 
-    public ModifyFilterCommand(InstallOptionsFileRequest model, List newListItems)
+    public ModifyFilterCommand(InstallOptionsFileRequest model, List<FileFilter> newListItems)
     {
         mModel = model;
         mNewFilter = newListItems;
@@ -30,12 +31,14 @@ public class ModifyFilterCommand extends Command
         setLabel(InstallOptionsPlugin.getFormattedString("modify.filter.command.label", new Object[]{mModel.getType()})); //$NON-NLS-1$
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         mModel.setFilter(mNewFilter);
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         mModel.setFilter(mOldFilter);
     }

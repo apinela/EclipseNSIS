@@ -227,7 +227,7 @@ public class XMLUtil
 
     public static Node[] findChildren(Node node, String name)
     {
-        List list = new ArrayList();
+        List<Node> list = new ArrayList<Node>();
         NodeList childNodes = node.getChildNodes();
         int count = childNodes.getLength();
         for (int i = 0; i < count; i++)
@@ -238,6 +238,6 @@ public class XMLUtil
                 list.add(child);
             }
         }
-        return (Node[]) list.toArray(new Node[list.size()]);
+        return list.toArray(new Node[list.size()]);
     }
 }

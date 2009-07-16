@@ -17,11 +17,11 @@ import org.eclipse.jface.text.*;
 
 public abstract class INIProblemFixer
 {
-    private static final Comparator cReversePositionComparator = new Comparator() {
-        public int compare(Object o1, Object o2)
+    private static final Comparator<INIProblemFix> cReversePositionComparator = new Comparator<INIProblemFix>() {
+        public int compare(INIProblemFix o1, INIProblemFix o2)
         {
-            Position p1 = ((INIProblemFix)o1).getPosition();
-            Position p2 = ((INIProblemFix)o2).getPosition();
+            Position p1 = o1.getPosition();
+            Position p2 = o2.getPosition();
             int n = p2.offset-p1.offset;
             if(n == 0) {
                 n = p2.length-p1.length;

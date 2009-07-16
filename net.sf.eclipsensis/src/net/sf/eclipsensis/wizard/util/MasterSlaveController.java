@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.*;
 public class MasterSlaveController extends SelectionAdapter
 {
     private Button mMaster;
-    private Map mSlaves = new HashMap();
+    private Map<Control, MasterSlaveEnabler> mSlaves = new HashMap<Control, MasterSlaveEnabler>();
     private boolean mIsReverse = false;
 
     public MasterSlaveController(Button button)
@@ -83,9 +83,9 @@ public class MasterSlaveController extends SelectionAdapter
      */
     private void updateSlavesInternal(boolean selection)
     {
-        for(Iterator iter=mSlaves.keySet().iterator(); iter.hasNext(); ) {
-            Control slave = (Control)iter.next();
-            MasterSlaveEnabler enabler = (MasterSlaveEnabler)mSlaves.get(slave);
+        for(Iterator<Control> iter=mSlaves.keySet().iterator(); iter.hasNext(); ) {
+            Control slave = iter.next();
+            MasterSlaveEnabler enabler = mSlaves.get(slave);
             recursiveSetEnabled(slave, (mIsReverse?!selection:selection), enabler);
         }
     }
@@ -98,7 +98,7 @@ public class MasterSlaveController extends SelectionAdapter
                 recursiveSetEnabled(children[i],enabled, enabler);
             }
         }
-        MasterSlaveEnabler enabler2 = (MasterSlaveEnabler)mSlaves.get(control);
+        MasterSlaveEnabler enabler2 = mSlaves.get(control);
         if(enabler2 != null) {
             enabler = enabler2;
         }
@@ -112,7 +112,8 @@ public class MasterSlaveController extends SelectionAdapter
     /* (non-Javadoc)
      * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
      */
-    public void widgetSelected(SelectionEvent e)
+    @Override
+	public void widgetSelected(SelectionEvent e)
     {
         updateSlaves();
     }

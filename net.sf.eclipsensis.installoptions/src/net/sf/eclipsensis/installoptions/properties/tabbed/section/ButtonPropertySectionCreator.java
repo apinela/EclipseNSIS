@@ -23,14 +23,16 @@ public class ButtonPropertySectionCreator extends UneditableElementPropertySecti
         super(button);
     }
 
-    protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
+    @Override
+	protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
         Composite composite = (Composite)super.createOtherPropertySection(parent, widgetFactory, commandHelper);
         createTextSection(composite, InstallOptionsModel.PROPERTY_STATE, widgetFactory, commandHelper);
         return composite;
     }
 
-    protected boolean shouldCreateOtherPropertySection()
+    @Override
+	protected boolean shouldCreateOtherPropertySection()
     {
         return true;
     }

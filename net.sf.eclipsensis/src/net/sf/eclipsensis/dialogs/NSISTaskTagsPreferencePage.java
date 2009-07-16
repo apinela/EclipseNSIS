@@ -35,7 +35,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     private Button mEditButton = null;
     private Button mRemoveButton = null;
     private Button mCaseSensitiveButton = null;
-    private Collection mOriginalTags = null;
+    private Collection<NSISTaskTag> mOriginalTags = null;
     private Font mBoldFont = null;
 
     /**
@@ -51,7 +51,8 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
      */
-    public void dispose()
+    @Override
+	public void dispose()
     {
         if(mBoldFont != null) {
             mBoldFont.dispose();
@@ -62,7 +63,8 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     /*
      * @see PreferencePage#createControl(Composite)
      */
-    public void createControl(Composite parent) {
+    @Override
+	public void createControl(Composite parent) {
         super.createControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_tasktagprefs_context"); //$NON-NLS-1$
     }
@@ -70,7 +72,8 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createContents(Composite parent)
+    @Override
+	protected Control createContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -108,12 +111,13 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         });
 
         mTableViewer.addCheckStateListener(new ICheckStateListener() {
-            public void checkStateChanged(CheckStateChangedEvent event) {
+            @SuppressWarnings("unchecked")
+			public void checkStateChanged(CheckStateChangedEvent event) {
                 NSISTaskTag taskTag= (NSISTaskTag)event.getElement();
                 boolean checked = event.getChecked();
                 if(checked) {
-                    Collection taskTags = (Collection)mTableViewer.getInput();
-                    for(Iterator iter=taskTags.iterator(); iter.hasNext(); ) {
+                    Collection<NSISTaskTag> taskTags = (Collection<NSISTaskTag>)mTableViewer.getInput();
+                    for(Iterator<NSISTaskTag> iter=taskTags.iterator(); iter.hasNext(); ) {
                         NSISTaskTag t = (NSISTaskTag)iter.next();
                         if(!t.equals(taskTag) && t.isDefault()) {
                             t.setDefault(false);
@@ -187,10 +191,10 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         mBoldFont = new Font(getShell().getDisplay(),fd);
 
         mOriginalTags = NSISPreferences.INSTANCE.getTaskTags();
-        Collection taskTags = NSISPreferences.INSTANCE.getTaskTags();
+        Collection<NSISTaskTag> taskTags = NSISPreferences.INSTANCE.getTaskTags();
         mTableViewer.setInput(NSISPreferences.INSTANCE.getTaskTags());
         mTableViewer.setAllChecked(false);
-        for (Iterator iter=taskTags.iterator(); iter.hasNext(); ) {
+        for (Iterator<NSISTaskTag> iter=taskTags.iterator(); iter.hasNext(); ) {
             NSISTaskTag t = (NSISTaskTag)iter.next();
             if(t.isDefault()) {
                 mTableViewer.setChecked(t,true);
@@ -220,16 +224,17 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
 //        mEditButton.setImage(enabled?CommonImages.DELETE_ICON:CommonImages.DELETE_DISABLED_ICON);
     }
 
-    private void edit()
+    @SuppressWarnings("unchecked")
+	private void edit()
     {
         IStructuredSelection sel = (IStructuredSelection)mTableViewer.getSelection();
         if(!sel.isEmpty() && sel.size() == 1) {
             NSISTaskTag oldTag = (NSISTaskTag)sel.getFirstElement();
             NSISTaskTag newTag = new NSISTaskTag(oldTag);
-            HashSet set = new HashSet();
-            Collection collection = (Collection)mTableViewer.getInput();
-            for (Iterator iter = collection.iterator(); iter.hasNext();) {
-                NSISTaskTag tag = (NSISTaskTag)iter.next();
+            HashSet<String> set = new HashSet<String>();
+            Collection<NSISTaskTag> collection = (Collection<NSISTaskTag>)mTableViewer.getInput();
+            for (Iterator<NSISTaskTag> iter = collection.iterator(); iter.hasNext();) {
+                NSISTaskTag tag = iter.next();
                 if(!tag.equals(newTag)) {
                     set.add(tag.getTag());
                 }
@@ -244,13 +249,14 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         }
     }
 
-    private void add()
+    @SuppressWarnings("unchecked")
+	private void add()
     {
         NSISTaskTag tag = new NSISTaskTag();
-        HashSet set = new HashSet();
-        Collection collection = (Collection)mTableViewer.getInput();
-        for (Iterator iter = collection.iterator(); iter.hasNext();) {
-            NSISTaskTag element = (NSISTaskTag)iter.next();
+        HashSet<String> set = new HashSet<String>();
+        Collection<NSISTaskTag> collection = (Collection<NSISTaskTag>)mTableViewer.getInput();
+        for (Iterator<NSISTaskTag> iter = collection.iterator(); iter.hasNext();) {
+            NSISTaskTag element = iter.next();
             set.add(element.getTag());
         }
         NSISTaskTagDialog dialog = new NSISTaskTagDialog(getShell(),tag);
@@ -261,12 +267,13 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         }
     }
 
-    private void remove()
+    @SuppressWarnings("unchecked")
+	private void remove()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
         if(!selection.isEmpty()) {
-            Collection coll = (Collection)mTableViewer.getInput();
-            for(Iterator iter=selection.toList().iterator(); iter.hasNext(); ) {
+            Collection<NSISTaskTag> coll = (Collection<NSISTaskTag>)mTableViewer.getInput();
+            for(Iterator<?> iter=selection.toList().iterator(); iter.hasNext(); ) {
                 coll.remove(iter.next());
             }
             mTableViewer.refresh();
@@ -277,15 +284,17 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
-    public boolean performOk()
+    @SuppressWarnings("unchecked")
+	@Override
+	public boolean performOk()
     {
         if (super.performOk()) {
-            Collection taskTags = (Collection)mTableViewer.getInput();
+            Collection<NSISTaskTag> taskTags = (Collection<NSISTaskTag>)mTableViewer.getInput();
             boolean caseSensitive = mCaseSensitiveButton.getSelection();
             boolean different = (caseSensitive != NSISPreferences.INSTANCE.isCaseSensitiveTaskTags());
             if (!different) {
                 if (taskTags.size() == mOriginalTags.size()) {
-                    for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
+                    for (Iterator<NSISTaskTag> iter = taskTags.iterator(); iter.hasNext();) {
                         if (!mOriginalTags.contains(iter.next())) {
                             different = true;
                             break;
@@ -299,7 +308,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
             if (different) {
                 if (taskTags.size() > 0) {
                     boolean defaultFound = false;
-                    for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
+                    for (Iterator<NSISTaskTag> iter = taskTags.iterator(); iter.hasNext();) {
                         NSISTaskTag element = (NSISTaskTag)iter.next();
                         if (element.isDefault()) {
                             defaultFound = true;
@@ -351,7 +360,8 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
-    protected void performDefaults()
+    @Override
+	protected void performDefaults()
     {
         mTableViewer.setInput(NSISPreferences.INSTANCE.getDefaultTaskTags());
         mTableViewer.refresh(true);
@@ -396,7 +406,8 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                     if(n >= 0 && n < NSISTaskTag.PRIORITY_LABELS.length) {
                         return NSISTaskTag.PRIORITY_LABELS[n];
                     }
-                default:
+	                //$FALL-THROUGH$
+				default:
                     return ""; //$NON-NLS-1$
             }
         }

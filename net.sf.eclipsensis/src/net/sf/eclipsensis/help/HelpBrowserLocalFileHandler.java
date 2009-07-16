@@ -24,8 +24,6 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
 {
     private static final String EXTENSION_POINT = "helpBrowserLocalFileHandler"; //$NON-NLS-1$
     private static final String HANDLER = "handler"; //$NON-NLS-1$
-    private static final String HANDLER_ID = "id"; //$NON-NLS-1$
-    private static final String HANDLER_NAME = "name"; //$NON-NLS-1$
     private static final String HANDLER_EXTENSIONS = "extensions"; //$NON-NLS-1$
     private static final String HANDLER_CLASS = "class"; //$NON-NLS-1$
 
@@ -38,7 +36,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
 
     public static final HelpBrowserLocalFileHandler INSTANCE = new HelpBrowserLocalFileHandler();
 
-    private Map mExtensions = new LinkedHashMap();
+    private Map<String,List<HandlerDescriptor>> mExtensions = new LinkedHashMap<String,List<HandlerDescriptor>>();
 
     private Object mLock = new Object();
 
@@ -65,16 +63,16 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
         synchronized (mLock) {
             String ext = IOUtility.getFileExtension(file);
             if (!Common.isEmpty(ext)) {
-                for (Iterator iter = mExtensions.keySet().iterator(); iter.hasNext();) {
-                    String extensionId = (String)iter.next();
+                for (Iterator<String> iter = mExtensions.keySet().iterator(); iter.hasNext();) {
+                    String extensionId = iter.next();
                     IExtension extension = getExtensionPointFilter().getExtension(extensionId);
                     if (extension == null) {
                         iter.remove();
                     }
                     else {
-                        List handlers = (List)mExtensions.get(extensionId);
-                        for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
-                            HandlerDescriptor desc = (HandlerDescriptor)iterator.next();
+                        List<HandlerDescriptor> handlers = mExtensions.get(extensionId);
+                        for (Iterator<HandlerDescriptor> iterator = handlers.iterator(); iterator.hasNext();) {
+                            HandlerDescriptor desc = iterator.next();
                             if (desc.getExtensions().contains(ext)) {
                                 try {
                                     return desc.getHandler().handle(file);
@@ -113,7 +111,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
         synchronized (mLock) {
             if (!mExtensions.containsKey(extension.getUniqueIdentifier())) {
                 IConfigurationElement[] elements = extension.getConfigurationElements();
-                List handlers = new ArrayList();
+                List<HandlerDescriptor> handlers = new ArrayList<HandlerDescriptor>();
                 for (int i = 0; i < elements.length; i++) {
                     if (HANDLER.equals(elements[i].getName())) {
                         try {
@@ -144,27 +142,17 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
     {
         private IConfigurationElement mElement;
 
-        private String mId = ""; //$NON-NLS-1$
-        private String mName = ""; //$NON-NLS-1$
-        private Set mExtensions = new CaseInsensitiveSet();
+        private Set<String> mExtensions = new CaseInsensitiveSet();
         private IHelpBrowserLocalFileHandler mHandler = null;
 
         private HandlerDescriptor(IConfigurationElement element)
         {
             super();
-            String id = element.getAttribute(HANDLER_ID);
-            if (id != null) {
-                mId = id;
-            }
-            String name = element.getAttribute(HANDLER_NAME);
-            if (name != null) {
-                mName = name;
-            }
             mExtensions.addAll(Common.tokenizeToList(element.getAttribute(HANDLER_EXTENSIONS), ','));
             mElement = element;
         }
 
-        public Set getExtensions()
+        public Set<String> getExtensions()
         {
             return mExtensions;
         }
@@ -182,16 +170,6 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
                 }
             }
             return mHandler;
-        }
-
-        public String getId()
-        {
-            return mId;
-        }
-
-        public String getName()
-        {
-            return mName;
         }
     }
 }

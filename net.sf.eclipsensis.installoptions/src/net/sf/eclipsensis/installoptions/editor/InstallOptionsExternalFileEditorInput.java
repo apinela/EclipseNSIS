@@ -65,7 +65,8 @@ public class InstallOptionsExternalFileEditorInput implements IInstallOptionsEdi
         return getPath();
     }
 
-    public boolean equals(Object o)
+    @Override
+	public boolean equals(Object o)
     {
         if (o == this) {
             return true;
@@ -113,6 +114,7 @@ public class InstallOptionsExternalFileEditorInput implements IInstallOptionsEdi
         return mInput.getToolTipText();
     }
 
+    @SuppressWarnings("unchecked")
     public Object getAdapter(Class adapter)
     {
         if(adapter == TextFileDocumentProvider.class) {
@@ -160,6 +162,7 @@ public class InstallOptionsExternalFileEditorInput implements IInstallOptionsEdi
                         return (mFile != null && mFile.exists() && !mFile.canWrite());
                     }
 
+                    @SuppressWarnings("unchecked")
                     public Object getAdapter(Class adapter)
                     {
                         return InstallOptionsExternalFileEditorInput.this.getAdapter(adapter);
@@ -181,4 +184,10 @@ public class InstallOptionsExternalFileEditorInput implements IInstallOptionsEdi
         }
         return null;
     }
+
+	@Override
+	public int hashCode() 
+	{
+		return mInput.hashCode();
+	}
 }

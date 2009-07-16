@@ -42,7 +42,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     public void reset(boolean full)
     {
         setDefaultReturnToken(getDefaultToken());
-        List rules = new ArrayList();
+        List<IRule> rules = new ArrayList<IRule>();
         addRules(rules);
         rules.add(new WhitespaceRule(new NSISWhitespaceDetector()));
         IRule[] result = new IRule[rules.size()];
@@ -53,7 +53,8 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.rules.ICharacterScanner#read()
      */
-    public int read()
+    @Override
+	public int read()
     {
         int c = super.read();
         if(!isCaseSensitive() && Character.isUpperCase((char)c)) {
@@ -90,13 +91,14 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.rules.ITokenScanner#setRange(org.eclipse.jface.text.IDocument, int, int)
      */
-    public void setRange(IDocument document, int offset, int length)
+    @Override
+	public void setRange(IDocument document, int offset, int length)
     {
         super.setRange(document, offset, length);
-        Arrays.sort(fDelimiters,new Comparator() {
-            public int compare(Object a, Object b)
+        Arrays.sort(fDelimiters,new Comparator<char[]>() {
+            public int compare(char[] a, char[] b)
             {
-                return ((char[])b).length-((char[])a).length;
+                return b.length-a.length;
             }
         });
     }
@@ -112,7 +114,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
     /**
      * @return
      */
-    protected abstract void addRules(List rules);
+    protected abstract void addRules(List<IRule> rules);
 
     /**
      * @return

@@ -35,10 +35,10 @@ public class INIProblemResolutionGenerator implements IMarkerResolutionGenerator
             if(line >= 0 && resolution != null) {
                 final IResource resource = marker.getResource();
                 if(resource instanceof IFile) {
-                    List editors = NSISEditorUtilities.findEditors(resource.getLocation());
+                    List<IEditorPart> editors = NSISEditorUtilities.findEditors(resource.getLocation());
                     IInstallOptionsEditor editor = null;
                     if(!Common.isEmptyCollection(editors)) {
-                        for (Iterator iter = editors.iterator(); iter.hasNext();) {
+                        for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
                             IEditorPart element = (IEditorPart)iter.next();
                             if(element instanceof IInstallOptionsEditor) {
                                 editor = (IInstallOptionsEditor)element;
@@ -71,8 +71,8 @@ public class INIProblemResolutionGenerator implements IMarkerResolutionGenerator
                                                 IDocumentProvider provider = ((InstallOptionsEditorInput)input).getDocumentProvider();
                                                 IDocument document = provider.getDocument(input);
                                                 INIFile inifile = editor.getINIFile();
-                                                List problems = inifile.getProblems(line > 0);
-                                                for (Iterator iter = problems.iterator(); iter.hasNext();) {
+                                                List<INIProblem> problems = inifile.getProblems(line > 0);
+                                                for (Iterator<INIProblem> iter = problems.iterator(); iter.hasNext();) {
                                                     INIProblem problem = (INIProblem)iter.next();
                                                     if (problem.getLine() == line && Common.stringsAreEqual(problem.getFixDescription(),resolution)) {
                                                         problem.fix(document);
@@ -91,8 +91,8 @@ public class INIProblemResolutionGenerator implements IMarkerResolutionGenerator
                             IDocumentProvider provider = ((InstallOptionsEditorInput)input).getDocumentProvider();
                             final IDocument document = provider.getDocument(input);
                             INIFile inifile = editor.getINIFile();
-                            List problems = inifile.getProblems(line > 0);
-                            for (Iterator iter = problems.iterator(); iter.hasNext();) {
+                            List<INIProblem> problems = inifile.getProblems(line > 0);
+                            for (Iterator<INIProblem> iter = problems.iterator(); iter.hasNext();) {
                                 final INIProblem problem = (INIProblem)iter.next();
                                 if (problem.getLine() == line && Common.stringsAreEqual(problem.getFixDescription(),resolution)) {
                                     final IEditorPart fEditor = editor;

@@ -49,7 +49,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     private static final int SIZING_WIZARD_HEIGHT = 500;
 
     private NSISWizardSettings mSettings = null;
-    private List mSettingsListeners = new ArrayList();
+    private List<INSISWizardSettingsListener> mSettingsListeners = new ArrayList<INSISWizardSettingsListener>();
     private IPageChangeProvider mPageChangeProvider;
     private AbstractNSISWizardPage mCurrentPage = null;
 
@@ -75,7 +75,8 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         }
     }
 
-    public Object getAdapter(Class adapter)
+    @SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter)
     {
         if(IPageChangeProvider.class.equals(adapter)) {
             if(mPageChangeProvider == null) {
@@ -86,7 +87,8 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         return null;
     }
 
-    public void setContainer(IWizardContainer wizardContainer)
+    @Override
+	public void setContainer(IWizardContainer wizardContainer)
     {
         if(getContainer() == mPageChangeProvider) {
             mPageChangeProvider = null;
@@ -95,8 +97,8 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         if(getContainer() instanceof IPageChangeProvider) {
             IPageChangeProvider pageChangeProvider = (IPageChangeProvider)getContainer();
             if(mPageChangeProvider instanceof PageChangeProvider) {
-                List list = ((PageChangeProvider)mPageChangeProvider).getListeners();
-                IPageChangedListener[] listeners = (IPageChangedListener[])list.toArray(new IPageChangedListener[list.size()]);
+                List<IPageChangedListener> list = ((PageChangeProvider)mPageChangeProvider).getListeners();
+                IPageChangedListener[] listeners = list.toArray(new IPageChangedListener[list.size()]);
                 for (int i = 0; i < listeners.length; i++) {
                     pageChangeProvider.addPageChangedListener(listeners[i]);
                     list.remove(listeners[i]);
@@ -110,7 +112,8 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     /**
      * Adding the page to the wizard.
      */
-    public final void addPages()
+    @Override
+	public final void addPages()
     {
         if(EclipseNSISPlugin.getDefault().isConfigured()) {
             initSettings();
@@ -151,7 +154,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         }
         mSettings = settings;
         mSettings.setWizard(this);
-        INSISWizardSettingsListener[] listeners = (INSISWizardSettingsListener[])mSettingsListeners.toArray(new INSISWizardSettingsListener[mSettingsListeners.size()]);
+        INSISWizardSettingsListener[] listeners = mSettingsListeners.toArray(new INSISWizardSettingsListener[mSettingsListeners.size()]);
         for (int i = 0; i < listeners.length; i++) {
             listeners[i].settingsChanged(oldSettings, mSettings);
         }
@@ -167,7 +170,8 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
      */
-    public IWizardPage getNextPage(IWizardPage page)
+    @Override
+	public IWizardPage getNextPage(IWizardPage page)
     {
         IWizardPage nextPage = super.getNextPage(page);
         if(mSettings.getInstallerType() == INSTALLER_TYPE_SILENT && nextPage != null &&
@@ -180,7 +184,8 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizard#getPreviousPage(org.eclipse.jface.wizard.IWizardPage)
      */
-    public IWizardPage getPreviousPage(IWizardPage page)
+    @Override
+	public IWizardPage getPreviousPage(IWizardPage page)
     {
         IWizardPage prevPage = super.getPreviousPage(page);
         if(mSettings.getInstallerType() == INSTALLER_TYPE_SILENT && prevPage != null &&
@@ -190,7 +195,8 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         return prevPage;
     }
 
-    public void createPageControls(Composite pageContainer)
+    @Override
+	public void createPageControls(Composite pageContainer)
     {
         super.createPageControls(pageContainer);
         Object data = pageContainer.getLayoutData();
@@ -242,7 +248,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
 
     private class PageChangeProvider implements IPageChangeProvider
     {
-        private List mListeners = new ArrayList();
+        private List<IPageChangedListener> mListeners = new ArrayList<IPageChangedListener>();
 
         public void addPageChangedListener(IPageChangedListener listener)
         {
@@ -251,7 +257,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
             }
         }
 
-        public List getListeners()
+        public List<IPageChangedListener> getListeners()
         {
             return mListeners;
         }
@@ -271,7 +277,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         public void firePageChanged()
         {
             PageChangedEvent pageChangedEvent = new PageChangedEvent(this, mCurrentPage);
-            IPageChangedListener[] listeners = (IPageChangedListener[])mListeners.toArray(new IPageChangedListener[mListeners.size()]);
+            IPageChangedListener[] listeners = mListeners.toArray(new IPageChangedListener[mListeners.size()]);
             for (int i = 0; i < listeners.length; i++) {
                 listeners[i].pageChanged(pageChangedEvent);
             }

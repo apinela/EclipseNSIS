@@ -26,13 +26,15 @@ public class PictureFigure extends UneditableElementFigure
         setBorder(new DashedLineBorder());
     }
 
-    protected void init(IPropertySource propertySource)
+    @Override
+	protected void init(IPropertySource propertySource)
     {
         setImage((Image)propertySource.getPropertyValue(InstallOptionsPicture.PROPERTY_IMAGE));
         super.init(propertySource);
     }
 
-    protected Control createUneditableSWTControl(Composite parent, int style)
+    @Override
+	protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Label label = new Label(parent, style);
         Image image = getImage();
@@ -42,7 +44,8 @@ public class PictureFigure extends UneditableElementFigure
         return label;
     }
 
-    public int getDefaultStyle()
+    @Override
+	public int getDefaultStyle()
     {
         return SWT.CENTER;
     }

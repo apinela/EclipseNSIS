@@ -11,10 +11,10 @@ package net.sf.eclipsensis.installoptions.model;
 
 import java.util.Comparator;
 
-public final class InstallOptionsWidgetComparator implements Comparator
+public final class InstallOptionsWidgetComparator implements Comparator<InstallOptionsWidget>
 {
-    public static final Comparator INSTANCE = new InstallOptionsWidgetComparator(false);
-    public static final Comparator REVERSE_INSTANCE = new InstallOptionsWidgetComparator(true);
+    public static final Comparator<InstallOptionsWidget> INSTANCE = new InstallOptionsWidgetComparator(false);
+    public static final Comparator<InstallOptionsWidget> REVERSE_INSTANCE = new InstallOptionsWidgetComparator(true);
 
     private boolean mReversed = false;
 
@@ -24,10 +24,8 @@ public final class InstallOptionsWidgetComparator implements Comparator
         mReversed = reversed;
     }
 
-    public int compare(Object o1, Object o2)
+    public int compare(InstallOptionsWidget w1, InstallOptionsWidget w2)
     {
-        InstallOptionsWidget w1 = (InstallOptionsWidget)o1;
-        InstallOptionsWidget w2 = (InstallOptionsWidget)o2;
         return (mReversed?-1:1)*(w1.getIndex()-w2.getIndex());
     }
 }

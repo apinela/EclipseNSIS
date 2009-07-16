@@ -22,14 +22,16 @@ public class UneditableElementPropertySectionCreator extends WidgetPropertySecti
         super(widget);
     }
 
-    protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
+    @Override
+	protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
         Composite composite = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
         createTextSection(composite, InstallOptionsModel.PROPERTY_TEXT, widgetFactory, commandHelper, isTextPropertyMultiline());
         return composite;
     }
 
-    protected boolean shouldCreateAppearancePropertySection()
+    @Override
+	protected boolean shouldCreateAppearancePropertySection()
     {
         return true;
     }

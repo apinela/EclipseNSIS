@@ -13,6 +13,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.commands.Command;
@@ -22,8 +23,8 @@ public class ArrangeCommand extends Command
     private int mType;
 
     private InstallOptionsDialog mParent;
-    private List mSelection;
-    private List mOldChildren;
+    private List<InstallOptionsWidget> mSelection;
+    private List<InstallOptionsWidget> mOldChildren;
 
     public ArrangeCommand(int type)
     {
@@ -47,7 +48,8 @@ public class ArrangeCommand extends Command
         setLabel(InstallOptionsPlugin.getResourceString(name));
     }
 
-    public boolean canExecute()
+    @Override
+	public boolean canExecute()
     {
         if(mParent != null) {
             if(!Common.isEmptyCollection(mSelection)) {
@@ -57,10 +59,11 @@ public class ArrangeCommand extends Command
         return false;
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         if(mParent != null) {
-            mOldChildren = new ArrayList(mParent.getChildren());
+            mOldChildren = new ArrayList<InstallOptionsWidget>(mParent.getChildren());
             redo();
         }
     }
@@ -70,13 +73,14 @@ public class ArrangeCommand extends Command
         mParent = parent;
     }
 
-    public void setSelection(List selection)
+    public void setSelection(List<InstallOptionsWidget> selection)
     {
         mSelection = selection;
     }
 
 
-    public void redo()
+    @Override
+	public void redo()
     {
         if(mParent != null) {
             mParent.setSelection(mSelection);
@@ -84,7 +88,8 @@ public class ArrangeCommand extends Command
         }
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         if(mParent != null) {
             mParent.setChildren(mOldChildren);

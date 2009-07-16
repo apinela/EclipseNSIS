@@ -16,6 +16,7 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.internal.ui.rulers.GuideEditPart;
 import org.eclipse.swt.graphics.Font;
 
+@SuppressWarnings("restriction")
 public class InstallOptionsGuideEditPart extends GuideEditPart
 {
     /**
@@ -26,13 +27,15 @@ public class InstallOptionsGuideEditPart extends GuideEditPart
         super(model);
     }
 
-    protected void createEditPolicies()
+    @Override
+	protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new InstallOptionsDragGuidePolicy());
     }
 
-    public void updateLocationOfFigures(int position)
+    @Override
+	public void updateLocationOfFigures(int position)
     {
         Font f = FontUtility.getInstallOptionsFont();
         position = (isHorizontal()?FigureUtility.pixelsToDialogUnitsY(position,f):FigureUtility.pixelsToDialogUnitsX(position,f));

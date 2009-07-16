@@ -27,7 +27,8 @@ public abstract class INIFileAction extends Action
     {
         mEditor = editor;
     }
-    public void run()
+    @Override
+	public void run()
     {
         if(doRun(mEditor.getINIFile().copy())) {
             Control c = (Control)mEditor.getAdapter(Control.class);
@@ -47,11 +48,11 @@ public abstract class INIFileAction extends Action
      */
     protected void updateDocument(INIFile iniFile, INISection section)
     {
-        List dirtyList = new ArrayList();
-        for (Iterator iter = iniFile.getChildren().iterator(); iter.hasNext();) {
-            INILine line = (INILine)iter.next();
+        List<INISection> dirtyList = new ArrayList<INISection>();
+        for (Iterator<INILine> iter = iniFile.getChildren().iterator(); iter.hasNext();) {
+            INILine line = iter.next();
             if (line instanceof INISection && ((INISection)line).isDirty()) {
-                dirtyList.add(line);
+                dirtyList.add((INISection) line);
             }
         }
         boolean isDelete = false;
@@ -60,7 +61,7 @@ public abstract class INIFileAction extends Action
             dirtyList.add(section);
         }
         if (dirtyList.size() > 0) {
-            Collections.sort(dirtyList, new Comparator() {
+            Collections.sort(dirtyList, new Comparator<INISection>() {
 
                 private Position getPosition(INISection section)
                 {
@@ -68,10 +69,10 @@ public abstract class INIFileAction extends Action
                     return (p == null?IInstallOptionsConstants.MAX_POSITION:p);
                 }
 
-                public int compare(Object o1, Object o2)
+                public int compare(INISection s1, INISection s2)
                 {
-                    Position p1 = getPosition((INISection)o1);
-                    Position p2 = getPosition((INISection)o2);
+                    Position p1 = getPosition(s1);
+                    Position p2 = getPosition(s2);
                     int n = p2.getOffset() - p1.getOffset();
                     if (n == 0) {
                         n = p2.getLength() - p1.getLength();
@@ -83,9 +84,9 @@ public abstract class INIFileAction extends Action
             IDocument document = target.getDocument();
             try {
                 target.beginCompoundChange();
-                Iterator iter = dirtyList.iterator();
+                Iterator<INISection> iter = dirtyList.iterator();
                 while (iter.hasNext()) {
-                    INISection sec = (INISection)iter.next();
+                    INISection sec = iter.next();
                     Position p = sec.getPosition();
                     if(p == null) {
                         document.replace(document.getLength(), 0, sec.toString());

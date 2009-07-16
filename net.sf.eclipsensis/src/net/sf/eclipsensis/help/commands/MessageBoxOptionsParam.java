@@ -29,7 +29,8 @@ public class MessageBoxOptionsParam extends NSISParam
         super(node);
     }
 
-    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new MessageBoxOptionsParamEditor(command, parentEditor);
     }
@@ -46,7 +47,8 @@ public class MessageBoxOptionsParam extends NSISParam
             super(command, parentEditor);
         }
 
-        public void clear()
+        @Override
+		public void clear()
         {
             resetCombo(mButtonsCombo);
             resetCombo(mIconCombo);
@@ -68,12 +70,14 @@ public class MessageBoxOptionsParam extends NSISParam
             }
         }
 
-        protected String validateParam()
+        @Override
+		protected String validateParam()
         {
             return null;
         }
 
-        protected void appendParamText(StringBuffer buf)
+        @Override
+		protected void appendParamText(StringBuffer buf)
         {
             StringBuffer buf2 = new StringBuffer(""); //$NON-NLS-1$
             buf.append(" "); //$NON-NLS-1$
@@ -106,7 +110,8 @@ public class MessageBoxOptionsParam extends NSISParam
             }
         }
 
-        public void saveSettings()
+        @Override
+		public void saveSettings()
         {
             super.saveSettings();
             if(getSettings() != null) {
@@ -129,7 +134,8 @@ public class MessageBoxOptionsParam extends NSISParam
             }
         }
 
-        protected Control createParamControl(Composite parent)
+        @Override
+		protected Control createParamControl(Composite parent)
         {
             parent = new Group(parent,SWT.NONE);
             GridLayout gridLayout = new GridLayout(2,false);
@@ -154,7 +160,8 @@ public class MessageBoxOptionsParam extends NSISParam
             return parent;
         }
 
-        protected void initParamEditor()
+        @Override
+		protected void initParamEditor()
         {
             super.initParamEditor();
             initCombo(mButtonsCombo, SETTING_BUTTONS);

@@ -45,7 +45,8 @@ public class FileFilter implements Cloneable
         setPatterns(patterns2);
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         return new FileFilter(this);
     }
@@ -70,7 +71,8 @@ public class FileFilter implements Cloneable
         mPatterns = (patterns==null?EMPTY_PATTERN_ARRAY:patterns);
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         StringBuffer buf = new StringBuffer(mDescription);
         buf.append(IInstallOptionsConstants.LIST_SEPARATOR);
@@ -83,12 +85,14 @@ public class FileFilter implements Cloneable
         return Common.flatten(mPatterns,InstallOptionsFileRequest.FILTER_SEPARATOR);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         return toString().hashCode();
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this != obj) {
             if (obj instanceof FileFilter) {

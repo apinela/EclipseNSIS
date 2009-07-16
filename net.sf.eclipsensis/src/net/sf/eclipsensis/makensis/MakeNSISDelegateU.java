@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.makensis;
 
-import java.util.ArrayList;
+import java.util.List;
 
 class MakeNSISDelegateU extends AbstractMakeNSISDelegate
 {
@@ -22,17 +22,19 @@ class MakeNSISDelegateU extends AbstractMakeNSISDelegate
         return true;
     }
 
-    protected native long init();
+    @Override
+	protected native long init();
 
-    protected native void destroy();
+    @Override
+	protected native void destroy();
 
     public native void reset();
 
-    public native ArrayList getErrors();
+    public native List<String> getErrors();
 
     public native String getOutputFileName();
 
     public native String getScriptFileName();
 
-    public native ArrayList getWarnings();
+    public native List<String> getWarnings();
 }

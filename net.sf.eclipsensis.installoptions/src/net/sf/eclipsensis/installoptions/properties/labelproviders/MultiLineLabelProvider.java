@@ -22,10 +22,11 @@ public class MultiLineLabelProvider extends LabelProvider
         super();
     }
 
-    public String getText(Object element)
+    @Override
+	public String getText(Object element)
     {
         if(element instanceof String) {
-            return TypeConverter.ESCAPED_STRING_CONVERTER.asString(element);
+            return TypeConverter.ESCAPED_STRING_CONVERTER.asString((String) element);
         }
         else {
             return super.getText(element);

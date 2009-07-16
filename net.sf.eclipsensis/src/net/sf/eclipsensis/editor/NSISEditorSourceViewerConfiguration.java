@@ -39,7 +39,8 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     /*
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
-    public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer)
+    @Override
+	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer)
     {
         return mAnnotationHover;
     }
@@ -47,13 +48,15 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     /* (non-Javadoc)
      * Method declared on SourceViewerConfiguration
      */
-    public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType)
+    @Override
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType)
     {
         return mTextHover;
     }
 
 
-    public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer)
+    @Override
+	public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer)
     {
         return mAnnotationHover;
     }
@@ -61,7 +64,8 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getInformationControlCreator(org.eclipse.jface.text.source.ISourceViewer)
      */
-    public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer)
+    @Override
+	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer)
     {
         return mInformationControlCreator;
     }
@@ -69,7 +73,8 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getInformationPresenter(org.eclipse.jface.text.source.ISourceViewer)
      */
-    public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer)
+    @Override
+	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer)
     {
         if(mInformationPresenter == null) {
             mInformationPresenter = NSISEditorUtilities.createStickyHelpInformationPresenter();
@@ -80,7 +85,8 @@ public class NSISEditorSourceViewerConfiguration extends NSISSourceViewerConfigu
     /*
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
-    public IContentAssistant getContentAssistant(ISourceViewer sourceViewer)
+    @Override
+	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer)
     {
         return NSISSourceViewerConfigurationTools.createContentAssistant(sourceViewer,
                         new IContentAssistProcessor[] {new NSISTemplateCompletionProcessor(),

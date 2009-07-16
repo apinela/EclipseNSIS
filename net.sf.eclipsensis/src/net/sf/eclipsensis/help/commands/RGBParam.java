@@ -27,17 +27,20 @@ public class RGBParam extends HexStringParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new RGBParamEditor(command, parentEditor);
     }
 
-    protected String getValidateErrorMessage()
+    @Override
+	protected String getValidateErrorMessage()
     {
         return EclipseNSISPlugin.getResourceString("rgb.param.error"); //$NON-NLS-1$
     }
 
-    protected String getRegexp()
+    @Override
+	protected String getRegexp()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(isAcceptVar()) {
@@ -57,7 +60,8 @@ public class RGBParam extends HexStringParam
             super(command, parentEditor);
         }
 
-        public void clear()
+        @Override
+		public void clear()
         {
             if(Common.isValid(mText)) {
                 mText.setText(""); //$NON-NLS-1$
@@ -65,7 +69,8 @@ public class RGBParam extends HexStringParam
             super.clear();
         }
 
-        protected void updateState(boolean state)
+        @Override
+		protected void updateState(boolean state)
         {
             if(Common.isValid(mText)) {
                 mText.setEnabled(state);
@@ -77,7 +82,8 @@ public class RGBParam extends HexStringParam
             super.updateState(state);
         }
 
-        protected Control createParamControl(Composite parent)
+        @Override
+		protected Control createParamControl(Composite parent)
         {
             parent = new Composite(parent,SWT.NONE);
             GridLayout layout = new GridLayout(2,false);
@@ -104,7 +110,8 @@ public class RGBParam extends HexStringParam
                     }
                 });
                 b.addSelectionListener(new SelectionAdapter() {
-                    public void widgetSelected(SelectionEvent e)
+                    @Override
+					public void widgetSelected(SelectionEvent e)
                     {
                         mText.setText(ColorManager.rgbToHex(editor.getRGB()));
                     }

@@ -20,7 +20,7 @@ import org.eclipse.jface.text.rules.*;
 public class NSISTaskTagRule implements IRule
 {
     private IToken mToken;
-    private Map mTaskTags;
+    private Map<String, NSISTaskTag> mTaskTags;
     private String[] mMatchStrings;
     /**
      *
@@ -38,27 +38,25 @@ public class NSISTaskTagRule implements IRule
 
     private void loadTaskTags()
     {
-        Collection taskTags = NSISPreferences.INSTANCE.getTaskTags();
+        Collection<NSISTaskTag> taskTags = NSISPreferences.INSTANCE.getTaskTags();
         boolean caseSensitive = NSISPreferences.INSTANCE.isCaseSensitiveTaskTags();
         if(caseSensitive) {
-            mTaskTags = new HashMap();
+            mTaskTags = new HashMap<String, NSISTaskTag>();
         }
         else {
-            mTaskTags = new CaseInsensitiveMap();
+            mTaskTags = new CaseInsensitiveMap<NSISTaskTag>();
         }
         String[] tagNames = new String[taskTags.size()];
         int i=0;
-        for (Iterator iter = taskTags.iterator(); iter.hasNext();) {
+        for (Iterator<NSISTaskTag> iter = taskTags.iterator(); iter.hasNext();) {
             NSISTaskTag tag = (NSISTaskTag)iter.next();
             tagNames[i] = tag.getTag();
             mTaskTags.put(tagNames[i],tag);
             i++;
         }
-        Arrays.sort(tagNames, new Comparator() {
-            public int compare(Object o1, Object o2)
+        Arrays.sort(tagNames, new Comparator<String>() {
+            public int compare(String tag1, String tag2)
             {
-                String tag1 = (String)o1;
-                String tag2 = (String)o2;
                 int n= tag2.length()-tag1.length();
                 if(n == 0) {
                     n = tag1.compareTo(tag2);

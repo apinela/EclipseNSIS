@@ -18,7 +18,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 
 public interface IInstallOptionsFigure extends IFigure
 {
-    public static final List SCROLL_FLAGS = Collections.unmodifiableList(Arrays.asList(
+    public static final List<String> SCROLL_FLAGS = Collections.unmodifiableList(Arrays.asList(
                                                     new String[]{InstallOptionsModel.FLAGS_HSCROLL,
                                                                  InstallOptionsModel.FLAGS_VSCROLL}));
 

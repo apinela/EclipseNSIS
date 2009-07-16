@@ -40,7 +40,8 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.ISourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)
      */
-    public void configure(SourceViewerConfiguration configuration)
+    @Override
+	public void configure(SourceViewerConfiguration configuration)
     {
         mColorRegistry = JFaceResources.getColorRegistry();
         mColorRegistry.addListener(this);
@@ -57,7 +58,8 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.ISourceViewerExtension2#unconfigure()
      */
-    public void unconfigure()
+    @Override
+	public void unconfigure()
     {
         mColorRegistry.removeListener(this);
         if (mInsertTemplateVariableAssistant != null) {
@@ -71,7 +73,8 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextOperationTargetExtension#enableOperation(int, boolean)
      */
-    public void enableOperation(int operation, boolean enable)
+    @Override
+	public void enableOperation(int operation, boolean enable)
     {
         switch(operation) {
             case INSERT_TEMPLATE_VARIABLE:
@@ -97,7 +100,8 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextOperationTarget#canDoOperation(int)
      */
-    public boolean canDoOperation(int operation)
+    @Override
+	public boolean canDoOperation(int operation)
     {
         switch(operation) {
             case INSERT_TEMPLATE_VARIABLE:
@@ -110,7 +114,8 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
      */
-    public void doOperation(int operation)
+    @Override
+	public void doOperation(int operation)
     {
         switch(operation) {
             case INSERT_TEMPLATE_VARIABLE:

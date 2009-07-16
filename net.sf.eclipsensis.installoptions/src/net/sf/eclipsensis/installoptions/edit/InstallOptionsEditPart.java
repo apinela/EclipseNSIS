@@ -21,7 +21,8 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
 {
     private AccessibleEditPart mAccessible;
 
-    public void activate()
+    @Override
+	public void activate()
     {
         if (isActive()) {
             return;
@@ -30,7 +31,8 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
         getInstallOptionsElement().addPropertyChangeListener(this);
     }
 
-    protected void createEditPolicies()
+    @Override
+	protected void createEditPolicies()
     {
         installEditPolicy(EditPolicy.COMPONENT_ROLE, new InstallOptionsEditPolicy());
     }
@@ -41,7 +43,8 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
      * Makes the EditPart insensible to changes in the model by removing itself
      * from the model's list of mListeners.
      */
-    public void deactivate()
+    @Override
+	public void deactivate()
     {
         if (!isActive()) {
             return;
@@ -50,7 +53,8 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
         getInstallOptionsElement().removePropertyChangeListener(this);
     }
 
-    protected AccessibleEditPart getAccessibleEditPart()
+    @Override
+	protected AccessibleEditPart getAccessibleEditPart()
     {
         if (mAccessible == null) {
             mAccessible = createAccessible();
@@ -63,7 +67,8 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
         return (InstallOptionsElement)getModel();
     }
 
-    public void addNotify()
+    @Override
+	public void addNotify()
     {
         super.addNotify();
         ((InstallOptionsElement)getModel()).addModelCommandListener(getModelCommandListener());
@@ -74,7 +79,8 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
         return (IModelCommandListener)((InstallOptionsEditDomain)getViewer().getEditDomain()).getAdapter(IModelCommandListener.class);
     }
 
-    public void removeNotify()
+    @Override
+	public void removeNotify()
     {
         ((InstallOptionsElement)getModel()).removeModelCommandListener(getModelCommandListener());
         super.removeNotify();

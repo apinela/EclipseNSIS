@@ -13,7 +13,8 @@ import net.sf.eclipsensis.help.NSISHelpURLProvider;
 
 public class NSISBrowserInformationProvider extends NSISInformationProvider
 {
-    protected Object getInformation(String word)
+    @Override
+	protected Object getInformation(String word)
     {
         String info = NSISHelpURLProvider.getInstance().getKeywordHelp(word);
         if(info == null) {

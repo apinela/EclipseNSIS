@@ -40,7 +40,8 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
         mText = text;
     }
 
-    protected int getMessageLabelStyle()
+    @Override
+	protected int getMessageLabelStyle()
     {
         return SWT.NONE;
     }
@@ -58,7 +59,8 @@ public class RegistryKeySelectionDialog extends StatusMessageDialog
         }
     }
 
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(1,false);

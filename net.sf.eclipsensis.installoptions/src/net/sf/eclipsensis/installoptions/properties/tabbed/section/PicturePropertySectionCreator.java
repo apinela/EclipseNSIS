@@ -22,22 +22,26 @@ public class PicturePropertySectionCreator extends UneditableElementPropertySect
         super(picture);
     }
 
-    protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
+    @Override
+	protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
         return null;
     }
 
-    protected boolean shouldCreateAppearancePropertySection()
+    @Override
+	protected boolean shouldCreateAppearancePropertySection()
     {
         return false;
     }
 
-    protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
+    @Override
+	protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
         return super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
     }
 
-    protected boolean shouldCreateOtherPropertySection()
+    @Override
+	protected boolean shouldCreateOtherPropertySection()
     {
         return true;
     }

@@ -23,7 +23,8 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
         super(section);
     }
 
-    protected void loadSection(INISection section)
+    @Override
+	protected void loadSection(INISection section)
     {
         String type = null;
         if(section != null) {
@@ -36,13 +37,15 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
         super.loadSection(section);
     }
 
-    protected void setDefaults()
+    @Override
+	protected void setDefaults()
     {
         super.setDefaults();
         mType = InstallOptionsPlugin.getResourceString("unknown.type.default"); //$NON-NLS-1$
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return mType;
     }
@@ -57,7 +60,8 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
         }
     }
 
-    public void setPropertyValue(Object id, Object value)
+    @Override
+	public void setPropertyValue(Object id, Object value)
     {
         if (InstallOptionsModel.PROPERTY_TYPE.equals(id)) {
             setType((String)value);
@@ -67,7 +71,8 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
         }
     }
 
-    protected Position getDefaultPosition()
+    @Override
+	protected Position getDefaultPosition()
     {
         return new Position(0,0,50,50);
     }

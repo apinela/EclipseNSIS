@@ -37,7 +37,8 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         setXyLayout(layout);
     }
 
-    public Command getCommand(Request request)
+    @Override
+	public Command getCommand(Request request)
     {
         if(request.getType().equals(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE)) {
             return getCreateFromTemplateCommand((CreateRequest)request);
@@ -85,7 +86,8 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         return result;
     }
 
-    protected Command createAddCommand(EditPart child, Object constraint)
+    @Override
+	protected Command createAddCommand(EditPart child, Object constraint)
     {
         return null;
     }
@@ -116,13 +118,15 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
      * @see org.eclipse.gef.editpolicies.ConstrainedLayoutEditPolicy#createChangeConstraintCommand(org.eclipse.gef.EditPart,
      *      java.lang.Object)
      */
-    protected Command createChangeConstraintCommand(EditPart child,
+    @Override
+	protected Command createChangeConstraintCommand(EditPart child,
             Object constraint)
     {
         return null;
     }
 
-    protected Command createChangeConstraintCommand(ChangeBoundsRequest request, EditPart child, Object constraint)
+    @Override
+	protected Command createChangeConstraintCommand(ChangeBoundsRequest request, EditPart child, Object constraint)
     {
         InstallOptionsWidget part = (InstallOptionsWidget)child.getModel();
         Point moveDelta;
@@ -218,7 +222,8 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         return result;
     }
 
-    protected EditPolicy createChildEditPolicy(EditPart child)
+    @Override
+	protected EditPolicy createChildEditPolicy(EditPart child)
     {
         return new InstallOptionsResizableEditPolicy(child);
     }
@@ -228,7 +233,8 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
      *
      * @see org.eclipse.gef.editpolicies.LayoutEditPolicy#createSizeOnDropFeedback(org.eclipse.gef.requests.CreateRequest)
      */
-    protected IFigure createSizeOnDropFeedback(CreateRequest createRequest)
+    @Override
+	protected IFigure createSizeOnDropFeedback(CreateRequest createRequest)
     {
         IFigure figure;
 
@@ -252,10 +258,11 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         return (InstallOptionsGuide)provider.getGuideAt(pos);
     }
 
-    protected Command getAddCommand(Request generic)
+    @Override
+	protected Command getAddCommand(Request generic)
     {
         ChangeBoundsRequest request = (ChangeBoundsRequest)generic;
-        List editParts = request.getEditParts();
+        List<?> editParts = request.getEditParts();
         CompoundCommand command = new CompoundCommand();
         command.setDebugLabel("Add in ConstrainedLayoutEditPolicy");//$NON-NLS-1$
         GraphicalEditPart childPart;
@@ -278,7 +285,8 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         return command.unwrap();
     }
 
-    protected Object translateToModelConstraint(Object figureConstraint)
+    @Override
+	protected Object translateToModelConstraint(Object figureConstraint)
     {
         Rectangle r= (Rectangle)figureConstraint;
         Position p = new Position(r.x,r.y,r.x+r.width-1,r.y+r.height-1);
@@ -294,13 +302,14 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
      *            the Clone Request
      * @return A command to perform the Clone.
      */
-    protected Command getCloneCommand(ChangeBoundsRequest request)
+    @Override
+	protected Command getCloneCommand(ChangeBoundsRequest request)
     {
         CloneCommand clone = new CloneCommand();
 
         clone.setParent((InstallOptionsDialog)getHost().getModel());
 
-        Iterator i = request.getEditParts().iterator();
+        Iterator<?> i = request.getEditParts().iterator();
         GraphicalEditPart currPart = null;
 
         while (i.hasNext()) {
@@ -332,7 +341,8 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         return clone;
     }
 
-    protected Command getCreateCommand(CreateRequest request)
+    @Override
+	protected Command getCreateCommand(CreateRequest request)
     {
         CreateCommand create = new CreateCommand();
         create.setParent((InstallOptionsDialog)getHost().getModel());
@@ -360,7 +370,8 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         return create;
     }
 
-    public EditPart getTargetEditPart(Request request)
+    @Override
+	public EditPart getTargetEditPart(Request request)
     {
         if (IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE.equals(request.getType())) {
             return getHost();
@@ -371,12 +382,14 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
     /* (non-Javadoc)
      * @see org.eclipse.gef.editpolicies.LayoutEditPolicy#getCreationFeedbackOffset(org.eclipse.gef.requests.CreateRequest)
      */
-    protected Insets getCreationFeedbackOffset(CreateRequest request)
+    @Override
+	protected Insets getCreationFeedbackOffset(CreateRequest request)
     {
         return new Insets();
     }
 
-    protected Command getDeleteDependantCommand(Request request)
+    @Override
+	protected Command getDeleteDependantCommand(Request request)
     {
         return null;
     }
@@ -386,17 +399,20 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
      *
      * @return the feedback layer
      */
-    protected IFigure getFeedbackLayer()
+    @Override
+	protected IFigure getFeedbackLayer()
     {
         return getLayer(LayerConstants.SCALED_FEEDBACK_LAYER);
     }
 
-    protected Command getOrphanChildrenCommand(Request request)
+    @Override
+	protected Command getOrphanChildrenCommand(Request request)
     {
         return null;
     }
 
-    public void showTargetFeedback(Request request) {
+    @Override
+	public void showTargetFeedback(Request request) {
         if(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE.equals(request.getType())) {
             showLayoutTargetFeedback(request);
             CreateRequest createReq = (CreateRequest)request;
@@ -409,7 +425,8 @@ public class InstallOptionsXYLayoutEditPolicy extends XYLayoutEditPolicy impleme
         }
     }
 
-    public void eraseTargetFeedback(Request request)
+    @Override
+	public void eraseTargetFeedback(Request request)
     {
         if(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE.equals(request.getType())) {
             eraseLayoutTargetFeedback(request);

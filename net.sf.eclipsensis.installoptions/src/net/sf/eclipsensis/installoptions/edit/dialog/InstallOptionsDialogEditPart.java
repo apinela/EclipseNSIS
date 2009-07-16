@@ -43,8 +43,8 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                 if(fig != null) {
                     fig.setDialogSize(d.getSize());
                 }
-                List children = getChildren();
-                for (Iterator iter = children.iterator(); iter.hasNext();) {
+                List<?> children = getChildren();
+                for (Iterator<?> iter = children.iterator(); iter.hasNext();) {
                     InstallOptionsWidgetEditPart element = (InstallOptionsWidgetEditPart)iter.next();
                     IFigure figure = element.getFigure();
                     if(figure != null) {
@@ -70,15 +70,16 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
         return (InstallOptionsDialog)getModel();
     }
 
-    public void propertyChange(PropertyChangeEvent evt)
+    @SuppressWarnings("unchecked")
+	public void propertyChange(PropertyChangeEvent evt)
     {
         String prop = evt.getPropertyName();
         if (InstallOptionsDialog.PROPERTY_SELECTION.equals(prop)) {
-            List modelSelection = (List)evt.getNewValue();
-            List selection = new ArrayList();
-            for (Iterator iter = modelSelection.iterator(); iter.hasNext();) {
-                InstallOptionsWidget element = (InstallOptionsWidget)iter.next();
-                selection.add(getViewer().getEditPartRegistry().get(element));
+            List<InstallOptionsWidget> modelSelection = (List<InstallOptionsWidget>)evt.getNewValue();
+            List<EditPart> selection = new ArrayList<EditPart>();
+            for (Iterator<InstallOptionsWidget> iter = modelSelection.iterator(); iter.hasNext();) {
+                InstallOptionsWidget element = iter.next();
+                selection.add((EditPart) getViewer().getEditPartRegistry().get(element));
             }
             getViewer().setSelection(new StructuredSelection(selection));
             getViewer().getControl().forceFocus();
@@ -89,16 +90,16 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
         else if (InstallOptionsModel.PROPERTY_CHILDREN.equals(prop)) {
             Object oldValue = evt.getOldValue();
             Object newValue = evt.getNewValue();
-            List selection = null;
+            List<EditPart> selection = null;
             int index = -1;
             if(oldValue instanceof InstallOptionsWidget && newValue instanceof InstallOptionsWidget) {
                 //Replaced child
                 if(getViewer() != null) {
                     ISelection sel = getViewer().getSelection();
                     if(sel instanceof IStructuredSelection) {
-                        selection = new ArrayList(((IStructuredSelection)sel).toList());
-                        for (Iterator iter = selection.iterator(); iter.hasNext();) {
-                            EditPart part = (EditPart)iter.next();
+                        selection = new ArrayList<EditPart>(((IStructuredSelection)sel).toList());
+                        for (Iterator<EditPart> iter = selection.iterator(); iter.hasNext();) {
+                            EditPart part = iter.next();
                             if(oldValue.equals(part.getModel())) {
                                 index = selection.indexOf(part);
                                 break;
@@ -111,12 +112,12 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
                 }
             }
             //This bit is in here to correct z-ordering of children.
-            List modelChildren = getModelChildren();
-            List children = getChildren();
+            List<InstallOptionsWidget> modelChildren = getModelChildren();
+            List<?> children = getChildren();
             int n = Math.min(modelChildren.size(), children.size());
             int i=0;
             for(; i<n; i++) {
-                Object model = modelChildren.get(i);
+            	InstallOptionsWidget model = modelChildren.get(i);
                 EditPart part = (EditPart)children.get(i);
                 if(model != part.getModel()) {
                     break;
@@ -169,17 +170,20 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
      *
      * @return Children of this as a List.
      */
-    protected List getModelChildren()
+    @Override
+	protected List<InstallOptionsWidget> getModelChildren()
     {
-        List list = new ArrayList(getInstallOptionsDialog().getChildren());
+    	List<InstallOptionsWidget> list = new ArrayList<InstallOptionsWidget>(getInstallOptionsDialog().getChildren());
         Collections.reverse(list);
         return list;
     }
 
-    protected AccessibleEditPart createAccessible()
+    @Override
+	protected AccessibleEditPart createAccessible()
     {
         return new AccessibleGraphicalEditPart() {
-            public void getName(AccessibleEvent e)
+            @Override
+			public void getName(AccessibleEvent e)
             {
                 e.result = InstallOptionsPlugin.getResourceString("install.options.dialog.name"); //$NON-NLS-1$
             }
@@ -189,7 +193,8 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     /**
      * Installs EditPolicies specific to this.
      */
-    protected void createEditPolicies()
+    @Override
+	protected void createEditPolicies()
     {
         super.createEditPolicies();
 
@@ -206,7 +211,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     {
         InstallOptionsWidgetEditPart child;
 
-        for (Iterator iter = getChildren().iterator(); iter.hasNext(); ) {
+        for (Iterator<?> iter = getChildren().iterator(); iter.hasNext(); ) {
             child = (InstallOptionsWidgetEditPart)iter.next();
             ((IInstallOptionsFigure)child.getFigure()).refresh();
         }
@@ -217,7 +222,8 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
      *
      * @return Figure.
      */
-    protected IFigure createFigure()
+    @Override
+	protected IFigure createFigure()
     {
         InstallOptionsDialogLayer f = new InstallOptionsDialogLayer();
         f.setDialogSize(getInstallOptionsDialog().getDialogSize().getSize());
@@ -230,10 +236,12 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     /**
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class adapter)
+    @Override
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class adapter)
     {
         if (adapter == SnapToHelper.class) {
-            List snapStrategies = new ArrayList();
+            List<SnapToHelper> snapStrategies = new ArrayList<SnapToHelper>();
 
             Boolean val = (Boolean)getViewer().getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY);
             if (val != null && val.booleanValue()) {
@@ -265,14 +273,15 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
 
             SnapToHelper ss[] = new SnapToHelper[snapStrategies.size()];
             for (int i = 0; i < snapStrategies.size(); i++) {
-                ss[i] = (SnapToHelper)snapStrategies.get(i);
+                ss[i] = snapStrategies.get(i);
             }
             return new CompoundSnapToHelper(ss);
         }
         return super.getAdapter(adapter);
     }
 
-    public void addNotify()
+    @Override
+	public void addNotify()
     {
         super.addNotify();
         getViewer().setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE,
@@ -282,13 +291,15 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
         getViewer().addPropertyChangeListener(mPropertyChangeListener);
     }
 
-    public void removeNotify()
+    @Override
+	public void removeNotify()
     {
         getViewer().removePropertyChangeListener(mPropertyChangeListener);
         super.removeNotify();
     }
 
-    public DragTracker getDragTracker(Request req)
+    @Override
+	public DragTracker getDragTracker(Request req)
     {
         if (req instanceof SelectionRequest
                 && ((SelectionRequest)req).getLastButtonPressed() == 3) {
@@ -297,17 +308,19 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
         return new MarqueeDragTracker();
     }
 
-    protected void refreshVisuals()
+    @Override
+	protected void refreshVisuals()
     {
         getFigure().setLayoutManager(mLayout);
-        List children = getChildren();
-        for (Iterator iter = children.iterator(); iter.hasNext();) {
+        List<?> children = getChildren();
+        for (Iterator<?> iter = children.iterator(); iter.hasNext();) {
             EditPart part = (EditPart)iter.next();
             part.refresh();
         }
     }
 
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("install.options.dialog.name"); //$NON-NLS-1$
     }

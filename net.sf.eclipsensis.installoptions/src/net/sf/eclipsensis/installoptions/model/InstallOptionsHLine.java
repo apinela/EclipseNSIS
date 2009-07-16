@@ -20,12 +20,14 @@ public class InstallOptionsHLine extends InstallOptionsLine
         super(section);
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_HLINE;
     }
 
-    public boolean isHorizontal()
+    @Override
+	public boolean isHorizontal()
     {
         return true;
     }

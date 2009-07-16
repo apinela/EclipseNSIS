@@ -50,7 +50,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
               EclipseNSISPlugin.getResourceString("wizard.general.description")); //$NON-NLS-1$
     }
 
-    protected boolean hasRequiredFields()
+    @Override
+	protected boolean hasRequiredFields()
     {
         return isScriptWizard();
     }
@@ -65,7 +66,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         }
     }
 
-    public boolean validatePage(int flag)
+    @Override
+	public boolean validatePage(int flag)
     {
         if(isTemplateWizard()) {
             return true;
@@ -87,12 +89,14 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         }
     }
 
-    protected String getHelpContextId()
+    @Override
+	protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizgeneral_context"; //$NON-NLS-1$
     }
 
-    protected Control createPageControl(Composite parent)
+    @Override
+	protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
 
@@ -164,7 +168,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
             targetPlatform = NSISWizardDialogUtil.createCombo(appGroup,NSISWizardDisplayValues.TARGET_PLATFORMS,
             			settings.getTargetPlatform(), true, "target.platform.label", true, null, false);  //$NON-NLS-1$
             targetPlatform.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     mWizard.getSettings().setTargetPlatform(targetPlatform.getSelectionIndex());
                 }
@@ -239,7 +244,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                                            settings.getInstallerType(),"installer.type.label", //$NON-NLS-1$
                                            true, null,false);
         SelectionAdapter sa = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 Button button = (Button)e.widget;
                 if(button.getSelection()) {
@@ -275,7 +281,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
                                                      (index >= 0 && index != MakeNSISRunner.COMPRESSOR_DEFAULT),
                                                      null,false);
             solidCompressor.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     mWizard.getSettings().setSolidCompression(((Button)e.widget).getSelection());
                 }
@@ -296,7 +303,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
             execLevel = NSISWizardDialogUtil.createCombo(instGroup,execLevels,settings.getExecutionLevel(),
                         true, "execution.level.label", true, null, false);  //$NON-NLS-1$
             execLevel.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     mWizard.getSettings().setExecutionLevel(execLevel.getSelectionIndex());
                 }
@@ -308,7 +316,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         }
 
         compressorType.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 int index = ((Combo)e.widget).getSelectionIndex();
                 mWizard.getSettings().setCompressorType(index);
@@ -382,7 +391,8 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         final Button createUninst = NSISWizardDialogUtil.createCheckBox(uninstGroup,"create.uninstaller.label",settings.isCreateUninstaller(), //$NON-NLS-1$
                                         true, null, false);
         createUninst.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = createUninst.getSelection();
                 mWizard.getSettings().setCreateUninstaller(selection);

@@ -68,7 +68,8 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         setTitle(mCreateMode?InstallOptionsPlugin.getResourceString("create.control.dialog.title"):InstallOptionsPlugin.getResourceString("edit.control.dialog.title")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public boolean close()
+    @Override
+	public boolean close()
     {
         if(mSection != null) {
             INIFile iniFile = (INIFile)mSection.getParent();
@@ -137,7 +138,8 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         }
     }
 
-    protected Point getInitialSize()
+    @Override
+	protected Point getInitialSize()
     {
         Point size = super.getInitialSize();
         if(size.x < MIN_WIDTH) {
@@ -149,12 +151,14 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         return size;
     }
 
-    protected Button createButton(Composite parent, int id, String label, boolean defaultButton)
+    @Override
+	protected Button createButton(Composite parent, int id, String label, boolean defaultButton)
     {
         return super.createButton(parent, id, label, false);
     }
 
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         Composite propertyComposite = new Composite(parent,SWT.BORDER);
         GridLayout layout = new GridLayout(1,false);
@@ -195,16 +199,19 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
                 {
                 }
 
+                @SuppressWarnings("unchecked")
                 public Object getAdapter(Class adapter)
                 {
                     return null;
                 }
 
+                @SuppressWarnings("unchecked")
                 public Object getService(Class api)
                 {
                     return null;
                 }
 
+                @SuppressWarnings("unchecked")
                 public boolean hasService(Class api)
                 {
                     return false;
@@ -224,7 +231,8 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
                              (tree.getHeaderVisible()?tree.getHeaderHeight():0)+2*tree.getBorderWidth()+
                              (tree.getHorizontalBar() != null?tree.getHorizontalBar().getSize().x:0);
             tree.addControlListener(new ControlAdapter() {
-                public void controlResized(ControlEvent e) {
+                @Override
+				public void controlResized(ControlEvent e) {
                     Rectangle area = tree.getClientArea();
                     TreeColumn[] columns = tree.getColumns();
                     if (area.width > 0) {
@@ -236,7 +244,8 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         }
         else if(control instanceof Composite){
         	control.addControlListener(new ControlAdapter() {
-                public void controlResized(ControlEvent e) {
+                @Override
+				public void controlResized(ControlEvent e) {
                     ((Composite)control).layout(true, true);
                 }
             });
@@ -244,7 +253,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         control.setLayoutData(data);
         ISelection selection;
         if(mCurrentWidget == null) {
-            Collection typeDefs = InstallOptionsModel.INSTANCE.getControlTypeDefs();
+            Collection<InstallOptionsModelTypeDef> typeDefs = InstallOptionsModel.INSTANCE.getControlTypeDefs();
             if(typeDefs.size() > 0) {
                 InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)typeDefs.iterator().next();
                 InstallOptionsElementFactory factory = InstallOptionsElementFactory.getFactory(typeDef.getType());
@@ -272,7 +281,8 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         return propertyComposite;
     }
 
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         if(mDialog.canUpdateINIFile()) {
             mDialog.updateINIFile();
@@ -299,7 +309,8 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
             super(delegate);
         }
 
-        public Object getEditableValue()
+        @Override
+		public Object getEditableValue()
         {
             Object object = super.getEditableValue();
             if(!((object instanceof CustomPropertySourceWrapper))) {
@@ -310,7 +321,8 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
             return object;
         }
 
-        public IPropertyDescriptor[] getPropertyDescriptors()
+        @Override
+		public IPropertyDescriptor[] getPropertyDescriptors()
         {
             IPropertyDescriptor[] descriptors = super.getPropertyDescriptors();
             if(!Common.isEmptyArray(descriptors)) {
@@ -328,7 +340,8 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
             return descriptors;
         }
 
-        public void setPropertyValue(Object id, Object value)
+        @Override
+		public void setPropertyValue(Object id, Object value)
         {
             if(InstallOptionsModel.PROPERTY_TYPE.equals(id)) {
                 propertyChange(new PropertyChangeEvent(getDelegate(),(String)id,getPropertyValue(id),value));
@@ -367,7 +380,8 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
             if(mStatusLineManager == null) {
                 mStatusLineManager = new StatusLineManager() {
 
-                    public void setErrorMessage(Image image, String message)
+                    @Override
+					public void setErrorMessage(Image image, String message)
                     {
                         if(Common.isEmpty(message)) {
                             setMessage(image,message);
@@ -377,17 +391,20 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
                         }
                     }
 
-                    public void setErrorMessage(String message)
+                    @Override
+					public void setErrorMessage(String message)
                     {
                         setErrorMessage(null, message);
                     }
 
-                    public void setMessage(Image image, String message)
+                    @Override
+					public void setMessage(Image image, String message)
                     {
                         updateStatus(new DialogStatus(IStatus.OK,message,image));
                     }
 
-                    public void setMessage(String message)
+                    @Override
+					public void setMessage(String message)
                     {
                         setMessage(null,message);
                     }
@@ -427,47 +444,56 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
             mDelegate = delegate;
         }
 
-        public CellEditor createPropertyEditor(Composite parent)
+        @Override
+		public CellEditor createPropertyEditor(Composite parent)
         {
             return mDelegate.createPropertyEditor(parent);
         }
 
-        public String getCategory()
+        @Override
+		public String getCategory()
         {
             return mDelegate.getCategory();
         }
 
-        public String getDescription()
+        @Override
+		public String getDescription()
         {
             return mDelegate.getDescription();
         }
 
-        public String getDisplayName()
+        @Override
+		public String getDisplayName()
         {
             return mDelegate.getDisplayName();
         }
 
-        public String[] getFilterFlags()
+        @Override
+		public String[] getFilterFlags()
         {
             return mDelegate.getFilterFlags();
         }
 
-        public Object getHelpContextIds()
+        @Override
+		public Object getHelpContextIds()
         {
             return HELP_CONTEXT;
         }
 
-        public Object getId()
+        @Override
+		public Object getId()
         {
             return mDelegate.getId();
         }
 
-        public ILabelProvider getLabelProvider()
+        @Override
+		public ILabelProvider getLabelProvider()
         {
             return mDelegate.getLabelProvider();
         }
 
-        public boolean isCompatibleWith(IPropertyDescriptor anotherProperty)
+        @Override
+		public boolean isCompatibleWith(IPropertyDescriptor anotherProperty)
         {
             return mDelegate.isCompatibleWith(anotherProperty);
         }

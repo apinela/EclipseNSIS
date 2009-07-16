@@ -9,40 +9,49 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.listbox;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.listitems.InstallOptionsListItemsEditPart;
-import net.sf.eclipsensis.installoptions.figures.*;
+import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
+import net.sf.eclipsensis.installoptions.figures.IListItemsFigure;
+import net.sf.eclipsensis.installoptions.figures.ListFigure;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
 import net.sf.eclipsensis.installoptions.properties.editors.ListCellEditor;
 
-import org.eclipse.gef.tools.*;
+import org.eclipse.gef.tools.CellEditorLocator;
+import org.eclipse.gef.tools.DirectEditManager;
 import org.eclipse.swt.widgets.Composite;
 
-public class InstallOptionsListboxEditPart extends InstallOptionsListItemsEditPart
+public class InstallOptionsListboxEditPart extends InstallOptionsListItemsEditPart<ListCellEditor>
 {
-    protected String getDirectEditLabelProperty()
+    @Override
+	protected String getDirectEditLabelProperty()
     {
         return "listbox.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected String getExtendedEditLabelProperty()
+    @Override
+	protected String getExtendedEditLabelProperty()
     {
         return "listbox.extended.edit.label"; //$NON-NLS-1$
     }
 
-    protected IListItemsFigure createListItemsFigure()
+    @Override
+	protected IListItemsFigure createListItemsFigure()
     {
         return new ListFigure((Composite)getViewer().getControl(), new PropertySourceWrapper(getInstallOptionsWidget()) {
-            public Object getPropertyValue(Object id)
+            @Override
+			@SuppressWarnings("unchecked")
+			public Object getPropertyValue(Object id)
             {
                 if(InstallOptionsModel.PROPERTY_FLAGS.equals(id)) {
-                    List list = (List)getDelegate().getPropertyValue(id);
+                    List<String> list = (List<String>)getDelegate().getPropertyValue(id);
                     if(!list.contains(InstallOptionsModel.FLAGS_VSCROLL)) {
-                        list = new ArrayList(list);
+                        list = new ArrayList<String>(list);
                         list.add(InstallOptionsModel.FLAGS_VSCROLL);
                     }
                     return list;
@@ -52,7 +61,8 @@ public class InstallOptionsListboxEditPart extends InstallOptionsListItemsEditPa
         });
     }
 
-    protected boolean supportsScrolling()
+    @Override
+	protected boolean supportsScrolling()
     {
         return true;
     }
@@ -60,22 +70,26 @@ public class InstallOptionsListboxEditPart extends InstallOptionsListItemsEditPa
     /**
      * @return
      */
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("listbox.type.name"); //$NON-NLS-1$
     }
 
-    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
+    @Override
+	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<ListCellEditor> clasz, CellEditorLocator locator) 
     {
-        return new InstallOptionsListboxEditManager(part,clasz,locator);
-    }
+    	return new InstallOptionsListboxEditManager(part,clasz,locator);
+	}
 
-    protected Class getCellEditorClass()
+	@Override
+	protected Class<ListCellEditor> getCellEditorClass()
     {
         return ListCellEditor.class;
     }
 
-    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    @Override
+	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new ListboxCellEditorLocator((ListFigure)figure);
     }

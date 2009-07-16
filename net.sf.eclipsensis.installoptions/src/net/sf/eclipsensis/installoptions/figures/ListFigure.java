@@ -23,8 +23,8 @@ import org.eclipse.ui.views.properties.IPropertySource;
 
 public class ListFigure extends EditableElementFigure implements IListItemsFigure
 {
-    private java.util.List mListItems;
-    private java.util.List mSelected;
+    private java.util.List<String> mListItems;
+    private java.util.List<String> mSelected;
 
     public ListFigure(Composite parent, IPropertySource propertySource, int style)
     {
@@ -36,32 +36,35 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
         super(parent, propertySource);
     }
 
-    protected void init(IPropertySource propertySource)
+    @Override
+	@SuppressWarnings("unchecked")
+	protected void init(IPropertySource propertySource)
     {
-        setListItems((java.util.List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_LISTITEMS));
+        setListItems((java.util.List<String>)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_LISTITEMS));
         super.init(propertySource);
    }
 
-    public java.util.List getSelected()
+    public java.util.List<String> getSelected()
     {
-        return mSelected==null?Collections.EMPTY_LIST:mSelected;
+        return mSelected==null?Collections.<String>emptyList():mSelected;
     }
 
-    public java.util.List getListItems()
+    public java.util.List<String> getListItems()
     {
-        return mListItems==null?Collections.EMPTY_LIST:mListItems;
+        return mListItems==null?Collections.<String>emptyList():mListItems;
     }
 
-    public void setListItems(java.util.List items)
+    public void setListItems(java.util.List<String> items)
     {
         mListItems = items;
     }
 
-    public void setState(String state)
+    @Override
+	public void setState(String state)
     {
         super.setState(state);
         if(mSelected == null) {
-            mSelected = new ArrayList();
+            mSelected = new ArrayList<String>();
         }
         mSelected.clear();
         mSelected.addAll(Arrays.asList(Common.tokenize(state,IInstallOptionsConstants.LIST_SEPARATOR,false)));
@@ -70,26 +73,27 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
     /**
      * @return
      */
-    protected Control createSWTControl(Composite parent, int style)
+    @Override
+	protected Control createSWTControl(Composite parent, int style)
     {
         List list = new List(parent, style);
-        java.util.List selected = getSelected();
-        java.util.List listItems = getListItems();
+        java.util.List<String> selected = getSelected();
+        java.util.List<String> listItems = getListItems();
         GC gc = new GC(list);
         int maxHeight = list.getItemHeight()*listItems.size();
         int maxWidth = 0;
-        for (Iterator iter = listItems.iterator(); iter.hasNext();) {
-            String item = (String)iter.next();
+        for (Iterator<String> iter = listItems.iterator(); iter.hasNext();) {
+            String item = iter.next();
             maxWidth = Math.max(maxWidth,gc.stringExtent(item).x);
             list.add(item);
         }
         gc.dispose();
-        for (Iterator iter = selected.iterator(); iter.hasNext();) {
-            String item = (String)iter.next();
+        for (Iterator<String> iter = selected.iterator(); iter.hasNext();) {
+            String item = iter.next();
             int n = -1;
             int m = 0;
-            for (Iterator iterator = listItems.iterator(); iterator.hasNext();) {
-                if(Common.stringsAreEqual((String)iterator.next(), item, true)) {
+            for (Iterator<String> iterator = listItems.iterator(); iterator.hasNext();) {
+                if(Common.stringsAreEqual(iterator.next(), item, true)) {
                     n = m;
                     break;
                 }
@@ -156,7 +160,8 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
     /**
      * @return
      */
-    public int getDefaultStyle()
+    @Override
+	public int getDefaultStyle()
     {
         return SWT.BORDER|SWT.MULTI;
     }

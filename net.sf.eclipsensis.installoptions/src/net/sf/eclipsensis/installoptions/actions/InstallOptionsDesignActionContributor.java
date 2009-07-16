@@ -29,7 +29,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
     private ToggleLockRetargetAction mToggleLockAction;
     private InstallOptionsWizardAction mWizardAction;
     private InstallOptionsHelpAction mHelpAction;
-    private List mDropDownActions = new ArrayList();
+    private List<DropDownAction> mDropDownActions = new ArrayList<DropDownAction>();
     private LanguageComboContributionItem mLanguageContributionItem;
 
     private void addDropDownAction(DropDownAction action)
@@ -39,7 +39,8 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         getPage().addPartListener(action);
     }
 
-    protected void buildActions()
+    @Override
+	protected void buildActions()
     {
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
         RetargetAction retargetAction;
@@ -256,10 +257,11 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         mLanguageContributionItem = new LanguageComboContributionItem(getPage());
     }
 
-    public void dispose()
+    @Override
+	public void dispose()
     {
         for (int i = 0; i < mDropDownActions.size(); i++) {
-            DropDownAction action = (DropDownAction)mDropDownActions.get(i);
+            DropDownAction action = mDropDownActions.get(i);
             getPage().removePartListener(action);
             action.dispose();
         }
@@ -269,13 +271,15 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         super.dispose();
     }
 
-    public void setActiveEditor(IEditorPart editor)
+    @Override
+	public void setActiveEditor(IEditorPart editor)
     {
         mSetDialogSizeMenu.setEditor(editor);
         mXYStatusContribution.editorChanged(editor);
         if(editor.getAdapter(ActionRegistry.class) == null) {
             Platform.getAdapterManager().registerAdapters(new IAdapterFactory(){
-                    public Object getAdapter(Object adaptableObject, Class adapterType)
+                    @SuppressWarnings("unchecked")
+					public Object getAdapter(Object adaptableObject, Class adapterType)
                     {
                         if(adapterType.equals(ActionRegistry.class)) {
                             return new ActionRegistry();
@@ -283,7 +287,8 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
                         return null;
                     }
 
-                    public Class[] getAdapterList()
+                    @SuppressWarnings("unchecked")
+					public Class[] getAdapterList()
                     {
                         return new Class[]{ActionRegistry.class};
                     }
@@ -292,13 +297,15 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         super.setActiveEditor(editor);
     }
 
-    protected void declareGlobalActionKeys()
+    @Override
+	protected void declareGlobalActionKeys()
     {
         addGlobalActionKey(ActionFactory.PRINT.getId());
         addGlobalActionKey(ActionFactory.SELECT_ALL.getId());
     }
 
-    public void contributeToToolBar(IToolBarManager tbm)
+    @Override
+	public void contributeToToolBar(IToolBarManager tbm)
     {
         tbm.add(getAction(ActionFactory.UNDO.getId()));
         tbm.add(getAction(ActionFactory.REDO.getId()));
@@ -331,12 +338,14 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
         tbm.add(mHelpAction);
     }
 
-    public void contributeToMenu(IMenuManager menubar)
+    @Override
+	public void contributeToMenu(IMenuManager menubar)
     {
         menubar.insertBefore(IWorkbenchActionConstants.M_WINDOW, mInstallOptionsMenu);
     }
 
-    public void contributeToStatusLine(IStatusLineManager statusLineManager)
+    @Override
+	public void contributeToStatusLine(IStatusLineManager statusLineManager)
     {
         statusLineManager.add(mXYStatusContribution);
     }

@@ -200,7 +200,8 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
         }
     }
 
-    public String doValidate()
+    @Override
+	public String doValidate()
     {
         if (!IOUtility.isValidPath(IOUtility.decodePath(getName())))
         {
@@ -216,7 +217,8 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
         }
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -227,7 +229,8 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
         return result;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj)
         {
@@ -275,7 +278,8 @@ public class NSISInstallDirectory extends AbstractNSISInstallItem implements INS
         return true;
     }
 
-    public void setTargetPlatform(int targetPlatform)
+    @Override
+	public void setTargetPlatform(int targetPlatform)
     {
         super.setTargetPlatform(targetPlatform);
         setDestination(NSISWizardUtil.convertPath(targetPlatform, getDestination()));

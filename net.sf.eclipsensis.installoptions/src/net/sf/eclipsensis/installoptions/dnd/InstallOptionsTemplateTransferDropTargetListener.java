@@ -31,7 +31,8 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
         setTransfer(InstallOptionsTemplateTransfer.INSTANCE);
     }
 
-    protected Request createTargetRequest()
+    @Override
+	protected Request createTargetRequest()
     {
         Request request = super.createTargetRequest();
         if(request instanceof CreateRequest) {
@@ -44,7 +45,8 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
         return request;
     }
 
-    protected CreationFactory getFactory(Object type)
+    @Override
+	protected CreationFactory getFactory(Object type)
     {
         if (type instanceof String) {
             return InstallOptionsElementFactory.getFactory((String)type);
@@ -55,7 +57,8 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
         return null;
     }
 
-    protected void handleDrop() {
+    @Override
+	protected void handleDrop() {
         super.handleDrop();
         selectAddedObjects();
     }
@@ -69,11 +72,11 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
         EditPartViewer viewer = getViewer();
         viewer.getControl().forceFocus();
         Object[] models = (Object[])model;
-        List selection = new ArrayList();
+        List<EditPart> selection = new ArrayList<EditPart>();
         for (int i = 0; i < models.length; i++) {
             Object editpart = viewer.getEditPartRegistry().get(models[i]);
             if (editpart instanceof EditPart) {
-                selection.add(editpart);
+                selection.add((EditPart) editpart);
             }
         }
         if (selection.size() > 0) {

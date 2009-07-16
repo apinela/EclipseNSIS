@@ -53,12 +53,14 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
         }
     }
 
-    protected NSISSettingsEditorPage createPage()
+    @Override
+	protected NSISSettingsEditorPage createPage()
     {
         return new LaunchSettingsEditorGeneralPage(mSettings);
     }
 
-    protected IFilter createSettingsFilter()
+    @Override
+	protected IFilter createSettingsFilter()
     {
         return new IFilter() {
             public boolean select(Object toTest)
@@ -68,12 +70,14 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
         };
     }
 
-    public Image getImage()
+    @Override
+	public Image getImage()
     {
         return EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.general.tab.icon")); //$NON-NLS-1$
     }
 
-    public void createControl(Composite parent)
+    @Override
+	public void createControl(Composite parent)
     {
         super.createControl(parent);
         if (mBuilder) {
@@ -89,12 +93,14 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
         return EclipseNSISPlugin.getResourceString("launchconfig.general.tab.name"); //$NON-NLS-1$
     }
 
-    public boolean canSave()
+    @Override
+	public boolean canSave()
     {
         return ((LaunchSettingsEditorGeneralPage)mPage).isValid();
     }
 
-    public boolean isValid(ILaunchConfiguration launchConfig)
+    @Override
+	public boolean isValid(ILaunchConfiguration launchConfig)
     {
         if(super.isValid(launchConfig)) {
             return ((LaunchSettingsEditorGeneralPage)mPage).isValid();
@@ -102,7 +108,8 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
         return false;
     }
 
-    public void settingsChanged()
+    @Override
+	public void settingsChanged()
     {
         super.settingsChanged();
         if(!((LaunchSettingsEditorGeneralPage)mPage).isValid()) {
@@ -184,7 +191,8 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             return validateScript(mScript.getText());
         }
 
-        public void reset()
+        @Override
+		public void reset()
         {
             NSISLaunchSettings settings = (NSISLaunchSettings)mSettings;
             mScript.setText(settings.getScript());
@@ -224,7 +232,8 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             return true;
         }
 
-        public void enableControls(boolean state)
+        @Override
+		public void enableControls(boolean state)
         {
             if (!mBuilder) {
                 mRunInstaller.setEnabled(state);
@@ -232,7 +241,8 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             super.enableControls(state);
         }
 
-        public void setDefaults()
+        @Override
+		public void setDefaults()
         {
             super.setDefaults();
             mScript.setText(""); //$NON-NLS-1$
@@ -241,7 +251,8 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             }
         }
 
-        protected boolean performApply(NSISSettings settings)
+        @Override
+		protected boolean performApply(NSISSettings settings)
         {
             if(super.performApply(settings)) {
                 if (getControl() != null) {
@@ -256,12 +267,14 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             return false;
         }
 
-        public boolean canEnableControls()
+        @Override
+		public boolean canEnableControls()
         {
             return !Common.isEmpty(mScript.getText());
         }
 
-        protected Composite createMasterControl(Composite parent)
+        @Override
+		protected Composite createMasterControl(Composite parent)
         {
             Composite composite = new Composite(parent,SWT.NONE);
             GridLayout layout = new GridLayout(2,false);
@@ -295,7 +308,8 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             buttons.setLayout(layout);
             final Button workspaceButton = createButton(buttons, EclipseNSISPlugin.getResourceString("launchconfig.browse.workspace.label"), ""); //$NON-NLS-1$  //$NON-NLS-2$
             workspaceButton.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     handleBrowseWorkspace(workspaceButton.getShell());
                 }
@@ -303,7 +317,8 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             workspaceButton.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
             final Button filesystemButton = createButton(buttons, EclipseNSISPlugin.getResourceString("launchconfig.browse.filesystem.label"), ""); //$NON-NLS-1$ //$NON-NLS-2$
             filesystemButton.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     handleBrowseFilesystem(filesystemButton.getShell());
                 }
@@ -311,7 +326,8 @@ class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
             filesystemButton.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
             final Button variablesButton = createButton(buttons, EclipseNSISPlugin.getResourceString("launchconfig.browse.variables.label"), ""); //$NON-NLS-1$  //$NON-NLS-2$
             variablesButton.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     handleBrowseVariables(variablesButton.getShell());
                 }

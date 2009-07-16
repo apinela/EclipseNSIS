@@ -11,7 +11,7 @@ package net.sf.eclipsensis.util;
 
 import java.util.*;
 
-public abstract class UpDownMover
+public abstract class UpDownMover<T>
 {
     public boolean canMoveUp()
     {
@@ -43,8 +43,8 @@ public abstract class UpDownMover
 
     public void moveToTop()
     {
-        List move = getMoveElements();
-        List elements = new ArrayList(getAllElements());
+        List<T> move = getMoveElements();
+        List<T> elements = new ArrayList<T>(getAllElements());
         elements.removeAll(move);
         elements.addAll(0,move);
         updateElements(elements, move, false);
@@ -52,8 +52,8 @@ public abstract class UpDownMover
 
     public void moveToBottom()
     {
-        List move = getMoveElements();
-        List elements = new ArrayList(getAllElements());
+        List<T> move = getMoveElements();
+        List<T> elements = new ArrayList<T>(getAllElements());
         elements.removeAll(move);
         elements.addAll(move);
         updateElements(elements, move, true);
@@ -61,8 +61,8 @@ public abstract class UpDownMover
 
     public void moveDown()
     {
-        List elements = getAllElements();
-        List move = getMoveElements();
+        List<T> elements = getAllElements();
+        List<T> move = getMoveElements();
         Collections.reverse(elements);
         elements = move(elements,move);
         Collections.reverse(elements);
@@ -71,17 +71,17 @@ public abstract class UpDownMover
 
     public void moveUp()
     {
-        List move = getMoveElements();
+        List<T> move = getMoveElements();
         updateElements(move(getAllElements(), move), move, false);
     }
 
-    private List move(List elements, List move)
+    private List<T> move(List<T> elements, List<T> move)
     {
         int nElements= elements.size();
-        List res= new ArrayList(nElements);
-        Object floating= null;
+        List<T> res= new ArrayList<T>(nElements);
+        T floating= null;
         for (int i= 0; i < nElements; i++) {
-            Object curr= elements.get(i);
+            T curr= elements.get(i);
             if (move.contains(curr)) {
                 res.add(curr);
             } else {
@@ -97,10 +97,10 @@ public abstract class UpDownMover
         return res;
     }
 
-    private List getMoveElements()
+    private List<T> getMoveElements()
     {
-        List moveElements = new ArrayList();
-        List allElements = getAllElements();
+        List<T> moveElements = new ArrayList<T>();
+        List<T> allElements = getAllElements();
         if(!Common.isEmptyCollection(allElements)) {
             int[] selectedIndices = getSelectedIndices();
 
@@ -116,11 +116,11 @@ public abstract class UpDownMover
 
     private int getSize()
     {
-        List allElements = getAllElements();
+        List<T> allElements = getAllElements();
         return Common.isEmptyCollection(allElements)?0:allElements.size();
     }
 
     protected abstract int[] getSelectedIndices();
-    protected abstract List getAllElements();
-    protected abstract void updateElements(List elements, List move, boolean isDown);
+    protected abstract List<T> getAllElements();
+    protected abstract void updateElements(List<T> elements, List<T> move, boolean isDown);
 }

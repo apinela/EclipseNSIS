@@ -32,7 +32,8 @@ import org.eclipse.ui.views.properties.tabbed.*;
 
 public class GeneralPropertySection extends InstallOptionsElementPropertySection
 {
-    protected Control createSection(InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, InstallOptionsCommandHelper commandHelper)
+    @Override
+	protected Control createSection(InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, InstallOptionsCommandHelper commandHelper)
     {
         if(element instanceof InstallOptionsWidget ) {
             InstallOptionsWidget widget = (InstallOptionsWidget)element;
@@ -116,8 +117,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                 event.detail &= ~(SWT.SELECTED|SWT.FOCUSED);
             }
         });
-        final List flags = new ArrayList(widget.getFlags());
-        final Collection availableFlags = widget.getTypeDef().getFlags();
+        final List<String> flags = new ArrayList<String>(widget.getFlags());
+        final Collection<String> availableFlags = widget.getTypeDef().getFlags();
         final IPropertyDescriptor descriptor = widget.getPropertyDescriptor(InstallOptionsModel.PROPERTY_FLAGS);
         final ICellEditorValidator validator = (ICellEditorValidator)Common.getObjectFieldValue(descriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
         final Runnable runnable = new Runnable() {
@@ -177,7 +178,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
 
         Button b = factory.createButton(group, InstallOptionsPlugin.getResourceString("select.all.label"), SWT.PUSH|SWT.FLAT); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter(){
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 flags.clear();
                 flags.addAll(availableFlags);
@@ -188,7 +190,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         b.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         b = factory.createButton(group, InstallOptionsPlugin.getResourceString("deselect.all.label"), SWT.PUSH|SWT.FLAT); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter(){
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 flags.clear();
                 viewer.setCheckedElements(Common.EMPTY_STRING_ARRAY);
@@ -204,8 +207,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             {
                 if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_FLAGS)) {
                     if(!nonUserChange[0]) {
-                        List newFlags = widget.getFlags();
-                        if (viewer != null && Common.isValid(viewer.getControl())) {
+                        List<String> newFlags = widget.getFlags();
+                        if (Common.isValid(viewer.getControl())) {
                             viewer.setCheckedElements(newFlags==null?Common.EMPTY_STRING_ARRAY:newFlags.toArray());
                             flags.clear();
                             flags.addAll(newFlags);
@@ -248,7 +251,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             indexCombo.select(index);
         }
         indexCombo.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 if(!nonUserChange[0]) {
                     commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_INDEX, indexName,
@@ -263,12 +267,12 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         final CCombo typeCombo = factory.createCCombo(composite, SWT.FLAT|SWT.DROP_DOWN|SWT.BORDER);
         typeCombo.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
 
-        final Collection coll = InstallOptionsModel.INSTANCE.getControlTypeDefs();
+        final Collection<InstallOptionsModelTypeDef> coll = InstallOptionsModel.INSTANCE.getControlTypeDefs();
         String type = widget.getType();
         int selected = -1;
         index = 0;
-        for (Iterator iter = coll.iterator(); iter.hasNext();) {
-            InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)iter.next();
+        for (Iterator<InstallOptionsModelTypeDef> iter = coll.iterator(); iter.hasNext();) {
+            InstallOptionsModelTypeDef typeDef = iter.next();
             final String t = typeDef.getType();
             typeCombo.add(t);
             if(t.equalsIgnoreCase(type)) {
@@ -288,8 +292,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             {
                 if(!nonUserChange[0]) {
                     String type = typeCombo.getText();
-                    for (Iterator iter = coll.iterator(); iter.hasNext();) {
-                        InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)iter.next();
+                    for (Iterator<InstallOptionsModelTypeDef> iter = coll.iterator(); iter.hasNext();) {
+                        InstallOptionsModelTypeDef typeDef = iter.next();
                         final String t = typeDef.getType();
                         if(t.equalsIgnoreCase(type)) {
                             type = t;
@@ -305,7 +309,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         };
 
         typeCombo.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e)
+            @Override
+			public void keyPressed(KeyEvent e)
             {
                 if (e.character == '\t') {
                     r.run();
@@ -314,12 +319,14 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         });
 
         typeCombo.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent event)
+            @Override
+			public void widgetSelected(SelectionEvent event)
             {
                 r.run();
             }
 
-            public void widgetDefaultSelected(SelectionEvent event)
+            @Override
+			public void widgetDefaultSelected(SelectionEvent event)
             {
                 r.run();
             }
@@ -336,7 +343,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         });
 
         typeCombo.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e)
+            @Override
+			public void focusLost(FocusEvent e)
             {
                 r.run();
             }
@@ -374,7 +382,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                 return null;
             }
         }) {
-            protected String getResetValue(Text text)
+            @Override
+			protected String getResetValue(Text text)
             {
                 Integer index = (Integer)text.getData(indexDataName);
                 if(index != null) {
@@ -397,7 +406,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                 return null;
             }
 
-            protected void handleTextChange(Text text)
+            @Override
+			protected void handleTextChange(Text text)
             {
                 Integer index = (Integer)text.getData(indexDataName);
                 if(index != null) {
@@ -445,7 +455,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         final Button lockedButton = factory.createButton(parent, lockedName, SWT.FLAT|SWT.CHECK);
         lockedButton.setSelection(widget.isLocked());
         lockedButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 if(!nonUserChange[0]) {
                     commandHelper.propertyChanged(InstallOptionsWidget.PROPERTY_LOCKED,
@@ -506,8 +517,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                     }
                     else if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_TYPE)) {
                         String type = (String)evt.getNewValue();
-                        for (Iterator iter = coll.iterator(); iter.hasNext();) {
-                            InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)iter.next();
+                        for (Iterator<InstallOptionsModelTypeDef> iter = coll.iterator(); iter.hasNext();) {
+                            InstallOptionsModelTypeDef typeDef = iter.next();
                             final String t = typeDef.getType();
                             if(t.equalsIgnoreCase(type)) {
                                 type = t;

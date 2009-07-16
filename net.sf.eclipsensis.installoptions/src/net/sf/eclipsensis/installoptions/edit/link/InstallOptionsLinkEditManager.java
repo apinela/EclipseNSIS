@@ -16,8 +16,8 @@ import org.eclipse.gef.tools.CellEditorLocator;
 
 public class InstallOptionsLinkEditManager extends InstallOptionsLabelEditManager
 {
-    public InstallOptionsLinkEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
+    public InstallOptionsLinkEditManager(GraphicalEditPart source, CellEditorLocator locator)
     {
-        super(source, editorType, locator);
+        super(source, locator);
     }
 }

@@ -28,7 +28,8 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
         super();
     }
 
-    protected void paintGrid(Graphics g)
+    @Override
+	protected void paintGrid(Graphics g)
     {
         try {
             Font f = FontUtility.getInstallOptionsFont();

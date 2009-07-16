@@ -38,7 +38,8 @@ public class NSISSyntaxStyle implements Cloneable
         mStrikethrough = strikeThrough;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         try {
             return super.clone();
@@ -48,7 +49,8 @@ public class NSISSyntaxStyle implements Cloneable
         }
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if(obj instanceof NSISSyntaxStyle) {
             NSISSyntaxStyle style = (NSISSyntaxStyle)obj;
@@ -73,7 +75,8 @@ public class NSISSyntaxStyle implements Cloneable
             return false;
         }
     }
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int hashCode = 0;
         if(mForeground != null) {
@@ -93,7 +96,8 @@ public class NSISSyntaxStyle implements Cloneable
     {
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         RGB rgb = mForeground;

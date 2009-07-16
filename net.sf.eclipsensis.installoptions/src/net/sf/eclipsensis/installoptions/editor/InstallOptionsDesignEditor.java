@@ -88,9 +88,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
     private GraphicalViewer mGraphicalViewer;
     private ActionRegistry mActionRegistry;
     private SelectionSynchronizer mSynchronizer;
-    private List mSelectionActions = new ArrayList();
-    private List mStackActions = new ArrayList();
-    private List mPropertyActions = new ArrayList();
+    private List<String> mSelectionActions = new ArrayList<String>();
+    private List<String> mStackActions = new ArrayList<String>();
+    private List<String> mPropertyActions = new ArrayList<String>();
     private PaletteViewerProvider mPaletteProvider;
     private FlyoutPaletteComposite mPalette;
     private CustomPalettePage mPalettePage;
@@ -109,7 +109,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             }
             InstallOptionsDialog dialog = getInstallOptionsDialog();
             dialog.modelChanged();
-            if(dialog != null && dialog.canUpdateINIFile()) {
+            if(dialog.canUpdateINIFile()) {
                 dialog.updateINIFile();
                 mINIFile.updateDocument();
             }
@@ -293,7 +293,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
     /**
      * @see org.eclipse.ui.part.WorkbenchPart#firePropertyChange(int)
      */
-    protected void firePropertyChange(int property)
+    @Override
+	protected void firePropertyChange(int property)
     {
         super.firePropertyChange(property);
         updateActions(mPropertyActions);
@@ -344,7 +345,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
      * can be updated in response to property changes.  An example is the "Save" action.
      * @return the list of property-dependant actions
      */
-    protected List getPropertyActions()
+    protected List<String> getPropertyActions()
     {
         return mPropertyActions;
     }
@@ -356,7 +357,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
      * the Delete action.
      * @return the list of selection-dependant actions
      */
-    protected List getSelectionActions()
+    protected List<String> getSelectionActions()
     {
         return mSelectionActions;
     }
@@ -380,7 +381,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
      * updated in response to command stack changes.  An example is the "undo" action.
      * @return the list of stack-dependant actions
      */
-    protected List getStackActions()
+    protected List<String> getStackActions()
     {
         return mStackActions;
     }
@@ -408,7 +409,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
      * Sets the site and input for this editor then creates and initializes the actions.
      * @see org.eclipse.ui.IEditorPart#init(IEditorSite, IEditorInput)
      */
-    public void init(IEditorSite site, IEditorInput input)
+    @Override
+	public void init(IEditorSite site, IEditorInput input)
     {
         setSite(site);
         setInput(input);
@@ -460,7 +462,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
     /**
      * @see org.eclipse.ui.IWorkbenchPart#setFocus()
      */
-    public void setFocus()
+    @Override
+	public void setFocus()
     {
         if(!mCreatedEmptyPart) {
             getGraphicalViewer().getControl().setFocus();
@@ -485,10 +488,10 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
      * its <code>update()</code> method called.
      * @param actionIds the list of IDs to update
      */
-    protected void updateActions(List actionIds)
+    protected void updateActions(List<String> actionIds)
     {
         ActionRegistry registry = getActionRegistry();
-        Iterator iter = actionIds.iterator();
+        Iterator<String> iter = actionIds.iterator();
         while (iter.hasNext()) {
             IAction action = registry.getAction(iter.next());
             if (action instanceof UpdateAction) {
@@ -511,7 +514,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
     /**
      * @see GraphicalEditor#createPartControl(Composite)
      */
-    public void createPartControl(Composite parent)
+    @Override
+	public void createPartControl(Composite parent)
     {
         if(!mINIFile.hasErrors()) {
             mInstallOptionsFont = FontUtility.getInstallOptionsFont();
@@ -617,14 +621,16 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
     protected PaletteViewerProvider createPaletteViewerProvider()
     {
         return new PaletteViewerProvider(getEditDomain()) {
-            protected void configurePaletteViewer(PaletteViewer viewer)
+            @Override
+			protected void configurePaletteViewer(PaletteViewer viewer)
             {
                 super.configurePaletteViewer(viewer);
                 viewer.setContextMenu(new CustomPaletteContextMenuProvider(viewer));
                 viewer.addDragSourceListener(new InstallOptionsTemplateTransferDragSourceListener(viewer));
             }
 
-            public PaletteViewer createPaletteViewer(Composite parent)
+            @Override
+			public PaletteViewer createPaletteViewer(Composite parent)
             {
                 PaletteViewer paletteViewer = super.createPaletteViewer(parent);
                 paletteViewer.setPaletteViewerPreferences(new PaletteViewerPreferences(cPreferenceStore));
@@ -633,7 +639,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         };
     }
 
-    public void dispose()
+    @Override
+	public void dispose()
     {
         NSISPreferences.INSTANCE.removeListener(this);
         InstallOptionsModel.INSTANCE.removeModelListener(mModelListener);
@@ -645,19 +652,17 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             file = (IFile)source;
             file.getWorkspace().removeResourceChangeListener(mResourceListener);
         }
-        if(input != null) {
-            IDocumentProvider provider = input.getDocumentProvider();
-            if(provider != null) {
-                IDocument doc = provider.getDocument(input);
-                if(doc != null) {
-                    if(isSwitching()) {
-                        updateDocument();
-                    }
-                    input.getDocumentProvider().disconnect(input);
-                    mINIFile.disconnect(doc);
-                }
-            }
-        }
+        IDocumentProvider provider = input.getDocumentProvider();
+		if(provider != null) {
+		    IDocument doc = provider.getDocument(input);
+		    if(doc != null) {
+		        if(isSwitching()) {
+		            updateDocument();
+		        }
+		        input.getDocumentProvider().disconnect(input);
+		        mINIFile.disconnect(doc);
+		    }
+		}
 
         getSite().getWorkbenchWindow().getPartService().removePartListener(mPartListener);
         mPartListener = null;
@@ -726,7 +731,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         }
     }
 
-    public void doSave(IProgressMonitor progressMonitor)
+    @Override
+	public void doSave(IProgressMonitor progressMonitor)
     {
         try {
             IInstallOptionsEditorInput input = (IInstallOptionsEditorInput)getEditorInput();
@@ -832,12 +838,15 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         }
     }
 
-    public void doSaveAs()
+    @Override
+	public void doSaveAs()
     {
         performSaveAs();
     }
 
-    public Object getAdapter(Class type)
+    @Override
+	@SuppressWarnings("unchecked")
+	public Object getAdapter(Class type)
     {
         if(type == getClass()) {
             return this;
@@ -987,7 +996,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         getSelectionActions().add(action.getId());
 
         action = new Action(InstallOptionsPlugin.getResourceString("grid.snap.glue.action.name")) { //$NON-NLS-1$
-            public void run()
+            @Override
+			public void run()
             {
                 if(getEditorInput() != null) {
                     new GridSnapGlueSettingsDialog(getSite().getShell(),getGraphicalViewer()).open();
@@ -1148,7 +1158,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             shell= null;
         }
         action = new Action(){
-            public void run() {
+            @Override
+			public void run() {
                 String[] preferencePages= {IInstallOptionsConstants.INSTALLOPTIONS_PREFERENCE_PAGE_ID};
                 if (preferencePages.length > 0 && (shell == null || !shell.isDisposed())) {
                     PreferencesUtil.createPreferenceDialogOn(shell, preferencePages[0], preferencePages, InstallOptionsDesignEditor.class).open();
@@ -1184,25 +1195,28 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         return (FigureCanvas)getGraphicalViewer().getControl();
     }
 
-    public boolean isDirty()
+    @Override
+	public boolean isDirty()
     {
         return isSaveOnCloseNeeded();
     }
 
-    public boolean isSaveAsAllowed()
+    @Override
+	public boolean isSaveAsAllowed()
     {
         return true;
     }
 
-    public boolean isSaveOnCloseNeeded()
+    @Override
+	public boolean isSaveOnCloseNeeded()
     {
         IInstallOptionsEditorInput input = (IInstallOptionsEditorInput)getEditorInput();
         return (input != null && input.getDocumentProvider().canSaveDocument(input)) || getCommandStack().isDirty();
     }
 
-    private Object loadPreference(String name, TypeConverter converter, Object defaultValue)
+    private <T> T loadPreference(String name, TypeConverter<T> converter, T defaultValue)
     {
-        Object o = null;
+        T o = null;
         try {
             o = converter.asType(cPreferenceStore.getString(name));
         }
@@ -1215,10 +1229,10 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         return o;
     }
 
-    private Object loadFileProperty(IFile file, QualifiedName name, TypeConverter converter, Object defaultValue)
+    private <T> T loadFileProperty(IFile file, QualifiedName name, TypeConverter<T> converter, T defaultValue)
     {
         defaultValue = loadPreference(name.getLocalName(),converter, defaultValue);
-        Object o = null;
+        T o = null;
         if(file != null) {
             try {
                 o = converter.asType(file.getPersistentProperty(name), defaultValue);
@@ -1294,9 +1308,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             }
 
             DialogSize dialogSize = null;
-            String dialogSizeName = (String)loadFileProperty(file, FILEPROPERTY_DIALOG_SIZE_NAME, TypeConverter.STRING_CONVERTER, null);
+            String dialogSizeName = loadFileProperty(file, FILEPROPERTY_DIALOG_SIZE_NAME, TypeConverter.STRING_CONVERTER, null);
             if(dialogSizeName == null) {
-                Dimension dim = (Dimension)loadFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,null);
+                Dimension dim = loadFileProperty(file, FILEPROPERTY_DIALOG_SIZE,TypeConverter.DIMENSION_CONVERTER,null);
                 if(dim != null) {
                     dialogSize = DialogSizeManager.getDialogSize(dim);
                 }
@@ -1310,8 +1324,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
                 }
             }
             dialog.setDialogSize(dialogSize);
-            dialog.setShowDialogSize(((Boolean)loadFileProperty(file, FILEPROPERTY_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
-                            SHOW_DIALOG_SIZE_DEFAULT)).booleanValue());
+            dialog.setShowDialogSize(loadFileProperty(file, FILEPROPERTY_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
+                            SHOW_DIALOG_SIZE_DEFAULT).booleanValue());
         }
     }
 
@@ -1414,7 +1428,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         return mSavePreviouslyNeeded;
     }
 
-    private void saveFileProperty(IFile file, QualifiedName name, TypeConverter converter, Object value, Object defaultValue)
+    private <T> void saveFileProperty(IFile file, QualifiedName name, TypeConverter<T> converter, T value, T defaultValue)
     {
         try {
             file.setPersistentProperty(name, converter.asString(value, defaultValue));
@@ -1430,40 +1444,40 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         if(dialog != null && file.exists()) {
             GraphicalViewer viewer = getGraphicalViewer();
             saveFileProperty(file, FILEPROPERTY_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
-                    viewer.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY),
+                    (Boolean)viewer.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY),
                     SHOW_RULERS_DEFAULT);
 
             // Snap to Geometry property
             saveFileProperty(file, FILEPROPERTY_SNAP_TO_GEOMETRY,TypeConverter.BOOLEAN_CONVERTER,
-                    viewer.getProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED),
+            		(Boolean)viewer.getProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED),
                     SNAP_TO_GEOMETRY_DEFAULT);
 
             // Grid properties
             saveFileProperty(file, FILEPROPERTY_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
-                    viewer.getProperty(SnapToGrid.PROPERTY_GRID_ENABLED),
+            		(Boolean)viewer.getProperty(SnapToGrid.PROPERTY_GRID_ENABLED),
                     SNAP_TO_GRID_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_GRID_STYLE,TypeConverter.STRING_CONVERTER,
-                    viewer.getProperty(InstallOptionsGridLayer.PROPERTY_GRID_STYLE),
+                    (String)viewer.getProperty(InstallOptionsGridLayer.PROPERTY_GRID_STYLE),
                     GRID_STYLE_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_GRID_ORIGIN,TypeConverter.POINT_CONVERTER,
-                    viewer.getProperty(SnapToGrid.PROPERTY_GRID_ORIGIN),
+                    (org.eclipse.draw2d.geometry.Point)viewer.getProperty(SnapToGrid.PROPERTY_GRID_ORIGIN),
                     GRID_ORIGIN_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_GRID_SPACING,TypeConverter.DIMENSION_CONVERTER,
-                    viewer.getProperty(SnapToGrid.PROPERTY_GRID_SPACING),
+                    (Dimension)viewer.getProperty(SnapToGrid.PROPERTY_GRID_SPACING),
                     GRID_SPACING_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
-                    viewer.getProperty(SnapToGrid.PROPERTY_GRID_VISIBLE),
+            		(Boolean)viewer.getProperty(SnapToGrid.PROPERTY_GRID_VISIBLE),
                     SHOW_GRID_DEFAULT);
 
             // Guides properties
             saveFileProperty(file, FILEPROPERTY_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                    viewer.getProperty(PROPERTY_SNAP_TO_GUIDES),
+            		(Boolean)viewer.getProperty(PROPERTY_SNAP_TO_GUIDES),
                     SNAP_TO_GUIDES_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_GLUE_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                    viewer.getProperty(PROPERTY_GLUE_TO_GUIDES),
+            		(Boolean)viewer.getProperty(PROPERTY_GLUE_TO_GUIDES),
                     GLUE_TO_GUIDES_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                    viewer.getProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY),
+            		(Boolean)viewer.getProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY),
                     SHOW_GUIDES_DEFAULT);
 
             saveFileProperty(file, FILEPROPERTY_DIALOG_SIZE_NAME,TypeConverter.STRING_CONVERTER,
@@ -1474,7 +1488,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         }
     }
 
-    public void setInput(IEditorInput input)
+    @Override
+	public void setInput(IEditorInput input)
     {
         superSetInput(input);
         input = getEditorInput();
@@ -1579,7 +1594,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         }
     }
 
-    protected void setSite(IWorkbenchPartSite site)
+    @Override
+	protected void setSite(IWorkbenchPartSite site)
     {
         super.setSite(site);
         getSite().getWorkbenchWindow().getPartService().addPartListener(mPartListener);
@@ -1670,7 +1686,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         /**
          * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
          */
-        public void createControl(Composite parent)
+        @Override
+		public void createControl(Composite parent)
         {
             super.createControl(parent);
             if (mPalette != null) {
@@ -1680,7 +1697,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         /**
          * @see org.eclipse.ui.part.IPage#dispose()
          */
-        public void dispose()
+        @Override
+		public void dispose()
         {
             if (mPalette != null) {
                 mPalette.setExternalViewer(null);
@@ -1719,7 +1737,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             super(viewer);
         }
 
-        public void init(IPageSite pageSite)
+        @Override
+		public void init(IPageSite pageSite)
         {
             super.init(pageSite);
             ActionRegistry registry = getActionRegistry();
@@ -1752,7 +1771,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             getViewer().setKeyHandler(getCommonKeyHandler());
             IToolBarManager tbm = getSite().getActionBars().getToolBarManager();
             mShowOutlineAction = new Action() {
-                public void run()
+                @Override
+				public void run()
                 {
                     showPage(ID_OUTLINE);
                 }
@@ -1762,7 +1782,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             mShowOutlineAction.setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("outline.icon"))); //$NON-NLS-1$
             tbm.add(mShowOutlineAction);
             mShowOverviewAction = new Action() {
-                public void run()
+                @Override
+				public void run()
                 {
                     showPage(ID_OVERVIEW);
                 }
@@ -1774,7 +1795,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             showPage(ID_OUTLINE);
         }
 
-        public void createControl(Composite parent)
+        @Override
+		public void createControl(Composite parent)
         {
             mPageBook = new PageBook(parent, SWT.NONE);
             mOutline = getViewer().createControl(mPageBook);
@@ -1789,7 +1811,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             PlatformUI.getWorkbench().getHelpSystem().setHelp(mPageBook,IInstallOptionsConstants.PLUGIN_CONTEXT_PREFIX + "installoptions_designoutline_context"); //$NON-NLS-1$
         }
 
-        public void dispose()
+        @Override
+		public void dispose()
         {
             unhookOutlineViewer();
             if (mThumbnail != null) {
@@ -1800,7 +1823,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             InstallOptionsDesignEditor.this.mOutlinePage = null;
         }
 
-        public Control getControl()
+        @Override
+		public Control getControl()
         {
             return mPageBook;
         }
@@ -1960,14 +1984,16 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             addDropTargetListener(new InstallOptionsTreeViewerDropTargetListener(this));
         }
 
-        public void addDragSourceListener(TransferDragSourceListener listener)
+        @Override
+		public void addDragSourceListener(TransferDragSourceListener listener)
         {
             if(listener instanceof InstallOptionsTreeViewerDragSourceListener) {
                 super.addDragSourceListener(listener);
             }
         }
 
-        public void addDropTargetListener(TransferDropTargetListener listener)
+        @Override
+		public void addDropTargetListener(TransferDropTargetListener listener)
         {
             if(listener instanceof InstallOptionsTreeViewerDropTargetListener) {
                 super.addDropTargetListener(listener);
@@ -1982,7 +2008,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             super(palette);
         }
 
-        public void buildContextMenu(IMenuManager menu)
+        @Override
+		public void buildContextMenu(IMenuManager menu)
         {
             super.buildContextMenu(menu);
             IContributionItem[] items = menu.getItems();
@@ -2022,7 +2049,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             mPaletteViewer = palette;
         }
 
-        public void run()
+        @Override
+		public void run()
         {
             Dialog settings = new CustomPaletteSettingsDialog(mPaletteViewer.getControl().getShell(),
                                                               mPaletteViewer.getPaletteViewerPreferences());
@@ -2048,7 +2076,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             return getPreferenceStore().getBoolean(PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED);
         }
 
-        protected void handlePreferenceStorePropertyChanged(String property)
+        @Override
+		protected void handlePreferenceStorePropertyChanged(String property)
         {
             if(property.equals(PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED)) {
                 firePropertyChanged(property,
@@ -2066,7 +2095,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         protected static final int UNLOAD_CREATION_TOOL_WHEN_FINISHED_ID = CLIENT_ID + 1;
 
         private org.eclipse.gef.ui.palette.PaletteViewerPreferences mPrefs;
-        private AbstractTemplateSettings mTemplateSettings;
+        private AbstractTemplateSettings<IInstallOptionsTemplate> mTemplateSettings;
 
         public CustomPaletteSettingsDialog(Shell parentShell, org.eclipse.gef.ui.palette.PaletteViewerPreferences prefs)
         {
@@ -2074,7 +2103,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             mPrefs = prefs;
         }
 
-        protected void cacheSettings()
+        @Override
+		@SuppressWarnings("unchecked")
+		protected void cacheSettings()
         {
             super.cacheSettings();
             if(mPrefs instanceof PaletteViewerPreferences) {
@@ -2082,14 +2113,16 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             }
         }
 
-        protected void configureShell(Shell newShell)
+        @Override
+		protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
             newShell.setText(InstallOptionsPlugin.getResourceString("settings.dialog.title")); //$NON-NLS-1$
             newShell.setImage(InstallOptionsPlugin.getShellImage());
         }
 
-        protected Control createDialogArea(Composite parent)
+        @Override
+		protected Control createDialogArea(Composite parent)
         {
             Composite composite = new Composite(parent, SWT.NONE);
             GridLayout layout = new GridLayout(1, false);
@@ -2119,24 +2152,28 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             Composite composite = new Composite(parent, SWT.NONE);
             composite.setLayout(new GridLayout(1,false));
 
-            mTemplateSettings = new AbstractTemplateSettings(composite, SWT.NONE, InstallOptionsTemplateManager.INSTANCE) {
-                protected boolean canAdd()
+            mTemplateSettings = new AbstractTemplateSettings<IInstallOptionsTemplate>(composite, SWT.NONE, InstallOptionsTemplateManager.INSTANCE) {
+                @Override
+				protected boolean canAdd()
                 {
                     return false;
                 }
 
-                protected ITemplate createTemplate(String name)
+                @Override
+				protected IInstallOptionsTemplate createTemplate(String name)
                 {
                     return new InstallOptionsTemplate2(name);
                 }
 
-                protected Dialog createDialog(final ITemplate template)
+                @Override
+				protected Dialog createDialog(final IInstallOptionsTemplate template)
                 {
-                    InstallOptionsTemplateDialog dialog = new InstallOptionsTemplateDialog(getShell(), (IInstallOptionsTemplate)template) {
-                        protected void okPressed()
+                    InstallOptionsTemplateDialog dialog = new InstallOptionsTemplateDialog(getShell(), template) {
+                        @Override
+						protected void okPressed()
                         {
                             createUpdateTemplate();
-                            ITemplate t = getTemplate();
+                            IInstallOptionsTemplate t = getTemplate();
                             if(template != t) {
                                 template.setName(t.getName());
                                 template.setDescription(t.getDescription());
@@ -2149,7 +2186,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
                     return dialog;
                 }
 
-                protected Image getShellImage()
+                @Override
+				protected Image getShellImage()
                 {
                     return InstallOptionsPlugin.getShellImage();
                 }
@@ -2160,7 +2198,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             b.setText(InstallOptionsPlugin.getResourceString("restore.defaults.label")); //$NON-NLS-1$
             b.setLayoutData(new GridData(SWT.RIGHT,SWT.CENTER,false, false));
             b.addSelectionListener(new SelectionAdapter(){
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     mTemplateSettings.performDefaults();
                 }
@@ -2210,7 +2249,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             return composite;
         }
 
-        protected void restoreSettings()
+        @Override
+		protected void restoreSettings()
         {
             super.restoreSettings();
             if(mPrefs instanceof PaletteViewerPreferences) {
@@ -2218,21 +2258,24 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             }
         }
 
-        protected void handleCancelPressed()
+        @Override
+		protected void handleCancelPressed()
         {
             if(mTemplateSettings.performCancel()) {
                 super.handleCancelPressed();
             }
         }
 
-        protected void okPressed()
+        @Override
+		protected void okPressed()
         {
             if(mTemplateSettings.performOk()) {
                 super.okPressed();
             }
         }
 
-        protected void buttonPressed(int buttonId)
+        @Override
+		protected void buttonPressed(int buttonId)
         {
             if(buttonId == UNLOAD_CREATION_TOOL_WHEN_FINISHED_ID) {
                 Button b = getButton(buttonId);

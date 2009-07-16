@@ -28,8 +28,8 @@ public abstract class NSISSettings implements INSISSettingsConstants
     private int mProcessPriority = INSISSettingsConstants.PROCESS_PRIORITY_DEFAULT;
     private int mCompressor = MakeNSISRunner.COMPRESSOR_DEFAULT;
     private boolean mSolidCompression = false;
-    private ArrayList mInstructions = null;
-    private LinkedHashMap mSymbols = null;
+    private List<String> mInstructions = null;
+    private Map<String, String> mSymbols = null;
 
     public void load()
     {
@@ -41,8 +41,8 @@ public abstract class NSISSettings implements INSISSettingsConstants
         setProcessPriority(getInt(PROCESS_PRIORITY));
         setCompressor(getInt(COMPRESSOR));
         setSolidCompression(getBoolean(SOLID_COMPRESSION));
-        setInstructions((ArrayList)loadObject(INSTRUCTIONS));
-        setSymbols((LinkedHashMap)loadObject(SYMBOLS));
+        setInstructions(this.<List<String>>loadObject(INSTRUCTIONS));
+        setSymbols(this.<Map<String,String>>loadObject(SYMBOLS));
         if(migrate(new Version(getString(PLUGIN_VERSION)))) {
             store();
         }
@@ -265,49 +265,49 @@ public abstract class NSISSettings implements INSISSettingsConstants
     /**
      * @return Returns the default instructions.
      */
-    public ArrayList getDefaultInstructions()
+    public List<String> getDefaultInstructions()
     {
-        return new ArrayList();
+        return new ArrayList<String>();
     }
 
     /**
      * @return Returns the instructions.
      */
-    public ArrayList getInstructions()
+    public List<String> getInstructions()
     {
-        return (mInstructions !=null?new ArrayList(mInstructions):new ArrayList());
+        return (mInstructions !=null?new ArrayList<String>(mInstructions):new ArrayList<String>());
     }
 
     /**
      * @param instructions The instructions to set.
      */
-    public void setInstructions(ArrayList instructions)
+    public void setInstructions(List<String> instructions)
     {
-        mInstructions = (instructions==null?new ArrayList():instructions);
+        mInstructions = (instructions==null?new ArrayList<String>():instructions);
     }
 
     /**
      * @return Returns the default symbols.
      */
-    public LinkedHashMap getDefaultSymbols()
+    public Map<String, String> getDefaultSymbols()
     {
-        return new LinkedHashMap();
+        return new LinkedHashMap<String, String>();
     }
 
     /**
      * @return Returns the symbols.
      */
-    public LinkedHashMap getSymbols()
+    public Map<String, String> getSymbols()
     {
-        return (mSymbols == null?new LinkedHashMap():new LinkedHashMap(mSymbols));
+        return (mSymbols == null?new LinkedHashMap<String, String>():new LinkedHashMap<String, String>(mSymbols));
     }
 
     /**
      * @param symbols The symbols to set.
      */
-    public void setSymbols(LinkedHashMap symbols)
+    public void setSymbols(Map<String, String> symbols)
     {
-        mSymbols = (symbols==null?new LinkedHashMap():symbols);
+        mSymbols = (symbols==null?new LinkedHashMap<String, String>():symbols);
     }
 
     public abstract String getString(String name);
@@ -320,6 +320,6 @@ public abstract class NSISSettings implements INSISSettingsConstants
     public abstract void removeBoolean(String name);
     public abstract void removeInt(String name);
     public abstract void removeObject(String name);
-    public abstract void storeObject(String name, Object object);
-    public abstract Object loadObject(String name);
+    public abstract <T> void storeObject(String name, T object);
+    public abstract <T> T loadObject(String name);
 }

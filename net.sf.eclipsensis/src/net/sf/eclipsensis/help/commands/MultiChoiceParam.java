@@ -25,7 +25,8 @@ public class MultiChoiceParam extends ChoiceParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new MultiChoiceParamEditor(command, parentEditor);
     }
@@ -40,7 +41,8 @@ public class MultiChoiceParam extends ChoiceParam
             super(command, parentEditor);
         }
 
-        public void clear()
+        @Override
+		public void clear()
         {
             if (!Common.isEmptyArray(mChoiceButtons))
             {
@@ -55,7 +57,9 @@ public class MultiChoiceParam extends ChoiceParam
             super.clear();
         }
 
-        protected String getPrefixableParamText()
+        @Override
+		@SuppressWarnings("null")
+		protected String getPrefixableParamText()
         {
             if (!Common.isEmptyArray(mChoiceButtons))
             {
@@ -82,7 +86,8 @@ public class MultiChoiceParam extends ChoiceParam
             return null;
         }
 
-        protected void updateState(boolean state)
+        @Override
+		protected void updateState(boolean state)
         {
             super.updateState(state);
             if (!Common.isEmptyArray(mChoiceButtons))
@@ -97,7 +102,8 @@ public class MultiChoiceParam extends ChoiceParam
             }
         }
 
-        public void saveSettings()
+        @Override
+		public void saveSettings()
         {
             super.saveSettings();
             if (!Common.isEmptyArray(mChoiceButtons) && getSettings() != null)
@@ -106,14 +112,15 @@ public class MultiChoiceParam extends ChoiceParam
                 {
                     if (Common.isValid(mChoiceButtons[i]))
                     {
-                        getSettings().put(mChoiceButtons[i].getData(DATA_CHOICE),
+                        getSettings().put((String)mChoiceButtons[i].getData(DATA_CHOICE),
                                 Boolean.valueOf(mChoiceButtons[i].getSelection()));
                     }
                 }
             }
         }
 
-        protected Control createParamControl(Composite parent)
+        @Override
+		protected Control createParamControl(Composite parent)
         {
             parent = new Composite(parent, SWT.NONE);
             GridLayout layout = new GridLayout(1, false);
@@ -136,7 +143,8 @@ public class MultiChoiceParam extends ChoiceParam
             return parent;
         }
 
-        protected void initParamEditor()
+        @Override
+		protected void initParamEditor()
         {
             super.initParamEditor();
             if (!Common.isEmptyArray(mChoiceButtons))
@@ -152,7 +160,8 @@ public class MultiChoiceParam extends ChoiceParam
             }
         }
 
-        public String validateParam()
+        @Override
+		public String validateParam()
         {
             if (!Common.isEmptyArray(mChoiceButtons))
             {

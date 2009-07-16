@@ -20,23 +20,27 @@ import org.eclipse.gef.editpolicies.SelectionEditPolicy;
 import org.eclipse.gef.tools.*;
 import org.eclipse.swt.widgets.Composite;
 
-public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditPart
+public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditPart<EditableComboBoxCellEditor>
 {
-    protected void createEditPolicies()
+    @Override
+	protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy("ShowDropdown", new SelectionEditPolicy() { //$NON-NLS-1$
-            protected void hideSelection()
+            @Override
+			protected void hideSelection()
             {
                 setShowDropdown(false);
             }
 
-            protected void showSelection()
+            @Override
+			protected void showSelection()
             {
                 setShowDropdown(false);
             }
 
-            protected void showPrimarySelection()
+            @Override
+			protected void showPrimarySelection()
             {
                 setShowDropdown(true);
             }
@@ -51,24 +55,28 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditP
         });
     }
 
-    protected String getDirectEditLabelProperty()
+    @Override
+	protected String getDirectEditLabelProperty()
     {
         return "combobox.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected String getExtendedEditLabelProperty()
+    @Override
+	protected String getExtendedEditLabelProperty()
     {
         return "combobox.extended.edit.label"; //$NON-NLS-1$
     }
 
-    protected IListItemsFigure createListItemsFigure()
+    @Override
+	protected IListItemsFigure createListItemsFigure()
     {
         ComboboxFigure comboboxFigure = new ComboboxFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
         comboboxFigure.setShowDropdown(getSelected()==SELECTED_PRIMARY);
         return comboboxFigure;
     }
 
-    protected boolean supportsScrolling()
+    @Override
+	protected boolean supportsScrolling()
     {
         return false;
     }
@@ -76,22 +84,26 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditP
     /**
      * @return
      */
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("combobox.type.name"); //$NON-NLS-1$
     }
 
-    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class clasz, CellEditorLocator locator)
+    @Override
+	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<EditableComboBoxCellEditor> clasz, CellEditorLocator locator)
     {
         return new InstallOptionsComboboxEditManager(part,clasz,locator);
     }
 
-    protected Class getCellEditorClass()
+    @Override
+	protected Class<EditableComboBoxCellEditor> getCellEditorClass()
     {
         return EditableComboBoxCellEditor.class;
     }
 
-    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    @Override
+	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new ComboboxCellEditorLocator((ComboboxFigure)figure);
     }

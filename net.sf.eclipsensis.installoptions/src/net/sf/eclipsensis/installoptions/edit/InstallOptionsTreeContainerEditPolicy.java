@@ -27,7 +27,8 @@ public class InstallOptionsTreeContainerEditPolicy extends TreeContainerEditPoli
      *
      * @see org.eclipse.gef.editpolicies.TreeContainerEditPolicy#getAddCommand(org.eclipse.gef.requests.ChangeBoundsRequest)
      */
-    protected Command getAddCommand(ChangeBoundsRequest request)
+    @Override
+	protected Command getAddCommand(ChangeBoundsRequest request)
     {
         return null;
     }
@@ -53,18 +54,20 @@ public class InstallOptionsTreeContainerEditPolicy extends TreeContainerEditPoli
         return cmd;
     }
 
-    protected Command getCreateCommand(CreateRequest request)
+    @Override
+	protected Command getCreateCommand(CreateRequest request)
     {
         InstallOptionsWidget child = (InstallOptionsWidget)request.getNewObject();
         int index = findIndexOfTreeItemAt(request.getLocation());
         return createCreateCommand(child, null, index, "Create InstallOptionsWidget");//$NON-NLS-1$
     }
 
-    protected Command getMoveChildrenCommand(ChangeBoundsRequest request)
+    @Override
+	protected Command getMoveChildrenCommand(ChangeBoundsRequest request)
     {
         CompoundCommand command = new CompoundCommand();
-        List editparts = request.getEditParts();
-        List children = getHost().getChildren();
+        List<?> editparts = request.getEditParts();
+        List<?> children = getHost().getChildren();
         int newIndex = findIndexOfTreeItemAt(request.getLocation());
         if(newIndex < 0) {
             newIndex = children.size();

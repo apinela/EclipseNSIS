@@ -21,7 +21,7 @@ import org.eclipse.ui.progress.UIJob;
 public class JobScheduler
 {
     private boolean mRunning = false;
-    private Set mJobFamilies = new HashSet();
+    private Set<Object> mJobFamilies = new HashSet<Object>();
 
     public void start()
     {
@@ -36,7 +36,7 @@ public class JobScheduler
             mRunning = false;
             IJobManager manager = Job.getJobManager();
             if(manager != null) {
-                for(Iterator iter = mJobFamilies.iterator(); iter.hasNext(); ) {
+                for(Iterator<Object> iter = mJobFamilies.iterator(); iter.hasNext(); ) {
                     manager.cancel(iter.next());
                     iter.remove();
                 }
@@ -79,12 +79,14 @@ public class JobScheduler
         final Object jobFamily = (family == null?this:family);
         mJobFamilies.add(jobFamily);
         UIJob job = new UIJob(name) {
-            public IStatus runInUIThread(IProgressMonitor monitor)
+            @Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
             {
                 return runnable.run(monitor);
             }
 
-            public boolean belongsTo(Object family)
+            @Override
+			public boolean belongsTo(Object family)
             {
                 return jobFamily.equals(family);
             }
@@ -138,12 +140,14 @@ public class JobScheduler
         mJobFamilies.add(jobFamily);
 
         Job job = new Job(name) {
-            public IStatus run(IProgressMonitor monitor)
+            @Override
+			public IStatus run(IProgressMonitor monitor)
             {
                 return runnable.run(monitor);
             }
 
-            public boolean belongsTo(Object family)
+            @Override
+			public boolean belongsTo(Object family)
             {
                 return jobFamily.equals(family);
             }

@@ -14,9 +14,9 @@ import org.eclipse.ui.views.properties.tabbed.ITypeMapper;
 
 public class InstallOptionsElementTypeMapper implements ITypeMapper
 {
-    public Class mapType(Object object)
+    public Class<?> mapType(Object object)
     {
-        Class type = object.getClass();
+        Class<?> type = object.getClass();
         if (object instanceof EditPart) {
             type = ((EditPart) object).getModel().getClass();
         }

@@ -34,7 +34,7 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
     public static final String VERTICAL_BETWEEN_ID=GROUP+"vertical.between"; //$NON-NLS-1$
 
     private int mType;
-    private Comparator mComparator;
+    private Comparator<GraphicalEditPart> mComparator;
 
     public DistributeAction(IWorkbenchPart part, int type)
     {
@@ -77,11 +77,11 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
         setImageDescriptor(imageDescriptor);
         setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString(prefix+".disabled.icon"))); //$NON-NLS-1$
         setEnabled(false);
-        mComparator = new Comparator() {
-            public int compare(Object o1, Object o2)
+        mComparator = new Comparator<GraphicalEditPart>() {
+            public int compare(GraphicalEditPart o1, GraphicalEditPart o2)
             {
-                Rectangle bounds1 = ((GraphicalEditPart)o1).getFigure().getBounds();
-                Rectangle bounds2 = ((GraphicalEditPart)o2).getFigure().getBounds();
+                Rectangle bounds1 = o1.getFigure().getBounds();
+                Rectangle bounds2 = o2.getFigure().getBounds();
                 double diff;
                 switch(mType) {
                     case DISTRIBUTE_HORIZONTAL_LEFT_EDGE:
@@ -113,7 +113,8 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
         return p+(d-1.0)/2.0;
     }
 
-    protected boolean calculateEnabled()
+    @Override
+	protected boolean calculateEnabled()
     {
         Command cmd = createDistributeCommand(getSelectedObjects());
         if (cmd == null) {
@@ -127,7 +128,8 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
      * @param objects The objects to be resized.
      * @return The command to resize the selected objects.
      */
-    private Command createDistributeCommand(List objects) {
+    @SuppressWarnings("unchecked")
+	private Command createDistributeCommand(List<?> objects) {
         if (objects.size() < 3) {
             return null;
         }
@@ -135,7 +137,7 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
             return null;
         }
 
-        Collections.sort(objects, mComparator);
+        Collections.sort((List<GraphicalEditPart>)objects, mComparator);
         double sum = 0.0;
         Rectangle bounds1 = ((GraphicalEditPart)objects.get(objects.size()-1)).getFigure().getBounds();
         Rectangle bounds2 = ((GraphicalEditPart)objects.get(0)).getFigure().getBounds();
@@ -256,7 +258,8 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
         return command;
     }
 
-    public void run() {
+    @Override
+	public void run() {
         execute(createDistributeCommand(getSelectedObjects()));
     }
 }

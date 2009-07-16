@@ -8,6 +8,7 @@
 package net.sf.eclipsensis.editor.codeassist;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsensis.util.Common;
 
@@ -30,7 +31,7 @@ public class NSISInformationControlCreator extends AbstractNSISInformationContro
     public NSISInformationControlCreator(String[] commandIds, int style)
     {
         super(style);
-        ArrayList list = new ArrayList();
+        List<ParameterizedCommand> list = new ArrayList<ParameterizedCommand>();
         if (!Common.isEmptyArray(commandIds))
         {
             for (int i = 0; i < commandIds.length; i++)
@@ -45,7 +46,7 @@ public class NSISInformationControlCreator extends AbstractNSISInformationContro
                 }
             }
         }
-        mCommands = (ParameterizedCommand[]) list.toArray(new ParameterizedCommand[list.size()]);
+        mCommands = list.toArray(new ParameterizedCommand[list.size()]);
     }
 
     public IInformationControl createInformationControl(Shell parent)

@@ -34,7 +34,8 @@ public class ToggleDialogSizeVisibilityAction extends Action
         setChecked(isChecked());
     }
 
-    public void run()
+    @Override
+	public void run()
     {
         if(isEnabled()) {
             if(isEnabled()) {
@@ -45,7 +46,8 @@ public class ToggleDialogSizeVisibilityAction extends Action
         }
     }
 
-    public boolean isEnabled()
+    @Override
+	public boolean isEnabled()
     {
         GraphicalViewer viewer = mEditor.getGraphicalViewer();
         if(viewer != null) {
@@ -54,7 +56,8 @@ public class ToggleDialogSizeVisibilityAction extends Action
         return false;
     }
 
-    public boolean isChecked()
+    @Override
+	public boolean isChecked()
     {
         if(isEnabled()) {
             GraphicalViewer viewer = mEditor.getGraphicalViewer();

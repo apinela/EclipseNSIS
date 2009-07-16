@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.*;
 
 public class SnapGlueSettings extends Composite implements IInstallOptionsConstants
 {
-    private Map mSettings = null;
+    private Map<String, Boolean> mSettings = null;
     private Button mSnapToGrid;
     private Button mSnapToGeometry;
     private Button mSnapToGuides;
@@ -30,7 +30,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
      * @param parent
      * @param style
      */
-    public SnapGlueSettings(Composite parent, Map settings)
+    public SnapGlueSettings(Composite parent, Map<String, Boolean> settings)
     {
         super(parent, SWT.NONE);
 		initialize();
@@ -41,7 +41,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
     {
         boolean b = defaultSetting.booleanValue();
         try {
-            b = ((Boolean)mSettings.get(name)).booleanValue();
+            b = mSettings.get(name).booleanValue();
         }
         catch(Exception ex) {
             b = defaultSetting.booleanValue();
@@ -49,7 +49,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
         return b;
     }
 
-    public void setSettings(Map settings)
+    public void setSettings(Map<String, Boolean> settings)
     {
         mSettings = settings;
         mSnapToGrid.setSelection(getSetting(PREFERENCE_SNAP_TO_GRID,SNAP_TO_GRID_DEFAULT));
@@ -77,7 +77,8 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
         mSnapToGrid.setToolTipText(InstallOptionsPlugin.getResourceString("snap.glue.settings.snap.grid.tooltip")); //$NON-NLS-1$
         mSnapToGrid.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mSnapToGrid.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 mSettings.put(PREFERENCE_SNAP_TO_GRID,Boolean.valueOf(mSnapToGrid.getSelection()));
             }
         });
@@ -87,7 +88,8 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
         mSnapToGeometry.setToolTipText(InstallOptionsPlugin.getResourceString("snap.glue.settings.snap.geometry.tooltip")); //$NON-NLS-1$
         mSnapToGeometry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mSnapToGeometry.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 mSettings.put(PREFERENCE_SNAP_TO_GEOMETRY,Boolean.valueOf(mSnapToGeometry.getSelection()));
             }
         });
@@ -97,7 +99,8 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
         mSnapToGuides.setToolTipText(InstallOptionsPlugin.getResourceString("snap.glue.settings.snap.guides.tooltip")); //$NON-NLS-1$
         mSnapToGuides.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mSnapToGuides.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 mSettings.put(PREFERENCE_SNAP_TO_GUIDES,Boolean.valueOf(mSnapToGuides.getSelection()));
             }
         });
@@ -109,7 +112,8 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
 //        data.horizontalIndent = 16;
         mGlueToGuides.setLayoutData(data);
         mGlueToGuides.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 mSettings.put(PREFERENCE_GLUE_TO_GUIDES,Boolean.valueOf(mGlueToGuides.getSelection()));
             }
         });

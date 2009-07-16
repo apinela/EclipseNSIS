@@ -13,12 +13,14 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 
 public class InstallOptionsDirRequestEditPart extends InstallOptionsPathRequestEditPart
 {
-    protected String getDirectEditLabelProperty()
+    @Override
+	protected String getDirectEditLabelProperty()
     {
         return "dirrequest.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("dirrequest.type.name"); //$NON-NLS-1$
     }

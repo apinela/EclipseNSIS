@@ -30,7 +30,8 @@ public class InstallOptionsSourceViewer extends InstallOptionsSourcePreviewer
         mScrollTipHelper = new NSISScrollTipHelper(this);
     }
 
-    protected void createControl(Composite parent, int styles)
+    @Override
+	protected void createControl(Composite parent, int styles)
     {
         super.createControl(parent, styles);
         final IPropertyChangeListener listener = new IPropertyChangeListener(){
@@ -51,13 +52,15 @@ public class InstallOptionsSourceViewer extends InstallOptionsSourcePreviewer
         });
     }
 
-    public void configure(SourceViewerConfiguration configuration)
+    @Override
+	public void configure(SourceViewerConfiguration configuration)
     {
         super.configure(configuration);
         mScrollTipHelper.connect();
     }
 
-    public void unconfigure()
+    @Override
+	public void unconfigure()
     {
         mScrollTipHelper.disconnect();
         super.unconfigure();

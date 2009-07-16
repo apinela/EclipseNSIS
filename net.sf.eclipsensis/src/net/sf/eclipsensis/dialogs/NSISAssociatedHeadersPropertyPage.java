@@ -30,8 +30,8 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
 {
     private TableViewer mViewer;
     private Button mReassociateHeaderWarning;
-    private Collection mOriginalHeaders;
-    private HashSet mHeaders;
+    private Collection<IFile> mOriginalHeaders;
+    private HashSet<IFile> mHeaders;
     private NSISHeaderAssociationManager mHeaderAssociationManager = NSISHeaderAssociationManager.getInstance();
 
     public NSISAssociatedHeadersPropertyPage(NSISSettings settings)
@@ -39,24 +39,28 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         super("headers", settings); //$NON-NLS-1$
     }
 
-    public boolean canEnableControls()
+    @Override
+	public boolean canEnableControls()
     {
         return true;
     }
 
-    public void enableControls(boolean state)
+    @Override
+	public void enableControls(boolean state)
     {
     }
 
-    public boolean supportsEnablement()
+    @Override
+	public boolean supportsEnablement()
     {
         return false;
     }
 
-    public Control createControl(final Composite parent)
+    @Override
+	public Control createControl(final Composite parent)
     {
         mOriginalHeaders = mHeaderAssociationManager.getAssociatedHeaders((IFile)((NSISProperties)mSettings).getResource());
-        mHeaders = new HashSet();
+        mHeaders = new HashSet<IFile>();
         initHeaders();
         final IFilter filter = new IFilter() {
             public boolean select(Object toTest)
@@ -91,7 +95,8 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         mViewer = new TableViewer(table);
         mViewer.setContentProvider(new CollectionContentProvider());
         mViewer.setLabelProvider(new CollectionLabelProvider() {
-            public String getColumnText(Object element, int columnIndex)
+            @Override
+			public String getColumnText(Object element, int columnIndex)
             {
                 if(element instanceof IFile) {
                     return ((IFile)element).getFullPath().toString();
@@ -100,7 +105,8 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
             }
         });
         mViewer.setComparator(new ViewerComparator() {
-            public int compare(Viewer viewer, Object e1, Object e2)
+            @Override
+			public int compare(Viewer viewer, Object e1, Object e2)
             {
                 if(e1 instanceof IFile && e2 instanceof IFile) {
                     return ((IFile)e1).getFullPath().toString().compareTo(((IFile)e2).getFullPath().toString());
@@ -115,7 +121,8 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         addButton.setImage(CommonImages.ADD_ICON);
         addButton.setToolTipText(EclipseNSISPlugin.getResourceString("add.associated.header.toolip")); //$NON-NLS-1$
         addButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent arg0)
+            @Override
+			public void widgetSelected(SelectionEvent arg0)
             {
                 FileSelectionDialog dialog = new FileSelectionDialog(parent.getShell(), ((NSISProperties)mSettings).getResource().getParent(), filter);
                 dialog.setDialogMessage(EclipseNSISPlugin.getResourceString("nsis.script.prompt")); //$NON-NLS-1$
@@ -155,7 +162,8 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         removeButton.setToolTipText(EclipseNSISPlugin.getResourceString("remove.associated.header.toolip")); //$NON-NLS-1$
         removeButton.setEnabled(false);
         removeButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent arg0)
+            @Override
+			public void widgetSelected(SelectionEvent arg0)
             {
                 IStructuredSelection sel = (IStructuredSelection)mViewer.getSelection();
                 if(!sel.isEmpty()) {
@@ -201,7 +209,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
     private void initHeaders()
     {
         mHeaders.clear();
-        for (Iterator iter = mOriginalHeaders.iterator(); iter.hasNext();) {
+        for (Iterator<IFile> iter = mOriginalHeaders.iterator(); iter.hasNext();) {
             IFile header = (IFile)iter.next();
             if(IOUtility.isValidFile(header)) {
                 mHeaders.add(header);
@@ -209,7 +217,8 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         }
     }
 
-    public void reset()
+    @Override
+	public void reset()
     {
         if(mViewer != null && mHeaders != null) {
             initHeaders();
@@ -220,7 +229,8 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         }
     }
 
-    public void setDefaults()
+    @Override
+	public void setDefaults()
     {
         if(mViewer != null && mHeaders != null) {
             mHeaders.clear();
@@ -231,18 +241,19 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         }
     }
 
-    protected boolean performApply(NSISSettings settings)
+    @Override
+	protected boolean performApply(NSISSettings settings)
     {
         IFile file = (IFile)((NSISProperties)mSettings).getResource();
-        Set removedHeaders = new HashSet(mOriginalHeaders);
+        Set<IFile> removedHeaders = new HashSet<IFile>(mOriginalHeaders);
         removedHeaders.removeAll(mHeaders);
-        Set addedHeaders = new HashSet(mHeaders);
+        Set<IFile> addedHeaders = new HashSet<IFile>(mHeaders);
         addedHeaders.removeAll(mOriginalHeaders);
-        for (Iterator iter = removedHeaders.iterator(); iter.hasNext();) {
+        for (Iterator<IFile> iter = removedHeaders.iterator(); iter.hasNext();) {
             mHeaderAssociationManager.disassociateFromScript((IFile)iter.next());
         }
-        for (Iterator iter = addedHeaders.iterator(); iter.hasNext();) {
-            mHeaderAssociationManager.associateWithScript((IFile)iter.next(), file);
+        for (Iterator<IFile> iter = addedHeaders.iterator(); iter.hasNext();) {
+            mHeaderAssociationManager.associateWithScript(iter.next(), file);
         }
         NSISPreferences.INSTANCE.getPreferenceStore().setValue(INSISPreferenceConstants.WARN_REASSOCIATE_HEADER, mReassociateHeaderWarning.getSelection());
         return true;

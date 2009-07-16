@@ -29,7 +29,7 @@ public class ListCellEditor extends CellEditor
 {
     private static final int DEFAULT_STYLE = SWT.SINGLE;
 
-    private java.util.List mItems;
+    private java.util.List<String> mItems;
     private String mSelection;
     private List mList;
     private boolean mCaseInsensitive = false;
@@ -39,12 +39,12 @@ public class ListCellEditor extends CellEditor
         setStyle(DEFAULT_STYLE);
     }
 
-    public ListCellEditor(Composite parent, java.util.List items)
+    public ListCellEditor(Composite parent, java.util.List<String> items)
     {
         this(parent, items, DEFAULT_STYLE);
     }
 
-    public ListCellEditor(Composite parent, java.util.List items, int style)
+    public ListCellEditor(Composite parent, java.util.List<String> items, int style)
     {
         super(parent, style);
         setItems(items);
@@ -60,12 +60,12 @@ public class ListCellEditor extends CellEditor
         mCaseInsensitive = caseInsensitive;
     }
 
-    public java.util.List getItems()
+    public java.util.List<String> getItems()
     {
-        return (mItems == null?Collections.EMPTY_LIST:mItems);
+        return (mItems == null?Collections.<String>emptyList():mItems);
     }
 
-    public void setItems(java.util.List items)
+    public void setItems(java.util.List<String> items)
     {
         mItems = items;
         populateListItems();
@@ -74,25 +74,29 @@ public class ListCellEditor extends CellEditor
     /*
      * (non-Javadoc) Method declared on CellEditor.
      */
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         mList = new List(parent, getStyle());
         mList.setFont(parent.getFont());
 
         mList.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e)
+            @Override
+			public void keyPressed(KeyEvent e)
             {
                 keyReleaseOccured(e);
             }
         });
 
         mList.addSelectionListener(new SelectionAdapter() {
-            public void widgetDefaultSelected(SelectionEvent event)
+            @Override
+			public void widgetDefaultSelected(SelectionEvent event)
             {
                 applyEditorValueAndDeactivate();
             }
 
-            public void widgetSelected(SelectionEvent event)
+            @Override
+			public void widgetSelected(SelectionEvent event)
             {
                 computeSelection();
             }
@@ -109,7 +113,8 @@ public class ListCellEditor extends CellEditor
         });
 
         mList.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e)
+            @Override
+			public void focusLost(FocusEvent e)
             {
                 ListCellEditor.this.focusLost();
             }
@@ -132,7 +137,8 @@ public class ListCellEditor extends CellEditor
         }
     }
 
-    protected Object doGetValue()
+    @Override
+	protected Object doGetValue()
     {
         return mSelection;
     }
@@ -140,12 +146,14 @@ public class ListCellEditor extends CellEditor
     /*
      * (non-Javadoc) Method declared on CellEditor.
      */
-    protected void doSetFocus()
+    @Override
+	protected void doSetFocus()
     {
         mList.setFocus();
     }
 
-    public LayoutData getLayoutData()
+    @Override
+	public LayoutData getLayoutData()
     {
         LayoutData layoutData = super.getLayoutData();
         if ((mList == null) || mList.isDisposed()) {
@@ -160,14 +168,15 @@ public class ListCellEditor extends CellEditor
         return layoutData;
     }
 
-    protected void doSetValue(Object value)
+    @Override
+	protected void doSetValue(Object value)
     {
-        java.util.List list = Common.tokenizeToList((String)value,IInstallOptionsConstants.LIST_SEPARATOR,false);
-        java.util.List items = getItems();
+        java.util.List<String> list = Common.tokenizeToList((String)value,IInstallOptionsConstants.LIST_SEPARATOR,false);
+        java.util.List<String> items = getItems();
         outer:
-        for (ListIterator iter = list.listIterator(); iter.hasNext();) {
-            String item = (String)iter.next();
-            for (Iterator iterator = items.iterator(); iterator.hasNext();) {
+        for (ListIterator<String> iter = list.listIterator(); iter.hasNext();) {
+            String item = iter.next();
+            for (Iterator<String> iterator = items.iterator(); iterator.hasNext();) {
                 String item2 = (String)iterator.next();
                 if(Common.stringsAreEqual(item,item2,mCaseInsensitive)) {
                     iter.set(item2);
@@ -176,7 +185,7 @@ public class ListCellEditor extends CellEditor
             }
             iter.remove();
         }
-        String[] selection = (String[])list.toArray(Common.EMPTY_STRING_ARRAY);
+        String[] selection = list.toArray(Common.EMPTY_STRING_ARRAY);
         mSelection = Common.flatten(selection,IInstallOptionsConstants.LIST_SEPARATOR);
         mList.setSelection(selection);
     }
@@ -226,7 +235,8 @@ public class ListCellEditor extends CellEditor
      *  (non-Javadoc)
      * @see org.eclipse.jface.viewers.CellEditor#focusLost()
      */
-    protected void focusLost()
+    @Override
+	protected void focusLost()
     {
         if (isActivated()) {
             applyEditorValueAndDeactivate();
@@ -237,7 +247,8 @@ public class ListCellEditor extends CellEditor
      *  (non-Javadoc)
      * @see org.eclipse.jface.viewers.CellEditor#keyReleaseOccured(org.eclipse.swt.events.KeyEvent)
      */
-    protected void keyReleaseOccured(KeyEvent keyEvent)
+    @Override
+	protected void keyReleaseOccured(KeyEvent keyEvent)
     {
         if (keyEvent.character == '\t') { // tab key
             applyEditorValueAndDeactivate();

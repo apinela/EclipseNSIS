@@ -20,7 +20,7 @@ import net.sf.eclipsensis.util.XMLUtil;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-public abstract class AbstractTemplateReaderWriter
+public abstract class AbstractTemplateReaderWriter<T extends ITemplate>
 {
     protected static final String TEMPLATE_ROOT = "templates"; //$NON-NLS-1$
     protected static final String TEMPLATE_ELEMENT = "template"; //$NON-NLS-1$
@@ -35,10 +35,10 @@ public abstract class AbstractTemplateReaderWriter
      * @return the read templates
      * @throws IOException if reading from the stream fails
      */
-    public Collection import$(File file) throws IOException
+    public Collection<T> import$(File file) throws IOException
     {
         try {
-            Collection templates= new HashSet();
+            Collection<T> templates= new HashSet<T>();
 
             Document document= XMLUtil.loadDocument(file);
 
@@ -47,7 +47,7 @@ public abstract class AbstractTemplateReaderWriter
             int count= elements.getLength();
             for (int i= 0; i != count; i++) {
                 Node node= elements.item(i);
-                ITemplate template = createTemplate();
+                T template = createTemplate();
                 template.fromNode(node);
                 templates.add(template);
             }
@@ -75,7 +75,7 @@ public abstract class AbstractTemplateReaderWriter
      * @param file the file to write the templates to in XML
      * @throws IOException if writing the templates fails
      */
-    public void export(Collection templates, File file) throws IOException
+    public void export(Collection<T> templates, File file) throws IOException
     {
         try {
             Document document= XMLUtil.newDocument();
@@ -83,8 +83,8 @@ public abstract class AbstractTemplateReaderWriter
             Node root= document.createElement(TEMPLATE_ROOT);
             document.appendChild(root);
 
-            for (Iterator iter=templates.iterator(); iter.hasNext(); ) {
-                ITemplate template= (ITemplate)iter.next();
+            for (Iterator<T> iter=templates.iterator(); iter.hasNext(); ) {
+                T template= iter.next();
                 Node node= template.toNode(document);
                 root.appendChild(node);
             }
@@ -106,5 +106,5 @@ public abstract class AbstractTemplateReaderWriter
             throw new IOException(e.getMessage());
         }
     }
-    protected abstract ITemplate createTemplate();
+    protected abstract T createTemplate();
 }

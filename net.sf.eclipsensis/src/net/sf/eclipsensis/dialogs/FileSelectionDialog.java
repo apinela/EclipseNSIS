@@ -105,13 +105,15 @@ public class FileSelectionDialog extends TitleAreaDialog
         mDialogTitle = dialogTitle;
     }
 
-    protected void configureShell(Shell shell) {
+    @Override
+	protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(mDialogTitle==null?EclipseNSISPlugin.getResourceString("fileselection.dialog.title"):mDialogTitle); //$NON-NLS-1$
         shell.setImage(EclipseNSISPlugin.getShellImage());
     }
 
-    protected Control createContents(Composite parent) {
+    @Override
+	protected Control createContents(Composite parent) {
 
         Control contents = super.createContents(parent);
         setTitle(mDialogHeader==null?EclipseNSISPlugin.getResourceString("fileselection.dialog.header"):mDialogHeader); //$NON-NLS-1$
@@ -124,7 +126,8 @@ public class FileSelectionDialog extends TitleAreaDialog
         }
         return contents;
     }
-    protected Control createDialogArea(Composite parent)
+    @Override
+	protected Control createDialogArea(Composite parent)
     {
         parent = (Composite)super.createDialogArea(parent);
         Composite composite = new Composite(parent,SWT.NONE);
@@ -181,7 +184,8 @@ public class FileSelectionDialog extends TitleAreaDialog
         tv2.setSorter(new ViewerSorter());
         if(mFilter != null) {
             tv2.addFilter(new ViewerFilter() {
-                public boolean select(Viewer viewer, Object parentElement, Object element)
+                @Override
+				public boolean select(Viewer viewer, Object parentElement, Object element)
                 {
                     return mFilter.select(element);
                 }
@@ -251,7 +255,8 @@ public class FileSelectionDialog extends TitleAreaDialog
 
     private class ContainerContentProvider extends EmptyContentProvider
     {
-        public Object[] getChildren(Object element)
+        @Override
+		public Object[] getChildren(Object element)
         {
             if (element instanceof IWorkspace) {
                 return ((IWorkspace) element).getRoot().getProjects();
@@ -260,7 +265,7 @@ public class FileSelectionDialog extends TitleAreaDialog
                 IContainer container = (IContainer) element;
                 if (container.isAccessible()) {
                     try {
-                        List children = new ArrayList();
+                        List<IResource> children = new ArrayList<IResource>();
                         IResource[] members = container.members();
                         for (int i = 0; i < members.length; i++) {
                             if (members[i].getType() != IResource.FILE) {
@@ -277,12 +282,14 @@ public class FileSelectionDialog extends TitleAreaDialog
             return EMPTY_ARRAY;
         }
 
-        public Object[] getElements(Object element)
+        @Override
+		public Object[] getElements(Object element)
         {
             return getChildren(element);
         }
 
-        public Object getParent(Object element)
+        @Override
+		public Object getParent(Object element)
         {
             if (element instanceof IResource) {
                 return ((IResource) element).getParent();
@@ -290,7 +297,8 @@ public class FileSelectionDialog extends TitleAreaDialog
             return null;
         }
 
-        public boolean hasChildren(Object element)
+        @Override
+		public boolean hasChildren(Object element)
         {
             return getChildren(element).length > 0;
         }
@@ -313,13 +321,14 @@ public class FileSelectionDialog extends TitleAreaDialog
 
     private class FilesContentProvider extends EmptyContentProvider
     {
-        public Object[] getElements(Object element)
+        @Override
+		public Object[] getElements(Object element)
         {
             if (element instanceof IContainer) {
                 IContainer container = (IContainer) element;
                 if (container.isAccessible()) {
                     try {
-                        List children = new ArrayList();
+                        List<IResource> children = new ArrayList<IResource>();
                         IResource[] members = container.members();
                         for (int i = 0; i < members.length; i++) {
                             if (members[i].getType() == IResource.FILE) {

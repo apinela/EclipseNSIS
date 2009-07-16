@@ -104,7 +104,8 @@ public class DimensionPropertySource implements IPropertySource
         return false;
     }
 
-    public String toString()
+    @Override
+	public String toString()
     {
         return new StringBuffer("(").append(mDimension.width).append(",").append(mDimension.height).append(")").toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }

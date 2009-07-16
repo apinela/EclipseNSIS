@@ -15,6 +15,7 @@ import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.ModifyListItemsCommand;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
+import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.commands.Command;
@@ -29,14 +30,17 @@ public class InstallOptionsListItemsExtendedEditPolicy extends InstallOptionsExt
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy#getExtendedEditCommand(net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest)
      */
-    protected Command getExtendedEditCommand(ExtendedEditRequest request)
+    @Override
+	protected Command getExtendedEditCommand(ExtendedEditRequest request)
     {
-        ModifyListItemsCommand command = new ModifyListItemsCommand((InstallOptionsListItems)request.getEditPart().getModel(),
-                                                                              (List)request.getNewValue());
+        List<String> list = Common.makeGenericList(String.class, (List<?>)request.getNewValue());
+		ModifyListItemsCommand command = new ModifyListItemsCommand((InstallOptionsListItems)request.getEditPart().getModel(),
+                                                                              list);
         return command;
     }
 
-    protected String getExtendedEditProperty()
+    @Override
+	protected String getExtendedEditProperty()
     {
         return InstallOptionsModel.PROPERTY_LISTITEMS;
     }

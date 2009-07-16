@@ -22,11 +22,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public abstract class AbstractTemplateDialog extends TrayDialog
+public abstract class AbstractTemplateDialog<T extends ITemplate> extends TrayDialog
 {
-    private ITemplate mOldTemplate = null;
-    private ITemplate mTemplate = null;
-    private AbstractTemplateManager mTemplateManager = null;
+    private T mOldTemplate = null;
+    private T mTemplate = null;
+    private AbstractTemplateManager<T> mTemplateManager = null;
     private Text mTemplateName = null;
     private Text mTemplateDescription = null;
     private Button mTemplateEnabled = null;
@@ -35,7 +35,8 @@ public abstract class AbstractTemplateDialog extends TrayDialog
     /**
      * @param parentShell
      */
-    public AbstractTemplateDialog(Shell parentShell, AbstractTemplateManager templateManager, ITemplate template, boolean create)
+    @SuppressWarnings("unchecked")
+	public AbstractTemplateDialog(Shell parentShell, AbstractTemplateManager<T> templateManager, T template, boolean create)
     {
         super(parentShell);
         setCreate(create);
@@ -45,12 +46,12 @@ public abstract class AbstractTemplateDialog extends TrayDialog
         }
         else {
             mOldTemplate = template;
-            mTemplate = (ITemplate)mOldTemplate.clone();
+            mTemplate = (T)mOldTemplate.clone();
         }
         mTemplateManager = templateManager;
     }
 
-    protected ITemplate getTemplate()
+    protected T getTemplate()
     {
         return mTemplate;
     }
@@ -65,7 +66,8 @@ public abstract class AbstractTemplateDialog extends TrayDialog
         return mCreate;
     }
 
-    public void create()
+    @Override
+	public void create()
     {
         super.create();
         getButton(IDialogConstants.OK_ID).setEnabled(!Common.isEmpty(mTemplateName.getText()));
@@ -74,7 +76,8 @@ public abstract class AbstractTemplateDialog extends TrayDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */
-    protected void configureShell(Shell newShell)
+    @Override
+	protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(getShellTitle());
@@ -84,7 +87,8 @@ public abstract class AbstractTemplateDialog extends TrayDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createDialogArea(Composite parent)
+    @Override
+	protected Control createDialogArea(Composite parent)
     {
         Composite composite = (Composite)super.createDialogArea(parent);
         ((GridLayout)composite.getLayout()).numColumns=2;
@@ -129,7 +133,8 @@ public abstract class AbstractTemplateDialog extends TrayDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         createUpdateTemplate();
         boolean ok;
@@ -146,11 +151,10 @@ public abstract class AbstractTemplateDialog extends TrayDialog
             catch(IOException ioe) {
                 Common.openError(getShell(),ioe.getMessage(), getShellImage());
             }
-            super.okPressed();
         }
     }
 
-    protected abstract ITemplate createTemplate(String name);
+    protected abstract T createTemplate(String name);
     protected abstract String getShellTitle();
     protected abstract Image getShellImage();
 }

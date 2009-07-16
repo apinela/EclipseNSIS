@@ -21,7 +21,8 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
      */
-    public boolean validate(INIKeyValue keyValue, int fixFlag)
+    @Override
+	public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
         return super.validate(keyValue, fixFlag) &&
@@ -40,9 +41,9 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
             INIKeyValue[] keyValues = ((INISection)keyValue.getParent()).findKeyValues(InstallOptionsModel.PROPERTY_LISTITEMS);
             final String validValues;
             if(!Common.isEmptyArray(keyValues)) {
-                Collection allValues = new CaseInsensitiveSet(Common.tokenizeToList(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR,false));
+                Collection<String> allValues = new CaseInsensitiveSet(Common.tokenizeToList(keyValues[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR,false));
                 if(!Common.isEmptyCollection(allValues)) {
-                    ArrayList valuesList = Common.makeList(values);
+                    List<String> valuesList = Common.makeList(values);
                     valuesList.removeAll(allValues);
                     if(valuesList.size() == 0) {
                         return true;
@@ -65,7 +66,8 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
                 INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getFormattedString("valid.selection.error", //$NON-NLS-1$
                                         new String[]{InstallOptionsModel.PROPERTY_STATE,InstallOptionsModel.PROPERTY_LISTITEMS}));
                 problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.invalid.selected.values")) { //$NON-NLS-1$
-                    protected INIProblemFix[] createFixes()
+                    @Override
+					protected INIProblemFix[] createFixes()
                     {
                         return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(validValues)+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                     }

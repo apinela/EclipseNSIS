@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
 {
-    private static ArrayList cProperties = new ArrayList();
+    private static List<String> cProperties = new ArrayList<String>();
 
     static
     {
@@ -52,7 +52,8 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
         mStore.setDefault("overwriteMode", OVERWRITE_ON); //$NON-NLS-1$
     }
 
-    protected String getHelpContextId()
+    @Override
+	protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_filedlg_context"; //$NON-NLS-1$
     }
@@ -64,7 +65,8 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
      * net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog
      * #getProperties()
      */
-    protected List getProperties()
+    @Override
+	protected List<String> getProperties()
     {
         return cProperties;
     }
@@ -76,7 +78,8 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
      * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
      * .Composite)
      */
-    protected Control createControlContents(Composite parent)
+    @Override
+	protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(3, false);
@@ -115,7 +118,8 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
                 true, "wizard.overwrite.label", true, null, false); //$NON-NLS-1$
         gd = (GridData) c2.getLayoutData();
         c2.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("overwriteMode", c2.getSelectionIndex()); //$NON-NLS-1$
             }
@@ -137,7 +141,8 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
         gd.horizontalSpan = 1;
         gd.grabExcessHorizontalSpace = true;
         b1.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("preserveAttributes", b1.getSelection()); //$NON-NLS-1$
             }
@@ -149,7 +154,8 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
         gd.horizontalSpan = 1;
         gd.grabExcessHorizontalSpace = true;
         b2.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("nonFatal", b2.getSelection()); //$NON-NLS-1$
             }
@@ -158,12 +164,14 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
         return composite;
     }
 
-    protected boolean hasRequiredFields()
+    @Override
+	protected boolean hasRequiredFields()
     {
         return true;
     }
 
-    protected String checkForErrors()
+    @Override
+	protected String checkForErrors()
     {
         if (!IOUtility.isValidFile(IOUtility.decodePath(mStore.getString("name")))){ //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name"); //$NON-NLS-1$

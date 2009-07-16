@@ -36,17 +36,20 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
               EclipseNSISPlugin.getResourceString("wizard.template.description")); //$NON-NLS-1$
     }
 
-    protected boolean hasRequiredFields()
+    @Override
+	protected boolean hasRequiredFields()
     {
         return true;
     }
 
-    protected String getHelpContextId()
+    @Override
+	protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_scrtmpltdlg_context"; //$NON-NLS-1$
     }
 
-    protected Control createPageControl(Composite parent)
+    @Override
+	protected Control createPageControl(Composite parent)
     {
         mTemplate = mWizard.getTemplate();
         final Composite composite = new Composite(parent, SWT.NONE);
@@ -105,7 +108,8 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
         data = (GridData)enabled.getLayoutData();
         data.horizontalSpan=2;
         enabled.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 if (mTemplate != null) {
                     mTemplate.setEnabled(((Button)e.widget).getSelection());
@@ -143,7 +147,8 @@ public class NSISWizardTemplatePage extends AbstractNSISWizardStartPage
         return composite;
     }
 
-    public boolean validatePage(int flag)
+    @Override
+	public boolean validatePage(int flag)
     {
         boolean b = !Common.isEmpty(mTemplate != null?mTemplate.getName():""); //$NON-NLS-1$
         if(b) {

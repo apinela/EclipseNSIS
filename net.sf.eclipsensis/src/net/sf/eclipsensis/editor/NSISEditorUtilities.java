@@ -10,34 +10,72 @@
 package net.sf.eclipsensis.editor;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
-import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.console.NSISConsoleLine;
-import net.sf.eclipsensis.editor.codeassist.*;
-import net.sf.eclipsensis.editor.text.*;
-import net.sf.eclipsensis.makensis.*;
+import net.sf.eclipsensis.editor.codeassist.NSISBrowserInformationControlCreator;
+import net.sf.eclipsensis.editor.codeassist.NSISBrowserInformationProvider;
+import net.sf.eclipsensis.editor.codeassist.NSISBrowserUtility;
+import net.sf.eclipsensis.editor.codeassist.NSISHelpInformationControlCreator;
+import net.sf.eclipsensis.editor.codeassist.NSISInformationProvider;
+import net.sf.eclipsensis.editor.text.NSISPartitionScanner;
+import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.makensis.MakeNSISResults;
+import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.script.NSISScriptProblem;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.MRUMap;
+import net.sf.eclipsensis.util.NSISCompileTestUtility;
+import net.sf.eclipsensis.util.NSISHeaderAssociationManager;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.ide.*;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class NSISEditorUtilities
 {
-    private static Map mMarkerAssistants = new MRUMap(10);
-
+    private static Map<String, INSISMarkerAssistant> mMarkerAssistants = new MRUMap<String, INSISMarkerAssistant>(10);
+    
     private NSISEditorUtilities()
     {
     }
@@ -80,20 +118,22 @@ public class NSISEditorUtilities
 
     public static INSISMarkerAssistant getMarkerAssistant(IFile file)
     {
-        INSISMarkerAssistant assistant = (INSISMarkerAssistant)mMarkerAssistants.get(file);
+    	String path = file.getFullPath().toString();
+        INSISMarkerAssistant assistant = mMarkerAssistants.get(path);
         if(assistant == null) {
             assistant = new NSISFileMarkerAssistant(file);
-            mMarkerAssistants.put(file, assistant);
+            mMarkerAssistants.put(path, assistant);
         }
         return assistant;
     }
 
     public static INSISMarkerAssistant getMarkerAssistant(File file)
     {
-        INSISMarkerAssistant assistant = (INSISMarkerAssistant)mMarkerAssistants.get(file);
+    	String path = file.getAbsolutePath();
+        INSISMarkerAssistant assistant = mMarkerAssistants.get(path);
         if(assistant == null) {
             assistant = new NSISExternalFileMarkerAssistant(file);
-            mMarkerAssistants.put(file, assistant);
+            mMarkerAssistants.put(path, assistant);
         }
         return assistant;
     }
@@ -243,9 +283,9 @@ public class NSISEditorUtilities
 
     public static void refreshEditorOutlines(IFile file)
     {
-        List editors = NSISEditorUtilities.findEditors(file);
+        List<IEditorPart> editors = NSISEditorUtilities.findEditors(file);
         if(!Common.isEmptyCollection(editors)) {
-            for (Iterator iterator = editors.iterator(); iterator.hasNext();) {
+            for (Iterator<IEditorPart> iterator = editors.iterator(); iterator.hasNext();) {
                 NSISEditorUtilities.refreshOutline((NSISEditor)iterator.next());
             }
         }
@@ -253,9 +293,9 @@ public class NSISEditorUtilities
 
     public static void refreshEditorOutlines(IPath path)
     {
-        List editors = NSISEditorUtilities.findEditors(path);
+        List<IEditorPart> editors = NSISEditorUtilities.findEditors(path);
         if(!Common.isEmptyCollection(editors)) {
-            for (Iterator iterator = editors.iterator(); iterator.hasNext();) {
+            for (Iterator<IEditorPart> iterator = editors.iterator(); iterator.hasNext();) {
                 NSISEditorUtilities.refreshOutline((NSISEditor)iterator.next());
             }
         }
@@ -278,7 +318,7 @@ public class NSISEditorUtilities
 
     public static void updatePresentations()
     {
-        final Collection editors = new ArrayList();
+        final Collection<NSISEditor> editors = new ArrayList<NSISEditor>();
         IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
         for (int i = 0; i < windows.length; i++) {
             IWorkbenchPage[] pages = windows[i].getPages();
@@ -300,8 +340,8 @@ public class NSISEditorUtilities
                 {
                     try {
                         monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.presentation.message"),editors.size()); //$NON-NLS-1$
-                        for(Iterator iter=editors.iterator(); iter.hasNext(); ) {
-                            ((NSISEditor)iter.next()).updatePresentation();
+                        for(Iterator<NSISEditor> iter=editors.iterator(); iter.hasNext(); ) {
+                            iter.next().updatePresentation();
                             monitor.worked(1);
                         }
                     }
@@ -314,9 +354,9 @@ public class NSISEditorUtilities
         }
     }
 
-    public static List findEditors(IPath path)
+    public static List<IEditorPart> findEditors(IPath path)
     {
-        List editors = new ArrayList();
+        List<IEditorPart> editors = new ArrayList<IEditorPart>();
         IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
         for (int i = 0; i < windows.length; i++) {
             IWorkbenchPage[] pages = windows[i].getPages();
@@ -336,9 +376,9 @@ public class NSISEditorUtilities
         return editors;
     }
 
-    public static List findEditors(IFile file)
+    public static List<IEditorPart> findEditors(IFile file)
     {
-        List editors = new ArrayList();
+        List<IEditorPart> editors = new ArrayList<IEditorPart>();
         IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
         for (int i = 0; i < windows.length; i++) {
             IWorkbenchPage[] pages = windows[i].getPages();
@@ -362,7 +402,8 @@ public class NSISEditorUtilities
     {
         if(file != null) {
             Runnable r = new Runnable() {
-                public void run()
+                @SuppressWarnings("null")
+				public void run()
                 {
                     IWorkbenchPage p = null;
                     if(page == null) {
@@ -383,7 +424,7 @@ public class NSISEditorUtilities
                     IFile[] files = null;
                     String ext = file.getFileExtension();
                     if(Common.stringsAreEqual(INSISConstants.NSI_EXTENSION,ext,true)) {
-                        files = (IFile[])NSISHeaderAssociationManager.getInstance().getAssociatedHeaders(file).toArray(new IFile[0]);
+                        files = NSISHeaderAssociationManager.getInstance().getAssociatedHeaders(file).toArray(new IFile[0]);
                     }
                     else if(Common.stringsAreEqual(INSISConstants.NSH_EXTENSION,ext,true)) {
                         files = new IFile[] {NSISHeaderAssociationManager.getInstance().getAssociatedScript(file)};
@@ -486,7 +527,7 @@ public class NSISEditorUtilities
                             return markers;
                         }
                         if(!Common.isEmptyArray(markers)) {
-                            List list = new ArrayList();
+                            List<IMarker> list = new ArrayList<IMarker>();
                             for (int i = 0; i < markers.length; i++) {
                                 int start = markers[i].getAttribute(IMarker.CHAR_START,-1);
                                 int end = markers[i].getAttribute(IMarker.CHAR_END,-1);
@@ -497,7 +538,7 @@ public class NSISEditorUtilities
                                     }
                                 }
                             }
-                            return (IMarker[])list.toArray(new IMarker[list.size()]);
+                            return list.toArray(new IMarker[list.size()]);
                         }
                     }
                     catch (CoreException e) {
@@ -508,12 +549,12 @@ public class NSISEditorUtilities
             else {
                 MakeNSISResults results = NSISCompileTestUtility.INSTANCE.getCachedResults(new File(path.toOSString()));
                 if(results != null) {
-                    List problems = results.getProblems();
+                    List<NSISScriptProblem> problems = results.getProblems();
                     if(!Common.isEmptyCollection(problems)) {
-                        List list;
-                        list = new ArrayList();
-                        for (Iterator iterator = problems.iterator(); iterator.hasNext();) {
-                            NSISScriptProblem problem = (NSISScriptProblem)iterator.next();
+                        List<IMarker> list;
+                        list = new ArrayList<IMarker>();
+                        for (Iterator<NSISScriptProblem> iterator = problems.iterator(); iterator.hasNext();) {
+                            NSISScriptProblem problem = iterator.next();
                             IMarker marker = problem.getMarker();
                             if(marker != null) {
                                 if(region == null) {
@@ -531,7 +572,7 @@ public class NSISEditorUtilities
                                 }
                             }
                         }
-                        return (IMarker[])list.toArray(new IMarker[list.size()]);
+                        return list.toArray(new IMarker[list.size()]);
                     }
                 }
             }
@@ -639,7 +680,8 @@ public class NSISEditorUtilities
         /* (non-Javadoc)
          * @see org.eclipse.core.resources.IMarker#getAttributes()
          */
-        public Map getAttributes()
+        @SuppressWarnings("unchecked")
+		public Map getAttributes()
         {
             return null;
         }
@@ -720,7 +762,8 @@ public class NSISEditorUtilities
         /* (non-Javadoc)
          * @see org.eclipse.core.resources.IMarker#setAttributes(java.util.Map)
          */
-        public void setAttributes(Map attributes)
+        @SuppressWarnings("unchecked")
+		public void setAttributes(Map attributes)
         {
         }
 
@@ -734,7 +777,8 @@ public class NSISEditorUtilities
         /* (non-Javadoc)
          * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
          */
-        public Object getAdapter(Class adapter)
+        @SuppressWarnings("unchecked")
+		public Object getAdapter(Class adapter)
         {
             return null;
         }

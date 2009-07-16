@@ -52,14 +52,14 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
     private NSISConsoleOutputStream mErrorStream;
 
     private NSISConsolePartitioner mPartitioner;
-    private List mPending = new ArrayList();
+    private List<NSISConsoleLine> mPending = new ArrayList<NSISConsoleLine>();
     private boolean mVisible = false;
     private boolean mInitialized = false;
     private IPreferenceStore mPreferenceStore;
 
     private AnnotationModel mAnnotationModel;
     private int mOffset;
-    private List mPendingAnnotations = new ArrayList();
+    private List<NSISConsoleAnnotation> mPendingAnnotations = new ArrayList<NSISConsoleAnnotation>();
 
     private IConsoleListener mLifecycleListener = new IConsoleListener() {
         public void consolesAdded(IConsole[] consoles)
@@ -105,7 +105,8 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         return mAnnotationModel;
     }
 
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
         Display.getDefault().asyncExec(new Runnable() {
@@ -128,8 +129,8 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
             public IStatus run(IProgressMonitor monitor)
             {
                 int offset = getDocument().getLength();
-                for(ListIterator iter = mPendingAnnotations.listIterator(); iter.hasNext(); ) {
-                    NSISConsoleAnnotation annotation = (NSISConsoleAnnotation)iter.next();
+                for(ListIterator<NSISConsoleAnnotation> iter = mPendingAnnotations.listIterator(); iter.hasNext(); ) {
+                    NSISConsoleAnnotation annotation = iter.next();
                     Position pos = annotation.getPosition();
                     if(pos.overlapsWith(0, offset) && !pos.includes(offset)) {
                         mAnnotationModel.addAnnotation(annotation, pos);
@@ -176,8 +177,8 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
     {
         synchronized(mPending) {
             mVisible = true;
-            for (Iterator iter = mPending.iterator(); iter.hasNext();) {
-                NSISConsoleLine line = (NSISConsoleLine)iter.next();
+            for (Iterator<NSISConsoleLine> iter = mPending.iterator(); iter.hasNext();) {
+                NSISConsoleLine line = iter.next();
                 appendLine(line);
                 iter.remove();
             }
@@ -220,7 +221,8 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         }
     }
 
-    protected void dispose()
+    @Override
+	protected void dispose()
     {
         // Here we can't call super.dispose() because we actually want the partitioner to remain
         // connected, but we won't show lines until the console is added to the console manager
@@ -304,12 +306,14 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         }
     }
 
-    public IPageBookViewPage createPage(IConsoleView view)
+    @Override
+	public IPageBookViewPage createPage(IConsoleView view)
     {
         return new NSISConsolePage(this, view);
     }
 
-    protected IConsoleDocumentPartitioner getPartitioner()
+    @Override
+	protected IConsoleDocumentPartitioner getPartitioner()
     {
         return mPartitioner;
     }
@@ -334,7 +338,8 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         mPartitioner.setWaterMarks(low, high);
     }
 
-    public void clearConsole()
+    @Override
+	public void clearConsole()
     {
         synchronized (mPending) {
             if (mPartitioner != null) {

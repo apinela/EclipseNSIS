@@ -57,7 +57,8 @@ public class NSISConfigWizardNode implements IWizardNode, IPluginContribution
                 new Runnable() {
                     public void run() {
                         SafeRunner.run(new SafeRunnable() {
-                            public void handleException(Throwable e) {
+                            @Override
+							public void handleException(Throwable e) {
                                 statuses[0] = new Status(IStatus.ERROR, getPluginId(), IStatus.OK,
                                         e.getMessage() == null ? "" : e.getMessage(), e); //$NON-NLS-1$,
                             }

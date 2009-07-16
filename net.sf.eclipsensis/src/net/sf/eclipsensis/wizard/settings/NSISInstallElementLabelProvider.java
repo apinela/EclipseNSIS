@@ -53,7 +53,8 @@ public class NSISInstallElementLabelProvider extends CellLabelProvider
         }
     }
 
-    public boolean isLabelProperty(Object element, String property) {
+    @Override
+	public boolean isLabelProperty(Object element, String property) {
         if(element instanceof INSISInstallElement) {
             return false;
         }
@@ -69,13 +70,15 @@ public class NSISInstallElementLabelProvider extends CellLabelProvider
         if(image2 == null) {
             EclipseNSISPlugin.getImageManager().putImageDescriptor(name,
                     new CompositeImageDescriptor(){
-                        protected void drawCompositeImage(int width, int height)
+                        @Override
+						protected void drawCompositeImage(int width, int height)
                         {
                             drawImage(image.getImageData(),0,0);
                             drawImage(cErrorImageData,0,getSize().y-cErrorImageData.height);
                         }
 
-                        protected Point getSize()
+                        @Override
+						protected Point getSize()
                         {
                             return new Point(image.getBounds().width,image.getBounds().height);
                         }
@@ -85,22 +88,26 @@ public class NSISInstallElementLabelProvider extends CellLabelProvider
         return image2;
     }
 
-    public String getToolTipText(Object element)
+    @Override
+	public String getToolTipText(Object element)
     {
         return (element instanceof INSISInstallElement?((INSISInstallElement)element).getError():null);
     }
 
-    public Image getToolTipImage(Object element)
+    @Override
+	public Image getToolTipImage(Object element)
     {
         return (element instanceof INSISInstallElement?(((INSISInstallElement)element).getError()!= null?cErrorImage:null):null);
     }
 
-    public boolean useNativeToolTip(Object object)
+    @Override
+	public boolean useNativeToolTip(Object object)
     {
         return false;
     }
 
-    public void update(ViewerCell cell)
+    @Override
+	public void update(ViewerCell cell)
     {
         cell.setImage(getImage(cell.getElement()));
         cell.setText(getText(cell.getElement()));

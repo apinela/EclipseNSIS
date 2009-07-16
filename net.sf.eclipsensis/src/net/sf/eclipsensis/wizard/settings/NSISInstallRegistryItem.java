@@ -78,7 +78,8 @@ public abstract class NSISInstallRegistryItem extends AbstractNSISInstallItem
         setSubKeyInternal(subKey);
     }
 
-    public String doValidate()
+    @Override
+	public String doValidate()
     {
         if(getRootKey() < 0) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.root.key.error"); //$NON-NLS-1$

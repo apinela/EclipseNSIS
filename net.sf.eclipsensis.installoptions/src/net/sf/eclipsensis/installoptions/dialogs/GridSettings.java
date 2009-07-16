@@ -25,7 +25,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
 {
     public static final String[][] GRID_STYLE_CONTENTS = {{GRID_STYLE_LINES,InstallOptionsPlugin.getResourceString("grid.settings.grid.style.lines.name")},{GRID_STYLE_DOTS,InstallOptionsPlugin.getResourceString("grid.settings.grid.style.dots.name")}}; //$NON-NLS-1$ //$NON-NLS-2$
 
-    private Map mSettings = null;
+    private Map<String,Object> mSettings = null;
     private Text mGridSpacingWidth;
     private Text mGridSpacingHeight;
     private Text mGridOriginX;
@@ -39,14 +39,14 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
      * @param parent
      * @param style
      */
-    public GridSettings(Composite parent, Map settings)
+    public GridSettings(Composite parent, Map<String,Object> settings)
     {
         super(parent, SWT.NONE);
 		initialize();
         setSettings(settings);
     }
 
-    public void setSettings(Map settings)
+    public void setSettings(Map<String,Object> settings)
     {
         mSettings = settings;
         Dimension d = null;
@@ -129,7 +129,8 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         mGridSpacingWidth.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mGridSpacingWidth.addVerifyListener(mPositiveNumberVerifyListener);
         mGridSpacingWidth.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e)
+            @Override
+			public void focusLost(FocusEvent e)
             {
                 String text = mGridSpacingWidth.getText();
                 if(Common.isEmpty(text)) {
@@ -145,7 +146,8 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         mGridSpacingHeight.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mGridSpacingHeight.addVerifyListener(mPositiveNumberVerifyListener);
         mGridSpacingHeight.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e)
+            @Override
+			public void focusLost(FocusEvent e)
             {
                 String text = mGridSpacingHeight.getText();
                 if(Common.isEmpty(text)) {
@@ -166,7 +168,8 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         mGridOriginX.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mGridOriginX.addVerifyListener(mNumberVerifyListener);
         mGridOriginX.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e)
+            @Override
+			public void focusLost(FocusEvent e)
             {
                 String text = mGridOriginX.getText();
                 if(Common.isEmpty(text)) {
@@ -183,7 +186,8 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         mGridOriginY.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mGridOriginY.addVerifyListener(mNumberVerifyListener);
         mGridOriginY.addFocusListener(new FocusAdapter() {
-            public void focusLost(FocusEvent e)
+            @Override
+			public void focusLost(FocusEvent e)
             {
                 String text = mGridOriginY.getText();
                 if(Common.isEmpty(text)) {
@@ -205,7 +209,8 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         mGridStyleViewer = new ComboViewer(mGridStyle);
         mGridStyleViewer.setContentProvider(new ArrayContentProvider());
         mGridStyleViewer.setLabelProvider(new LabelProvider() {
-            public String getText(Object element)
+            @Override
+			public String getText(Object element)
             {
                 return ((String[])element)[1];
             }

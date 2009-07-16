@@ -16,7 +16,7 @@ import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
-public class NSISWizardTemplateDialog extends AbstractTemplateDialog
+public class NSISWizardTemplateDialog extends AbstractTemplateDialog<NSISWizardTemplate>
 {
     private NSISWizardSettings mSettings = null;
 
@@ -29,24 +29,28 @@ public class NSISWizardTemplateDialog extends AbstractTemplateDialog
         mSettings = settings;
     }
 
-    protected ITemplate createTemplate(String name)
+    @Override
+	protected NSISWizardTemplate createTemplate(String name)
     {
         return new NSISWizardTemplate(name);
     }
 
-    protected void createUpdateTemplate()
+    @Override
+	protected void createUpdateTemplate()
     {
         super.createUpdateTemplate();
-        NSISWizardTemplate template = (NSISWizardTemplate)getTemplate();
+        NSISWizardTemplate template = getTemplate();
         template.setSettings(mSettings);
     }
 
-    protected Image getShellImage()
+    @Override
+	protected Image getShellImage()
     {
         return EclipseNSISPlugin.getShellImage();
     }
 
-    protected String getShellTitle()
+    @Override
+	protected String getShellTitle()
     {
         return EclipseNSISPlugin.getResourceString("wizard.template.dialog.title"); //$NON-NLS-1$
     }

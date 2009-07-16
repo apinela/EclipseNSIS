@@ -26,7 +26,8 @@ public class ToggleLockCommand extends Command
         setLabel(InstallOptionsPlugin.getResourceString((mShouldLock?"lock.command.name":"unlock.command.name"))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         setLocked(mShouldLock);
     }
@@ -38,7 +39,8 @@ public class ToggleLockCommand extends Command
         }
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         setLocked(!mShouldLock);
     }

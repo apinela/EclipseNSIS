@@ -9,26 +9,30 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit.text;
 
-import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditManager;
+
 import net.sf.eclipsensis.installoptions.figures.TextFigure;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.util.NumberVerifyListener;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 
-public class InstallOptionsTextEditManager extends InstallOptionsEditableElementEditManager
+
+public class InstallOptionsTextEditManager extends InstallOptionsGenericTextEditManager
 {
-    public InstallOptionsTextEditManager(GraphicalEditPart source, Class editorType, CellEditorLocator locator)
+    public InstallOptionsTextEditManager(GraphicalEditPart source, Class<TextCellEditor> editorType, CellEditorLocator locator)
     {
         super(source, editorType, locator);
     }
 
-    protected String getInitialText(InstallOptionsWidget control)
+    @Override
+	protected String getInitialText(InstallOptionsWidget control)
     {
         String text = super.getInitialText(control);
         if(control.getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) &&
@@ -38,7 +42,8 @@ public class InstallOptionsTextEditManager extends InstallOptionsEditableElement
         return text;
     }
 
-    protected CellEditor createCellEditor(Composite composite)
+    @Override
+	protected TextCellEditor createCellEditor(Composite composite)
     {
         TextCellEditor cellEditor = (TextCellEditor)super.createCellEditor(composite);
         TextFigure figure = (TextFigure)getEditPart().getFigure();
@@ -48,7 +53,8 @@ public class InstallOptionsTextEditManager extends InstallOptionsEditableElement
         return cellEditor;
     }
 
-    protected int getCellEditorStyle()
+    @Override
+	protected int getCellEditorStyle()
     {
         TextFigure figure = (TextFigure)getEditPart().getFigure();
         int style = SWT.LEFT;

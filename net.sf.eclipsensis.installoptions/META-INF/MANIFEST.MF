@@ -66,6 +66,4 @@ Export-Package: net.sf.eclipsensis.installoptions,
  net.sf.eclipsensis.installoptions.util,
  net.sf.eclipsensis.installoptions.wizard
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.4,
- J2SE-1.5,
- JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

@@ -19,6 +19,7 @@ import org.eclipse.gef.rulers.RulerProvider;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 
+@SuppressWarnings("restriction")
 public class InstallOptionsRulerFigure extends RulerFigure
 {
     private double mDPU = -1.0;
@@ -29,12 +30,14 @@ public class InstallOptionsRulerFigure extends RulerFigure
         super(isHorizontal, measurementUnit);
     }
 
-    public int getUnit()
+    @Override
+	public int getUnit()
     {
         return mUnit;
     }
 
-    public void setUnit(int newUnit)
+    @Override
+	public void setUnit(int newUnit)
     {
         if (mUnit != newUnit) {
             mUnit = newUnit;
@@ -43,7 +46,8 @@ public class InstallOptionsRulerFigure extends RulerFigure
         }
     }
 
-    protected void handleZoomChanged()
+    @Override
+	protected void handleZoomChanged()
     {
         mDPU = -1.0;
         repaint();
@@ -53,13 +57,15 @@ public class InstallOptionsRulerFigure extends RulerFigure
     /* (non-Javadoc)
      * @see org.eclipse.draw2d.Figure#invalidate()
      */
-    public void invalidate()
+    @Override
+	public void invalidate()
     {
         super.invalidate();
         mDPU = -1.0;
     }
 
-    protected double getDPU()
+    @Override
+	protected double getDPU()
     {
         if (mDPU <= 0) {
             if (getUnit() == RulerProvider.UNIT_PIXELS) {

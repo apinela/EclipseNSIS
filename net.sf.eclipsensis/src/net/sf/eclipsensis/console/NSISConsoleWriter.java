@@ -22,8 +22,8 @@ public class NSISConsoleWriter implements Runnable
     private INSISConsole mConsole = null;
     private InputStream mInputStream = null;
     private INSISConsoleLineProcessor mLineProcessor = null;
-    private List mErrors = new ArrayList();
-    private List mWarnings = new ArrayList();
+    private List<NSISConsoleLine> mErrors = new ArrayList<NSISConsoleLine>();
+    private List<NSISConsoleLine> mWarnings = new ArrayList<NSISConsoleLine>();
     private boolean mRunning = false;
 
     public NSISConsoleWriter(MakeNSISProcess process, INSISConsole console, InputStream inputStream, INSISConsoleLineProcessor lineProcessor)
@@ -96,12 +96,12 @@ public class NSISConsoleWriter implements Runnable
         }
     }
 
-    public List getErrors()
+    public List<NSISConsoleLine> getErrors()
     {
         return mErrors;
     }
 
-    public List getWarnings()
+    public List<NSISConsoleLine> getWarnings()
     {
         return mWarnings;
     }

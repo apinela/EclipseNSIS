@@ -11,7 +11,6 @@ package net.sf.eclipsensis.util;
 
 import java.net.Authenticator;
 
-import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog.RegistryValue;
 
 public class WinAPI
 {

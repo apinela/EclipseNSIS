@@ -28,7 +28,8 @@ public class ChangeTypeCommand extends DeleteCommand
         return mNewChild;
     }
 
-    public void redo()
+    @Override
+	public void redo()
     {
         detachFromGuides(mChild);
         mIndex = mChild.getIndex();
@@ -40,12 +41,14 @@ public class ChangeTypeCommand extends DeleteCommand
         }
     }
 
-    public void execute()
+    @Override
+	public void execute()
     {
         redo();
     }
 
-    public void undo()
+    @Override
+	public void undo()
     {
         Position oldPos = mChild.getPosition();
         Position newPos = mNewChild.getPosition();

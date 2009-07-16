@@ -20,13 +20,15 @@ public class VersionStringParam extends RegexpParam
         super(node);
     }
 
-    protected void init(Node node)
+    @Override
+	protected void init(Node node)
     {
         super.init(node);
         setAcceptVar(false);
     }
 
-    protected String getRegexp()
+    @Override
+	protected String getRegexp()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(isAcceptSymbol()) {
@@ -36,12 +38,14 @@ public class VersionStringParam extends RegexpParam
         return buf.toString();
     }
 
-    protected String getValidateErrorMessage()
+    @Override
+	protected String getValidateErrorMessage()
     {
         return EclipseNSISPlugin.getResourceString("version.string.param.error"); //$NON-NLS-1$
     }
 
-    public boolean verifyText(String text)
+    @Override
+	public boolean verifyText(String text)
     {
         if(text != null && text.length() > 0) {
             if((isAcceptSymbol() && text.charAt(0)=='$')) {

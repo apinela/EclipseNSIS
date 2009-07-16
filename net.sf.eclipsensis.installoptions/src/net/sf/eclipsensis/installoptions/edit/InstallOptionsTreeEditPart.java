@@ -9,18 +9,24 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit;
 
-import java.beans.*;
-import java.util.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.gef.*;
+import org.eclipse.gef.EditPart;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractTreeEditPart;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements PropertyChangeListener
 {
@@ -35,7 +41,8 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
         super(model);
     }
 
-    public void activate()
+    @Override
+	public void activate()
     {
         super.activate();
         InstallOptionsElement element = getInstallOptionsElement();
@@ -47,14 +54,16 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
     /**
      * Creates and installs pertinent EditPolicies for this.
      */
-    protected void createEditPolicies()
+    @Override
+	protected void createEditPolicies()
     {
         EditPolicy component = new InstallOptionsEditPolicy();
         installEditPolicy(EditPolicy.COMPONENT_ROLE, component);
         installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new InstallOptionsTreeEditPolicy());
     }
 
-    public void deactivate()
+    @Override
+	public void deactivate()
     {
         InstallOptionsElement element = getInstallOptionsElement();
         if(element != null) {
@@ -79,9 +88,10 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
      *
      * @return <code>null</code>
      */
-    protected List getModelChildren()
+    @Override
+	protected List<InstallOptionsWidget> getModelChildren()
     {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     public void propertyChange(final PropertyChangeEvent change)
@@ -121,7 +131,8 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
         refreshVisuals();
     }
 
-    protected void replaceChild(EditPart oldChild, EditPart newChild)
+    @SuppressWarnings("unchecked")
+	protected void replaceChild(EditPart oldChild, EditPart newChild)
     {
         Assert.isNotNull(oldChild);
         Assert.isNotNull(newChild);
@@ -157,10 +168,11 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
      * @param property
      *            Property to be refreshed.
      */
-    protected void refreshVisuals()
+    @Override
+	protected void refreshVisuals()
     {
         if (getWidget() instanceof Tree) {
-            for(Iterator iter = getChildren().iterator(); iter.hasNext();) {
+            for(Iterator<?> iter = getChildren().iterator(); iter.hasNext();) {
                 ((InstallOptionsTreeEditPart)iter.next()).refreshVisuals();
             }
         }

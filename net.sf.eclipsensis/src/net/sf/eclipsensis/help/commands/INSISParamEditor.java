@@ -25,9 +25,9 @@ public interface INSISParamEditor
 
     public void appendText(StringBuffer buf);
 
-    public void setDependents(List dependents);
+    public void setDependents(List<INSISParamEditor> dependents);
 
-    public List getDependents();
+    public List<INSISParamEditor> getDependents();
 
     public void setEnabled(boolean enabled);
 
@@ -35,9 +35,9 @@ public interface INSISParamEditor
 
     public NSISParam getParam();
 
-    public Map getSettings();
+    public Map<String,Object> getSettings();
 
-    public void setSettings(Map settings);
+    public void setSettings(Map<String,Object> settings);
 
     public void saveSettings();
 
@@ -45,7 +45,7 @@ public interface INSISParamEditor
 
     public INSISParamEditor getParentEditor();
 
-    public List getChildEditors();
+    public List<INSISParamEditor> getChildEditors();
 
     public void dispose();
 

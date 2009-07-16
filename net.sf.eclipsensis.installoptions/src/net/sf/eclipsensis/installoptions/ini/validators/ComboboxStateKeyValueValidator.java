@@ -35,7 +35,8 @@ public class ComboboxStateKeyValueValidator implements IINIKeyValueValidator
                 else {
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, error);
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.selected.value")) { //$NON-NLS-1$
-                        protected INIProblemFix[] createFixes()
+                        @Override
+						protected INIProblemFix[] createFixes()
                         {
                             return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(array[0])+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                         }

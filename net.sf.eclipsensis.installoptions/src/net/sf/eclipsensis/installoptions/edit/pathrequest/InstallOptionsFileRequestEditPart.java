@@ -18,6 +18,7 @@ import net.sf.eclipsensis.installoptions.model.commands.ModifyFilterCommand;
 import net.sf.eclipsensis.installoptions.properties.dialogs.FileFilterDialog;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
+import net.sf.eclipsensis.installoptions.util.FileFilter;
 
 import org.eclipse.gef.commands.Command;
 import org.eclipse.jface.window.Window;
@@ -47,7 +48,9 @@ public class InstallOptionsFileRequestEditPart extends InstallOptionsPathRequest
 
     };
 
-    public Object getAdapter(Class key)
+    @SuppressWarnings("unchecked")
+	@Override
+	public Object getAdapter(Class key)
     {
         if(IExtendedEditSupport.class.equals(key)) {
             return mExtendedEditSupport;
@@ -55,32 +58,39 @@ public class InstallOptionsFileRequestEditPart extends InstallOptionsPathRequest
         return super.getAdapter(key);
     }
 
-    protected String getDirectEditLabelProperty()
+    @Override
+	protected String getDirectEditLabelProperty()
     {
         return "filerequest.direct.edit.label"; //$NON-NLS-1$
     }
 
-    protected String getExtendedEditLabelProperty()
+    @Override
+	protected String getExtendedEditLabelProperty()
     {
         return "filerequest.extended.edit.label"; //$NON-NLS-1$
     }
 
-    protected String getTypeName()
+    @Override
+	protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("filerequest.type.name"); //$NON-NLS-1$
     }
 
-    protected void createEditPolicies()
+    @Override
+	protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsExtendedEditPolicy(this) {
-            protected Command getExtendedEditCommand(ExtendedEditRequest request)
+            @SuppressWarnings("unchecked")
+			@Override
+			protected Command getExtendedEditCommand(ExtendedEditRequest request)
             {
-                ModifyFilterCommand command = new ModifyFilterCommand((InstallOptionsFileRequest)request.getEditPart().getModel(), (List)request.getNewValue());
+                ModifyFilterCommand command = new ModifyFilterCommand((InstallOptionsFileRequest)request.getEditPart().getModel(), (List<FileFilter>)request.getNewValue());
                 return command;
             }
 
-            protected String getExtendedEditProperty()
+            @Override
+			protected String getExtendedEditProperty()
             {
                 return InstallOptionsModel.PROPERTY_FILTER;
             }

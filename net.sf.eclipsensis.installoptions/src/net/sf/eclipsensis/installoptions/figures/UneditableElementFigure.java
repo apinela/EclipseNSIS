@@ -28,7 +28,8 @@ public abstract class UneditableElementFigure extends SWTControlFigure implement
         super(parent, propertySource);
     }
 
-    protected void init(IPropertySource propertySource)
+    @Override
+	protected void init(IPropertySource propertySource)
     {
         setText((String)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TEXT));
         super.init(propertySource);
@@ -44,12 +45,14 @@ public abstract class UneditableElementFigure extends SWTControlFigure implement
         mText = text;
     }
 
-    protected boolean supportsScrollBars()
+    @Override
+	protected boolean supportsScrollBars()
     {
         return true;
     }
 
-    protected final Control createSWTControl(Composite parent, int style)
+    @Override
+	protected final Control createSWTControl(Composite parent, int style)
     {
         Control control = createUneditableSWTControl(parent, style);
         createScrollBars(control);

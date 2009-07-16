@@ -40,7 +40,8 @@ public class NSISScrollTipHelper
                     mSelAdapter = new SelectionAdapter() {
                         private Label mLabel = null;
 
-                        public void widgetSelected(SelectionEvent e)
+                        @Override
+						public void widgetSelected(SelectionEvent e)
                         {
                             switch(e.detail) {
                                 case SWT.NONE:

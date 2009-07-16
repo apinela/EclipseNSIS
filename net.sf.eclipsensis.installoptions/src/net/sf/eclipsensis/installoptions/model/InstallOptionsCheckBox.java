@@ -40,7 +40,8 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
         super(section);
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("stateDefault"); //$NON-NLS-1$
@@ -48,20 +49,23 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
         skippedProperties.add("stateData"); //$NON-NLS-1$
     }
 
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
         mState = null;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
     	InstallOptionsCheckBox clone = (InstallOptionsCheckBox)super.clone();
         clone.setState(getState());
         return clone;
     }
 
-    protected void addPropertyName(List list, String setting)
+    @Override
+	protected void addPropertyName(List<String> list, String setting)
     {
         if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
             list.add(InstallOptionsModel.PROPERTY_STATE);
@@ -71,7 +75,8 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
         }
     }
 
-    public Object getPropertyValue(Object propName)
+    @Override
+	public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_STATE.equals(propName)) {
             return getState();
@@ -79,7 +84,8 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
         return super.getPropertyValue(propName);
     }
 
-    public void setPropertyValue(Object id, Object value)
+    @Override
+	public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_STATE)) {
             setState((Integer)value);
@@ -104,22 +110,26 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
         }
     }
 
-    public String getType()
+    @Override
+	public String getType()
     {
         return InstallOptionsModel.TYPE_CHECKBOX;
     }
 
-    protected Position getDefaultPosition()
+    @Override
+	protected Position getDefaultPosition()
     {
         return new Position(0,0,65,10);
     }
 
-    protected String getDefaultText()
+    @Override
+	protected String getDefaultText()
     {
         return InstallOptionsPlugin.getResourceString("checkbox.text.default"); //$NON-NLS-1$
     }
 
-    protected IPropertyDescriptor createPropertyDescriptor(String name)
+    @Override
+	protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$
@@ -157,12 +167,14 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
         return STATE_DATA;
     }
 
-    protected IPropertySectionCreator createPropertySectionCreator()
+    @Override
+	protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new CheckBoxPropertySectionCreator(this);
     }
 
-    protected TypeConverter loadTypeConverter(String property, Object value)
+    @Override
+	protected TypeConverter<?> loadTypeConverter(String property, Object value)
 	{
         if (InstallOptionsModel.PROPERTY_STATE.equals(property)) {
             if(value instanceof String) {

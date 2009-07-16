@@ -36,7 +36,8 @@ public class FilterKeyValueValidator implements IINIKeyValueValidator
                                                             InstallOptionsPlugin.getFormattedString("filter.value.error", //$NON-NLS-1$
                                                                     new Object[]{keyValue.getKey()}));
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.filter.value")) { //$NON-NLS-1$
-                        protected INIProblemFix[] createFixes()
+                        @Override
+						protected INIProblemFix[] createFixes()
                         {
                             StringBuffer buf = new StringBuffer(keyValue.getText());
                             if(n == 0) {

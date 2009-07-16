@@ -9,8 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
@@ -44,7 +48,7 @@ public class RunnableInputStreamReader implements Runnable
     public synchronized String[] getOutput()
     {
         if(mOutput == null) {
-            ArrayList output = new ArrayList();
+            List<String> output = new ArrayList<String>();
             BufferedReader br = new BufferedReader(new InputStreamReader(mInputStream));
             try {
                 String line = br.readLine();
@@ -61,7 +65,7 @@ public class RunnableInputStreamReader implements Runnable
             finally {
                 IOUtility.closeIO(br);
             }
-            mOutput = (String[])output.toArray(Common.EMPTY_STRING_ARRAY);
+            mOutput = output.toArray(Common.EMPTY_STRING_ARRAY);
         }
         return mOutput;
     }

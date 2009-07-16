@@ -21,7 +21,8 @@ public class NSISWizardDialog extends AbstractNSISWizardDialog
         super(parentShell, wizard);
     }
 
-    protected String getHelpContextId()
+    @Override
+	protected String getHelpContextId()
     {
         return ((NSISWizard)getWizard()).getHelpContextId();
     }

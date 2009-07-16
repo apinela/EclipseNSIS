@@ -28,14 +28,16 @@ public class InstallOptionsLinkExtendedEditPolicy extends InstallOptionsExtended
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy#getExtendedEditCommand(net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest)
      */
-    protected Command getExtendedEditCommand(ExtendedEditRequest request)
+    @Override
+	protected Command getExtendedEditCommand(ExtendedEditRequest request)
     {
         ModifyTxtColorCommand command = new ModifyTxtColorCommand((InstallOptionsLink)request.getEditPart().getModel(),
                                                                               (RGB)request.getNewValue());
         return command;
     }
 
-    protected String getExtendedEditProperty()
+    @Override
+	protected String getExtendedEditProperty()
     {
         return InstallOptionsModel.PROPERTY_TXTCOLOR;
     }

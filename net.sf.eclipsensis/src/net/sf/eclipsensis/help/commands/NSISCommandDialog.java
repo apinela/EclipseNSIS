@@ -89,7 +89,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     private static final int MIN_WINDOW_HEIGHT = 400;
     private static final int MIN_WINDOW_WIDTH = 350;
     private static final String SETTING_COLLAPSE_HELP = "collapseHelp"; //$NON-NLS-1$
-    private static Map cCommandStateMap;
+    private static Map<String, Map<String, Object>> cCommandStateMap;
     private static final Object JOB_FAMILY = new Object();
     private static final String STYLE_LINK;
     private static final String NEW_STYLE_LINK = "<style type=\"text/css\">body { text: #000000; background-color: #FFFFFF} pre { background-color: #F7F7F7} a { color: #567599} a:hover { background-color: #F4F4F4}</style>";
@@ -97,7 +97,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     private NSISCommand mCommand;
 
     private Control mParamEditorControl;
-    private Map mSettings = null;
+    private Map<String, Object> mSettings = null;
     private boolean mCollapseHelp = false;
     private IDialogSettings mDialogSettings = null;
 
@@ -117,7 +117,7 @@ public class NSISCommandDialog extends StatusMessageDialog
                 {
                     try
                     {
-                        cCommandStateMap = (Map) IOUtility.readObject(stateLocation);
+                        cCommandStateMap = IOUtility.readObject(stateLocation);
                     }
                     catch (Exception e)
                     {
@@ -127,7 +127,7 @@ public class NSISCommandDialog extends StatusMessageDialog
                 }
                 if (cCommandStateMap == null)
                 {
-                    cCommandStateMap = new HashMap();
+                    cCommandStateMap = new HashMap<String, Map<String, Object>>();
                 }
                 mStarted = true;
             }
@@ -199,7 +199,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         mCommand = command;
         setTitle(EclipseNSISPlugin.getResourceString("nsis.command.wizard.title")); //$NON-NLS-1$
         setShellImage(EclipseNSISPlugin.getShellImage());
-        mSettings = (Map) cCommandStateMap.get(mCommand.getName());
+        mSettings = cCommandStateMap.get(mCommand.getName());
         mRemember = mSettings != null;
         mParamEditor = mCommand.createEditor();
         setParamEditorState();
@@ -220,7 +220,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         }
     }
 
-    protected Point getInitialSize()
+    @Override
+	protected Point getInitialSize()
     {
         Point p = super.getInitialSize();
         if (p.y < MIN_WINDOW_HEIGHT)
@@ -243,7 +244,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         return p;
     }
 
-    public void create()
+    @Override
+	public void create()
     {
         super.create();
 
@@ -266,7 +268,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         return mResult;
     }
 
-    public boolean close()
+    @Override
+	public boolean close()
     {
         mParamEditor = null;
         getShell().getDisplay().removeFilter(SWT.Modify, mFilter);
@@ -294,7 +297,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         }
     }
 
-    protected void cancelPressed()
+    @Override
+	protected void cancelPressed()
     {
         saveDialogSettings();
         super.cancelPressed();
@@ -305,7 +309,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         mDialogSettings.put(SETTING_COLLAPSE_HELP, !(getTray() instanceof BrowserDialogTray));
     }
 
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         saveDialogSettings();
         if (mRemember)
@@ -319,7 +324,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         super.okPressed();
     }
 
-    protected Control createHelpControl(Composite parent)
+    @Override
+	protected Control createHelpControl(Composite parent)
     {
         Control helpControl = super.createHelpControl(parent);
         Listener listener = new Listener() {
@@ -360,7 +366,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         return helpControl;
     }
 
-    protected void createControlAndMessageArea(Composite parent)
+    @Override
+	protected void createControlAndMessageArea(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2, false);
@@ -429,7 +436,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         final StyledText textWidget = previewer.getTextWidget();
         textWidget.getCaret().setVisible(false);
         textWidget.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 textWidget.setSelectionRange(e.x, 0);
             }
@@ -437,7 +445,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         return previewer;
     }
 
-    protected Control createControl(Composite parent)
+    @Override
+	protected Control createControl(Composite parent)
     {
         final Composite child = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2, false);
@@ -565,7 +574,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         final Button revertButton = new Button(buttonPanel, SWT.PUSH);
         revertButton.setText(EclipseNSISPlugin.getResourceString("revert.label")); //$NON-NLS-1$
         revertButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
                     public void run()
@@ -588,7 +598,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         revertButton.setEnabled(mRemember && !Common.isEmptyMap(mSettings));
 
         rememberButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mRemember = rememberButton.getSelection();
                 setParamEditorState();
@@ -599,7 +610,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         Button clearButton = new Button(buttonPanel, SWT.PUSH);
         clearButton.setText(EclipseNSISPlugin.getResourceString("clear.label")); //$NON-NLS-1$
         clearButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
                     public void run()
@@ -616,7 +628,8 @@ public class NSISCommandDialog extends StatusMessageDialog
             mTray = new BrowserDialogTray();
             mTray.setCurrentCommand(mCommand.getName());
             toolItem.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e)
+                @Override
+				public void widgetSelected(SelectionEvent e)
                 {
                     openTray(mTray);
                 }
@@ -635,7 +648,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         return child;
     }
 
-    public void openTray(DialogTray tray) throws IllegalStateException, UnsupportedOperationException
+    @Override
+	public void openTray(DialogTray tray) throws IllegalStateException, UnsupportedOperationException
     {
         DialogTray oldTray = getTray();
         if (oldTray != null)
@@ -678,7 +692,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         {
             if (mSettings == null)
             {
-                mSettings = new HashMap();
+                mSettings = new HashMap<String, Object>();
             }
             mParamEditor.setSettings(mSettings);
         }
@@ -694,8 +708,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         private String mCurrentCommand = null;
         private ToolItem mBack = null;
         private ToolItem mForward = null;
-        private Stack mBackCommands = null;
-        private Stack mForwardCommands = null;
+        private Stack<String> mBackCommands = null;
+        private Stack<String> mForwardCommands = null;
         private Image mCloseImage = null;
         private Image mCloseHotImage = null;
 
@@ -714,10 +728,12 @@ public class NSISCommandDialog extends StatusMessageDialog
             }
         };
 
-        protected Control createContents(final Composite parent)
+        @Override
+		protected Control createContents(final Composite parent)
         {
             Composite contents = new Composite(parent, SWT.NONE) {
-                public Point computeSize(int wHint, int hHint, boolean changed)
+                @Override
+				public Point computeSize(int wHint, int hHint, boolean changed)
                 {
                     Point size = super.computeSize(wHint, hHint, changed);
                     if (wHint == SWT.DEFAULT && size.x < MIN_WINDOW_WIDTH)
@@ -849,7 +865,7 @@ public class NSISCommandDialog extends StatusMessageDialog
                             if (!Common.isEmptyCollection(mBackCommands))
                             {
                                 String oldKeyword = mCurrentCommand;
-                                String keyword = (String) mBackCommands.firstElement();
+                                String keyword = mBackCommands.firstElement();
                                 if (!Common.stringsAreEqual(oldKeyword, keyword))
                                 {
                                     if (setCurrentCommand(keyword) && oldKeyword != null)
@@ -866,7 +882,7 @@ public class NSISCommandDialog extends StatusMessageDialog
                             if (!Common.isEmptyCollection(mBackCommands))
                             {
                                 String oldKeyword = mCurrentCommand;
-                                String keyword = (String) mBackCommands.pop();
+                                String keyword = mBackCommands.pop();
                                 if (setCurrentCommand(keyword) && oldKeyword != null)
                                 {
                                     mForwardCommands.push(oldKeyword);
@@ -879,7 +895,7 @@ public class NSISCommandDialog extends StatusMessageDialog
                             if (!Common.isEmptyCollection(mForwardCommands))
                             {
                                 String oldKeyword = mCurrentCommand;
-                                String keyword = (String) mForwardCommands.pop();
+                                String keyword = mForwardCommands.pop();
                                 if (setCurrentCommand(keyword) && oldKeyword != null)
                                 {
                                     mBackCommands.push(oldKeyword);
@@ -911,8 +927,8 @@ public class NSISCommandDialog extends StatusMessageDialog
                         closeTray();
                     }
                 });
-                mBackCommands = new Stack();
-                mForwardCommands = new Stack();
+                mBackCommands = new Stack<String>();
+                mForwardCommands = new Stack<String>();
                 updateToolbarButtons();
             }
         }
@@ -987,7 +1003,8 @@ public class NSISCommandDialog extends StatusMessageDialog
             if (mBrowser != null && !mBrowser.isDisposed())
             {
                 mBrowser.addLocationListener(new LocationAdapter() {
-                    public void changing(LocationEvent event)
+                    @Override
+					public void changing(LocationEvent event)
                     {
                         if (!NSISBrowserUtility.ABOUT_BLANK.equalsIgnoreCase(event.location))
                         {

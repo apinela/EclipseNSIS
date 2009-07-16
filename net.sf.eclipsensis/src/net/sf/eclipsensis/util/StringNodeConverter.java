@@ -11,28 +11,29 @@ package net.sf.eclipsensis.util;
 
 import org.w3c.dom.*;
 
-public class StringNodeConverter extends AbstractNodeConverter
+public class StringNodeConverter extends AbstractNodeConverter<String>
 {
     private static final String STRING_NODE = "string"; //$NON-NLS-1$
 
-    public Object fromNode(Node node, Class clasz)
+    @Override
+	public String fromNode(Node node, Class<?> clasz)
     {
-        if(String.class.equals(clasz) && STRING_NODE.equals(node.getNodeName())) {
-            return XMLUtil.readTextNode(node);
-        }
-        throw new IllegalArgumentException(clasz.getName());
+        if (String.class.isAssignableFrom(clasz)) {
+			if (STRING_NODE.equals(node.getNodeName())) {
+				return XMLUtil.readTextNode(node);
+			}
+		}
+		throw new IllegalArgumentException(clasz.getName());
     }
 
-    public Node toNode(Document document, Object object)
+    public Node toNode(Document document, String object)
     {
-        if(object instanceof String) {
+        if(object != null) {
             Node node = document.createElement(STRING_NODE);
             node.appendChild(document.createTextNode((String)object));
             return node;
         }
-        else {
-            throw new IllegalArgumentException(object.getClass().getName());
-        }
+        throw new IllegalArgumentException(String.valueOf(object));
     }
 
 }

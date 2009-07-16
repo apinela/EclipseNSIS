@@ -9,15 +9,20 @@
  *******************************************************************************/
 package net.sf.eclipsensis.template;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.AbstractNodeConvertible;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.XMLUtil;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.Text;
 
-public abstract class AbstractTemplate extends AbstractNodeConvertible implements ITemplate, Serializable
+public abstract class AbstractTemplate extends AbstractNodeConvertible implements ITemplate
 {
     private static final long serialVersionUID = -6593538372175606301L;
 
@@ -58,7 +63,8 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
         mType = TYPE_USER;
     }
 
-    public void fromNode(Node node)
+    @Override
+	public void fromNode(Node node)
     {
         super.fromNode(node);
         NamedNodeMap attributes= node.getAttributes();
@@ -83,12 +89,14 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
         setEnabled(true);
     }
 
-    protected String getChildNodeName()
+    @Override
+	protected String getChildNodeName()
     {
         return "attribute"; //$NON-NLS-1$
     }
 
-    public Node toNode(Document document)
+    @Override
+	public Node toNode(Document document)
     {
         Node node = super.toNode(document);
         if (!Common.isEmpty(getId())) {
@@ -102,7 +110,8 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
         return node;
     }
 
-    protected void addSkippedProperties(Collection skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("id"); //$NON-NLS-1$
@@ -172,7 +181,8 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    public String toString()
+    @Override
+	public String toString()
     {
         return getName();
     }
@@ -222,7 +232,8 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
         mType = type;
     }
 
-    public Object clone()
+    @Override
+	public Object clone()
     {
         try {
             return super.clone();

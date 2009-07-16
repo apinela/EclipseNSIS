@@ -27,7 +27,8 @@ public class GroupBoxFigure extends UneditableElementFigure
         setOpaque(false);
     }
 
-    public boolean isClickThrough()
+    @Override
+	public boolean isClickThrough()
     {
         return true;
     }
@@ -35,7 +36,8 @@ public class GroupBoxFigure extends UneditableElementFigure
     /**
      * @return
      */
-    protected Control createUneditableSWTControl(Composite parent, int style)
+    @Override
+	protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Group group = new Group(parent, style);
         group.setText(mText);
@@ -45,7 +47,8 @@ public class GroupBoxFigure extends UneditableElementFigure
     /**
      * @return
      */
-    public int getDefaultStyle()
+    @Override
+	public int getDefaultStyle()
     {
         return SWT.SHADOW_ETCHED_IN;
     }

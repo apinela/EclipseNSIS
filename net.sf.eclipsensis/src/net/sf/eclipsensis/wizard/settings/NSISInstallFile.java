@@ -43,7 +43,8 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     private boolean mPreserveAttributes = false;
 
-    public String doValidate()
+    @Override
+	public String doValidate()
     {
         if (!IOUtility.isValidFile(IOUtility.decodePath(getName())))
         {
@@ -64,7 +65,8 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
         return new NSISInstallFileDialog(wizard, this).open() == Window.OK;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj)
         {
@@ -191,7 +193,8 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
         return TYPE;
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -250,7 +253,8 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
         }
     }
 
-    public void setTargetPlatform(int targetPlatform)
+    @Override
+	public void setTargetPlatform(int targetPlatform)
     {
         super.setTargetPlatform(targetPlatform);
         setDestination(NSISWizardUtil.convertPath(targetPlatform, getDestination()));

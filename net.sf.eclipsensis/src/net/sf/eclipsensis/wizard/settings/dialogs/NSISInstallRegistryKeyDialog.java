@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.*;
 
 public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
 {
-    protected static ArrayList cProperties = new ArrayList();
+    protected static List<String> cProperties = new ArrayList<String>();
     protected ShellConstantConverter mShellConstantConverter = new ShellConstantConverter();
 
     static {
@@ -51,7 +51,8 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
     /* (non-Javadoc)
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
-    protected List getProperties()
+    @Override
+	protected List<String> getProperties()
     {
         return cProperties;
     }
@@ -64,7 +65,8 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected final Control createControlContents(Composite parent)
+    @Override
+	protected final Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -76,7 +78,8 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
         b.setText(EclipseNSISPlugin.getResourceString("wizard.browse.registry.label")); //$NON-NLS-1$
         b.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,false,false));
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 browseRegistry();
             }
@@ -165,7 +168,8 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
         final Combo c1 = NSISWizardDialogUtil.createCombo(composite,NSISWizardDisplayValues.HKEY_NAMES,mStore.getInt("rootKey"), //$NON-NLS-1$
                             true,"wizard.root.key.label",true,null,false); //$NON-NLS-1$
         c1.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+            @Override
+			public void widgetSelected(SelectionEvent e) {
                 mStore.setValue("rootKey",c1.getSelectionIndex()); //$NON-NLS-1$
                 validate();
             }
@@ -215,17 +219,20 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
         return composite;
     }
 
-    protected boolean hasRequiredFields()
+    @Override
+	protected boolean hasRequiredFields()
     {
         return true;
     }
 
-    protected String getHelpContextId()
+    @Override
+	protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_regkeydlg_context"; //$NON-NLS-1$
     }
 
-    protected String checkForErrors()
+    @Override
+	protected String checkForErrors()
     {
         int rootKey = mStore.getInt("rootKey"); //$NON-NLS-1$
         if(rootKey < 0 || rootKey >= NSISWizardDisplayValues.HKEY_NAMES.length) {

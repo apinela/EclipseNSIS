@@ -15,7 +15,8 @@ import org.eclipse.core.resources.IFile;
 
 public class NSISTestHandler extends NSISHandler
 {
-    protected void handleScript(IFile file)
+    @Override
+	protected void handleScript(IFile file)
     {
         NSISCompileTestUtility.INSTANCE.test(file.getFullPath());
     }

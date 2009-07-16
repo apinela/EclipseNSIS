@@ -71,7 +71,7 @@ public class PreferenceStoreWrapper implements IPreferenceStore
             }
         }
     };
-    private Map mNamesMap = new HashMap();
+    private Map<String, Class<?>> mNamesMap = new HashMap<String, Class<?>>();
     /**
      * @param preferenceStore
      */
@@ -91,10 +91,10 @@ public class PreferenceStoreWrapper implements IPreferenceStore
 
     public void update()
     {
-        for(Iterator iter = mNamesMap.entrySet().iterator(); iter.hasNext(); ) {
-            Map.Entry entry = (Map.Entry)iter.next();
+        for(Iterator<Map.Entry<String,Class<?>>> iter = mNamesMap.entrySet().iterator(); iter.hasNext(); ) {
+        	Map.Entry<String,Class<?>> entry = iter.next();
             String name = (String)entry.getKey();
-            Class type = (Class)entry.getValue();
+            Class<?> type = entry.getValue();
             if(type.equals(Boolean.class)) {
                 mParentStore.setValue(name,mInternalStore.getBoolean(name));
             }
@@ -118,8 +118,8 @@ public class PreferenceStoreWrapper implements IPreferenceStore
 
     public void loadDefaults()
     {
-        for(Iterator iter = mNamesMap.keySet().iterator(); iter.hasNext(); ) {
-            mInternalStore.setToDefault((String)iter.next());
+        for(Iterator<String> iter = mNamesMap.keySet().iterator(); iter.hasNext(); ) {
+            mInternalStore.setToDefault(iter.next());
         }
     }
 

@@ -22,12 +22,14 @@ public class NSISCommandTransfer extends ObjectTransfer
     {
     }
 
-    protected int[] getTypeIds()
+    @Override
+	protected int[] getTypeIds()
     {
         return TYPEIDS;
     }
 
-    protected String[] getTypeNames()
+    @Override
+	protected String[] getTypeNames()
     {
         return TYPE_NAMES;
     }

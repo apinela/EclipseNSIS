@@ -54,7 +54,8 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     /**
      * @see org.eclipse.jface.window.Window#configureShell(Shell)
      */
-    protected void configureShell(Shell newShell)
+    @Override
+	protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setImage(EclipseNSISPlugin.getShellImage());
@@ -64,14 +65,16 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     /**
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(Composite)
      */
-    protected void createButtonsForButtonBar(Composite parent)
+    @Override
+	protected void createButtonsForButtonBar(Composite parent)
     {
         // create OK button
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
                      true);
     }
 
-    protected Control createDialogArea(Composite parent) {
+    @Override
+	protected Control createDialogArea(Composite parent) {
         final Display display = getShell().getDisplay();
         Color background = JFaceColors.getBannerBackground(display);
         Color foreground = JFaceColors.getBannerForeground(display);
@@ -115,7 +118,8 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         link.setBackground(background);
         link.setText(cAboutText);
         link.addSelectionListener(new SelectionAdapter(){
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 openLink(e.text);
             }
@@ -131,7 +135,8 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createButtonBar(Composite parent)
+    @Override
+	protected Control createButtonBar(Composite parent)
     {
         Control ctl = super.createButtonBar(parent);
         getButton(IDialogConstants.OK_ID).setFocus();

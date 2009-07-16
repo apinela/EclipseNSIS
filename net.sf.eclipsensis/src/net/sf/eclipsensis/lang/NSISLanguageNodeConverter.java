@@ -13,31 +13,31 @@ import net.sf.eclipsensis.util.*;
 
 import org.w3c.dom.*;
 
-public class NSISLanguageNodeConverter extends AbstractNodeConverter
+public class NSISLanguageNodeConverter extends AbstractNodeConverter<NSISLanguage>
 {
     private static final String NAME_ATTR = "name"; //$NON-NLS-1$
     private static final String LANGUAGE_NODE = "language"; //$NON-NLS-1$
 
-    public Object fromNode(Node node, Class clasz)
+    @Override
+	public NSISLanguage fromNode(Node node, Class<?> clasz)
     {
-        if(NSISLanguage.class.equals(clasz) && LANGUAGE_NODE.equals(node.getNodeName())) {
-            NamedNodeMap attributes = node.getAttributes();
-            String langName = XMLUtil.getStringValue(attributes, NAME_ATTR);
-            return NSISLanguageManager.getInstance().getLanguage(langName);
-        }
-        throw new IllegalArgumentException(clasz.getName());
+        if (NSISLanguage.class.isAssignableFrom(clasz)) {
+			if (LANGUAGE_NODE.equals(node.getNodeName())) {
+				NamedNodeMap attributes = node.getAttributes();
+				String langName = XMLUtil.getStringValue(attributes, NAME_ATTR);
+				return NSISLanguageManager.getInstance().getLanguage(langName);
+			}
+		}
+		throw new IllegalArgumentException(clasz.getName());
     }
 
-    public Node toNode(Document document, Object object)
+    public Node toNode(Document document, NSISLanguage object)
     {
-        if(object instanceof NSISLanguage) {
+        if(object != null) {
             Node node = document.createElement(LANGUAGE_NODE);
             XMLUtil.addAttribute(document, node, NAME_ATTR, ((NSISLanguage)object).getName());
             return node;
         }
-        else {
-            throw new IllegalArgumentException(object.getClass().getName());
-        }
+        throw new IllegalArgumentException(String.valueOf(object));
     }
-
 }

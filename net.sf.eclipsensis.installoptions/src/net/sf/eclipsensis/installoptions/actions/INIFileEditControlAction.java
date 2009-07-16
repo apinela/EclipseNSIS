@@ -30,12 +30,13 @@ public class INIFileEditControlAction extends INIFileCreateControlAction
         setDisabledImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("edit.control.disabled.icon"))); //$NON-NLS-1$)
     }
 
-    protected INISection getSection(INIFile iniFile)
+    @Override
+	protected INISection getSection(INIFile iniFile)
     {
         INISection section = null;
         INISection currSection = mEditor.getCurrentSection();
         if (currSection != null && !mEditor.getINIFile().hasErrors()) {
-            for(Iterator iter = iniFile.getChildren().iterator(); iter.hasNext(); ) {
+            for(Iterator<INILine> iter = iniFile.getChildren().iterator(); iter.hasNext(); ) {
                 INILine line = (INILine)iter.next();
                 if (line instanceof INISection) {
                     INISection sec2 = (INISection)line;
@@ -49,7 +50,8 @@ public class INIFileEditControlAction extends INIFileCreateControlAction
         return section;
     }
 
-    protected boolean doRun(INIFile iniFile, INISection section)
+    @Override
+	protected boolean doRun(INIFile iniFile, INISection section)
     {
         if (section != null) {
             return doRun2(iniFile, section);

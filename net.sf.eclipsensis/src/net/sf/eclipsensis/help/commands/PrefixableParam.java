@@ -25,7 +25,8 @@ public abstract class PrefixableParam extends NSISParam
         super(node);
     }
 
-    protected void init(Node node)
+    @Override
+	protected void init(Node node)
     {
         super.init(node);
         NamedNodeMap attributes = node.getAttributes();
@@ -52,12 +53,14 @@ public abstract class PrefixableParam extends NSISParam
         mPrefix = prefix;
     }
 
-    protected final NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected final NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return createPrefixableParamEditor(command, parentEditor);
     }
 
-    protected final String getDefaultValue()
+    @Override
+	protected final String getDefaultValue()
     {
         if (mAllowBlank)
         {
@@ -83,7 +86,8 @@ public abstract class PrefixableParam extends NSISParam
             super(command, parentEditor);
         }
 
-        protected final void appendParamText(StringBuffer buf)
+        @Override
+		protected final void appendParamText(StringBuffer buf)
         {
             String text = getPrefixableParamText();
             if (text != null)
@@ -106,12 +110,14 @@ public abstract class PrefixableParam extends NSISParam
             }
         }
 
-        protected boolean shouldDecorate()
+        @Override
+		protected boolean shouldDecorate()
         {
             return true;
         }
 
-        protected String validateParam()
+        @Override
+		protected String validateParam()
         {
             return null;
         }

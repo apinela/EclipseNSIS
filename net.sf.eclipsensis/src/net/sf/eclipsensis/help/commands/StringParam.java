@@ -28,7 +28,8 @@ public class StringParam extends SubstitutableParam
         super(node);
     }
 
-    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    @Override
+	protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new StringParamEditor(command, parentEditor);
     }
@@ -56,7 +57,8 @@ public class StringParam extends SubstitutableParam
             super(command, parentEditor);
         }
 
-        public void clear()
+        @Override
+		public void clear()
         {
             if (Common.isValid(mText))
             {
@@ -65,7 +67,8 @@ public class StringParam extends SubstitutableParam
             super.clear();
         }
 
-        protected String getPrefixableParamText()
+        @Override
+		protected String getPrefixableParamText()
         {
             if (Common.isValid(mText))
             {
@@ -74,7 +77,8 @@ public class StringParam extends SubstitutableParam
             return null;
         }
 
-        protected String validateParam()
+        @Override
+		protected String validateParam()
         {
             if (Common.isValid(mText))
             {
@@ -83,7 +87,8 @@ public class StringParam extends SubstitutableParam
             return null;
         }
 
-        public void saveSettings()
+        @Override
+		public void saveSettings()
         {
             super.saveSettings();
             if (Common.isValid(mText) && getSettings() != null)
@@ -92,7 +97,8 @@ public class StringParam extends SubstitutableParam
             }
         }
 
-        protected Control createParamControl(Composite parent)
+        @Override
+		protected Control createParamControl(Composite parent)
         {
             mText = new Text(parent, SWT.BORDER);
             setToolTip(mText);
@@ -114,7 +120,8 @@ public class StringParam extends SubstitutableParam
             return mText;
         }
 
-        protected void initParamEditor()
+        @Override
+		protected void initParamEditor()
         {
             super.initParamEditor();
             if (Common.isValid(mText))

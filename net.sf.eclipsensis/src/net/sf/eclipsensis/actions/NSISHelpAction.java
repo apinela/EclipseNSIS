@@ -31,7 +31,8 @@ public class NSISHelpAction extends ActionDelegate implements IEditorActionDeleg
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-    public void run(IAction action)
+    @Override
+	public void run(IAction action)
     {
         NSISHelpURLProvider.getInstance().showPlatformHelp(PLUGIN_HELP_URL);
     }

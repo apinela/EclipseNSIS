@@ -19,14 +19,14 @@ import org.w3c.dom.Node;
 
 public class InstallOptionsElementFactory implements CreationFactory
 {
-    private static Map cCachedFactories = new CaseInsensitiveMap();
+    private static Map<String, InstallOptionsElementFactory> cCachedFactories = new CaseInsensitiveMap<InstallOptionsElementFactory>();
 
     public static InstallOptionsElementFactory getFactory(String type)
     {
         InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type);
         if(typeDef != null) {
             synchronized(typeDef) {
-                InstallOptionsElementFactory factory = (InstallOptionsElementFactory)cCachedFactories.get(typeDef.getType());
+                InstallOptionsElementFactory factory = cCachedFactories.get(typeDef.getType());
                 if(factory == null) {
                     factory = new InstallOptionsElementFactory(typeDef);
                     cCachedFactories.put(typeDef.getType(), factory);

@@ -32,7 +32,8 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
-    public void init(IAction action)
+    @Override
+	public void init(IAction action)
     {
         super.init(action);
         MakeNSISRunner.addListener(this);
@@ -41,7 +42,8 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
-    public void dispose()
+    @Override
+	public void dispose()
     {
         super.dispose();
         MakeNSISRunner.removeListener(this);
@@ -52,7 +54,8 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
         return mType;
     }
 
-    public void setActiveEditor(IEditorPart targetEditor)
+    @Override
+	public void setActiveEditor(IEditorPart targetEditor)
     {
         super.setActiveEditor(targetEditor);
         updateInput();
@@ -126,7 +129,8 @@ public abstract class NSISScriptAction extends NSISAction implements IMakeNSISRu
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
      */
-    public void selectionChanged(IAction action, ISelection selection)
+    @Override
+	public void selectionChanged(IAction action, ISelection selection)
     {
         if(selection instanceof IStructuredSelection) {
             //This is for the popup context menu handling
