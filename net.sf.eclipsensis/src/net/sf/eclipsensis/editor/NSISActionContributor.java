@@ -120,19 +120,19 @@ public class NSISActionContributor extends TextEditorActionContributor implement
             editMenu.add(mInsertRegFile);
             editMenu.add(mInsertRegKey);
             editMenu.add(mInsertRegVal);
+	        editMenu.addMenuListener(new IMenuListener() {
+	            public void menuAboutToShow(IMenuManager manager)
+	            {
+	                IEditorPart editor = getActiveEditorPart();
+	                if(editor != null && editor instanceof NSISEditor) {
+	                    ISelection sel = ((NSISEditor)editor).getSelectionProvider().getSelection();
+	                    if(sel instanceof ITextSelection) {
+	                        mAddBlockComment.setEnabled(((ITextSelection)sel).getLength() > 0);
+	                    }
+	                }
+	            }
+	        });
 		}
-        editMenu.addMenuListener(new IMenuListener() {
-            public void menuAboutToShow(IMenuManager manager)
-            {
-                IEditorPart editor = getActiveEditorPart();
-                if(editor != null && editor instanceof NSISEditor) {
-                    ISelection sel = ((NSISEditor)editor).getSelectionProvider().getSelection();
-                    if(sel instanceof ITextSelection) {
-                        mAddBlockComment.setEnabled(((ITextSelection)sel).getLength() > 0);
-                    }
-                }
-            }
-        });
 	}
 
 	private void doSetActiveEditor(IEditorPart part)

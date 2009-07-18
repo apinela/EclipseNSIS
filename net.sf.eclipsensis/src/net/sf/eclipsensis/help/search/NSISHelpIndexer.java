@@ -23,6 +23,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
+@SuppressWarnings("restriction")
 public class NSISHelpIndexer implements INSISHelpSearchConstants
 {
     private static final String[] cIndexedFileExtensions;
@@ -151,7 +152,7 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
             return Status.OK_STATUS;
         }
 
-        private Document makeDocument(File f) throws IOException, InterruptedException
+		private Document makeDocument(File f) throws IOException, InterruptedException
         {
             Document doc = new Document();
 

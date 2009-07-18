@@ -98,7 +98,7 @@ public class QuickFixRulerAction extends AbstractRulerActionDelegate
                 return ;
             }
 
-            Iterator iter= model.getAnnotationIterator();
+            Iterator<?> iter= model.getAnnotationIterator();
             int layer= Integer.MIN_VALUE;
 
             while (iter.hasNext()) {
@@ -107,8 +107,9 @@ public class QuickFixRulerAction extends AbstractRulerActionDelegate
                     continue;
                 }
 
-                int annotationLayer= annotationAccess.getLayer(annotation);
+                int annotationLayer = Integer.MAX_VALUE;
                 if (annotationAccess != null) {
+                    annotationLayer= annotationAccess.getLayer(annotation);
                     if (annotationLayer < layer) {
                         continue;
                     }

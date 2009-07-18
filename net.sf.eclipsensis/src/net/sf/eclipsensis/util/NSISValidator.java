@@ -24,7 +24,7 @@ public class NSISValidator implements INSISConstants
     private static final SimpleDateFormat cCVSDateFormat;
     private static final SimpleDateFormat cCVSEnglishDateFormat;
     public static final String DEFINED_SYMBOLS_PREFIX = "Defined symbols: "; //$NON-NLS-1$
-    private static Map cVersionDateMap;
+    private static Map<Version, Date> cVersionDateMap;
 
     static {
         TimeZone tz = TimeZone.getTimeZone("GMT"); //$NON-NLS-1$
@@ -45,13 +45,13 @@ public class NSISValidator implements INSISConstants
         } catch (MissingResourceException x) {
             bundle = null;
         }
-        Map map = Common.loadMapProperty(bundle,"version.dates"); //$NON-NLS-1$
+        Map<String, String> map = Common.loadMapProperty(bundle,"version.dates"); //$NON-NLS-1$
         SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm"); //$NON-NLS-1$
         sdf.setTimeZone(tz);
-        cVersionDateMap = new LinkedHashMap();
-        for(Iterator iter=map.keySet().iterator(); iter.hasNext(); ) {
-            String key = (String)iter.next();
-            String value = (String)map.get(key);
+        cVersionDateMap = new LinkedHashMap<Version, Date>();
+        for(Iterator<String> iter=map.keySet().iterator(); iter.hasNext(); ) {
+            String key = iter.next();
+            String value = map.get(key);
             Version v = new Version(key);
             Date d;
             try {
@@ -167,9 +167,9 @@ public class NSISValidator implements INSISConstants
                             }
                         }
 
-                        for(Iterator iter=cVersionDateMap.keySet().iterator(); iter.hasNext(); ) {
-                            Version v = (Version)iter.next();
-                            Date d = (Date)cVersionDateMap.get(v);
+                        for(Iterator<Version> iter=cVersionDateMap.keySet().iterator(); iter.hasNext(); ) {
+                            Version v = iter.next();
+                            Date d = cVersionDateMap.get(v);
                             if(cvsDate.compareTo(d) >= 0) {
                                 version = v;
                             }

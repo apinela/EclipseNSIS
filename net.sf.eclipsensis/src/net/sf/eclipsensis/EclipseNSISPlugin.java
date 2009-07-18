@@ -25,6 +25,8 @@ import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.util.Version;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
@@ -38,6 +40,7 @@ import org.eclipse.ui.branding.IProductConstants;
 import org.eclipse.ui.editors.text.templates.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.*;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -65,6 +68,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     private Version mJavaVersion;
     private Stack<IEclipseNSISService> mServices = new Stack<IEclipseNSISService>();
     private JobScheduler mJobScheduler = new JobScheduler();
+    private IEclipsePreferences mPreferences;
 
     private NSISConsole mConsole = null;
 
@@ -100,6 +104,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         }
         cShellImage = mImageManager.getImage(getResourceString("nsis.icon")); //$NON-NLS-1$
         mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
+        mPreferences = new InstanceScope().getNode(mName);
         mVersion = new Version((String)getBundle().getHeaders().get("Bundle-Version")); //$NON-NLS-1$
         if(cInvalidException != null) {
             throw new CoreException(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,cInvalidException,
@@ -694,5 +699,15 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     public static Image getShellImage()
     {
         return cShellImage;
+    }
+    
+    public void savePreferences()
+    {
+    	try {
+			mPreferences.flush();
+		} 
+    	catch (BackingStoreException e) {
+			log(e);
+		}    	
     }
 }

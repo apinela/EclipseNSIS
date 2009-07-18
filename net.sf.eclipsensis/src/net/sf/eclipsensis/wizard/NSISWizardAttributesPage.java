@@ -684,7 +684,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 IStructuredSelection sel = (IStructuredSelection) availableLangViewer.getSelection();
                 if (!sel.isEmpty())
                 {
-                    moveAcross(availableLangViewer, selectedLangViewer, sel.toList());
+                    moveAcross(availableLangViewer, selectedLangViewer, Common.makeGenericList(NSISLanguage.class,sel.toList()));
                     selectedLangViewer.reveal(sel.getFirstElement());
                     langRunnable.run();
                 }
@@ -796,7 +796,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         });
     }
 
-    private void moveAcross(ListViewer fromLV, ListViewer toLV, java.util.List<NSISLanguage> move)
+    @SuppressWarnings("unchecked")
+	private void moveAcross(ListViewer fromLV, ListViewer toLV, java.util.List<NSISLanguage> move)
     {
         java.util.List<NSISLanguage> from = (java.util.List<NSISLanguage>) fromLV.getInput();
         java.util.List<NSISLanguage> to = (java.util.List<NSISLanguage>) toLV.getInput();

@@ -33,7 +33,7 @@ public class NSISBrowserUtility
     public static final Image DISABLED_FORWARD_IMAGE;
     public static final Image HTMLHELP_IMAGE;
     public static final Image HTMLHELP_DISABLED_IMAGE;
-    public static final Set HTML_EXTENSIONS;
+    public static final Set<String> HTML_EXTENSIONS;
 
     private static RGB cBrowserHelpBackground = null;
     private static RGB cBrowserHelpForeground = null;

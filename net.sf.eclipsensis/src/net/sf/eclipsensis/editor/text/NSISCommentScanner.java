@@ -64,7 +64,7 @@ public class NSISCommentScanner extends NSISRuleBasedScanner implements INSISBac
      * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#addRules(java.util.List, org.eclipse.jface.text.rules.IToken)
      */
     @Override
-	protected void addRules(List rules)
+	protected void addRules(List<IRule> rules)
     {
         mCaseSensitive = getPreferenceStore().getBoolean(INSISEditorPreferenceConstants.CASE_SENSITIVE_TASK_TAGS);
         IRule taskTagsRule = getTaskTagsRule();

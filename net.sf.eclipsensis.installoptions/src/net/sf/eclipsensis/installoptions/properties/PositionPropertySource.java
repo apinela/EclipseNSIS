@@ -25,7 +25,7 @@ public class PositionPropertySource implements IPropertySource
     public static final String ID_RIGHT = InstallOptionsModel.PROPERTY_RIGHT;
     public static final String ID_BOTTOM = InstallOptionsModel.PROPERTY_BOTTOM;
 
-    private static Map cValidators = new HashMap();
+    private static Map<String, IntegerCellEditorValidator> cValidators = new HashMap<String, IntegerCellEditorValidator>();
 
     static {
         cValidators.put(ID_LEFT, new IntegerCellEditorValidator(InstallOptionsPlugin.getResourceString("left.property.name"))); //$NON-NLS-1$
@@ -38,19 +38,19 @@ public class PositionPropertySource implements IPropertySource
 
     private void createDescriptors()
     {
-        IntegerCellEditorValidator validator = (IntegerCellEditorValidator)cValidators.get(ID_LEFT);
+        IntegerCellEditorValidator validator = cValidators.get(ID_LEFT);
         PropertyDescriptor leftProp = new CustomTextPropertyDescriptor(ID_LEFT, validator.getPropertyName());
         leftProp.setValidator(validator);
 
-        validator = (IntegerCellEditorValidator)cValidators.get(ID_TOP);
+        validator = cValidators.get(ID_TOP);
         PropertyDescriptor topProp = new CustomTextPropertyDescriptor(ID_TOP, validator.getPropertyName());
         topProp.setValidator(validator);
 
-        validator = (IntegerCellEditorValidator)cValidators.get(ID_RIGHT);
+        validator = cValidators.get(ID_RIGHT);
         PropertyDescriptor rightProp = new CustomTextPropertyDescriptor(ID_RIGHT, validator.getPropertyName());
         rightProp.setValidator(validator);
 
-        validator = (IntegerCellEditorValidator)cValidators.get(ID_BOTTOM);
+        validator = cValidators.get(ID_BOTTOM);
         PropertyDescriptor bottomProp = new CustomTextPropertyDescriptor(ID_BOTTOM, validator.getPropertyName());
         bottomProp.setValidator(validator);
 

@@ -23,7 +23,7 @@ public class TextSectionDisplayTextProvider extends LabelSectionDisplayTextProvi
     {
         INIKeyValue[] values = section.findKeyValues(InstallOptionsModel.PROPERTY_FLAGS);
         if(!Common.isEmptyArray(values)) {
-            List flags = Common.tokenizeToList(values[0].getValue(), IInstallOptionsConstants.LIST_SEPARATOR,false);
+            List<String> flags = Common.tokenizeToList(values[0].getValue(), IInstallOptionsConstants.LIST_SEPARATOR,false);
             return flags.contains(InstallOptionsModel.FLAGS_MULTILINE);
         }
         return false;

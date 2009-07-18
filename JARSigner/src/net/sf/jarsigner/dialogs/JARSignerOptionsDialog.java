@@ -41,7 +41,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
     /**
      * @param parentShell
      */
-    public JARSignerOptionsDialog(Shell parentShell, List<Object> selection)
+    public JARSignerOptionsDialog(Shell parentShell, List<?> selection)
     {
         super(parentShell, selection);
     }

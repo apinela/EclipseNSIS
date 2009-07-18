@@ -21,7 +21,7 @@ public class JARVerifier extends AbstractJARUtil
 {
     private boolean mCerts = false;
 
-    public JARVerifier(IVMInstall vmInstall, String toolsJar, List targetJars)
+    public JARVerifier(IVMInstall vmInstall, String toolsJar, List<?> targetJars)
     {
         super(vmInstall, toolsJar, targetJars);
     }

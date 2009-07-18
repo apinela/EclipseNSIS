@@ -119,7 +119,7 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
     {
         boolean ok = super.performOk();
 
-        mPlugin.savePluginPreferences();
+        mPlugin.savePreferences();
 
         return ok;
     }

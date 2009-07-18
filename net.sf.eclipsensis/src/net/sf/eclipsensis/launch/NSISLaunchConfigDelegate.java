@@ -255,7 +255,7 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
                                     }
                                 }
                             };
-                            String message = MessageFormat.format(EclipseNSISPlugin.getResourceString("launch.console.redirect.message"), new String[]{filename}); //$NON-NLS-1$
+                            String message = MessageFormat.format(EclipseNSISPlugin.getResourceString("launch.console.redirect.message"), new Object[]{filename}); //$NON-NLS-1$
                             final NSISConsole nsisConsole = EclipseNSISPlugin.getDefault().getConsole();
                             final String ffilename;
                             if(encoding != null && !encoding.equals(defaultEncoding)) {

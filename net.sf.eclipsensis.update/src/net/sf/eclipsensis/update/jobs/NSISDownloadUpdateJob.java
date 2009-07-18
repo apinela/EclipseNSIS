@@ -68,12 +68,12 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
             return NetworkUtil.makeConnection(new NestedProgressMonitor(monitor,getName(),25), url, defaultURL);
         }
         catch (IOException ex) {
-            final List downloadSites = NetworkUtil.getDownloadSites(mVersion, new NestedProgressMonitor(monitor,getName(),25),
+            final List<DownloadSite> downloadSites = NetworkUtil.getDownloadSites(mVersion, new NestedProgressMonitor(monitor,getName(),25),
                     EclipseNSISUpdatePlugin.getResourceString("download.update.retrieve.alternate.message"), getName()); //$NON-NLS-1$
             if (!Common.isEmptyCollection(downloadSites)) {
                 String urlString = (url == null?"":url.toString()); //$NON-NLS-1$
                 String defaultURLString = (defaultURL == null?"":defaultURL.toString()); //$NON-NLS-1$
-                for (Iterator iter = downloadSites.iterator(); iter.hasNext();) {
+                for (Iterator<DownloadSite> iter = downloadSites.iterator(); iter.hasNext();) {
                     DownloadSite site = (DownloadSite)iter.next();
                     String siteURLString = NSISUpdateURLs.getGenericDownloadURL(site.getName(), mVersion).toString();
                     if (siteURLString.equalsIgnoreCase(urlString) || siteURLString.equalsIgnoreCase(defaultURLString)) {

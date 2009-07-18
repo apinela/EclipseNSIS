@@ -55,7 +55,7 @@ public class NSISOutlineLabelProvider extends LabelProvider
         }
         else if(element.hasChildren()) {
             int severity = IMarker.SEVERITY_INFO;
-            for(Iterator iter = element.getChildren().iterator(); iter.hasNext(); ) {
+            for(Iterator<NSISOutlineElement> iter = element.getChildren().iterator(); iter.hasNext(); ) {
                 int s = getElementSeverity((NSISOutlineElement)iter.next());
                 if(s > severity) {
                     severity = s;

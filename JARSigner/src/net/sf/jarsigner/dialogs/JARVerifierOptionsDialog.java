@@ -27,7 +27,7 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
     /**
      * @param parentShell
      */
-    public JARVerifierOptionsDialog(Shell parentShell, List<Object> selection)
+    public JARVerifierOptionsDialog(Shell parentShell, List<?> selection)
     {
         super(parentShell, selection);
     }

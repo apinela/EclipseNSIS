@@ -37,7 +37,9 @@ public class GraphicalPartFactory implements EditPartFactory
             else if (model instanceof InstallOptionsDialog) {
                 child = new InstallOptionsDialogEditPart();
             }
-            child.setModel(model);
+            if (child != null) {
+				child.setModel(model);
+			}
         }
         return child;
     }

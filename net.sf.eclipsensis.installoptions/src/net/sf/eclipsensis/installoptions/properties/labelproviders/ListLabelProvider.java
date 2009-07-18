@@ -21,8 +21,8 @@ public class ListLabelProvider extends LabelProvider
     @Override
 	public String getText(Object element)
     {
-        if(element instanceof List) {
-            return Common.flatten(((List)element).toArray(),IInstallOptionsConstants.LIST_SEPARATOR);
+        if(element instanceof List<?>) {
+            return Common.flatten(((List<?>)element).toArray(),IInstallOptionsConstants.LIST_SEPARATOR);
         }
         else {
             return super.getText(element);

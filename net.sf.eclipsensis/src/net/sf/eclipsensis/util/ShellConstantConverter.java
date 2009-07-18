@@ -17,7 +17,7 @@ import net.sf.eclipsensis.help.NSISKeywords.ShellConstant;
 public class ShellConstantConverter
 {
     private String mShellContext = ShellConstant.CONTEXT_GENERAL;
-    private List mShellConstants = NSISKeywords.getInstance().getShellConstants();
+    private List<ShellConstant> mShellConstants = NSISKeywords.getInstance().getShellConstants();
 
     public String getShellContext()
     {
@@ -32,7 +32,7 @@ public class ShellConstantConverter
     public String encodeConstants(String line)
     {
         if(!Common.isEmpty(line)) {
-            for (Iterator iter = mShellConstants.iterator(); iter.hasNext();) {
+            for (Iterator<ShellConstant> iter = mShellConstants.iterator(); iter.hasNext();) {
                 ShellConstant constant = (ShellConstant)iter.next();
                 if(constant.value.length() <= line.length()) {
                     if(!ShellConstant.CONTEXT_GENERAL.equals(constant.context) &&
@@ -54,7 +54,7 @@ public class ShellConstantConverter
     public String decodeConstants(String line)
     {
         if(!Common.isEmpty(line)) {
-            for (Iterator iter = mShellConstants.iterator(); iter.hasNext();) {
+            for (Iterator<ShellConstant> iter = mShellConstants.iterator(); iter.hasNext();) {
                 ShellConstant constant = (ShellConstant)iter.next();
                 if(constant.value.length() <= line.length()) {
                     if(!ShellConstant.CONTEXT_GENERAL.equals(constant.context) &&

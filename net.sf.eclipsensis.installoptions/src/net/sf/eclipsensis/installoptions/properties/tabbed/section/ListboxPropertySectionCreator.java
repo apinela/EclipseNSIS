@@ -46,7 +46,7 @@ public class ListboxPropertySectionCreator extends ListItemsPropertySectionCreat
         selectAll.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         selectAll.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
-                List list = (List)viewer.getInput();
+                List<?> list = (List<?>)viewer.getInput();
                 if(list != null) {
                     Object[] checkedItems = viewer.getCheckedElements();
                     if(checkedItems != null && checkedItems.length == list.size()) {

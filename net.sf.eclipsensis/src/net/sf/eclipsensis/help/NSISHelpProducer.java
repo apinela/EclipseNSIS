@@ -122,7 +122,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                                 }
                             }
                         }
-                        else if(IOUtility.isValidDirectory(helpFile)) {
+                        else if(helpFile != null && IOUtility.isValidDirectory(helpFile)) {
                             try {
                                 Program.launch(helpFile.getCanonicalPath());
                                 return new ByteArrayInputStream(GO_BACK);
@@ -159,8 +159,8 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
 
     public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
     {
-        if(data instanceof Map) {
-            Map map = (Map)data;
+        if(data instanceof Map<?,?>) {
+            Map<?,?> map = (Map<?,?>)data;
             if(map.containsKey("pluginId")) { //$NON-NLS-1$
                 mPluginId = (String)map.get("pluginId"); //$NON-NLS-1$
             }

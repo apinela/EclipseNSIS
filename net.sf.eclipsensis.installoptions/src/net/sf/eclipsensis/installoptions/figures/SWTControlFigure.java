@@ -96,7 +96,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
 
     protected void init(IPropertySource propertySource)
     {
-        List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
+        List<?> flags = (List<?>)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
         setDisabled(flags != null && flags.contains(InstallOptionsModel.FLAGS_DISABLED));
         setHScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_HSCROLL));
         setVScroll(flags != null && flags.contains(InstallOptionsModel.FLAGS_VSCROLL));

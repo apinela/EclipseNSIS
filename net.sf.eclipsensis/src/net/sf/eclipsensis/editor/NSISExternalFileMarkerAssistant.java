@@ -90,7 +90,7 @@ public class NSISExternalFileMarkerAssistant implements INSISMarkerAssistant
             AnnotationModel annotationModel = (AnnotationModel)model;
             annotationModel.removeAllAnnotations();
             if (results != null) {
-                List problems = results.getProblems();
+                List<NSISScriptProblem> problems = results.getProblems();
                 if (!Common.isEmptyCollection(problems)) {
                     IEditorInput editorInput = editor.getEditorInput();
                     IFile file = null;
@@ -98,7 +98,7 @@ public class NSISExternalFileMarkerAssistant implements INSISMarkerAssistant
                         file = ((IFileEditorInput)editorInput).getFile();
                     }
                     IDocument doc = editor.getDocumentProvider().getDocument(editorInput);
-                    for (Iterator iter = problems.iterator(); iter.hasNext();) {
+                    for (Iterator<NSISScriptProblem> iter = problems.iterator(); iter.hasNext();) {
                         NSISScriptProblem problem = (NSISScriptProblem)iter.next();
                         int line = problem.getLine();
                         if (line >= 0) {

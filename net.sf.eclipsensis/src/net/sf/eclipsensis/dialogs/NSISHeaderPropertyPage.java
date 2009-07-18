@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-public class NSISHeaderPropertyPage extends PropertyPage implements IWorkbenchPropertyPage
+public class NSISHeaderPropertyPage extends PropertyPage
 {
     private static final IFilter IFILE_FILTER = new IFilter() {
         public boolean select(Object toTest)

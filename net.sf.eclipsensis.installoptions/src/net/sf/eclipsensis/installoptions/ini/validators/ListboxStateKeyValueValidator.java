@@ -42,7 +42,7 @@ public class ListboxStateKeyValueValidator extends DropListStateKeyValueValidato
     {
         INIKeyValue[] values = ((INISection)keyValue.getParent()).findKeyValues(InstallOptionsModel.PROPERTY_FLAGS);
         if(!Common.isEmptyArray(values)) {
-            List flags = Arrays.asList(Common.tokenize(values[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR));
+            List<String> flags = Common.tokenizeToList(values[0].getValue(),IInstallOptionsConstants.LIST_SEPARATOR);
             if(flags.contains(InstallOptionsModel.FLAGS_MULTISELECT) ||
                flags.contains(InstallOptionsModel.FLAGS_EXTENDEDSELECT)) {
                 return true;

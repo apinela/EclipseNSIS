@@ -250,7 +250,8 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
                 if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_42) >= 0) {
                     break;
                 }
-            default:
+	            //$FALL-THROUGH$
+			default:
                 libType = LIBTYPE_DLL;
         }
         if (mLibType != libType) {

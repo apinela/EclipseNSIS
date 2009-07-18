@@ -108,9 +108,7 @@ public class NSISInformationControl implements IInformationControl, IInformation
         mSeparator = new Label(mStatusComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
         mSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        if (statusFieldText != null) {
-            createStatusLabel(statusFieldText, foreground, background);
-        }
+        createStatusLabel(statusFieldText, foreground, background);
     }
 
     private void createStatusLabel(final String statusFieldText, Color foreground, Color background)

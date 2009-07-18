@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsBuilderTab;
 
+@SuppressWarnings("restriction")
 public class NSISBuilderLaunchConfigTabGroup extends AbstractLaunchConfigurationTabGroup
 {
     public NSISBuilderLaunchConfigTabGroup()
@@ -23,7 +24,7 @@ public class NSISBuilderLaunchConfigTabGroup extends AbstractLaunchConfiguration
         super();
     }
 
-    public void createTabs(ILaunchConfigurationDialog dialog, String mode)
+	public void createTabs(ILaunchConfigurationDialog dialog, String mode)
     {
         ExternalToolsBuilderTab buildTab = new ExternalToolsBuilderTab() {
             @Override

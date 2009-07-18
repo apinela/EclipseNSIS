@@ -89,14 +89,14 @@ public class TableResizer extends ControlAdapter
             int sumWidth = 0;
             for(int i=0; i<n; i++) {
                 int width2 =  (int)((mCachedWeights[i]/mTotalWeight)*width);
-                if(headerVisible) {
+                if(headerVisible && minWidths != null) {
                     width2 = Math.max(minWidths[i], width2);
                 }
                 sumWidth += width2;
                 columns[i].setWidth(width2);
             }
             width = width-sumWidth;
-            if(headerVisible) {
+            if(headerVisible && minWidths != null) {
                 width = Math.max(width, minWidths[n]);
             }
             columns[n].setWidth(width);

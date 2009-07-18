@@ -38,7 +38,7 @@ public class TextFigure extends EditableElementFigure
     @Override
 	protected void init(IPropertySource propertySource)
     {
-        List flags = (List)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
+        List<?> flags = (List<?>)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
         setOnlyNumbers(flags != null && flags.contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS));
         setMultiLine(flags != null && flags.contains(InstallOptionsModel.FLAGS_MULTILINE));
         setNoWordWrap(flags != null && flags.contains(InstallOptionsModel.FLAGS_NOWORDWRAP));

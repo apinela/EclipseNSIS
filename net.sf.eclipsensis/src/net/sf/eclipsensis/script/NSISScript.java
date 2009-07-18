@@ -66,7 +66,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
     public void compact()
     {
         INSISScriptElement previous = null;
-        for (Iterator iter = mElements.iterator(); iter.hasNext();) {
+        for (Iterator<INSISScriptElement> iter = mElements.iterator(); iter.hasNext();) {
             INSISScriptElement element = (INSISScriptElement)iter.next();
             if(previous instanceof NSISScriptBlankLine && element instanceof NSISScriptBlankLine) {
                 iter.remove();
@@ -104,7 +104,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
 
     public void append(NSISScriptlet scriptlet) throws InvalidNSISScriptElementException
     {
-        for(Iterator iter = scriptlet.mElements.iterator(); iter.hasNext(); ) {
+        for(Iterator<INSISScriptElement> iter = scriptlet.mElements.iterator(); iter.hasNext(); ) {
             addElement((INSISScriptElement)iter.next());
         }
     }

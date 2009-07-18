@@ -91,7 +91,7 @@ public class NSISFileMarkerAssistant implements INSISMarkerAssistant, INSISConst
 							protected void execute(IProgressMonitor monitor)
                             {
                                 try {
-                                    List problems = results.getProblems();
+                                    List<NSISScriptProblem> problems = results.getProblems();
                                     monitor.beginTask(EclipseNSISPlugin.getResourceString("updating.problem.markers.task.name"),1+(problems==null?0:problems.size())); //$NON-NLS-1$
                                     IPath path = mFile.getFullPath();
                                     IPath loc = mFile.getLocation();
@@ -105,8 +105,8 @@ public class NSISFileMarkerAssistant implements INSISMarkerAssistant, INSISConst
                                         return;
                                     }
                                     monitor.worked(1);
-                                    if (!Common.isEmptyCollection(problems)) {
-                                        for(Iterator iter = problems.iterator(); iter.hasNext(); ) {
+                                    if (problems != null && !Common.isEmptyCollection(problems)) {
+                                        for(Iterator<NSISScriptProblem> iter = problems.iterator(); iter.hasNext(); ) {
                                             if(monitor.isCanceled()) {
                                                 return;
                                             }

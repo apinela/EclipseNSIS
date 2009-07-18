@@ -135,11 +135,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
         }
     }
 
-    protected URL getDefaultURL() throws IOException
-    {
-        return null;
-    }
-
+    protected abstract URL getDefaultURL() throws IOException;
     protected abstract URL getURL() throws IOException;
     protected abstract IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException;
 }

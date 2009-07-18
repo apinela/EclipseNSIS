@@ -97,7 +97,8 @@ public class UnicodeReader extends Reader
                                     unread -= 4;
                                     break;
                                 }
-                            default:
+	                            //$FALL-THROUGH$
+							default:
                                 encoding = "UTF-16LE";
                                 unread -= 2;
                         }

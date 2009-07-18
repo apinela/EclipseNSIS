@@ -48,13 +48,13 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     private IDialogSettings mDialogSettings;
     private IVMInstall mVMInstall = null;
     private String mToolsMainClassName = null;
-    private List<Object> mSelection = Collections.emptyList();
+    private List<?> mSelection = Collections.emptyList();
 
     /**
      * @param parentShell
      * @throws KeyStoreException
      */
-    public AbstractToolsUtilityDialog(Shell parentShell, List<Object> selection)
+    public AbstractToolsUtilityDialog(Shell parentShell, List<?> selection)
     {
         super(parentShell);
         mSelection = (selection == null?Collections.emptyList():selection);
@@ -96,7 +96,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         return mDialogSettings;
     }
 
-    protected final List<Object> getSelection()
+    protected final List<?> getSelection()
     {
         return mSelection;
     }

@@ -48,7 +48,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
     public void propertyChange(PropertyChangeEvent evt)
     {
         if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_FLAGS)) {
-            List newFlags = (List)evt.getNewValue();
+            List<?> newFlags = (List<?>)evt.getNewValue();
             setMultiLine(newFlags.contains(InstallOptionsModel.FLAGS_MULTILINE));
             setOnlyNumbers(newFlags.contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS));
         }

@@ -31,7 +31,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 
-class NSISGeneralTab extends NSISTab implements INSISSettingsEditorPageListener
+class NSISGeneralTab extends NSISTab
 {
     private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{[^\\r\\n]+\\}"); //$NON-NLS-1$
     private static final String[] FILTER_EXTENSIONS = new String[] {"*."+INSISConstants.NSI_EXTENSION}; //$NON-NLS-1$
