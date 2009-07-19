@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.INSISConstants;
@@ -127,6 +129,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 {
     public static final String ECLIPSENSIS_URI_SCHEME = "eclipsensis:"; //$NON-NLS-1$
     public static final String FILE_URI_SCHEME = "file:"; //$NON-NLS-1$
+    private static final Pattern cFileUriPattern = Pattern.compile("^(file://)([^/].*)?$", Pattern.CASE_INSENSITIVE);
     private static String cFirstPage = null;
     private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin
             .getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
@@ -396,17 +399,18 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                 if (!Common.isEmpty(event.location))
                 {
                     File f = null;
-                    if (event.location.regionMatches(true, 0, FILE_URI_SCHEME, 0, FILE_URI_SCHEME.length()))
+                    if (isFileURI(event.location))
                     {
                         try
                         {
-                            URI url = new URI(event.location);
+                        	String location = fixFileURI(event.location);
+                            URI url = new URI(location);
                             if (url.getFragment() != null)
                             {
-                                int n = event.location.lastIndexOf('#');
+                                int n = location.lastIndexOf('#');
                                 if (n >= 0)
                                 {
-                                    url = new URI(event.location.substring(0, n));
+                                    url = new URI(location.substring(0, n));
                                 }
                             }
                             f = new File(url);
@@ -1001,8 +1005,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                                     String location = event.location;
                                     if (!Common.isEmpty(location))
                                     {
-                                        if (!location.regionMatches(true, 0, FILE_URI_SCHEME, 0, FILE_URI_SCHEME
-                                                .length()))
+                                        if (!isFileURI(location))
                                         {
                                             // This is a windows file name
                                             location = decode(IOUtility.getFileURLString(new File(location)));
@@ -1713,7 +1716,22 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
     }
 
-    private class NSISHelpIndexEntryDialog extends Dialog
+    private boolean isFileURI(String location) 
+    {
+		return location.regionMatches(true, 0, FILE_URI_SCHEME, 0, FILE_URI_SCHEME.length());
+	}
+
+    private String fixFileURI(String location) 
+    {
+    	Matcher matcher = cFileUriPattern.matcher(location);
+    	if(matcher.matches())
+    	{
+    		return new StringBuilder(matcher.group(1)).append("/").append(matcher.group(2)).toString();
+    	}
+		return location;
+	}
+
+	private class NSISHelpIndexEntryDialog extends Dialog
     {
         private NSISHelpIndexEntry mEntry;
         private NSISHelpIndexURL mURL;
