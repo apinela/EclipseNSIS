@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checklist>
+<item name="EclipseNSIS">
+<item name="Manual configuration wizard"/>
+<item name="File change listener - touch makensis.exe"/>
+<item name="NSIS command help">
+<item name="hover help"/>
+<item name="F2 and F3 help">
+<item name="internal"/>
+<item name="external"/>
+</item>
+</item>
+<item name="Code assist"/>
+<item name="Insert template"/>
+<item name="Tabs to spaces"/>
+<item name="Toggle comments">
+<item name="single line"/>
+<item name="block"/>
+</item>
+<item name="Insert file name"/>
+<item name="Insert folder name"/>
+<item name="Insert color"/>
+<item name="Insert reg file"/>
+<item name="Insert reg key"/>
+<item name="Insert reg value"/>
+<item name="Scroll tip"/>
+<item name="Drag &amp; drop">
+<item name="files"/>
+<item name="reg files"/>
+</item>
+<item name="Rulers clicking">
+<item name="Vertical"/>
+<item name="Overview"/>
+</item>
+<item name="Compile scripts">
+<item name="Menu"/>
+<item name="Toolbar"/>
+<item name="Alt+C">
+<item name="Editor"/>
+<item name="Resource navigator"/>
+</item>
+</item>
+<item name="Compile &amp; Test scripts">
+<item name="Menu"/>
+<item name="Toolbar"/>
+<item name="Alt+M">
+<item name="Editor"/>
+<item name="Resource navigator"/>
+</item>
+</item>
+<item name="Test scripts">
+<item name="Menu"/>
+<item name="Toolbar"/>
+<item name="Alt+T">
+<item name="Editor"/>
+<item name="Resource navigator"/>
+</item>
+</item>
+<item name="Cancel compilation">
+<item name="Console"/>
+<item name="Menu"/>
+<item name="Toolbar"/>
+<item name="Alt+N in Editor"/>
+</item>
+<item name="Clear problem markers">
+<item name="Menu"/>
+<item name="Alt+R">
+<item name="Editor"/>
+<item name="Resource navigator"/>
+</item>
+</item>
+<item name="Export as HTML"/>
+<item name="Code outline">
+<item name="Synchronize"/>
+<item name="Expand"/>
+<item name="Collapse"/>
+<item name="Filter"/>
+</item>
+<item name="Code folding">
+<item name="Toggle"/>
+<item name="Expand all"/>
+<item name="Expand"/>
+<item name="Collapse"/>
+<item name="Collapse all"/>
+</item>
+<item name="Task tags"/>
+<item name="NSIS help view">
+<item name="Browse"/>
+<item name="Show/hide nav pane"/>
+<item name="Sync"/>
+<item name="Search"/>
+<item name="Index"/>
+</item>
+<item name="Launch config"/>
+<item name="Build config"/>
+<item name="Console">
+<item name="Scrolling"/>
+<item name="Errors, warnings click">
+<item name="Vertical ruler"/>
+<item name="Text area"/>
+</item>
+</item>
+<item name="Command wizard">
+<item name="Double click"/>
+<item name="Drag &amp; drop"/>
+<item name="Repeatable parameters"/>
+<item name="Tree/List view"/>
+<item name="Revert"/>
+<item name="Clear"/>
+<item name="Remember parameter values"/>
+<item name="Tray help"/>
+</item>
+<item name="Script wizard">
+<item name="Silent"/>
+<item name="Classic"/>
+<item name="Modern UI"/>
+<item name="Language option"/>
+<item name="Start menu option"/>
+<item name="Directory option"/>
+<item name="License"/>
+<item name="Splash"/>
+<item name="Background"/>
+<item name="All content types"/>
+<item name="Drag &amp; drop"/>
+<item name="Save as">
+<item name="Template"/>
+<item name="Workspace file"/>
+<item name="Filesystem file"/>
+</item>
+</item>
+<item name="NSIS Update">
+<item name="All options"/>
+<item name="All content types"/>
+<item name="Choose download site"/>
+<item name="All content types"/>
+<item name="Proxy"/>
+</item>
+<item name="Preferences">
+<item name="Console visibility"/>
+<item name="Makensis.exe notification"/>
+<item name="Instructions"/>
+<item name="Defined symbols"/>
+<item name="Editor">
+<item name="Spaces for tabs"/>
+<item name="Match delimiters"/>
+<item name="Syntax styles"/>
+</item>
+<item name="Templates">
+<item name="Create"/>
+<item name="Edit"/>
+<item name="Delete"/>
+<item name="Export"/>
+<item name="Import"/>
+<item name="Restore removed"/>
+<item name="Revert to default"/>
+</item>
+<item name="Task tags">
+<item name="Auto tag detection"/>
+<item name="New tag types"/>
+</item>
+<item name="Script Templates">
+<item name="Create"/>
+<item name="Edit"/>
+<item name="Delete"/>
+<item name="Export"/>
+<item name="Import"/>
+<item name="Restore removed"/>
+<item name="Revert to default"/>
+</item>
+<item name="Auto NSIS updates"/>
+<item name="Colors and fonts"/>
+</item>
+<item name="Script properties"/>
+</item>
+<item name="EclipseNSIS InstallOptions Editor">
+<item name="Script Format">
+<item name="Leading/trailing spaces in section name"/>
+<item name="Leading/trailing spaces in key name"/>
+<item name="Spacing around delimiter"/>
+<item name="Hex numerical values"/>
+<item name="Comments on new line or end of existing line"/>
+<item name="CR/LF">
+<item name="Label control"/>
+<item name="Multiline Text Control"/>
+<item name="ValidateText property"/>
+</item>
+</item>
+<item name="Design Editor">
+<item name="Selection Tools">
+<item name="Selection"/>
+<item name="Marquee"/>
+</item>
+<item name="Control Creation Tools"/>
+<item name="Templated Creation Tools">
+<item name="Create"/>
+<item name="Edit"/>
+<item name="Delete"/>
+</item>
+<item name="Palette and Template settings">
+<item name="Palette">
+<item name="Font"/>
+<item name="Layout"/>
+<item name="Drawer"/>
+<item name="Options"/>
+</item>
+<item name="Template">
+<item name="Edit"/>
+<item name="Delete"/>
+<item name="Export"/>
+<item name="Import"/>
+<item name="Restore removed"/>
+<item name="Revert to default"/>
+</item>
+</item>
+<item name="Drawing Tools">
+<item name="Grid"/>
+<item name="Rulers"/>
+<item name="Guides">
+<item name="Create"/>
+<item name="Delete"/>
+<item name="Move"/>
+</item>
+<item name="Snap">
+<item name="Guides"/>
+<item name="Rulers"/>
+<item name="Controls"/>
+</item>
+<item name="Glue"/>
+<item name="Dialog Size"/>
+</item>
+<item name="Graphical Editing commands">
+<item name="Show/Hide">
+<item name="Rulers"/>
+<item name="Grid"/>
+<item name="Guides"/>
+<item name="Dialog Size"/>
+</item>
+<item name="Grid/Snap/Glue Settings">
+<item name="Grid Spacing"/>
+<item name="Grid Origin"/>
+<item name="Grid Style"/>
+</item>
+<item name="Align">
+<item name="Left"/>
+<item name="Center"/>
+<item name="Right"/>
+<item name="Top"/>
+<item name="Middle"/>
+<item name="Bottom"/>
+</item>
+<item name="Match Sizes">
+<item name="Width"/>
+<item name="Height"/>
+<item name="Both"/>
+</item>
+<item name="Distribute">
+<item name="Horizontal Interstices"/>
+<item name="Left Edges"/>
+<item name="Horizontal Centers"/>
+<item name="Right Edges"/>
+<item name="Vertical Interstices"/>
+<item name="Top Edges"/>
+<item name="Vertical Centers"/>
+<item name="Bottom Edges"/>
+</item>
+<item name="Arrange">
+<item name="Send Backward"/>
+<item name="Send to Back"/>
+<item name="Bring Forward"/>
+<item name="Bring to Front"/>
+</item>
+<item name="Lock/Unlock">
+<item name="Lock"/>
+<item name="Unlock"/>
+</item>
+<item name="Reset dialog size"/>
+<item name="Refresh"/>
+<item name="Preview"/>
+<item name="Create/Modify controls">
+<item name="Controls drawer">
+<item name="Click"/>
+<item name="Drag &amp; drop"/>
+</item>
+<item name="Palette drawer">
+<item name="Click"/>
+<item name="Drag &amp; drop"/>
+</item>
+<item name="Clipboard"/>
+<item name="Clone"/>
+</item>
+<item name="Properties view">
+<item name="Change field number"/>
+<item name="Change control type"/>
+<item name="Change Text control flags">
+<item name="Multiline"/>
+<item name="Numbers only"/>
+</item>
+<item name="Change ListBox control flags">
+<item name="Multiselect"/>
+<item name="Extended select"/>
+</item>
+<item name="Classic editor dialogs">
+<item name="FileRequest filter"/>
+<item name="Flags"/>
+<item name="DropList ListItems"/>
+<item name="Combobox ListItems"/>
+<item name="ListBox ListItems"/>
+<item name="Label Text"/>
+<item name="Text State"/>
+<item name="Link TxtColor"/>
+</item>
+</item>
+<item name="Direct edit">
+<item name="Label"/>
+<item name="Text"/>
+<item name="Password"/>
+<item name="Combobox"/>
+<item name="DropList"/>
+<item name="Listbox"/>
+<item name="CheckBox"/>
+<item name="RadioButton"/>
+<item name="FileRequest"/>
+<item name="DirRequest"/>
+<item name="GroupBox"/>
+<item name="Link"/>
+<item name="Button"/>
+</item>
+<item name="Extended edit">
+<item name="Combobox"/>
+<item name="DropList"/>
+<item name="Listbox"/>
+<item name="CheckBox"/>
+<item name="RadioButton"/>
+<item name="FileRequest"/>
+<item name="Link"/>
+</item>
+<item name="Outline">
+<item name="Change sequence"/>
+<item name="Delete"/>
+<item name="Select synchronization"/>
+</item>
+</item>
+</item>
+<item name="Source Editor">
+<item name="Rulers clicking">
+<item name="Vertical"/>
+<item name="Overview"/>
+</item>
+<item name="Code folding">
+<item name="Toggle"/>
+<item name="Expand all"/>
+<item name="Expand"/>
+<item name="Collapse"/>
+<item name="Collapse all"/>
+</item>
+<item name="Code outline">
+<item name="Synchronize"/>
+</item>
+<item name="Source Editing commands">
+<item name="Create Control">
+<item name="Change field id"/>
+<item name="Change control type"/>
+<item name="Shortcut">
+<item name="Editor"/>
+<item name="Outline"/>
+</item>
+</item>
+<item name="Edit Control">
+<item name="Change field id"/>
+<item name="Change control type"/>
+<item name="Shortcut">
+<item name="Editor"/>
+<item name="Outline"/>
+</item>
+</item>
+<item name="Delete Control">
+<item name="Shortcut">
+<item name="Editor"/>
+<item name="Outline"/>
+</item>
+</item>
+<item name="Reorder INI sections"/>
+<item name="Fix Problems">
+<item name="All"/>
+<item name="Errors"/>
+<item name="Warnings"/>
+</item>
+</item>
+<item name="Quick Fix">
+<item name="Vertical ruler click"/>
+<item name="Ctrl+1"/>
+<item name="Problems view"/>
+</item>
+</item>
+<item name="Script Wizard"/>
+<item name="Preferences">
+<item name="Design Editor">
+<item name="Show/Hide">
+<item name="Rulers"/>
+<item name="Grid"/>
+<item name="Guides"/>
+<item name="Dialog Size"/>
+</item>
+<item name="Grid">
+<item name="Grid Spacing"/>
+<item name="Grid Origin"/>
+<item name="Grid Style"/>
+</item>
+<item name="Snap &amp; Glue">
+<item name="Guides"/>
+<item name="Rulers"/>
+<item name="Controls"/>
+<item name="Glue"/>
+</item>
+<item name="Dialog Sizes">
+<item name="Create"/>
+<item name="Edit"/>
+<item name="Delete"/>
+</item>
+</item>
+<item name="Source Editor">
+<item name="Syntax styles"/>
+</item>
+<item name="Check INI file association"/>
+</item>
+</item>
+</checklist>
