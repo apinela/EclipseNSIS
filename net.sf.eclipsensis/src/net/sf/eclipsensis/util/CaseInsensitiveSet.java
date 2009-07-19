@@ -56,7 +56,7 @@ public class CaseInsensitiveSet extends AbstractSet<String> implements Serializa
     {
         if (initialCapacity < 0)
         {
-            throw new IllegalArgumentException("Illegal initial capacity: " + initialCapacity);
+            throw new IllegalArgumentException("Illegal initial capacity: " + initialCapacity); //$NON-NLS-1$
         }
         mValueMap = new LinkedHashMap<String,String>(initialCapacity);
     }

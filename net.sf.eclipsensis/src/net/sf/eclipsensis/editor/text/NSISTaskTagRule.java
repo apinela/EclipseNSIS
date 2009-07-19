@@ -49,7 +49,7 @@ public class NSISTaskTagRule implements IRule
         String[] tagNames = new String[taskTags.size()];
         int i=0;
         for (Iterator<NSISTaskTag> iter = taskTags.iterator(); iter.hasNext();) {
-            NSISTaskTag tag = (NSISTaskTag)iter.next();
+            NSISTaskTag tag = iter.next();
             tagNames[i] = tag.getTag();
             mTaskTags.put(tagNames[i],tag);
             i++;

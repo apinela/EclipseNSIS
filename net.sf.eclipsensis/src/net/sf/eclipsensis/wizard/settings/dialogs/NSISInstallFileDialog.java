@@ -135,8 +135,8 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite2.setLayout(layout);
 
-        final Button b1 = NSISWizardDialogUtil.createCheckBox(composite2, "wizard.preserveattr.label", mStore
-                .getBoolean("preserveAttributes"), true, null, false);
+        final Button b1 = NSISWizardDialogUtil.createCheckBox(composite2, "wizard.preserveattr.label", mStore //$NON-NLS-1$
+                .getBoolean("preserveAttributes"), true, null, false); //$NON-NLS-1$
         gd = (GridData) b1.getLayoutData();
         gd.horizontalSpan = 1;
         gd.grabExcessHorizontalSpace = true;
@@ -148,8 +148,8 @@ public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
             }
         });
 
-        final Button b2 = NSISWizardDialogUtil.createCheckBox(composite2, "wizard.nonfatal.label", mStore
-                .getBoolean("nonFatal"), true, null, false);
+        final Button b2 = NSISWizardDialogUtil.createCheckBox(composite2, "wizard.nonfatal.label", mStore //$NON-NLS-1$
+                .getBoolean("nonFatal"), true, null, false); //$NON-NLS-1$
         gd = (GridData) b2.getLayoutData();
         gd.horizontalSpan = 1;
         gd.grabExcessHorizontalSpace = true;

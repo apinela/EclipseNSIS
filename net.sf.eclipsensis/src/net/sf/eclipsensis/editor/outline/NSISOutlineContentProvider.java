@@ -110,35 +110,37 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     private NSISOutlineElement openElement(NSISOutlineElement current, NSISOutlineElement element,
                                            int[] invalidParents)
     {
+    	NSISOutlineElement current2 = current;
         boolean found = false;
         if(!Common.isEmptyArray(invalidParents)) {
             for(int i=0; i<invalidParents.length; i++) {
-                if(mResources.getTypeIndex(current.getType()) == invalidParents[i]) {
+                if(mResources.getTypeIndex(current2.getType()) == invalidParents[i]) {
                     found = true;
                     break;
                 }
             }
         }
         if(!found) {
-            current.addChild(element);
-            current = element;
+            current2.addChild(element);
+            current2 = element;
         }
-        return current;
+        return current2;
     }
 
     private NSISOutlineElement closeElement(IDocument document, NSISOutlineElement current, NSISOutlineElement element,
                                             int[] validTypes) throws BadLocationException, BadPositionCategoryException
     {
+    	NSISOutlineElement current2 = current;
         if(!Common.isEmptyArray(validTypes)) {
             List<NSISOutlineElement> elementsToClose = new ArrayList<NSISOutlineElement>();
             boolean found = false;
-            NSISOutlineElement el = current;
+            NSISOutlineElement el = current2;
             while(el.getType() != NSISOutlineElement.ROOT && !found) {
                 elementsToClose.add(el);
                 for (int i = 0; i < validTypes.length; i++) {
                     if(mResources.getTypeIndex(el.getType()) == validTypes[i]) {
                         found = true;
-                        current = el.getParent();
+                        current2 = el.getParent();
                         for (Iterator<NSISOutlineElement> iter = elementsToClose.iterator(); iter.hasNext();) {
                             el = iter.next();
                             el.merge(element.getPosition());
@@ -157,7 +159,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                 }
             }
         }
-        return current;
+        return current2;
     }
 
     private void addLine(IDocument document, NSISOutlineElement current,
@@ -822,28 +824,29 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
 
         protected IToken createToken(String text, int startOffset, int length)
         {
+        	String text2 = text;
             if(mMatchKeywords) {
-                if(text.length()==0 && !mIsString) {
+                if(text2.length()==0 && !mIsString) {
                     return Token.WHITESPACE;
                 }
                 else {
                     if(mIsString) {
-                        if(text.length() > 0) {
-                            if(text.length() > 1 && text.charAt(0) == text.charAt(text.length()-1)) {
-                                text = text.substring(1,text.length()-1);
+                        if(text2.length() > 0) {
+                            if(text2.length() > 1 && text2.charAt(0) == text2.charAt(text2.length()-1)) {
+                                text2 = text2.substring(1,text2.length()-1);
                             }
                             else {
-                                text = text.substring(1);
+                                text2 = text2.substring(1);
                             }
                         }
                     }
-                    String type = mResources.getType(text);
+                    String type = mResources.getType(text2);
 
                     return (type == null?Token.UNDEFINED:new Token(new NSISOutlineData(type, new Region(startOffset,length))));
                 }
             }
             else {
-                return new Token(new NSISOutlineTextData(text, new TypedRegion(startOffset,length,(mIsString?NSISPartitionScanner.NSIS_STRING:IDocument.DEFAULT_CONTENT_TYPE))));
+                return new Token(new NSISOutlineTextData(text2, new TypedRegion(startOffset,length,(mIsString?NSISPartitionScanner.NSIS_STRING:IDocument.DEFAULT_CONTENT_TYPE))));
             }
         }
     }

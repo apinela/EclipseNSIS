@@ -14,7 +14,7 @@ import java.util.List;
 class MakeNSISDelegateU extends AbstractMakeNSISDelegate
 {
     static {
-        System.loadLibrary("MakeNSISRunnerU");
+        System.loadLibrary("MakeNSISRunnerU"); //$NON-NLS-1$
     }
 
     public boolean isUnicode()

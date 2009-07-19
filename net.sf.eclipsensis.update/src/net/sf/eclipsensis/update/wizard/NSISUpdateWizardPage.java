@@ -36,7 +36,7 @@ public class NSISUpdateWizardPage extends WizardPage
 
     static
     {
-        LINK_TEXT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("wizard.proxy.link.text")).format(new String[] { "org.eclipse.ui.net.NetPreferences" }); //$NON-NLS-1$
+        LINK_TEXT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("wizard.proxy.link.text")).format(new String[] { "org.eclipse.ui.net.NetPreferences" }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public NSISUpdateWizardPage(int action, boolean ignorePreview)
@@ -68,7 +68,8 @@ public class NSISUpdateWizardPage extends WizardPage
         Link link = new Link(parent, SWT.WRAP);
         link.setText(LINK_TEXT);
         link.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 if (e.text != null)
                 {
@@ -98,7 +99,8 @@ public class NSISUpdateWizardPage extends WizardPage
         notify.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         notify.setSelection(mAction == SchedulerConstants.UPDATE_NOTIFY);
         notify.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 if (notify.getSelection())
                 {
@@ -112,7 +114,8 @@ public class NSISUpdateWizardPage extends WizardPage
         download.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         download.setSelection(mAction == SchedulerConstants.UPDATE_DOWNLOAD);
         download.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 if (download.getSelection())
                 {
@@ -126,7 +129,8 @@ public class NSISUpdateWizardPage extends WizardPage
         install.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         install.setSelection(mAction == SchedulerConstants.UPDATE_INSTALL);
         install.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 if (install.getSelection())
                 {
@@ -150,7 +154,8 @@ public class NSISUpdateWizardPage extends WizardPage
         ignorePreview.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         ignorePreview.setSelection(mIgnorePreview);
         ignorePreview.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 mIgnorePreview = ignorePreview.getSelection();
             }

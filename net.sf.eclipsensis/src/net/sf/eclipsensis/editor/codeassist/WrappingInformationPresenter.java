@@ -33,18 +33,19 @@ public class WrappingInformationPresenter implements NSISInformationControl.IInf
 
     public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight)
     {
-        hoverInfo = hoverInfo.trim();
+        String hoverInfo2 = hoverInfo.trim();
+        int maxWidth2 = maxWidth;
         GC gc = new GC(display);
         try {
-            maxWidth -= gc.getFontMetrics().getAverageCharWidth();
-            Point p = gc.stringExtent(hoverInfo);
-            if (p.x > maxWidth) {
+            maxWidth2 -= gc.getFontMetrics().getAverageCharWidth();
+            Point p = gc.stringExtent(hoverInfo2);
+            if (p.x > maxWidth2) {
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                StringTokenizer st = new StringTokenizer(hoverInfo, "\r\n"); //$NON-NLS-1$
+                StringTokenizer st = new StringTokenizer(hoverInfo2, "\r\n"); //$NON-NLS-1$
                 while (st.hasMoreTokens()) {
                     String token = st.nextToken();
                     p = gc.stringExtent(token);
-                    if (p.x <= maxWidth) {
+                    if (p.x <= maxWidth2) {
                         buf.append(token);
                     }
                     else {
@@ -67,7 +68,7 @@ public class WrappingInformationPresenter implements NSISInformationControl.IInf
                                     string = mIndent+string;
                                 }
                                 p = gc.stringExtent(string);
-                                if (p.x <= maxWidth) {
+                                if (p.x <= maxWidth2) {
                                     last = (index >= 0?i:i - 1);
                                 }
                                 else {
@@ -94,7 +95,7 @@ public class WrappingInformationPresenter implements NSISInformationControl.IInf
                             buf.append("\n").append(mIndent); //$NON-NLS-1$
                         }
                         String s = new String(chars, start, chars.length - start);
-                        if (gc.stringExtent(s).x > maxWidth && last >= start) {
+                        if (gc.stringExtent(s).x > maxWidth2 && last >= start) {
                             buf.append(new String(chars, start, last - start + 1)).append("\n").append(mIndent); //$NON-NLS-1$
                             start = last + 1;
                             s = new String(chars, start, chars.length - start);
@@ -105,12 +106,12 @@ public class WrappingInformationPresenter implements NSISInformationControl.IInf
                         buf.append("\n"); //$NON-NLS-1$
                     }
                 }
-                hoverInfo = buf.toString();
+                hoverInfo2 = buf.toString();
             }
         }
         finally {
             gc.dispose();
         }
-        return hoverInfo;
+        return hoverInfo2;
     }
 }

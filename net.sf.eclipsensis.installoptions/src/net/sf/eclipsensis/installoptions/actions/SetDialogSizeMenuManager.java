@@ -65,7 +65,7 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
             List<DialogSize> dialogSizes = DialogSizeManager.getDialogSizes();
             mActionMap.keySet().retainAll(dialogSizes);
             for (Iterator<DialogSize> iter = dialogSizes.iterator(); iter.hasNext();) {
-                DialogSize element = (DialogSize)iter.next();
+                DialogSize element = iter.next();
                 if(!mActionMap.containsKey(element)) {
                     SetDialogSizeAction action = new SetDialogSizeAction(element);
                     action.setEditor(mEditor);

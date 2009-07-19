@@ -255,7 +255,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         if(mCurrentWidget == null) {
             Collection<InstallOptionsModelTypeDef> typeDefs = InstallOptionsModel.INSTANCE.getControlTypeDefs();
             if(typeDefs.size() > 0) {
-                InstallOptionsModelTypeDef typeDef = (InstallOptionsModelTypeDef)typeDefs.iterator().next();
+                InstallOptionsModelTypeDef typeDef = typeDefs.iterator().next();
                 InstallOptionsElementFactory factory = InstallOptionsElementFactory.getFactory(typeDef.getType());
                 mCurrentWidget = (InstallOptionsWidget)factory.getNewObject();
                 mDialog.addChild(mCurrentWidget);

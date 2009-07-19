@@ -85,14 +85,14 @@ public class RGBParam extends HexStringParam
         @Override
 		protected Control createParamControl(Composite parent)
         {
-            parent = new Composite(parent,SWT.NONE);
+        	Composite parent2 = new Composite(parent,SWT.NONE);
             GridLayout layout = new GridLayout(2,false);
             layout.marginHeight = layout.marginWidth = 0;
-            parent.setLayout(layout);
-            mText = (Text)super.createParamControl(parent);
+            parent2.setLayout(layout);
+            mText = (Text)super.createParamControl(parent2);
             if(Common.isValid(mText)) {
                 mText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
-                final ColorEditor editor = new ColorEditor(parent);
+                final ColorEditor editor = new ColorEditor(parent2);
                 Button b = editor.getButton();
                 final RGB bgColor = b.getBackground().getRGB();
                 b.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
@@ -118,7 +118,7 @@ public class RGBParam extends HexStringParam
                 });
                 mText.setData(DATA_BUTTON,b);
             }
-            return parent;
+            return parent2;
         }
     }
 }

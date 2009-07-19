@@ -129,8 +129,8 @@ public class FileSelectionDialog extends TitleAreaDialog
     @Override
 	protected Control createDialogArea(Composite parent)
     {
-        parent = (Composite)super.createDialogArea(parent);
-        Composite composite = new Composite(parent,SWT.NONE);
+    	Composite parent2 = (Composite)super.createDialogArea(parent);
+        Composite composite = new Composite(parent2,SWT.NONE);
         composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         GridLayout layout = new GridLayout(1,true);
         composite.setLayout(layout);
@@ -250,7 +250,7 @@ public class FileSelectionDialog extends TitleAreaDialog
                 tv2.setSelection(new StructuredSelection());
             }
         }
-        return parent;
+        return parent2;
     }
 
     private class ContainerContentProvider extends EmptyContentProvider

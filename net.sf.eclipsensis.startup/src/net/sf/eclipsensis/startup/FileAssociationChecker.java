@@ -219,7 +219,8 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
                     return false;
                 }
 
-                public IStatus runInUIThread(final IProgressMonitor monitor)
+                @Override
+				public IStatus runInUIThread(final IProgressMonitor monitor)
                 {
                     if (monitor.isCanceled()) {
                         return Status.CANCEL_STATUS;

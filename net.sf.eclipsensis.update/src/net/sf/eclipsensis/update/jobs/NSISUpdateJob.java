@@ -61,7 +61,8 @@ public abstract class NSISUpdateJob extends Job
         }
     }
 
-    public final boolean belongsTo(Object family)
+    @Override
+	public final boolean belongsTo(Object family)
     {
         return family == this || family == NSISUpdateJobSettings.JOB_FAMILY;
     }
@@ -71,7 +72,8 @@ public abstract class NSISUpdateJob extends Job
         return e.getMessage();
     }
 
-    public final IStatus run(IProgressMonitor monitor)
+    @Override
+	public final IStatus run(IProgressMonitor monitor)
     {
         IStatus status = doRun(monitor);
         if(shouldReschedule()) {

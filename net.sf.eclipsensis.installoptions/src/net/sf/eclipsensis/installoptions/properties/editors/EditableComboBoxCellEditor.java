@@ -223,7 +223,7 @@ public class EditableComboBoxCellEditor extends CellEditor
     private String checkValue(String value)
     {
         for (Iterator<String> iter = getItems().iterator(); iter.hasNext();) {
-            String item = (String)iter.next();
+            String item = iter.next();
             if(Common.stringsAreEqual(item, value, mCaseInsensitive)) {
                 return item;
             }
@@ -261,7 +261,7 @@ public class EditableComboBoxCellEditor extends CellEditor
         if (mCombo != null && mItems != null) {
             mCombo.removeAll();
             for (int i = 0; i < mItems.size(); i++) {
-                mCombo.add((String)mItems.get(i), i);
+                mCombo.add(mItems.get(i), i);
             }
 
             if(mSelection == null) {

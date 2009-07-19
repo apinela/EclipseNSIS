@@ -210,7 +210,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
     {
         mHeaders.clear();
         for (Iterator<IFile> iter = mOriginalHeaders.iterator(); iter.hasNext();) {
-            IFile header = (IFile)iter.next();
+            IFile header = iter.next();
             if(IOUtility.isValidFile(header)) {
                 mHeaders.add(header);
             }
@@ -250,7 +250,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         Set<IFile> addedHeaders = new HashSet<IFile>(mHeaders);
         addedHeaders.removeAll(mOriginalHeaders);
         for (Iterator<IFile> iter = removedHeaders.iterator(); iter.hasNext();) {
-            mHeaderAssociationManager.disassociateFromScript((IFile)iter.next());
+            mHeaderAssociationManager.disassociateFromScript(iter.next());
         }
         for (Iterator<IFile> iter = addedHeaders.iterator(); iter.hasNext();) {
             mHeaderAssociationManager.associateWithScript(iter.next(), file);

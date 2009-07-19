@@ -92,7 +92,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     private static Map<String, Map<String, Object>> cCommandStateMap;
     private static final Object JOB_FAMILY = new Object();
     private static final String STYLE_LINK;
-    private static final String NEW_STYLE_LINK = "<style type=\"text/css\">body { text: #000000; background-color: #FFFFFF} pre { background-color: #F7F7F7} a { color: #567599} a:hover { background-color: #F4F4F4}</style>";
+    private static final String NEW_STYLE_LINK = "<style type=\"text/css\">body { text: #000000; background-color: #FFFFFF} pre { background-color: #F7F7F7} a { color: #567599} a:hover { background-color: #F4F4F4}</style>"; //$NON-NLS-1$
 
     private NSISCommand mCommand;
 
@@ -157,13 +157,14 @@ public class NSISCommandDialog extends StatusMessageDialog
 
         private boolean isChildOf(Control parent, Control child)
         {
-            while (child != null)
+        	Control child2 = child;
+            while (child2 != null)
             {
-                if (child == parent)
+                if (child2 == parent)
                 {
                     return true;
                 }
-                child = child.getParent();
+                child2 = child2.getParent();
             }
             return false;
         }
@@ -962,13 +963,14 @@ public class NSISCommandDialog extends StatusMessageDialog
 
         private String fixStyle(String text)
         {
-            int n = text.indexOf(STYLE_LINK);
+        	String text2 = text;
+            int n = text2.indexOf(STYLE_LINK);
             if (n >= 0)
             {
-                text = new StringBuffer(text.substring(0, n)).append(NEW_STYLE_LINK).append(
-                        text.substring(n + STYLE_LINK.length())).toString();
+                text2 = new StringBuffer(text2.substring(0, n)).append(NEW_STYLE_LINK).append(
+                        text2.substring(n + STYLE_LINK.length())).toString();
             }
-            return text;
+            return text2;
         }
 
         private boolean setCurrentCommand(String command)

@@ -35,19 +35,21 @@ public class KeyStoreDialog extends Dialog
         mStorePassword = storePassword;
     }
 
-    protected void configureShell(Shell newShell)
+    @Override
+	protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(JARSignerPlugin.getResourceString("keystore.dialog.title")); //$NON-NLS-1$
     }
 
-    protected Control createDialogArea(Composite parent)
+    @Override
+	protected Control createDialogArea(Composite parent)
     {
-        parent = (Composite)super.createDialogArea(parent);
-        GridLayout layout = (GridLayout)parent.getLayout();
+        Composite parent2 = (Composite)super.createDialogArea(parent);
+        GridLayout layout = (GridLayout)parent2.getLayout();
         layout.numColumns = 1;
         layout.makeColumnsEqualWidth = false;
-        Composite composite = new Composite(parent,SWT.NONE);
+        Composite composite = new Composite(parent2,SWT.NONE);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         layout = new GridLayout(3,false);
         layout.marginHeight = 0;
@@ -72,7 +74,8 @@ public class KeyStoreDialog extends Dialog
         b.setLayoutData(new GridData());
         b.setText(UtilitiesPlugin.getResourceString("browse.label")); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 FileDialog dialog = new FileDialog(getShell(),SWT.OPEN);
                 dialog.setText(JARSignerPlugin.getResourceString("key.store.location.message")); //$NON-NLS-1$
@@ -101,10 +104,11 @@ public class KeyStoreDialog extends Dialog
             }
         });
 
-        return parent;
+        return parent2;
     }
 
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         mKeyStore = JARSignerPlugin.loadKeyStore(mKeyStoreName,mStorePassword);
         if(mKeyStore != null) {

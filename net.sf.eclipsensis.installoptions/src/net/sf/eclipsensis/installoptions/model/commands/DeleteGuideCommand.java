@@ -45,7 +45,7 @@ public class DeleteGuideCommand extends Command
         mOldWidgets = new HashMap<InstallOptionsWidget, Integer>(mGuide.getMap());
         Iterator<InstallOptionsWidget> iter = mOldWidgets.keySet().iterator();
         while (iter.hasNext()) {
-            mGuide.detachWidget((InstallOptionsWidget)iter.next());
+            mGuide.detachWidget(iter.next());
         }
         mParent.removeGuide(mGuide);
     }
@@ -56,8 +56,8 @@ public class DeleteGuideCommand extends Command
         mParent.addGuide(mGuide);
         Iterator<InstallOptionsWidget> iter = mOldWidgets.keySet().iterator();
         while (iter.hasNext()) {
-            InstallOptionsWidget widget = (InstallOptionsWidget)iter.next();
-            mGuide.attachWidget(widget, ((Integer)mOldWidgets.get(widget)).intValue());
+            InstallOptionsWidget widget = iter.next();
+            mGuide.attachWidget(widget, (mOldWidgets.get(widget)).intValue());
         }
     }
 }

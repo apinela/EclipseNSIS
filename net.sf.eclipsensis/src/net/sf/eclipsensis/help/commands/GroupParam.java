@@ -118,12 +118,12 @@ public class GroupParam extends NSISParam
             	NSISParam param = iter.next();
                 List<NSISParam> dependents = mDependencies.get(param);
                 if (!Common.isEmptyCollection(dependents)) {
-                    parentEditor = map.get(param);
+                	INSISParamEditor parentEditor2 = map.get(param);
                     List<INSISParamEditor> list = new ArrayList<INSISParamEditor>();
                     for (Iterator<NSISParam> iterator = dependents.iterator(); iterator.hasNext();) {
                         list.add(map.get(iterator.next()));
                     }
-                    parentEditor.setDependents(list);
+                    parentEditor2.setDependents(list);
                 }
             }
         }

@@ -281,11 +281,11 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     private String maybeMakeRelative(File reference, String pathname)
     {
         if(pathname.toUpperCase().startsWith(mNsisDirKeyword)) {
-            pathname = Common.quote(pathname);
+            return Common.quote(pathname);
         }
         else {
             if(!Common.isEmpty(pathname) && mSettings.isMakePathsRelative()) {
-                pathname = IOUtility.makeRelativeLocation(reference,pathname);
+                return IOUtility.makeRelativeLocation(reference,pathname);
             }
         }
         return pathname;
@@ -1182,15 +1182,16 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
      */
     private NSISScriptAttribute createVersionInfoKey(String langId, String[] args)
     {
+    	String[] args2 = args;
         if(langId != null) {
-            String[] temp = new String[Common.isEmptyArray(args)?1:args.length+1];
+            String[] temp = new String[Common.isEmptyArray(args2)?1:args2.length+1];
             temp[0]=langId;
-            if(!Common.isEmptyArray(args)) {
-                System.arraycopy(args,0,temp,1,args.length);
+            if(!Common.isEmptyArray(args2)) {
+                System.arraycopy(args2,0,temp,1,args2.length);
             }
-            args = temp;
+            args2 = temp;
         }
-        return new NSISScriptAttribute("VIAddVersionKey",args); //$NON-NLS-1$
+        return new NSISScriptAttribute("VIAddVersionKey",args2); //$NON-NLS-1$
     }
 
     private NSISScriptSectionGroup buildSectionGroup(NSISSectionGroup secGrp, Map<String, String> sectionDescMap)
@@ -1325,9 +1326,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         }
                     }
                     if(type.equals(NSISInstallFile.TYPE)) {
-                        section.addElement(new NSISScriptInstruction("File", new String[] {
-                                (((NSISInstallFile) installElement).getNonFatal() ? getKeyword("/nonfatal") : null),
-                                (((NSISInstallFile) installElement).getPreserveAttributes() ? getKeyword("/a") : null),
+                        section.addElement(new NSISScriptInstruction("File", new String[] { //$NON-NLS-1$
+                                (((NSISInstallFile) installElement).getNonFatal() ? getKeyword("/nonfatal") : null), //$NON-NLS-1$
+                                (((NSISInstallFile) installElement).getPreserveAttributes() ? getKeyword("/a") : null), //$NON-NLS-1$
                                 maybeMakeRelative(mSaveFile, ((NSISInstallFile) installElement).getName()) }));
                         if(unSection != null) {
                             unSection.addElement(0,new NSISScriptInstruction("Delete", //$NON-NLS-1$
@@ -1338,9 +1339,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                     else if (type.equals(NSISInstallFiles.TYPE)) {
                         INSISInstallElement[] children2 = ((NSISInstallFiles)installElement).getChildren();
                         for (int j = 0; j < children2.length; j++) {
-                            section.addElement(new NSISScriptInstruction("File", new String[] {
-                                    (((NSISInstallFiles) installElement).getNonFatal() ? getKeyword("/nonfatal"): null),
-                                    (((NSISInstallFiles) installElement).getPreserveAttributes() ? getKeyword("/a"): null),
+                            section.addElement(new NSISScriptInstruction("File", new String[] { //$NON-NLS-1$
+                                    (((NSISInstallFiles) installElement).getNonFatal() ? getKeyword("/nonfatal"): null), //$NON-NLS-1$
+                                    (((NSISInstallFiles) installElement).getPreserveAttributes() ? getKeyword("/a"): null), //$NON-NLS-1$
                                     maybeMakeRelative(mSaveFile,((NSISInstallFiles.FileItem) children2[j]).getName()) }));
                             if(unSection != null) {
                                 unSection.addElement(0,new NSISScriptInstruction("Delete", //$NON-NLS-1$
@@ -1353,10 +1354,10 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         NSISInstallDirectory installDirectory = (NSISInstallDirectory)installElement;
                         String name = installDirectory.getDisplayName() + "\\*"; //$NON-NLS-1$
                         if(installDirectory.isRecursive()) {
-                            section.addElement(new NSISScriptInstruction("File",new String[]{
-                                    (installDirectory.getNonFatal() ? getKeyword("/nonfatal"): null),
-                                    (installDirectory.getPreserveAttributes() ? getKeyword("/a"): null),
-                                    getKeyword("/r"),
+                            section.addElement(new NSISScriptInstruction("File",new String[]{ //$NON-NLS-1$
+                                    (installDirectory.getNonFatal() ? getKeyword("/nonfatal"): null), //$NON-NLS-1$
+                                    (installDirectory.getPreserveAttributes() ? getKeyword("/a"): null), //$NON-NLS-1$
+                                    getKeyword("/r"), //$NON-NLS-1$
                                     maybeMakeRelative(mSaveFile,name)}));
                             if(unSection != null) {
                                 if(mNewRmDirUsage) {
@@ -1373,9 +1374,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                             }
                         }
                         else {
-                            section.addElement(new NSISScriptInstruction("File", new String[] {
-                                    (installDirectory.getNonFatal() ? getKeyword("/nonfatal"): null),
-                                    (installDirectory.getPreserveAttributes() ? getKeyword("/a"): null),
+                            section.addElement(new NSISScriptInstruction("File", new String[] { //$NON-NLS-1$
+                                    (installDirectory.getNonFatal() ? getKeyword("/nonfatal"): null), //$NON-NLS-1$
+                                    (installDirectory.getPreserveAttributes() ? getKeyword("/a"): null), //$NON-NLS-1$
                                     maybeMakeRelative(mSaveFile,name)}));
                             if(unSection != null) {
                                 unSection.addElement(0,new NSISScriptInstruction("RmDir", //$NON-NLS-1$

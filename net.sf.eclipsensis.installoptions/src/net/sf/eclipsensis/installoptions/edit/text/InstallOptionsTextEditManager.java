@@ -45,7 +45,7 @@ public class InstallOptionsTextEditManager extends InstallOptionsGenericTextEdit
     @Override
 	protected TextCellEditor createCellEditor(Composite composite)
     {
-        TextCellEditor cellEditor = (TextCellEditor)super.createCellEditor(composite);
+        TextCellEditor cellEditor = super.createCellEditor(composite);
         TextFigure figure = (TextFigure)getEditPart().getFigure();
         if(figure.isOnlyNumbers()) {
             ((Text)cellEditor.getControl()).addVerifyListener(new NumberVerifyListener());

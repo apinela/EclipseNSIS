@@ -31,45 +31,47 @@ public class ShellConstantConverter
 
     public String encodeConstants(String line)
     {
-        if(!Common.isEmpty(line)) {
+    	String line2 = line;
+        if(!Common.isEmpty(line2)) {
             for (Iterator<ShellConstant> iter = mShellConstants.iterator(); iter.hasNext();) {
-                ShellConstant constant = (ShellConstant)iter.next();
-                if(constant.value.length() <= line.length()) {
+                ShellConstant constant = iter.next();
+                if(constant.value.length() <= line2.length()) {
                     if(!ShellConstant.CONTEXT_GENERAL.equals(constant.context) &&
                        !mShellContext.equals(constant.context) &&
                        !ShellConstant.CONTEXT_GENERAL.equals(mShellContext)){
                         continue;
                     }
-                    String newLine = Common.replaceAll(line, constant.value, constant.name, true);
-                    if(!newLine.equals(line) && !ShellConstant.CONTEXT_GENERAL.equals(constant.context)) {
+                    String newLine = Common.replaceAll(line2, constant.value, constant.name, true);
+                    if(!newLine.equals(line2) && !ShellConstant.CONTEXT_GENERAL.equals(constant.context)) {
                         mShellContext = constant.context;
-                        line = newLine;
+                        line2 = newLine;
                     }
                 }
             }
         }
-        return line;
+        return line2;
     }
 
     public String decodeConstants(String line)
     {
-        if(!Common.isEmpty(line)) {
+    	String line2 = line;
+        if(!Common.isEmpty(line2)) {
             for (Iterator<ShellConstant> iter = mShellConstants.iterator(); iter.hasNext();) {
-                ShellConstant constant = (ShellConstant)iter.next();
-                if(constant.value.length() <= line.length()) {
+                ShellConstant constant = iter.next();
+                if(constant.value.length() <= line2.length()) {
                     if(!ShellConstant.CONTEXT_GENERAL.equals(constant.context) &&
                        !mShellContext.equals(constant.context) &&
                        !ShellConstant.CONTEXT_GENERAL.equals(mShellContext)){
                         continue;
                     }
-                    String newLine = Common.replaceAll(line, constant.name, constant.value, true);
-                    if(!newLine.equals(line) && !ShellConstant.CONTEXT_GENERAL.equals(constant.context)) {
+                    String newLine = Common.replaceAll(line2, constant.name, constant.value, true);
+                    if(!newLine.equals(line2) && !ShellConstant.CONTEXT_GENERAL.equals(constant.context)) {
                         mShellContext = constant.context;
-                        line = newLine;
+                        line2 = newLine;
                     }
                 }
             }
         }
-        return line;
+        return line2;
     }
 }

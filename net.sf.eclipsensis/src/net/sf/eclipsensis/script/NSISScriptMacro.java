@@ -11,7 +11,7 @@ package net.sf.eclipsensis.script;
 
 public class NSISScriptMacro extends AbstractNSISScriptElementContainer
 {
-    private String mName;
+    private String mMacroName;
     private Object mArg;
     /**
      * @param name
@@ -29,13 +29,13 @@ public class NSISScriptMacro extends AbstractNSISScriptElementContainer
     public NSISScriptMacro(String name, Object arg)
     {
         this(makeArray(name, arg));
-        mName = name;
+        mMacroName = name;
         mArg = arg;
     }
 
     private void updateArgs()
     {
-        updateArgs(makeArray(mName,mArg));
+        updateArgs(makeArray(mMacroName,mArg));
     }
 
     /**
@@ -93,7 +93,7 @@ public class NSISScriptMacro extends AbstractNSISScriptElementContainer
      */
     public String getName()
     {
-        return mName;
+        return mMacroName;
     }
 
     /**
@@ -101,7 +101,7 @@ public class NSISScriptMacro extends AbstractNSISScriptElementContainer
      */
     public void setName(String name)
     {
-        mName = name;
+        mMacroName = name;
         updateArgs();
     }
 }

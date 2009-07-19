@@ -134,7 +134,7 @@ public class NSISScriptWizard extends NSISWizard
         if(!Common.isEmptyCollection(editors)) {
             java.util.List<IEditorPart> dirtyEditors = new ArrayList<IEditorPart>();
             for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
-                IEditorPart editor = (IEditorPart)iter.next();
+                IEditorPart editor = iter.next();
                 if(editor.isDirty()) {
                     dirtyEditors.add(editor);
                 }
@@ -152,7 +152,7 @@ public class NSISScriptWizard extends NSISWizard
 
                 if(saveExternal) {
                     for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
-                        IEditorPart editor = (IEditorPart)iter.next();
+                        IEditorPart editor = iter.next();
                         editor.getSite().getPage().closeEditor(editor,false);
                     }
                 }

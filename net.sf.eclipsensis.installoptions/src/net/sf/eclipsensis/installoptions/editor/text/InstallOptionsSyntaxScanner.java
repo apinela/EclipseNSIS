@@ -51,7 +51,7 @@ public abstract class InstallOptionsSyntaxScanner extends BufferedRuleBasedScann
 
     protected IToken createToken(String name)
     {
-        NSISSyntaxStyle style = (NSISSyntaxStyle)mSyntaxStylesMap.get(name);
+        NSISSyntaxStyle style = mSyntaxStylesMap.get(name);
         if(style != null) {
             return new Token(style.createTextAttribute());
         }

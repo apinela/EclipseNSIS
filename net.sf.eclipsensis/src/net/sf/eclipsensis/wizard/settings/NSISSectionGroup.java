@@ -176,10 +176,11 @@ public class NSISSectionGroup extends AbstractNSISInstallGroup
     @Override
 	protected Node createChildNode(Document document, String name, Object value)
     {
+    	Object value2 = value;
         if(name.equals("description")) { //$NON-NLS-1$
-            value = document.createTextNode((String)value);
+            value2 = document.createTextNode((String)value2);
         }
-        return super.createChildNode(document, name, value);
+        return super.createChildNode(document, name, value2);
     }
 
     @Override

@@ -78,7 +78,8 @@ class DownloadURLsParserCallback extends ParserCallback
         loadImageURLs();
     }
 
-    public void handleEndTag(Tag t, int pos)
+    @Override
+	public void handleEndTag(Tag t, int pos)
     {
         if(!mDone) {
             if(t.equals(Tag.FORM)) {
@@ -106,7 +107,8 @@ class DownloadURLsParserCallback extends ParserCallback
         }
     }
 
-    public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
+    @Override
+	public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(!mDone) {
             if(t.equals(Tag.LI)) {
@@ -148,7 +150,8 @@ class DownloadURLsParserCallback extends ParserCallback
         }
     }
 
-    public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
+    @Override
+	public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(!mDone) {
             if(t.equals(Tag.FORM)) {
@@ -176,7 +179,8 @@ class DownloadURLsParserCallback extends ParserCallback
         }
     }
 
-    public void handleText(char[] data, int pos)
+    @Override
+	public void handleText(char[] data, int pos)
     {
         if(!mDone) {
             if(mInForm) {

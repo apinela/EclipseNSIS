@@ -165,27 +165,28 @@ public class NSISWizardDialogUtil
 
     public static Composite checkParentLayoutColumns(Composite parent, int numColumns)
     {
-        GridLayout layout = (GridLayout)parent.getLayout();
+    	Composite parent2 = parent;
+        GridLayout layout = (GridLayout)parent2.getLayout();
         if (layout.numColumns < numColumns) {
-            parent = new Composite(parent, SWT.NONE);
+            parent2 = new Composite(parent2, SWT.NONE);
             GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
             data.horizontalSpan = layout.numColumns;
-            parent.setLayoutData(data);
+            parent2.setLayoutData(data);
 
             layout = new GridLayout(numColumns, layout.makeColumnsEqualWidth);
             layout.marginHeight = 0;
             layout.marginWidth = 0;
-            parent.setLayout(layout);
+            parent2.setLayout(layout);
         }
-        return parent;
+        return parent2;
     }
 
     public static Text createText(Composite parent, String value, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
         GridLayout layout = (GridLayout)parent.getLayout();
-        parent = checkParentLayoutColumns(parent, 2);
-        Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
-        Text t = createText(parent, value, layout.numColumns - 1, enabled, masterSlaveController);
+        Composite parent2 = checkParentLayoutColumns(parent, 2);
+        Label l = createLabel(parent2, labelResource, enabled, masterSlaveController, isRequired);
+        Text t = createText(parent2, value, layout.numColumns - 1, enabled, masterSlaveController);
         t.setData(LABEL, l);
         return t;
     }
@@ -210,12 +211,12 @@ public class NSISWizardDialogUtil
 
     public static Text createDirectoryBrowser(Composite parent, String value, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        parent = checkParentLayoutColumns(parent, 3);
-        GridLayout layout = (GridLayout)parent.getLayout();
-        final Text t = createText(parent, value, labelResource, enabled, masterSlaveController, isRequired);
+    	Composite parent2 = checkParentLayoutColumns(parent, 3);
+        GridLayout layout = (GridLayout)parent2.getLayout();
+        final Text t = createText(parent2, value, labelResource, enabled, masterSlaveController, isRequired);
         ((GridData)t.getLayoutData()).horizontalSpan = layout.numColumns - 2;
 
-        final Button button = new Button(parent, SWT.PUSH | SWT.CENTER);
+        final Button button = new Button(parent2, SWT.PUSH | SWT.CENTER);
         button.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
         button.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
@@ -241,12 +242,12 @@ public class NSISWizardDialogUtil
     public static Text createFileBrowser(Composite parent, String value, final boolean isSave, final String[] filterNames, final String[] filterExtensions, String labelResource, boolean enabled,
             MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        parent = checkParentLayoutColumns(parent, 3);
-        GridLayout layout = (GridLayout)parent.getLayout();
-        final Text t = createText(parent, value, labelResource, enabled, masterSlaveController, isRequired);
+    	Composite parent2 = checkParentLayoutColumns(parent, 3);
+        GridLayout layout = (GridLayout)parent2.getLayout();
+        final Text t = createText(parent2, value, labelResource, enabled, masterSlaveController, isRequired);
         ((GridData)t.getLayoutData()).horizontalSpan = layout.numColumns - 2;
 
-        createFileBrowserButton(parent, isSave, filterNames, filterExtensions, t, enabled, masterSlaveController);
+        createFileBrowserButton(parent2, isSave, filterNames, filterExtensions, t, enabled, masterSlaveController);
 
         return t;
     }
@@ -291,23 +292,23 @@ public class NSISWizardDialogUtil
     public static Text createImageBrowser(Composite parent, String value, Point size, final String[] filterNames, final String[] filterExtensions, String labelResource, boolean enabled,
             MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        parent = checkParentLayoutColumns(parent, 2);
-        GridLayout layout = (GridLayout)parent.getLayout();
-        Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
-        parent = new Composite(parent, SWT.NONE);
+    	Composite parent2 = checkParentLayoutColumns(parent, 2);
+        GridLayout layout = (GridLayout)parent2.getLayout();
+        Label l = createLabel(parent2, labelResource, enabled, masterSlaveController, isRequired);
+        parent2 = new Composite(parent2, SWT.NONE);
         GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
         data.horizontalSpan = layout.numColumns - 1;
-        parent.setLayoutData(data);
+        parent2.setLayoutData(data);
         layout = new GridLayout(3, false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        parent.setLayout(layout);
-        final Text t = createText(parent, value, 1, enabled, masterSlaveController);
+        parent2.setLayout(layout);
+        final Text t = createText(parent2, value, 1, enabled, masterSlaveController);
         t.setData(LABEL, l);
 
-        createFileBrowserButton(parent, false, filterNames, filterExtensions, t, enabled, masterSlaveController);
+        createFileBrowserButton(parent2, false, filterNames, filterExtensions, t, enabled, masterSlaveController);
 
-        final Label l2 = new Label(parent, SWT.BORDER | SWT.SHADOW_IN | SWT.CENTER);
+        final Label l2 = new Label(parent2, SWT.BORDER | SWT.SHADOW_IN | SWT.CENTER);
         data = new GridData(SWT.CENTER, SWT.CENTER, false, false);
         if (size != null) {
             if (size.x != SWT.DEFAULT) {
@@ -392,13 +393,13 @@ public class NSISWizardDialogUtil
     public static Combo createCombo(Composite parent, String[] items, String selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController,
             boolean isRequired)
     {
-        parent = checkParentLayoutColumns(parent, 2);
+    	Composite parent2 = checkParentLayoutColumns(parent, 2);
         Label l = null;
         if (labelResource != null) {
-            l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
+            l = createLabel(parent2, labelResource, enabled, masterSlaveController, isRequired);
         }
 
-        Combo c = createCombo(parent, ((GridLayout)parent.getLayout()).numColumns - (l == null?0:1), items, selectedItem, isReadOnly, enabled, masterSlaveController);
+        Combo c = createCombo(parent2, ((GridLayout)parent2.getLayout()).numColumns - (l == null?0:1), items, selectedItem, isReadOnly, enabled, masterSlaveController);
         if (l != null) {
             c.setData(LABEL, l);
         }
@@ -454,11 +455,11 @@ public class NSISWizardDialogUtil
 
     public static ColorEditor createColorEditor(Composite parent, RGB value, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        parent = checkParentLayoutColumns(parent, 2);
-        Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
+    	Composite parent2 = checkParentLayoutColumns(parent, 2);
+        Label l = createLabel(parent2, labelResource, enabled, masterSlaveController, isRequired);
 
-        GridLayout layout = (GridLayout)parent.getLayout();
-        ColorEditor ce = new ColorEditor(parent);
+        GridLayout layout = (GridLayout)parent2.getLayout();
+        ColorEditor ce = new ColorEditor(parent2);
         ce.setRGB(value);
         Button b = ce.getButton();
         GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
@@ -473,26 +474,26 @@ public class NSISWizardDialogUtil
 
     public static Button[] createRadioGroup(Composite parent, String[] items, int selectedItem, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        parent = checkParentLayoutColumns(parent, labelResource != null?2:1);
+    	Composite parent2 = checkParentLayoutColumns(parent, labelResource != null?2:1);
         Label l = null;
         if(labelResource != null) {
-            l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
+            l = createLabel(parent2, labelResource, enabled, masterSlaveController, isRequired);
         }
 
-        GridLayout layout = (GridLayout)parent.getLayout();
-        parent = new Composite(parent, SWT.NONE);
+        GridLayout layout = (GridLayout)parent2.getLayout();
+        parent2 = new Composite(parent2, SWT.NONE);
         GridData gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
         gd.horizontalSpan = layout.numColumns - (l==null?0:1);
-        parent.setLayoutData(gd);
+        parent2.setLayoutData(gd);
         layout = new GridLayout(items.length, true);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        parent.setLayout(layout);
+        parent2.setLayout(layout);
 
         Button[] buttons = new Button[items.length];
         int selectedIndex = -1;
         for (int i = 0; i < items.length; i++) {
-            buttons[i] = new Button(parent, SWT.RADIO | SWT.LEFT);
+            buttons[i] = new Button(parent2, SWT.RADIO | SWT.LEFT);
             buttons[i].setText(items[i]);
             buttons[i].setData(new Integer(i));
             if (i == selectedItem) {
@@ -567,11 +568,11 @@ public class NSISWizardDialogUtil
     public static Combo createContentBrowser(Composite parent, String labelResource, String value, String[] items, final NSISWizard wizard, boolean enabled,
             MasterSlaveController masterSlaveController, boolean isRequired)
     {
-        parent = checkParentLayoutColumns(parent, 3);
-        int numColumns = ((GridLayout)parent.getLayout()).numColumns;
+    	Composite parent2 = checkParentLayoutColumns(parent, 3);
+        int numColumns = ((GridLayout)parent2.getLayout()).numColumns;
         GridData gd;
-        Label l = createLabel(parent, labelResource, enabled, masterSlaveController, isRequired);
-        Composite composite = new Composite(parent, SWT.NONE);
+        Label l = createLabel(parent2, labelResource, enabled, masterSlaveController, isRequired);
+        Composite composite = new Composite(parent2, SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = numColumns - 1;
         composite.setLayoutData(gd);

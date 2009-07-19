@@ -11,7 +11,7 @@ package net.sf.eclipsensis.script;
 
 public class NSISScriptFunction extends AbstractNSISScriptElementContainer
 {
-    private String mName;
+    private String mFunctionName;
 
     /**
      * @param name
@@ -19,7 +19,7 @@ public class NSISScriptFunction extends AbstractNSISScriptElementContainer
     public NSISScriptFunction(String name)
     {
         super("Function",name); //$NON-NLS-1$
-        mName = name;
+        mFunctionName = name;
     }
 
     /**
@@ -27,7 +27,7 @@ public class NSISScriptFunction extends AbstractNSISScriptElementContainer
      */
     public String getName()
     {
-        return mName;
+        return mFunctionName;
     }
 
     /**
@@ -35,7 +35,7 @@ public class NSISScriptFunction extends AbstractNSISScriptElementContainer
      */
     public void setName(String name)
     {
-        mName = name;
+        mFunctionName = name;
         updateArgs(name);
     }
 

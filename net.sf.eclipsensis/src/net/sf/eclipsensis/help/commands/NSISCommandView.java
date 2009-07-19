@@ -263,9 +263,9 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     {
         mViewer.update(node,null);
         for(Iterator<TreeNode> iter = node.getChildren().iterator(); iter.hasNext(); ) {
-            node = iter.next();
-            if(node.getCommand() == null) {
-                updateIcon(node);
+            TreeNode childNode = iter.next();
+            if(childNode.getCommand() == null) {
+                updateIcon(childNode);
             }
         }
     }
@@ -407,26 +407,27 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
 
     private TreeNode findParent(TreeNode parent, NSISCommand cmd)
     {
+    	TreeNode parent2 = parent;
         String category = cmd.getCategory();
         if(Common.isEmpty(category)) {
             category = DEFAULT_CATEGORY;
         }
         String[] cats = Common.tokenize(category, '/');
         for(int j=0; j<cats.length; j++) {
-            for (Iterator<TreeNode> iter = parent.getChildren().iterator(); iter.hasNext();) {
+            for (Iterator<TreeNode> iter = parent2.getChildren().iterator(); iter.hasNext();) {
                 TreeNode node = iter.next();
                 if(node.getName().equals(cats[j])) {
-                    parent = node;
+                    parent2 = node;
                     break;
                 }
             }
-            if(!parent.getName().equals(cats[j])) {
+            if(!parent2.getName().equals(cats[j])) {
                 TreeNode node = new TreeNode(cats[j]);
-                parent.addChild(node);
-                parent = node;
+                parent2.addChild(node);
+                parent2 = node;
             }
         }
-        return parent;
+        return parent2;
     }
 
     /**

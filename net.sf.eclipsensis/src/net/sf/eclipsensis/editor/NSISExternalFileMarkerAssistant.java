@@ -99,7 +99,7 @@ public class NSISExternalFileMarkerAssistant implements INSISMarkerAssistant
                     }
                     IDocument doc = editor.getDocumentProvider().getDocument(editorInput);
                     for (Iterator<NSISScriptProblem> iter = problems.iterator(); iter.hasNext();) {
-                        NSISScriptProblem problem = (NSISScriptProblem)iter.next();
+                        NSISScriptProblem problem = iter.next();
                         int line = problem.getLine();
                         if (line >= 0) {
                             try {

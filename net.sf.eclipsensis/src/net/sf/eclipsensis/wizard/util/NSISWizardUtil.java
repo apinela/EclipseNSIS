@@ -26,15 +26,16 @@ public class NSISWizardUtil
 
     public static String convertPath(int targetPlatform, String path)
     {
+    	String path2 = path;
         switch(targetPlatform) {
             case INSISWizardConstants.TARGET_PLATFORM_X64:
-                path = IOUtility.convertPathTo64bit(path);
+                path2 = IOUtility.convertPathTo64bit(path2);
                 break;
             case INSISWizardConstants.TARGET_PLATFORM_X86:
-                path = IOUtility.convertPathTo32bit(path);
+                path2 = IOUtility.convertPathTo32bit(path2);
                 break;
         }
-        return path;
+        return path2;
     }
 
     public static String[] getPathConstantsAndVariables(int targetPlatform)

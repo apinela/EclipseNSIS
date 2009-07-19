@@ -74,7 +74,8 @@ public class DownloadSiteSelectionDialog extends Dialog
         }
     }
 
-    protected void configureShell(Shell shell)
+    @Override
+	protected void configureShell(Shell shell)
     {
         super.configureShell(shell);
         shell.setText(EclipseNSISUpdatePlugin.getResourceString("download.sites.dialog.title")); //$NON-NLS-1$
@@ -109,7 +110,8 @@ public class DownloadSiteSelectionDialog extends Dialog
         }
     }
 
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         if(mDialogSettings != null) {
             mDialogSettings.put(SAVE_PREFERRED, mSavePreferred.getSelection());
@@ -143,7 +145,8 @@ public class DownloadSiteSelectionDialog extends Dialog
         return mDefaultSiteImage;
     }
 
-    protected Control createDialogArea(Composite parent)
+    @Override
+	protected Control createDialogArea(Composite parent)
     {
         Composite composite = (Composite)super.createDialogArea(parent);
         Label l = new Label(composite, SWT.NONE);
@@ -160,13 +163,15 @@ public class DownloadSiteSelectionDialog extends Dialog
         GridLayout layout = new GridLayout(4,false);
         composite2.setLayout(layout);
         SelectionAdapter selectionAdapter = new SelectionAdapter() {
-            public void widgetDefaultSelected(SelectionEvent e)
+            @Override
+			public void widgetDefaultSelected(SelectionEvent e)
             {
                 widgetSelected(e);
                 okPressed();
             }
 
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 Button button = (Button)e.widget;
                 if(button.getSelection()) {
@@ -175,7 +180,7 @@ public class DownloadSiteSelectionDialog extends Dialog
             }
         };
         for (ListIterator<DownloadSite> iter = mDownloadSites.listIterator(); iter.hasNext();) {
-            DownloadSite site = (DownloadSite)iter.next();
+            DownloadSite site = iter.next();
             final Button button = new Button(composite2,SWT.RADIO);
             button.setBackground(white);
             button.setSelection(mSelectedSite==null?!iter.hasPrevious():site.equals(mSelectedSite));
@@ -184,12 +189,14 @@ public class DownloadSiteSelectionDialog extends Dialog
             button.addSelectionListener(selectionAdapter);
 
             MouseAdapter mouseAdapter = new MouseAdapter() {
-                public void mouseUp(MouseEvent e)
+                @Override
+				public void mouseUp(MouseEvent e)
                 {
                     button.setFocus();
                 }
 
-                public void mouseDoubleClick(MouseEvent e)
+                @Override
+				public void mouseDoubleClick(MouseEvent e)
                 {
                     mouseUp(e);
                     okPressed();
@@ -211,12 +218,14 @@ public class DownloadSiteSelectionDialog extends Dialog
                         gc.dispose();
                     }
 
-                    public void mouseEnter(MouseEvent e)
+                    @Override
+					public void mouseEnter(MouseEvent e)
                     {
                         paint(WinAPI.RBS_CHECKEDHOT,WinAPI.RBS_UNCHECKEDHOT);
                     }
 
-                    public void mouseExit(MouseEvent e)
+                    @Override
+					public void mouseExit(MouseEvent e)
                     {
                         paint(WinAPI.RBS_CHECKEDNORMAL,WinAPI.RBS_UNCHECKEDNORMAL);
                     }

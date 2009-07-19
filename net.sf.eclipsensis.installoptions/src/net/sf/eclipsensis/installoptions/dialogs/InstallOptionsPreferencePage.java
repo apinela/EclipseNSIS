@@ -671,7 +671,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         gridData.horizontalSpan = 2;
         mShowRulers.setLayoutData(gridData);
         mShowRulers.setText(InstallOptionsPlugin.getResourceString("show.rulers.label")); //$NON-NLS-1$
-        mShowRulers.setSelection(((Boolean)mDisplaySettingsMap.get(PREFERENCE_SHOW_RULERS)).booleanValue());
+        mShowRulers.setSelection((mDisplaySettingsMap.get(PREFERENCE_SHOW_RULERS)).booleanValue());
         mShowRulers.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e)
@@ -685,7 +685,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         gridData.horizontalSpan = 2;
         mShowGrid.setLayoutData(gridData);
         mShowGrid.setText(InstallOptionsPlugin.getResourceString("show.grid.label")); //$NON-NLS-1$
-        mShowGrid.setSelection(((Boolean)mDisplaySettingsMap.get(PREFERENCE_SHOW_GRID)).booleanValue());
+        mShowGrid.setSelection((mDisplaySettingsMap.get(PREFERENCE_SHOW_GRID)).booleanValue());
         mShowGrid.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e)
@@ -699,7 +699,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         gridData.horizontalSpan = 2;
         mShowGuides.setLayoutData(gridData);
         mShowGuides.setText(InstallOptionsPlugin.getResourceString("show.guides.label")); //$NON-NLS-1$
-        mShowGuides.setSelection(((Boolean)mDisplaySettingsMap.get(PREFERENCE_SHOW_GUIDES)).booleanValue());
+        mShowGuides.setSelection((mDisplaySettingsMap.get(PREFERENCE_SHOW_GUIDES)).booleanValue());
         mShowGuides.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e)
@@ -713,7 +713,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         gridData.horizontalSpan = 2;
         mShowDialogSize.setLayoutData(gridData);
         mShowDialogSize.setText(InstallOptionsPlugin.getResourceString("show.dialog.size.label")); //$NON-NLS-1$
-        mShowDialogSize.setSelection(((Boolean)mDisplaySettingsMap.get(PREFERENCE_SHOW_DIALOG_SIZE)).booleanValue());
+        mShowDialogSize.setSelection((mDisplaySettingsMap.get(PREFERENCE_SHOW_DIALOG_SIZE)).booleanValue());
         mShowDialogSize.addSelectionListener(new SelectionAdapter() {
             @Override
 			public void widgetSelected(SelectionEvent e)

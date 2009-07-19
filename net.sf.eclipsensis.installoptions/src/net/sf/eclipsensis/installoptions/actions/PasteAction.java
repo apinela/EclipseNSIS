@@ -99,7 +99,7 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
             List<InstallOptionsEditPart> selection = Common.makeGenericList(InstallOptionsEditPart.class, ((IStructuredSelection)viewer.getSelection()).toList());
             List<InstallOptionsWidget> modelSelection = new ArrayList<InstallOptionsWidget>();
             for (Iterator<InstallOptionsEditPart> iter = selection.iterator(); iter.hasNext();) {
-            	InstallOptionsEditPart part = (InstallOptionsEditPart)iter.next();
+            	InstallOptionsEditPart part = iter.next();
                 modelSelection.add((InstallOptionsWidget) part.getModel());
             }
             command.setSelection(modelSelection);

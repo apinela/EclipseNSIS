@@ -56,10 +56,11 @@ public abstract class NSISInstallRegistryItem extends AbstractNSISInstallItem
      */
     public void setRootKey(int rootKey)
     {
-        if(rootKey >= NSISWizardDisplayValues.HKEY_NAMES.length) {
-            rootKey = INSISWizardConstants.HKCU;
+    	int rootKey2 = rootKey;
+        if(rootKey2 >= NSISWizardDisplayValues.HKEY_NAMES.length) {
+            rootKey2 = INSISWizardConstants.HKCU;
         }
-        setRootKeyInternal(rootKey);
+        setRootKeyInternal(rootKey2);
     }
 
     /**

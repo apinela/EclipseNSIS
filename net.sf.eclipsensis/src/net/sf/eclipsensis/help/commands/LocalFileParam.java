@@ -155,14 +155,14 @@ public class LocalFileParam extends LocalFilesystemObjectParam
         @Override
 		protected Control createParamControl(Composite parent)
         {
-            parent = new Composite(parent,SWT.NONE);
+        	Composite parent2 = new Composite(parent,SWT.NONE);
             GridLayout layout = new GridLayout(2,false);
             layout.marginHeight = layout.marginWidth = 0;
-            parent.setLayout(layout);
-            mFileText = new Text(parent,SWT.BORDER);
+            parent2.setLayout(layout);
+            mFileText = new Text(parent2,SWT.BORDER);
             setToolTip(mFileText);
             mFileText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
-            final Button b = new Button(parent,SWT.PUSH);
+            final Button b = new Button(parent2,SWT.PUSH);
             b.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
             b.setText(EclipseNSISPlugin.getResourceString("browse.text")); //$NON-NLS-1$
             b.addSelectionListener(new SelectionAdapter() {
@@ -185,7 +185,7 @@ public class LocalFileParam extends LocalFilesystemObjectParam
                 }
             });
             mFileText.setData(DATA_BUTTON,b);
-            return parent;
+            return parent2;
         }
 
         protected boolean isSave()

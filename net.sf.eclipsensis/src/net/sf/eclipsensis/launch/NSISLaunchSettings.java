@@ -258,11 +258,11 @@ public class NSISLaunchSettings extends NSISSettings
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             for (Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry<String, String> entry = iter.next();
-                String key = (String)entry.getKey();
+                String key = entry.getKey();
                 if (key != null) {
                     buf.append(key);
                 }
-                String value = (String)entry.getValue();
+                String value = entry.getValue();
                 if (value != null) {
                     buf.append('\255').append(value);
                 }
@@ -280,7 +280,7 @@ public class NSISLaunchSettings extends NSISSettings
         LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
         if (!Common.isEmptyCollection(list)) {
             for (Iterator<String> iter = list.iterator(); iter.hasNext();) {
-                String item = (String)iter.next();
+                String item = iter.next();
                 if (item != null && item.length() > 0) {
                     String key;
                     String value;

@@ -122,7 +122,8 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         }
     }
 
-    protected final void configureShell(Shell newShell)
+    @Override
+	protected final void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(getDialogTitle());
@@ -159,7 +160,8 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         b.setText(label);
         b.setSelection(data.equals(getValues().get(property)));
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 setValue(property, data);
             }
@@ -181,7 +183,8 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         gd.horizontalSpan = layout.numColumns;
         b.setLayoutData(gd);
         b.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 setValue(property,b.getSelection()?Boolean.TRUE:Boolean.FALSE);
             }
@@ -248,7 +251,8 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         return l;
     }
 
-    protected final Control createDialogArea(Composite parent)
+    @Override
+	protected final Control createDialogArea(Composite parent)
     {
         parent = (Composite)super.createDialogArea(parent);
         GridLayout layout = (GridLayout)parent.getLayout();
@@ -288,7 +292,8 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         return parent;
     }
 
-    public void create()
+    @Override
+	public void create()
     {
         super.create();
         updateButtons();
@@ -349,7 +354,8 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         }
     }
 
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         mDialogSettings.put(TOOLS_JAR,getToolsJar());
         mDialogSettings.put(VERBOSE,isVerbose());
@@ -452,7 +458,8 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
             mOpen = open;
         }
 
-        public void widgetSelected(SelectionEvent e)
+        @Override
+		public void widgetSelected(SelectionEvent e)
         {
             Button b = (Button)e.widget;
             if(b == null) {

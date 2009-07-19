@@ -76,7 +76,8 @@ public class NSISUpdateWizard extends NSISConfigWizard
         setDialogSettings(dialogSettings);
     }
 
-    public void createPageControls(Composite pageContainer)
+    @Override
+	public void createPageControls(Composite pageContainer)
     {
         super.createPageControls(pageContainer);
         Object data = pageContainer.getLayoutData();
@@ -87,12 +88,14 @@ public class NSISUpdateWizard extends NSISConfigWizard
         }
     }
 
-    public void addPages()
+    @Override
+	public void addPages()
     {
         addPage(new NSISUpdateWizardPage(mAction, mIgnorePreview));
     }
 
-    public int getPageCount()
+    @Override
+	public int getPageCount()
     {
         int n = super.getPageCount();
         if(n == 0) {
@@ -102,7 +105,8 @@ public class NSISUpdateWizard extends NSISConfigWizard
         return n;
     }
 
-    public IWizardPage[] getPages()
+    @Override
+	public IWizardPage[] getPages()
     {
         IWizardPage[] wizpages = super.getPages();
         if(Common.isEmptyArray(wizpages)) {
@@ -112,7 +116,8 @@ public class NSISUpdateWizard extends NSISConfigWizard
         return wizpages;
     }
 
-    public IWizardPage getStartingPage()
+    @Override
+	public IWizardPage getStartingPage()
     {
         IWizardPage wizardPage = super.getStartingPage();
         if(wizardPage == null) {
@@ -122,7 +127,8 @@ public class NSISUpdateWizard extends NSISConfigWizard
         return wizardPage;
     }
 
-    public void setContainer(IWizardContainer wizardContainer)
+    @Override
+	public void setContainer(IWizardContainer wizardContainer)
     {
         if(getContainer() instanceof IPageChangeProvider) {
             if(mPageChangedListener != null) {
@@ -138,7 +144,8 @@ public class NSISUpdateWizard extends NSISConfigWizard
         }
     }
 
-    public boolean doPerformFinish()
+    @Override
+	public boolean doPerformFinish()
     {
         if(getPageCount() > 0) {
             IDialogSettings settings = getDialogSettings();

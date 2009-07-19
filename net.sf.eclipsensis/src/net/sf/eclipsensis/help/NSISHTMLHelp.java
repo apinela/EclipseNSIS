@@ -955,7 +955,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                                 StringBuffer regex = new StringBuffer(""); //$NON-NLS-1$
                                 for (Iterator<String> iter = terms.iterator(); iter.hasNext();)
                                 {
-                                    String term = (String) iter.next();
+                                    String term = iter.next();
                                     boolean isRegex = false;
                                     if (term.startsWith(NSISHelpSearchQueryParser.REGEX_PREFIX))
                                     {
@@ -1363,7 +1363,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             }
             else
             {
-                url = (NSISHelpIndexURL) urls.get(0);
+                url = urls.get(0);
             }
             if (url != null)
             {
@@ -1749,12 +1749,12 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         @Override
 		protected Control createDialogArea(Composite parent)
         {
-            parent = (Composite) super.createDialogArea(parent);
-            Label l = new Label(parent, SWT.NONE);
+        	Composite parent2 = (Composite) super.createDialogArea(parent);
+            Label l = new Label(parent2, SWT.NONE);
             l.setText(EclipseNSISPlugin.getResourceString("help.browser.index.entry.dialog.header")); //$NON-NLS-1$
             l.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-            Table table = new Table(parent, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL);
+            Table table = new Table(parent2, SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL);
             initializeDialogUnits(table);
             GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
             data.widthHint = convertWidthInCharsToPixels(80);
@@ -1817,7 +1817,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             });
             viewer.setInput(mEntry);
             viewer.setSelection(new StructuredSelection(mURL));
-            return parent;
+            return parent2;
         }
 
         private boolean updateURL(ISelection sel)

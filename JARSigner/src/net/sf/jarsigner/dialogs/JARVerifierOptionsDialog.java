@@ -32,23 +32,27 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
         super(parentShell, selection);
     }
 
-    protected void init()
+    @Override
+	protected void init()
     {
         mControlsList = new ArrayList<Control>();
         super.init();
         setValue(CERTS,getDialogSettings().getBoolean(CERTS)?Boolean.TRUE:Boolean.FALSE);
     }
 
-    protected String getDialogTitle()
+    @Override
+	protected String getDialogTitle()
     {
         return JARSignerPlugin.getResourceString("jarverifier.dialog.title"); //$NON-NLS-1$
     }
 
-    protected void createValuesDialogArea(Composite parent)
+    @Override
+	protected void createValuesDialogArea(Composite parent)
     {
     }
 
-    protected void createFlagsDialogArea(Composite parent)
+    @Override
+	protected void createFlagsDialogArea(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -81,7 +85,8 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
         mControlsList.add(b);
     }
 
-    protected void valueChanged(String name, Object oldValue, Object newValue)
+    @Override
+	protected void valueChanged(String name, Object oldValue, Object newValue)
     {
         if(name.equals(VERBOSE)) {
             boolean state = ((Boolean)newValue).booleanValue();
@@ -97,13 +102,15 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
         }
     }
 
-    public void create()
+    @Override
+	public void create()
     {
         super.create();
         updateControlsState(isVerbose());
     }
 
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         getDialogSettings().put(CERTS,isCerts());
         super.okPressed();

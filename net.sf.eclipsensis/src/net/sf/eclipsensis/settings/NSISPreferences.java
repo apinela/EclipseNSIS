@@ -305,19 +305,20 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      */
     public void setTaskTags(Collection<NSISTaskTag> taskTags)
     {
-        if(taskTags != null && taskTags.size() == mDefaultTaskTags.size()) {
+    	Collection<NSISTaskTag> taskTags2 = taskTags;
+        if(taskTags2 != null && taskTags2.size() == mDefaultTaskTags.size()) {
             boolean different = false;
-            for (Iterator<NSISTaskTag> iter = taskTags.iterator(); iter.hasNext();) {
+            for (Iterator<NSISTaskTag> iter = taskTags2.iterator(); iter.hasNext();) {
                 if(!mDefaultTaskTags.contains(iter.next())) {
                     different = true;
                     break;
                 }
             }
             if(!different) {
-                taskTags = null;
+                taskTags2 = null;
             }
         }
-        mTaskTags = taskTags;
+        mTaskTags = taskTags2;
     }
 
 
@@ -431,8 +432,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             dirty = true;
             NSISPreferencePage.removeNSISHome(nsisHome);
             if(NSISPreferencePage.NSIS_HOMES.size() > 0) {
-                nsisHome = (String)NSISPreferencePage.NSIS_HOMES.get(0);
-                internalSetNSISHome(nsisHome);
+                internalSetNSISHome(NSISPreferencePage.NSIS_HOMES.get(0));
             }
             else {
                 break;

@@ -99,7 +99,7 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         mViewer.setComparator(new ViewerComparator());
         final List<String> types = new ArrayList<String>(mResources.getTypes());
         for (Iterator<String> iter = types.iterator(); iter.hasNext();) {
-            String type = (String)iter.next();
+            String type = iter.next();
             if(mResources.isClosingType(type)) {
                 iter.remove();
                 continue;

@@ -30,7 +30,7 @@ public class InstallOptionsCommentScanner extends InstallOptionsSyntaxScanner
         Arrays.sort(fDelimiters,new Comparator<char[]>() {
             public int compare(char[] a, char[] b)
             {
-                return ((char[])b).length-((char[])a).length;
+                return (b).length-(a).length;
             }
         });
     }

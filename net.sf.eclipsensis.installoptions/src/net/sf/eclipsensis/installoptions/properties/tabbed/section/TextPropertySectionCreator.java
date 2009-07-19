@@ -51,7 +51,7 @@ public class TextPropertySectionCreator extends EditableElementPropertySectionCr
 		        private boolean checkFlag(List<String> flags, String flag)
 		        {
 		            for (Iterator<String> iter = flags.iterator(); iter.hasNext();) {
-		                String f = (String)iter.next();
+		                String f = iter.next();
 		                if(flag.equalsIgnoreCase(f)) {
 		                    return true;
 		                }

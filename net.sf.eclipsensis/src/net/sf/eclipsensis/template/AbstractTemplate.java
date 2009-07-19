@@ -28,7 +28,6 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
 
     public static final String TEMPLATE_ELEMENT = "template"; //$NON-NLS-1$
     protected static final String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
-    protected static final String NAME_ATTRIBUTE= "name"; //$NON-NLS-1$
     protected static final String DESCRIPTION_NODE= "description"; //$NON-NLS-1$
 
     private String mId = null;

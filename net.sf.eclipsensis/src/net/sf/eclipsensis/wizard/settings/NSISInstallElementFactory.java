@@ -124,7 +124,7 @@ public class NSISInstallElementFactory
             Version maxVersion = null;
             String validTypes = null;
             for(Enumeration<String> e=cBundle.getKeys(); e.hasMoreElements();) {
-                String key = (String)e.nextElement();
+                String key = e.nextElement();
                 if(key.startsWith(VALID_TYPES)) {
                     int n = key.indexOf('#');
                     Version version = (n >= 0?new Version(key.substring(n+1)):INSISVersions.MINIMUM_VERSION);
@@ -172,13 +172,14 @@ public class NSISInstallElementFactory
     @SuppressWarnings("unchecked")
 	private static <T extends INSISInstallElement> NSISInstallElementDescriptor<T> getDescriptor(String type)
     {
-        if(!cValidTypes.contains(type)) {
-            type = cTypeAliases.get(type);
-            if(type == null || !cValidTypes.contains(type)) {
+    	String type2 = type;
+        if(!cValidTypes.contains(type2)) {
+            type2 = cTypeAliases.get(type2);
+            if(type2 == null || !cValidTypes.contains(type2)) {
                 return null;
             }
         }
-        return (NSISInstallElementDescriptor<T>)cElementMap.get(type);
+        return (NSISInstallElementDescriptor<T>)cElementMap.get(type2);
     }
 
     public static INSISInstallElement create(String type)

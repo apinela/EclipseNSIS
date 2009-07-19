@@ -35,18 +35,21 @@ public abstract class AbstractJARUtil extends AbstractToolsUtility
         mKeyStore = maybeQuote(keyStore);
     }
 
-    protected String getProgramArguments(Object target)
+    @Override
+	protected String getProgramArguments(Object target)
     {
         return mArgsFormat.format(new String[]{maybeQuote(((IFile)target).getLocation().toOSString())});
     }
 
-    public IStatus run(IProgressMonitor monitor)
+    @Override
+	public IStatus run(IProgressMonitor monitor)
     {
         mArgsFormat = createArgsFormat();
         return super.run(monitor);
     }
 
-    protected Plugin getPlugin()
+    @Override
+	protected Plugin getPlugin()
     {
         return JARSignerPlugin.getDefault();
     }

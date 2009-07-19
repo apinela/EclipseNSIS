@@ -947,35 +947,36 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
 
     private int getCaretOffsetForInsertCommand(IDocument doc, int offset)
     {
+    	int offset2 = offset;
         if(doc != null) {
-            ITypedRegion[][] regions = NSISTextUtility.getNSISLines(doc, offset);
+            ITypedRegion[][] regions = NSISTextUtility.getNSISLines(doc, offset2);
             if(Common.isEmptyArray(regions)) {
                 try {
-                    ITypedRegion partition = NSISTextUtility.getNSISPartitionAtOffset(doc, offset);
+                    ITypedRegion partition = NSISTextUtility.getNSISPartitionAtOffset(doc, offset2);
                     if(partition.getType().equals(NSISPartitionScanner.NSIS_SINGLELINE_COMMENT) ||
                        partition.getType().equals(NSISPartitionScanner.NSIS_MULTILINE_COMMENT)) {
-                        offset = partition.getOffset();
-                        if(offset > 0) {
-                            offset--;
-                            partition = NSISTextUtility.getNSISPartitionAtOffset(doc, offset);
+                        offset2 = partition.getOffset();
+                        if(offset2 > 0) {
+                            offset2--;
+                            partition = NSISTextUtility.getNSISPartitionAtOffset(doc, offset2);
                             if(partition.getType().equals(NSISPartitionScanner.NSIS_SINGLELINE_COMMENT) ||
                                partition.getType().equals(NSISPartitionScanner.NSIS_MULTILINE_COMMENT)) {
-                                offset = offset+1;
+                                offset2 = offset2+1;
                             }
                             else {
-                                int line1 = doc.getLineOfOffset(offset);
-                                int line2 = doc.getLineOfOffset(offset+1);
+                                int line1 = doc.getLineOfOffset(offset2);
+                                int line2 = doc.getLineOfOffset(offset2+1);
                                 if(line1 == line2) {
-                                    offset = getCaretOffsetForInsertCommand(doc, offset);
+                                    offset2 = getCaretOffsetForInsertCommand(doc, offset2);
                                 }
                                 else {
                                     IRegion info  = doc.getLineInformation(line1);
                                     String s = doc.get(info.getOffset()+info.getLength()-1,1);
                                     if(s.charAt(0) == INSISConstants.LINE_CONTINUATION_CHAR) {
-                                        offset = getCaretOffsetForInsertCommand(doc,info.getOffset()+info.getLength()-1);
+                                        offset2 = getCaretOffsetForInsertCommand(doc,info.getOffset()+info.getLength()-1);
                                     }
                                     else {
-                                        offset++;
+                                        offset2++;
                                     }
                                 }
                             }
@@ -987,10 +988,10 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                 }
             }
             else {
-                offset = regions[0][0].getOffset();
+                offset2 = regions[0][0].getOffset();
             }
         }
-        return offset;
+        return offset2;
     }
 
     private void insertCommand(NSISCommand command, boolean updateOffset)

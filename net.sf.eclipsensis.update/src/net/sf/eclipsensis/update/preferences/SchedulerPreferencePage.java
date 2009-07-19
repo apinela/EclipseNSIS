@@ -46,12 +46,14 @@ public class SchedulerPreferencePage extends PreferencePage implements IWorkbenc
         }
     }
 
-    protected IPreferenceStore doGetPreferenceStore()
+    @Override
+	protected IPreferenceStore doGetPreferenceStore()
     {
         return EclipseNSISUpdatePlugin.getDefault().getPreferenceStore();
     }
 
-    protected Control createContents(Composite parent)
+    @Override
+	protected Control createContents(Composite parent)
     {
         parent = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -266,7 +268,8 @@ public class SchedulerPreferencePage extends PreferencePage implements IWorkbenc
         return dt.getHours()*3600+dt.getMinutes()*60+dt.getSeconds();
     }
 
-    public boolean performOk()
+    @Override
+	public boolean performOk()
     {
         boolean ok = super.performOk();
         if(ok) {
@@ -279,7 +282,8 @@ public class SchedulerPreferencePage extends PreferencePage implements IWorkbenc
         return ok;
     }
 
-    protected void performDefaults()
+    @Override
+	protected void performDefaults()
     {
         loadDefaults();
         Enabler enabler = Enabler.get(mAutoUpdate);

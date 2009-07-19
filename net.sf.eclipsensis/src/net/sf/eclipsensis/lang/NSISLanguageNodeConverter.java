@@ -35,7 +35,7 @@ public class NSISLanguageNodeConverter extends AbstractNodeConverter<NSISLanguag
     {
         if(object != null) {
             Node node = document.createElement(LANGUAGE_NODE);
-            XMLUtil.addAttribute(document, node, NAME_ATTR, ((NSISLanguage)object).getName());
+            XMLUtil.addAttribute(document, node, NAME_ATTR, (object).getName());
             return node;
         }
         throw new IllegalArgumentException(String.valueOf(object));

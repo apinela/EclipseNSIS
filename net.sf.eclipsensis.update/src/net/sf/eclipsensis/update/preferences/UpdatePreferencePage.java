@@ -73,11 +73,11 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     private Button mManualSelectMirror;
     private String mLatestVersion = null;
     private static Pattern cIPAddressRegex = Pattern
-            .compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
+            .compile("(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"); //$NON-NLS-1$
 
     static
     {
-        LINK_TEXT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("preference.page.proxy.link.text")).format(new String[] { "org.eclipse.ui.net.NetPreferences" }); //$NON-NLS-1$
+        LINK_TEXT = new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("preference.page.proxy.link.text")).format(new String[] { "org.eclipse.ui.net.NetPreferences" }); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private ModifyListener mModifyListener = new ModifyListener() {
@@ -88,12 +88,14 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     };
     private Button mSelectSourceforgeMirror;
 
-    protected IPreferenceStore doGetPreferenceStore()
+    @Override
+	protected IPreferenceStore doGetPreferenceStore()
     {
         return EclipseNSISUpdatePlugin.getDefault().getPreferenceStore();
     }
 
-    protected Control createContents(Composite parent)
+    @Override
+	protected Control createContents(Composite parent)
     {
         parent = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(1, false);
@@ -110,7 +112,8 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         Link link = new Link(parent, SWT.WRAP);
         link.setText(LINK_TEXT);
         link.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 if (e.text != null)
                 {
@@ -227,7 +230,8 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         updateMirrorSelector(!autoSelect);
 
         mSelectSourceforgeMirror.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
                     public void run()
@@ -269,7 +273,8 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         });
 
         SelectionAdapter adapter = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 updateMirrorSelector(e.widget == mManualSelectMirror);
             }
@@ -340,7 +345,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
                         {
                             if (!mRefreshedSites
                                     && Common.openQuestion(getShell(), EclipseNSISUpdatePlugin
-                                            .getResourceString("invalid.sourceforge.mirror.message"),
+                                            .getResourceString("invalid.sourceforge.mirror.message"), //$NON-NLS-1$
                                             EclipseNSISUpdatePlugin.getShellImage()))
                             {
                                 downloadSites = getDownloadSites(true);
@@ -359,7 +364,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
                 });
                 if (!retValue[0])
                 {
-                    setErrorMessage(EclipseNSISUpdatePlugin.getResourceString("invalid.sourceforge.mirror.error"));
+                    setErrorMessage(EclipseNSISUpdatePlugin.getResourceString("invalid.sourceforge.mirror.error")); //$NON-NLS-1$
                     return false;
                 }
             }
@@ -421,7 +426,8 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         return null;
     }
 
-    public boolean performOk()
+    @Override
+	public boolean performOk()
     {
         boolean ok = super.performOk();
         if (ok)
@@ -435,7 +441,8 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         return ok;
     }
 
-    protected void performDefaults()
+    @Override
+	protected void performDefaults()
     {
         loadDefaults();
         super.performDefaults();

@@ -95,8 +95,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     {
         List<EditPart> selection = (List<EditPart>)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
         if (selection == null
-          || selection.isEmpty()
-          || !(selection.get(0) instanceof EditPart)) {
+          || selection.isEmpty()) {
             return null;
         }
         return selection.get(0);

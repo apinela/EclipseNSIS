@@ -50,7 +50,8 @@ class NSISInstallUpdateJob extends NSISUpdateJob
         mSetupExe = setupExe;
     }
 
-    protected boolean shouldReschedule()
+    @Override
+	protected boolean shouldReschedule()
     {
         return getSettings().isAutomated();
     }
@@ -105,7 +106,8 @@ class NSISInstallUpdateJob extends NSISUpdateJob
         return false;
     }
 
-    protected IStatus doRun(final IProgressMonitor monitor)
+    @Override
+	protected IStatus doRun(final IProgressMonitor monitor)
     {
         if(IOUtility.isValidFile(mSetupExe)) {
             monitor.beginTask(getName(), IProgressMonitor.UNKNOWN);
@@ -127,7 +129,8 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                                         {
                                             setShellStyle(getShellStyle()|SWT.RESIZE);
                                         }
-                                        protected int getTableStyle()
+                                        @Override
+										protected int getTableStyle()
                                         {
                                             return super.getTableStyle() | SWT.READ_ONLY;
                                         }
@@ -151,8 +154,8 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                 final List<String> cmd = new ArrayList<String>();
                 if(EclipseNSISPlugin.getDefault().isWinVista())
                 {
-                	cmd.add("cmd.exe");
-                	cmd.add("/c");
+                	cmd.add("cmd.exe"); //$NON-NLS-1$
+                	cmd.add("/c"); //$NON-NLS-1$
                 }
                 cmd.add(mSetupExe.getAbsolutePath());
                 boolean install = ((settings.getAction() & SchedulerConstants.UPDATE_INSTALL) == SchedulerConstants.UPDATE_INSTALL);
@@ -274,7 +277,8 @@ class NSISInstallUpdateJob extends NSISUpdateJob
         }
     }
 
-    protected String formatException(Throwable e)
+    @Override
+	protected String formatException(Throwable e)
     {
         return new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("install.update.error")).format(new String[] {mVersion,e.getMessage()}); //$NON-NLS-1$
     }

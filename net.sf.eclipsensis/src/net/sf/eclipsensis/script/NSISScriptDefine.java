@@ -11,7 +11,7 @@ package net.sf.eclipsensis.script;
 
 public class NSISScriptDefine extends AbstractNSISScriptElement
 {
-    private String mName = null;
+    private String mSymbolName = null;
     private String mValue = null;
 
     /**
@@ -20,7 +20,7 @@ public class NSISScriptDefine extends AbstractNSISScriptElement
      */
     public NSISScriptDefine(String name, String value) {
         super("!define", makeArray(name, value)); //$NON-NLS-1$
-        mName = name;
+        mSymbolName = name;
         mValue = value;
     }
 
@@ -29,12 +29,12 @@ public class NSISScriptDefine extends AbstractNSISScriptElement
      */
     public NSISScriptDefine(String name) {
         super("!define",name); //$NON-NLS-1$
-        mName = name;
+        mSymbolName = name;
     }
 
     private void updateArgs()
     {
-        updateArgs(makeArray(mName,mValue));
+        updateArgs(makeArray(mSymbolName,mValue));
     }
 
     /**
@@ -42,7 +42,7 @@ public class NSISScriptDefine extends AbstractNSISScriptElement
      */
     public String getName()
     {
-        return mName;
+        return mSymbolName;
     }
 
     /**
@@ -50,7 +50,7 @@ public class NSISScriptDefine extends AbstractNSISScriptElement
      */
     public void setName(String name)
     {
-        mName = name;
+        mSymbolName = name;
         updateArgs();
     }
 

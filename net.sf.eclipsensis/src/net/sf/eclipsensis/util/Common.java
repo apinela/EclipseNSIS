@@ -233,10 +233,10 @@ public class Common
         if(newClass.equals(oldClass) || oldClass.isAssignableFrom(newClass)) {
             int oldLength = Array.getLength(oldArray);
             int newLength = Array.getLength(newArray);
-            startIndex = Math.min(startIndex,newLength-1);
-            newLength = Math.min(newLength,newLength-startIndex);
+            int startIndex2 = Math.min(startIndex,newLength-1);
+            newLength = Math.min(newLength,newLength-startIndex2);
             appendedArray = resizeArray(oldArray, oldLength+newLength);
-            System.arraycopy(newArray,startIndex,appendedArray,oldLength,newLength);
+            System.arraycopy(newArray,startIndex2,appendedArray,oldLength,newLength);
         }
         return appendedArray;
     }
@@ -319,15 +319,16 @@ public class Common
 
     public static String leftPad(String text, int length, char padChar)
     {
-        if(text.length() < length) {
+    	String text2 = text;
+        if(text2.length() < length) {
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-            for(int i=text.length(); i<length; i++) {
+            for(int i=text2.length(); i<length; i++) {
                 buf.append(padChar);
             }
-            buf.append(text);
-            text = buf.toString();
+            buf.append(text2);
+            text2 = buf.toString();
         }
-        return text;
+        return text2;
     }
 
     public static String flatten(Object[] array, char separator)
@@ -447,46 +448,48 @@ public class Common
 
     public static String replaceAll(String input, String search, String replace, boolean ignoreCase)
     {
-        if(!Common.isEmpty(input) && !Common.isEmpty(search) &&
-                search.length() <= input.length()) {
-            replace = (replace == null?"":replace); //$NON-NLS-1$
+    	String input2 = input;
+    	String search2 = search;
+        if(!Common.isEmpty(input2) && !Common.isEmpty(search2) &&
+                search2.length() <= input2.length()) {
+            String replace2 = (replace == null?"":replace); //$NON-NLS-1$
             String tmp;
             if(ignoreCase) {
-                search = search.toLowerCase();
-                tmp = input.toLowerCase();
+                search2 = search2.toLowerCase();
+                tmp = input2.toLowerCase();
             }
             else {
-                tmp = input;
+                tmp = input2;
             }
-            int n = tmp.indexOf(search);
+            int n = tmp.indexOf(search2);
             if (n >= 0) {
                 int start = 0;
                 StringBuffer buf = new StringBuffer();
                 while(n >= 0) {
-                    buf.append(input.substring(start,n));
-                    buf.append(replace);
-                    start = n+search.length();
-                    if(start <= (tmp.length()-search.length())) {
-                        n = tmp.indexOf(search,start);
+                    buf.append(input2.substring(start,n));
+                    buf.append(replace2);
+                    start = n+search2.length();
+                    if(start <= (tmp.length()-search2.length())) {
+                        n = tmp.indexOf(search2,start);
                     }
                     else {
                         break;
                     }
                 }
                 if(start < tmp.length()) {
-                    buf.append(input.substring(start));
+                    buf.append(input2.substring(start));
                 }
-                input = buf.toString();
+                input2 = buf.toString();
                 if(ignoreCase) {
-                    tmp = input.toLowerCase();
+                    tmp = input2.toLowerCase();
                 }
                 else {
-                    tmp = input;
+                    tmp = input2;
                 }
             }
         }
 
-        return input;
+        return input2;
     }
 
     public static void beanToStore(Object bean, IPreferenceStore store, java.util.List<String> properties)
@@ -658,10 +661,11 @@ public class Common
 
     public static String maybeQuote(String text)
     {
-        if(shouldQuote(text)) {
-            text = quote(text);
+    	String text2 = text;
+        if(shouldQuote(text2)) {
+            text2 = quote(text2);
         }
-        return text;
+        return text2;
     }
 
     public static boolean shouldQuote(String text)
@@ -693,10 +697,11 @@ public class Common
 
     public static String maybeUnquote(String text)
     {
-        if(isQuoted(text)) {
-            text = text.substring(1,text.length()-1);
+    	String text2 = text;
+        if(isQuoted(text2)) {
+            text2 = text2.substring(1,text2.length()-1);
         }
-        return text;
+        return text2;
     }
 
     public static String quote(String text)
@@ -796,14 +801,15 @@ public class Common
 
     public static String padString(String str, int length)
     {
-        if(str != null) {
-            if(str.length() < length) {
-                char[] c = new char[length-str.length()];
+    	String str2 = str;
+        if(str2 != null) {
+            if(str2.length() < length) {
+                char[] c = new char[length-str2.length()];
                 Arrays.fill(c,' ');
-                str += new String(c);
+                str2 += new String(c);
             }
         }
-        return str;
+        return str2;
     }
 
     public static void printBundleExtensions(Bundle bundle)
@@ -821,15 +827,15 @@ public class Common
 
     private static void printChildren(String prefix, IConfigurationElement[] elements) {
         if(!Common.isEmptyArray(elements)) {
-            prefix += "\t"; //$NON-NLS-1$
+        	String prefix2 = prefix + "\t"; //$NON-NLS-1$
             for (int j = 0; j < elements.length; j++) {
                 String[] attr = elements[j].getAttributeNames();
                 if(!Common.isEmptyArray(attr)) {
                     for (int i = 0; i < attr.length; i++) {
-                        System.out.println(prefix+attr[i]+"="+elements[j].getAttribute(attr[i])); //$NON-NLS-1$
+                        System.out.println(prefix2+attr[i]+"="+elements[j].getAttribute(attr[i])); //$NON-NLS-1$
                     }
                 }
-                printChildren(prefix,elements[j].getChildren());
+                printChildren(prefix2,elements[j].getChildren());
             }
         }
     }
@@ -909,7 +915,7 @@ public class Common
                 }
                 buf.append(chars[i]);
             }
-            text = buf.toString();
+            return buf.toString();
         }
         return text;
     }

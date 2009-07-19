@@ -46,7 +46,8 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         super(parentShell, selection);
     }
 
-    protected void init()
+    @Override
+	protected void init()
     {
         super.init();
         String storePass = getStringDialogSetting(STORE_PASS);
@@ -91,12 +92,14 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         setValue(SECTIONS_ONLY,getDialogSettings().getBoolean(SECTIONS_ONLY)?Boolean.TRUE:Boolean.FALSE);
     }
 
-    protected String getDialogTitle()
+    @Override
+	protected String getDialogTitle()
     {
         return JARSignerPlugin.getResourceString("jarsigner.dialog.title"); //$NON-NLS-1$
     }
 
-    protected void createValuesDialogArea(Composite parent)
+    @Override
+	protected void createValuesDialogArea(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -109,7 +112,8 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         applyDialogFont(composite);
 
         SelectionAdapter sa = new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 Button b = (Button)e.widget;
                 Text text = (Text)b.getData(ATTR_TEXT);
@@ -135,7 +139,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
                         mComboViewer.refresh(true);
                         if(!mAliases.contains(alias)) {
                             if(mAliases.size() > 0) {
-                                alias = (String)mAliases.get(0);
+                                alias = mAliases.get(0);
                             }
                             else {
                                 alias = ""; //$NON-NLS-1$
@@ -181,7 +185,8 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
 
     }
 
-    protected void createFlagsDialogArea(Composite parent)
+    @Override
+	protected void createFlagsDialogArea(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -196,7 +201,8 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         makeCheckBox(composite,JARSignerPlugin.getResourceString(SECTIONS_ONLY),SECTIONS_ONLY,false);
     }
 
-    protected boolean isValid()
+    @Override
+	protected boolean isValid()
     {
         if(super.isValid()) {
             boolean state = !Common.isEmpty(getAlias());
@@ -212,7 +218,8 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         return false;
     }
 
-    protected void okPressed()
+    @Override
+	protected void okPressed()
     {
         getDialogSettings().put(STORE_PASS,getStorePass());
         getDialogSettings().put(ALIAS,getAlias());

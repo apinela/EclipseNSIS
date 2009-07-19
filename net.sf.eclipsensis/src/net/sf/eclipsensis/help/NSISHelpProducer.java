@@ -40,15 +40,16 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
 
     private String stripPrefixes(String href)
     {
+    	String href2 = href;
         for (int i = 0; i < mHelpURLPrefixes.length; i++) {
-            if(href.charAt(0) == '/') {
-                href = href.substring(1);
+            if(href2.charAt(0) == '/') {
+                href2 = href2.substring(1);
             }
-            if(href.startsWith(mHelpURLPrefixes[i])) {
-                href = href.substring(mHelpURLPrefixes[i].length());
+            if(href2.startsWith(mHelpURLPrefixes[i])) {
+                href2 = href2.substring(mHelpURLPrefixes[i].length());
             }
         }
-        return href;
+        return href2;
     }
 
     /* (non-Javadoc)
@@ -56,58 +57,59 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
      */
     public InputStream getInputStream(String pluginID, String href, Locale locale)
     {
+    	String href2 = href;
         if(pluginID.equals(mPluginId)) {
-            if(href.equals(NSISCONTRIB_JS_LOCATION)) {
+            if(href2.equals(NSISCONTRIB_JS_LOCATION)) {
                 return new ByteArrayInputStream(NSIS_CONTRIB_JS);
             }
-            else if(href.startsWith(NSIS_PLATFORM_HELP_PREFIX) && !mJavascriptOnly) {
-                if(href.startsWith(NSIS_CONTRIB_PATH)) {
+            else if(href2.startsWith(NSIS_PLATFORM_HELP_PREFIX) && !mJavascriptOnly) {
+                if(href2.startsWith(NSIS_CONTRIB_PATH)) {
                     String nsisContribPath = NSISHelpURLProvider.getInstance().getNSISContribPath();
                     if(nsisContribPath == null) {
                         nsisContribPath = NSIS_PLATFORM_HELP_PREFIX+"Contrib"; //$NON-NLS-1$
                     }
-                    href = Common.replaceAll(href, NSIS_CONTRIB_PATH, nsisContribPath, true);
+                    href2 = Common.replaceAll(href2, NSIS_CONTRIB_PATH, nsisContribPath, true);
                 }
                 String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
                 if(!Common.isEmpty(nsisHome)) {
                     File nsisDir = new File(nsisHome);
                     if(IOUtility.isValidDirectory(nsisDir)) {
                         File helpFile = null;
-                        String href2=href.substring(NSIS_PLATFORM_HELP_PREFIX.length());
-                        boolean isKeyword = href2.startsWith(KEYWORD_PREFIX);
+                        String href3=href2.substring(NSIS_PLATFORM_HELP_PREFIX.length());
+                        boolean isKeyword = href3.startsWith(KEYWORD_PREFIX);
                         if(isKeyword) {
-                            String keyword = href2.substring(KEYWORD_PREFIX.length());
+                            String keyword = href3.substring(KEYWORD_PREFIX.length());
                             String url = NSISHelpURLProvider.getInstance().getHelpURL(keyword, true);
                             if(url != null) {
-                                href2 = stripPrefixes(url);
+                                href3 = stripPrefixes(url);
                             }
                         }
                         String target = null;
-                        int n = href2.lastIndexOf('#');
+                        int n = href3.lastIndexOf('#');
                         if(n > 0) {
-                            target = href2.substring(n);
-                            href2 = href2.substring(0,n);
+                            target = href3.substring(n);
+                            href3 = href3.substring(0,n);
                         }
-                        boolean isDocs = href2.startsWith(DOCS_LOCATION_PREFIX);
-                        boolean isContrib = href2.startsWith(CONTRIB_LOCATION_PREFIX);
+                        boolean isDocs = href3.startsWith(DOCS_LOCATION_PREFIX);
+                        boolean isContrib = href3.startsWith(CONTRIB_LOCATION_PREFIX);
                         if(isDocs || isContrib) {
                             if(IOUtility.isValidDirectory(cHelpCacheLocation)) {
-                                helpFile = new File(cHelpCacheLocation,href2);
+                                helpFile = new File(cHelpCacheLocation,href3);
                             }
                             if(!IOUtility.isValidFile(helpFile)) {
-                                helpFile = new File(nsisDir,href2);
+                                helpFile = new File(nsisDir,href3);
                             }
                         }
                         else {
-                            helpFile = new File(nsisDir,href2);
+                            helpFile = new File(nsisDir,href3);
                         }
                         if(IOUtility.isValidFile(helpFile)) {
                             if(isKeyword) {
-                                href2 = IOUtility.getFileURLString(helpFile);
+                                href3 = IOUtility.getFileURLString(helpFile);
                                 if(target != null) {
-                                    href2 += target;
+                                    href3 += target;
                                 }
-                                String content = mLocationReplaceFormat.format(new String[] {href2});
+                                String content = mLocationReplaceFormat.format(new String[] {href3});
                                 return new ByteArrayInputStream(content.getBytes());
                             }
                             if(HelpBrowserLocalFileHandler.INSTANCE.handle(helpFile)) {
@@ -141,12 +143,12 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                                 }
                             }
                             return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("missing.help.format", //$NON-NLS-1$
-                                                                    new Object[]{STYLE, href,PLUGIN_ID,
+                                                                    new Object[]{STYLE, href2,PLUGIN_ID,
                                                                                  NSISLiveHelpAction.class.getName()}).getBytes());
                         }
                         else {
                             return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("missing.file.format", //$NON-NLS-1$
-                                                                                new Object[]{STYLE,href}).getBytes());
+                                                                                new Object[]{STYLE,href2}).getBytes());
                         }
                     }
                 }

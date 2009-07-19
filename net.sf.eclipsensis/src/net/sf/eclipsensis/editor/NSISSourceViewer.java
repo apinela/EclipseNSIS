@@ -755,18 +755,19 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
 
     private String convertTabsToSpaces(IDocument doc, int textOffset, String text, int tabWidth)
     {
-        if (text != null) {
-            int index= text.indexOf('\t');
+    	String text2 = text;
+        if (text2 != null) {
+            int index= text2.indexOf('\t');
             if (index > -1) {
                 StringBuffer buffer= new StringBuffer();
-                mLineTracker.set(text);
+                mLineTracker.set(text2);
                 int lines= mLineTracker.getNumberOfLines();
 
                 try {
                     for (int i= 0; i < lines; i++) {
                         int offset= mLineTracker.getLineOffset(i);
                         int endOffset= offset + mLineTracker.getLineLength(i);
-                        String line= text.substring(offset, endOffset);
+                        String line= text2.substring(offset, endOffset);
 
                         int position= 0;
                         if (i == 0) {
@@ -799,11 +800,11 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                         }
                     }
 
-                    text= buffer.toString();
+                    text2= buffer.toString();
                 } catch (BadLocationException x) {
                 }
             }
         }
-        return text;
+        return text2;
     }
 }

@@ -59,7 +59,7 @@ public class PrimitivesNodeConverter extends AbstractNodeConverter<Object>
 
     public Node toNode(Document document, Object object)
     {
-        String nodeName = (String)mClassNameMap.get(object.getClass());
+        String nodeName = mClassNameMap.get(object.getClass());
         if(nodeName != null) {
             Node node = document.createElement(nodeName);
             XMLUtil.addAttribute(document, node, VALUE_ATTR, String.valueOf(object));

@@ -47,12 +47,14 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
         super(EclipseNSISUpdatePlugin.getResourceString("check.update.message"), settings, jobRunner); //$NON-NLS-1$
     }
 
-    protected boolean shouldReschedule()
+    @Override
+	protected boolean shouldReschedule()
     {
         return getSettings().isAutomated() && ((getSettings().getAction() & SchedulerConstants.UPDATE_DOWNLOAD) == 0);
     }
 
-    protected URL getURL() throws IOException
+    @Override
+	protected URL getURL() throws IOException
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
         if(version != null) {
@@ -75,7 +77,8 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
         return null;
     }
 
-    protected URL getDefaultURL() throws IOException
+    @Override
+	protected URL getDefaultURL() throws IOException
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
         if(version != null) {
@@ -86,7 +89,8 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
         return null;
     }
 
-    protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
+    @Override
+	protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
     {
         try {
             monitor.beginTask(getName(), 100);
@@ -165,7 +169,8 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
         return Status.OK_STATUS;
     }
 
-    protected String formatException(Throwable e)
+    @Override
+	protected String formatException(Throwable e)
     {
         return new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("check.update.error")).format(new String[]{e.getMessage()}); //$NON-NLS-1$
     }

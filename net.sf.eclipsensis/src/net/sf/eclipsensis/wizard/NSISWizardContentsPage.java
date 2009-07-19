@@ -551,7 +551,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                         if(fileItem != null && types[i].equals(NSISInstallFile.TYPE) && filesOnly) {
                             fileItem.setName(files[i]);
                             if(target.canAddChild(fileItem)) {
-                                types[i] = NSISInstallFiles.FileItem.TYPE;
+                                types[i] = NSISInstallFiles.FileItem.FILEITEM_TYPE;
                                 continue;
                             }
                         }
@@ -649,6 +649,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
 
             private void doDrop(List<INSISInstallElement> selection, int detail, INSISInstallElement oldParent, INSISInstallElement newParent, int index)
             {
+            	int index2 = index;
                 try {
                     for (Iterator<INSISInstallElement>  iter = selection.iterator(); iter.hasNext();) {
                         INSISInstallElement el = iter.next();
@@ -660,12 +661,12 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                             case DND.DROP_MOVE:
                                 if(oldParent == newParent) {
                                     int n = oldParent.indexOf(el);
-                                    if(n < index) {
-                                        index--;
+                                    if(n < index2) {
+                                        index2--;
                                     }
                                     oldParent.removeChild(el);
                                 }
-                                newParent.addChild(index++,el);
+                                newParent.addChild(index2++,el);
                         }
                     }
                     setPageComplete(validatePage(VALIDATE_ALL));
@@ -684,6 +685,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
 
             private void doDrop(String[] files, String[] types, INSISInstallElement target, int index)
             {
+            	int index2 = index;
                 try {
                     RegistryImporter importer = null;
                     RegistryImportStrategy strategy = null;
@@ -698,7 +700,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                             el = new NSISInstallDirectory();
                             ((NSISInstallDirectory)el).setName(files[i]);
                         }
-                        else if(types[i].equals(NSISInstallFiles.FileItem.TYPE)) {
+                        else if(types[i].equals(NSISInstallFiles.FileItem.FILEITEM_TYPE)) {
                             el = new NSISInstallFiles.FileItem();
                             ((NSISInstallFiles.FileItem)el).setName(files[i]);
                         }
@@ -716,7 +718,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                                 if(!Common.isEmptyCollection(list)) {
                                     for (Iterator<NSISInstallRegistryItem> iter = list.iterator(); iter.hasNext();) {
                                     	NSISInstallRegistryItem element = iter.next();
-                                        target.addChild(index++, element);
+                                        target.addChild(index2++, element);
                                     }
                                 }
                                 continue;
@@ -727,7 +729,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                             ((NSISInstallFile)el).setName(files[i]);
                         }
                         if(el != null) {
-                            target.addChild(index++,el);
+                            target.addChild(index2++,el);
                         }
                     }
                     setPageComplete(validatePage(VALIDATE_ALL));
@@ -1015,9 +1017,10 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
 
     private boolean isAncestorOf(INSISInstallElement first, INSISInstallElement second)
     {
-        while(!first.equals(second)) {
-            second = second.getParent();
-            if(second == null) {
+    	INSISInstallElement second2 = second;
+        while(!first.equals(second2)) {
+            second2 = second2.getParent();
+            if(second2 == null) {
                 return false;
             }
         }
@@ -1219,18 +1222,19 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
 
         public void addRegistryValue(String rootKey, String subKey, String value, int type, String data)
         {
-            switch(type) {
+        	int type2 = type;
+            switch(type2) {
                 case WinAPI.REG_BINARY:
-                    type = REG_BIN;
+                    type2 = REG_BIN;
                     break;
                 case WinAPI.REG_DWORD:
-                    type = REG_DWORD;
+                    type2 = REG_DWORD;
                     break;
                 case WinAPI.REG_EXPAND_SZ:
-                    type = REG_EXPAND_SZ;
+                    type2 = REG_EXPAND_SZ;
                     break;
                 case WinAPI.REG_SZ:
-                    type = REG_SZ;
+                    type2 = REG_SZ;
                     break;
                 default:
                     return;
@@ -1240,7 +1244,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             regVal.setSubKey(subKey);
             regVal.setValue(value);
             regVal.setData(data);
-            regVal.setValueType(type);
+            regVal.setValueType(type2);
             mRegistryItems.add(regVal);
         }
 

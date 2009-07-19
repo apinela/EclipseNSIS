@@ -63,11 +63,11 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                 ResourceBundle bundle = ResourceBundle
                         .getBundle(NSISLanguageManager.class.getName());
                 mLocaleLanguageMap = Common.loadMapProperty(bundle,
-                        "locale.language.map");
+                        "locale.language.map"); //$NON-NLS-1$
                 mLanguageIdLocaleMap = Common.loadMapProperty(bundle,
-                        "langid.locale.map");
+                        "langid.locale.map"); //$NON-NLS-1$
                 mDefaultLanguageId = Integer.valueOf(bundle
-                        .getString("default.langid"));
+                        .getString("default.langid")); //$NON-NLS-1$
             }
             catch (Exception ex) {
                 mDefaultLanguageId = new Integer(1033);

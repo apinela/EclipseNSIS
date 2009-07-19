@@ -346,13 +346,13 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     @Override
 	protected Control createContents(Composite parent)
     {
-        parent = new Composite(parent,SWT.NONE);
+    	Composite parent2 = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
-        parent.setLayout(layout);
+        parent2.setLayout(layout);
 
-        Link link= new Link(parent, SWT.NONE);
+        Link link= new Link(parent2, SWT.NONE);
         link.setText(EclipseNSISPlugin.getResourceString("editor.preferences.note")); //$NON-NLS-1$
         link.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -361,7 +361,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
             }
         });
 
-        Group group = new Group(parent,SWT.SHADOW_ETCHED_IN);
+        Group group = new Group(parent2,SWT.SHADOW_ETCHED_IN);
         group.setText(EclipseNSISPlugin.getResourceString("appearances.group.label")); //$NON-NLS-1$
         layout = new GridLayout(1,false);
         layout.marginWidth = 0;
@@ -371,7 +371,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         Composite c = createAppearanceGroup(group);
         c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        group = new Group(parent,SWT.SHADOW_ETCHED_IN);
+        group = new Group(parent2,SWT.SHADOW_ETCHED_IN);
         group.setText(EclipseNSISPlugin.getResourceString("syntax.group.label")); //$NON-NLS-1$
         layout = new GridLayout(1,false);
         layout.marginWidth = 0;
@@ -381,7 +381,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         c = createSyntaxGroup(group);
         c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        group = new Group(parent,SWT.SHADOW_ETCHED_IN);
+        group = new Group(parent2,SWT.SHADOW_ETCHED_IN);
         group.setText(EclipseNSISPlugin.getResourceString("other.group.label")); //$NON-NLS-1$
         group.setLayout(new GridLayout(1,false));
         group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -389,8 +389,8 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         initialize();
-        Dialog.applyDialogFont(parent);
-        return parent;
+        Dialog.applyDialogFont(parent2);
+        return parent2;
     }
 
     private void initialize() {

@@ -37,12 +37,14 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
         mVersion = version;
     }
 
-    protected boolean shouldReschedule()
+    @Override
+	protected boolean shouldReschedule()
     {
         return getSettings().isAutomated() && ((getSettings().getAction() & SchedulerConstants.UPDATE_INSTALL) == 0);
     }
 
-    protected URL getURL() throws IOException
+    @Override
+	protected URL getURL() throws IOException
     {
         if(cPreferenceStore.getBoolean(IUpdatePreferenceConstants.AUTOSELECT_SOURCEFORGE_MIRROR)) {
             return NSISUpdateURLs.getAutoDownloadURL(mVersion);
@@ -56,12 +58,14 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
         return null;
     }
 
-    protected URL getDefaultURL() throws IOException
+    @Override
+	protected URL getDefaultURL() throws IOException
     {
         return NSISUpdateURLs.getDownloadURL(mVersion);
     }
 
-    protected HttpURLConnection makeConnection(IProgressMonitor monitor, URL url, URL defaultURL) throws IOException
+    @Override
+	protected HttpURLConnection makeConnection(IProgressMonitor monitor, URL url, URL defaultURL) throws IOException
     {
         try {
             monitor.beginTask(getName(),100);
@@ -74,7 +78,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                 String urlString = (url == null?"":url.toString()); //$NON-NLS-1$
                 String defaultURLString = (defaultURL == null?"":defaultURL.toString()); //$NON-NLS-1$
                 for (Iterator<DownloadSite> iter = downloadSites.iterator(); iter.hasNext();) {
-                    DownloadSite site = (DownloadSite)iter.next();
+                    DownloadSite site = iter.next();
                     String siteURLString = NSISUpdateURLs.getGenericDownloadURL(site.getName(), mVersion).toString();
                     if (siteURLString.equalsIgnoreCase(urlString) || siteURLString.equalsIgnoreCase(defaultURLString)) {
                         iter.remove();
@@ -83,7 +87,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
                 while (!Common.isEmptyCollection(downloadSites)) {
                     DownloadSite site;
                     if (getSettings().isAutomated()) {
-                        site = (DownloadSite)downloadSites.remove(0);
+                        site = downloadSites.remove(0);
                     }
                     else {
                         final DownloadSite[] selectedSite = {null};
@@ -122,7 +126,8 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
         }
     }
 
-    protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
+    @Override
+	protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
     {
         try {
             monitor.beginTask(getName(),100);
@@ -242,7 +247,8 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
         return Status.OK_STATUS;
     }
 
-    protected String formatException(Throwable e)
+    @Override
+	protected String formatException(Throwable e)
     {
         return new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("download.update.error")).format(new String[] {mVersion,e.getMessage()}); //$NON-NLS-1$
     }

@@ -102,11 +102,12 @@ public abstract class NSISParam
 
     protected String maybeQuote(String text)
     {
-        if (shouldQuote(text))
+    	String text2 = text;
+        if (shouldQuote(text2))
         {
-            text = Common.quote(text);
+            text2 = Common.quote(text2);
         }
-        return text;
+        return text2;
     }
 
     protected boolean shouldQuote(String text)
@@ -281,13 +282,14 @@ public abstract class NSISParam
 
         public Control createControl(Composite parent)
         {
+        	Composite parent2 = parent;
             if (Common.isValid(mControl))
             {
                 throw new RuntimeException(EclipseNSISPlugin.getResourceString("create.editor.error")); //$NON-NLS-1$
             }
-            int availableGridCells = ((GridLayout) parent.getLayout()).numColumns;
+            int availableGridCells = ((GridLayout) parent2.getLayout()).numColumns;
             int n = 0;
-            Control[] children = parent.getChildren();
+            Control[] children = parent2.getChildren();
             if (!Common.isEmptyArray(children))
             {
                 for (int i = 0; i < children.length; i++)
@@ -301,19 +303,19 @@ public abstract class NSISParam
             int neededGridCells = (isOptional() ? 1 : 0) + (!emptyName ? 1 : 0) + 1;
             if (neededGridCells > availableGridCells)
             {
-                parent = new Composite(parent, SWT.None);
+                parent2 = new Composite(parent2, SWT.None);
                 GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
                 data.horizontalSpan = availableGridCells;
                 GridLayout layout = new GridLayout(neededGridCells, false);
                 layout.marginHeight = layout.marginWidth = 0;
-                parent.setLayout(layout);
+                parent2.setLayout(layout);
             }
 
             int horizontalSpan = 1;
 
             if (isOptional())
             {
-                mOptionalButton = new Button(parent, SWT.CHECK);
+                mOptionalButton = new Button(parent2, SWT.CHECK);
                 GridData gridData = new GridData(SWT.FILL, SWT.CENTER, false, false);
                 mOptionalButton.setLayoutData(gridData);
                 if (!emptyName)
@@ -328,7 +330,7 @@ public abstract class NSISParam
                 {
                     if (createMissing())
                     {
-                        Label l = new Label(parent, SWT.None);
+                        Label l = new Label(parent2, SWT.None);
                         GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
                         data.widthHint = 12;
                         l.setLayoutData(data);
@@ -344,7 +346,7 @@ public abstract class NSISParam
                 if (!isOptional())
                 {
                     mRequiredFields = shouldDecorate();
-                    mNameLabel = NSISWizardDialogUtil.createLabel(parent, null, true, null, mRequiredFields);
+                    mNameLabel = NSISWizardDialogUtil.createLabel(parent2, null, true, null, mRequiredFields);
                     mNameLabel.setText(getName());
                     mNameLabel.addDisposeListener(new DisposeListener() {
                         public void widgetDisposed(DisposeEvent e)
@@ -365,7 +367,7 @@ public abstract class NSISParam
                 {
                     if (createMissing())
                     {
-                        Label l = new Label(parent, SWT.None);
+                        Label l = new Label(parent2, SWT.None);
                         l.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
                     }
                     else
@@ -374,7 +376,7 @@ public abstract class NSISParam
                     }
                 }
             }
-            mControl = createParamControl(parent);
+            mControl = createParamControl(parent2);
             if (mControl != null)
             {
                 GridData gridData = new GridData(SWT.FILL, (mControl instanceof Composite ? SWT.FILL : SWT.CENTER),

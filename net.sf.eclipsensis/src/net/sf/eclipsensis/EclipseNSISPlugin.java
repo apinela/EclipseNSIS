@@ -152,7 +152,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                     }
                 };
                 if(wwindow != null && wwindow.getShell().isVisible()) {
-                    if (!Boolean.getBoolean("net.sf.eclipsensis.config.IsConfiguring")) 
+                    if (!Boolean.getBoolean("net.sf.eclipsensis.config.IsConfiguring"))  //$NON-NLS-1$
                     {
 						configOp.run();
 					}
@@ -218,12 +218,12 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             final IRunnableWithProgress op = new IRunnableWithProgress(){
                 public void run(IProgressMonitor monitor)
                 {
-                    monitor = new DisplayUpdateProgressMonitor(monitor);
+                	IProgressMonitor monitor2 = new DisplayUpdateProgressMonitor(monitor);
                     try {
                         String taskName = EclipseNSISPlugin.getResourceString("starting.eclipsensis.message"); //$NON-NLS-1$
-                        monitor.beginTask(taskName,services.length+1);
+                        monitor2.beginTask(taskName,services.length+1);
                         for (int i = 0; i < services.length; i++) {
-                            NestedProgressMonitor subMonitor = new NestedProgressMonitor(monitor,taskName,1);
+                            NestedProgressMonitor subMonitor = new NestedProgressMonitor(monitor2,taskName,1);
                             try {
                                 Object obj = Common.createDefaultObject(services[i]);
                                 if(obj instanceof IEclipseNSISService) {
@@ -239,7 +239,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                                 subMonitor.done();
                             }
                         }
-                        monitor.subTask(EclipseNSISPlugin.getResourceString("starting.makensis.message")); //$NON-NLS-1$
+                        monitor2.subTask(EclipseNSISPlugin.getResourceString("starting.makensis.message")); //$NON-NLS-1$
                         Runnable runnable = new Runnable() {
                             public void run()
                             {
@@ -253,7 +253,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                             runnable.run();
                         }
 
-                        monitor.worked(1);
+                        monitor2.worked(1);
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -441,7 +441,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         }
         mJavaVersion = new Version(version,"._"); //$NON-NLS-1$
         Map<String,String> vms = Common.loadMapProperty(getResourceBundle(),(mIsNT?"nt.vms":"9x.vms"),'\u00FF'); //$NON-NLS-1$ //$NON-NLS-2$
-        version = (String)vms.get(mJavaVendor);
+        version = vms.get(mJavaVendor);
         if(version != null) {
             String[] tokens = Common.tokenize(version,'-');
             if(tokens.length == 2) {

@@ -153,7 +153,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         private ListenerList mListeners = new ListenerList(ListenerList.IDENTITY);
         private ListenerList mPropertyChangeListeners = new ListenerList(ListenerList.IDENTITY);
         private ICellEditorValidator mValidator;
-        private boolean mOnlyNumbers = false;
+        private boolean mProxyOnlyNumbers = false;
         private VerifyListener mNumberVerifyListener;
         private ILabelProvider mLabelProvider;
 
@@ -194,8 +194,8 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
 
         public void setOnlyNumbers(boolean onlyNumbers)
         {
-            if(mOnlyNumbers != onlyNumbers) {
-                mOnlyNumbers = onlyNumbers;
+            if(mProxyOnlyNumbers != onlyNumbers) {
+                mProxyOnlyNumbers = onlyNumbers;
                 updateNumberVerifier();
             }
         }
@@ -206,7 +206,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                 if(mDelegate instanceof TextCellEditor) {
                     Text text = (Text)mDelegate.getControl();
                     if(text != null) {
-                        if(mOnlyNumbers) {
+                        if(mProxyOnlyNumbers) {
                             text.addVerifyListener(getNumberVerifyListener());
                         }
                         else {
@@ -215,7 +215,7 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
                     }
                 }
                 else {
-                    ((MultiLineTextCellEditor)mDelegate).setOnlyNumbers(mOnlyNumbers);
+                    ((MultiLineTextCellEditor)mDelegate).setOnlyNumbers(mProxyOnlyNumbers);
                 }
             }
         }

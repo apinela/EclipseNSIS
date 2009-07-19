@@ -66,7 +66,8 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
         return cStateLocation;
     }
 
-    public void start(BundleContext context) throws Exception
+    @Override
+	public void start(BundleContext context) throws Exception
     {
         mPluginId = context.getBundle().getSymbolicName();
         super.start(context);
@@ -88,6 +89,7 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
     /**
 	 * This method is called when the plug-in is stopped
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception
     {
         Scheduler scheduler = Scheduler.getInstance();

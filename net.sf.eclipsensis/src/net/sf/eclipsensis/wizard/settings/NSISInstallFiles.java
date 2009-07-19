@@ -32,15 +32,15 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     {
         private static final long serialVersionUID = 3744853352840436396L;
 
-        public static final String TYPE = "File Item"; //$NON-NLS-1$
+        public static final String FILEITEM_TYPE = "File Item"; //$NON-NLS-1$
 
-        private static final Image IMAGE = EclipseNSISPlugin.getImageManager().getImage(
+        private static final Image FILEITEM_IMAGE = EclipseNSISPlugin.getImageManager().getImage(
                 EclipseNSISPlugin.getResourceString("wizard.file.icon")); //$NON-NLS-1$
 
         static
         {
-            NSISInstallElementFactory.register(TYPE,
-                    EclipseNSISPlugin.getResourceString("wizard.fileitem.type.name"), IMAGE, FileItem.class); //$NON-NLS-1$
+            NSISInstallElementFactory.register(FILEITEM_TYPE,
+                    EclipseNSISPlugin.getResourceString("wizard.fileitem.type.name"), FILEITEM_IMAGE, FileItem.class); //$NON-NLS-1$
         }
 
         private String mName = null;
@@ -136,7 +136,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
          */
         public Image getImage()
         {
-            return IMAGE;
+            return FILEITEM_IMAGE;
         }
 
         /**
@@ -154,7 +154,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
          */
         public String getType()
         {
-            return TYPE;
+            return FILEITEM_TYPE;
         }
 
         /*
@@ -400,7 +400,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 	public void setChildTypes()
     {
         clearChildTypes();
-        addChildType(FileItem.TYPE);
+        addChildType(FileItem.FILEITEM_TYPE);
     }
 
     /**
@@ -440,7 +440,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         for (Iterator<String> iter = newFiles.iterator(); iter.hasNext();)
         {
             FileItem fi = new FileItem();
-            fi.setName((String) iter.next());
+            fi.setName(iter.next());
             addChild(fi);
             setDirty();
         }

@@ -11,7 +11,7 @@ package net.sf.eclipsensis.script;
 
 public class NSISScriptInstruction extends AbstractNSISScriptElement
 {
-    private String mName = null;
+    private String mInstructionName = null;
     private Object mArg = null;
 
     /**
@@ -20,7 +20,7 @@ public class NSISScriptInstruction extends AbstractNSISScriptElement
     public NSISScriptInstruction(String name)
     {
         super(name);
-        mName = name;
+        mInstructionName = name;
     }
 
     /**
@@ -30,7 +30,7 @@ public class NSISScriptInstruction extends AbstractNSISScriptElement
     public NSISScriptInstruction(String name, Object arg)
     {
         super(name,arg);
-        mName = name;
+        mInstructionName = name;
         mArg = arg;
     }
 
@@ -56,7 +56,7 @@ public class NSISScriptInstruction extends AbstractNSISScriptElement
      */
     private void updateArgs()
     {
-        updateArgs(makeArray(mName,mArg));
+        updateArgs(makeArray(mInstructionName,mArg));
     }
 
     /**
@@ -64,7 +64,7 @@ public class NSISScriptInstruction extends AbstractNSISScriptElement
      */
     public String getName()
     {
-        return mName;
+        return mInstructionName;
     }
 
     /**
@@ -72,7 +72,7 @@ public class NSISScriptInstruction extends AbstractNSISScriptElement
      */
     public void setName(String name)
     {
-        mName = name;
+        mInstructionName = name;
         updateArgs();
     }
 }

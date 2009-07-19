@@ -56,19 +56,20 @@ public class NSISHelpIndex implements Serializable
 
     private String getTitle(String url)
     {
-        int n = url.lastIndexOf('#');
+    	String url2 = url;
+        int n = url2.lastIndexOf('#');
         if(n > 0) {
-            url = url.substring(0,n);
+            url2 = url2.substring(0,n);
         }
         String title = ""; //$NON-NLS-1$
-        if(mTitlemap.containsKey(url)) {
-            title = mTitlemap.get(url);
+        if(mTitlemap.containsKey(url2)) {
+            title = mTitlemap.get(url2);
         }
         else {
             Reader r = null;
             HTMLTitleParserCallback callback = null;
             try {
-                URLConnection conn = new URL(url).openConnection();
+                URLConnection conn = new URL(url2).openConnection();
                 r = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 callback = new HTMLTitleParserCallback(r);
                 NSISHelpURLProvider.HTML_PARSER.parse(r,callback,true);
@@ -84,7 +85,7 @@ public class NSISHelpIndex implements Serializable
                 }
                 IOUtility.closeIO(r);
             }
-            mTitlemap.put(url,title);
+            mTitlemap.put(url2,title);
         }
         return title;
     }
@@ -106,9 +107,10 @@ public class NSISHelpIndex implements Serializable
 
     public NSISHelpIndexEntry findEntry(String name)
     {
-        if(name != null && name.length() > 0 && mIndexIndex != null) {
-            name = name.toLowerCase();
-            int[] key = {name.charAt(0),0};
+    	String name2 = name;
+        if(name2 != null && name2.length() > 0 && mIndexIndex != null) {
+            name2 = name2.toLowerCase();
+            int[] key = {name2.charAt(0),0};
             int n = Arrays.binarySearch(mIndexIndex,key,cIndexIndexComparator);
             if(n < 0) {
                 n = -n-1;
@@ -124,11 +126,11 @@ public class NSISHelpIndex implements Serializable
             }
             int m = Collections.binarySearch(mEntries.subList(mIndexIndex[n][1],
                                                           (n < (mIndexIndex.length-1)?mIndexIndex[n+1][1]:mEntries.size())),
-                                         name, cIndexEntryComparator);
+                                         name2, cIndexEntryComparator);
             if(m < 0) {
                 m = mIndexIndex[n][1]-m-1;
                 NSISHelpIndexEntry entry = mEntries.get(m);
-                if(!entry.getSortKey().startsWith(name)) {
+                if(!entry.getSortKey().startsWith(name2)) {
                     if(m > mIndexIndex[n][1]) {
                         m--;
                     }

@@ -9,8 +9,6 @@
  *******************************************************************************/
 package net.sf.jarsigner.actions;
 
-import java.util.List;
-
 import net.sf.eclipsensis.utilities.UtilitiesPlugin;
 import net.sf.eclipsensis.utilities.job.IJobStatusRunnable;
 import net.sf.jarsigner.JARSignerPlugin;
@@ -52,13 +50,12 @@ public class JARSignerAction implements IObjectActionDelegate
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
-	@SuppressWarnings("unchecked")
 	public void run(IAction action)
     {
         if ((mSelection != null) && !mSelection.isEmpty() && (mSelection instanceof IStructuredSelection)) {
             IStructuredSelection sel = (IStructuredSelection)mSelection;
             try {
-                JARSignerOptionsDialog dialog = new JARSignerOptionsDialog(Display.getDefault().getActiveShell(),(List<Object>)sel.toList());
+                JARSignerOptionsDialog dialog = new JARSignerOptionsDialog(Display.getDefault().getActiveShell(),sel.toList());
                 if(dialog.open() == Window.OK) {
                     final JARSigner jarSigner = new JARSigner(dialog.getVMInstall(), dialog.getToolsJar(),sel.toList(),
                                                               dialog.getKeyStore(),dialog.getStorePass(),dialog.getAlias());

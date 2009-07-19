@@ -38,7 +38,7 @@ public class NSISRegionScanner implements NSISScanner, INSISBackwardScanner
             Arrays.sort(mDelimiters,new Comparator<char[]>() {
                 public int compare(char[] a, char[] b)
                 {
-                    return ((char[])b).length-((char[])a).length;
+                    return (b).length-(a).length;
                 }
             });
         }

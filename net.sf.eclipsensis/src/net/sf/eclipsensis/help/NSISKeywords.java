@@ -738,13 +738,13 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
         public void setText(String text)
         {
-            text = text.toLowerCase();
+            String text2 = text.toLowerCase();
             if(mText != null) {
-                if(!text.startsWith(mText)) {
+                if(!text2.startsWith(mText)) {
                     reset();
                 }
             }
-            mText = text;
+            mText = text2;
         }
 
         public boolean hasPotentialMatch()

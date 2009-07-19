@@ -162,11 +162,11 @@ public class NSISConsoleViewer extends TextConsoleViewer
         rulerColumn.addAnnotationType(NSISConsoleAnnotation.TYPE);
         //rulerColumn
         mRuler.addDecorator(0, rulerColumn);
-        styles= (styles & ~SWT.BORDER);
+        int styles2 = (styles & ~SWT.BORDER);
         mComposite= new Canvas(parent, SWT.NONE);
         mComposite.setLayout(new RulerLayout(VERTICAL_RULER_GAP));
-        parent= mComposite;
-        super.createControl(parent, styles);
+        Composite parent2 = mComposite;
+        super.createControl(parent2, styles2);
         mRuler.createControl(mComposite, this);
         mRuler.getControl().setBackground(getTextWidget().getBackground());
         rulerColumn.getControl().setBackground(getTextWidget().getBackground());
@@ -345,16 +345,16 @@ public class NSISConsoleViewer extends TextConsoleViewer
             if(newRanges.size() > 0) {
                 StyleRange existingRange = iter.next();
                 for(ListIterator<StyleRange> iter2=newRanges.listIterator(); iter2.hasNext(); ) {
-                    newRange = iter2.next();
+                	StyleRange newRange2 = iter2.next();
                     int offset1 = existingRange.start;
-                    int offset2 = newRange.start;
+                    int offset2 = newRange2.start;
                     int end1 = offset1 + existingRange.length - 1;
-                    int end2 = offset2 + newRange.length - 1;
+                    int end2 = offset2 + newRange2.length - 1;
                     if(offset1 >= 0 && end1 >= offset1 && offset2 >= 0 && end2 >= offset2) {
                         if(offset1 == offset2 && end1 == end2) {
-                            newRange.foreground = existingRange.foreground;
+                        	newRange2.foreground = existingRange.foreground;
                             iter2.remove();
-                            iter.set(newRange);
+                            iter.set(newRange2);
                             continue;
                         }
                         if(offset1 < offset2)
@@ -371,30 +371,30 @@ public class NSISConsoleViewer extends TextConsoleViewer
                                     }
                                 }
                                 else {
-                                    StyleRange range2 = (StyleRange)newRange.clone();
+                                    StyleRange range2 = (StyleRange)newRange2.clone();
                                     range2.start=end1+1;
                                     range2.length=end2-end1;
                                     iter2.set(range2);
-                                    newRange.length = end1-offset2+1;
+                                    newRange2.length = end1-offset2+1;
                                 }
-                                newRange.foreground = existingRange.foreground;
-                                iter.add(newRange);
+                                newRange2.foreground = existingRange.foreground;
+                                iter.add(newRange2);
                             }
                         }
                         else if(offset1 == offset2){
                             if(end1 < end2) {
-                                StyleRange range2 = (StyleRange)newRange.clone();
-                                newRange.length=end1-offset1+1;
-                                newRange.foreground = existingRange.foreground;
-                                iter.set(newRange);
+                                StyleRange range2 = (StyleRange)newRange2.clone();
+                                newRange2.length=end1-offset1+1;
+                                newRange2.foreground = existingRange.foreground;
+                                iter.set(newRange2);
                                 range2.start = end1+1;
                                 range2.length = end2-end1;
                                 iter2.set(range2);
                             }
                             else {
                                 iter2.remove();
-                                newRange.foreground = existingRange.foreground;
-                                iter.set(newRange);
+                                newRange2.foreground = existingRange.foreground;
+                                iter.set(newRange2);
                                 existingRange.start = end2+1;
                                 existingRange.length = end1-end2;
                                 iter.add(existingRange);
@@ -402,9 +402,9 @@ public class NSISConsoleViewer extends TextConsoleViewer
                         }
                         else {
                             if(offset1 <= end2) {
-                                newRange.length = offset1-offset2+1;
+                            	newRange2.length = offset1-offset2+1;
                                 if(end2 < end1) {
-                                    StyleRange range2 = (StyleRange)newRange.clone();
+                                    StyleRange range2 = (StyleRange)newRange2.clone();
                                     range2.start=offset1;
                                     range2.length=end2-offset1+1;
                                     range2.foreground = existingRange.foreground;
@@ -413,13 +413,13 @@ public class NSISConsoleViewer extends TextConsoleViewer
                                     existingRange.length=end1-end2;
                                 }
                                 else {
-                                    StyleRange range2 = (StyleRange)newRange.clone();
+                                    StyleRange range2 = (StyleRange)newRange2.clone();
                                     range2.start=offset1;
                                     range2.length=end1-offset1+1;
                                     range2.foreground = existingRange.foreground;
                                     iter.set(range2);
                                     if(end2 > end1) {
-                                        range2 = (StyleRange)newRange.clone();
+                                        range2 = (StyleRange)newRange2.clone();
                                         range2.start=end1+1;
                                         range2.length=end2-end1;
                                         iter2.add(range2);

@@ -39,15 +39,15 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
 
     public void createControl(Composite parent)
     {
-        parent = new Composite(parent,SWT.NONE);
-        parent.setLayout(new GridLayout(1,false));
-        Font wizardFont = parent.getFont();
+        Composite parent2 = new Composite(parent,SWT.NONE);
+        parent2.setLayout(new GridLayout(1,false));
+        Font wizardFont = parent2.getFont();
 
-        Label l = new Label(parent,SWT.NONE);
+        Label l = new Label(parent2,SWT.NONE);
         l.setFont(wizardFont);
         l.setText(EclipseNSISPlugin.getResourceString("config.wizard.welcome.message")); //$NON-NLS-1$
 
-        Group g = new Group(parent,SWT.NONE);
+        Group g = new Group(parent2,SWT.NONE);
         g.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         g.setLayout(new GridLayout(1,false));
         l = new Label(g,SWT.NONE);
@@ -127,7 +127,7 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
         if(input.size() > 0) {
             viewer.setSelection(new StructuredSelection(input.iterator().next()));
         }
-        setControl(parent);
+        setControl(parent2);
     }
 
     public boolean canFinishEarly()

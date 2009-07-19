@@ -37,7 +37,7 @@ public class INIFileEditControlAction extends INIFileCreateControlAction
         INISection currSection = mEditor.getCurrentSection();
         if (currSection != null && !mEditor.getINIFile().hasErrors()) {
             for(Iterator<INILine> iter = iniFile.getChildren().iterator(); iter.hasNext(); ) {
-                INILine line = (INILine)iter.next();
+                INILine line = iter.next();
                 if (line instanceof INISection) {
                     INISection sec2 = (INISection)line;
                     if(Common.stringsAreEqual(sec2.getName(), currSection.getName())) {

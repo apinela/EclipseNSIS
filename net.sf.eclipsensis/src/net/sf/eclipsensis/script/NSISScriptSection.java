@@ -14,7 +14,7 @@ import net.sf.eclipsensis.util.Common;
 
 public class NSISScriptSection extends AbstractNSISScriptElementContainer
 {
-    private String mName = null;
+    private String mSectionName = null;
     private boolean mBold = false;
     private boolean mHidden = false;
     private boolean mDefaultUnselected = false;
@@ -34,7 +34,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
     public NSISScriptSection(String name, boolean bold, boolean hidden, boolean defaultUnselected, String index)
     {
         super("Section", makeArray(name, bold, hidden, defaultUnselected, index)); //$NON-NLS-1$
-        mName = name;
+        mSectionName = name;
         mBold = bold;
         mHidden = Common.isEmpty(name)||hidden;
         mDefaultUnselected = defaultUnselected;
@@ -43,7 +43,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
 
     private void updateArgs()
     {
-        updateArgs(makeArray(mName, mBold, mHidden, mDefaultUnselected, mIndex));
+        updateArgs(makeArray(mSectionName, mBold, mHidden, mDefaultUnselected, mIndex));
     }
 
     /**
@@ -127,7 +127,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
      */
     public String getName()
     {
-        return mName;
+        return mSectionName;
     }
 
     /**
@@ -135,7 +135,7 @@ public class NSISScriptSection extends AbstractNSISScriptElementContainer
      */
     public void setName(String name)
     {
-        mName = name;
+        mSectionName = name;
         updateArgs();
     }
 

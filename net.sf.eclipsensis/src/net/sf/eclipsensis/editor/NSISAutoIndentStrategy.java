@@ -25,12 +25,13 @@ public class NSISAutoIndentStrategy extends NSISAutoEditStrategy
     }
 
     protected int findEndOfWhiteSpace(IDocument doc, int offset, int end) throws BadLocationException {
-        while (offset < end) {
-            char c= doc.getChar(offset);
+    	int offset2 = offset;
+        while (offset2 < end) {
+            char c= doc.getChar(offset2);
             if (c != ' ' && c != '\t') {
-                return offset;
+                return offset2;
             }
-            offset++;
+            offset2++;
         }
         return end;
     }

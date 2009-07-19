@@ -138,18 +138,18 @@ public class LocalPathParam extends LocalFileParam
         @Override
 		protected Control createParamControl(Composite parent)
         {
-            parent = new Composite(parent,SWT.NONE);
+        	Composite parent2 = new Composite(parent,SWT.NONE);
             GridLayout layout = new GridLayout(3,false);
             layout.marginHeight = layout.marginWidth = 0;
-            parent.setLayout(layout);
-            mPathText = new Text(parent,SWT.BORDER);
+            parent2.setLayout(layout);
+            mPathText = new Text(parent2,SWT.BORDER);
             setToolTip(mPathText);
             mPathText.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false));
 
-            final Button b = new Button(parent,SWT.ARROW|SWT.DOWN);
+            final Button b = new Button(parent2,SWT.ARROW|SWT.DOWN);
             b.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false));
 
-            final Menu menu = new Menu(parent.getShell(),SWT.POP_UP);
+            final Menu menu = new Menu(parent2.getShell(),SWT.POP_UP);
             MenuItem mi = new MenuItem(menu,SWT.PUSH);
             mi.setText(EclipseNSISPlugin.getResourceString("browse.file.text")); //$NON-NLS-1$
             mi.addSelectionListener(new SelectionAdapter() {
@@ -215,7 +215,7 @@ public class LocalPathParam extends LocalFileParam
             });
 
             mPathText.setData(DATA_BUTTON, b);
-            return parent;
+            return parent2;
         }
     }
 }

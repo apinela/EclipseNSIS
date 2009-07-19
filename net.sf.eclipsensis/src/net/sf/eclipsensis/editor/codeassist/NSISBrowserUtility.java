@@ -135,29 +135,30 @@ public class NSISBrowserUtility
 
     public static void handleURL(String url, INSISBrowserKeywordURLHandler keywordURLHandler, INSISBrowserFileURLHandler fileURLHandler)
     {
-        if (url.regionMatches(true, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME.length())) {
-            String keyword = url.substring(NSISHelpURLProvider.KEYWORD_URI_SCHEME.length());
+    	String url2 = url;
+        if (url2.regionMatches(true, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME.length())) {
+            String keyword = url2.substring(NSISHelpURLProvider.KEYWORD_URI_SCHEME.length());
             keywordURLHandler.handleKeyword(keyword);
         }
-        else if (url.regionMatches(true, 0, NSISHelpURLProvider.HELP_URI_SCHEME, 0, NSISHelpURLProvider.HELP_URI_SCHEME.length())) {
-            url = url.substring(NSISHelpURLProvider.HELP_URI_SCHEME.length());
-            NSISHelpURLProvider.getInstance().showHelp(url);
+        else if (url2.regionMatches(true, 0, NSISHelpURLProvider.HELP_URI_SCHEME, 0, NSISHelpURLProvider.HELP_URI_SCHEME.length())) {
+            url2 = url2.substring(NSISHelpURLProvider.HELP_URI_SCHEME.length());
+            NSISHelpURLProvider.getInstance().showHelp(url2);
         }
-        else if (url.regionMatches(true, 0, NSISHTMLHelp.FILE_URI_SCHEME, 0, NSISHTMLHelp.FILE_URI_SCHEME.length())) {
+        else if (url2.regionMatches(true, 0, NSISHTMLHelp.FILE_URI_SCHEME, 0, NSISHTMLHelp.FILE_URI_SCHEME.length())) {
             try {
-                fileURLHandler.handleFile(new File(new URI(url)));
+                fileURLHandler.handleFile(new File(new URI(url2)));
             }
             catch (URISyntaxException e) {
                 e.printStackTrace();
             }
         }
         else {
-            File f= new File(url);
+            File f= new File(url2);
             if(IOUtility.isValidFile(f)) {
                 fileURLHandler.handleFile(f);
             }
             else {
-                Common.openExternalBrowser(url);
+                Common.openExternalBrowser(url2);
             }
         }
     }

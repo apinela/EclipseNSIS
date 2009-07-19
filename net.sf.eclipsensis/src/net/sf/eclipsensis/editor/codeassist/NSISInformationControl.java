@@ -269,15 +269,16 @@ public class NSISInformationControl implements IInformationControl, IInformation
 
     public boolean containsControl(Control control)
     {
+    	Control control2 = control;
         do {
-            if (control == mShell) {
+            if (control2 == mShell) {
                 return true;
             }
-            if (control instanceof Shell) {
+            if (control2 instanceof Shell) {
                 return false;
             }
-            control = control.getParent();
-        } while (control != null);
+            control2 = control2.getParent();
+        } while (control2 != null);
         return false;
     }
 
@@ -299,7 +300,7 @@ public class NSISInformationControl implements IInformationControl, IInformation
 
     public void setInformation(String content)
     {
-        setInput(new NSISInformation(content==null?"":content));
+        setInput(new NSISInformation(content==null?"":content)); //$NON-NLS-1$
     }
 
     public void setVisible(boolean visible)
@@ -376,7 +377,7 @@ public class NSISInformationControl implements IInformationControl, IInformation
 
     public void setInput(Object input)
     {
-        String content = input != null?String.valueOf(input):"";
+        String content = input != null?String.valueOf(input):""; //$NON-NLS-1$
         if (mPresenter == null) {
             mText.setText(content);
         }

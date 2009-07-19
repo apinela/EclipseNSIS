@@ -238,14 +238,15 @@ public class NSISCompileTestUtility
 
     private boolean saveEditors(List<IEditorPart> editors, int beforeCompileSave)
     {
-        if (!Common.isEmptyCollection(editors)) {
+    	List<IEditorPart> editors2 = editors;
+        if (!Common.isEmptyCollection(editors2)) {
             boolean ok = false;
             String message = null;
             switch(beforeCompileSave) {
                 case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_ASSOCIATED_CONFIRM:
-                    if(editors.size() > 1) {
+                    if(editors2.size() > 1) {
                         StringBuffer buf = new StringBuffer();
-                        for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
+                        for (Iterator<IEditorPart> iter = editors2.iterator(); iter.hasNext();) {
                             IEditorPart editor = iter.next();
                             buf.append(INSISConstants.LINE_SEPARATOR).append(((IFileEditorInput)editor.getEditorInput()).getFile().getFullPath().toString());
                         }
@@ -255,9 +256,9 @@ public class NSISCompileTestUtility
                     }
 	                //$FALL-THROUGH$
 				case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
-                    IEditorPart editor = editors.get(0);
-                    if(editors.size() > 1) {
-                        editors = editors.subList(0,1);
+                    IEditorPart editor = editors2.get(0);
+                    if(editors2.size() > 1) {
+                        editors2 = editors2.subList(0,1);
                     }
                     IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(editor);
                     IPath path = (input instanceof IFileEditorInput?((IFileEditorInput)input).getFile().getFullPath():input.getPath());
@@ -281,8 +282,7 @@ public class NSISCompileTestUtility
                 dialog.open();
                 ok = dialog.getReturnCode() == IDialogConstants.OK_ID;
                 if(ok && dialog.getToggleState()) {
-                    beforeCompileSave |= INSISPreferenceConstants.BEFORE_COMPILE_SAVE_AUTO_FLAG;
-                    NSISPreferences.INSTANCE.setBeforeCompileSave(beforeCompileSave);
+                    NSISPreferences.INSTANCE.setBeforeCompileSave(beforeCompileSave|INSISPreferenceConstants.BEFORE_COMPILE_SAVE_AUTO_FLAG);
                     NSISPreferences.INSTANCE.store();
                 }
             }
@@ -290,9 +290,9 @@ public class NSISCompileTestUtility
                 ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
                 dialog.open();
                 IProgressMonitor progressMonitor = dialog.getProgressMonitor();
-                if(editors.size() > 1) {
-                    progressMonitor.beginTask(EclipseNSISPlugin.getResourceString("saving.before.compilation.task.name"),editors.size()); //$NON-NLS-1$
-                    for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
+                if(editors2.size() > 1) {
+                    progressMonitor.beginTask(EclipseNSISPlugin.getResourceString("saving.before.compilation.task.name"),editors2.size()); //$NON-NLS-1$
+                    for (Iterator<IEditorPart> iter = editors2.iterator(); iter.hasNext();) {
                         IEditorPart editor = iter.next();
                         SubProgressMonitor monitor = new SubProgressMonitor(progressMonitor, 1);
                         editor.doSave(monitor);
@@ -302,7 +302,7 @@ public class NSISCompileTestUtility
                     }
                 }
                 else {
-                    editors.get(0).doSave(progressMonitor);
+                    editors2.get(0).doSave(progressMonitor);
                 }
                 dialog.close();
                 if (progressMonitor.isCanceled()) {
@@ -344,13 +344,13 @@ public class NSISCompileTestUtility
 
     private String getExeName(IPath script)
     {
-        script = getCompileScript(script);
-        if(script != null) {
-            if(script.getDevice() == null) {
-                return getExeName(getFile(script));
+    	IPath script2 = getCompileScript(script);
+        if(script2 != null) {
+            if(script2.getDevice() == null) {
+                return getExeName(getFile(script2));
             }
             else {
-                return getExeName(new File(script.toOSString()));
+                return getExeName(new File(script2.toOSString()));
             }
         }
         return null;

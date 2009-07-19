@@ -54,6 +54,7 @@ public class EclipseNSISStartup extends AbstractUIPlugin
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception
     {
         cPlugin = this;
@@ -67,6 +68,7 @@ public class EclipseNSISStartup extends AbstractUIPlugin
 	 * (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception
     {
 		super.stop(context);

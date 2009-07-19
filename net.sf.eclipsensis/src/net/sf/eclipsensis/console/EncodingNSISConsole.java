@@ -26,14 +26,15 @@ public class EncodingNSISConsole implements INSISConsole
 
     public void appendLine(NSISConsoleLine line)
     {
+    	NSISConsoleLine line2 = line;
         try {
             String text = new String(line.toString().getBytes(),mEncoding);
-            line = new NSISConsoleLine(text, line.getType(),line.getSource(),line.getLineNum());
+            line2 = new NSISConsoleLine(text, line.getType(),line.getSource(),line.getLineNum());
         }
         catch (UnsupportedEncodingException e) {
             EclipseNSISPlugin.getDefault().log(e);
         }
-        mDelegate.appendLine(line);
+        mDelegate.appendLine(line2);
     }
 
     public void clearConsole()

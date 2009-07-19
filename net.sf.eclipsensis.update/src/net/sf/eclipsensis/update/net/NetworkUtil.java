@@ -91,7 +91,7 @@ public class NetworkUtil
         {
             cDownloadSites = new ArrayList<DownloadSite>();
             cDownloadSitesRefreshTimestamp = 0;
-            cDownloadSitesVersion = "0";
+            cDownloadSitesVersion = "0"; //$NON-NLS-1$
         }
         else
         {
@@ -441,7 +441,7 @@ public class NetworkUtil
                     int count = 0;
                     for (Iterator<String[]> iter = sites.iterator(); iter.hasNext();)
                     {
-                        String[] element = (String[]) iter.next();
+                        String[] element = iter.next();
                         if (element != null && element.length == 4)
                         {
                             File imageFile = null;
@@ -488,7 +488,7 @@ public class NetworkUtil
             try
             {
                 Document doc = XMLUtil.newDocument();
-                Node parent = doc.createElement("downloadsites");
+                Node parent = doc.createElement("downloadsites"); //$NON-NLS-1$
                 doc.appendChild(parent);
                 NodeConversionUtility.createCollectionNode(doc, parent, cDownloadSites);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);

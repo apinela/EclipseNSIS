@@ -58,11 +58,12 @@ public class CaseInsensitiveMap<T> extends AbstractMap<String, T> implements Ser
     @Override
 	public T get(Object key)
     {
-    	if (key == null || key instanceof String) {
-			String uppercaseKey = toUpperCase((String) key);
+    	Object key2 = key;
+    	if (key2 == null || key2 instanceof String) {
+			String uppercaseKey = toUpperCase((String) key2);
 			if (mKeyMap.containsKey(uppercaseKey)) {
-				key = mKeyMap.get(uppercaseKey);
-				return mValueMap.get(key);
+				key2 = mKeyMap.get(uppercaseKey);
+				return mValueMap.get(key2);
 			}
 		}
 		return null;
@@ -71,11 +72,12 @@ public class CaseInsensitiveMap<T> extends AbstractMap<String, T> implements Ser
     @Override
 	public T remove(Object key)
     {
-    	if (key == null || key instanceof String) {
-			String fixedKey = toUpperCase((String) key);
+    	Object key2 = key;
+    	if (key2 == null || key2 instanceof String) {
+			String fixedKey = toUpperCase((String) key2);
 			if (mKeyMap.containsKey(fixedKey)) {
-				key = mKeyMap.remove(fixedKey);
-				return mValueMap.remove(key);
+				key2 = mKeyMap.remove(fixedKey);
+				return mValueMap.remove(key2);
 			}
 		}
 		return null;

@@ -471,8 +471,9 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
 
     public void setInformation(String content)
     {
+    	String content2 = content;
         mKeyword = null;
-        mBrowserHasContent = content != null && content.length() > 0;
+        mBrowserHasContent = content2 != null && content2.length() > 0;
 
         if (mBrowserHasContent)
         {
@@ -495,13 +496,13 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
 
             if (styles != null)
             {
-                StringBuffer buffer = new StringBuffer(content);
+                StringBuffer buffer = new StringBuffer(content2);
                 insertStyles(buffer, styles);
-                content = buffer.toString();
+                content2 = buffer.toString();
             }
         }
 
-        mBrowser.setText(content);
+        mBrowser.setText(content2);
         mBrowser.setSize(Math.min(200, mMaxWidth), Math.min(mMaxHeight, 50));
     }
 

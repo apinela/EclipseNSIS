@@ -39,7 +39,7 @@ public class INIProblemResolutionGenerator implements IMarkerResolutionGenerator
                     IInstallOptionsEditor editor = null;
                     if(!Common.isEmptyCollection(editors)) {
                         for (Iterator<IEditorPart> iter = editors.iterator(); iter.hasNext();) {
-                            IEditorPart element = (IEditorPart)iter.next();
+                            IEditorPart element = iter.next();
                             if(element instanceof IInstallOptionsEditor) {
                                 editor = (IInstallOptionsEditor)element;
                                 break;
@@ -73,7 +73,7 @@ public class INIProblemResolutionGenerator implements IMarkerResolutionGenerator
                                                 INIFile inifile = editor.getINIFile();
                                                 List<INIProblem> problems = inifile.getProblems(line > 0);
                                                 for (Iterator<INIProblem> iter = problems.iterator(); iter.hasNext();) {
-                                                    INIProblem problem = (INIProblem)iter.next();
+                                                    INIProblem problem = iter.next();
                                                     if (problem.getLine() == line && Common.stringsAreEqual(problem.getFixDescription(),resolution)) {
                                                         problem.fix(document);
                                                         break;
@@ -93,7 +93,7 @@ public class INIProblemResolutionGenerator implements IMarkerResolutionGenerator
                             INIFile inifile = editor.getINIFile();
                             List<INIProblem> problems = inifile.getProblems(line > 0);
                             for (Iterator<INIProblem> iter = problems.iterator(); iter.hasNext();) {
-                                final INIProblem problem = (INIProblem)iter.next();
+                                final INIProblem problem = iter.next();
                                 if (problem.getLine() == line && Common.stringsAreEqual(problem.getFixDescription(),resolution)) {
                                     final IEditorPart fEditor = editor;
                                     return new IMarkerResolution[] {

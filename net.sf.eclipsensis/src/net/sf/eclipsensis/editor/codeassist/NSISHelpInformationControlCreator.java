@@ -45,15 +45,15 @@ public class NSISHelpInformationControlCreator extends NSISInformationControlCre
 			public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation,
                     int maxWidth, int maxHeight)
             {
-                hoverInfo = super.updatePresentation(display, hoverInfo, presentation, maxWidth, maxHeight);
-                int n = hoverInfo.indexOf(' ');
+                String hoverInfo2 = super.updatePresentation(display, hoverInfo, presentation, maxWidth, maxHeight);
+                int n = hoverInfo2.indexOf(' ');
                 if (n <= 0)
                 {
-                    n = hoverInfo.length();
+                    n = hoverInfo2.length();
                 }
                 presentation.addStyleRange(new StyleRange(0, n, display.getSystemColor(SWT.COLOR_INFO_FOREGROUND),
                         display.getSystemColor(SWT.COLOR_INFO_BACKGROUND), SWT.BOLD));
-                return hoverInfo;
+                return hoverInfo2;
             }
         };
     }

@@ -92,20 +92,21 @@ public class MasterSlaveController extends SelectionAdapter
 
     private void recursiveSetEnabled(Control control, boolean enabled, MasterSlaveEnabler enabler)
     {
+        MasterSlaveEnabler enabler2 = enabler;
         if(control instanceof Composite) {
             Control[] children = ((Composite)control).getChildren();
             for (int i = 0; i < children.length; i++) {
-                recursiveSetEnabled(children[i],enabled, enabler);
+                recursiveSetEnabled(children[i],enabled, enabler2);
             }
         }
-        MasterSlaveEnabler enabler2 = mSlaves.get(control);
-        if(enabler2 != null) {
-            enabler = enabler2;
+        MasterSlaveEnabler enabler3 = mSlaves.get(control);
+        if(enabler3 != null) {
+            enabler2 = enabler3;
         }
-        enabled = enabled?(enabler != null?enabler.canEnable(control):enabled):enabled;
-        NSISWizardDialogUtil.setEnabled(control,enabled);
-        if(enabler != null) {
-            enabler.enabled(control,enabled);
+        boolean enabled2 = enabled?(enabler2 != null?enabler2.canEnable(control):enabled):enabled;
+        NSISWizardDialogUtil.setEnabled(control,enabled2);
+        if(enabler2 != null) {
+            enabler2.enabled(control,enabled2);
         }
     }
 

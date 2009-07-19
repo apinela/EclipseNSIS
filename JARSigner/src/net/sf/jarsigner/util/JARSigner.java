@@ -69,27 +69,32 @@ public class JARSigner extends AbstractJARUtil
         mStoreType = maybeQuote(storeType);
     }
 
-    protected String getSuccessMessage(Object target)
+    @Override
+	protected String getSuccessMessage(Object target)
     {
         return JARSignerPlugin.getFormattedString("jar.signed.message",new Object[]{target}); //$NON-NLS-1$
     }
 
-    protected String getFailMessage(Object target)
+    @Override
+	protected String getFailMessage(Object target)
     {
         return JARSignerPlugin.getFormattedString("jar.not.signed.message",new Object[]{target}); //$NON-NLS-1$
     }
 
-    protected String getConsoleTitle()
+    @Override
+	protected String getConsoleTitle()
     {
         return JARSignerPlugin.getResourceString("jarsigner.console.title"); //$NON-NLS-1$
     }
 
-    protected String getLaunchTitle()
+    @Override
+	protected String getLaunchTitle()
     {
         return JARSignerPlugin.getResourceString("jarsigner.launch.title"); //$NON-NLS-1$
     }
 
-    protected MessageFormat createArgsFormat()
+    @Override
+	protected MessageFormat createArgsFormat()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         buf.append("-keystore ").append(mKeyStore); //$NON-NLS-1$
@@ -120,22 +125,26 @@ public class JARSigner extends AbstractJARUtil
         return new MessageFormat(buf.toString());
     }
 
-    protected String getCancelMessage()
+    @Override
+	protected String getCancelMessage()
     {
         return JARSignerPlugin.getResourceString("jarsigner.cancel.message"); //$NON-NLS-1$
     }
 
-    protected String getTaskName()
+    @Override
+	protected String getTaskName()
     {
         return JARSignerPlugin.getResourceString("jarsigner.task.name"); //$NON-NLS-1$
     }
 
-    protected String getSubTaskName(Object target)
+    @Override
+	protected String getSubTaskName(Object target)
     {
         return JARSignerPlugin.getFormattedString("jarsigner.subtask.name", new Object[]{target}); //$NON-NLS-1$
     }
 
-    protected IStatus postProcess(Object target, IProgressMonitor monitor)
+    @Override
+	protected IStatus postProcess(Object target, IProgressMonitor monitor)
     {
         if(Common.isEmpty(mSignedJar)) {
             try {

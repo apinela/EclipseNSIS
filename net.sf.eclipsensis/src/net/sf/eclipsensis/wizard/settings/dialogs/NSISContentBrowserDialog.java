@@ -31,7 +31,7 @@ public class NSISContentBrowserDialog extends Dialog
     private HashSet<String> mTypes = new HashSet<String>(Arrays.asList(new String[]{
                                                         NSISInstallDirectory.TYPE,
                                                         NSISInstallFile.TYPE,
-                                                        NSISInstallFiles.FileItem.TYPE
+                                                        NSISInstallFiles.FileItem.FILEITEM_TYPE
                                                      }));
 
     /**
@@ -91,21 +91,21 @@ public class NSISContentBrowserDialog extends Dialog
         NSISWizardDialogUtil.createLabel(composite,"wizard.select.shortcut.message",true,null,false); //$NON-NLS-1$
 
         ViewerFilter vf = new ViewerFilter() {
-            private HashSet<String> mTypes = new HashSet<String>(Arrays.asList(new String[]{
+            private HashSet<String> mFilterTypes = new HashSet<String>(Arrays.asList(new String[]{
                                                     NSISInstaller.TYPE,
                                                     NSISSectionGroup.TYPE,
                                                     NSISSection.TYPE,
                                                     NSISInstallDirectory.TYPE,
                                                     NSISInstallFile.TYPE,
                                                     NSISInstallFiles.TYPE,
-                                                    NSISInstallFiles.FileItem.TYPE
+                                                    NSISInstallFiles.FileItem.FILEITEM_TYPE
                                                  }));
 
             @Override
 			public boolean select(Viewer viewer, Object parentElement, Object element)
             {
                 if(element instanceof INSISInstallElement) {
-                    return mTypes.contains(((INSISInstallElement)element).getType());
+                    return mFilterTypes.contains(((INSISInstallElement)element).getType());
                 }
                 return false;
             }

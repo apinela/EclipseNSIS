@@ -137,16 +137,16 @@ public class MessageBoxOptionsParam extends NSISParam
         @Override
 		protected Control createParamControl(Composite parent)
         {
-            parent = new Group(parent,SWT.NONE);
+        	Composite parent2 = new Group(parent,SWT.NONE);
             GridLayout gridLayout = new GridLayout(2,false);
             gridLayout.marginWidth = gridLayout.marginHeight = 2;
-            parent.setLayout(gridLayout);
-            mButtonsCombo = createCombo(parent,EclipseNSISPlugin.getResourceString("messagebox.param.buttons.label"),NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.MESSAGEBOX_OPTION_BUTTON_PARAMETERS)); //$NON-NLS-1$
-            mIconCombo = createCombo(parent,EclipseNSISPlugin.getResourceString("messagebox.param.icon.label"),NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.MESSAGEBOX_OPTION_ICON_PARAMETERS)); //$NON-NLS-1$
-            mDefaultCombo = createCombo(parent,EclipseNSISPlugin.getResourceString("messagebox.param.default.label"),NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.MESSAGEBOX_OPTION_DEFAULT_PARAMETERS)); //$NON-NLS-1$
+            parent2.setLayout(gridLayout);
+            mButtonsCombo = createCombo(parent2,EclipseNSISPlugin.getResourceString("messagebox.param.buttons.label"),NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.MESSAGEBOX_OPTION_BUTTON_PARAMETERS)); //$NON-NLS-1$
+            mIconCombo = createCombo(parent2,EclipseNSISPlugin.getResourceString("messagebox.param.icon.label"),NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.MESSAGEBOX_OPTION_ICON_PARAMETERS)); //$NON-NLS-1$
+            mDefaultCombo = createCombo(parent2,EclipseNSISPlugin.getResourceString("messagebox.param.default.label"),NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.MESSAGEBOX_OPTION_DEFAULT_PARAMETERS)); //$NON-NLS-1$
             String[] others = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.MESSAGEBOX_OPTION_OTHER_PARAMETERS);
             if(!Common.isEmptyArray(others)) {
-                Group buttons = new Group(parent,SWT.None);
+                Group buttons = new Group(parent2,SWT.None);
                 buttons.setText(EclipseNSISPlugin.getResourceString("messagebox.param.other.options.label")); //$NON-NLS-1$
                 GridData data = new GridData(SWT.FILL,SWT.FILL,true,false);
                 data.horizontalSpan = 2;
@@ -157,7 +157,7 @@ public class MessageBoxOptionsParam extends NSISParam
                     mOthersButtons[i] = createCheckbox(buttons, others[i]);
                 }
             }
-            return parent;
+            return parent2;
         }
 
         @Override

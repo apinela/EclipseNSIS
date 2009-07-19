@@ -56,12 +56,14 @@ public class JobScheduler
         final Object jobFamily = (family == null?this:family);
 
         new UIJob(name) {
-            public IStatus runInUIThread(IProgressMonitor monitor)
+            @Override
+			public IStatus runInUIThread(IProgressMonitor monitor)
             {
                 return runnable.run(monitor);
             }
 
-            public boolean belongsTo(Object family)
+            @Override
+			public boolean belongsTo(Object family)
             {
                 return jobFamily.equals(family);
             }
@@ -79,12 +81,14 @@ public class JobScheduler
         final Object jobFamily = (family == null?this:family);
 
         new Job(name) {
-            public IStatus run(IProgressMonitor monitor)
+            @Override
+			public IStatus run(IProgressMonitor monitor)
             {
                 return runnable.run(monitor);
             }
 
-            public boolean belongsTo(Object family)
+            @Override
+			public boolean belongsTo(Object family)
             {
                 return jobFamily.equals(family);
             }

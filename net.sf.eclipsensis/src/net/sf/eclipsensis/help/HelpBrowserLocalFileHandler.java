@@ -142,19 +142,19 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
     {
         private IConfigurationElement mElement;
 
-        private Set<String> mExtensions = new CaseInsensitiveSet();
+        private Set<String> mHandlerExtensions = new CaseInsensitiveSet();
         private IHelpBrowserLocalFileHandler mHandler = null;
 
         private HandlerDescriptor(IConfigurationElement element)
         {
             super();
-            mExtensions.addAll(Common.tokenizeToList(element.getAttribute(HANDLER_EXTENSIONS), ','));
+            mHandlerExtensions.addAll(Common.tokenizeToList(element.getAttribute(HANDLER_EXTENSIONS), ','));
             mElement = element;
         }
 
         public Set<String> getExtensions()
         {
-            return mExtensions;
+            return mHandlerExtensions;
         }
 
         public IHelpBrowserLocalFileHandler getHandler()
@@ -166,7 +166,7 @@ public class HelpBrowserLocalFileHandler implements IExtensionChangeHandler, IHe
                 catch (CoreException e) {
                     EclipseNSISPlugin.getDefault().log(e);
                     mHandler = NULL_HANDLER;
-                    mExtensions.clear();
+                    mHandlerExtensions.clear();
                 }
             }
             return mHandler;

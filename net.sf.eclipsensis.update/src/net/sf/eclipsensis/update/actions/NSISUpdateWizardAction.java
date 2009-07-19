@@ -27,7 +27,7 @@ public class NSISUpdateWizardAction implements IWorkbenchWindowActionDelegate
         final Shell shell = mWindow.getShell();
         final NSISUpdateWizardDialog[] wizardDialog = new NSISUpdateWizardDialog[1];
         try {
-			System.setProperty("net.sf.eclipsensis.config.IsConfiguring", String.valueOf(true));
+			System.setProperty("net.sf.eclipsensis.config.IsConfiguring", String.valueOf(true)); //$NON-NLS-1$
 			BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 				public void run() {
 					try {
@@ -48,7 +48,7 @@ public class NSISUpdateWizardAction implements IWorkbenchWindowActionDelegate
 				wizardDialog[0].open();
 			}
 		} finally {
-			System.setProperty("net.sf.eclipsensis.config.IsConfiguring", String.valueOf(false));
+			System.setProperty("net.sf.eclipsensis.config.IsConfiguring", String.valueOf(false)); //$NON-NLS-1$
 		}
 	}
 

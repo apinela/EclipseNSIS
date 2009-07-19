@@ -261,7 +261,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
         RegistryKey regKey = mBrowser.getSelectedKey();
         List<RegistryValue> list;
         if(regKey != null) {
-            list = regKey.getValues(); //$NON-NLS-1$
+            list = regKey.getValues(); 
             if(Common.isEmptyCollection(list)) {
                 list = new ArrayList<RegistryValue>();
                 int hKey = regKey.getHandle();
@@ -293,7 +293,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                         list.add(0,new RegistryValue(regKey.toString(),null,WinAPI.REG_SZ,null));
                     }
                 }
-                regKey.setValues(list); //$NON-NLS-1$
+                regKey.setValues(list); 
             }
         }
         else {

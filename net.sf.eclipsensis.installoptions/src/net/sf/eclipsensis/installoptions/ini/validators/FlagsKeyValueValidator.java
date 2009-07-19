@@ -34,7 +34,7 @@ public class FlagsKeyValueValidator implements IINIKeyValueValidator
                         final List<String> flags = Common.tokenizeToList(value,IInstallOptionsConstants.LIST_SEPARATOR,false);
                         int n = 0;
                         for (Iterator<String> iter=flags.iterator(); iter.hasNext(); ) {
-                            String flag = (String)iter.next();
+                            String flag = iter.next();
                             if(!Common.isEmpty(flag) && !availableFlags.contains(flag)) {
                                 iter.remove();
                                 if((fixFlag & INILine.VALIDATE_FIX_WARNINGS)== 0) {

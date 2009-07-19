@@ -118,7 +118,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                 if(checked) {
                     Collection<NSISTaskTag> taskTags = (Collection<NSISTaskTag>)mTableViewer.getInput();
                     for(Iterator<NSISTaskTag> iter=taskTags.iterator(); iter.hasNext(); ) {
-                        NSISTaskTag t = (NSISTaskTag)iter.next();
+                        NSISTaskTag t = iter.next();
                         if(!t.equals(taskTag) && t.isDefault()) {
                             t.setDefault(false);
                             mTableViewer.setChecked(t,false);
@@ -195,7 +195,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         mTableViewer.setInput(NSISPreferences.INSTANCE.getTaskTags());
         mTableViewer.setAllChecked(false);
         for (Iterator<NSISTaskTag> iter=taskTags.iterator(); iter.hasNext(); ) {
-            NSISTaskTag t = (NSISTaskTag)iter.next();
+            NSISTaskTag t = iter.next();
             if(t.isDefault()) {
                 mTableViewer.setChecked(t,true);
                 break;
@@ -309,7 +309,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                 if (taskTags.size() > 0) {
                     boolean defaultFound = false;
                     for (Iterator<NSISTaskTag> iter = taskTags.iterator(); iter.hasNext();) {
-                        NSISTaskTag element = (NSISTaskTag)iter.next();
+                        NSISTaskTag element = iter.next();
                         if (element.isDefault()) {
                             defaultFound = true;
                             break;

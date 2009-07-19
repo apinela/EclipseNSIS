@@ -15,7 +15,7 @@ import net.sf.eclipsensis.INSISConstants;
 
 public class NSISScript extends AbstractNSISScriptElementContainer
 {
-    private String mName;
+    private String mScriptName;
     private boolean mHasUninstall = false;
 
     /**
@@ -32,7 +32,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
     public NSISScript(String name)
     {
         super("Name",name); //$NON-NLS-1$
-        mName = name;
+        mScriptName = name;
     }
 
     /**
@@ -40,7 +40,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
      */
     public String getName()
     {
-        return mName;
+        return mScriptName;
     }
 
     /**
@@ -48,7 +48,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
      */
     public void setName(String name)
     {
-        mName = name;
+        mScriptName = name;
         updateArgs(name);
     }
 
@@ -67,7 +67,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
     {
         INSISScriptElement previous = null;
         for (Iterator<INSISScriptElement> iter = mElements.iterator(); iter.hasNext();) {
-            INSISScriptElement element = (INSISScriptElement)iter.next();
+            INSISScriptElement element = iter.next();
             if(previous instanceof NSISScriptBlankLine && element instanceof NSISScriptBlankLine) {
                 iter.remove();
             }
@@ -105,7 +105,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
     public void append(NSISScriptlet scriptlet) throws InvalidNSISScriptElementException
     {
         for(Iterator<INSISScriptElement> iter = scriptlet.mElements.iterator(); iter.hasNext(); ) {
-            addElement((INSISScriptElement)iter.next());
+            addElement(iter.next());
         }
     }
 }

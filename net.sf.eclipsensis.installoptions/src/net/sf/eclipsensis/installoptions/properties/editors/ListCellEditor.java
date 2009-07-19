@@ -177,7 +177,7 @@ public class ListCellEditor extends CellEditor
         for (ListIterator<String> iter = list.listIterator(); iter.hasNext();) {
             String item = iter.next();
             for (Iterator<String> iterator = items.iterator(); iterator.hasNext();) {
-                String item2 = (String)iterator.next();
+                String item2 = iterator.next();
                 if(Common.stringsAreEqual(item,item2,mCaseInsensitive)) {
                     iter.set(item2);
                     continue outer;
@@ -198,7 +198,7 @@ public class ListCellEditor extends CellEditor
         if (mList != null && mItems != null) {
             mList.removeAll();
             for (int i = 0; i < mItems.size(); i++) {
-                mList.add((String)mItems.get(i), i);
+                mList.add(mItems.get(i), i);
             }
 
             if(mSelection == null) {

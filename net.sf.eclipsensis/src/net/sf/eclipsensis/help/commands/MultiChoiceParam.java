@@ -122,10 +122,10 @@ public class MultiChoiceParam extends ChoiceParam
         @Override
 		protected Control createParamControl(Composite parent)
         {
-            parent = new Composite(parent, SWT.NONE);
+        	Composite parent2 = new Composite(parent, SWT.NONE);
             GridLayout layout = new GridLayout(1, false);
             layout.marginHeight = layout.marginWidth = 0;
-            parent.setLayout(layout);
+            parent2.setLayout(layout);
             ComboEntry[] choices = getComboEntries();
             if (!Common.isEmptyArray(choices))
             {
@@ -133,14 +133,14 @@ public class MultiChoiceParam extends ChoiceParam
                 mChoiceButtons = new Button[choices.length];
                 for (int i = 0; i < choices.length; i++)
                 {
-                    Button b = new Button(parent, SWT.CHECK);
+                    Button b = new Button(parent2, SWT.CHECK);
                     b.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
                     b.setText(choices[i].getDisplay());
                     b.setData(DATA_CHOICE, choices[i].getValue());
                     mChoiceButtons[i++] = b;
                 }
             }
-            return parent;
+            return parent2;
         }
 
         @Override

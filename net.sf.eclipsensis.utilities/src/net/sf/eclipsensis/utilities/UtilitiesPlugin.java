@@ -77,7 +77,8 @@ public class UtilitiesPlugin extends AbstractUIPlugin
         return mResourceBundle;
     }
 
-    public void start(BundleContext context) throws Exception
+    @Override
+	public void start(BundleContext context) throws Exception
     {
         super.start(context);
         mJobScheduler.start();
@@ -96,7 +97,8 @@ public class UtilitiesPlugin extends AbstractUIPlugin
         return mJobScheduler;
     }
 
-    public void stop(BundleContext context) throws Exception
+    @Override
+	public void stop(BundleContext context) throws Exception
     {
         mJobScheduler.stop();
         mShellImage = null;

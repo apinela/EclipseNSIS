@@ -110,7 +110,7 @@ public class NSISFileMarkerAssistant implements INSISMarkerAssistant, INSISConst
                                             if(monitor.isCanceled()) {
                                                 return;
                                             }
-                                            NSISScriptProblem problem = (NSISScriptProblem)iter.next();
+                                            NSISScriptProblem problem = iter.next();
                                             IPath p = (IPath)problem.getPath();
                                             if (p!= null && p.equals(path)) {
                                                 IMarker marker = mFile.createMarker(PROBLEM_MARKER_ID);

@@ -11,19 +11,19 @@ package net.sf.eclipsensis.script;
 
 public class NSISScriptUndef extends AbstractNSISScriptElement
 {
-    private String mName = null;
+    private String mSymbolName = null;
 
     /**
      * @param name
      */
     public NSISScriptUndef(String name) {
         super("!undef",name); //$NON-NLS-1$
-        mName = name;
+        mSymbolName = name;
     }
 
     private void updateArgs()
     {
-        updateArgs(mName);
+        updateArgs(mSymbolName);
     }
 
     /**
@@ -31,7 +31,7 @@ public class NSISScriptUndef extends AbstractNSISScriptElement
      */
     public String getName()
     {
-        return mName;
+        return mSymbolName;
     }
 
     /**
@@ -39,7 +39,7 @@ public class NSISScriptUndef extends AbstractNSISScriptElement
      */
     public void setName(String name)
     {
-        mName = name;
+        mSymbolName = name;
         updateArgs();
     }
 }

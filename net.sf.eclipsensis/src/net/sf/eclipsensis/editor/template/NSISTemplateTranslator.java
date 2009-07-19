@@ -122,7 +122,7 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
             List<Integer> list = map.get(name);
             int[] offsets = new int[list.size()];
             for (int j = 0; j < offsets.length; j++) {
-                offsets[j] = ((Integer)list.get(j)).intValue();
+                offsets[j] = (list.get(j)).intValue();
             }
             variables.add(new TemplateVariable(name, name, offsets));
         }

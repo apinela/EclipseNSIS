@@ -37,7 +37,8 @@ public class InstallOptionsUnknownEditManager extends InstallOptionsUneditableEl
         return InstallOptionsModel.PROPERTY_TYPE;
     }
 
-    protected int getCellEditorStyle()
+    @Override
+	protected int getCellEditorStyle()
     {
         return SWT.SINGLE|SWT.CENTER;
     }

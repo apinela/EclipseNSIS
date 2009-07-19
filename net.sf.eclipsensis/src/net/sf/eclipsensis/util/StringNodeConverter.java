@@ -30,7 +30,7 @@ public class StringNodeConverter extends AbstractNodeConverter<String>
     {
         if(object != null) {
             Node node = document.createElement(STRING_NODE);
-            node.appendChild(document.createTextNode((String)object));
+            node.appendChild(document.createTextNode(object));
             return node;
         }
         throw new IllegalArgumentException(String.valueOf(object));

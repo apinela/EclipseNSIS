@@ -188,12 +188,12 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     @Override
 	protected final Control createDialogArea(Composite parent)
     {
-        parent = new Composite(parent, SWT.NONE);
+    	Composite parent2 = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        parent.setLayout(layout);
-        parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        parent2.setLayout(layout);
+        parent2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         mErrorImage = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("error.icon")); //$NON-NLS-1$
         mWarningImage = EclipseNSISPlugin.getImageManager().getImage(
@@ -210,9 +210,9 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         imageData = imageData.scaledTo(width, height);
         mOKImage = new Image(getShell().getDisplay(), imageData);
 
-        createControlAndMessageArea(parent);
-        applyDialogFont(parent);
-        return parent;
+        createControlAndMessageArea(parent2);
+        applyDialogFont(parent2);
+        return parent2;
     }
 
     /**
@@ -334,11 +334,12 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         @Override
 		protected void setMessage(String message)
         {
-            if (message == null)
+        	String message2 = message;
+            if (message2 == null)
             {
-                message = ""; //$NON-NLS-1$
+            	message2 = ""; //$NON-NLS-1$
             }
-            super.setMessage(message);
+            super.setMessage(message2);
         }
 
         public Image getImage()

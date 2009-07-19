@@ -38,7 +38,7 @@ public class LanguageParam extends ComboParam
             });
             int i=0;
             for (Iterator<NSISLanguage> iter = languages.iterator(); iter.hasNext();) {
-                NSISLanguage lang = (NSISLanguage)iter.next();
+                NSISLanguage lang = iter.next();
                 String def = lang.getLangDef();
                 entries[i++] = new ComboEntry(def, def);
             }

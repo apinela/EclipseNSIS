@@ -26,7 +26,8 @@ class Enabler
         mButton = button;
         mDependents = dependents;
         mButton.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e)
+            @Override
+			public void widgetSelected(SelectionEvent e)
             {
                 run();
             }

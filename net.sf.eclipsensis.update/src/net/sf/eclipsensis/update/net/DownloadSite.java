@@ -63,38 +63,41 @@ public class DownloadSite extends AbstractNodeConvertible
         return mName;
     }
 
-    protected String getChildNodeName()
+    @Override
+	protected String getChildNodeName()
     {
-        return "attribute";
+        return "attribute"; //$NON-NLS-1$
     }
 
     public String getNodeName()
     {
-        return "downloadsite";
+        return "downloadsite"; //$NON-NLS-1$
     }
 
-    protected void addSkippedProperties(Collection<String> skippedProperties)
+    @Override
+	protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
-        skippedProperties.add("image");
+        skippedProperties.add("image"); //$NON-NLS-1$
     }
 
-    protected void propertyFromNode(Node childNode, PropertyDescriptor propertyDescriptor)
+    @Override
+	protected void propertyFromNode(Node childNode, PropertyDescriptor propertyDescriptor)
     {
         String propertyName = propertyDescriptor.getName();
-        if ("imageFile".equals(propertyName))
+        if ("imageFile".equals(propertyName)) //$NON-NLS-1$
         {
             mImageFile = (File) getNodeValue(childNode, propertyDescriptor.getName(), File.class);
         }
-        else if ("location".equals(propertyName))
+        else if ("location".equals(propertyName)) //$NON-NLS-1$
         {
             mLocation = (String) getNodeValue(childNode, propertyDescriptor.getName(), String.class);
         }
-        else if ("name".equals(propertyName))
+        else if ("name".equals(propertyName)) //$NON-NLS-1$
         {
             mName = (String) getNodeValue(childNode, propertyDescriptor.getName(), String.class);
         }
-        else if ("continent".equals(propertyName))
+        else if ("continent".equals(propertyName)) //$NON-NLS-1$
         {
             mContinent = (String) getNodeValue(childNode, propertyDescriptor.getName(), String.class);
         }
@@ -104,7 +107,8 @@ public class DownloadSite extends AbstractNodeConvertible
         }
     }
 
-    protected Object convertFromString(String string, Class<?> clasz)
+    @Override
+	protected Object convertFromString(String string, Class<?> clasz)
     {
         if (File.class.equals(clasz))
         {
@@ -113,7 +117,8 @@ public class DownloadSite extends AbstractNodeConvertible
         return super.convertFromString(string, clasz);
     }
 
-    protected String convertToString(String name, Object obj)
+    @Override
+	protected String convertToString(String name, Object obj)
     {
         if (obj instanceof File)
         {
@@ -122,7 +127,8 @@ public class DownloadSite extends AbstractNodeConvertible
         return super.convertToString(name, obj);
     }
 
-    public int hashCode()
+    @Override
+	public int hashCode()
     {
         int result = 31 + (mContinent == null ? 0 : mContinent.hashCode());
         result = 31 * result + (mImageFile == null ? 0 : mImageFile.hashCode());
@@ -131,7 +137,8 @@ public class DownloadSite extends AbstractNodeConvertible
         return result;
     }
 
-    public boolean equals(Object obj)
+    @Override
+	public boolean equals(Object obj)
     {
         if (this == obj)
         {

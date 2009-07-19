@@ -87,7 +87,7 @@ public class NSISHelpTOC implements Serializable
 
         private String mName;
         private String mURL;
-        private List<NSISHelpTOCNode> mChildren;
+        private List<NSISHelpTOCNode> mNodeChildren;
         private NSISHelpTOCNode mParent = null;
 
         private NSISHelpTOCNode(String name, String url)
@@ -102,10 +102,10 @@ public class NSISHelpTOC implements Serializable
             if(node.getOwner() != NSISHelpTOC.this) {
                 throw new IllegalArgumentException();
             }
-            if(mChildren == null) {
-                mChildren = new ArrayList<NSISHelpTOCNode>();
+            if(mNodeChildren == null) {
+                mNodeChildren = new ArrayList<NSISHelpTOCNode>();
             }
-            mChildren.add(node);
+            mNodeChildren.add(node);
             mapNode(node);
             node.setParent(this);
         }
@@ -117,7 +117,7 @@ public class NSISHelpTOC implements Serializable
 
         public List<NSISHelpTOCNode> getChildren()
         {
-            return (mChildren != null?Collections.unmodifiableList(mChildren):null);
+            return (mNodeChildren != null?Collections.unmodifiableList(mNodeChildren):null);
         }
 
         public String getName()

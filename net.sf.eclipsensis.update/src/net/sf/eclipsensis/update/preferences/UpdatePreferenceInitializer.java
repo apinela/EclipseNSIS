@@ -17,7 +17,8 @@ import org.eclipse.core.runtime.preferences.*;
 
 public class UpdatePreferenceInitializer extends AbstractPreferenceInitializer implements IUpdatePreferenceConstants
 {
-    public void initializeDefaultPreferences()
+    @Override
+	public void initializeDefaultPreferences()
     {
         IEclipsePreferences prefs = new DefaultScope().getNode(EclipseNSISUpdatePlugin.getDefault().getPluginId());
 

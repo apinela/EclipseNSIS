@@ -60,13 +60,14 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
     @Override
 	public void setTaskName(String name)
     {
-        if(!Common.isEmpty(name)) {
+    	String name2 = name;
+        if(!Common.isEmpty(name2)) {
             if(!Common.isEmpty(mPrefix)) {
-                if(!mPrefix.substring(0,mPrefix.length()-3).equalsIgnoreCase(name) && !mPrefix.regionMatches(true,0,name,0,mPrefix.length())) {
-                    name = mPrefix+name;
+                if(!mPrefix.substring(0,mPrefix.length()-3).equalsIgnoreCase(name2) && !mPrefix.regionMatches(true,0,name2,0,mPrefix.length())) {
+                    name2 = mPrefix+name2;
                 }
             }
-            super.setTaskName(name);
+            super.setTaskName(name2);
         }
     }
 

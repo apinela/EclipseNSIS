@@ -65,11 +65,12 @@ public class ColorManager
 
     public static RGB getRGB(int pixel)
     {
-        int blue = pixel % 256;
-        pixel /= 256;
-        int green = pixel % 256;
-        pixel /= 256;
-        int red = pixel % 256;
+    	int pixel2 = pixel;
+        int blue = pixel2 % 256;
+        pixel2 /= 256;
+        int green = pixel2 % 256;
+        pixel2 /= 256;
+        int red = pixel2 % 256;
         return new RGB(red,green,blue);
     }
 

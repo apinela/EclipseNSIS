@@ -39,7 +39,7 @@ public class INIKeyValueValidatorRegistry
                 try {
                     IINIKeyValueValidator validator;
 
-                    String key = (String)e.nextElement();
+                    String key = e.nextElement();
                     String className = bundle.getString(key);
                     Class<? extends IINIKeyValueValidator> clasz = (Class<? extends IINIKeyValueValidator>) Class.forName(className);
                     if(map.containsKey(clasz)) {
@@ -47,7 +47,7 @@ public class INIKeyValueValidatorRegistry
                     }
                     else {
                         Constructor<? extends IINIKeyValueValidator> c = clasz.getConstructor((Class[])null);
-                        validator = (IINIKeyValueValidator)c.newInstance((Object[])null);
+                        validator = c.newInstance((Object[])null);
                         map.put(clasz,validator);
                     }
                     mRegistry.put(key,validator);

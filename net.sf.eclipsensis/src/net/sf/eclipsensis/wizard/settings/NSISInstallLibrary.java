@@ -239,7 +239,8 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     public void setLibType(int libType)
     {
-        switch (libType)
+    	int libType2 = libType;
+        switch (libType2)
         {
             case LIBTYPE_DLL:
             case LIBTYPE_REGDLL:
@@ -252,11 +253,11 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
                 }
 	            //$FALL-THROUGH$
 			default:
-                libType = LIBTYPE_DLL;
+                libType2 = LIBTYPE_DLL;
         }
-        if (mLibType != libType) {
+        if (mLibType != libType2) {
             setDirty();
-            mLibType = libType;
+            mLibType = libType2;
         }
     }
 

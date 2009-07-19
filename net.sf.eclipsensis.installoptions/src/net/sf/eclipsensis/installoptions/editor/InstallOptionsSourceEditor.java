@@ -936,7 +936,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
     private class OutlinePage extends ContentOutlinePage
     {
-        private String mJobFamily = getClass().getName()+System.currentTimeMillis();
+        private String mOutlineJobFamily = getClass().getName()+System.currentTimeMillis();
 
         @Override
 		public void createControl(Composite parent)
@@ -1045,7 +1045,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         @Override
 		public void dispose()
         {
-            mJobScheduler.cancelJobs(mJobFamily);
+            mJobScheduler.cancelJobs(mOutlineJobFamily);
             TreeViewer viewer = getTreeViewer();
             if(viewer != null) {
                 viewer.removeSelectionChangedListener(mSelectionSynchronizer);
@@ -1059,8 +1059,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
          */
         public void update()
         {
-            mJobScheduler.cancelJobs(mJobFamily);
-            mJobScheduler.scheduleUIJob(mJobFamily, InstallOptionsPlugin.getResourceString("outline.update.job.name"), //$NON-NLS-1$
+            mJobScheduler.cancelJobs(mOutlineJobFamily);
+            mJobScheduler.scheduleUIJob(mOutlineJobFamily, InstallOptionsPlugin.getResourceString("outline.update.job.name"), //$NON-NLS-1$
                           new IJobStatusRunnable(){
                               public IStatus run(IProgressMonitor monitor)
                               {

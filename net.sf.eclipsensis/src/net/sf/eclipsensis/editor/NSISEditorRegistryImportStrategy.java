@@ -112,21 +112,22 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
 
     private void addLineToBuf(String line)
     {
+    	String line2 = line;
         mShellConstantConverter.setShellContext(ShellConstant.CONTEXT_GENERAL);
-        line = mShellConstantConverter.encodeConstants(line);
+        line2 = mShellConstantConverter.encodeConstants(line2);
         String newContext = mShellConstantConverter.getShellContext();
         if(!newContext.equals(ShellConstant.CONTEXT_GENERAL) && !newContext.equals(mContext)) {
             mBuffer.append(NSISKeywords.getInstance().getKeyword("SetShellVarContext")).append( //$NON-NLS-1$
                     " ").append(newContext).append(INSISConstants.LINE_SEPARATOR); //$NON-NLS-1$
             mContext = newContext;
         }
-        while(line.length() > mTextLimit) {
-            mBuffer.append(line.substring(0, mTextLimit-1)).append(
+        while(line2.length() > mTextLimit) {
+            mBuffer.append(line2.substring(0, mTextLimit-1)).append(
                     INSISConstants.LINE_CONTINUATION_CHAR).append(
                     INSISConstants.LINE_SEPARATOR);
-            line = line.substring(mTextLimit-1);
+            line2 = line2.substring(mTextLimit-1);
         }
-        mBuffer.append(line).append(INSISConstants.LINE_SEPARATOR);
+        mBuffer.append(line2).append(INSISConstants.LINE_SEPARATOR);
     }
 
     private static String makeRegCommand(MessageFormat format, String[] args)

@@ -93,7 +93,7 @@ public class PreferenceStoreWrapper implements IPreferenceStore
     {
         for(Iterator<Map.Entry<String,Class<?>>> iter = mNamesMap.entrySet().iterator(); iter.hasNext(); ) {
         	Map.Entry<String,Class<?>> entry = iter.next();
-            String name = (String)entry.getKey();
+            String name = entry.getKey();
             Class<?> type = entry.getValue();
             if(type.equals(Boolean.class)) {
                 mParentStore.setValue(name,mInternalStore.getBoolean(name));

@@ -108,24 +108,25 @@ public class IOUtility
 
     public static String resolveFileName(String fileName, NSISEditor editor)
     {
-        String newFileName = IOUtility.encodePath(fileName);
-        if(editor != null && newFileName.equalsIgnoreCase(fileName)) {
+    	String fileName2 = fileName;
+        String newFileName = IOUtility.encodePath(fileName2);
+        if(editor != null && newFileName.equalsIgnoreCase(fileName2)) {
             IEditorInput editorInput = editor.getEditorInput();
             if(editorInput instanceof IFileEditorInput) {
                 IFile file = ((IFileEditorInput)editorInput).getFile();
                 if(file != null) {
-                    fileName = makeRelativeLocation(file, fileName);
+                    fileName2 = makeRelativeLocation(file, fileName2);
                 }
             }
             else if(editorInput instanceof ILocationProvider) {
                 File f = new File(((ILocationProvider)editorInput).getPath(editorInput).toOSString());
-                fileName = makeRelativeLocation(f, fileName);
+                fileName2 = makeRelativeLocation(f, fileName2);
             }
         }
         else {
-            fileName = newFileName;
+            fileName2 = newFileName;
         }
-        return Common.maybeQuote(Common.escapeQuotes(fileName));
+        return Common.maybeQuote(Common.escapeQuotes(fileName2));
     }
 
     public static boolean deleteDirectory(File directory)
@@ -182,24 +183,26 @@ public class IOUtility
 
     public static String encodePath(String path)
     {
-        if(!Common.isEmpty(path)) {
+    	String path2 = path;
+        if(!Common.isEmpty(path2)) {
             String nsisdirKeyword = NSISKeywords.getInstance().getKeyword("${NSISDIR}"); //$NON-NLS-1$
             String nsisHome = NSISPreferences.INSTANCE.getNSISHome().toLowerCase();
-            if(path.toLowerCase().startsWith(nsisHome)) {
-                path = nsisdirKeyword + path.substring(nsisHome.length());
+            if(path2.toLowerCase().startsWith(nsisHome)) {
+                path2 = nsisdirKeyword + path2.substring(nsisHome.length());
             }
         }
-        return path;
+        return path2;
     }
 
     public static String decodePath(String path)
     {
+    	String path2 = path;
         String nsisdirKeyword = NSISKeywords.getInstance().getKeyword("${NSISDIR}").toLowerCase(); //$NON-NLS-1$
         String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
-        if(path.toLowerCase().startsWith(nsisdirKeyword)) {
-            path = nsisHome + path.substring(nsisdirKeyword.length());
+        if(path2.toLowerCase().startsWith(nsisdirKeyword)) {
+            path2 = nsisHome + path2.substring(nsisdirKeyword.length());
         }
-        return path;
+        return path2;
     }
 
     public static <T> T readObject(File file) throws IOException, ClassNotFoundException
@@ -220,12 +223,13 @@ public class IOUtility
     @SuppressWarnings("unchecked")
 	public static <T> T readObject(InputStream inputStream, final ClassLoader classLoader) throws IOException, ClassNotFoundException
     {
+    	InputStream inputStream2 = inputStream;
         ObjectInputStream ois = null;
         try {
-            if(!(inputStream instanceof BufferedInputStream)) {
-                inputStream = new BufferedInputStream(inputStream);
+            if(!(inputStream2 instanceof BufferedInputStream)) {
+                inputStream2 = new BufferedInputStream(inputStream2);
             }
-            ois = new ObjectInputStream(inputStream){
+            ois = new ObjectInputStream(inputStream2){
 
                 @Override
 				protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
@@ -243,7 +247,7 @@ public class IOUtility
         }
         finally {
             closeIO(ois);
-            closeIO(inputStream);
+            closeIO(inputStream2);
         }
     }
 
@@ -319,19 +323,20 @@ public class IOUtility
 
     public static void writeObject(OutputStream outputStream, Object object) throws IOException
     {
+    	OutputStream outputStream2 = outputStream;
         if(object != null) {
             ObjectOutputStream oos = null;
 
             try {
-                if(!(outputStream instanceof BufferedOutputStream)) {
-                    outputStream = new BufferedOutputStream(outputStream);
+                if(!(outputStream2 instanceof BufferedOutputStream)) {
+                    outputStream2 = new BufferedOutputStream(outputStream2);
                 }
-                oos = new ObjectOutputStream(outputStream);
+                oos = new ObjectOutputStream(outputStream2);
                 oos.writeObject(object);
             }
             finally {
                 closeIO(oos);
-                closeIO(outputStream);
+                closeIO(outputStream2);
             }
         }
     }

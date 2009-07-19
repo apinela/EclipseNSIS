@@ -31,59 +31,59 @@ public class NSISConsoleLineProcessor implements INSISConsoleLineProcessor
     public NSISConsoleLine processText(String text)
     {
         NSISConsoleLine line;
-        text = text.trim();
+        String text2 = text.trim();
 
-        String lText = text.toLowerCase();
+        String lText = text2.toLowerCase();
         if(lText.startsWith("error")) { //$NON-NLS-1$
-            Matcher matcher = MakeNSISRunner.MAKENSIS_ERROR_PATTERN.matcher(text);
+            Matcher matcher = MakeNSISRunner.MAKENSIS_ERROR_PATTERN.matcher(text2);
             if(matcher.matches()) {
-                line = NSISConsoleLine.error(text);
+                line = NSISConsoleLine.error(text2);
                 setLineInfo(line, new Path(matcher.group(1)), Integer.parseInt(matcher.group(2)));
                 return line;
             }
         }
         if(lText.startsWith("!include: error")) { //$NON-NLS-1$
-            Matcher matcher = MakeNSISRunner.MAKENSIS_INCLUDE_ERROR_PATTERN.matcher(text);
+            Matcher matcher = MakeNSISRunner.MAKENSIS_INCLUDE_ERROR_PATTERN.matcher(text2);
             if(matcher.matches()) {
-                line = NSISConsoleLine.error(text);
+                line = NSISConsoleLine.error(text2);
                 setLineInfo(line, new Path(matcher.group(1)), Integer.parseInt(matcher.group(2)));
                 return line;
             }
         }
         if(lText.startsWith("error ") || lText.startsWith("error:") || //$NON-NLS-1$ //$NON-NLS-2$
            lText.startsWith("!include: error ") || lText.startsWith("!include: error:") || lText.startsWith("invalid command")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            line = NSISConsoleLine.error(text);
+            line = NSISConsoleLine.error(text2);
         }
         else if(lText.startsWith("warning ") || lText.startsWith("warning:") || lText.startsWith("invalid ")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            line = NSISConsoleLine.warning(text);
+            line = NSISConsoleLine.warning(text2);
         }
         else if(lText.endsWith(" warning:") || lText.endsWith(" warnings:")) { //$NON-NLS-1$ //$NON-NLS-2$
-            Matcher matcher = MakeNSISRunner.MAKENSIS_WARNINGS_PATTERN.matcher(text);
+            Matcher matcher = MakeNSISRunner.MAKENSIS_WARNINGS_PATTERN.matcher(text2);
             if(matcher.matches()) {
                 mWarningCount = Integer.parseInt(matcher.group(1));
             }
-            line = NSISConsoleLine.warning(text);
+            line = NSISConsoleLine.warning(text2);
         }
         else if(MakeNSISRunner.MAKENSIS_SYNTAX_ERROR_PATTERN.matcher(lText).matches()) {
             mErrorMode = true;
-            line = NSISConsoleLine.error(text);
+            line = NSISConsoleLine.error(text2);
         }
         else if(mErrorMode) {
-            line = NSISConsoleLine.error(text);
+            line = NSISConsoleLine.error(text2);
         }
-        else if(mWarningCount > 0 && !Common.isEmpty(text)) {
+        else if(mWarningCount > 0 && !Common.isEmpty(text2)) {
             mWarningCount--;
-            line = NSISConsoleLine.warning(text);
+            line = NSISConsoleLine.warning(text2);
         }
         else {
-            line = NSISConsoleLine.info(text);
+            line = NSISConsoleLine.info(text2);
         }
         if(line.getType() == NSISConsoleLine.TYPE_WARNING) {
-            Matcher matcher = MakeNSISRunner.MAKENSIS_WARNING_PATTERN.matcher(text);
+            Matcher matcher = MakeNSISRunner.MAKENSIS_WARNING_PATTERN.matcher(text2);
             if(matcher.matches()) {
                 setLineInfo(line, new Path(matcher.group(1)), Integer.parseInt(matcher.group(2)));
             }
-            else if(!text.endsWith("warnings:") && !text.endsWith("warning:")) { //$NON-NLS-1$ //$NON-NLS-2$
+            else if(!text2.endsWith("warnings:") && !text2.endsWith("warning:")) { //$NON-NLS-1$ //$NON-NLS-2$
                 setLineInfo(line, (mScript.getDevice() != null?mScript:null), 1);
             }
         }
@@ -93,36 +93,38 @@ public class NSISConsoleLineProcessor implements INSISConsoleLineProcessor
 
     private void setLineInfo(NSISConsoleLine line, IPath path, int lineNum)
     {
-        if(path != null) {
-            if(path.toString().startsWith("macro:")) { //$NON-NLS-1$
+    	IPath path2 = path;
+    	int lineNum2 = lineNum;
+        if(path2 != null) {
+            if(path2.toString().startsWith("macro:")) { //$NON-NLS-1$
                 //TODO Add macro discovery here.
-                path = null;
-                lineNum = 1;
+            	path2 = null;
+            	lineNum2 = 1;
             }
         }
-        if(path == null) {
-            path = mScript;
+        if(path2 == null) {
+        	path2 = mScript;
         }
         else {
             if(mScript.getDevice() == null) {
-                if(!path.isAbsolute()) {
-                    path = ResourcesPlugin.getWorkspace().getRoot().getFile(mScript).getParent().getFullPath().append(path);
+                if(!path2.isAbsolute()) {
+                	path2 = ResourcesPlugin.getWorkspace().getRoot().getFile(mScript).getParent().getFullPath().append(path2);
                 }
                 else {
-                    IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
+                    IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path2);
                     if(file != null) {
-                        path = file.getFullPath();
+                    	path2 = file.getFullPath();
                     }
                 }
             }
             else {
-                if(!path.isAbsolute()) {
-                    path = mScript.removeLastSegments(1).append(path);
+                if(!path2.isAbsolute()) {
+                	path2 = mScript.removeLastSegments(1).append(path2);
                 }
             }
         }
-        line.setSource(path);
-        line.setLineNum(lineNum);
+        line.setSource(path2);
+        line.setLineNum(lineNum2);
     }
 
     /* (non-Javadoc)

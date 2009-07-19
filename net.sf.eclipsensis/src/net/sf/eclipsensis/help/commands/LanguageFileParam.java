@@ -39,7 +39,7 @@ public class LanguageFileParam extends ComboParam
             });
             int i=0;
             for (Iterator<NSISLanguage> iter = languages.iterator(); iter.hasNext();) {
-                NSISLanguage lang = (NSISLanguage)iter.next();
+                NSISLanguage lang = iter.next();
                 String file = lang.getName()+INSISConstants.LANGUAGE_FILES_EXTENSION;
                 entries[i++] = new ComboEntry(file, file);
             }

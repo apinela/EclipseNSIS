@@ -64,7 +64,7 @@ public class UnicodeReader extends Reader
                             case (byte)0xFE:
                                 switch(bom[3]) {
                                     case (byte)0xFF:
-                                        encoding = "UTF-32BE";
+                                        encoding = "UTF-32BE"; //$NON-NLS-1$
                                         unread -= 4;
                                 }
                         }
@@ -75,7 +75,7 @@ public class UnicodeReader extends Reader
                     case (byte)0xBB:
                         switch(bom[2]) {
                             case (byte)0xBF:
-                                encoding = "UTF-8";
+                                encoding = "UTF-8"; //$NON-NLS-1$
                                 unread -= 3;
                         }
                 }
@@ -83,7 +83,7 @@ public class UnicodeReader extends Reader
             case (byte)0xFE:
                 switch(bom[1]) {
                     case (byte)0xFF:
-                        encoding = "UTF-16BE";
+                        encoding = "UTF-16BE"; //$NON-NLS-1$
                         unread -= 2;
                 }
                 break;
@@ -93,13 +93,13 @@ public class UnicodeReader extends Reader
                         switch(bom[2]) {
                             case (byte)0x00:
                                 if(bom[3] == (byte)0x00) {
-                                    encoding = "UTF-32LE";
+                                    encoding = "UTF-32LE"; //$NON-NLS-1$
                                     unread -= 4;
                                     break;
                                 }
 	                            //$FALL-THROUGH$
 							default:
-                                encoding = "UTF-16LE";
+                                encoding = "UTF-16LE"; //$NON-NLS-1$
                                 unread -= 2;
                         }
                 }
@@ -140,7 +140,7 @@ public class UnicodeReader extends Reader
 	public int read(char[] cbuf, int off, int len) throws IOException
     {
         if(mClosed) {
-            throw new IOException("Reader is closed");
+            throw new IOException("Reader is closed"); //$NON-NLS-1$
         }
         if (mInternalReader == null) {
             detectEncoding();

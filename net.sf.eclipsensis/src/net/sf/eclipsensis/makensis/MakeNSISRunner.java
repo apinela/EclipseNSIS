@@ -152,10 +152,11 @@ public class MakeNSISRunner implements INSISConstants
     private static List<NSISScriptProblem> processProblems(INSISConsole console, IPath path, List<NSISConsoleLine> errors, List<NSISConsoleLine> warnings)
     {
     	List<NSISScriptProblem> problems = new ArrayList<NSISScriptProblem>();
-        if (Common.isEmptyCollection(errors)) {
+    	List<NSISConsoleLine> errors2 = errors;
+        if (Common.isEmptyCollection(errors2)) {
         	List<String> compileErrors = cMakeNSISDelegate.getErrors();
             if(!Common.isEmptyCollection(compileErrors)) {
-                errors = new ArrayList<NSISConsoleLine>();
+                errors2 = new ArrayList<NSISConsoleLine>();
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                 for(Iterator<String> iter = compileErrors.iterator(); iter.hasNext() ;) {
                     String text = iter.next();
@@ -177,7 +178,7 @@ public class MakeNSISRunner implements INSISConstants
         }
         else {
             int nextIndex = 0;
-            ListIterator<NSISConsoleLine> iter = errors.listIterator();
+            ListIterator<NSISConsoleLine> iter = errors2.listIterator();
 
             while(iter.hasNext()) {
                 NSISConsoleLine error = iter.next();
@@ -202,7 +203,7 @@ public class MakeNSISRunner implements INSISConstants
                 NSISScriptProblem problem = new NSISScriptProblem(p,NSISScriptProblem.TYPE_ERROR,text,lineNum);
                 error.setProblem(problem);
                 problems.add(problem);
-                iter = errors.listIterator(nextIndex);
+                iter = errors2.listIterator(nextIndex);
             }
         }
 
@@ -682,14 +683,15 @@ public class MakeNSISRunner implements INSISConstants
 
     private static Integer[] splitCompilationTime(int time)
     {
+    	int time2 = time;
     	Integer[] result = new Integer[3];
         Arrays.fill(result,Common.ZERO);
-        result[2] = new Integer(time % 1000);
-        time /= 1000;
+        result[2] = new Integer(time2 % 1000);
+        time2 /= 1000;
         for(int i=1; i>=0; i--) {
-            if(time > 0) {
-                result[i] = new Integer(time % 60);
-                time /= 60;
+            if(time2 > 0) {
+                result[i] = new Integer(time2 % 60);
+                time2 /= 60;
             }
             else {
                 break;

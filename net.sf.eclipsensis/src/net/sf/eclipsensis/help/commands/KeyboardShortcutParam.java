@@ -221,24 +221,24 @@ public class KeyboardShortcutParam extends PrefixableParam
         @Override
 		protected Control createParamControl(Composite parent)
         {
-            parent = new Composite(parent, SWT.NONE);
+        	Composite parent2 = new Composite(parent, SWT.NONE);
             GridLayout layout = new GridLayout(cModifiers.length + 1, false);
             layout.marginHeight = layout.marginWidth = 0;
-            parent.setLayout(layout);
+            parent2.setLayout(layout);
             mModifierButtons = new Button[cModifiers.length];
             for (int i = 0; i < cModifiers.length; i++)
             {
-                mModifierButtons[i] = new Button(parent, SWT.CHECK);
+                mModifierButtons[i] = new Button(parent2, SWT.CHECK);
                 mModifierButtons[i].setText(cModifiers[i]);
                 mModifierButtons[i].setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
             }
-            mKeyCombo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
+            mKeyCombo = new Combo(parent2, SWT.DROP_DOWN | SWT.READ_ONLY);
             mKeyCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
             for (int i = 0; i < cKeys.length; i++)
             {
                 mKeyCombo.add(cKeys[i]);
             }
-            return parent;
+            return parent2;
         }
 
     }

@@ -29,7 +29,7 @@ public class NSISInstallElementNodeConverter extends AbstractNodeConverter<INSIS
     public Node toNode(Document document, INSISInstallElement object)
     {
         if(object != null) {
-            return ((INSISInstallElement)object).toNode(document);
+            return (object).toNode(document);
         }
         throw new IllegalArgumentException(String.valueOf(object));
     }
