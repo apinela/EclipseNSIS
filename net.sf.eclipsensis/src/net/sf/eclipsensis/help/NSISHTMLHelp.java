@@ -16,6 +16,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
@@ -129,7 +130,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 {
     public static final String ECLIPSENSIS_URI_SCHEME = "eclipsensis:"; //$NON-NLS-1$
     public static final String FILE_URI_SCHEME = "file:"; //$NON-NLS-1$
-    private static final Pattern cFileUriPattern = Pattern.compile("^(file://)([^/].*)?$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern cFileUriPattern = Pattern.compile("^file:///?(.*)$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern cW3CFileUriPattern = Pattern.compile("^file://([^/].*)?$", Pattern.CASE_INSENSITIVE);
     private static String cFirstPage = null;
     private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin
             .getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
@@ -403,7 +405,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     {
                         try
                         {
-                        	String location = fixFileURI(event.location);
+                        	String location = encodeFileURI(fixFileURI(event.location));
                             URI url = new URI(location);
                             if (url.getFragment() != null)
                             {
@@ -415,7 +417,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                             }
                             f = new File(url);
                         }
-                        catch (URISyntaxException e)
+                        catch (Exception e)
                         {
                             EclipseNSISPlugin.getDefault().log(e);
                         }
@@ -1009,6 +1011,10 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                                         {
                                             // This is a windows file name
                                             location = decode(IOUtility.getFileURLString(new File(location)));
+                                        }
+                                        else
+                                        {
+                                        	location = fixFileURI(location);
                                         }
                                         String file;
                                         int n = location.lastIndexOf('#');
@@ -1721,12 +1727,22 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 		return location.regionMatches(true, 0, FILE_URI_SCHEME, 0, FILE_URI_SCHEME.length());
 	}
 
-    private String fixFileURI(String location) 
+    private String fixFileURI(String location)
+    {
+    	Matcher matcher = cW3CFileUriPattern.matcher(location);
+    	if(matcher.matches())
+    	{
+    		return "file:///" + matcher.group(1);
+    	}
+		return location;
+	}
+
+    private String encodeFileURI(String location) throws IOException
     {
     	Matcher matcher = cFileUriPattern.matcher(location);
     	if(matcher.matches())
     	{
-    		return new StringBuilder(matcher.group(1)).append("/").append(matcher.group(2)).toString();
+    		return "file:///" + URLEncoder.encode(matcher.group(1),System.getProperty("file.encoding"));
     	}
 		return location;
 	}

@@ -159,7 +159,8 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
             doc.add(new Field(INDEX_FIELD_URL, IOUtility.getFileURLString(f), Field.Store.YES, Field.Index.NO));
 
             HTMLParser parser = new HTMLParser(new FileInputStream(f));
-
+            parser.parse();
+            
             doc.add(new Field(INDEX_FIELD_CONTENTS, parser.getReader(), Field.TermVector.NO));
             doc.add(new Field(INDEX_FIELD_SUMMARY, parser.getSummary(), Field.Store.YES, Field.Index.NO));
             doc.add(new Field(INDEX_FIELD_TITLE, parser.getTitle(), Field.Store.YES, Field.Index.TOKENIZED));

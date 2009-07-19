@@ -713,7 +713,14 @@ public class MakeNSISRunner implements INSISConstants
             if (IOUtility.isValidFile(exeFile)) {
                 File workDir = exeFile.getParentFile();
                 try {
-                    Process proc = Runtime.getRuntime().exec(new String[]{exeName},null,workDir);
+                	List<String> args = new ArrayList<String>();
+                	if(EclipseNSISPlugin.getDefault().isWinVista())
+                	{
+                		args.add("cmd.exe");
+                		args.add("/c");
+                	}
+            		args.add(exeName);
+                    Process proc = Runtime.getRuntime().exec(args.toArray(new String[args.size()]),null,workDir);
                     if(wait) {
                         proc.waitFor();
                     }
