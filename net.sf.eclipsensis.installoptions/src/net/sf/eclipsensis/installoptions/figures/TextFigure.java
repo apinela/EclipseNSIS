@@ -92,15 +92,16 @@ public class TextFigure extends EditableElementFigure
     @Override
 	protected Control createSWTControl(Composite parent, int style)
     {
+    	int style2 = style;
         if(!isMultiLine()) {
             if(isHScroll()) {
-                style &= ~SWT.H_SCROLL;
+                style2 &= ~SWT.H_SCROLL;
             }
             if(isVScroll()) {
-                style &= ~SWT.V_SCROLL;
+                style2 &= ~SWT.V_SCROLL;
             }
         }
-        Text text = new Text(parent, style);
+        Text text = new Text(parent, style2);
         String state = getState();
         if(!isMultiLine()) {
             createScrollBars(text);

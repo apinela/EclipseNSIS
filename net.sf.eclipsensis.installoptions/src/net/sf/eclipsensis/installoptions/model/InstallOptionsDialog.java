@@ -615,20 +615,21 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
 
     public void addChild(InstallOptionsWidget child, int index)
     {
-        if (index >= 0) {
-            mChildren.add(index,child);
+    	int index2 = index;
+        if (index2 >= 0) {
+            mChildren.add(index2,child);
         }
         else {
             mChildren.add(child);
-            index = mChildren.indexOf(child);
+            index2 = mChildren.indexOf(child);
         }
-        updateChildIndices(index);
+        updateChildIndices(index2);
         child.setParent(this);
         INISection section = child.getSection();
         if(section != null) {
             mINISectionMap.put(section,child);
         }
-        fireChildAdded(InstallOptionsModel.PROPERTY_CHILDREN, child, new Integer(index));
+        fireChildAdded(InstallOptionsModel.PROPERTY_CHILDREN, child, new Integer(index2));
         setDirty(true);
     }
 

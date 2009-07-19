@@ -45,12 +45,12 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
 
             final TabbedPropertySheetWidgetFactory widgetFactory = getWidgetFactory();
 
-            parent = createSectionComposite(parent);
+            Composite parent2 = createSectionComposite(parent);
             GridLayout layout = new GridLayout(2, false);
             layout.marginHeight = layout.marginWidth = 0;
-            parent.setLayout(layout);
+            parent2.setLayout(layout);
 
-            final Group summaryGroup = widgetFactory.createGroup(parent, InstallOptionsPlugin.getResourceString("filter.summary.group.name")); //$NON-NLS-1$
+            final Group summaryGroup = widgetFactory.createGroup(parent2, InstallOptionsPlugin.getResourceString("filter.summary.group.name")); //$NON-NLS-1$
             summaryGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
             summaryGroup.setLayout(new GridLayout(2, false));
 
@@ -200,7 +200,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                 }
             });
 
-            final Group detailGroup = widgetFactory.createGroup(parent, InstallOptionsPlugin.getResourceString("filter.detail.group.name")); //$NON-NLS-1$
+            final Group detailGroup = widgetFactory.createGroup(parent2, InstallOptionsPlugin.getResourceString("filter.detail.group.name")); //$NON-NLS-1$
             detailGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
             detailGroup.setLayout(new GridLayout(1, false));
 
@@ -551,13 +551,13 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
 
             };
             element.addPropertyChangeListener(listener);
-            parent.addDisposeListener(new DisposeListener() {
+            parent2.addDisposeListener(new DisposeListener() {
                 public void widgetDisposed(DisposeEvent e)
                 {
                     element.removePropertyChangeListener(listener);
                 }
             });
-            return parent;
+            return parent2;
         }
         return null;
     }

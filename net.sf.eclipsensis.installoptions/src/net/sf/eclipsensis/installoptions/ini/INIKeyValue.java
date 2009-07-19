@@ -33,11 +33,12 @@ public class INIKeyValue extends INILine
     {
         super(text, delimiter);
         mKey = key;
-        if(value != null && value.length() > 2 && value.startsWith("\"") && value.endsWith("\"")) { //$NON-NLS-1$ //$NON-NLS-2$
-            value = value.substring(1,value.length()-1);
+        String value2 = value;
+        if(value2 != null && value2.length() > 2 && value2.startsWith("\"") && value2.endsWith("\"")) { //$NON-NLS-1$ //$NON-NLS-2$
+            value2 = value2.substring(1,value2.length()-1);
             mQuoted = true;
         }
-        setValue(value);
+        setValue(value2);
         mOriginalValue = getValue();
     }
 
@@ -181,13 +182,14 @@ public class INIKeyValue extends INILine
     private String maybeQuote(String text)
     {
         mQuoted = false;
-        if(text != null && text.length() > 0) {
-            if(Character.isWhitespace(text.charAt(0)) || Character.isWhitespace(text.charAt(text.length()-1))) {
-                text = quote(text);
+        String text2 = text;
+        if(text2 != null && text2.length() > 0) {
+            if(Character.isWhitespace(text2.charAt(0)) || Character.isWhitespace(text2.charAt(text2.length()-1))) {
+                text2 = quote(text2);
                 mQuoted = true;
             }
         }
-        return text;
+        return text2;
     }
 
     private String quote(String text)

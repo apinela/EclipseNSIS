@@ -495,6 +495,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     @Override
 	protected void doSetInput(IEditorInput input) throws CoreException
     {
+    	IEditorInput input2 = input;
         IInstallOptionsEditorInput editorInput = (IInstallOptionsEditorInput)getEditorInput();
         if(editorInput != null) {
             Object source = editorInput.getSource();
@@ -521,37 +522,37 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 }
             }
         }
-        if(input != null) {
-            if(!(input instanceof IInstallOptionsEditorInput)) {
-                if(input instanceof IFileEditorInput) {
-                    IFile file = ((IFileEditorInput)input).getFile();
+        if(input2 != null) {
+            if(!(input2 instanceof IInstallOptionsEditorInput)) {
+                if(input2 instanceof IFileEditorInput) {
+                    IFile file = ((IFileEditorInput)input2).getFile();
                     InstallOptionsNature.addNature(file.getProject());
-                    input = new InstallOptionsEditorInput((IFileEditorInput)input);
+                    input2 = new InstallOptionsEditorInput((IFileEditorInput)input2);
                 }
-                else if (input instanceof IPathEditorInput){
-                    input = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input);
+                else if (input2 instanceof IPathEditorInput){
+                    input2 = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input2);
                 }
                 else {
-                    input = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input.getAdapter(IPathEditorInput.class));
+                    input2 = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input2.getAdapter(IPathEditorInput.class));
                 }
-                setDocumentProvider(((IInstallOptionsEditorInput)input).getDocumentProvider());
-                super.doSetInput(input);
+                setDocumentProvider(((IInstallOptionsEditorInput)input2).getDocumentProvider());
+                super.doSetInput(input2);
             }
             else {
-                setDocumentProvider(((IInstallOptionsEditorInput)input).getDocumentProvider());
-                super.doSetInput(input);
-                ((IInstallOptionsEditorInput)input).completedSwitch();
+                setDocumentProvider(((IInstallOptionsEditorInput)input2).getDocumentProvider());
+                super.doSetInput(input2);
+                ((IInstallOptionsEditorInput)input2).completedSwitch();
             }
         }
-        input = getEditorInput();
-        if(input != null) {
-            Object source = ((IInstallOptionsEditorInput)input).getSource();
+        input2 = getEditorInput();
+        if(input2 != null) {
+            Object source = ((IInstallOptionsEditorInput)input2).getSource();
             IFile file = null;
             if(source instanceof IFile) {
                 file = (IFile)source;
                 file.getWorkspace().addResourceChangeListener(mResourceListener);
             }
-            IDocument document = getDocumentProvider().getDocument(input);
+            IDocument document = getDocumentProvider().getDocument(input2);
             document.addPositionCategory(MARKER_CATEGORY);
             document.addPositionUpdater(mMarkerPositionUpdater);
             mINIFile.connect(document);

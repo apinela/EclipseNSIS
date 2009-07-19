@@ -189,16 +189,17 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
     private void initializePreference(String associationId, boolean enablement, String bundleId, String enablementPref)
     {
         if(!PREFERENCES.contains(associationId)) {
+        	boolean enablement2 = enablement;
             if(enablementPref != null) {
                 Bundle bundle = Platform.getBundle(bundleId);
                 if(bundle != null) {
                     IPreferenceStore prefs = new ScopedPreferenceStore(new InstanceScope(), bundle.getSymbolicName());
                     if(prefs.contains(enablementPref)) {
-                        enablement = prefs.getBoolean(enablementPref);
+                        enablement2 = prefs.getBoolean(enablementPref);
                     }
                 }
             }
-            PREFERENCES.setValue(associationId,Boolean.toString(enablement));
+            PREFERENCES.setValue(associationId,Boolean.toString(enablement2));
         }
     }
 

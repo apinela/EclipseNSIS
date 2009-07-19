@@ -170,7 +170,7 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
     private RGB checkDefault(RGB rgb)
     {
         if(InstallOptionsLink.DEFAULT_TXTCOLOR.equals(rgb)) {
-            rgb = null;
+            return null;
         }
         return rgb;
     }
@@ -182,8 +182,9 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
      * @param colorText
      * @param newRGB
      */
-    private void updateRGB(final InstallOptionsCommandHelper commandHelper, final IPropertyDescriptor descriptor, final ILabelProvider labelProvider, final Text colorText, RGB newRGB)
+    private void updateRGB(final InstallOptionsCommandHelper commandHelper, final IPropertyDescriptor descriptor, final ILabelProvider labelProvider, final Text colorText, RGB rgb)
     {
+    	RGB newRGB = rgb;
         RGB oldRGB = (RGB)getWidget().getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR);
         if(InstallOptionsLink.DEFAULT_TXTCOLOR.equals(newRGB)) {
             newRGB = null;

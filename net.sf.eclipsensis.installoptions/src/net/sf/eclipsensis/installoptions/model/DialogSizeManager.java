@@ -109,14 +109,15 @@ public class DialogSizeManager
             else {
                 cDialogSizes.clear();
             }
+            List<DialogSize> dialogSizes2 = dialogSizes;
             List<DialogSize> oldList = new ArrayList<DialogSize>(cDialogSizes.values());
             boolean makeCopy = false;
-            if(Common.isEmptyCollection(dialogSizes)) {
-                dialogSizes=getPresetDialogSizes();
+            if(Common.isEmptyCollection(dialogSizes2)) {
+                dialogSizes2=getPresetDialogSizes();
                 makeCopy = true;
             }
             boolean foundDefault = false;
-            for(Iterator<DialogSize> iter=dialogSizes.iterator(); iter.hasNext(); ) {
+            for(Iterator<DialogSize> iter=dialogSizes2.iterator(); iter.hasNext(); ) {
                 DialogSize dialogSize = iter.next();
                 if(makeCopy) {
                     dialogSize = dialogSize.getCopy();
@@ -136,12 +137,12 @@ public class DialogSizeManager
                 }
             }
             if(!foundDefault) {
-                DialogSize dialogSize = cDialogSizes.get(dialogSizes.get(0).getName());
+                DialogSize dialogSize = cDialogSizes.get(dialogSizes2.get(0).getName());
                 dialogSize.setDefault(true);
             }
 
-            if(oldList.size() != dialogSizes.size() || !oldList.containsAll(dialogSizes)) {
-                mListeners.firePropertyChange(PROPERTY_DIALOGSIZES, oldList, dialogSizes);
+            if(oldList.size() != dialogSizes2.size() || !oldList.containsAll(dialogSizes2)) {
+                mListeners.firePropertyChange(PROPERTY_DIALOGSIZES, oldList, dialogSizes2);
             }
         }
     }

@@ -97,19 +97,19 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     @Override
 	protected Control createContents(Composite parent)
     {
-        parent = new Composite(parent, SWT.NONE);
+    	Composite parent2 = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(1, false);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
-        parent.setLayout(layout);
+        parent2.setLayout(layout);
 
-        Label l = new Label(parent, SWT.NONE);
+        Label l = new Label(parent2, SWT.NONE);
         l.setText(EclipseNSISUpdatePlugin.getResourceString("preference.page.header")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-        Group group1 = createSitesGroup(parent);
-        Group group2 = createOptionsGroup(parent);
-        Link link = new Link(parent, SWT.WRAP);
+        Group group1 = createSitesGroup(parent2);
+        Group group2 = createOptionsGroup(parent2);
+        Link link = new Link(parent2, SWT.WRAP);
         link.setText(LINK_TEXT);
         link.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -128,9 +128,9 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         link.setLayoutData(gridData);
 
         updateState();
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent2,
                 EclipseNSISUpdatePlugin.PLUGIN_CONTEXT_PREFIX + "nsis_update_prefs_context"); //$NON-NLS-1$
-        return parent;
+        return parent2;
     }
 
     private void loadDefaults()

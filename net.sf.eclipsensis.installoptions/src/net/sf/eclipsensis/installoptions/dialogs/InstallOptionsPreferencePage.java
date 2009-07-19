@@ -208,13 +208,13 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     {
         loadPreferences();
         loadDialogSizes();
-        parent = new Composite(parent,SWT.NONE);
+        Composite parent2 = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         layout.marginHeight = 0;
         layout.marginWidth = 0;
-        parent.setLayout(layout);
+        parent2.setLayout(layout);
 
-        mFolder = new TabFolder(parent, SWT.NONE);
+        mFolder = new TabFolder(parent2, SWT.NONE);
         mFolder.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         Dialog.applyDialogFont(mFolder);
         TabItem item = new TabItem(mFolder, SWT.NONE);
@@ -227,17 +227,17 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         item.setData(InstallOptionsSourceEditor.class);
         activateTab();
 
-        mFileAssociation = new Button(parent,SWT.CHECK);
+        mFileAssociation = new Button(parent2,SWT.CHECK);
         mFileAssociation.setText(InstallOptionsPlugin.getResourceString("check.default.editor.label")); //$NON-NLS-1$
         mFileAssociation.setSelection(FileAssociationChecker.getFileAssociationChecking(FILE_ASSOCIATION_ID));
         mFileAssociation.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
 
-        mAutosaveBeforePreview = new Button(parent,SWT.CHECK);
+        mAutosaveBeforePreview = new Button(parent2,SWT.CHECK);
         mAutosaveBeforePreview.setText(InstallOptionsPlugin.getResourceString("autosave.before.preview.label")); //$NON-NLS-1$
         mAutosaveBeforePreview.setSelection(getPreferenceStore().getBoolean(PREFERENCE_AUTOSAVE_BEFORE_PREVIEW));
         mAutosaveBeforePreview.setLayoutData(new GridData(SWT.BEGINNING,SWT.CENTER,false,false));
 
-        return parent;
+        return parent2;
     }
 
     private void activateTab()
@@ -431,23 +431,23 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
 
     private Composite createDesignEditorTab(Composite parent)
     {
-        parent = new Composite(parent,SWT.NONE);
+    	Composite parent2 = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 2;
         layout.marginWidth = 2;
-        parent.setLayout(layout);
+        parent2.setLayout(layout);
 
-        Label l = new Label(parent,SWT.WRAP);
+        Label l = new Label(parent2,SWT.WRAP);
         l.setText(InstallOptionsPlugin.getResourceString("design.editor.preferences.description")); //$NON-NLS-1$
         GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = 2;
         l.setLayoutData(gd);
 
-        createDisplayGroup(parent);
-        createDialogSizesGroup(parent);
-        mSnapGlueSettings = new SnapGlueSettings(parent, mSnapGlueSettingsMap);
-        mGridSettings = new GridSettings(parent,mGridSettingsMap);
-        return parent;
+        createDisplayGroup(parent2);
+        createDialogSizesGroup(parent2);
+        mSnapGlueSettings = new SnapGlueSettings(parent2, mSnapGlueSettingsMap);
+        mGridSettings = new GridSettings(parent2,mGridSettingsMap);
+        return parent2;
     }
 
     private void loadDialogSizes()
@@ -929,8 +929,8 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         @Override
 		protected Control createDialogArea(Composite parent)
         {
-            parent = (Composite)super.createDialogArea(parent);
-            Composite composite = new Composite(parent,SWT.NONE);
+        	Composite parent2 = (Composite)super.createDialogArea(parent);
+            Composite composite = new Composite(parent2,SWT.NONE);
             composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
             GridLayout gridLayout = new GridLayout(2,false);
             gridLayout.marginWidth = 0;
@@ -1012,7 +1012,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             data.widthHint = convertWidthInCharsToPixels(5);
             height.setLayoutData(data);
 
-            return parent;
+            return parent2;
         }
     }
 }

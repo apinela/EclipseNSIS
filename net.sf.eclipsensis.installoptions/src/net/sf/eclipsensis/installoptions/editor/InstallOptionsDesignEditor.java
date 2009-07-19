@@ -1231,18 +1231,18 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
 
     private <T> T loadFileProperty(IFile file, QualifiedName name, TypeConverter<T> converter, T defaultValue)
     {
-        defaultValue = loadPreference(name.getLocalName(),converter, defaultValue);
+    	T defaultValue2 = loadPreference(name.getLocalName(),converter, defaultValue);
         T o = null;
         if(file != null) {
             try {
-                o = converter.asType(file.getPersistentProperty(name), defaultValue);
+                o = converter.asType(file.getPersistentProperty(name), defaultValue2);
             }
             catch (Exception e) {
                 o = null;
             }
         }
         if(o == null) {
-            o = defaultValue;
+            o = defaultValue2;
         }
         return o;
     }
@@ -1492,9 +1492,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
 	public void setInput(IEditorInput input)
     {
         superSetInput(input);
-        input = getEditorInput();
-        if(input != null) {
-            IDocument document = ((IInstallOptionsEditorInput)input).getDocumentProvider().getDocument(input);
+        IEditorInput input2 = getEditorInput();
+        if(input2 != null) {
+            IDocument document = ((IInstallOptionsEditorInput)input2).getDocumentProvider().getDocument(input2);
             mINIFile.connect(document);
             loadInstallOptionsDialog();
         }
@@ -1539,6 +1539,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
 
     protected void superSetInput(IEditorInput input)
     {
+    	IEditorInput input2 = input;
         IEditorInput oldInput = getEditorInput();
         if (oldInput != null) {
             ((InstallOptionsEditDomain)getEditDomain()).setFile((IFile)null);
@@ -1549,26 +1550,26 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             }
             ((IInstallOptionsEditorInput)oldInput).getDocumentProvider().disconnect(oldInput);
         }
-        if(input != null) {
+        if(input2 != null) {
             try {
-                if(!(input instanceof IInstallOptionsEditorInput)) {
-                    if(input instanceof IFileEditorInput) {
-                        IFile file = ((IFileEditorInput)input).getFile();
+                if(!(input2 instanceof IInstallOptionsEditorInput)) {
+                    if(input2 instanceof IFileEditorInput) {
+                        IFile file = ((IFileEditorInput)input2).getFile();
                         InstallOptionsNature.addNature(file.getProject());
-                        input = new InstallOptionsEditorInput((IFileEditorInput)input);
+                        input2 = new InstallOptionsEditorInput((IFileEditorInput)input2);
                     }
-                    else if (input instanceof IPathEditorInput){
-                        input = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input);
+                    else if (input2 instanceof IPathEditorInput){
+                        input2 = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input2);
                     }
                     else {
-                        input = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input.getAdapter(IPathEditorInput.class));
+                        input2 = new InstallOptionsExternalFileEditorInput((IPathEditorInput)input2.getAdapter(IPathEditorInput.class));
                     }
-                    ((IInstallOptionsEditorInput)input).getDocumentProvider().connect(input);
+                    ((IInstallOptionsEditorInput)input2).getDocumentProvider().connect(input2);
                 }
                 else {
-                    IInstallOptionsEditorInput input2 = (IInstallOptionsEditorInput)input;
-                    input2.getDocumentProvider().connect(input);
-                    input2.completedSwitch();
+                    IInstallOptionsEditorInput input3 = (IInstallOptionsEditorInput)input2;
+                    input3.getDocumentProvider().connect(input3);
+                    input3.completedSwitch();
                 }
             }
             catch (CoreException e) {
@@ -1576,11 +1577,11 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             }
         }
 
-        super.setInput(input);
+        super.setInput(input2);
 
-        input = getEditorInput();
-        if (input != null) {
-            Object source = ((IInstallOptionsEditorInput)input).getSource();
+        input2 = getEditorInput();
+        if (input2 != null) {
+            Object source = ((IInstallOptionsEditorInput)input2).getSource();
             if(source instanceof IFile) {
                 ((IFile)source).getWorkspace().addResourceChangeListener(mResourceListener);
                 ((InstallOptionsEditDomain)getEditDomain()).setFile((IFile)source);
@@ -2233,20 +2234,20 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
          */
         private Control createCreationToolOptions(Composite composite)
         {
-            composite = new Composite(composite, SWT.NONE);
-            composite.setLayout(new GridLayout(1,false));
+        	Composite composite2 = new Composite(composite, SWT.NONE);
+            composite2.setLayout(new GridLayout(1,false));
 
-            Label label = new Label(composite, SWT.NONE);
+            Label label = new Label(composite2, SWT.NONE);
             label.setText(InstallOptionsPlugin.getResourceString("creation.tools.options")); //$NON-NLS-1$
             GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
             label.setLayoutData(data);
 
-            Button b = createButton(composite, UNLOAD_CREATION_TOOL_WHEN_FINISHED_ID,
+            Button b = createButton(composite2, UNLOAD_CREATION_TOOL_WHEN_FINISHED_ID,
                     InstallOptionsPlugin.getResourceString("unload.creation.tool.when.finished.label"), //$NON-NLS-1$
                     SWT.CHECK,null);
             ((GridData)b.getLayoutData()).horizontalIndent = 5;
             b.setSelection(((PaletteViewerPreferences)mPrefs).getUnloadCreationToolWhenFinished());
-            return composite;
+            return composite2;
         }
 
         @Override

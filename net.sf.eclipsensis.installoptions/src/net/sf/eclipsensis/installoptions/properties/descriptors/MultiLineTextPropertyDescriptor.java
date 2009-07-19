@@ -560,12 +560,13 @@ public class MultiLineTextPropertyDescriptor extends TextPropertyDescriptor impl
         @Override
 		protected void doSetValue(Object value)
         {
-            if(value == null) {
-                value = ""; //$NON-NLS-1$
+        	Object value2 = value;
+            if(value2 == null) {
+                value2 = ""; //$NON-NLS-1$
             }
-            mValue = value;
+            mValue = value2;
             if(mDelegate != null) {
-                mDelegate.setValue(value);
+                mDelegate.setValue(value2);
             }
         }
 

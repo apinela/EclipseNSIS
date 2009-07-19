@@ -43,17 +43,17 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                 cols++;
             }
 
-            parent = createSectionComposite(parent);
+            Composite parent2 = createSectionComposite(parent);
 			GridLayout layout = new GridLayout(cols,false);
             layout.marginHeight = layout.marginWidth = 0;
-            parent.setLayout(layout);
+            parent2.setLayout(layout);
 
-            Control c = createGeneralSection(widget, parent, commandHelper);
+            Control c = createGeneralSection(widget, parent2, commandHelper);
             GridData data = new GridData(SWT.FILL,SWT.FILL,false,true);
             c.setLayoutData(data);
 
             if(customSectionCreator != null) {
-                Composite composite = getWidgetFactory().createComposite(parent);
+                Composite composite = getWidgetFactory().createComposite(parent2);
                 layout = new GridLayout(1,false);
                 layout.marginHeight = layout.marginWidth = 0;
                 composite.setLayout(layout);
@@ -64,11 +64,11 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                 }
             }
             if(widget.getTypeDef().getFlags().size() > 0 || widget.getFlags().size() > 0) {
-                c = createFlagsSection(widget, parent, commandHelper);
+                c = createFlagsSection(widget, parent2, commandHelper);
                 data = new GridData(SWT.FILL,SWT.FILL,false,true);
                 c.setLayoutData(data);
             }
-            return parent;
+            return parent2;
         }
         return null;
     }
@@ -231,11 +231,11 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
     {
         TabbedPropertySheetWidgetFactory factory = getWidgetFactory();
 
-        parent = factory.createGroup(parent, InstallOptionsPlugin.getResourceString("basic.section.label")); //$NON-NLS-1$
-        parent.setLayout(new GridLayout(1,false));
+        Composite parent2 = factory.createGroup(parent, InstallOptionsPlugin.getResourceString("basic.section.label")); //$NON-NLS-1$
+        parent2.setLayout(new GridLayout(1,false));
 
         final boolean[] nonUserChange = { false };
-        Composite composite = factory.createComposite(parent);
+        Composite composite = factory.createComposite(parent2);
         composite.setLayout(new GridLayout(2,false));
         final String indexName = widget.getPropertyDescriptor(InstallOptionsModel.PROPERTY_INDEX).getDisplayName();
         CLabel l = factory.createCLabel(composite, indexName);
@@ -351,7 +351,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         });
 
         final String positionName = widget.getPropertyDescriptor(InstallOptionsModel.PROPERTY_POSITION).getDisplayName();
-        Group group = factory.createGroup(parent, positionName);
+        Group group = factory.createGroup(parent2, positionName);
         group.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
         group.setLayout(new GridLayout(2,false));
         final Position position = widget.getPosition().getCopy();
@@ -452,7 +452,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         }
 
         final String lockedName = widget.getPropertyDescriptor(InstallOptionsWidget.PROPERTY_LOCKED).getDisplayName();
-        final Button lockedButton = factory.createButton(parent, lockedName, SWT.FLAT|SWT.CHECK);
+        final Button lockedButton = factory.createButton(parent2, lockedName, SWT.FLAT|SWT.CHECK);
         lockedButton.setSelection(widget.isLocked());
         lockedButton.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -549,6 +549,6 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         });
 
         composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
-        return parent;
+        return parent2;
     }
 }

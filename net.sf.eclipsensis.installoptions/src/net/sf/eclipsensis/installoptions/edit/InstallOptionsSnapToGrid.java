@@ -32,42 +32,43 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
         Font f = FontUtility.getInstallOptionsFont();
         double dpuX = ((double)FigureUtility.dialogUnitsToPixelsX(1000,f))/1000;
         double dpuY = ((double)FigureUtility.dialogUnitsToPixelsY(1000,f))/1000;
-        rect = rect.getPreciseCopy();
-
-        makeRelative(container.getContentPane(), rect);
+        PrecisionRectangle rect2 = rect.getPreciseCopy();
+        int snapLocations2 = snapLocations;
+        
+        makeRelative(container.getContentPane(), rect2);
         PrecisionRectangle correction = new PrecisionRectangle();
         makeRelative(container.getContentPane(), correction);
 
-        if (gridX > 0 && (snapLocations & EAST) != 0) {
-            correction.preciseWidth -= Math.IEEEremainder(rect.preciseRight()
+        if (gridX > 0 && (snapLocations2 & EAST) != 0) {
+            correction.preciseWidth -= Math.IEEEremainder(rect2.preciseRight()
                     - origin.x*dpuX - 1, gridX*dpuX);
-            snapLocations &= ~EAST;
+            snapLocations2 &= ~EAST;
         }
 
-        if ((snapLocations & (WEST | HORIZONTAL)) != 0 && gridX > 0) {
-            double leftCorrection = Math.IEEEremainder(rect.preciseX - origin.x*dpuX,
+        if ((snapLocations2 & (WEST | HORIZONTAL)) != 0 && gridX > 0) {
+            double leftCorrection = Math.IEEEremainder(rect2.preciseX - origin.x*dpuX,
                     gridX*dpuX);
             correction.preciseX -= leftCorrection;
-            if ((snapLocations & HORIZONTAL) == 0) {
+            if ((snapLocations2 & HORIZONTAL) == 0) {
                 correction.preciseWidth += leftCorrection;
             }
-            snapLocations &= ~(WEST | HORIZONTAL);
+            snapLocations2 &= ~(WEST | HORIZONTAL);
         }
 
-        if ((snapLocations & SOUTH) != 0 && gridY > 0) {
-            correction.preciseHeight -= Math.IEEEremainder(rect.preciseBottom()
+        if ((snapLocations2 & SOUTH) != 0 && gridY > 0) {
+            correction.preciseHeight -= Math.IEEEremainder(rect2.preciseBottom()
                     - origin.y*dpuY - 1, gridY*dpuY);
-            snapLocations &= ~SOUTH;
+            snapLocations2 &= ~SOUTH;
         }
 
-        if ((snapLocations & (NORTH | VERTICAL)) != 0 && gridY > 0) {
+        if ((snapLocations2 & (NORTH | VERTICAL)) != 0 && gridY > 0) {
             double topCorrection = Math.IEEEremainder(
-                    rect.preciseY - origin.y*dpuY, gridY*dpuY);
+                    rect2.preciseY - origin.y*dpuY, gridY*dpuY);
             correction.preciseY -= topCorrection;
-            if ((snapLocations & VERTICAL) == 0) {
+            if ((snapLocations2 & VERTICAL) == 0) {
                 correction.preciseHeight += topCorrection;
             }
-            snapLocations &= ~(NORTH | VERTICAL);
+            snapLocations2 &= ~(NORTH | VERTICAL);
         }
 
         correction.updateInts();
@@ -77,6 +78,6 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
         result.preciseWidth += correction.preciseWidth;
         result.preciseHeight += correction.preciseHeight;
         result.updateInts();
-        return snapLocations;
+        return snapLocations2;
     }
 }

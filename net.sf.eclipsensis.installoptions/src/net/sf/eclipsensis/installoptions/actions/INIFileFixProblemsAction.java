@@ -27,20 +27,21 @@ public class INIFileFixProblemsAction extends INIFileAction
     {
         super(editor);
         String prefix;
-        if(FIX_ALL_ID.equals(id)) {
+        String id2 = id;
+        if(FIX_ALL_ID.equals(id2)) {
             mFixFlag = INILine.VALIDATE_FIX_ALL;
             prefix="fix.all"; //$NON-NLS-1$
         }
-        else if(FIX_WARNINGS_ID.equals(id)) {
+        else if(FIX_WARNINGS_ID.equals(id2)) {
             mFixFlag = INILine.VALIDATE_FIX_WARNINGS;
             prefix="fix.warnings"; //$NON-NLS-1$
         }
         else {
             mFixFlag = INILine.VALIDATE_FIX_ERRORS;
-            id = FIX_ERRORS_ID;
+            id2 = FIX_ERRORS_ID;
             prefix="fix.errors"; //$NON-NLS-1$
         }
-        setId(id);
+        setId(id2);
 
         setText(InstallOptionsPlugin.getResourceString(prefix+".action.name")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString(prefix+".action.tooltip")); //$NON-NLS-1$

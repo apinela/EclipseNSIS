@@ -392,16 +392,17 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
 
     private static IINIContainer loadLine(INIFile iniFile, IINIContainer container, String text, String delimiter)
     {
+    	IINIContainer container2 = container;
         INILine line = parse(text, delimiter);
         iniFile.mLines.add(line);
         if(line instanceof IINIContainer) {
             iniFile.addChild(line);
-            container = (IINIContainer)line;
+            container2 = (IINIContainer)line;
         }
         else {
-            container.addChild(line);
+            container2.addChild(line);
         }
-        return container;
+        return container2;
     }
 
     private List<INILine> parseLines(IDocument doc, int startLine, int endLine)

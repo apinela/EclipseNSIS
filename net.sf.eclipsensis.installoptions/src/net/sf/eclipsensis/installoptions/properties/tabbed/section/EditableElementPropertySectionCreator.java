@@ -28,18 +28,18 @@ public class EditableElementPropertySectionCreator extends WidgetPropertySection
     @Override
 	protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
-        parent = (Composite)super.createOtherPropertySection(parent, widgetFactory, commandHelper);
-        Text text = createTextSection(parent, InstallOptionsModel.PROPERTY_MINLEN, widgetFactory, commandHelper);
+    	Composite parent2 = (Composite)super.createOtherPropertySection(parent, widgetFactory, commandHelper);
+        Text text = createTextSection(parent2, InstallOptionsModel.PROPERTY_MINLEN, widgetFactory, commandHelper);
         if(text != null) {
             text.addVerifyListener(getNumberVerifyListener());
         }
 
-        text = createTextSection(parent, InstallOptionsModel.PROPERTY_MAXLEN, widgetFactory, commandHelper);
+        text = createTextSection(parent2, InstallOptionsModel.PROPERTY_MAXLEN, widgetFactory, commandHelper);
         if(text != null) {
             text.addVerifyListener(getNumberVerifyListener());
         }
 
-        text = createTextSection(parent, InstallOptionsModel.PROPERTY_VALIDATETEXT, widgetFactory, commandHelper, true);
+        text = createTextSection(parent2, InstallOptionsModel.PROPERTY_VALIDATETEXT, widgetFactory, commandHelper, true);
         if(text != null) {
             GC gc = new GC(text);
             gc.setFont(JFaceResources.getDialogFont());
@@ -48,7 +48,7 @@ public class EditableElementPropertySectionCreator extends WidgetPropertySection
             GridData data = (GridData)text.getLayoutData();
             data.heightHint = fontMetrics.getHeight()*2;
         }
-        return parent;
+        return parent2;
     }
 
     @Override

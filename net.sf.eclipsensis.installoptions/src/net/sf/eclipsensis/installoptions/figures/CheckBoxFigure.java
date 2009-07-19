@@ -73,8 +73,8 @@ public class CheckBoxFigure extends ButtonFigure
         Button button = (Button)super.createUneditableSWTControl(parent, style);
         button.setSelection(mState);
         if(mLeftText) {
-            style = WinAPI.GetWindowLong(button.handle,WinAPI.GWL_STYLE);
-            WinAPI.SetWindowLong(button.handle,WinAPI.GWL_STYLE,style|WinAPI.BS_LEFTTEXT);
+            WinAPI.SetWindowLong(button.handle,WinAPI.GWL_STYLE,
+            		WinAPI.GetWindowLong(button.handle,WinAPI.GWL_STYLE)|WinAPI.BS_LEFTTEXT);
         }
         return button;
     }

@@ -389,7 +389,8 @@ public class InstallOptionsRulerComposite extends Composite
         /**
          * Constructor
          */
-        public RulerViewer(InstallOptionsDialog dialog) {
+        public RulerViewer(InstallOptionsDialog dialog) 
+        {
             super(dialog);
             init();
         }
@@ -397,12 +398,14 @@ public class InstallOptionsRulerComposite extends Composite
          * @see org.eclipse.gef.EditPartViewer#appendSelection(org.eclipse.gef.EditPart)
          */
         @Override
-		public void appendSelection(EditPart editpart) {
-            if (editpart instanceof RootEditPart) {
-                editpart = ((RootEditPart)editpart).getContents();
+		public void appendSelection(EditPart editpart) 
+        {
+        	EditPart editpart2 = editpart;
+            if (editpart2 instanceof RootEditPart) {
+                editpart2 = ((RootEditPart)editpart2).getContents();
             }
-            setFocus(editpart);
-            super.appendSelection(editpart);
+            setFocus(editpart2);
+            super.appendSelection(editpart2);
         }
         /**
          * @see org.eclipse.gef.GraphicalViewer#findHandleAt(org.eclipse.draw2d.geometry.Point)

@@ -32,12 +32,12 @@ public abstract class WidgetPropertySectionCreator extends PropertySectionCreato
 
     public final Control createPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
-        parent = widgetFactory.createComposite(parent);
+    	Composite parent2 = widgetFactory.createComposite(parent);
         GridLayout layout = new GridLayout(1,false);
         layout.marginHeight = layout.marginWidth = 0;
-        parent.setLayout(layout);
+        parent2.setLayout(layout);
         if(shouldCreateAppearancePropertySection()) {
-            Group group = widgetFactory.createGroup(parent, InstallOptionsPlugin.getResourceString("appearance.section.label")); //$NON-NLS-1$
+            Group group = widgetFactory.createGroup(parent2, InstallOptionsPlugin.getResourceString("appearance.section.label")); //$NON-NLS-1$
             group.setLayout(new GridLayout(1,false));
             group.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
             Control c = createAppearancePropertySection(group, widgetFactory, commandHelper);
@@ -49,7 +49,7 @@ public abstract class WidgetPropertySectionCreator extends PropertySectionCreato
             }
         }
         if(shouldCreateOtherPropertySection()) {
-            Group group = widgetFactory.createGroup(parent, InstallOptionsPlugin.getResourceString("other.section.label")); //$NON-NLS-1$
+            Group group = widgetFactory.createGroup(parent2, InstallOptionsPlugin.getResourceString("other.section.label")); //$NON-NLS-1$
             group.setLayout(new GridLayout(1,false));
             group.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
             Control c = createOtherPropertySection(group, widgetFactory, commandHelper);
@@ -60,7 +60,7 @@ public abstract class WidgetPropertySectionCreator extends PropertySectionCreato
                 group.dispose();
             }
         }
-        return parent;
+        return parent2;
     }
 
     protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)

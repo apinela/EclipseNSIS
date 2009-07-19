@@ -417,15 +417,15 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     private List<String> retainSupportedFlags(List<String> flags)
     {
-        flags = new ArrayList<String>(flags);
+    	List<String> flags2 = new ArrayList<String>(flags);
         Collection<String> supportedFlags = getTypeDef().getFlags();
-        for (Iterator<String> iter = flags.iterator(); iter.hasNext();) {
+        for (Iterator<String> iter = flags2.iterator(); iter.hasNext();) {
             String flag = iter.next();
             if(!supportedFlags.contains(flag)) {
                 iter.remove();
             }
         }
-        return flags;
+        return flags2;
     }
 
     public boolean hasFlag(String flag)
@@ -460,7 +460,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     private int toGraphical(int value, int refValue)
     {
         if(value < 0) {
-            value = Math.max(value,refValue+value);
+            return Math.max(value,refValue+value);
         }
         return value;
     }
@@ -499,26 +499,26 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     private Position toGraphical(Position p, Dimension size, boolean toPixels, Font font)
     {
-        p = p.getCopy();
+        Position p2 = p.getCopy();
         if(size == null) {
-            p.set(0,0,0,0);
+            p2.set(0,0,0,0);
         }
         else {
-            p.left = toGraphical(p.left,size.width);
-            p.top = toGraphical(p.top,size.height);
-            p.right = toGraphical(p.right,size.width);
-            p.bottom = toGraphical(p.bottom,size.height);
+            p2.left = toGraphical(p2.left,size.width);
+            p2.top = toGraphical(p2.top,size.height);
+            p2.right = toGraphical(p2.right,size.width);
+            p2.bottom = toGraphical(p2.bottom,size.height);
         }
         if(toPixels) {
-            p = FigureUtility.dialogUnitsToPixels(p,font);
+            p2 = FigureUtility.dialogUnitsToPixels(p2,font);
         }
-        return p;
+        return p2;
     }
 
     private int toModel(int value, int localValue, int refValue)
     {
         if(localValue < 0 && value < refValue) {
-            value = Math.max(0,value) - refValue;
+            return Math.max(0,value) - refValue;
         }
         return value;
     }
@@ -557,19 +557,20 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     private Position toModel(Position p, Dimension size, boolean fromPixels, Font font)
     {
+    	Position p2 = p;
         if(fromPixels) {
-            p = FigureUtility.pixelsToDialogUnits(p,font);
+            p2 = FigureUtility.pixelsToDialogUnits(p2,font);
         }
         if(size == null) {
-            p.set(0,0,0,0);
+            p2.set(0,0,0,0);
         }
         else {
-            p.left = toModel(p.left, mPosition.left, size.width);
-            p.top = toModel(p.top, mPosition.top, size.height);
-            p.right = toModel(p.right, mPosition.right, size.width);
-            p.bottom = toModel(p.bottom, mPosition.bottom, size.height);
+            p2.left = toModel(p2.left, mPosition.left, size.width);
+            p2.top = toModel(p2.top, mPosition.top, size.height);
+            p2.right = toModel(p2.right, mPosition.right, size.width);
+            p2.bottom = toModel(p2.bottom, mPosition.bottom, size.height);
         }
-        return p;
+        return p2;
     }
 
     public Position getPosition()

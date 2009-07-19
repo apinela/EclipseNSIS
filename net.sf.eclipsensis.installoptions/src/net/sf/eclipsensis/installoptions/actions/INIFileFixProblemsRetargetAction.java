@@ -19,18 +19,19 @@ public class INIFileFixProblemsRetargetAction extends RetargetAction
     {
         super("",""); //$NON-NLS-1$ //$NON-NLS-2$
         String prefix;
-        if(INIFileFixProblemsAction.FIX_ALL_ID.equals(id)) {
+        String id2 = id;
+        if(INIFileFixProblemsAction.FIX_ALL_ID.equals(id2)) {
             prefix="fix.all"; //$NON-NLS-1$
         }
-        else if(INIFileFixProblemsAction.FIX_WARNINGS_ID.equals(id)) {
+        else if(INIFileFixProblemsAction.FIX_WARNINGS_ID.equals(id2)) {
             prefix="fix.warnings"; //$NON-NLS-1$
         }
         else {
-            id = INIFileFixProblemsAction.FIX_ERRORS_ID;
+            id2 = INIFileFixProblemsAction.FIX_ERRORS_ID;
             prefix="fix.errors"; //$NON-NLS-1$
         }
 
-        setId(id);
+        setId(id2);
         setText(InstallOptionsPlugin.getResourceString(prefix+".action.name")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString(prefix+".action.tooltip")); //$NON-NLS-1$
         setImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString(prefix+".action.icon"))); //$NON-NLS-1$

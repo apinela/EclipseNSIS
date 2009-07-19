@@ -38,8 +38,8 @@ public class InstallOptionsGuideEditPart extends GuideEditPart
 	public void updateLocationOfFigures(int position)
     {
         Font f = FontUtility.getInstallOptionsFont();
-        position = (isHorizontal()?FigureUtility.pixelsToDialogUnitsY(position,f):FigureUtility.pixelsToDialogUnitsX(position,f));
-        position = (isHorizontal()?FigureUtility.dialogUnitsToPixelsY(position,f):FigureUtility.dialogUnitsToPixelsX(position,f));
-        super.updateLocationOfFigures(position);
+        int position2 = (isHorizontal()?FigureUtility.pixelsToDialogUnitsY(position,f):FigureUtility.pixelsToDialogUnitsX(position,f));
+        position2 = (isHorizontal()?FigureUtility.dialogUnitsToPixelsY(position2,f):FigureUtility.dialogUnitsToPixelsX(position2,f));
+        super.updateLocationOfFigures(position2);
     }
 }

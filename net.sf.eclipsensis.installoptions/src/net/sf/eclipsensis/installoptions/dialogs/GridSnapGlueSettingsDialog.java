@@ -55,13 +55,14 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
     @SuppressWarnings("unchecked")
 	private <T> T makeCopy(T o)
     {
-        if(o instanceof Point) {
-            o = (T)new Point((Point)o);
+    	T o2 = o;
+        if(o2 instanceof Point) {
+            o2 = (T)new Point((Point)o2);
         }
-        else if(o instanceof Dimension) {
-            o = (T)new Dimension((Dimension)o);
+        else if(o2 instanceof Dimension) {
+            o2 = (T)new Dimension((Dimension)o2);
         }
-        return o;
+        return o2;
     }
 
     @SuppressWarnings("unchecked")

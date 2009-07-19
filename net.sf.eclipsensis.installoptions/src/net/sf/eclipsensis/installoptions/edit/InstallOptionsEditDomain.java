@@ -116,12 +116,13 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
         @Override
 		public synchronized void execute(Command command)
         {
+        	Command command2 = command;
             if(validateEdit()) {
-                CompoundCommand cmd = new CompoundCommand(command.getLabel());
-                cmd.add(command);
-                command = cmd;
-                mCurrentCommands.push(command);
-                super.execute(command);
+                CompoundCommand cmd = new CompoundCommand(command2.getLabel());
+                cmd.add(command2);
+                command2 = cmd;
+                mCurrentCommands.push(command2);
+                super.execute(command2);
                 mCurrentCommands.pop();
             }
             else {

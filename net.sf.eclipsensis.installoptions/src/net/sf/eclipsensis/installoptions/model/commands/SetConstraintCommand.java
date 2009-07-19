@@ -29,11 +29,11 @@ public class SetConstraintCommand extends Command
         mOldPos = mModel.getPosition().getCopy();
         Position oldPos = mModel.toGraphical(mOldPos,false);
         mGraphicalPos = pos;
-        pos = mModel.toGraphical(mModel.toModel(pos),false);
+        Position pos2 = mModel.toGraphical(mModel.toModel(pos),false);
 
         if(moveDelta != null) {
-            int left = pos.left;
-            int top = pos.top;
+            int left = pos2.left;
+            int top = pos2.top;
 
             if(moveDelta.x == 0) {
                 left = oldPos.left;
@@ -41,13 +41,13 @@ public class SetConstraintCommand extends Command
             if(moveDelta.y == 0) {
                 top = oldPos.top;
             }
-            if(left != pos.left || top != pos.top) {
-                pos.setLocation(left, top);
+            if(left != pos2.left || top != pos2.top) {
+                pos2.setLocation(left, top);
             }
         }
 
         if(sizeDelta != null) {
-            Dimension newSize = pos.getSize();
+            Dimension newSize = pos2.getSize();
             Dimension oldSize = oldPos.getSize();
             int width = newSize.width;
             int height = newSize.width;
@@ -59,10 +59,10 @@ public class SetConstraintCommand extends Command
                 height = oldSize.height;
             }
             if(width != newSize.width || height != newSize.width) {
-                pos.setSize(width, height);
+                pos2.setSize(width, height);
             }
         }
-        mNewPos = mModel.toModel(pos,false);
+        mNewPos = mModel.toModel(pos2,false);
     }
 
     @Override

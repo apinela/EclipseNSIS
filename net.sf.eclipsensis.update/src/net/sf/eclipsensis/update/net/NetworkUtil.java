@@ -111,12 +111,13 @@ public class NetworkUtil
     {
         try
         {
-            monitor.beginTask(cConnectionFormat.format(new String[] { url.getHost() }), 100);
+        	URL url2 = url;
+            monitor.beginTask(cConnectionFormat.format(new String[] { url2.getHost() }), 100);
             HttpURLConnection conn = null;
             int responseCode;
             try
             {
-                conn = (HttpURLConnection) url.openConnection();
+                conn = (HttpURLConnection) url2.openConnection();
                 responseCode = conn.getResponseCode();
             }
             catch (IOException e)
@@ -135,9 +136,9 @@ public class NetworkUtil
                 if (defaultURL != null)
                 {
                     monitor.worked(50);
-                    url = defaultURL;
-                    monitor.setTaskName(cConnectionFormat.format(new String[] { url.getHost() }));
-                    conn = (HttpURLConnection) url.openConnection();
+                    url2 = defaultURL;
+                    monitor.setTaskName(cConnectionFormat.format(new String[] { url2.getHost() }));
+                    conn = (HttpURLConnection) url2.openConnection();
                     responseCode = conn.getResponseCode();
                 }
                 if (responseCode >= 400)

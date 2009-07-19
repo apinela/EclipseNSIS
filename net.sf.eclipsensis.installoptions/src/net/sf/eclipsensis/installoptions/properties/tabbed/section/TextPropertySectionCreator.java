@@ -33,13 +33,13 @@ public class TextPropertySectionCreator extends EditableElementPropertySectionCr
     @Override
 	protected Control createAppearancePropertySection(Composite parent, final TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
-        parent = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
-        final Composite composite = widgetFactory.createComposite(parent);
+    	Composite parent2 = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
+        final Composite composite = widgetFactory.createComposite(parent2);
         GridLayout layout = new GridLayout(2,false);
         layout.marginWidth = layout.marginHeight = 0;
         composite.setLayout(layout);
         GridData data = new GridData(SWT.FILL, SWT.FILL,true,true);
-        data.horizontalSpan = ((GridLayout)parent.getLayout()).numColumns;
+        data.horizontalSpan = ((GridLayout)parent2.getLayout()).numColumns;
         composite.setLayoutData(data);
         final Text[] text = {createStatePropertySection(composite, widgetFactory, commandHelper)};
         Collection<String> flags = getWidget().getTypeDef().getFlags();
@@ -94,7 +94,7 @@ public class TextPropertySectionCreator extends EditableElementPropertySectionCr
 		        }
 		    });
 		}
-        return parent;
+        return parent2;
     }
 
     protected Text createStatePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)

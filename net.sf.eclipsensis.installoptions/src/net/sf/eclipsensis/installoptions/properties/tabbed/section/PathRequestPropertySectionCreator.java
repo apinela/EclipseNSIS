@@ -25,9 +25,9 @@ public class PathRequestPropertySectionCreator extends EditableElementPropertySe
     @Override
 	protected Control createAppearancePropertySection(Composite parent, final TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
-        parent = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
-        createTextSection(parent, InstallOptionsModel.PROPERTY_STATE, widgetFactory, commandHelper);
-        return parent;
+    	Composite parent2 = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
+        createTextSection(parent2, InstallOptionsModel.PROPERTY_STATE, widgetFactory, commandHelper);
+        return parent2;
     }
 
     @Override

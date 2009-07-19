@@ -60,12 +60,12 @@ public class NSISUpdateWizardPage extends WizardPage
 
     public void createControl(Composite parent)
     {
-        parent = new Composite(parent, SWT.NONE);
-        parent.setLayout(new GridLayout(1, false));
+    	Composite parent2 = new Composite(parent, SWT.NONE);
+        parent2.setLayout(new GridLayout(1, false));
 
-        Group group1 = createActionGroup(parent);
-        Group group2 = createOptionsGroup(parent);
-        Link link = new Link(parent, SWT.WRAP);
+        Group group1 = createActionGroup(parent2);
+        Group group2 = createOptionsGroup(parent2);
+        Link link = new Link(parent2, SWT.WRAP);
         link.setText(LINK_TEXT);
         link.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -82,9 +82,9 @@ public class NSISUpdateWizardPage extends WizardPage
         GridData gridData = new GridData(SWT.FILL, SWT.FILL, false, false);
         gridData.widthHint = Math.max(size1.x, size2.x);
         link.setLayoutData(gridData);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent2,
                 EclipseNSISUpdatePlugin.PLUGIN_CONTEXT_PREFIX + "nsis_update_wizard_context"); //$NON-NLS-1$
-        setControl(parent);
+        setControl(parent2);
     }
 
     private Group createActionGroup(Composite parent)

@@ -120,8 +120,8 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
 
     protected boolean isHexChar(char c)
     {
-        c = Character.toLowerCase(c);
-        return (c >= 'a' && c <= 'f');
+        char c2 = Character.toLowerCase(c);
+        return (c2 >= 'a' && c2 <= 'f');
     }
 
     protected boolean isEmptyAllowed()
@@ -145,11 +145,12 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
 
     protected int parseInt(String value, int radix)
     {
+    	String value2 = value;
         switch(radix) {
             case 16:
-                value = value.substring(2);
+                value2 = value2.substring(2);
         }
-        return (int)Long.parseLong(value,radix);
+        return (int)Long.parseLong(value2,radix);
     }
 
     protected String formatInt(int value, int radix, String prefix)

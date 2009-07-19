@@ -55,25 +55,25 @@ public class SchedulerPreferencePage extends PreferencePage implements IWorkbenc
     @Override
 	protected Control createContents(Composite parent)
     {
-        parent = new Composite(parent,SWT.NONE);
+    	Composite parent2 = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
-        parent.setLayout(layout);
+        parent2.setLayout(layout);
 
-        mAutoUpdate = new Button(parent,SWT.CHECK);
+        mAutoUpdate = new Button(parent2,SWT.CHECK);
         mAutoUpdate.setText(EclipseNSISUpdatePlugin.getResourceString("auto.update.label")); //$NON-NLS-1$
         mAutoUpdate.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false));
 
-        createScheduleGroup(parent);
-        createActionGroup(parent);
+        createScheduleGroup(parent2);
+        createActionGroup(parent2);
 
         loadPreferences();
 
         new Enabler(mAutoUpdate, new Control[] {mStartup,mDaily,mWeekly,mMonthly,
                     mNotify,mDownload,mInstall}).run();
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,EclipseNSISUpdatePlugin.PLUGIN_CONTEXT_PREFIX+"nsis_scheduler_prefs_context"); //$NON-NLS-1$
-        return parent;
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent2,EclipseNSISUpdatePlugin.PLUGIN_CONTEXT_PREFIX+"nsis_scheduler_prefs_context"); //$NON-NLS-1$
+        return parent2;
     }
 
     private void loadPreferences()
@@ -256,11 +256,12 @@ public class SchedulerPreferencePage extends PreferencePage implements IWorkbenc
 
     private void setTime(DateTime dt, int time)
     {
-        dt.setSeconds(time % 60);
-        time /= 60;
-        dt.setMinutes(time % 60);
-        time /= 60;
-        dt.setHours(time);
+    	int time2 = time;
+        dt.setSeconds(time2 % 60);
+        time2 /= 60;
+        dt.setMinutes(time2 % 60);
+        time2 /= 60;
+        dt.setHours(time2);
     }
 
     private int getTime(DateTime dt)

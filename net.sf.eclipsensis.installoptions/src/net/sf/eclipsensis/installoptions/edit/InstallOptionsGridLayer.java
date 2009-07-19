@@ -112,11 +112,12 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
 
     public void setStyle(String style)
     {
-        if (style == null || !IInstallOptionsConstants.GRID_STYLE_DOTS.equals(style)) {
-            style = GRID_STYLE_LINES;
+    	String style2 = style;
+        if (style2 == null || !IInstallOptionsConstants.GRID_STYLE_DOTS.equals(style2)) {
+            style2 = GRID_STYLE_LINES;
         }
-        if (!style.equals(mStyle)) {
-            mStyle = style;
+        if (!style2.equals(mStyle)) {
+            mStyle = style2;
             repaint();
         }
     }

@@ -20,14 +20,15 @@ public class DefaultSectionDisplayTextProvider implements IINISectionDisplayText
 
     public String formatDisplayText(String type, INISection section)
     {
-        InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type);
+    	String type2 = type;
+        InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type2);
         if(typeDef != null) {
             String displayText = getDisplayText(typeDef, section);
             if(!typeDef.getName().equals(InstallOptionsModel.TYPE_UNKNOWN)) {
-                type = typeDef.getName();
+                type2 = typeDef.getName();
             }
             return InstallOptionsPlugin.getFormattedString("source.outline.display.name.format",  //$NON-NLS-1$
-                    new String[]{section.getName(), type, (Common.isEmpty(displayText)?MISSING_DISPLAY_NAME:displayText)});
+                    new String[]{section.getName(), type2, (Common.isEmpty(displayText)?MISSING_DISPLAY_NAME:displayText)});
         }
         return null;
     }

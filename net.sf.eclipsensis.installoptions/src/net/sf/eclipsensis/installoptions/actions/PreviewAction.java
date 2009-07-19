@@ -249,12 +249,14 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                     ModalContext.run(new IRunnableWithProgress() {
                         private File createPreviewFile(File previewFile, INIFile inifile, final NSISLanguage lang) throws IOException
                         {
-                            if(previewFile == null) {
-                                previewFile = File.createTempFile("preview",".ini"); //$NON-NLS-1$ //$NON-NLS-2$
-                                previewFile.deleteOnExit();
+                        	File previewFile2 = previewFile;
+                        	INIFile inifile2 = inifile;
+                            if(previewFile2 == null) {
+                                previewFile2 = File.createTempFile("preview",".ini"); //$NON-NLS-1$ //$NON-NLS-2$
+                                previewFile2.deleteOnExit();
                             }
-                            inifile = inifile.copy();
-                            InstallOptionsDialog dialog = InstallOptionsDialog.loadINIFile(inifile);
+                            inifile2 = inifile2.copy();
+                            InstallOptionsDialog dialog = InstallOptionsDialog.loadINIFile(inifile2);
                             DialogSize dialogSize;
                             if(getId().equals(PREVIEW_MUI_ID)) {
                                 dialogSize = DialogSizeManager.getDialogSize(cMUIDialogSizeName);
@@ -338,9 +340,9 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                     }
                                 }
                             }
-                            inifile = dialog.updateINIFile();
-                            IOUtility.writeContentToFile(previewFile,inifile.toString().getBytes());
-                            return previewFile;
+                            inifile2 = dialog.updateINIFile();
+                            IOUtility.writeContentToFile(previewFile2,inifile2.toString().getBytes());
+                            return previewFile2;
                         }
 
                         public void run(IProgressMonitor monitor)

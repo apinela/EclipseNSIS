@@ -254,10 +254,10 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     @Override
 	protected final Control createDialogArea(Composite parent)
     {
-        parent = (Composite)super.createDialogArea(parent);
-        GridLayout layout = (GridLayout)parent.getLayout();
+    	Composite parent2 = (Composite)super.createDialogArea(parent);
+        GridLayout layout = (GridLayout)parent2.getLayout();
 
-        Composite composite = new Composite(parent,SWT.NONE);
+        Composite composite = new Composite(parent2,SWT.NONE);
         GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         gridData.horizontalSpan = layout.numColumns;
         composite.setLayoutData(gridData);
@@ -289,7 +289,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
                         UtilitiesPlugin.getResourceString("tools.jar.name"),false), //$NON-NLS-1$
                 true);
 
-        return parent;
+        return parent2;
     }
 
     @Override

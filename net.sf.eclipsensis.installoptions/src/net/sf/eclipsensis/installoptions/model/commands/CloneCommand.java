@@ -53,8 +53,7 @@ public class CloneCommand extends Command
         if (mBounds == null) {
             mBounds = new HashMap<InstallOptionsWidget, Rectangle>();
         }
-        newBounds = FigureUtility.pixelsToDialogUnits(newBounds,mFont);
-        mBounds.put(widget, newBounds);
+        mBounds.put(widget, FigureUtility.pixelsToDialogUnits(newBounds,mFont));
     }
 
     public void addWidget(InstallOptionsWidget widget, int index)

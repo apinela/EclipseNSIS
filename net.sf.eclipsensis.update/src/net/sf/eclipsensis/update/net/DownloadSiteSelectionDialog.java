@@ -84,18 +84,18 @@ public class DownloadSiteSelectionDialog extends Dialog
 
     private void makeLabel(Composite parent, Image image, String text, Color bgColor, MouseListener listener, MouseTrackListener listener2)
     {
-        parent = new Composite(parent,SWT.NONE);
-        parent.setBackground(bgColor);
-        parent.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
-        parent.addMouseListener(listener);
+    	Composite parent2 = new Composite(parent,SWT.NONE);
+        parent2.setBackground(bgColor);
+        parent2.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
+        parent2.addMouseListener(listener);
         if(listener2 != null) {
-            parent.addMouseTrackListener(listener2);
+            parent2.addMouseTrackListener(listener2);
         }
         GridLayout layout = new GridLayout(1,false);
         layout.marginWidth = layout.marginHeight = 0;
-        parent.setLayout(layout);
+        parent2.setLayout(layout);
 
-        Label l = new Label(parent,SWT.NONE);
+        Label l = new Label(parent2,SWT.NONE);
         l.setBackground(bgColor);
         if(image != null) {
             l.setImage(image);

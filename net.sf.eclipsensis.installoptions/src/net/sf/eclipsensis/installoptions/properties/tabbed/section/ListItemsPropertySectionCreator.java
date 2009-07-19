@@ -42,9 +42,9 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
     @Override
 	protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
-        parent = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
-        createListItemsAndStateSection(parent, widgetFactory, commandHelper);
-        return parent;
+    	Composite parent2 = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
+        createListItemsAndStateSection(parent2, widgetFactory, commandHelper);
+        return parent2;
     }
 
     @Override
@@ -60,17 +60,17 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         if(listItemsDescriptor != null && stateDescriptor != null) {
             final boolean[] nonUserChange = {false};
 
-            parent = widgetFactory.createGroup(parent, listItemsDescriptor.getDisplayName());
+            Composite parent2 = widgetFactory.createGroup(parent, listItemsDescriptor.getDisplayName());
             GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
             data.horizontalSpan = 2;
-            parent.setLayoutData(data);
+            parent2.setLayoutData(data);
             GridLayout gridLayout = new GridLayout(2, false);
             gridLayout.verticalSpacing = 0;
             gridLayout.marginHeight = 0;
             gridLayout.marginTop = 2;
-            parent.setLayout(gridLayout);
+            parent2.setLayout(gridLayout);
 
-            final Table table = widgetFactory.createTable(parent,SWT.FLAT|SWT.CHECK|SWT.MULTI);
+            final Table table = widgetFactory.createTable(parent2,SWT.FLAT|SWT.CHECK|SWT.MULTI);
             GC gc = new GC(table);
             gc.setFont(JFaceResources.getDialogFont());
             FontMetrics fontMetrics = gc.getFontMetrics();
@@ -94,11 +94,12 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
 
                 public int hashCode(Object element)
                 {
-                    if(element != null) {
-                        if(element instanceof String) {
-                            element = ((String)element).toLowerCase();
+                	Object element2 = element;
+                    if(element2 != null) {
+                        if(element2 instanceof String) {
+                            element2 = ((String)element2).toLowerCase();
                         }
-                        return element.hashCode();
+                        return element2.hashCode();
                     }
                     return 0;
                 }
@@ -177,14 +178,14 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                 }
             });
 
-            Composite buttons = widgetFactory.createComposite(parent);
+            Composite buttons = widgetFactory.createComposite(parent2);
             buttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
             GridLayout layout = new GridLayout(2, true);
             layout.marginHeight = layout.marginWidth = 0;
             buttons.setLayout(layout);
             createListAndStateButtons(buttons, viewer, widgetFactory, commandHelper);
 
-            CLabel l = widgetFactory.createCLabel(parent, InstallOptionsPlugin.getResourceString("listitems.state.checked.items.message"), SWT.FLAT); //$NON-NLS-1$
+            CLabel l = widgetFactory.createCLabel(parent2, InstallOptionsPlugin.getResourceString("listitems.state.checked.items.message"), SWT.FLAT); //$NON-NLS-1$
             FontData[] fd = l.getFont().getFontData();
             for (int i = 0; i < fd.length; i++) {
                 fd[i].setStyle(fd[i].getStyle()|SWT.BOLD);

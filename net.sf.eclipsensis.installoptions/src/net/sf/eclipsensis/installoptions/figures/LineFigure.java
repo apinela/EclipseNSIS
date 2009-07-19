@@ -23,13 +23,8 @@ public class LineFigure extends SWTControlFigure
     @Override
 	protected void setControlBounds(Control control, int x, int y, int width, int height)
     {
-        if( (getStyle() & SWT.HORIZONTAL) > 0) {
-            height = 2;
-        }
-        else {
-            width = 2;
-        }
-        super.setControlBounds(control, x, y, width, height);
+        boolean isHorizontal = (getStyle() & SWT.HORIZONTAL) > 0;
+        super.setControlBounds(control, x, y, isHorizontal?width:2, isHorizontal?2:height);
     }
 
     @Override

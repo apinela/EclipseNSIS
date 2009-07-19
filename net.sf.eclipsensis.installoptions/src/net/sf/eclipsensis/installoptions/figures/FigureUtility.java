@@ -44,19 +44,20 @@ public class FigureUtility
 
     private static long muldiv(long v, int multiplicand, int divisor)
     {
+    	long value = v;
         if (multiplicand == 0) {
             return 0;
         }
-        if (v > (Long.MAX_VALUE / multiplicand - multiplicand))
+        if (value > (Long.MAX_VALUE / multiplicand - multiplicand))
         {
-            v = div(v, divisor);
-            if (v > Long.MAX_VALUE / multiplicand) {
+            value = div(value, divisor);
+            if (value > Long.MAX_VALUE / multiplicand) {
                 return Long.MAX_VALUE;
             }
-            return v * multiplicand;
+            return value * multiplicand;
         }
-        v *= multiplicand;
-        return div(v, divisor);
+        value *= multiplicand;
+        return div(value, divisor);
     }
 
     public static int dialogUnitsToPixelsX(int dlgUnits, Font f)
