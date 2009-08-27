@@ -9,16 +9,25 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.wizard;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.template.IInstallOptionsTemplate;
+import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.util.ColorManager;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.WizardShellImageChanger;
 
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.*;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
 
 public class InstallOptionsWizard extends Wizard implements INewWizard
 {
@@ -41,7 +50,23 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
     @Override
 	public void addPages()
     {
-    	addPage(new InstallOptionsWizardPage());
+        if(EclipseNSISPlugin.getDefault().isConfigured()) {
+        	addPage(new InstallOptionsWizardPage());
+        }
+        else {
+            String error = EclipseNSISPlugin.getFormattedString("wizard.unconfigured.error", new Object[]{getWindowTitle()}); //$NON-NLS-1$
+            Common.openError(getShell(), error, InstallOptionsPlugin.getShellImage());
+            EclipseNSISPlugin.getDefault().getJobScheduler().scheduleUIJob("", new IJobStatusRunnable() { //$NON-NLS-1$
+                public IStatus run(IProgressMonitor monitor)
+                {
+                    IWizardContainer container = getContainer();
+					if (container != null) {
+						container.getShell().close();
+					}
+					return Status.OK_STATUS;
+                }
+            });
+        }
     }
 
     /** (non-Javadoc)

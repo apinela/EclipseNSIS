@@ -52,6 +52,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     private List<INSISWizardSettingsListener> mSettingsListeners = new ArrayList<INSISWizardSettingsListener>();
     private IPageChangeProvider mPageChangeProvider;
     private AbstractNSISWizardPage mCurrentPage = null;
+    private boolean mForcedCancel = false;
 
     /**
      * Constructor for NSISWizard.
@@ -128,11 +129,15 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
         else {
             String error = EclipseNSISPlugin.getFormattedString("wizard.unconfigured.error", new Object[]{getWindowTitle()}); //$NON-NLS-1$
             Common.openError(getShell(), error, EclipseNSISPlugin.getShellImage());
+            mForcedCancel = true;
             EclipseNSISPlugin.getDefault().getJobScheduler().scheduleUIJob("", new IJobStatusRunnable() { //$NON-NLS-1$
                 public IStatus run(IProgressMonitor monitor)
                 {
-                    getContainer().getShell().close();
-                    return Status.OK_STATUS;
+                    IWizardContainer container = getContainer();
+					if (container != null) {
+						container.getShell().close();
+					}
+					return Status.OK_STATUS;
                 }
             });
         }
@@ -221,7 +226,9 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     /* (non-Javadoc)
      * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
      */
-    public void init(IWorkbench workbench, IStructuredSelection selection) {
+    public void init(IWorkbench workbench, IStructuredSelection selection) 
+    {
+        mForcedCancel = false;
     }
 
     protected abstract void addStartPage();
@@ -242,6 +249,11 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     protected void setTemplate(NSISWizardTemplate template)
     {
         mTemplate = template;
+    }
+    
+    protected boolean isForcedCancel()
+    {
+    	return mForcedCancel;
     }
 
     public abstract String getHelpContextId();

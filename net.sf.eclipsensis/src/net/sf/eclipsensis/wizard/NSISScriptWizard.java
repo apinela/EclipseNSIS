@@ -198,7 +198,7 @@ public class NSISScriptWizard extends NSISWizard
     @Override
 	public boolean performCancel()
     {
-        if(Common.openQuestion(getShell(),EclipseNSISPlugin.getResourceString("wizard.cancel.question"), //$NON-NLS-1$
+        if(isForcedCancel() || Common.openQuestion(getShell(),EclipseNSISPlugin.getResourceString("wizard.cancel.question"), //$NON-NLS-1$
                 EclipseNSISPlugin.getShellImage())) {
             return super.performCancel();
         }

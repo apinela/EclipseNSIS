@@ -117,7 +117,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                             }
                             else {
                                 try {
-                                    return new BufferedInputStream(new FileInputStream(helpFile));
+                                    return new BufferedInputStream(new NSISHelpInputStream(new FileInputStream(helpFile)));
                                 }
                                 catch (FileNotFoundException e) {
                                     EclipseNSISPlugin.getDefault().log(e);

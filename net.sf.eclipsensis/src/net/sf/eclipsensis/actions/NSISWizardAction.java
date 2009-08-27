@@ -11,6 +11,7 @@ package net.sf.eclipsensis.actions;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.dialogs.NSISWizardDialog;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.wizard.NSISScriptWizard;
 
 import org.eclipse.jface.action.IAction;
@@ -28,23 +29,30 @@ public class NSISWizardAction extends NSISAction
     {
         IWorkbench workbench = PlatformUI.getWorkbench();
         final Shell shell = workbench.getActiveWorkbenchWindow().getShell();
-        final NSISWizardDialog[] wizardDialog = new NSISWizardDialog[1];
-        BusyIndicator.showWhile(shell.getDisplay(),new Runnable() {
-            public void run()
-            {
-                try {
-                    wizardDialog[0] = new NSISWizardDialog(shell, new NSISScriptWizard());
-                    wizardDialog[0].create();
-                }
-                catch (Exception e) {
-                    wizardDialog[0] = null;
-                    EclipseNSISPlugin.getDefault().log(e);
-                }
-            }
-        });
-        if(wizardDialog[0] != null) {
-            wizardDialog[0].open();
-        }
+        if (isEnabled()) {
+			final NSISWizardDialog[] wizardDialog = new NSISWizardDialog[1];
+			BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+				public void run() {
+					try {
+						wizardDialog[0] = new NSISWizardDialog(shell,
+								new NSISScriptWizard());
+						wizardDialog[0].create();
+					} catch (Exception e) {
+						wizardDialog[0] = null;
+						EclipseNSISPlugin.getDefault().log(e);
+					}
+				}
+			});
+			if (wizardDialog[0] != null) {
+				wizardDialog[0].open();
+			}
+		}
+    	else
+    	{
+            Common.openError(shell,
+            		EclipseNSISPlugin.getResourceString("unconfigured.confirm"), //$NON-NLS-1$
+            		EclipseNSISPlugin.getShellImage());
+    	}
     }
 
     public boolean isEnabled()

@@ -796,11 +796,11 @@
             name="%wizard.category"
             id="net.sf.eclipsensis"/>
       <wizard
+            category="net.sf.eclipsensis"
             class="net.sf.eclipsensis.wizard.NSISScriptWizard"
             icon="icons/wizard.gif"
-            category="net.sf.eclipsensis"
-            name="%wizard.name"
-            id="net.sf.eclipsensis.wizard.NSISScriptWizard"/>
+            id="net.sf.eclipsensis.wizard.NSISScriptWizard"
+            name="%wizard.name"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.templates">
