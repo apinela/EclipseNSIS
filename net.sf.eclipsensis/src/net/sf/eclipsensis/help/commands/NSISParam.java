@@ -517,19 +517,19 @@ public abstract class NSISParam
             updateState(enabled);
         }
 
-        public final void appendText(StringBuffer buf)
+        public final void appendText(StringBuffer buf, boolean preview)
         {
-            if (getSettings() != null)
+            if (getSettings() != null && !preview)
             {
                 saveSettings();
             }
             if (isSelected())
             {
-                internalAppendText(buf);
+                internalAppendText(buf, preview);
             }
         }
 
-        protected void internalAppendText(StringBuffer buf)
+        protected void internalAppendText(StringBuffer buf, boolean preview)
         {
             if (isOptional() && isIncludePrevious())
             {
@@ -545,7 +545,7 @@ public abstract class NSISParam
                             INSISParamEditor child = children.get(n - 1);
                             if (child instanceof NSISParamEditor && !child.isSelected())
                             {
-                                ((NSISParamEditor) child).internalAppendText(buf);
+                                ((NSISParamEditor) child).internalAppendText(buf, preview);
                             }
                         }
                     }
@@ -561,7 +561,7 @@ public abstract class NSISParam
             }
             else
             {
-                appendParamText(buf);
+                appendParamText(buf, preview);
             }
         }
 
@@ -634,7 +634,7 @@ public abstract class NSISParam
             }
         }
 
-        protected abstract void appendParamText(StringBuffer buf);
+        protected abstract void appendParamText(StringBuffer buf, boolean preview);
 
         protected abstract Control createParamControl(Composite parent);
 

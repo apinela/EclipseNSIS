@@ -192,11 +192,11 @@ public class GroupParam extends NSISParam
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf)
+		protected void appendParamText(StringBuffer buf, boolean preview)
         {
             if(!Common.isEmptyCollection(mParamEditors)) {
                 for (Iterator<INSISParamEditor> iter = mParamEditors.iterator(); iter.hasNext();) {
-                    iter.next().appendText(buf);
+                    iter.next().appendText(buf, preview);
                 }
             }
         }

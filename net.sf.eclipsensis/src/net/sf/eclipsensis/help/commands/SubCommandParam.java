@@ -152,7 +152,7 @@ public class SubCommandParam extends NSISParam
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf)
+		protected void appendParamText(StringBuffer buf, boolean preview)
         {
             if (mCommandEditor != null)
             {
@@ -164,7 +164,7 @@ public class SubCommandParam extends NSISParam
                         buf.append(" "); //$NON-NLS-1$
                     }
                     buf.append(command.getValue());
-                    mCommandEditor.appendText(buf);
+                    mCommandEditor.appendText(buf, preview);
                 }
             }
         }

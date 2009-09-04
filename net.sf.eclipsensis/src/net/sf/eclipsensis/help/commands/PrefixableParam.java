@@ -87,7 +87,7 @@ public abstract class PrefixableParam extends NSISParam
         }
 
         @Override
-		protected final void appendParamText(StringBuffer buf)
+		protected final void appendParamText(StringBuffer buf, boolean preview)
         {
             String text = getPrefixableParamText();
             if (text != null)

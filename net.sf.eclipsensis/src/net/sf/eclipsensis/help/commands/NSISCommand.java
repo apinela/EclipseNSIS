@@ -78,10 +78,20 @@ public class NSISCommand
 
     NSISCommandResult getResult(INSISParamEditor editor)
     {
+        return getResult(editor, false);
+    }
+
+    NSISCommandResult getResultPreview(INSISParamEditor editor)
+    {
+        return getResult(editor, true);
+    }
+
+    private NSISCommandResult getResult(INSISParamEditor editor, boolean preview)
+    {
         StringBuffer buf = new StringBuffer(getName());
         if (editor != null && this.equals(editor.getCommand()))
         {
-            editor.appendText(buf);
+            editor.appendText(buf, preview);
         }
         buf.append(INSISConstants.LINE_SEPARATOR);
         int length = buf.length();

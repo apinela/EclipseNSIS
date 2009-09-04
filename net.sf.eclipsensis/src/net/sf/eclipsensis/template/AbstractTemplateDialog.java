@@ -147,6 +147,7 @@ public abstract class AbstractTemplateDialog<T extends ITemplate> extends TrayDi
         if(ok) {
             try {
                 mTemplateManager.save();
+                super.okPressed();
             }
             catch(IOException ioe) {
                 Common.openError(getShell(),ioe.getMessage(), getShellImage());

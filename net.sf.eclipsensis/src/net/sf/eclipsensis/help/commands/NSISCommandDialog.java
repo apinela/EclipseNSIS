@@ -292,7 +292,7 @@ public class NSISCommandDialog extends StatusMessageDialog
             else
             {
                 updateStatus(new DialogStatus(IStatus.OK, "")); //$NON-NLS-1$
-                mResult = mCommand.getResult(mParamEditor);
+                mResult = mCommand.getResultPreview(mParamEditor);
                 mCommandDoc.set(mResult.getContent());
             }
         }

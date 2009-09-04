@@ -60,7 +60,7 @@ public class RadioParam extends GroupParam
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf)
+		protected void appendParamText(StringBuffer buf, boolean preview)
         {
             if (!Common.isEmptyCollection(mParamEditors))
             {
@@ -72,7 +72,7 @@ public class RadioParam extends GroupParam
                     {
                         if (radioButton.getSelection())
                         {
-                            editor.appendText(buf);
+                            editor.appendText(buf, preview);
                             return;
                         }
                     }

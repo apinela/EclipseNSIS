@@ -77,7 +77,7 @@ public class MessageBoxOptionsParam extends NSISParam
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf)
+		protected void appendParamText(StringBuffer buf, boolean preview)
         {
             StringBuffer buf2 = new StringBuffer(""); //$NON-NLS-1$
             buf.append(" "); //$NON-NLS-1$

@@ -62,7 +62,7 @@ public abstract class AbstractNSISInstallItemDialog extends StatusMessageDialog 
 
         Control control = createControlContents(group);
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-        gd.widthHint = convertWidthInCharsToPixels(65);
+        gd.widthHint = convertWidthInCharsToPixels(80);
         control.setLayoutData(gd);
 
         NSISWizardDialogUtil.createRequiredFieldsLabel(composite);

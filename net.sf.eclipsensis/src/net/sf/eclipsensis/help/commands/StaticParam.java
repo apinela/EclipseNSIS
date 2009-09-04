@@ -60,7 +60,7 @@ public class StaticParam extends NSISParam
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf)
+		protected void appendParamText(StringBuffer buf, boolean preview)
         {
             if(!Common.isEmpty(getValue())) {
                 buf.append(" ").append(maybeQuote(getValue())); //$NON-NLS-1$

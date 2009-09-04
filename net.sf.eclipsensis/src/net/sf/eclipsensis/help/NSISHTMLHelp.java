@@ -1009,6 +1009,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                                     {
                                         if (!isFileURI(location))
                                         {
+                                        	location.replace("+", " ");
                                             // This is a windows file name
                                             location = decode(IOUtility.getFileURLString(new File(location)));
                                         }
@@ -1732,7 +1733,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     	Matcher matcher = cW3CFileUriPattern.matcher(location);
     	if(matcher.matches())
     	{
-    		return "file:///" + matcher.group(1);
+    		return "file:///" + matcher.group(1).replace("+", "%20");
     	}
 		return location;
 	}
@@ -1742,7 +1743,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     	Matcher matcher = cFileUriPattern.matcher(location);
     	if(matcher.matches())
     	{
-    		return "file:///" + URLEncoder.encode(matcher.group(1),System.getProperty("file.encoding"));
+    		return "file:///" + URLEncoder.encode(matcher.group(1),System.getProperty("file.encoding")).replace("+", "%20");
     	}
 		return location;
 	}

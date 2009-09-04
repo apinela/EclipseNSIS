@@ -23,7 +23,7 @@ public interface INSISParamEditor
 
     public String validate();
 
-    public void appendText(StringBuffer buf);
+    public void appendText(StringBuffer buf, boolean preview);
 
     public void setDependents(List<INSISParamEditor> dependents);
 

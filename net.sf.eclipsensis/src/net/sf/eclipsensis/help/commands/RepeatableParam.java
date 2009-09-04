@@ -118,10 +118,10 @@ public class RepeatableParam extends NSISParam
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf)
+		protected void appendParamText(StringBuffer buf, boolean preview)
         {
             for (Iterator<INSISParamEditor> iter = mChildParamEditors.iterator(); iter.hasNext();) {
-                (iter.next()).appendText(buf);
+                (iter.next()).appendText(buf, preview);
             }
         }
 
