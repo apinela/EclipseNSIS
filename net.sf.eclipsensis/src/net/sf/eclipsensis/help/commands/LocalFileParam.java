@@ -25,7 +25,7 @@ import org.w3c.dom.*;
 
 public class LocalFileParam extends LocalFilesystemObjectParam
 {
-    public static final String ATTR_FILTER = "filter"; //$NON-NLS-1$
+    public static final String TAG_FILTER = "filter"; //$NON-NLS-1$
     public static final String SETTING_FILE = "file"; //$NON-NLS-1$
 
     protected String[] mFilterNames;
@@ -47,7 +47,7 @@ public class LocalFileParam extends LocalFilesystemObjectParam
     {
         List<String> filterNames = new ArrayList<String>();
         List<String> filters = new ArrayList<String>();
-        Node[] children = XMLUtil.findChildren(node, ATTR_FILTER);
+        Node[] children = XMLUtil.findChildren(node, TAG_FILTER);
         if(!Common.isEmptyArray(children)) {
             for (int i = 0; i < children.length; i++) {
                 NamedNodeMap attr = children[i].getAttributes();

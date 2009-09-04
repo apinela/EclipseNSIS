@@ -11,6 +11,16 @@
 ###############################################################################
 -->
 <commands>
+  <version name="2.45">
+    <add>
+      <command name="!delfile" category="conditional.compilation.category" scope="any">
+        <param name="/nonfatal" type="static" optional="true"/>
+        <param name="file" type="pattern" acceptVar="false" 
+        	errorMessage="local.file.wildcard.param.error"
+        	regexp="([a-z]:)?\\?(((\.?[a-z0-9\$%\'`\-@\{\}~\!#\(\)\&amp;_\^\x20\+\,\=\[\]])+|\.{1,2}+)\\)*(\.?[a-z0-9\*\?\$%\'`\-@\{\}~\!#\(\)\&amp;_\^\x20\+\,\=\[\]])+"/>
+      </command>
+    </add>
+  </version>
   <version name="2.42">
     <add>
       <command name="!searchreplace" category="conditional.compilation.category" scope="any">
@@ -255,7 +265,9 @@
         <param name="text" type="string" allowBlank="true"/>
       </command>
       <command name="!delfile" category="compiler.utility.commands.category" scope="any">
-        <param name="file" type="localfile" acceptVar="false"/>
+        <param name="file" type="pattern" acceptVar="false" 
+        	errorMessage="local.file.wildcard.param.error"
+        	regexp="([a-z]:)?\\?(((\.?[a-z0-9\$%\'`\-@\{\}~\!#\(\)\&amp;_\^\x20\+\,\=\[\]])+|\.{1,2}+)\\)*(\.?[a-z0-9\$%\'`\-@\{\}~\!#\(\)\&amp;_\^\x20\+\,\=\[\]])+"/>
       </command>
       <command name="!tempfile" category="compiler.utility.commands.category" scope="any">
         <param name="symbol" type="string" acceptVar="false"/>
