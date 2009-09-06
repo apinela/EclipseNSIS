@@ -536,8 +536,21 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
         downButton.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         m.addSlave(downButton);
+        
+        Composite langOptions = langGroup;
+        boolean showSupportedLangOption = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
+		if(showSupportedLangOption)
+        {
+        	langOptions = new Composite(langGroup, SWT.None);
+            layout = new GridLayout(2, false);
+            layout.marginHeight = 0;
+            layout.marginWidth = 0;
+            langOptions.setLayout(layout);
+            data = new GridData(SWT.FILL, SWT.FILL, true, false);
+            langOptions.setLayoutData(data);
+        }
 
-        final Button selectLang = NSISWizardDialogUtil.createCheckBox(langGroup,
+        final Button selectLang = NSISWizardDialogUtil.createCheckBox(langOptions,
                 "select.language.label", settings.isSelectLanguage(), true, m, false); //$NON-NLS-1$
         selectLang.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -546,6 +559,27 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 mWizard.getSettings().setSelectLanguage(selectLang.getSelection());
             }
         });
+        
+        final Button displaySupported;
+        if (showSupportedLangOption) {
+        	((GridData)selectLang.getLayoutData()).horizontalSpan = 1;
+			displaySupported = NSISWizardDialogUtil
+					.createCheckBox(
+							langOptions,
+							"display.supported.languages.label", settings.isDisplaySupportedLanguages(), true, m, false); //$NON-NLS-1$
+        	((GridData)displaySupported.getLayoutData()).horizontalSpan = 1;
+			displaySupported.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					mWizard.getSettings().setDisplaySupportedLanguages(
+							displaySupported.getSelection());
+				}
+			});
+		}
+        else
+        {
+        	displaySupported = null;
+        }
 
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
             public void enabled(Control control, boolean flag)
@@ -587,6 +621,12 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                     return settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isEnableLanguageSupport()
                     && selectedLanguages.size() > 1;
                 }
+                else if (control == displaySupported && displaySupported != null)
+                {
+                    java.util.List<NSISLanguage> selectedLanguages = (java.util.List<NSISLanguage>) selectedLangViewer.getInput();
+                    return settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isEnableLanguageSupport()
+                    && selectedLanguages.size() > 0;
+                }
                 else
                 {
                     return true;
@@ -600,6 +640,10 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         m.setEnabler(upButton, mse);
         m.setEnabler(downButton, mse);
         m.setEnabler(selectLang, mse);
+        if (displaySupported != null) 
+        {
+			m.setEnabler(displaySupported, mse);
+		}
 
         final Runnable langRunnable = new Runnable() {
             public void run()
@@ -613,7 +657,10 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 upButton.setEnabled(mse.canEnable(upButton));
                 downButton.setEnabled(mse.canEnable(downButton));
                 selectLang.setEnabled(mse.canEnable(selectLang));
-                setPageComplete(validateField(LANG_CHECK));
+                if (displaySupported != null) {
+					displaySupported.setEnabled(mse.canEnable(displaySupported));
+				}
+				setPageComplete(validateField(LANG_CHECK));
             }
         };
 
@@ -698,6 +745,11 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 upButton.setEnabled(mse.canEnable(upButton));
                 downButton.setEnabled(mse.canEnable(downButton));
                 selectLang.setEnabled(mse.canEnable(selectLang));
+                if (displaySupported != null) 
+                {
+					displaySupported
+							.setEnabled(mse.canEnable(displaySupported));
+				}
             }
         });
         selectedLangViewer.getList().addSelectionListener(new SelectionAdapter() {
@@ -761,6 +813,11 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 if (isCurrentPage())
                 {
                     selectLang.setEnabled(mse.canEnable(selectLang));
+                    if (displaySupported != null) 
+                    {
+    					displaySupported
+    							.setEnabled(mse.canEnable(displaySupported));
+    				}
                 }
             }
         });
@@ -771,6 +828,11 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 enableLangSupport.setSelection(newSettings.isEnableLanguageSupport());
                 m.updateSlaves();
                 selectLang.setSelection(newSettings.isSelectLanguage());
+                if (displaySupported != null) 
+                {
+					displaySupported
+							.setEnabled(mse.canEnable(displaySupported));
+				}
                 java.util.List<NSISLanguage> selectedLanguages = newSettings.getLanguages();
                 java.util.List<NSISLanguage> availableLanguages = NSISLanguageManager.getInstance().getLanguages();
                 if (selectedLanguages.isEmpty())

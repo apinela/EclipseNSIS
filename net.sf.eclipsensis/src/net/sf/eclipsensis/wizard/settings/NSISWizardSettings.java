@@ -67,6 +67,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public static final String ENABLE_LANGUAGE_SUPPORT = "ENABLE_LANGUAGE_SUPPORT"; //$NON-NLS-1$
     public static final String LANGUAGES = "LANGUAGES"; //$NON-NLS-1$
     public static final String SELECT_LANGUAGE = "SELECT_LANGUAGE"; //$NON-NLS-1$
+    public static final String DISPLAY_SUPPORTED_LANGUAGES = "DISPLAY_SUPPORTED_LANGUAGES"; //$NON-NLS-1$
     public static final String INSTALL_DIR = "INSTALL_DIR"; //$NON-NLS-1$
     public static final String CHANGE_INSTALL_DIR = "CHANGE_INSTALL_DIR"; //$NON-NLS-1$
     public static final String CREATE_START_MENU_GROUP = "CREATE_START_MENU_GROUP"; //$NON-NLS-1$
@@ -138,6 +139,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     private boolean mEnableLanguageSupport = false;
     private List<NSISLanguage> mLanguages = new ArrayList<NSISLanguage>();
     private boolean mSelectLanguage = false;
+    private boolean mDisplaySupportedLanguages = true;
     private String mInstallDir = new StringBuffer(NSISKeywords.getInstance().getKeyword("$PROGRAMFILES")).append("\\").append(mName).toString(); //$NON-NLS-1$ //$NON-NLS-2$
     private boolean mChangeInstallDir = true;
     private boolean mCreateStartMenuGroup = false;
@@ -876,6 +878,24 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public boolean isSelectLanguage()
     {
         return mSelectLanguage;
+    }
+
+    /**
+     * @param displaySupportedLanguages The displaySupportedLanguages to set.
+     */
+    public void setDisplaySupportedLanguages(boolean displaySupportedLanguages)
+    {
+        boolean oldValue = mDisplaySupportedLanguages;
+        mSelectLanguage = displaySupportedLanguages;
+        firePropertyChanged(DISPLAY_SUPPORTED_LANGUAGES, oldValue, displaySupportedLanguages);
+    }
+
+    /**
+     * @return Returns the displaySupportedLanguages.
+     */
+    public boolean isDisplaySupportedLanguages()
+    {
+        return mDisplaySupportedLanguages;
     }
 
     /**
