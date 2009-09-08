@@ -31,6 +31,7 @@ public class NSISLanguage implements Serializable
     private String mDisplayName;
     private int mLangId;
     private String mLangDef;
+    private int mCodePage;
 
     private transient Map<String, String> mLangStrings = null;
 
@@ -39,15 +40,24 @@ public class NSISLanguage implements Serializable
      * @param displayName
      * @param langId
      */
-    public NSISLanguage(String name, String displayName, int langId)
+    public NSISLanguage(String name, String displayName, int langId, int codePage)
     {
         mName = name;
         mDisplayName = displayName;
         mLangId = langId;
+        mCodePage = codePage;
         mLangDef = new StringBuffer("${LANG_").append(name.toUpperCase()).append("}").toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    /**
+	/**
+     * @return Returns the codePage.
+     */
+    public int getCodePage() 
+    {
+		return mCodePage;
+	}
+
+	/**
      * @return Returns the langId.
      */
     public int getLangId()

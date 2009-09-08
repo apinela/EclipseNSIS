@@ -74,7 +74,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
     static
     {
     	String defaultLang = InstallOptionsPlugin.getResourceString("option.default","(Default)"); //$NON-NLS-1$ //$NON-NLS-2$
-    	DEFAULT = new NSISLanguage(defaultLang, defaultLang, 0);
+    	DEFAULT = new NSISLanguage(defaultLang, defaultLang, 0, 0);
     }
 
     public LanguageComboContributionItem(IPartService partService)

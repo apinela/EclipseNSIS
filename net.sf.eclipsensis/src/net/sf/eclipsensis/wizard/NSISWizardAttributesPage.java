@@ -552,13 +552,6 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         final Button selectLang = NSISWizardDialogUtil.createCheckBox(langOptions,
                 "select.language.label", settings.isSelectLanguage(), true, m, false); //$NON-NLS-1$
-        selectLang.addSelectionListener(new SelectionAdapter() {
-            @Override
-			public void widgetSelected(SelectionEvent e)
-            {
-                mWizard.getSettings().setSelectLanguage(selectLang.getSelection());
-            }
-        });
         
         final Button displaySupported;
         if (showSupportedLangOption) {
@@ -566,7 +559,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 			displaySupported = NSISWizardDialogUtil
 					.createCheckBox(
 							langOptions,
-							"display.supported.languages.label", settings.isDisplaySupportedLanguages(), true, m, false); //$NON-NLS-1$
+							"display.supported.languages.label", settings.isDisplaySupportedLanguages(),  //$NON-NLS-1$
+							true, m, false);
         	((GridData)displaySupported.getLayoutData()).horizontalSpan = 1;
 			displaySupported.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -625,7 +619,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 {
                     java.util.List<NSISLanguage> selectedLanguages = (java.util.List<NSISLanguage>) selectedLangViewer.getInput();
                     return settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isEnableLanguageSupport()
-                    && selectedLanguages.size() > 0;
+                    && selectedLanguages.size() > 1 && selectLang.getSelection();
                 }
                 else
                 {
@@ -644,6 +638,17 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         {
 			m.setEnabler(displaySupported, mse);
 		}
+
+        selectLang.addSelectionListener(new SelectionAdapter() {
+            @Override
+			public void widgetSelected(SelectionEvent e)
+            {
+                mWizard.getSettings().setSelectLanguage(selectLang.getSelection());
+                if (displaySupported != null) {
+					displaySupported.setEnabled(mse.canEnable(displaySupported));
+				}
+            }
+        });
 
         final Runnable langRunnable = new Runnable() {
             public void run()

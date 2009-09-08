@@ -186,10 +186,12 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                 String name = filename.substring(0,filename.length()-INSISConstants.LANGUAGE_FILES_EXTENSION.length());
                 String displayName = name;
                 int langId = 0;
+                int codePage = 0;
 
                 BufferedReader br = null;
                 //1st non-comment line = header
                 //2nd non-comment line = lang id
+                //5th non-comment line = codepage
                 int n;
                 String line;
                 try {
@@ -204,6 +206,19 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                                 break;
                             case 2: //lang id
                                 langId = Integer.parseInt(line);
+                                break;
+                            case 3: //font
+                            case 4: //font size
+                            	break;
+                            case 5: //codepage
+                            	try
+                            	{
+                            		codePage = Integer.parseInt(line);
+                            	}
+                            	catch(NumberFormatException nfe)
+                            	{
+                            		codePage = 0;
+                            	}
                                 break outer;
                         }
                         line = skipComments(br);
@@ -253,7 +268,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                         }
                     }
                 }
-                language = new NSISLanguage(name,displayName,langId);
+                language = new NSISLanguage(name,displayName,langId, codePage);
             }
         }
         catch(Exception ex) {

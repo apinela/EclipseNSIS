@@ -1,7 +1,5 @@
 package net.sf.eclipsensis.help.commands;
 
-import java.util.regex.Pattern;
-
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.XMLUtil;
 

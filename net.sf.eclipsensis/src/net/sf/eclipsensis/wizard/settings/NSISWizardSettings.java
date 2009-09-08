@@ -11,6 +11,7 @@ package net.sf.eclipsensis.wizard.settings;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -886,7 +887,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public void setDisplaySupportedLanguages(boolean displaySupportedLanguages)
     {
         boolean oldValue = mDisplaySupportedLanguages;
-        mSelectLanguage = displaySupportedLanguages;
+        mDisplaySupportedLanguages = displaySupportedLanguages;
         firePropertyChanged(DISPLAY_SUPPORTED_LANGUAGES, oldValue, displaySupportedLanguages);
     }
 
@@ -1666,5 +1667,11 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
         boolean oldValue = mMultiUserInstallModeAsk;
         mMultiUserInstallModeAsk = multiUserInstallModeAsk;
         firePropertyChanged(MULTIUSER_INSTALL_MODE_ASK, oldValue, multiUserInstallModeAsk);
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
+    {
+    	mDisplaySupportedLanguages = true;
+        in.defaultReadObject();
     }
 }

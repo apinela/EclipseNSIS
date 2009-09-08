@@ -800,16 +800,26 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
             if(mSettings.isEnableLanguageSupport() && mSettings.isSelectLanguage() && languages.size() > 1) {
                 if(mIsMUI) {
+                	if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 &&
+                	   !mSettings.isDisplaySupportedLanguages()) {
+                		mOnInitFunction.addElement(new NSISScriptDefine("MUI_LANGDLL_ALLLANGUAGES"));
+                	}
                     mOnInitFunction.addElement(new NSISScriptInsertMacro("MUI_LANGDLL_DISPLAY")); //$NON-NLS-1$
                 }
                 else {
+                	boolean useCodePage = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 &&
+             	   						  mSettings.isDisplaySupportedLanguages();
                     mOnInitFunction.addElement(new NSISScriptInstruction("Push","")); //$NON-NLS-1$ //$NON-NLS-2$
                     for (Iterator<NSISLanguage> iter = languages.iterator(); iter.hasNext();) {
                         NSISLanguage language = iter.next();
+                        if(useCodePage)
+                        {
+                            mOnInitFunction.addElement(new NSISScriptInstruction("Push",language.getCodePage())); //$NON-NLS-1$
+                        }
                         mOnInitFunction.addElement(new NSISScriptInstruction("Push",language.getLangDef())); //$NON-NLS-1$
                         mOnInitFunction.addElement(new NSISScriptInstruction("Push",language.getDisplayName())); //$NON-NLS-1$
                     }
-                    mOnInitFunction.addElement(new NSISScriptInstruction("Push","A")); //$NON-NLS-1$ //$NON-NLS-2$
+                    mOnInitFunction.addElement(new NSISScriptInstruction("Push",useCodePage?"CA":"A")); //$NON-NLS-1$ //$NON-NLS-2$
                     mOnInitFunction.addElement(new NSISScriptInstruction("LangDLL::LangDialog",new String[]{ //$NON-NLS-1$
                             EclipseNSISPlugin.getResourceString("scriptgen.langdialog.title"),EclipseNSISPlugin.getResourceString("scriptgen.langdialog.message")})); //$NON-NLS-1$ //$NON-NLS-2$
                     mOnInitFunction.addElement(new NSISScriptInstruction("Pop",getKeyword("$LANGUAGE"))); //$NON-NLS-1$ //$NON-NLS-2$
