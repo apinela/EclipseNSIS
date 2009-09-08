@@ -212,7 +212,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         Method readMethod = descriptor.getReadMethod();
         if (readMethod != null)
         {
-            Object obj = readMethod.invoke(this, (Object)null);
+            Object obj = readMethod.invoke(this, (Object[])null);
 
             if (obj != null)
             {
@@ -311,7 +311,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
 							return childNode;
 						}
 					}
-				} else if (!Common.isWrappedPrimitive(value)) {
+				} else if (!isConvertibleAttributeType(value.getClass())) {
 					INodeConverter<Object> nodeConverter = (INodeConverter<Object>) NodeConverterFactory.INSTANCE.getNodeConverter(value.getClass());
 					childNode.appendChild(nodeConverter.toNode(document, value));
 					return childNode;
@@ -321,6 +321,20 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
 			}
 		}
 		return childNode;
+    }
+
+    protected boolean isConvertibleAttributeType(Class<?> clasz)
+    {
+        return  (String.class.equals(clasz)    ||
+                 Long.class.equals(clasz)      || long.class.equals(clasz)    ||
+             	 Integer.class.equals(clasz)   || int.class.equals(clasz)     ||
+             	 Short.class.equals(clasz)     || short.class.equals(clasz)   ||
+             	 Float.class.equals(clasz)     || float.class.equals(clasz)   ||
+             	 Double.class.equals(clasz)    || double.class.equals(clasz)  ||
+             	 Byte.class.equals(clasz)      || byte.class.equals(clasz)    ||
+             	 Boolean.class.equals(clasz)   || boolean.class.equals(clasz) ||
+             	 Character.class.equals(clasz) || char.class.equals(clasz)    ||
+             	 RGB.class.equals(clasz));
     }
 
     protected abstract String getChildNodeName();

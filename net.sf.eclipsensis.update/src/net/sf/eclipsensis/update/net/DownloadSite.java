@@ -108,6 +108,16 @@ public class DownloadSite extends AbstractNodeConvertible
     }
 
     @Override
+    protected boolean isConvertibleAttributeType(Class<?> clasz)
+    {
+    	if(File.class.equals(clasz))
+    	{
+    		return true;
+    	}
+    	return super.isConvertibleAttributeType(clasz);
+    }
+
+    @Override
 	protected Object convertFromString(String string, Class<?> clasz)
     {
         if (File.class.equals(clasz))

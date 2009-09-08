@@ -707,6 +707,16 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
     }
 
+    @Override
+    protected boolean isConvertibleAttributeType(Class<?> clasz)
+    {
+    	if(Position.class.equals(clasz))
+    	{
+    		return true;
+    	}
+    	return super.isConvertibleAttributeType(clasz);
+    }
+    
     private class IndexPropertyDescriptor extends ComboBoxPropertyDescriptor
     {
         public IndexPropertyDescriptor()
