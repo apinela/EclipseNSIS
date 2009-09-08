@@ -24,6 +24,7 @@ import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.jobs.NSISUpdateURLs;
+import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.IPath;
@@ -138,8 +139,16 @@ class DownloadURLsParserCallback extends ParserCallback
                             if(a.isDefined(Attribute.NAME)) {
                                 if(MIRROR.equalsIgnoreCase((String)a.getAttribute(Attribute.NAME))) {
                                     if(a.isDefined(Attribute.VALUE)) {
-                                        mCurrentSite[3] = (String)a.getAttribute(Attribute.VALUE);
-                                        mCurrentSite[0] = mImageURLs.getProperty(mCurrentSite[3]);
+                                        String[] names = Common.tokenize((String)a.getAttribute(Attribute.VALUE),',');
+                                        for (int i = 0; i < names.length; i++) 
+                                        {
+    										mCurrentSite[3] = names[i];
+                                            mCurrentSite[0] = mImageURLs.getProperty(mCurrentSite[3]);
+                                            if(mCurrentSite[0] != null)
+                                            {
+                                            	break;
+                                            }
+										}
                                     }
                                 }
                             }

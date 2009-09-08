@@ -40,9 +40,9 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
     private transient Collection<String> mSkippedProperties = null;
 
     @Override
-	public Object clone() throws CloneNotSupportedException
+    public Object clone() throws CloneNotSupportedException
     {
-		return super.clone();
+        return super.clone();
     }
 
     public synchronized Collection<String> getSkippedProperties()
@@ -135,7 +135,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
      * @return
      */
     @SuppressWarnings("unchecked")
-	protected Object getNodeValue(Node node, String name, Class<?> clasz)
+    protected Object getNodeValue(Node node, String name, Class<?> clasz)
     {
         if (clasz.isArray())
         {
@@ -280,61 +280,61 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
     }
 
     @SuppressWarnings("unchecked")
-	protected Node createChildNode(Document document, String name, Object value)
+    protected Node createChildNode(Document document, String name, Object value)
     {
         Node childNode = document.createElement(getChildNodeName());
         XMLUtil.addAttribute(document, childNode, NAME_ATTRIBUTE, name);
         if (value != null) {
-			if (value.getClass().isArray()) {
-				NodeConversionUtility.createArrayNode(document, childNode,
-						value);
-			} else if (value instanceof Collection<?>) {
-				NodeConversionUtility.createCollectionNode(document, childNode,
-						(Collection<?>) value);
-			} else if (value instanceof INodeConvertible) {
-				childNode.appendChild(((INodeConvertible) value)
-						.toNode(document));
-			} else if (value instanceof Node) {
-				childNode.appendChild((Node) value);
-			} else if (value instanceof NodeList) {
-				NodeList nodeList = (NodeList) value;
-				int n = nodeList.getLength();
-				for (int i = 0; i < n; i++) {
-					childNode.appendChild(nodeList.item(i));
-				}
-			} else {
-				if (value instanceof String) {
-					String str = (String) value;
-					for (int i = 0; i < XML_ESCAPE_CHARS.length; i++) {
-						if (str.indexOf(XML_ESCAPE_CHARS[i]) >= 0) {
-							childNode.appendChild(document.createTextNode(str));
-							return childNode;
-						}
-					}
-				} else if (!isConvertibleAttributeType(value.getClass())) {
-					INodeConverter<Object> nodeConverter = (INodeConverter<Object>) NodeConverterFactory.INSTANCE.getNodeConverter(value.getClass());
-					childNode.appendChild(nodeConverter.toNode(document, value));
-					return childNode;
-				}
-				XMLUtil.addAttribute(document, childNode, VALUE_ATTRIBUTE,
-						convertToString(name, value));
-			}
-		}
-		return childNode;
+            if (value.getClass().isArray()) {
+                NodeConversionUtility.createArrayNode(document, childNode,
+                        value);
+            } else if (value instanceof Collection<?>) {
+                NodeConversionUtility.createCollectionNode(document, childNode,
+                        (Collection<?>) value);
+            } else if (value instanceof INodeConvertible) {
+                childNode.appendChild(((INodeConvertible) value)
+                        .toNode(document));
+            } else if (value instanceof Node) {
+                childNode.appendChild((Node) value);
+            } else if (value instanceof NodeList) {
+                NodeList nodeList = (NodeList) value;
+                int n = nodeList.getLength();
+                for (int i = 0; i < n; i++) {
+                    childNode.appendChild(nodeList.item(i));
+                }
+            } else {
+                if (value instanceof String) {
+                    String str = (String) value;
+                    for (int i = 0; i < XML_ESCAPE_CHARS.length; i++) {
+                        if (str.indexOf(XML_ESCAPE_CHARS[i]) >= 0) {
+                            childNode.appendChild(document.createTextNode(str));
+                            return childNode;
+                        }
+                    }
+                } else if (!isConvertibleAttributeType(value.getClass())) {
+                    INodeConverter<Object> nodeConverter = (INodeConverter<Object>) NodeConverterFactory.INSTANCE.getNodeConverter(value.getClass());
+                    childNode.appendChild(nodeConverter.toNode(document, value));
+                    return childNode;
+                }
+                XMLUtil.addAttribute(document, childNode, VALUE_ATTRIBUTE,
+                        convertToString(name, value));
+            }
+        }
+        return childNode;
     }
 
     protected boolean isConvertibleAttributeType(Class<?> clasz)
     {
         return  (String.class.equals(clasz)    ||
                  Long.class.equals(clasz)      || long.class.equals(clasz)    ||
-             	 Integer.class.equals(clasz)   || int.class.equals(clasz)     ||
-             	 Short.class.equals(clasz)     || short.class.equals(clasz)   ||
-             	 Float.class.equals(clasz)     || float.class.equals(clasz)   ||
-             	 Double.class.equals(clasz)    || double.class.equals(clasz)  ||
-             	 Byte.class.equals(clasz)      || byte.class.equals(clasz)    ||
-             	 Boolean.class.equals(clasz)   || boolean.class.equals(clasz) ||
-             	 Character.class.equals(clasz) || char.class.equals(clasz)    ||
-             	 RGB.class.equals(clasz));
+                 Integer.class.equals(clasz)   || int.class.equals(clasz)     ||
+                 Short.class.equals(clasz)     || short.class.equals(clasz)   ||
+                 Float.class.equals(clasz)     || float.class.equals(clasz)   ||
+                 Double.class.equals(clasz)    || double.class.equals(clasz)  ||
+                 Byte.class.equals(clasz)      || byte.class.equals(clasz)    ||
+                 Boolean.class.equals(clasz)   || boolean.class.equals(clasz) ||
+                 Character.class.equals(clasz) || char.class.equals(clasz)    ||
+                 RGB.class.equals(clasz));
     }
 
     protected abstract String getChildNodeName();
