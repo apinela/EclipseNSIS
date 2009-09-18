@@ -16,7 +16,7 @@ import org.w3c.dom.*;
 public class InstallOptionsWidgetNodeConverter extends AbstractNodeConverter<InstallOptionsWidget>
 {
     @Override
-	public InstallOptionsWidget fromNode(Node node, Class<?> clasz)
+    public InstallOptionsWidget fromNode(Node node, Class<?> clasz)
     {
         if(InstallOptionsWidget.class.isAssignableFrom(clasz)) {
             if(node.getNodeName().equals(InstallOptionsWidget.NODE_NAME)) {

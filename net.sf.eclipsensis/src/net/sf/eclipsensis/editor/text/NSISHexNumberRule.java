@@ -43,7 +43,7 @@ public class NSISHexNumberRule extends NSISWordPatternRule
      * @see net.sf.eclipsensis.editor.text.NSISWordPatternRule#testEndSequence(java.lang.String)
      */
     @Override
-	protected boolean testEndSequence(String endSequence)
+    protected boolean testEndSequence(String endSequence)
     {
         return (endSequence.length() > 0) && super.testEndSequence(endSequence);
     }

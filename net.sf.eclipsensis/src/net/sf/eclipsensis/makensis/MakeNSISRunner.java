@@ -151,10 +151,10 @@ public class MakeNSISRunner implements INSISConstants
 
     private static List<NSISScriptProblem> processProblems(INSISConsole console, IPath path, List<NSISConsoleLine> errors, List<NSISConsoleLine> warnings)
     {
-    	List<NSISScriptProblem> problems = new ArrayList<NSISScriptProblem>();
-    	List<NSISConsoleLine> errors2 = errors;
+        List<NSISScriptProblem> problems = new ArrayList<NSISScriptProblem>();
+        List<NSISConsoleLine> errors2 = errors;
         if (Common.isEmptyCollection(errors2)) {
-        	List<String> compileErrors = cMakeNSISDelegate.getErrors();
+            List<String> compileErrors = cMakeNSISDelegate.getErrors();
             if(!Common.isEmptyCollection(compileErrors)) {
                 errors2 = new ArrayList<NSISConsoleLine>();
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -496,11 +496,11 @@ public class MakeNSISRunner implements INSISConstants
                     }
                     finally {
                         if (results != null) {
-							results.setProblems(processProblems(console,
-									script, consoleErrors, consoleWarnings));
-							rv = results.getReturnCode();
-						}
-						if (rv == MakeNSISResults.RETURN_CANCEL) {
+                            results.setProblems(processProblems(console,
+                                    script, consoleErrors, consoleWarnings));
+                            rv = results.getReturnCode();
+                        }
+                        if (rv == MakeNSISResults.RETURN_CANCEL) {
                             console.appendLine(NSISConsoleLine.error(EclipseNSISPlugin.getResourceString("cancel.message"))); //$NON-NLS-1$
                         }
                     }
@@ -683,8 +683,8 @@ public class MakeNSISRunner implements INSISConstants
 
     private static Integer[] splitCompilationTime(int time)
     {
-    	int time2 = time;
-    	Integer[] result = new Integer[3];
+        int time2 = time;
+        Integer[] result = new Integer[3];
         Arrays.fill(result,Common.ZERO);
         result[2] = new Integer(time2 % 1000);
         time2 /= 1000;
@@ -713,13 +713,13 @@ public class MakeNSISRunner implements INSISConstants
             if (IOUtility.isValidFile(exeFile)) {
                 File workDir = exeFile.getParentFile();
                 try {
-                	List<String> args = new ArrayList<String>();
-                	if(EclipseNSISPlugin.getDefault().isWinVista())
-                	{
-                		args.add("cmd.exe");
-                		args.add("/c");
-                	}
-            		args.add(exeName);
+                    List<String> args = new ArrayList<String>();
+                    if(EclipseNSISPlugin.getDefault().isWinVista())
+                    {
+                        args.add("cmd.exe");
+                        args.add("/c");
+                    }
+                    args.add(exeName);
                     Process proc = Runtime.getRuntime().exec(args.toArray(new String[args.size()]),null,workDir);
                     if(wait) {
                         proc.waitFor();

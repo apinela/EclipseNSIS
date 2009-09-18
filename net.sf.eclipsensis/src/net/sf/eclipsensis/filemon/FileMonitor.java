@@ -128,7 +128,7 @@ public class FileMonitor
         private boolean mCanceled = false;
 
         @Override
-		public boolean cancel()
+        public boolean cancel()
         {
             if(super.cancel()) {
                 mCanceled = true;
@@ -138,7 +138,7 @@ public class FileMonitor
         }
 
         @Override
-		public void run()
+        public void run()
         {
             Thread.currentThread().setName(EclipseNSISPlugin.getResourceString("file.monitor.thread.name")); //$NON-NLS-1$
             File[] files = mRegistry.keySet().toArray(new File[mRegistry.size()]);
@@ -181,7 +181,7 @@ public class FileMonitor
 
         private void fireChanged(int type, File file, FileChangeRegistryEntry entry)
         {
-        	List<WeakReference<IFileChangeListener>> listeners = new ArrayList<WeakReference<IFileChangeListener>>(entry.listeners);
+            List<WeakReference<IFileChangeListener>> listeners = new ArrayList<WeakReference<IFileChangeListener>>(entry.listeners);
             for (WeakReference<IFileChangeListener> weakref : listeners) {
                 IFileChangeListener listener = weakref.get();
                 if(listener == null) {

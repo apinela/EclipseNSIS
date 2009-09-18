@@ -43,7 +43,7 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
         final Rectangle[] newBounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS));
         mTextFigure = new TextFigure(parent, new PropertySourceWrapper(propertySource){
                 @Override
-				public Object getPropertyValue(Object id)
+                public Object getPropertyValue(Object id)
                 {
                     if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
                         return newBounds[0];
@@ -55,7 +55,7 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
             });
         mButtonFigure = new ButtonFigure(parent, new PropertySourceWrapper(propertySource){
             @Override
-			public Object getPropertyValue(Object id)
+            public Object getPropertyValue(Object id)
             {
                 if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
                     return newBounds[1];
@@ -121,7 +121,7 @@ public class PathRequestFigure extends AbstractInstallOptionsFigure implements I
     }
 
     @Override
-	public void setBounds(Rectangle rect)
+    public void setBounds(Rectangle rect)
     {
         Rectangle[] newBounds = calculateBounds(rect);
         getLayoutManager().setConstraint(mTextFigure,newBounds[0]);

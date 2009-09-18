@@ -29,7 +29,7 @@ public class ToggleEnablementCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         setEnablement(mShouldEnable);
     }
@@ -51,7 +51,7 @@ public class ToggleEnablementCommand extends Command
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         setEnablement(!mShouldEnable);
     }

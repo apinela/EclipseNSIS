@@ -29,7 +29,7 @@ public class InstallOptionsListboxEditManager extends InstallOptionsEditableElem
     }
 
     @Override
-	protected ListCellEditor createCellEditor(Composite composite)
+    protected ListCellEditor createCellEditor(Composite composite)
     {
         InstallOptionsListbox listbox = (InstallOptionsListbox)getEditPart().getModel();
         List<String> items = listbox.getListItems();
@@ -39,12 +39,12 @@ public class InstallOptionsListboxEditManager extends InstallOptionsEditableElem
     }
 
     @Override
-	protected void selectCellEditorText()
+    protected void selectCellEditorText()
     {
     }
 
     @Override
-	protected int getCellEditorStyle()
+    protected int getCellEditorStyle()
     {
         List<String> flags = ((InstallOptionsListbox)getEditPart().getModel()).getFlags();
         return (flags.contains(InstallOptionsModel.FLAGS_MULTISELECT)||

@@ -35,7 +35,7 @@ public class MoveGuideCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         boolean isHorizontal = mGuide.isHorizontal();
         mGuideOldPosition = mGuide.getPosition();
@@ -63,7 +63,7 @@ public class MoveGuideCommand extends Command
     }
 
     @Override
-	public boolean canExecute()
+    public boolean canExecute()
     {
         boolean isHorizontal = mGuide.isHorizontal();
         Font f = FontUtility.getInstallOptionsFont();
@@ -85,7 +85,7 @@ public class MoveGuideCommand extends Command
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         mGuide.setPosition(mGuideOldPosition);
         Iterator<InstallOptionsWidget> iter = mGuide.getWidgets().iterator();

@@ -112,7 +112,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     }
 
     @Override
-	public void applyData(Object data)
+    public void applyData(Object data)
     {
        mData = data;
        activateTab();
@@ -185,7 +185,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     }
 
     @SuppressWarnings("unchecked")
-	private <T> void savePreference(Map<String, ? super T> map, String name, TypeConverter<T> converter, T defaultValue)
+    private <T> void savePreference(Map<String, ? super T> map, String name, TypeConverter<T> converter, T defaultValue)
     {
         T o = (T) map.get(name);
         if(o == null) {
@@ -195,7 +195,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     }
 
     @Override
-	protected IPreferenceStore doGetPreferenceStore()
+    protected IPreferenceStore doGetPreferenceStore()
     {
         return InstallOptionsPlugin.getDefault().getPreferenceStore();
     }
@@ -204,7 +204,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected Control createContents(Composite parent)
+    protected Control createContents(Composite parent)
     {
         loadPreferences();
         loadDialogSizes();
@@ -264,7 +264,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         styleButton.setLayoutData(gd);
         styleButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 IStructuredSelection sel = (IStructuredSelection)mSyntaxStylesViewer.getSelection();
                 if(!sel.isEmpty()) {
                     boolean state = styleButton.getSelection();
@@ -279,7 +279,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     }
 
     @Override
-	public void createControl(Composite parent)
+    public void createControl(Composite parent)
     {
         super.createControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),PLUGIN_CONTEXT_PREFIX+"installoptions_preferences_context"); //$NON-NLS-1$
@@ -295,7 +295,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         link.setText(InstallOptionsPlugin.getResourceString("source.editor.preferences.description")); //$NON-NLS-1$
         link.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.ui.preferencePages.GeneralTextEditor", null, null); //$NON-NLS-1$
             }
         });
@@ -320,7 +320,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         mSyntaxStylesViewer.setContentProvider(new CollectionContentProvider());
         mSyntaxStylesViewer.setLabelProvider(new LabelProvider(){
             @Override
-			public String getText(Object element) {
+            public String getText(Object element) {
                 if(element instanceof String) {
                     String name = (String)element;
                     String label = InstallOptionsPlugin.getResourceString(name.toLowerCase()+".label",""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -349,7 +349,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         foregroundColorButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
         foregroundColorButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 IStructuredSelection sel = (IStructuredSelection)mSyntaxStylesViewer.getSelection();
                 if(!sel.isEmpty()) {
                     String key= (String)sel.getFirstElement();
@@ -431,7 +431,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
 
     private Composite createDesignEditorTab(Composite parent)
     {
-    	Composite parent2 = new Composite(parent,SWT.NONE);
+        Composite parent2 = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(2,false);
         layout.marginHeight = 2;
         layout.marginWidth = 2;
@@ -545,7 +545,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         mRemoveDialogSize = createButton(buttons, CommonImages.DELETE_ICON, "remove.tooltip", //$NON-NLS-1$
                                          new Listener() {
                                              @SuppressWarnings("unchecked")
-											 public void handleEvent(Event e) {
+                                             public void handleEvent(Event e) {
                                                  IStructuredSelection selection= (IStructuredSelection) mDialogSizeViewer.getSelection();
                                                  if(!selection.isEmpty()) {
                                                      Collection<DialogSize> coll = (Collection<DialogSize>)mDialogSizeViewer.getInput();
@@ -569,7 +569,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
 
         mDialogSizeViewer.addCheckStateListener(new ICheckStateListener() {
             @SuppressWarnings("unchecked")
-			public void checkStateChanged(CheckStateChangedEvent event) {
+            public void checkStateChanged(CheckStateChangedEvent event) {
                 DialogSize dialogSize= (DialogSize)event.getElement();
                 boolean checked = event.getChecked();
                 Collection<DialogSize> dialogSizes = (Collection<DialogSize>)mDialogSizeViewer.getInput();
@@ -674,7 +674,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         mShowRulers.setSelection((mDisplaySettingsMap.get(PREFERENCE_SHOW_RULERS)).booleanValue());
         mShowRulers.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mDisplaySettingsMap.put(PREFERENCE_SHOW_RULERS, Boolean.valueOf(((Button)e.widget).getSelection()));
             }
@@ -688,7 +688,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         mShowGrid.setSelection((mDisplaySettingsMap.get(PREFERENCE_SHOW_GRID)).booleanValue());
         mShowGrid.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mDisplaySettingsMap.put(PREFERENCE_SHOW_GRID, Boolean.valueOf(((Button)e.widget).getSelection()));
             }
@@ -702,7 +702,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         mShowGuides.setSelection((mDisplaySettingsMap.get(PREFERENCE_SHOW_GUIDES)).booleanValue());
         mShowGuides.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mDisplaySettingsMap.put(PREFERENCE_SHOW_GUIDES, Boolean.valueOf(((Button)e.widget).getSelection()));
             }
@@ -716,7 +716,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         mShowDialogSize.setSelection((mDisplaySettingsMap.get(PREFERENCE_SHOW_DIALOG_SIZE)).booleanValue());
         mShowDialogSize.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mDisplaySettingsMap.put(PREFERENCE_SHOW_DIALOG_SIZE, Boolean.valueOf(((Button)e.widget).getSelection()));
             }
@@ -732,7 +732,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     }
 
     @Override
-	protected void performDefaults()
+    protected void performDefaults()
     {
         mDisplaySettingsMap.put(PREFERENCE_SHOW_RULERS,SHOW_RULERS_DEFAULT);
         mShowRulers.setSelection(SHOW_RULERS_DEFAULT.booleanValue());
@@ -778,7 +778,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
     }
 
     @Override
-	public boolean performOk()
+    public boolean performOk()
     {
         if(getPreferenceStore().contains(PREFERENCE_CHECK_EDITOR_ASSOCIATION)) {
             getPreferenceStore().setToDefault(PREFERENCE_CHECK_EDITOR_ASSOCIATION);
@@ -858,7 +858,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         }
 
         @Override
-		protected void configureShell(Shell newShell)
+        protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
             newShell.setText((Common.isEmpty(mCurrent.getName())?InstallOptionsPlugin.getResourceString("dialog.size.dialog.add.title"):InstallOptionsPlugin.getResourceString("dialog.size.dialog.edit.title"))); //$NON-NLS-1$ //$NON-NLS-2$
@@ -866,7 +866,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         }
 
         @Override
-		public void create()
+        public void create()
         {
             super.create();
             updateOKButton();
@@ -881,8 +881,8 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         }
 
         @Override
-		@SuppressWarnings("unchecked")
-		protected void okPressed()
+        @SuppressWarnings("unchecked")
+        protected void okPressed()
         {
             String oldName = (mOriginal == null?"":mOriginal.getName().toLowerCase()); //$NON-NLS-1$
             String newName = mCurrent.getName().toLowerCase();
@@ -927,9 +927,9 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
         }
 
         @Override
-		protected Control createDialogArea(Composite parent)
+        protected Control createDialogArea(Composite parent)
         {
-        	Composite parent2 = (Composite)super.createDialogArea(parent);
+            Composite parent2 = (Composite)super.createDialogArea(parent);
             Composite composite = new Composite(parent2,SWT.NONE);
             composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
             GridLayout gridLayout = new GridLayout(2,false);
@@ -971,7 +971,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             );
             width.addFocusListener(new FocusAdapter() {
                 @Override
-				public void focusLost(FocusEvent e)
+                public void focusLost(FocusEvent e)
                 {
                     String text = width.getText();
                     if(Common.isEmpty(text)) {
@@ -1000,7 +1000,7 @@ public class InstallOptionsPreferencePage extends PropertyPage implements IWorkb
             );
             height.addFocusListener(new FocusAdapter() {
                 @Override
-				public void focusLost(FocusEvent e)
+                public void focusLost(FocusEvent e)
                 {
                     String text = height.getText();
                     if(Common.isEmpty(text)) {

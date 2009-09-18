@@ -23,7 +23,7 @@ public class MultiLineLabelProvider extends LabelProvider
     }
 
     @Override
-	public String getText(Object element)
+    public String getText(Object element)
     {
         if(element instanceof String) {
             return TypeConverter.ESCAPED_STRING_CONVERTER.asString((String) element);

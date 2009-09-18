@@ -50,7 +50,7 @@ public class NSISScriptMacro extends AbstractNSISScriptElementContainer
      * @see net.sf.eclipsensis.script.INSISScriptElement#write(net.sf.eclipsensis.script.NSISScriptWriter)
      */
     @Override
-	public void write(NSISScriptWriter writer)
+    public void write(NSISScriptWriter writer)
     {
         super.write(writer);
         writer.indent();
@@ -63,7 +63,7 @@ public class NSISScriptMacro extends AbstractNSISScriptElementContainer
      * @see net.sf.eclipsensis.script.AbstractNSISScriptElementContainer#validateElement(net.sf.eclipsensis.script.INSISScriptElement)
      */
     @Override
-	protected void validateElement(INSISScriptElement element)
+    protected void validateElement(INSISScriptElement element)
             throws InvalidNSISScriptElementException
     {
         if(element instanceof NSISScriptMacro) {

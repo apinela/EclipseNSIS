@@ -18,7 +18,7 @@ public class MapContentProvider extends EmptyContentProvider
      * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
      */
     @Override
-	public Object[] getElements(Object inputElement)
+    public Object[] getElements(Object inputElement)
     {
         if(inputElement != null && inputElement instanceof Map<?,?>) {
             return ((Map<?,?>)inputElement).entrySet().toArray();

@@ -2,7 +2,7 @@
  * Copyright (c) 2005-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.update.net;
@@ -64,7 +64,7 @@ public class DownloadSite extends AbstractNodeConvertible
     }
 
     @Override
-	protected String getChildNodeName()
+    protected String getChildNodeName()
     {
         return "attribute"; //$NON-NLS-1$
     }
@@ -75,14 +75,14 @@ public class DownloadSite extends AbstractNodeConvertible
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("image"); //$NON-NLS-1$
     }
 
     @Override
-	protected void propertyFromNode(Node childNode, PropertyDescriptor propertyDescriptor)
+    protected void propertyFromNode(Node childNode, PropertyDescriptor propertyDescriptor)
     {
         String propertyName = propertyDescriptor.getName();
         if ("imageFile".equals(propertyName)) //$NON-NLS-1$
@@ -110,15 +110,15 @@ public class DownloadSite extends AbstractNodeConvertible
     @Override
     protected boolean isConvertibleAttributeType(Class<?> clasz)
     {
-    	if(File.class.equals(clasz))
-    	{
-    		return true;
-    	}
-    	return super.isConvertibleAttributeType(clasz);
+        if(File.class.equals(clasz))
+        {
+            return true;
+        }
+        return super.isConvertibleAttributeType(clasz);
     }
 
     @Override
-	protected Object convertFromString(String string, Class<?> clasz)
+    protected Object convertFromString(String string, Class<?> clasz)
     {
         if (File.class.equals(clasz))
         {
@@ -128,7 +128,7 @@ public class DownloadSite extends AbstractNodeConvertible
     }
 
     @Override
-	protected String convertToString(String name, Object obj)
+    protected String convertToString(String name, Object obj)
     {
         if (obj instanceof File)
         {
@@ -138,7 +138,7 @@ public class DownloadSite extends AbstractNodeConvertible
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         int result = 31 + (mContinent == null ? 0 : mContinent.hashCode());
         result = 31 * result + (mImageFile == null ? 0 : mImageFile.hashCode());
@@ -148,7 +148,7 @@ public class DownloadSite extends AbstractNodeConvertible
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj)
         {

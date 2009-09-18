@@ -16,14 +16,14 @@ import org.w3c.dom.*;
 public class NSISInstallElementNodeConverter extends AbstractNodeConverter<INSISInstallElement>
 {
     @Override
-	public INSISInstallElement fromNode(Node node, Class<?> clasz)
+    public INSISInstallElement fromNode(Node node, Class<?> clasz)
     {
         if (INSISInstallElement.class.isAssignableFrom(clasz)) {
-			if (node.getNodeName().equals(INSISInstallElement.NODE)) {
-				return NSISInstallElementFactory.createFromNode(node);
-			}
-		}
-		throw new IllegalArgumentException(clasz.getName());
+            if (node.getNodeName().equals(INSISInstallElement.NODE)) {
+                return NSISInstallElementFactory.createFromNode(node);
+            }
+        }
+        throw new IllegalArgumentException(clasz.getName());
     }
 
     public Node toNode(Document document, INSISInstallElement object)

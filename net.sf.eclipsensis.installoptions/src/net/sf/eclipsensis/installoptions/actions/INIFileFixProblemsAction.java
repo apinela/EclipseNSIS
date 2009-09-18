@@ -50,7 +50,7 @@ public class INIFileFixProblemsAction extends INIFileAction
     }
 
     @Override
-	protected boolean doRun(INIFile iniFile)
+    protected boolean doRun(INIFile iniFile)
     {
         iniFile.validate(mFixFlag, true);
         iniFile.update();

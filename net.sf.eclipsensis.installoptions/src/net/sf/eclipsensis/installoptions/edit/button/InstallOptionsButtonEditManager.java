@@ -26,7 +26,7 @@ public class InstallOptionsButtonEditManager extends InstallOptionsUneditableEle
      * @see net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditManager#getCellEditorStyle()
      */
     @Override
-	protected int getCellEditorStyle()
+    protected int getCellEditorStyle()
     {
         return SWT.SINGLE|SWT.CENTER;
     }

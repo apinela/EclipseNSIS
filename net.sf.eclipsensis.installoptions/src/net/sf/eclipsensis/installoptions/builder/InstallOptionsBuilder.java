@@ -48,7 +48,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
     }
 
     @Override
-	protected void clean(IProgressMonitor monitor)
+    protected void clean(IProgressMonitor monitor)
     {
         try {
             String taskName = InstallOptionsPlugin.getResourceString("clean.task.name"); //$NON-NLS-1$
@@ -61,7 +61,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
     }
 
     @Override
-	protected void startupOnInitialize()
+    protected void startupOnInitialize()
     {
         super.startupOnInitialize();
 
@@ -152,23 +152,23 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 
 
     /*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
-	 *      java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException
+     * (non-Javadoc)
+     *
+     * @see org.eclipse.core.internal.events.InternalBuilder#build(int,
+     *      java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException
     {
-		if (kind == FULL_BUILD) {
-			fullBuild(monitor);
-		}
+        if (kind == FULL_BUILD) {
+            fullBuild(monitor);
+        }
         else {
-			IResourceDelta delta = getDelta(getProject());
-			if (delta == null) {
-				fullBuild(monitor);
-			}
+            IResourceDelta delta = getDelta(getProject());
+            if (delta == null) {
+                fullBuild(monitor);
+            }
             else {
                 if(!checkBuilderVersion(getProject())) {
                     fullBuild(monitor);
@@ -176,10 +176,10 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
                 else {
                     incrementalBuild(delta, monitor);
                 }
-			}
-		}
-		return null;
-	}
+            }
+        }
+        return null;
+    }
 
     private static String getExtension(String name)
     {
@@ -194,8 +194,8 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 
     private void checkINI(IResource resource)
     {
-		if (resource instanceof IFile && cExtensionsSet.contains(getExtension(resource.getName()))) {
-			IFile file = (IFile) resource;
+        if (resource instanceof IFile && cExtensionsSet.contains(getExtension(resource.getName()))) {
+            IFile file = (IFile) resource;
             try {
                 String editorId = file.getPersistentProperty(IDE.EDITOR_KEY);
                 if(editorId != null && (INSTALLOPTIONS_DESIGN_EDITOR_ID.equals(editorId) ||
@@ -225,16 +225,16 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
             catch (CoreException e) {
                 e.printStackTrace();
             }
-		}
-	}
+        }
+    }
 
-	protected void fullBuild(final IProgressMonitor monitor)
+    protected void fullBuild(final IProgressMonitor monitor)
     {
-		try {
+        try {
             monitor.beginTask(InstallOptionsPlugin.getResourceString("full.build.task.name"),100); //$NON-NLS-1$
             resetBuildTimestamp();
             monitor.worked(50);
-			getProject().accept(new IResourceVisitor() {
+            getProject().accept(new IResourceVisitor() {
                 public boolean visit(IResource resource)
                 {
                     if(monitor.isCanceled()) {
@@ -247,19 +247,19 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
             monitor.worked(45);
             getProject().setPersistentProperty(PROJECTPROPERTY_BUILDER_VERSION, cBuilderVersion.toString());
             monitor.worked(5);
-		}
+        }
         catch (CoreException e) {
-		}
+        }
         finally {
             monitor.done();
         }
-	}
+    }
 
-	protected void incrementalBuild(IResourceDelta delta, final IProgressMonitor monitor) throws CoreException
+    protected void incrementalBuild(IResourceDelta delta, final IProgressMonitor monitor) throws CoreException
     {
         try {
             monitor.beginTask(InstallOptionsPlugin.getResourceString("full.build.task.name"),100); //$NON-NLS-1$
-    		delta.accept(new IResourceDeltaVisitor() {
+            delta.accept(new IResourceDeltaVisitor() {
                 public boolean visit(IResourceDelta delta)
                 {
                     if(monitor.isCanceled()) {
@@ -284,7 +284,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         finally {
             monitor.done();
         }
-	}
+    }
 
     private void updateMarkers(final IFile file, final INIFile iniFile)
     {
@@ -292,7 +292,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
             WorkspaceModifyOperation op = new WorkspaceModifyOperation(file)
             {
                 @Override
-				protected void execute(IProgressMonitor monitor)throws CoreException
+                protected void execute(IProgressMonitor monitor)throws CoreException
                 {
                     try {
                         monitor.beginTask(InstallOptionsPlugin.getResourceString("updating.markers.task.name"), 2+(iniFile==null?0:iniFile.getProblems().length)); //$NON-NLS-1$
@@ -484,7 +484,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         }
 
         @Override
-		public boolean equals(Object other)
+        public boolean equals(Object other)
         {
             if(other instanceof ProjectJobFamily) {
                 return mProject.equals(((ProjectJobFamily)other).mProject);
@@ -492,10 +492,10 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
             return false;
         }
 
-		@Override
-		public int hashCode() 
-		{
-			return mProject.hashCode();
-		}
+        @Override
+        public int hashCode()
+        {
+            return mProject.hashCode();
+        }
     }
 }

@@ -21,7 +21,7 @@ public class NSISStringRule extends NSISSingleLineRule
     }
 
     @Override
-	protected boolean postProcess(ICharacterScanner scanner, int c)
+    protected boolean postProcess(ICharacterScanner scanner, int c)
     {
         NSISTextUtility.stringEscapeSequencesDetected(scanner, c);
         return true;

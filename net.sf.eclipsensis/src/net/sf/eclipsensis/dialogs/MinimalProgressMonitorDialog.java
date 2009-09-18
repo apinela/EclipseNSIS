@@ -112,7 +112,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     }
 
     @Override
-	protected void configureShell(Shell shell)
+    protected void configureShell(Shell shell)
     {
         shell.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e)
@@ -165,18 +165,18 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
 
     private void setFGColor(Control control, Color fgColor)
     {
-    	if(!(control instanceof ProgressBar)) {
-	        control.setForeground(fgColor);
-	        if(control instanceof Composite) {
-	            Composite composite = (Composite)control;
-	            Control[] controls = composite.getChildren();
-	            if(!Common.isEmptyArray(controls)) {
-	                for (int i = 0; i < controls.length; i++) {
-	                    setFGColor(controls[i], fgColor);
-	                }
-	            }
-	        }
-    	}
+        if(!(control instanceof ProgressBar)) {
+            control.setForeground(fgColor);
+            if(control instanceof Composite) {
+                Composite composite = (Composite)control;
+                Control[] controls = composite.getChildren();
+                if(!Common.isEmptyArray(controls)) {
+                    for (int i = 0; i < controls.length; i++) {
+                        setFGColor(controls[i], fgColor);
+                    }
+                }
+            }
+        }
     }
 
     public String getCaption()
@@ -190,7 +190,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     }
 
     @Override
-	protected Control createContents(Composite parent)
+    protected Control createContents(Composite parent)
     {
         final Composite container = new Composite(parent, (mBGImage==null?SWT.NONE:SWT.NO_BACKGROUND));
         GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -223,13 +223,13 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     }
 
     @Override
-	protected Image getImage()
+    protected Image getImage()
     {
         return null;
     }
 
     @Override
-	protected Control createMessageArea(Composite composite)
+    protected Control createMessageArea(Composite composite)
     {
         // create message
         if (message != null) {
@@ -248,7 +248,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     }
 
     @Override
-	protected Control createDialogArea(Composite parent)
+    protected Control createDialogArea(Composite parent)
     {
         // task label
         message = ""; //$NON-NLS-1$
@@ -286,7 +286,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
      * see org.eclipse.jface.Window.getInitialLocation()
      */
     @Override
-	protected Point getInitialLocation(Point initialSize) {
+    protected Point getInitialLocation(Point initialSize) {
         Composite parent = getShell().getParent();
 
         if (parent == null) {
@@ -312,7 +312,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     }
 
     @Override
-	protected Point getInitialSize()
+    protected Point getInitialSize()
     {
         Point calculatedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT,true);
         if (calculatedSize.x < mMinimumWidth) {
@@ -325,7 +325,7 @@ public class MinimalProgressMonitorDialog extends ProgressMonitorDialog
     }
 
     @Override
-	protected Control createButtonBar(Composite parent)
+    protected Control createButtonBar(Composite parent)
     {
         return null;
     }

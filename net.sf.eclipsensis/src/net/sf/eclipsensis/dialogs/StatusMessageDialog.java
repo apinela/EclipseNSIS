@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
@@ -44,7 +44,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
 
     /**
      * Creates a new dialog.
-     * 
+     *
      * @param parent
      *            the shell parent of the dialog
      */
@@ -78,7 +78,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
             {
                 mMessageLabel.addControlListener(new ControlAdapter() {
                     @Override
-					public void controlResized(ControlEvent e)
+                    public void controlResized(ControlEvent e)
                     {
                         updateMessageLabelToolTip();
                     }
@@ -94,7 +94,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     }
 
     @Override
-	protected void configureShell(Shell newShell)
+    protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setImage(mShellImage);
@@ -140,7 +140,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     /**
      * Updates the status of the ok button to reflect the given status.
      * Subclasses may override this method to update additional buttons.
-     * 
+     *
      * @param status
      *            the status.
      */
@@ -154,7 +154,7 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
     }
 
     @Override
-	protected Control createContents(Composite parent)
+    protected Control createContents(Composite parent)
     {
         // create the top level composite for the dialog
         Composite composite = new Composite(parent, SWT.BORDER);
@@ -186,9 +186,9 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
      * @see Dialog#createDialogArea(Composite)
      */
     @Override
-	protected final Control createDialogArea(Composite parent)
+    protected final Control createDialogArea(Composite parent)
     {
-    	Composite parent2 = new Composite(parent, SWT.NONE);
+        Composite parent2 = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -300,11 +300,11 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.window.Window#close()
      */
     @Override
-	public boolean close()
+    public boolean close()
     {
         if (mOKImage != null && !mOKImage.isDisposed())
         {
@@ -332,12 +332,12 @@ public abstract class StatusMessageDialog extends TrayDialog implements IDialogC
         }
 
         @Override
-		protected void setMessage(String message)
+        protected void setMessage(String message)
         {
-        	String message2 = message;
+            String message2 = message;
             if (message2 == null)
             {
-            	message2 = ""; //$NON-NLS-1$
+                message2 = ""; //$NON-NLS-1$
             }
             super.setMessage(message2);
         }

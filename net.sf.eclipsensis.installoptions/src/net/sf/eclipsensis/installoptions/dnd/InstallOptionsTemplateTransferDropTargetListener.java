@@ -32,7 +32,7 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
     }
 
     @Override
-	protected Request createTargetRequest()
+    protected Request createTargetRequest()
     {
         Request request = super.createTargetRequest();
         if(request instanceof CreateRequest) {
@@ -46,7 +46,7 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
     }
 
     @Override
-	protected CreationFactory getFactory(Object type)
+    protected CreationFactory getFactory(Object type)
     {
         if (type instanceof String) {
             return InstallOptionsElementFactory.getFactory((String)type);
@@ -58,7 +58,7 @@ public class InstallOptionsTemplateTransferDropTargetListener extends TemplateTr
     }
 
     @Override
-	protected void handleDrop() {
+    protected void handleDrop() {
         super.handleDrop();
         selectAddedObjects();
     }

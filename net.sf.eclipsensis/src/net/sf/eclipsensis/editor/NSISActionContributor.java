@@ -42,15 +42,15 @@ public class NSISActionContributor extends TextEditorActionContributor implement
     private RetargetTextEditorAction mInsertRegVal;
     private IContributionItem mConfigWizardAction;
 
-	/**
-	 * Default constructor.
-	 */
-	public NSISActionContributor()
+    /**
+     * Default constructor.
+     */
+    public NSISActionContributor()
     {
-		super();
-		ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
+        super();
+        ResourceBundle bundle = EclipseNSISPlugin.getDefault().getResourceBundle();
         mContentAssistProposal= new RetargetTextEditorAction(bundle, "content.assist.proposal."); //$NON-NLS-1$
-		mContentAssistProposal.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+        mContentAssistProposal.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 
         mInsertTemplate= new RetargetTextEditorAction(bundle, "insert.template."); //$NON-NLS-1$
         mInsertTemplate.setActionDefinitionId(INSERT_TEMPLATE_COMMAND_ID);
@@ -94,19 +94,19 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mConfigWizardAction = new ActionContributionItem(new NSISConfigWizardAction());
     }
 
-	/*
-	 * @see IEditorActionBarContributor#init(IActionBars)
-	 */
-	@Override
-	public void init(IActionBars bars)
+    /*
+     * @see IEditorActionBarContributor#init(IActionBars)
+     */
+    @Override
+    public void init(IActionBars bars)
     {
-		super.init(bars);
+        super.init(bars);
 
-		IMenuManager menuManager= bars.getMenuManager();
-		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
-		if (editMenu != null) {
-			editMenu.add(new Separator());
-			editMenu.add(mContentAssistProposal);
+        IMenuManager menuManager= bars.getMenuManager();
+        IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
+        if (editMenu != null) {
+            editMenu.add(new Separator());
+            editMenu.add(mContentAssistProposal);
             editMenu.add(mInsertTemplate);
             editMenu.add(new Separator());
             editMenu.add(mTabsToSpaces);
@@ -120,22 +120,22 @@ public class NSISActionContributor extends TextEditorActionContributor implement
             editMenu.add(mInsertRegFile);
             editMenu.add(mInsertRegKey);
             editMenu.add(mInsertRegVal);
-	        editMenu.addMenuListener(new IMenuListener() {
-	            public void menuAboutToShow(IMenuManager manager)
-	            {
-	                IEditorPart editor = getActiveEditorPart();
-	                if(editor != null && editor instanceof NSISEditor) {
-	                    ISelection sel = ((NSISEditor)editor).getSelectionProvider().getSelection();
-	                    if(sel instanceof ITextSelection) {
-	                        mAddBlockComment.setEnabled(((ITextSelection)sel).getLength() > 0);
-	                    }
-	                }
-	            }
-	        });
-		}
-	}
+            editMenu.addMenuListener(new IMenuListener() {
+                public void menuAboutToShow(IMenuManager manager)
+                {
+                    IEditorPart editor = getActiveEditorPart();
+                    if(editor != null && editor instanceof NSISEditor) {
+                        ISelection sel = ((NSISEditor)editor).getSelectionProvider().getSelection();
+                        if(sel instanceof ITextSelection) {
+                            mAddBlockComment.setEnabled(((ITextSelection)sel).getLength() > 0);
+                        }
+                    }
+                }
+            });
+        }
+    }
 
-	private void doSetActiveEditor(IEditorPart part)
+    private void doSetActiveEditor(IEditorPart part)
     {
         IEditorPart oldEditor = getActiveEditorPart();
         if(oldEditor != null) {
@@ -144,10 +144,10 @@ public class NSISActionContributor extends TextEditorActionContributor implement
                 manager.removeMenuListener(this);
             }
         }
-		ITextEditor editor= null;
-		if (part instanceof ITextEditor) {
-			editor= (ITextEditor) part;
-		}
+        ITextEditor editor= null;
+        if (part instanceof ITextEditor) {
+            editor= (ITextEditor) part;
+        }
 
         if(editor != null) {
             try {
@@ -162,7 +162,7 @@ public class NSISActionContributor extends TextEditorActionContributor implement
             }
         }
 
-		mContentAssistProposal.setAction(getAction(editor, INSISEditorConstants.CONTENT_ASSIST_PROPOSAL));
+        mContentAssistProposal.setAction(getAction(editor, INSISEditorConstants.CONTENT_ASSIST_PROPOSAL));
         mInsertTemplate.setAction(getAction(editor, INSISEditorConstants.INSERT_TEMPLATE));
         mTabsToSpaces.setAction(getAction(editor, INSISEditorConstants.TABS_TO_SPACES));
         mToggleComment.setAction(getAction(editor, INSISEditorConstants.TOGGLE_COMMENT));
@@ -174,27 +174,27 @@ public class NSISActionContributor extends TextEditorActionContributor implement
         mInsertRegFile.setAction(getAction(editor, INSISEditorConstants.INSERT_REGFILE));
         mInsertRegKey.setAction(getAction(editor, INSISEditorConstants.INSERT_REGKEY));
         mInsertRegVal.setAction(getAction(editor, INSISEditorConstants.INSERT_REGVAL));
-	}
+    }
 
-	/*
-	 * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
-	 */
-	@Override
-	public void setActiveEditor(IEditorPart part)
+    /*
+     * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
+     */
+    @Override
+    public void setActiveEditor(IEditorPart part)
     {
         doSetActiveEditor(part);
-		super.setActiveEditor(part);
-	}
+        super.setActiveEditor(part);
+    }
 
-	/*
-	 * @see IEditorActionBarContributor#dispose()
-	 */
-	@Override
-	public void dispose()
+    /*
+     * @see IEditorActionBarContributor#dispose()
+     */
+    @Override
+    public void dispose()
     {
-		doSetActiveEditor(null);
-		super.dispose();
-	}
+        doSetActiveEditor(null);
+        super.dispose();
+    }
 
     public void menuAboutToShow(IMenuManager manager)
     {

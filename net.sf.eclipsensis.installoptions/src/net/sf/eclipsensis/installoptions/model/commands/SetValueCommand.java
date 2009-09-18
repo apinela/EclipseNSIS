@@ -35,13 +35,13 @@ public class SetValueCommand extends Command
     }
 
     @Override
-	public boolean canExecute()
+    public boolean canExecute()
     {
         return true;
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         boolean wasPropertySet = getTarget().isPropertySet(mPropertyName);
         mUndoValue = getTarget().getPropertyValue(mPropertyName);
@@ -74,7 +74,7 @@ public class SetValueCommand extends Command
     }
 
     @Override
-	public void redo()
+    public void redo()
     {
         execute();
     }
@@ -90,7 +90,7 @@ public class SetValueCommand extends Command
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         if (mResetOnUndo) {
             getTarget().resetPropertyValue(mPropertyName);

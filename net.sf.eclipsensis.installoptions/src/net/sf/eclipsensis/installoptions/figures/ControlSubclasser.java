@@ -67,7 +67,7 @@ public class ControlSubclasser
         }
 
         @SuppressWarnings("unused")
-		public int windowProc(int hWnd, int msg, int wParam, int lParam)
+        public int windowProc(int hWnd, int msg, int wParam, int lParam)
         {
             int res;
 
@@ -101,7 +101,7 @@ public class ControlSubclasser
     {
         int oldProc;
         @SuppressWarnings("unused")
-		SWTControlFigure figure;
+        SWTControlFigure figure;
 
         public ControlInfo(int oldProc, SWTControlFigure figure)
         {

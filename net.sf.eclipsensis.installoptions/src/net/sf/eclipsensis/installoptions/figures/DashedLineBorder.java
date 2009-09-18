@@ -25,7 +25,7 @@ public class DashedLineBorder extends LineBorder
     }
 
     @Override
-	public void paint(IFigure figure, Graphics graphics, Insets insets)
+    public void paint(IFigure figure, Graphics graphics, Insets insets)
     {
         int oldStyle = graphics.getLineStyle();
         graphics.setLineStyle(SWT.LINE_CUSTOM);

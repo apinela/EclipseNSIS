@@ -23,13 +23,13 @@ import org.eclipse.jface.viewers.CellEditor;
 public abstract class InstallOptionsEditableElementEditPart<T extends CellEditor> extends InstallOptionsWidgetEditPart
 {
     @Override
-	protected String getAccessibleControlEventResult()
+    protected String getAccessibleControlEventResult()
     {
         return getInstallOptionsEditableElement().getState();
     }
 
     @Override
-	protected void createEditPolicies()
+    protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, createDirectEditPolicy());
@@ -49,7 +49,7 @@ public abstract class InstallOptionsEditableElementEditPart<T extends CellEditor
     }
 
     @Override
-	protected void doPropertyChange(PropertyChangeEvent evt)
+    protected void doPropertyChange(PropertyChangeEvent evt)
     {
         if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
             IEditableElementFigure figure2 = (IEditableElementFigure)getFigure();
@@ -62,17 +62,17 @@ public abstract class InstallOptionsEditableElementEditPart<T extends CellEditor
     }
 
     @Override
-	protected final DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator) 
+    protected final DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
     {
-		return creatDirectEditManager(part, getCellEditorClass(), locator);
-	}
+        return creatDirectEditManager(part, getCellEditorClass(), locator);
+    }
 
-	@Override
-	protected String getTypeName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    protected String getTypeName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	protected abstract Class<T> getCellEditorClass();
+    protected abstract Class<T> getCellEditorClass();
     protected abstract DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<T> clasz, CellEditorLocator locator);
 }

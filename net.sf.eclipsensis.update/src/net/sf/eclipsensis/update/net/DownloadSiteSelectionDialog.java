@@ -75,7 +75,7 @@ public class DownloadSiteSelectionDialog extends Dialog
     }
 
     @Override
-	protected void configureShell(Shell shell)
+    protected void configureShell(Shell shell)
     {
         super.configureShell(shell);
         shell.setText(EclipseNSISUpdatePlugin.getResourceString("download.sites.dialog.title")); //$NON-NLS-1$
@@ -84,7 +84,7 @@ public class DownloadSiteSelectionDialog extends Dialog
 
     private void makeLabel(Composite parent, Image image, String text, Color bgColor, MouseListener listener, MouseTrackListener listener2)
     {
-    	Composite parent2 = new Composite(parent,SWT.NONE);
+        Composite parent2 = new Composite(parent,SWT.NONE);
         parent2.setBackground(bgColor);
         parent2.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         parent2.addMouseListener(listener);
@@ -111,7 +111,7 @@ public class DownloadSiteSelectionDialog extends Dialog
     }
 
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         if(mDialogSettings != null) {
             mDialogSettings.put(SAVE_PREFERRED, mSavePreferred.getSelection());
@@ -146,7 +146,7 @@ public class DownloadSiteSelectionDialog extends Dialog
     }
 
     @Override
-	protected Control createDialogArea(Composite parent)
+    protected Control createDialogArea(Composite parent)
     {
         Composite composite = (Composite)super.createDialogArea(parent);
         Label l = new Label(composite, SWT.NONE);
@@ -164,14 +164,14 @@ public class DownloadSiteSelectionDialog extends Dialog
         composite2.setLayout(layout);
         SelectionAdapter selectionAdapter = new SelectionAdapter() {
             @Override
-			public void widgetDefaultSelected(SelectionEvent e)
+            public void widgetDefaultSelected(SelectionEvent e)
             {
                 widgetSelected(e);
                 okPressed();
             }
 
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 Button button = (Button)e.widget;
                 if(button.getSelection()) {
@@ -190,13 +190,13 @@ public class DownloadSiteSelectionDialog extends Dialog
 
             MouseAdapter mouseAdapter = new MouseAdapter() {
                 @Override
-				public void mouseUp(MouseEvent e)
+                public void mouseUp(MouseEvent e)
                 {
                     button.setFocus();
                 }
 
                 @Override
-				public void mouseDoubleClick(MouseEvent e)
+                public void mouseDoubleClick(MouseEvent e)
                 {
                     mouseUp(e);
                     okPressed();
@@ -219,13 +219,13 @@ public class DownloadSiteSelectionDialog extends Dialog
                     }
 
                     @Override
-					public void mouseEnter(MouseEvent e)
+                    public void mouseEnter(MouseEvent e)
                     {
                         paint(WinAPI.RBS_CHECKEDHOT,WinAPI.RBS_UNCHECKEDHOT);
                     }
 
                     @Override
-					public void mouseExit(MouseEvent e)
+                    public void mouseExit(MouseEvent e)
                     {
                         paint(WinAPI.RBS_CHECKEDNORMAL,WinAPI.RBS_UNCHECKEDNORMAL);
                     }

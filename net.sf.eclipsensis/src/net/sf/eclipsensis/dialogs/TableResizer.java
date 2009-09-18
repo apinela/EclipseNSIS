@@ -38,7 +38,7 @@ public class TableResizer extends ControlAdapter
     }
 
     @Override
-	public void controlResized(ControlEvent e)
+    public void controlResized(ControlEvent e)
     {
         Table table = (Table)e.widget;
         int width = table.getClientArea().width;

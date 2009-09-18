@@ -112,7 +112,7 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
 
     private void addLineToBuf(String line)
     {
-    	String line2 = line;
+        String line2 = line;
         mShellConstantConverter.setShellContext(ShellConstant.CONTEXT_GENERAL);
         line2 = mShellConstantConverter.encodeConstants(line2);
         String newContext = mShellConstantConverter.getShellContext();

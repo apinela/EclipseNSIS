@@ -266,56 +266,56 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                             }
 
                             if (set != null) {
-								for (int i = 0; i < values.length; i++) {
-									int m = values[i].indexOf('^');
-									int n = values[i].indexOf('~');
-									if (values[i].charAt(0) == '-') {
-										set.remove(values[i].substring(1));
-									} else if (m > 0) {
-										String oldValue = values[i].substring(
-												0, m);
-										String newValue = values[i]
-												.substring(m + 1);
-										List<String> list2 = mNewerKeywordsMap
-												.get(oldValue);
-										if (list2 == null) {
-											list2 = new ArrayList<String>();
-											list2.add(oldValue);
-											mNewerKeywordsMap.put(oldValue,
-													list2);
-										}
-										if (!list2.contains(newValue)) {
-											list2.add(newValue);
-										}
-										set.add(oldValue);
-										set.add(newValue);
-									} else if (n > 0) {
-										String oldValue = values[i].substring(
-												0, n);
-										String newValue = values[i]
-												.substring(n + 1);
-										List<String> list2 = mNewerKeywordsMap
-												.get(oldValue);
-										if (list2 == null) {
-											list2 = new ArrayList<String>();
-											mNewerKeywordsMap.put(oldValue,
-													list2);
-										} else {
-											list2.remove(oldValue);
-										}
-										if (!list2.contains(newValue)) {
-											list2.add(newValue);
-										}
-										set.remove(oldValue);
-										set.add(newValue);
-									} else {
-										if (values[i].charAt(0) == '+') {
-											values[i] = values[i].substring(1);
-										}
-										set.add(values[i]);
-									}
-								}
-							}
+                                for (int i = 0; i < values.length; i++) {
+                                    int m = values[i].indexOf('^');
+                                    int n = values[i].indexOf('~');
+                                    if (values[i].charAt(0) == '-') {
+                                        set.remove(values[i].substring(1));
+                                    } else if (m > 0) {
+                                        String oldValue = values[i].substring(
+                                                0, m);
+                                        String newValue = values[i]
+                                                .substring(m + 1);
+                                        List<String> list2 = mNewerKeywordsMap
+                                                .get(oldValue);
+                                        if (list2 == null) {
+                                            list2 = new ArrayList<String>();
+                                            list2.add(oldValue);
+                                            mNewerKeywordsMap.put(oldValue,
+                                                    list2);
+                                        }
+                                        if (!list2.contains(newValue)) {
+                                            list2.add(newValue);
+                                        }
+                                        set.add(oldValue);
+                                        set.add(newValue);
+                                    } else if (n > 0) {
+                                        String oldValue = values[i].substring(
+                                                0, n);
+                                        String newValue = values[i]
+                                                .substring(n + 1);
+                                        List<String> list2 = mNewerKeywordsMap
+                                                .get(oldValue);
+                                        if (list2 == null) {
+                                            list2 = new ArrayList<String>();
+                                            mNewerKeywordsMap.put(oldValue,
+                                                    list2);
+                                        } else {
+                                            list2.remove(oldValue);
+                                        }
+                                        if (!list2.contains(newValue)) {
+                                            list2.add(newValue);
+                                        }
+                                        set.remove(oldValue);
+                                        set.add(newValue);
+                                    } else {
+                                        if (values[i].charAt(0) == '+') {
+                                            values[i] = values[i].substring(1);
+                                        }
+                                        set.add(values[i]);
+                                    }
+                                }
+                            }
                         }
                     }
                 }

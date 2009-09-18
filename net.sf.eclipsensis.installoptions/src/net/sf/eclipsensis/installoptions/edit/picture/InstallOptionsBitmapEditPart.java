@@ -14,13 +14,13 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 public class InstallOptionsBitmapEditPart extends InstallOptionsPictureEditPart
 {
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return "bitmap.direct.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("bitmap.type.name"); //$NON-NLS-1$
     }

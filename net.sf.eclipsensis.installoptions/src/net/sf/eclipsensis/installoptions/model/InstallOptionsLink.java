@@ -31,7 +31,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
     public static final RGB DEFAULT_TXTCOLOR = new RGB(0,0,255);
     private static ILabelProvider cLabelProvider = new LabelProvider(){
         @Override
-		public String getText(Object element)
+        public String getText(Object element)
         {
             RGB rgb = null;
             if(element instanceof RGB) {
@@ -61,13 +61,13 @@ public class InstallOptionsLink extends InstallOptionsLabel
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_LINK;
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         mState = ""; //$NON-NLS-1$
@@ -78,7 +78,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
      * @return
      */
     @Override
-	protected String getDefaultText()
+    protected String getDefaultText()
     {
         return InstallOptionsPlugin.getResourceString("link.text.default"); //$NON-NLS-1$
     }
@@ -87,7 +87,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
      * @return
      */
     @Override
-	protected Position getDefaultPosition()
+    protected Position getDefaultPosition()
     {
         return new Position(0,0,15,9);
     }
@@ -123,7 +123,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
     }
 
     @Override
-	protected TypeConverter<?> loadTypeConverter(String property, Object value)
+    protected TypeConverter<?> loadTypeConverter(String property, Object value)
     {
         if(property.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TXTCOLOR)) {
             return TypeConverter.RGB_CONVERTER;
@@ -134,7 +134,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
     }
 
     @Override
-	protected void addPropertyName(List<String> list, String setting)
+    protected void addPropertyName(List<String> list, String setting)
     {
         if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
             list.add(InstallOptionsModel.PROPERTY_STATE);
@@ -148,7 +148,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$;
@@ -173,7 +173,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         InstallOptionsLink clone = (InstallOptionsLink)super.clone();
         clone.setState(getState());
@@ -184,7 +184,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
     }
 
     @Override
-	public Object getPropertyValue(Object propName)
+    public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_STATE.equals(propName)) {
             return getState();
@@ -196,7 +196,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
     }
 
     @Override
-	public void setPropertyValue(Object id, Object value)
+    public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_STATE)) {
             setState((String)value);
@@ -210,13 +210,13 @@ public class InstallOptionsLink extends InstallOptionsLabel
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new LinkPropertySectionCreator(this);
     }
 
     @Override
-	public boolean isMultiLine()
+    public boolean isMultiLine()
     {
         return mMultiLine;
     }
@@ -232,7 +232,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
     }
 
     @Override
-	public void modelChanged()
+    public void modelChanged()
     {
         super.modelChanged();
         setMultiLine(checkMultiLine());

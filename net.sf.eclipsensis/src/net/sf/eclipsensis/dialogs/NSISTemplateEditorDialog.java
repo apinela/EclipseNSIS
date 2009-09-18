@@ -90,12 +90,12 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
         mContextTypes= contexts.toArray(new String[contexts.size()][]);
 
         mTemplateContextType = mContextTypeRegistry.getContextType(mContextTypeId);
-		setTitle(EclipseNSISPlugin.getResourceString((edit?"edit.template.dialog.title": //$NON-NLS-1$
+        setTitle(EclipseNSISPlugin.getResourceString((edit?"edit.template.dialog.title": //$NON-NLS-1$
                                                            "new.template.dialog.title"))); //$NON-NLS-1$
     }
 
     @Override
-	public void create()
+    public void create()
     {
         super.create();
         if(mPatternEditor != null && Common.isEmpty(mPatternEditor.getTextWidget().getText())) {
@@ -109,7 +109,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     }
 
     @Override
-	protected Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         Composite composite= new Composite(parent, SWT.NONE);
         GridLayout layout= new GridLayout();
@@ -510,7 +510,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
          * @see Action#run()
          */
         @Override
-		public void run()
+        public void run()
         {
             if (mOperationCode != -1 && mOperationTarget != null) {
                 mOperationTarget.doOperation(mOperationCode);

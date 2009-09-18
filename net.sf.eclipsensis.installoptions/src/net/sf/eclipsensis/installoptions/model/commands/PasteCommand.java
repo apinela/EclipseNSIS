@@ -49,7 +49,7 @@ public class PasteCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         CopyCommand.CopyContents mCopyContents = (CopyCommand.CopyContents)Clipboard.getDefault().getContents();
         if(mCopyContents != null) {
@@ -89,7 +89,7 @@ public class PasteCommand extends Command
     }
 
     @Override
-	public void redo()
+    public void redo()
     {
         calculatePasteBounds(mParent.getDialogSize().getSize());
         for (Iterator<InstallOptionsWidget> iter = mPasteList.iterator(); iter.hasNext();) {
@@ -101,7 +101,7 @@ public class PasteCommand extends Command
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         for (Iterator<InstallOptionsWidget> iter = mPasteList.iterator(); iter.hasNext();) {
             mParent.removeChild(iter.next());

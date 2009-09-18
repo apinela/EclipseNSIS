@@ -34,7 +34,7 @@ public class DeleteTemplateAction extends Action
     }
 
     @Override
-	public void run()
+    public void run()
     {
         InstallOptionsTemplateManager.INSTANCE.removeTemplate(mTemplate);
         try {

@@ -32,7 +32,7 @@ public class NSISTemplateSourceViewerConfiguration extends NSISSourceViewerConfi
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
     @Override
-	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer)
+    public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer)
     {
         return NSISSourceViewerConfigurationTools.createPresentationReconciler(sourceViewer,
                 new ITokenScanner[] {new NSISTemplateCodeScanner(mPreferenceStore),

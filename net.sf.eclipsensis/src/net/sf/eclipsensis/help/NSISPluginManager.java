@@ -200,7 +200,7 @@ public class NSISPluginManager implements INSISConstants
 
     public String[] getPluginNames(File dir)
     {
-    	Map<String, PluginInfo> map = mCustomPluginsMap.get(dir);
+        Map<String, PluginInfo> map = mCustomPluginsMap.get(dir);
         if(map == null) {
             loadPlugins(dir);
             map = mCustomPluginsMap.get(dir);

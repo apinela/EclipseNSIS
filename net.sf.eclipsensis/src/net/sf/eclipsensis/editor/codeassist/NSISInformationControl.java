@@ -269,7 +269,7 @@ public class NSISInformationControl implements IInformationControl, IInformation
 
     public boolean containsControl(Control control)
     {
-    	Control control2 = control;
+        Control control2 = control;
         do {
             if (control2 == mShell) {
                 return true;

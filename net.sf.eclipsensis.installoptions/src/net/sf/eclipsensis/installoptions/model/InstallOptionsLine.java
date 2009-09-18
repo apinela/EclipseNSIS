@@ -17,7 +17,7 @@ import net.sf.eclipsensis.installoptions.properties.tabbed.section.*;
 public abstract class InstallOptionsLine extends InstallOptionsWidget
 {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1423121089228222673L;
 
@@ -27,7 +27,7 @@ public abstract class InstallOptionsLine extends InstallOptionsWidget
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("flags"); //$NON-NLS-1$
@@ -35,7 +35,7 @@ public abstract class InstallOptionsLine extends InstallOptionsWidget
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new WidgetPropertySectionCreator(this) { };
     }

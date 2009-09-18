@@ -20,13 +20,13 @@ import org.eclipse.gef.tools.DirectEditManager;
 public class InstallOptionsDropListEditPart extends InstallOptionsComboboxEditPart
 {
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return "droplist.direct.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected String getExtendedEditLabelProperty()
+    protected String getExtendedEditLabelProperty()
     {
         return "droplist.extended.edit.label"; //$NON-NLS-1$
     }
@@ -35,13 +35,13 @@ public class InstallOptionsDropListEditPart extends InstallOptionsComboboxEditPa
      * @return
      */
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("droplist.type.name"); //$NON-NLS-1$
     }
 
     @Override
-	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<EditableComboBoxCellEditor> clasz, CellEditorLocator locator)
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<EditableComboBoxCellEditor> clasz, CellEditorLocator locator)
     {
         return new InstallOptionsDropListEditManager(part,clasz,locator);
     }

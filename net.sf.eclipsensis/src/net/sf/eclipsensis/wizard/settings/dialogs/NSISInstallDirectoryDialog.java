@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings.dialogs;
@@ -57,32 +57,32 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog
      * #getProperties()
      */
     @Override
-	protected List<String> getProperties()
+    protected List<String> getProperties()
     {
         return cProperties;
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_folderdlg_context"; //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
      * .Composite)
      */
     @Override
-	protected Control createControlContents(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(3, false);
@@ -117,7 +117,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
                 true, "wizard.overwrite.label", true, null, false); //$NON-NLS-1$
         c2.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("overwriteMode", c2.getSelectionIndex()); //$NON-NLS-1$
             }
@@ -127,7 +127,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
                 "wizard.recursive.label", mStore.getBoolean("recursive"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$
         cb1.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("recursive", cb1.getSelection()); //$NON-NLS-1$
             }
@@ -151,7 +151,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
         gd.grabExcessHorizontalSpace = true;
         b1.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("preserveAttributes", b1.getSelection()); //$NON-NLS-1$
             }
@@ -164,7 +164,7 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
         gd.grabExcessHorizontalSpace = true;
         b2.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("nonFatal", b2.getSelection()); //$NON-NLS-1$
             }
@@ -174,13 +174,13 @@ public class NSISInstallDirectoryDialog extends AbstractNSISInstallItemDialog
     }
 
     @Override
-	protected boolean hasRequiredFields()
+    protected boolean hasRequiredFields()
     {
         return true;
     }
 
     @Override
-	protected String checkForErrors()
+    protected String checkForErrors()
     {
         if (!IOUtility.isValidPath(IOUtility.decodePath(mStore.getString("name")))){ //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.invalid.directory.name"); //$NON-NLS-1$

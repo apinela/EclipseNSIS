@@ -109,7 +109,7 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
     }
 
     @Override
-	public boolean isDynamic()
+    public boolean isDynamic()
     {
         return true;
     }

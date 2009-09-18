@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
@@ -27,7 +27,7 @@ public class NSISHelpInformationControlCreator extends NSISInformationControlCre
     }
 
     @Override
-	protected boolean shouldBuildStatusText()
+    protected boolean shouldBuildStatusText()
     {
         boolean b = super.shouldBuildStatusText();
         if (b)
@@ -38,11 +38,11 @@ public class NSISHelpInformationControlCreator extends NSISInformationControlCre
     }
 
     @Override
-	protected NSISInformationControl.IInformationPresenter createInformationPresenter()
+    protected NSISInformationControl.IInformationPresenter createInformationPresenter()
     {
         return new WrappingInformationPresenter("\t\t") { //$NON-NLS-1$
             @Override
-			public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation,
+            public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation,
                     int maxWidth, int maxHeight)
             {
                 String hoverInfo2 = super.updatePresentation(display, hoverInfo, presentation, maxWidth, maxHeight);

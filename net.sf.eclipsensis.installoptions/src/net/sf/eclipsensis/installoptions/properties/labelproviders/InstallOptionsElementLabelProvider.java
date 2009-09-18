@@ -36,7 +36,7 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
     @Override
-	public Image getImage(Object objects)
+    public Image getImage(Object objects)
     {
         if (objects == null || objects.equals(StructuredSelection.EMPTY)) {
             return null;
@@ -61,7 +61,7 @@ public class InstallOptionsElementLabelProvider extends LabelProvider
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
     @Override
-	public String getText(Object objects)
+    public String getText(Object objects)
     {
         if (objects == null || objects.equals(StructuredSelection.EMPTY)) {
             return InstallOptionsPlugin.getResourceString("no.items.selected.message"); //$NON-NLS-1$

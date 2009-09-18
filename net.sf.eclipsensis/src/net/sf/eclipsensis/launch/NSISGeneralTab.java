@@ -54,13 +54,13 @@ class NSISGeneralTab extends NSISTab
     }
 
     @Override
-	protected NSISSettingsEditorPage createPage()
+    protected NSISSettingsEditorPage createPage()
     {
         return new LaunchSettingsEditorGeneralPage(mSettings);
     }
 
     @Override
-	protected IFilter createSettingsFilter()
+    protected IFilter createSettingsFilter()
     {
         return new IFilter() {
             public boolean select(Object toTest)
@@ -71,13 +71,13 @@ class NSISGeneralTab extends NSISTab
     }
 
     @Override
-	public Image getImage()
+    public Image getImage()
     {
         return EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.general.tab.icon")); //$NON-NLS-1$
     }
 
     @Override
-	public void createControl(Composite parent)
+    public void createControl(Composite parent)
     {
         super.createControl(parent);
         if (mBuilder) {
@@ -94,13 +94,13 @@ class NSISGeneralTab extends NSISTab
     }
 
     @Override
-	public boolean canSave()
+    public boolean canSave()
     {
         return ((LaunchSettingsEditorGeneralPage)mPage).isValid();
     }
 
     @Override
-	public boolean isValid(ILaunchConfiguration launchConfig)
+    public boolean isValid(ILaunchConfiguration launchConfig)
     {
         if(super.isValid(launchConfig)) {
             return ((LaunchSettingsEditorGeneralPage)mPage).isValid();
@@ -109,7 +109,7 @@ class NSISGeneralTab extends NSISTab
     }
 
     @Override
-	public void settingsChanged()
+    public void settingsChanged()
     {
         super.settingsChanged();
         if(!((LaunchSettingsEditorGeneralPage)mPage).isValid()) {
@@ -192,7 +192,7 @@ class NSISGeneralTab extends NSISTab
         }
 
         @Override
-		public void reset()
+        public void reset()
         {
             NSISLaunchSettings settings = (NSISLaunchSettings)mSettings;
             mScript.setText(settings.getScript());
@@ -233,7 +233,7 @@ class NSISGeneralTab extends NSISTab
         }
 
         @Override
-		public void enableControls(boolean state)
+        public void enableControls(boolean state)
         {
             if (!mBuilder) {
                 mRunInstaller.setEnabled(state);
@@ -242,7 +242,7 @@ class NSISGeneralTab extends NSISTab
         }
 
         @Override
-		public void setDefaults()
+        public void setDefaults()
         {
             super.setDefaults();
             mScript.setText(""); //$NON-NLS-1$
@@ -252,7 +252,7 @@ class NSISGeneralTab extends NSISTab
         }
 
         @Override
-		protected boolean performApply(NSISSettings settings)
+        protected boolean performApply(NSISSettings settings)
         {
             if(super.performApply(settings)) {
                 if (getControl() != null) {
@@ -268,13 +268,13 @@ class NSISGeneralTab extends NSISTab
         }
 
         @Override
-		public boolean canEnableControls()
+        public boolean canEnableControls()
         {
             return !Common.isEmpty(mScript.getText());
         }
 
         @Override
-		protected Composite createMasterControl(Composite parent)
+        protected Composite createMasterControl(Composite parent)
         {
             Composite composite = new Composite(parent,SWT.NONE);
             GridLayout layout = new GridLayout(2,false);
@@ -309,7 +309,7 @@ class NSISGeneralTab extends NSISTab
             final Button workspaceButton = createButton(buttons, EclipseNSISPlugin.getResourceString("launchconfig.browse.workspace.label"), ""); //$NON-NLS-1$  //$NON-NLS-2$
             workspaceButton.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     handleBrowseWorkspace(workspaceButton.getShell());
                 }
@@ -318,7 +318,7 @@ class NSISGeneralTab extends NSISTab
             final Button filesystemButton = createButton(buttons, EclipseNSISPlugin.getResourceString("launchconfig.browse.filesystem.label"), ""); //$NON-NLS-1$ //$NON-NLS-2$
             filesystemButton.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     handleBrowseFilesystem(filesystemButton.getShell());
                 }
@@ -327,7 +327,7 @@ class NSISGeneralTab extends NSISTab
             final Button variablesButton = createButton(buttons, EclipseNSISPlugin.getResourceString("launchconfig.browse.variables.label"), ""); //$NON-NLS-1$  //$NON-NLS-2$
             variablesButton.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     handleBrowseVariables(variablesButton.getShell());
                 }

@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class NSISInstallRegistryValue extends NSISInstallRegistryItem
 {
-	private static final long serialVersionUID = 4012648943855296196L;
+    private static final long serialVersionUID = 4012648943855296196L;
 
     public static final String TYPE = "Registry Value"; //$NON-NLS-1$
     private int mRootKey = HKLM;
@@ -33,19 +33,19 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
     }
 
     @Override
-	protected int getRootKeyInternal()
+    protected int getRootKeyInternal()
     {
         return mRootKey;
     }
 
     @Override
-	protected String getSubKeyInternal()
+    protected String getSubKeyInternal()
     {
         return mSubKey;
     }
 
     @Override
-	protected void setRootKeyInternal(int rootKey)
+    protected void setRootKeyInternal(int rootKey)
     {
         if(mRootKey != rootKey) {
             setDirty();
@@ -54,7 +54,7 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
     }
 
     @Override
-	protected void setSubKeyInternal(String subKey)
+    protected void setSubKeyInternal(String subKey)
     {
         if(!Common.stringsAreEqual(mSubKey, subKey)) {
             setDirty();
@@ -71,7 +71,7 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
     }
 
     @Override
-	protected void makeDisplayName(StringBuffer buf)
+    protected void makeDisplayName(StringBuffer buf)
     {
         super.makeDisplayName(buf);
         buf.append("\\").append(mValue).toString(); //$NON-NLS-1$
@@ -163,7 +163,7 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
     }
 
     @Override
-	public String doValidate()
+    public String doValidate()
     {
         String error = super.doValidate();
         if(Common.isEmpty(error)) {
@@ -184,7 +184,7 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -197,7 +197,7 @@ public class NSISInstallRegistryValue extends NSISInstallRegistryItem
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;

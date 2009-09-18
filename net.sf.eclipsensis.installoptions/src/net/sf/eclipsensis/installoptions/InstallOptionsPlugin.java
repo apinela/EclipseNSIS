@@ -65,7 +65,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     private JobScheduler mJobScheduler = new JobScheduler();
     private ChainedPreferenceStore mCombinedPreferenceStore;
     private IEclipsePreferences mPreferences;
-    
+
     /**
      *
      */
@@ -257,7 +257,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     }
 
     @Override
-	public void start(BundleContext context) throws Exception
+    public void start(BundleContext context) throws Exception
     {
         super.start(context);
         mName = (String)getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
@@ -275,7 +275,7 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
     }
 
     @Override
-	public void stop(BundleContext context) throws Exception
+    public void stop(BundleContext context) throws Exception
     {
         mJobScheduler.stop();
         mImageManager = null;
@@ -321,14 +321,14 @@ public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOp
         }
         return cStateLocation;
     }
-    
+
     public void savePreferences()
     {
-    	try {
-			mPreferences.flush();
-		} 
-    	catch (BackingStoreException e) {
-			log(e);
-		}    	
+        try {
+            mPreferences.flush();
+        }
+        catch (BackingStoreException e) {
+            log(e);
+        }
     }
 }

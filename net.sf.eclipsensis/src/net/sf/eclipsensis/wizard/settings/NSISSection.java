@@ -23,7 +23,7 @@ import org.w3c.dom.*;
 
 public class NSISSection extends AbstractNSISInstallGroup
 {
-	private static final long serialVersionUID = -971949137266423189L;
+    private static final long serialVersionUID = -971949137266423189L;
 
     public static final String TYPE = "Section"; //$NON-NLS-1$
 
@@ -50,7 +50,7 @@ public class NSISSection extends AbstractNSISInstallGroup
      * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
      */
     @Override
-	public void setChildTypes()
+    public void setChildTypes()
     {
         clearChildTypes();
         addChildType(NSISInstallFile.TYPE);
@@ -188,7 +188,7 @@ public class NSISSection extends AbstractNSISInstallGroup
     }
 
     @Override
-	protected Object getNodeValue(Node node, String name, Class<?> clasz)
+    protected Object getNodeValue(Node node, String name, Class<?> clasz)
     {
         if(name.equals("description")) { //$NON-NLS-1$
             return XMLUtil.readTextNode(node);
@@ -199,9 +199,9 @@ public class NSISSection extends AbstractNSISInstallGroup
     }
 
     @Override
-	protected Node createChildNode(Document document, String name, Object value)
+    protected Node createChildNode(Document document, String name, Object value)
     {
-    	Object value2 = value;
+        Object value2 = value;
         if(name.equals("description")) { //$NON-NLS-1$
             value2 = document.createTextNode((String)value2);
         }
@@ -209,7 +209,7 @@ public class NSISSection extends AbstractNSISInstallGroup
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         final int PRIME = 31;
         int result = super.hashCode();
@@ -222,7 +222,7 @@ public class NSISSection extends AbstractNSISInstallGroup
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;

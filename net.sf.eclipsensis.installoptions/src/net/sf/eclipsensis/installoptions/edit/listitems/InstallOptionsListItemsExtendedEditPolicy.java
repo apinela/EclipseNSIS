@@ -31,16 +31,16 @@ public class InstallOptionsListItemsExtendedEditPolicy extends InstallOptionsExt
      * @see net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy#getExtendedEditCommand(net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest)
      */
     @Override
-	protected Command getExtendedEditCommand(ExtendedEditRequest request)
+    protected Command getExtendedEditCommand(ExtendedEditRequest request)
     {
         List<String> list = Common.makeGenericList(String.class, (List<?>)request.getNewValue());
-		ModifyListItemsCommand command = new ModifyListItemsCommand((InstallOptionsListItems)request.getEditPart().getModel(),
+        ModifyListItemsCommand command = new ModifyListItemsCommand((InstallOptionsListItems)request.getEditPart().getModel(),
                                                                               list);
         return command;
     }
 
     @Override
-	protected String getExtendedEditProperty()
+    protected String getExtendedEditProperty()
     {
         return InstallOptionsModel.PROPERTY_LISTITEMS;
     }

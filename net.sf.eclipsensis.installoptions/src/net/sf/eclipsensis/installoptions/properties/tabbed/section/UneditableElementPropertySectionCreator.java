@@ -23,7 +23,7 @@ public class UneditableElementPropertySectionCreator extends WidgetPropertySecti
     }
 
     @Override
-	protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
+    protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
         Composite composite = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
         createTextSection(composite, InstallOptionsModel.PROPERTY_TEXT, widgetFactory, commandHelper, isTextPropertyMultiline());
@@ -31,7 +31,7 @@ public class UneditableElementPropertySectionCreator extends WidgetPropertySecti
     }
 
     @Override
-	protected boolean shouldCreateAppearancePropertySection()
+    protected boolean shouldCreateAppearancePropertySection()
     {
         return true;
     }

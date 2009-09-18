@@ -44,7 +44,7 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
     }
 
     @Override
-	public void setCommandStack(CommandStack stack)
+    public void setCommandStack(CommandStack stack)
     {
         if(stack instanceof InstallOptionsCommandStack) {
             super.setCommandStack(stack);
@@ -114,9 +114,9 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
         private Stack<Command> mCurrentCommands = new Stack<Command>();
 
         @Override
-		public synchronized void execute(Command command)
+        public synchronized void execute(Command command)
         {
-        	Command command2 = command;
+            Command command2 = command;
             if(validateEdit()) {
                 CompoundCommand cmd = new CompoundCommand(command2.getLabel());
                 cmd.add(command2);
@@ -167,7 +167,7 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
     @SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapter)
+    public Object getAdapter(Class adapter)
     {
         if(adapter == IModelCommandListener.class) {
             return getCommandStack();

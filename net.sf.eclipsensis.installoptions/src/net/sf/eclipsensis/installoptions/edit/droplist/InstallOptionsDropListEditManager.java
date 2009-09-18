@@ -24,12 +24,12 @@ public class InstallOptionsDropListEditManager extends InstallOptionsComboboxEdi
     }
 
     @Override
-	protected void selectCellEditorText()
+    protected void selectCellEditorText()
     {
     }
 
     @Override
-	protected int getCellEditorStyle()
+    protected int getCellEditorStyle()
     {
         return super.getCellEditorStyle()|SWT.READ_ONLY;
     }

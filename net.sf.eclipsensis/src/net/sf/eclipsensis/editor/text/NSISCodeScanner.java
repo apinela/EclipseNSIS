@@ -40,7 +40,7 @@ public class NSISCodeScanner extends NSISStringScanner
      * @return
      */
     @Override
-	protected void addRules(List<IRule> rules)
+    protected void addRules(List<IRule> rules)
     {
         rules.add(getPluginsRule());
         rules.add(getCompiletimeCommandsRule());
@@ -58,7 +58,7 @@ public class NSISCodeScanner extends NSISStringScanner
      * @return
      */
     @Override
-	protected synchronized IToken getDefaultToken()
+    protected synchronized IToken getDefaultToken()
     {
         return new Token(new TextAttribute(null));
     }
@@ -76,7 +76,7 @@ public class NSISCodeScanner extends NSISStringScanner
                 }
 
                 @Override
-				public boolean isWordPart(char character)
+                public boolean isWordPart(char character)
                 {
                     return (Character.isLetter(character) || character == '_') || character == '.';
                 }
@@ -108,7 +108,7 @@ public class NSISCodeScanner extends NSISStringScanner
         if(mPluginsRule == null) {
             mPluginsRule = new NSISPluginRule(new NSISWordDetector(){
                 @Override
-				public boolean isWordPart(char character)
+                public boolean isWordPart(char character)
                 {
                     return super.isWordPart(character) || NSISPluginRule.PLUGIN_CALL_VALID_CHARS.indexOf(character) >= 0;
                 }
@@ -183,7 +183,7 @@ public class NSISCodeScanner extends NSISStringScanner
      * @see net.sf.eclipsensis.settings.IPropertyAdaptable#adaptToProperty(org.eclipse.jface.preference.IPreferenceStore, java.lang.String)
      */
     @Override
-	public void adaptToProperty(IPreferenceStore store, String property)
+    public void adaptToProperty(IPreferenceStore store, String property)
     {
         if (INSISEditorPreferenceConstants.PLUGINS_STYLE.equals(property)) {
             mPluginsRule = null;
@@ -218,7 +218,7 @@ public class NSISCodeScanner extends NSISStringScanner
      * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#reset(boolean)
      */
     @Override
-	public void reset(boolean full)
+    public void reset(boolean full)
     {
         if(full) {
             mCallbacksRule = null;
@@ -236,7 +236,7 @@ public class NSISCodeScanner extends NSISStringScanner
      * @see net.sf.eclipsensis.settings.IPropertyAdaptable#canAdaptToProperty(org.eclipse.jface.preference.IPreferenceStore, java.lang.String)
      */
     @Override
-	public boolean canAdaptToProperty(IPreferenceStore store, String property)
+    public boolean canAdaptToProperty(IPreferenceStore store, String property)
     {
         if(INSISEditorPreferenceConstants.CALLBACKS_STYLE.equals(property) ||
            INSISEditorPreferenceConstants.PLUGINS_STYLE.equals(property) ||

@@ -41,7 +41,7 @@ public class NSISManualConfigWizard extends NSISConfigWizard
     }
 
     @Override
-	public void createPageControls(Composite pageContainer)
+    public void createPageControls(Composite pageContainer)
     {
         super.createPageControls(pageContainer);
         Object data = pageContainer.getLayoutData();
@@ -53,7 +53,7 @@ public class NSISManualConfigWizard extends NSISConfigWizard
     }
 
     @Override
-	public void setContainer(IWizardContainer wizardContainer)
+    public void setContainer(IWizardContainer wizardContainer)
     {
         if(getContainer() instanceof IPageChangeProvider) {
             ((IPageChangeProvider)getContainer()).removePageChangedListener(mPageChangedListener);
@@ -65,13 +65,13 @@ public class NSISManualConfigWizard extends NSISConfigWizard
     }
 
     @Override
-	protected boolean doPerformFinish()
+    protected boolean doPerformFinish()
     {
         return ((NSISManualConfigWizardPage)getPages()[0]).performFinish();
     }
 
     @Override
-	public final void addPages()
+    public final void addPages()
     {
         addPage(new NSISManualConfigWizardPage());
     }

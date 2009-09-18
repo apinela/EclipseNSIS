@@ -105,7 +105,7 @@ public abstract class InstallOptionsCommandHelper
                                             setShellStyle(getShellStyle()|SWT.RESIZE);
                                         }
                                         @Override
-										protected int getTableStyle()
+                                        protected int getTableStyle()
                                         {
                                             return super.getTableStyle() | SWT.READ_ONLY;
                                         }

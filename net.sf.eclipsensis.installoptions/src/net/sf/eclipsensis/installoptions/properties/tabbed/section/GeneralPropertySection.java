@@ -33,7 +33,7 @@ import org.eclipse.ui.views.properties.tabbed.*;
 public class GeneralPropertySection extends InstallOptionsElementPropertySection
 {
     @Override
-	protected Control createSection(InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, InstallOptionsCommandHelper commandHelper)
+    protected Control createSection(InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, InstallOptionsCommandHelper commandHelper)
     {
         if(element instanceof InstallOptionsWidget ) {
             InstallOptionsWidget widget = (InstallOptionsWidget)element;
@@ -44,7 +44,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             }
 
             Composite parent2 = createSectionComposite(parent);
-			GridLayout layout = new GridLayout(cols,false);
+            GridLayout layout = new GridLayout(cols,false);
             layout.marginHeight = layout.marginWidth = 0;
             parent2.setLayout(layout);
 
@@ -179,7 +179,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         Button b = factory.createButton(group, InstallOptionsPlugin.getResourceString("select.all.label"), SWT.PUSH|SWT.FLAT); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter(){
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 flags.clear();
                 flags.addAll(availableFlags);
@@ -191,7 +191,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         b = factory.createButton(group, InstallOptionsPlugin.getResourceString("deselect.all.label"), SWT.PUSH|SWT.FLAT); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter(){
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 flags.clear();
                 viewer.setCheckedElements(Common.EMPTY_STRING_ARRAY);
@@ -252,7 +252,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         }
         indexCombo.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 if(!nonUserChange[0]) {
                     commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_INDEX, indexName,
@@ -310,7 +310,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
 
         typeCombo.addKeyListener(new KeyAdapter() {
             @Override
-			public void keyPressed(KeyEvent e)
+            public void keyPressed(KeyEvent e)
             {
                 if (e.character == '\t') {
                     r.run();
@@ -320,13 +320,13 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
 
         typeCombo.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent event)
+            public void widgetSelected(SelectionEvent event)
             {
                 r.run();
             }
 
             @Override
-			public void widgetDefaultSelected(SelectionEvent event)
+            public void widgetDefaultSelected(SelectionEvent event)
             {
                 r.run();
             }
@@ -344,7 +344,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
 
         typeCombo.addFocusListener(new FocusAdapter() {
             @Override
-			public void focusLost(FocusEvent e)
+            public void focusLost(FocusEvent e)
             {
                 r.run();
             }
@@ -383,7 +383,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             }
         }) {
             @Override
-			protected String getResetValue(Text text)
+            protected String getResetValue(Text text)
             {
                 Integer index = (Integer)text.getData(indexDataName);
                 if(index != null) {
@@ -407,7 +407,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             }
 
             @Override
-			protected void handleTextChange(Text text)
+            protected void handleTextChange(Text text)
             {
                 Integer index = (Integer)text.getData(indexDataName);
                 if(index != null) {
@@ -456,7 +456,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         lockedButton.setSelection(widget.isLocked());
         lockedButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 if(!nonUserChange[0]) {
                     commandHelper.propertyChanged(InstallOptionsWidget.PROPERTY_LOCKED,

@@ -18,13 +18,13 @@ import org.eclipse.jface.text.IDocument;
 public class InstallOptionsCommentScanner extends InstallOptionsSyntaxScanner
 {
     @Override
-	protected void reset()
+    protected void reset()
     {
         setDefaultReturnToken(createToken(IInstallOptionsConstants.COMMENT_STYLE));
     }
 
     @Override
-	public void setRange(IDocument document, int offset, int length)
+    public void setRange(IDocument document, int offset, int length)
     {
         super.setRange(document, offset, length);
         Arrays.sort(fDelimiters,new Comparator<char[]>() {

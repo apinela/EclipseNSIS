@@ -60,7 +60,7 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getTemplates(java.lang.String)
      */
     @Override
-	protected Template[] getTemplates(String contextTypeId)
+    protected Template[] getTemplates(String contextTypeId)
     {
         return EclipseNSISPlugin.getDefault().getTemplateStore().getTemplates();
     }
@@ -69,7 +69,7 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createContext(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
      */
     @Override
-	protected TemplateContext createContext(ITextViewer viewer, IRegion region)
+    protected TemplateContext createContext(ITextViewer viewer, IRegion region)
     {
         TemplateContextType contextType= getContextType(viewer, region);
         if (contextType != null) {
@@ -83,7 +83,7 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getContextType(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
      */
     @Override
-	protected TemplateContextType getContextType(ITextViewer viewer, IRegion region)
+    protected TemplateContextType getContextType(ITextViewer viewer, IRegion region)
     {
         if(mInsertTemplatesMode || region.getLength() > 0) {
             return EclipseNSISPlugin.getDefault().getContextTypeRegistry().getContextType(NSISTemplateContextType.NSIS_TEMPLATE_CONTEXT_TYPE);
@@ -97,7 +97,7 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getImage(org.eclipse.jface.text.templates.Template)
      */
     @Override
-	protected Image getImage(Template template)
+    protected Image getImage(Template template)
     {
         return TEMPLATE_IMAGE;
     }
@@ -106,7 +106,7 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
      */
     @Override
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
+    public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer,
             int offset)
     {
         ICompletionProposal[] proposals = super.computeCompletionProposals(viewer, offset);
@@ -129,7 +129,7 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
      * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getRelevance(org.eclipse.jface.text.templates.Template, java.lang.String)
      */
     @Override
-	protected int getRelevance(Template template, String prefix)
+    protected int getRelevance(Template template, String prefix)
     {
         if( (mInsertTemplatesMode && Common.isEmpty(prefix)) ||
             (template.getName().toLowerCase().startsWith(prefix.toLowerCase()))) {
@@ -142,7 +142,7 @@ public class NSISTemplateCompletionProcessor extends TemplateCompletionProcessor
      * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
      */
     @Override
-	public char[] getCompletionProposalAutoActivationCharacters()
+    public char[] getCompletionProposalAutoActivationCharacters()
     {
         return NSISInformationUtility.getCompletionProposalAutoActivationCharacters();
     }

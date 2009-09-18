@@ -28,7 +28,7 @@ public abstract class INIFileAction extends Action
         mEditor = editor;
     }
     @Override
-	public void run()
+    public void run()
     {
         if(doRun(mEditor.getINIFile().copy())) {
             Control c = (Control)mEditor.getAdapter(Control.class);

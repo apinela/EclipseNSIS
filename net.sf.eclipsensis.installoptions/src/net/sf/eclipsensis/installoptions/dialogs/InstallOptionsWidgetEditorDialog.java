@@ -69,7 +69,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
     }
 
     @Override
-	public boolean close()
+    public boolean close()
     {
         if(mSection != null) {
             INIFile iniFile = (INIFile)mSection.getParent();
@@ -139,7 +139,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
     }
 
     @Override
-	protected Point getInitialSize()
+    protected Point getInitialSize()
     {
         Point size = super.getInitialSize();
         if(size.x < MIN_WIDTH) {
@@ -152,13 +152,13 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
     }
 
     @Override
-	protected Button createButton(Composite parent, int id, String label, boolean defaultButton)
+    protected Button createButton(Composite parent, int id, String label, boolean defaultButton)
     {
         return super.createButton(parent, id, label, false);
     }
 
     @Override
-	protected Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         Composite propertyComposite = new Composite(parent,SWT.BORDER);
         GridLayout layout = new GridLayout(1,false);
@@ -232,7 +232,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
                              (tree.getHorizontalBar() != null?tree.getHorizontalBar().getSize().x:0);
             tree.addControlListener(new ControlAdapter() {
                 @Override
-				public void controlResized(ControlEvent e) {
+                public void controlResized(ControlEvent e) {
                     Rectangle area = tree.getClientArea();
                     TreeColumn[] columns = tree.getColumns();
                     if (area.width > 0) {
@@ -243,9 +243,9 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
             });
         }
         else if(control instanceof Composite){
-        	control.addControlListener(new ControlAdapter() {
+            control.addControlListener(new ControlAdapter() {
                 @Override
-				public void controlResized(ControlEvent e) {
+                public void controlResized(ControlEvent e) {
                     ((Composite)control).layout(true, true);
                 }
             });
@@ -282,7 +282,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
     }
 
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         if(mDialog.canUpdateINIFile()) {
             mDialog.updateINIFile();
@@ -310,7 +310,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         }
 
         @Override
-		public Object getEditableValue()
+        public Object getEditableValue()
         {
             Object object = super.getEditableValue();
             if(!((object instanceof CustomPropertySourceWrapper))) {
@@ -322,7 +322,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         }
 
         @Override
-		public IPropertyDescriptor[] getPropertyDescriptors()
+        public IPropertyDescriptor[] getPropertyDescriptors()
         {
             IPropertyDescriptor[] descriptors = super.getPropertyDescriptors();
             if(!Common.isEmptyArray(descriptors)) {
@@ -341,7 +341,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         }
 
         @Override
-		public void setPropertyValue(Object id, Object value)
+        public void setPropertyValue(Object id, Object value)
         {
             if(InstallOptionsModel.PROPERTY_TYPE.equals(id)) {
                 propertyChange(new PropertyChangeEvent(getDelegate(),(String)id,getPropertyValue(id),value));
@@ -381,7 +381,7 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
                 mStatusLineManager = new StatusLineManager() {
 
                     @Override
-					public void setErrorMessage(Image image, String message)
+                    public void setErrorMessage(Image image, String message)
                     {
                         if(Common.isEmpty(message)) {
                             setMessage(image,message);
@@ -392,19 +392,19 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
                     }
 
                     @Override
-					public void setErrorMessage(String message)
+                    public void setErrorMessage(String message)
                     {
                         setErrorMessage(null, message);
                     }
 
                     @Override
-					public void setMessage(Image image, String message)
+                    public void setMessage(Image image, String message)
                     {
                         updateStatus(new DialogStatus(IStatus.OK,message,image));
                     }
 
                     @Override
-					public void setMessage(String message)
+                    public void setMessage(String message)
                     {
                         setMessage(null,message);
                     }
@@ -445,55 +445,55 @@ public class InstallOptionsWidgetEditorDialog extends StatusMessageDialog implem
         }
 
         @Override
-		public CellEditor createPropertyEditor(Composite parent)
+        public CellEditor createPropertyEditor(Composite parent)
         {
             return mDelegate.createPropertyEditor(parent);
         }
 
         @Override
-		public String getCategory()
+        public String getCategory()
         {
             return mDelegate.getCategory();
         }
 
         @Override
-		public String getDescription()
+        public String getDescription()
         {
             return mDelegate.getDescription();
         }
 
         @Override
-		public String getDisplayName()
+        public String getDisplayName()
         {
             return mDelegate.getDisplayName();
         }
 
         @Override
-		public String[] getFilterFlags()
+        public String[] getFilterFlags()
         {
             return mDelegate.getFilterFlags();
         }
 
         @Override
-		public Object getHelpContextIds()
+        public Object getHelpContextIds()
         {
             return HELP_CONTEXT;
         }
 
         @Override
-		public Object getId()
+        public Object getId()
         {
             return mDelegate.getId();
         }
 
         @Override
-		public ILabelProvider getLabelProvider()
+        public ILabelProvider getLabelProvider()
         {
             return mDelegate.getLabelProvider();
         }
 
         @Override
-		public boolean isCompatibleWith(IPropertyDescriptor anotherProperty)
+        public boolean isCompatibleWith(IPropertyDescriptor anotherProperty)
         {
             return mDelegate.isCompatibleWith(anotherProperty);
         }

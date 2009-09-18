@@ -55,7 +55,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
      * @see org.eclipse.jface.window.Window#configureShell(Shell)
      */
     @Override
-	protected void configureShell(Shell newShell)
+    protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setImage(EclipseNSISPlugin.getShellImage());
@@ -66,7 +66,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(Composite)
      */
     @Override
-	protected void createButtonsForButtonBar(Composite parent)
+    protected void createButtonsForButtonBar(Composite parent)
     {
         // create OK button
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
@@ -74,7 +74,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     }
 
     @Override
-	protected Control createDialogArea(Composite parent) {
+    protected Control createDialogArea(Composite parent) {
         final Display display = getShell().getDisplay();
         Color background = JFaceColors.getBannerBackground(display);
         Color foreground = JFaceColors.getBannerForeground(display);
@@ -119,7 +119,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         link.setText(cAboutText);
         link.addSelectionListener(new SelectionAdapter(){
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 openLink(e.text);
             }
@@ -136,7 +136,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
      * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected Control createButtonBar(Composite parent)
+    protected Control createButtonBar(Composite parent)
     {
         Control ctl = super.createButtonBar(parent);
         getButton(IDialogConstants.OK_ID).setFocus();

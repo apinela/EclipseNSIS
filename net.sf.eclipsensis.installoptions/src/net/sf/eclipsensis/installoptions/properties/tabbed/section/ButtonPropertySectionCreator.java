@@ -24,7 +24,7 @@ public class ButtonPropertySectionCreator extends UneditableElementPropertySecti
     }
 
     @Override
-	protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
+    protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
         Composite composite = (Composite)super.createOtherPropertySection(parent, widgetFactory, commandHelper);
         createTextSection(composite, InstallOptionsModel.PROPERTY_STATE, widgetFactory, commandHelper);
@@ -32,7 +32,7 @@ public class ButtonPropertySectionCreator extends UneditableElementPropertySecti
     }
 
     @Override
-	protected boolean shouldCreateOtherPropertySection()
+    protected boolean shouldCreateOtherPropertySection()
     {
         return true;
     }

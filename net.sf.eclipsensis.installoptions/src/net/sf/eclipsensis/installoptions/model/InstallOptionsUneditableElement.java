@@ -21,7 +21,7 @@ import org.eclipse.ui.views.properties.*;
 public abstract class InstallOptionsUneditableElement extends InstallOptionsWidget
 {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7057456623768374043L;
     private String mText;
@@ -32,14 +32,14 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("defaultText"); //$NON-NLS-1$
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         mText = ""; //$NON-NLS-1$
@@ -49,14 +49,14 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
      * @param type
      */
     @Override
-	protected void setDefaults()
+    protected void setDefaults()
     {
         super.setDefaults();
         mText = getDefaultText();
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         InstallOptionsUneditableElement clone = (InstallOptionsUneditableElement)super.clone();
         clone.setText(getText());
@@ -64,7 +64,7 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
     }
 
     @Override
-	protected void addPropertyName(List<String> list, String setting)
+    protected void addPropertyName(List<String> list, String setting)
     {
         if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TEXT)) {
             list.add(InstallOptionsModel.PROPERTY_TEXT);
@@ -75,7 +75,7 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_TEXT)) {
             String propertyName = InstallOptionsPlugin.getResourceString("text.property.name"); //$NON-NLS-1$;
@@ -89,7 +89,7 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
     }
 
     @Override
-	public Object getPropertyValue(Object propName)
+    public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_TEXT.equals(propName)) {
             return getText();
@@ -98,7 +98,7 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
     }
 
     @Override
-	public void setPropertyValue(Object id, Object value)
+    public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_TEXT)) {
             setText((String)value);
@@ -129,7 +129,7 @@ public abstract class InstallOptionsUneditableElement extends InstallOptionsWidg
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new UneditableElementPropertySectionCreator(this);
     }

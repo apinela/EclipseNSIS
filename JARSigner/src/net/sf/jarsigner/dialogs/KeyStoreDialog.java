@@ -36,14 +36,14 @@ public class KeyStoreDialog extends Dialog
     }
 
     @Override
-	protected void configureShell(Shell newShell)
+    protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(JARSignerPlugin.getResourceString("keystore.dialog.title")); //$NON-NLS-1$
     }
 
     @Override
-	protected Control createDialogArea(Composite parent)
+    protected Control createDialogArea(Composite parent)
     {
         Composite parent2 = (Composite)super.createDialogArea(parent);
         GridLayout layout = (GridLayout)parent2.getLayout();
@@ -75,7 +75,7 @@ public class KeyStoreDialog extends Dialog
         b.setText(UtilitiesPlugin.getResourceString("browse.label")); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 FileDialog dialog = new FileDialog(getShell(),SWT.OPEN);
                 dialog.setText(JARSignerPlugin.getResourceString("key.store.location.message")); //$NON-NLS-1$
@@ -108,7 +108,7 @@ public class KeyStoreDialog extends Dialog
     }
 
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         mKeyStore = JARSignerPlugin.loadKeyStore(mKeyStoreName,mStorePassword);
         if(mKeyStore != null) {

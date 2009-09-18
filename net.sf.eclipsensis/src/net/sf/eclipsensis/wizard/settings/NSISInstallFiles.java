@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
@@ -46,7 +46,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
         private String mName = null;
 
         @Override
-		public String doValidate()
+        public String doValidate()
         {
             if (!IOUtility.isValidFile(IOUtility.decodePath(getName())))
             {
@@ -60,7 +60,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * net.sf.eclipsensis.wizard.settings.INSISInstallElement#edit(org.eclipse
          * .swt.widgets.Composite)
@@ -103,11 +103,11 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#equals(java.lang.Object)
          */
         @Override
-		public boolean equals(Object obj)
+        public boolean equals(Object obj)
         {
             if (obj instanceof FileItem)
             {
@@ -118,7 +118,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName
          * ()
@@ -130,7 +130,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
          */
@@ -149,7 +149,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
          */
         public String getType()
@@ -159,18 +159,18 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.lang.Object#hashCode()
          */
         @Override
-		public int hashCode()
+        public int hashCode()
         {
             return mName.hashCode();
         }
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see
          * net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
          */
@@ -218,14 +218,14 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     private boolean mPreserveAttributes = false;
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("files"); //$NON-NLS-1$
     }
 
     @Override
-	public String doValidate()
+    public String doValidate()
     {
         if (!NSISWizardUtil.isValidNSISPathName(getSettings().getTargetPlatform(), getDestination()))
         {
@@ -243,7 +243,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj)
         {
@@ -314,7 +314,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
      */
@@ -343,7 +343,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
      */
     public Image getImage()
@@ -361,7 +361,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
      */
     public String getType()
@@ -370,7 +370,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         final int PRIME = 31;
         int result = super.hashCode();
@@ -381,7 +381,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
      */
     public boolean isEditable()
@@ -391,13 +391,13 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes
      * ()
      */
     @Override
-	public void setChildTypes()
+    public void setChildTypes()
     {
         clearChildTypes();
         addChildType(FileItem.FILEITEM_TYPE);
@@ -460,7 +460,7 @@ public class NSISInstallFiles extends AbstractNSISInstallGroup implements INSISI
     }
 
     @Override
-	public void setTargetPlatform(int targetPlatform)
+    public void setTargetPlatform(int targetPlatform)
     {
         super.setTargetPlatform(targetPlatform);
         setDestination(NSISWizardUtil.convertPath(targetPlatform, getDestination()));

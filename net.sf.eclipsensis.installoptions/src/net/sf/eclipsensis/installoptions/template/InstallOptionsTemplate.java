@@ -67,7 +67,7 @@ public class InstallOptionsTemplate extends AbstractTemplate implements IInstall
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("sections"); //$NON-NLS-1$
@@ -75,7 +75,7 @@ public class InstallOptionsTemplate extends AbstractTemplate implements IInstall
     }
 
     @Override
-	public Node toNode(Document document)
+    public Node toNode(Document document)
     {
         Node node = super.toNode(document);
         INISection[] iniSections = getSections();
@@ -96,7 +96,7 @@ public class InstallOptionsTemplate extends AbstractTemplate implements IInstall
     }
 
     @Override
-	public void fromNode(Node node)
+    public void fromNode(Node node)
     {
         super.fromNode(node);
         Node[] nodes = XMLUtil.findChildren(node, SECTIONS_NODE);
@@ -155,7 +155,7 @@ public class InstallOptionsTemplate extends AbstractTemplate implements IInstall
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         InstallOptionsTemplate template = (InstallOptionsTemplate)super.clone();
         INISection[] sections = new INISection[mSections.length];
@@ -167,7 +167,7 @@ public class InstallOptionsTemplate extends AbstractTemplate implements IInstall
     }
 
     @Override
-	public boolean isEqualTo(ITemplate template)
+    public boolean isEqualTo(ITemplate template)
     {
         if (this == template) {
             return true;

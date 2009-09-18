@@ -124,7 +124,7 @@ public class Scheduler implements IStartup, IUpdatePreferenceConstants
         final Job[] job = {null};
         Runnable r= new Runnable() {
             @SuppressWarnings("unchecked")
-			public void run()
+            public void run()
             {
                 try {
                     Class<? extends Job> theClass = (Class<? extends Job>) Class.forName("net.sf.eclipsensis.update.jobs.NSISCheckUpdateJob"); //$NON-NLS-1$

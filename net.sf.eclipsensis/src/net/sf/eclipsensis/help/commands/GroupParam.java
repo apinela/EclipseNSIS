@@ -38,7 +38,7 @@ public class GroupParam extends NSISParam
     }
 
     @Override
-	protected void init(Node node)
+    protected void init(Node node)
     {
         super.init(node);
         loadParams(node);
@@ -50,7 +50,7 @@ public class GroupParam extends NSISParam
     }
 
     @Override
-	protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new GroupParamEditor(command, parentEditor);
     }
@@ -76,25 +76,25 @@ public class GroupParam extends NSISParam
                 NSISParam param = NSISCommandManager.createParam(children[i]);
                 if(param != null) {
                     params.add(param);
-	                int depends = XMLUtil.getIntValue(children[i].getAttributes(), ATTR_DEPENDS,-1);
-	                int index = params.size()-1;
-	                if(depends >= 0 && depends != index) {
-	                    if(depends < params.size()) {
-	                        NSISParam dependsParam = params.get(depends);
-	                        if(dependsParam.isOptional()) {
-	                            addDependent(mDependencies, dependsParam, param);
-	                        }
-	                    }
-	                    else {
-	                    	addDependent(tempDependencies, new Integer(depends), param);
-	                    }
-	                }
-	                List<NSISParam> dependents = tempDependencies.remove(new Integer(index));
-	                if(dependents != null) {
-	                    if(param.isOptional()) {
-	                        mDependencies.put(param, dependents);
-	                    }
-	                }
+                    int depends = XMLUtil.getIntValue(children[i].getAttributes(), ATTR_DEPENDS,-1);
+                    int index = params.size()-1;
+                    if(depends >= 0 && depends != index) {
+                        if(depends < params.size()) {
+                            NSISParam dependsParam = params.get(depends);
+                            if(dependsParam.isOptional()) {
+                                addDependent(mDependencies, dependsParam, param);
+                            }
+                        }
+                        else {
+                            addDependent(tempDependencies, new Integer(depends), param);
+                        }
+                    }
+                    List<NSISParam> dependents = tempDependencies.remove(new Integer(index));
+                    if(dependents != null) {
+                        if(param.isOptional()) {
+                            mDependencies.put(param, dependents);
+                        }
+                    }
                 }
             }
         }
@@ -115,10 +115,10 @@ public class GroupParam extends NSISParam
                 map.put(mChildParams[i], mParamEditors.get(i));
             }
             for (Iterator<NSISParam> iter= mDependencies.keySet().iterator(); iter.hasNext(); ) {
-            	NSISParam param = iter.next();
+                NSISParam param = iter.next();
                 List<NSISParam> dependents = mDependencies.get(param);
                 if (!Common.isEmptyCollection(dependents)) {
-                	INSISParamEditor parentEditor2 = map.get(param);
+                    INSISParamEditor parentEditor2 = map.get(param);
                     List<INSISParamEditor> list = new ArrayList<INSISParamEditor>();
                     for (Iterator<NSISParam> iterator = dependents.iterator(); iterator.hasNext();) {
                         list.add(map.get(iterator.next()));
@@ -129,13 +129,13 @@ public class GroupParam extends NSISParam
         }
 
         @Override
-		public List<INSISParamEditor> getChildEditors()
+        public List<INSISParamEditor> getChildEditors()
         {
             return mParamEditors;
         }
 
         @Override
-		protected void updateState(boolean state)
+        protected void updateState(boolean state)
         {
             super.updateState(state);
             if(!Common.isEmptyCollection(mParamEditors)) {
@@ -154,7 +154,7 @@ public class GroupParam extends NSISParam
         }
 
         @Override
-		public void clear()
+        public void clear()
         {
             if(!Common.isEmptyCollection(mParamEditors)) {
                 for (Iterator<INSISParamEditor> iter = mParamEditors.iterator(); iter.hasNext();) {
@@ -166,7 +166,7 @@ public class GroupParam extends NSISParam
         }
 
         @Override
-		public void reset()
+        public void reset()
         {
             super.reset();
             if(mParamEditors.size() > 0) {
@@ -177,7 +177,7 @@ public class GroupParam extends NSISParam
         }
 
         @Override
-		protected String validateParam()
+        protected String validateParam()
         {
             String validText = null;
             if(!Common.isEmptyCollection(mParamEditors)) {
@@ -192,7 +192,7 @@ public class GroupParam extends NSISParam
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf, boolean preview)
+        protected void appendParamText(StringBuffer buf, boolean preview)
         {
             if(!Common.isEmptyCollection(mParamEditors)) {
                 for (Iterator<INSISParamEditor> iter = mParamEditors.iterator(); iter.hasNext();) {
@@ -202,8 +202,8 @@ public class GroupParam extends NSISParam
         }
 
         @Override
-		@SuppressWarnings("unchecked")
-		public void setSettings(Map<String, Object> settings)
+        @SuppressWarnings("unchecked")
+        public void setSettings(Map<String, Object> settings)
         {
             super.setSettings(settings);
             if(!Common.isEmptyCollection((mParamEditors))) {
@@ -230,7 +230,7 @@ public class GroupParam extends NSISParam
         }
 
         @Override
-		public void saveSettings()
+        public void saveSettings()
         {
             super.saveSettings();
             if(!Common.isEmptyCollection(mParamEditors) && getSettings() != null) {
@@ -241,13 +241,13 @@ public class GroupParam extends NSISParam
         }
 
         @Override
-		protected boolean createMissing()
+        protected boolean createMissing()
         {
             return false;
         }
 
         @Override
-		protected Control createParamControl(Composite parent)
+        protected Control createParamControl(Composite parent)
         {
             Composite composite = null;
             if(!Common.isEmptyArray(mChildParams)) {
@@ -266,7 +266,7 @@ public class GroupParam extends NSISParam
         }
 
         @Override
-		protected void initParamEditor()
+        protected void initParamEditor()
         {
             super.initParamEditor();
             if(!Common.isEmptyCollection(mParamEditors)) {

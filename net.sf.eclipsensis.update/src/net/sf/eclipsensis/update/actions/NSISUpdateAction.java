@@ -20,7 +20,7 @@ public class NSISUpdateAction extends NSISAction
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     @Override
-	public void run(IAction action)
+    public void run(IAction action)
     {
         new NSISCheckUpdateJob().schedule();
     }

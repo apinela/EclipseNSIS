@@ -24,61 +24,61 @@ public abstract class TypeConverter<T>
     public abstract String asString(T o);
     public abstract T asType(String s);
     public abstract T makeCopy(T o);
-    
+
     @SuppressWarnings("unchecked")
-	public final String toString(Object o)
+    public final String toString(Object o)
     {
-    	return asString((T)o);
+        return asString((T)o);
     }
 
     public String asString(T o, T defaultValue)
     {
-    	String string;
+        String string;
         try {
             string = asString(o);
         }
         catch(Exception ex) {
-        	string = null;
+            string = null;
         }
-		return (string != null?string:asString(defaultValue));
+        return (string != null?string:asString(defaultValue));
     }
 
     public T asType(String s, T defaultValue)
     {
-    	T type;
+        T type;
         try {
             type = asType(s);
         }
         catch(Exception ex) {
-        	type = null;
+            type = null;
         }
-		return (type != null?type:makeCopy(defaultValue));
+        return (type != null?type:makeCopy(defaultValue));
     }
 
     public static final TypeConverter<Point> POINT_CONVERTER = new TypeConverter<Point>() {
         @Override
-		public String asString(Point o)
+        public String asString(Point o)
         {
             return (o==null?null:Common.flatten(new int[]{(o).x,(o).y},','));
         }
 
         @Override
-		public Point asType(String s)
+        public Point asType(String s)
         {
             Point p = null;
             if(s != null) {
                 String[] parts = Common.tokenize(s,',');
-	            if(parts.length == 2) {
-	                p = new Point();
-	                p.x = Integer.parseInt(parts[0]);
-	                p.y = Integer.parseInt(parts[1]);
-	            }
+                if(parts.length == 2) {
+                    p = new Point();
+                    p.x = Integer.parseInt(parts[0]);
+                    p.y = Integer.parseInt(parts[1]);
+                }
             }
             return p;
         }
 
         @Override
-		public Point makeCopy(Point o)
+        public Point makeCopy(Point o)
         {
             return new Point(o);
         }
@@ -86,7 +86,7 @@ public abstract class TypeConverter<T>
 
     public static final TypeConverter<Position> POSITION_CONVERTER = new TypeConverter<Position>() {
         @Override
-		public String asString(Position o)
+        public String asString(Position o)
         {
             String s = null;
             if(o != null ) {
@@ -97,7 +97,7 @@ public abstract class TypeConverter<T>
         }
 
         @Override
-		public Position asType(String s)
+        public Position asType(String s)
         {
             Position p = null;
             if(s != null) {
@@ -112,7 +112,7 @@ public abstract class TypeConverter<T>
         }
 
         @Override
-		public Position makeCopy(Position o)
+        public Position makeCopy(Position o)
         {
             return (o).getCopy();
         }
@@ -120,19 +120,19 @@ public abstract class TypeConverter<T>
 
     public static final TypeConverter<Boolean> BOOLEAN_CONVERTER = new TypeConverter<Boolean>() {
         @Override
-		public String asString(Boolean o)
+        public String asString(Boolean o)
         {
             return (o != null?(o).toString():null);
         }
 
         @Override
-		public Boolean asType(String s)
+        public Boolean asType(String s)
         {
             return (s == null?null:Boolean.valueOf(s));
         }
 
         @Override
-		public Boolean makeCopy(Boolean o)
+        public Boolean makeCopy(Boolean o)
         {
             return o;
         }
@@ -146,19 +146,19 @@ public abstract class TypeConverter<T>
         }
 
         @Override
-		public String asString(RGB o)
+        public String asString(RGB o)
         {
-        	if(o != null) {
-	            StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
-	            RGB rgb = flip(o);
-	            buf.append(ColorManager.rgbToHex(rgb));
-	            return buf.toString();
-        	}
-        	return null;
+            if(o != null) {
+                StringBuffer buf = new StringBuffer("0x"); //$NON-NLS-1$
+                RGB rgb = flip(o);
+                buf.append(ColorManager.rgbToHex(rgb));
+                return buf.toString();
+            }
+            return null;
         }
 
         @Override
-		public RGB asType(String s)
+        public RGB asType(String s)
         {
             if(s != null && s.startsWith("0x") && s.length()==8) { //$NON-NLS-1$
                 RGB rgb = ColorManager.hexToRGB(s.substring(2));
@@ -172,7 +172,7 @@ public abstract class TypeConverter<T>
         }
 
         @Override
-		public RGB makeCopy(RGB o)
+        public RGB makeCopy(RGB o)
         {
             RGB rgb = o;
             return new RGB(rgb.red,rgb.green,rgb.blue);
@@ -181,19 +181,19 @@ public abstract class TypeConverter<T>
 
     public static final TypeConverter<Integer> INTEGER_CONVERTER = new TypeConverter<Integer>() {
         @Override
-		public String asString(Integer o)
+        public String asString(Integer o)
         {
             return (o==null?null:(o).toString());
         }
 
         @Override
-		public Integer asType(String s)
+        public Integer asType(String s)
         {
             return (Common.isEmpty(s)?null:Integer.valueOf(s));
         }
 
         @Override
-		public Integer makeCopy(Integer o)
+        public Integer makeCopy(Integer o)
         {
             return o;
         }
@@ -201,19 +201,19 @@ public abstract class TypeConverter<T>
 
     public static final TypeConverter<Integer> HEX_CONVERTER = new TypeConverter<Integer>() {
         @Override
-		public String asString(Integer o)
+        public String asString(Integer o)
         {
             return (o == null?null:"0x"+Integer.toHexString((o).intValue())); //$NON-NLS-1$
         }
 
         @Override
-		public Integer asType(String s)
+        public Integer asType(String s)
         {
             return (Common.isEmpty(s)?null:Integer.valueOf(s.substring(2), 16));
         }
 
         @Override
-		public Integer makeCopy(Integer o)
+        public Integer makeCopy(Integer o)
         {
             return o;
         }
@@ -221,19 +221,19 @@ public abstract class TypeConverter<T>
 
     public static final TypeConverter<String[]> STRING_ARRAY_CONVERTER = new TypeConverter<String[]>() {
         @Override
-		public String asString(String[] o)
+        public String asString(String[] o)
         {
             return (o==null?null:Common.flatten(o,IInstallOptionsConstants.LIST_SEPARATOR));
         }
 
         @Override
-		public String[] asType(String s)
+        public String[] asType(String s)
         {
             return (s==null?null:Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR,false));
         }
 
         @Override
-		public String[] makeCopy(String[] o)
+        public String[] makeCopy(String[] o)
         {
             return (o).clone();
         }
@@ -241,20 +241,20 @@ public abstract class TypeConverter<T>
 
     public static final TypeConverter<List<String>> STRING_LIST_CONVERTER = new TypeConverter<List<String>>() {
         @Override
-		public String asString(List<String> o)
+        public String asString(List<String> o)
         {
             return (o==null?null:Common.flatten(o.toArray(Common.EMPTY_STRING_ARRAY),IInstallOptionsConstants.LIST_SEPARATOR));
         }
 
         @Override
-		public List<String> asType(String s)
+        public List<String> asType(String s)
         {
             return (s==null?null:Common.tokenizeToList(s,IInstallOptionsConstants.LIST_SEPARATOR,false));
         }
 
         @Override
-		@SuppressWarnings("unchecked")
-		public List<String> makeCopy(List<String> o)
+        @SuppressWarnings("unchecked")
+        public List<String> makeCopy(List<String> o)
         {
             if(o instanceof Cloneable) {
                 try {
@@ -271,19 +271,19 @@ public abstract class TypeConverter<T>
 
     public static final TypeConverter<String> STRING_CONVERTER = new TypeConverter<String>() {
         @Override
-		public String asString(String o)
+        public String asString(String o)
         {
             return o;
         }
 
         @Override
-		public String asType(String s)
+        public String asType(String s)
         {
             return s;
         }
 
         @Override
-		public String makeCopy(String o)
+        public String makeCopy(String o)
         {
             return o;
         }
@@ -291,7 +291,7 @@ public abstract class TypeConverter<T>
 
     public static final TypeConverter<String> ESCAPED_STRING_CONVERTER = new TypeConverter<String>() {
         @Override
-		public String asString(String o)
+        public String asString(String o)
         {
             if(o != null) {
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -336,7 +336,7 @@ public abstract class TypeConverter<T>
         }
 
         @Override
-		public String asType(String s)
+        public String asType(String s)
         {
             if(s != null) {
                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
@@ -366,7 +366,7 @@ public abstract class TypeConverter<T>
         }
 
         @Override
-		public String makeCopy(String o)
+        public String makeCopy(String o)
         {
             return o;
         }
@@ -374,28 +374,28 @@ public abstract class TypeConverter<T>
 
     public static final TypeConverter<Dimension> DIMENSION_CONVERTER = new TypeConverter<Dimension>() {
         @Override
-		public String asString(Dimension o)
+        public String asString(Dimension o)
         {
             return (o==null?null:Common.flatten(new int[]{(o).width,(o).height},','));
         }
 
         @Override
-		public Dimension asType(String s)
+        public Dimension asType(String s)
         {
             Dimension d = null;
-			if (s != null) {
+            if (s != null) {
                 String[] parts = Common.tokenize(s,',');
                 if(parts.length == 2) {
                     d = new Dimension();
                     d.width = Integer.parseInt(parts[0]);
                     d.height = Integer.parseInt(parts[1]);
                 }
-			}
-			return d;
+            }
+            return d;
         }
 
         @Override
-		public Dimension makeCopy(Dimension o)
+        public Dimension makeCopy(Dimension o)
         {
             return new Dimension(o);
         }

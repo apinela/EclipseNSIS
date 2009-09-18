@@ -33,7 +33,7 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
     }
 
     @Override
-	public void enableControls(boolean state)
+    public void enableControls(boolean state)
     {
         if(state) {
             //Hack to properly enable the buttons
@@ -42,20 +42,20 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
     }
 
     @Override
-	protected Control createControl(final Composite parent)
+    protected Control createControl(final Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         SelectionAdapter addAdapter = new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 addOrEditSymbol(parent.getShell(),"",""); //$NON-NLS-1$ //$NON-NLS-2$
             }
         };
         SelectionAdapter editAdapter = new SelectionAdapter() {
             @Override
-			@SuppressWarnings("unchecked")
-			public void widgetSelected(SelectionEvent e)
+            @SuppressWarnings("unchecked")
+            public void widgetSelected(SelectionEvent e)
             {
                 Map.Entry<String, String> entry = (Map.Entry<String, String>)((IStructuredSelection)mSymbols.getSelection()).getFirstElement();
                 addOrEditSymbol(parent.getShell(),entry.getKey(),entry.getValue());
@@ -63,8 +63,8 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
         };
         SelectionAdapter removeAdapter = new SelectionAdapter() {
             @Override
-			@SuppressWarnings("unchecked")
-			public void widgetSelected(SelectionEvent e)
+            @SuppressWarnings("unchecked")
+            public void widgetSelected(SelectionEvent e)
             {
                 Map<String, String> map = (Map<String, String>)mSymbols.getInput();
                 IStructuredSelection selection = (IStructuredSelection)mSymbols.getSelection();
@@ -76,33 +76,33 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
             }
         };
 
-        TableViewerUpDownMover<Map<String, String>, Map.Entry<String, String>> mover = 
-        	new TableViewerUpDownMover<Map<String, String>, Map.Entry<String, String>>() {
-	
-	            @Override
-				@SuppressWarnings("unchecked")
-				protected List<Map.Entry<String, String>> getAllElements()
-	            {
-	                return new ArrayList<Map.Entry<String, String>>(((Map<String, String>)((TableViewer)getViewer()).getInput()).entrySet());
-	            }
-	
-	            @Override
-				protected void updateStructuredViewerInput(Map<String, String> input, List<Map.Entry<String, String>> elements, 
-	            		List<Map.Entry<String, String>> move, boolean isDown)
-	            {
-	                input.clear();
-	                for(Iterator<Map.Entry<String, String>> iter=elements.iterator(); iter.hasNext(); ) {
-	                    Map.Entry<String, String> entry = iter.next();
-	                    input.put(entry.getKey(),entry.getValue());
-	                    fireChanged();
-	                }
-	            }
-	
-	        };
+        TableViewerUpDownMover<Map<String, String>, Map.Entry<String, String>> mover =
+            new TableViewerUpDownMover<Map<String, String>, Map.Entry<String, String>>() {
+
+                @Override
+                @SuppressWarnings("unchecked")
+                protected List<Map.Entry<String, String>> getAllElements()
+                {
+                    return new ArrayList<Map.Entry<String, String>>(((Map<String, String>)((TableViewer)getViewer()).getInput()).entrySet());
+                }
+
+                @Override
+                protected void updateStructuredViewerInput(Map<String, String> input, List<Map.Entry<String, String>> elements,
+                        List<Map.Entry<String, String>> move, boolean isDown)
+                {
+                    input.clear();
+                    for(Iterator<Map.Entry<String, String>> iter=elements.iterator(); iter.hasNext(); ) {
+                        Map.Entry<String, String> entry = iter.next();
+                        input.put(entry.getKey(),entry.getValue());
+                        fireChanged();
+                    }
+                }
+
+            };
 
         IDoubleClickListener doubleClickListener = new IDoubleClickListener() {
             @SuppressWarnings("unchecked")
-			public void doubleClick(DoubleClickEvent event)
+            public void doubleClick(DoubleClickEvent event)
             {
                 Map.Entry<String, String> entry = (Map.Entry<String, String>)((IStructuredSelection)event.getSelection()).getFirstElement();
                 addOrEditSymbol(parent.getShell(),entry.getKey(),entry.getValue());
@@ -123,8 +123,8 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	protected boolean performApply(NSISSettings settings)
+    @SuppressWarnings("unchecked")
+    protected boolean performApply(NSISSettings settings)
     {
         if (getControl() != null) {
             mSettings.setSymbols((Map<String, String>)mSymbols.getInput());
@@ -133,19 +133,19 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
     }
 
     @Override
-	public void reset()
+    public void reset()
     {
         mSymbols.setInput(mSettings.getSymbols());
     }
 
     @Override
-	public void setDefaults()
+    public void setDefaults()
     {
         mSymbols.setInput(mSettings.getDefaultSymbols());
     }
 
     @SuppressWarnings("unchecked")
-	private void addOrEditSymbol(Shell shell, String oldName, String oldValue)
+    private void addOrEditSymbol(Shell shell, String oldName, String oldValue)
     {
         Map<String, String> map = (Map<String, String>)mSymbols.getInput();
         NSISSymbolDialog dialog = new NSISSymbolDialog(shell,oldName, oldValue);
@@ -177,7 +177,7 @@ public class NSISSettingsEditorSymbolsPage extends NSISSettingsEditorPage
     }
 
     @Override
-	public boolean canEnableControls()
+    public boolean canEnableControls()
     {
         return true;
     }

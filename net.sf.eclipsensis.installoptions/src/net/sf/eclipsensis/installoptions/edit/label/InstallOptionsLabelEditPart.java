@@ -40,13 +40,13 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
     protected static boolean cIsNT = "Windows NT".equals(System.getProperty("os.name")); //$NON-NLS-1$ //$NON-NLS-2$
 
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return "label.direct.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected IInstallOptionsFigure createInstallOptionsFigure()
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         if(cIsNT) {
             //This is a hack because Windows NT Labels don't seem to respond to the
@@ -59,11 +59,11 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
     }
 
     @Override
-	protected UneditableElementDirectEditPolicy createDirectEditPolicy()
+    protected UneditableElementDirectEditPolicy createDirectEditPolicy()
     {
         return new UneditableElementDirectEditPolicy() {
             @Override
-			protected String getDirectEditValue(DirectEditRequest edit)
+            protected String getDirectEditValue(DirectEditRequest edit)
             {
                 return TypeConverter.ESCAPED_STRING_CONVERTER.asType(super.getDirectEditValue(edit));
             }
@@ -74,7 +74,7 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
      * @return
      */
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("label.type.name"); //$NON-NLS-1$
     }
@@ -83,7 +83,7 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
      * @see net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart#creatDirectEditManager(net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart, java.lang.Class, org.eclipse.gef.tools.CellEditorLocator)
      */
     @Override
-	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
     {
         return new InstallOptionsLabelEditManager(part, locator);
     }
@@ -92,7 +92,7 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
      * @see net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart#createCellEditorLocator(net.sf.eclipsensis.installoptions.figures.UneditableElementFigure)
      */
     @Override
-	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new LabelCellEditorLocator((ILabelFigure)getFigure());
     }
@@ -124,7 +124,7 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
         }
 
         @Override
-		protected void createChildFigures()
+        protected void createChildFigures()
         {
             mShadowTextFlow = new TextFlow(""); //$NON-NLS-1$
             mShadowTextFlow.setFont(FontUtility.getInstallOptionsFont());
@@ -141,7 +141,7 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
         }
 
         @Override
-		protected void init(IPropertySource propertySource)
+        protected void init(IPropertySource propertySource)
         {
             super.init(propertySource);
             mTextFlow.setForegroundColor(ColorManager.getColor(getTxtColor()));
@@ -168,14 +168,14 @@ public class InstallOptionsLabelEditPart extends InstallOptionsUneditableElement
         }
 
         @Override
-		protected void setChildConstraints(Rectangle rect)
+        protected void setChildConstraints(Rectangle rect)
         {
             setConstraint(mFlowPage, new Rectangle(0,0,rect.width,rect.height));
             setConstraint(mShadowFlowPage, new Rectangle(1,1,rect.width,rect.height));
         }
 
         @Override
-		public void refresh()
+        public void refresh()
         {
             super.refresh();
             String text = isMultiLine()?TypeConverter.ESCAPED_STRING_CONVERTER.asString(getText()):getText();

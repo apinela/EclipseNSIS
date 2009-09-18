@@ -49,7 +49,7 @@ public class ArrangeCommand extends Command
     }
 
     @Override
-	public boolean canExecute()
+    public boolean canExecute()
     {
         if(mParent != null) {
             if(!Common.isEmptyCollection(mSelection)) {
@@ -60,7 +60,7 @@ public class ArrangeCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         if(mParent != null) {
             mOldChildren = new ArrayList<InstallOptionsWidget>(mParent.getChildren());
@@ -80,7 +80,7 @@ public class ArrangeCommand extends Command
 
 
     @Override
-	public void redo()
+    public void redo()
     {
         if(mParent != null) {
             mParent.setSelection(mSelection);
@@ -89,7 +89,7 @@ public class ArrangeCommand extends Command
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         if(mParent != null) {
             mParent.setChildren(mOldChildren);

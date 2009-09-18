@@ -56,7 +56,7 @@ public class NSISHelpIndex implements Serializable
 
     private String getTitle(String url)
     {
-    	String url2 = url;
+        String url2 = url;
         int n = url2.lastIndexOf('#');
         if(n > 0) {
             url2 = url2.substring(0,n);
@@ -107,7 +107,7 @@ public class NSISHelpIndex implements Serializable
 
     public NSISHelpIndexEntry findEntry(String name)
     {
-    	String name2 = name;
+        String name2 = name;
         if(name2 != null && name2.length() > 0 && mIndexIndex != null) {
             name2 = name2.toLowerCase();
             int[] key = {name2.charAt(0),0};
@@ -229,19 +229,19 @@ public class NSISHelpIndex implements Serializable
         }
 
         @Override
-		public int hashCode()
+        public int hashCode()
         {
             return mSortKey.hashCode();
         }
 
         @Override
-		public String toString()
+        public String toString()
         {
             return mName;
         }
 
         @Override
-		public boolean equals(Object other)
+        public boolean equals(Object other)
         {
             if(other != this) {
                 if(other instanceof NSISHelpIndexEntry) {
@@ -312,7 +312,7 @@ public class NSISHelpIndex implements Serializable
         }
 
         @Override
-		public void handleEndTag(Tag t, int pos)
+        public void handleEndTag(Tag t, int pos)
         {
             if(Tag.TITLE.equals(t) && mInTitle) {
                 mInTitle = false;
@@ -325,7 +325,7 @@ public class NSISHelpIndex implements Serializable
         }
 
         @Override
-		public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
+        public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
         {
             if(Tag.TITLE.equals(t) && !mInTitle) {
                 mInTitle = true;
@@ -333,7 +333,7 @@ public class NSISHelpIndex implements Serializable
         }
 
         @Override
-		public void handleText(char[] data, int pos)
+        public void handleText(char[] data, int pos)
         {
             if(mInTitle) {
                 if(mTitle.length() > 0) {

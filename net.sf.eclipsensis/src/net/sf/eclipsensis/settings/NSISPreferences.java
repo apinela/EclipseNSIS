@@ -208,7 +208,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     }
 
     @Override
-	public void load()
+    public void load()
     {
         initializeNSISPreferences();
         initializeEditorPreferences();
@@ -226,7 +226,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     }
 
     @Override
-	protected boolean migrate(Version settingsVersion)
+    protected boolean migrate(Version settingsVersion)
     {
         boolean b = super.migrate(settingsVersion);
         if(EclipseNSISPlugin.getDefault().getVersion().compareTo(settingsVersion) > 0) {
@@ -272,7 +272,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     }
 
     @Override
-	public void store()
+    public void store()
     {
         setValue(NSIS_HOME,mNSISHome);
         setValue(USE_ECLIPSE_HELP,mUseEclipseHelp);
@@ -305,7 +305,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      */
     public void setTaskTags(Collection<NSISTaskTag> taskTags)
     {
-    	Collection<NSISTaskTag> taskTags2 = taskTags;
+        Collection<NSISTaskTag> taskTags2 = taskTags;
         if(taskTags2 != null && taskTags2.size() == mDefaultTaskTags.size()) {
             boolean different = false;
             for (Iterator<NSISTaskTag> iter = taskTags2.iterator(); iter.hasNext();) {
@@ -593,7 +593,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      * @see net.sf.eclipsensis.settings.NSISSettings#getBoolean(java.lang.String)
      */
     @Override
-	public boolean getBoolean(String name)
+    public boolean getBoolean(String name)
     {
         return mPreferenceStore.getBoolean(name);
     }
@@ -602,7 +602,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      * @see net.sf.eclipsensis.settings.NSISSettings#getInt(java.lang.String)
      */
     @Override
-	public int getInt(String name)
+    public int getInt(String name)
     {
         return mPreferenceStore.getInt(name);
     }
@@ -611,7 +611,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      * @see net.sf.eclipsensis.settings.NSISSettings#getString(java.lang.String)
      */
     @Override
-	public String getString(String name)
+    public String getString(String name)
     {
         return mPreferenceStore.getString(name);
     }
@@ -620,7 +620,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, boolean)
      */
     @Override
-	public void setValue(String name, boolean value)
+    public void setValue(String name, boolean value)
     {
         mPreferenceStore.setValue(name, value);
     }
@@ -629,7 +629,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, int)
      */
     @Override
-	public void setValue(String name, int value)
+    public void setValue(String name, int value)
     {
         mPreferenceStore.setValue(name, value);
     }
@@ -638,7 +638,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, java.lang.String)
      */
     @Override
-	public void setValue(String name, String value)
+    public void setValue(String name, String value)
     {
         mPreferenceStore.setValue(name, value);
     }
@@ -647,7 +647,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      * @see net.sf.eclipsensis.settings.NSISSettings#removeBoolean(java.lang.String)
      */
     @Override
-	public void removeBoolean(String name)
+    public void removeBoolean(String name)
     {
         mPreferenceStore.setValue(name, IPreferenceStore.BOOLEAN_DEFAULT_DEFAULT);
     }
@@ -656,7 +656,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      * @see net.sf.eclipsensis.settings.NSISSettings#removeInt(java.lang.String)
      */
     @Override
-	public void removeInt(String name)
+    public void removeInt(String name)
     {
         mPreferenceStore.setValue(name, IPreferenceStore.INT_DEFAULT_DEFAULT);
     }
@@ -665,7 +665,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      * @see net.sf.eclipsensis.settings.NSISSettings#removeString(java.lang.String)
      */
     @Override
-	public void removeString(String name)
+    public void removeString(String name)
     {
         mPreferenceStore.setValue(name, IPreferenceStore.STRING_DEFAULT_DEFAULT);
     }
@@ -676,7 +676,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     }
 
     @Override
-	public <T> void storeObject(String name, T object)
+    public <T> void storeObject(String name, T object)
     {
         String fileName = getString(name);
         if(Common.isEmpty(fileName)) {
@@ -702,8 +702,8 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	public <T> T loadObject(String name)
+    @SuppressWarnings("unchecked")
+    public <T> T loadObject(String name)
     {
         String fileName = getString(name);
         File objectFile = new File(PLUGIN_STATE_LOCATION,fileName);
@@ -721,7 +721,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     }
 
     @Override
-	public void removeObject(String name)
+    public void removeObject(String name)
     {
         storeObject(name, null);
     }

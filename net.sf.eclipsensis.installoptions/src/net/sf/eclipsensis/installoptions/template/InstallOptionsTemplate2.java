@@ -70,7 +70,7 @@ public class InstallOptionsTemplate2 extends AbstractTemplate implements IInstal
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         InstallOptionsTemplate2 template = (InstallOptionsTemplate2)super.clone();
         template.setWidgets(mWidgets);
@@ -98,7 +98,7 @@ public class InstallOptionsTemplate2 extends AbstractTemplate implements IInstal
     }
 
     @Override
-	public void fromNode(Node node)
+    public void fromNode(Node node)
     {
         int version = XMLUtil.getIntValue(node.getAttributes(),VERSION_ATTRIBUTE);
         if(version == VERSION) {
@@ -113,7 +113,7 @@ public class InstallOptionsTemplate2 extends AbstractTemplate implements IInstal
     }
 
     @Override
-	public Node toNode(Document document)
+    public Node toNode(Document document)
     {
         Node node = super.toNode(document);
         XMLUtil.addAttribute(document, node, VERSION_ATTRIBUTE, Integer.toString(VERSION));
@@ -121,7 +121,7 @@ public class InstallOptionsTemplate2 extends AbstractTemplate implements IInstal
     }
 
     @Override
-	public boolean isEqualTo(ITemplate template)
+    public boolean isEqualTo(ITemplate template)
     {
         if (this == template) {
             return true;

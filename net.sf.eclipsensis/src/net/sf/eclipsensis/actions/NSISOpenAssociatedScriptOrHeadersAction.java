@@ -26,17 +26,17 @@ public class NSISOpenAssociatedScriptOrHeadersAction extends NSISScriptAction
     private boolean mOpenAssociatedHeadersAction = false;
 
     @Override
-	protected void started(IPath script)
+    protected void started(IPath script)
     {
     }
 
     @Override
-	protected void stopped(IPath script, MakeNSISResults results)
+    protected void stopped(IPath script, MakeNSISResults results)
     {
     }
 
     @Override
-	public void run(IAction action)
+    public void run(IAction action)
     {
         if(mFile != null) {
             IWorkbenchPage page = null;
@@ -48,7 +48,7 @@ public class NSISOpenAssociatedScriptOrHeadersAction extends NSISScriptAction
     }
 
     @Override
-	protected void setInput(IPath input)
+    protected void setInput(IPath input)
     {
         super.setInput(input);
         mFile = null;
@@ -67,7 +67,7 @@ public class NSISOpenAssociatedScriptOrHeadersAction extends NSISScriptAction
     }
 
     @Override
-	public void init(IAction action)
+    public void init(IAction action)
     {
         super.init(action);
         if(INSISConstants.OPEN_ASSOCIATED_HEADERS_ACTION_ID.equals(action.getId())||
@@ -87,7 +87,7 @@ public class NSISOpenAssociatedScriptOrHeadersAction extends NSISScriptAction
     }
 
     @Override
-	public boolean isEnabled()
+    public boolean isEnabled()
     {
         if(super.isEnabled()) {
             if(mFile != null) {

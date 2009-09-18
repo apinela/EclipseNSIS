@@ -27,8 +27,8 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	protected Request createTargetRequest()
+    @SuppressWarnings("unchecked")
+    protected Request createTargetRequest()
     {
         ChangeBoundsRequest request = new ChangeBoundsRequest(RequestConstants.REQ_MOVE);
         request.setEditParts((List<EditPart>)InstallOptionsTreeViewerTransfer.INSTANCE.getObject());
@@ -36,8 +36,8 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	protected Command getCommand()
+    @SuppressWarnings("unchecked")
+    protected Command getCommand()
     {
         CompoundCommand command = new CompoundCommand();
 
@@ -72,7 +72,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     }
 
     @Override
-	protected Collection<EditPart> getExclusionSet() {
+    protected Collection<EditPart> getExclusionSet() {
         List<EditPart> selection = Common.makeGenericList(EditPart.class, getViewer().getSelectedEditParts());
         List<EditPart> exclude = new ArrayList<EditPart>(selection);
         exclude.addAll(includeChildren(selection));
@@ -80,7 +80,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     }
 
     @Override
-	protected void handleDragOver()
+    protected void handleDragOver()
     {
         if (InstallOptionsTreeViewerTransfer.INSTANCE.getViewer() != getViewer()) {
             getCurrentEvent().detail = DND.DROP_NONE;
@@ -91,7 +91,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     }
 
     @SuppressWarnings("unchecked")
-	protected EditPart getSourceEditPart()
+    protected EditPart getSourceEditPart()
     {
         List<EditPart> selection = (List<EditPart>)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
         if (selection == null
@@ -113,7 +113,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     }
 
     @Override
-	public boolean isEnabled(DropTargetEvent event)
+    public boolean isEnabled(DropTargetEvent event)
     {
         if (event.detail != DND.DROP_MOVE) {
             return false;
@@ -122,7 +122,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     }
 
     @SuppressWarnings("unchecked")
-	protected boolean isMove()
+    protected boolean isMove()
     {
         EditPart source = getSourceEditPart();
         List<EditPart> selection = (List<EditPart>)InstallOptionsTreeViewerTransfer.INSTANCE.getObject();
@@ -136,7 +136,7 @@ public class InstallOptionsTreeViewerDropTargetListener extends AbstractTransfer
     }
 
     @Override
-	protected void updateTargetRequest()
+    protected void updateTargetRequest()
     {
         ChangeBoundsRequest request = (ChangeBoundsRequest)getTargetRequest();
         request.setLocation(getDropLocation());

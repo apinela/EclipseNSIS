@@ -25,14 +25,14 @@ public abstract class InstallOptionsGenericTextEditManager extends InstallOption
     }
 
     @Override
-	protected void selectCellEditorText()
+    protected void selectCellEditorText()
     {
         Text text = (Text)getCellEditor().getControl();
         text.selectAll();
     }
 
     @Override
-	protected TextCellEditor createCellEditor(Composite composite)
+    protected TextCellEditor createCellEditor(Composite composite)
     {
         return new TextCellEditor(composite, getCellEditorStyle());
     }

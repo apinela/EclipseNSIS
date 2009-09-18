@@ -58,7 +58,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
      * @see net.sf.eclipsensis.dialogs.StatusMessageDialog#createControl(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2,false);
@@ -135,7 +135,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         mName = mNameText.getText();
         if(!Common.isEmptyCollection(mExistingSymbols) && mExistingSymbols.contains(mName)) {
@@ -166,7 +166,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
      * @see org.eclipse.jface.window.Window#create()
      */
     @Override
-	public void create()
+    public void create()
     {
         super.create();
         validate();

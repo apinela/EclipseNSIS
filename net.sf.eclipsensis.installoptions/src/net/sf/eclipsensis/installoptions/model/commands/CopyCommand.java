@@ -53,14 +53,14 @@ public class CopyCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         mBounds = new Rectangle(mMinX,mMinY,mMaxX-mMinX+1,mMaxY-mMinY+1);
         redo();
     }
 
     @Override
-	public void redo()
+    public void redo()
     {
         Clipboard clipboard = Clipboard.getDefault();
         clipboard.setContents(mNewContents);

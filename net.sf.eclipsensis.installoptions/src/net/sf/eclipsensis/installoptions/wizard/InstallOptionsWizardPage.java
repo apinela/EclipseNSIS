@@ -69,9 +69,9 @@ public class InstallOptionsWizardPage extends WizardPage
      */
     public InstallOptionsWizardPage()
     {
-    	super(NAME);
-    	this.setTitle(InstallOptionsPlugin.getResourceString("wizard.page.title")); //$NON-NLS-1$
-    	this.setDescription(InstallOptionsPlugin.getResourceString("wizard.page.description")); //$NON-NLS-1$
+        super(NAME);
+        this.setTitle(InstallOptionsPlugin.getResourceString("wizard.page.title")); //$NON-NLS-1$
+        this.setDescription(InstallOptionsPlugin.getResourceString("wizard.page.description")); //$NON-NLS-1$
     }
 
     /** (non-Javadoc)
@@ -143,7 +143,7 @@ public class InstallOptionsWizardPage extends WizardPage
         });
         SelectionAdapter selectionAdapter = new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mSaveLocation.setText(""); //$NON-NLS-1$
             }
@@ -156,7 +156,7 @@ public class InstallOptionsWizardPage extends WizardPage
         b.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         b.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 String savePath = mSaveLocation.getText();
                 if(Common.isEmpty(savePath)) {
                     savePath = InstallOptionsPlugin.getResourceString("wizard.default.file.name"); //$NON-NLS-1$
@@ -290,7 +290,7 @@ public class InstallOptionsWizardPage extends WizardPage
 
         ViewerFilter filter = new ViewerFilter() {
             @Override
-			public boolean select(Viewer viewer, Object parentElement, Object element)
+            public boolean select(Viewer viewer, Object parentElement, Object element)
             {
                 if(element instanceof IInstallOptionsTemplate) {
                     IInstallOptionsTemplate template = (IInstallOptionsTemplate)element;
@@ -321,7 +321,7 @@ public class InstallOptionsWizardPage extends WizardPage
         });
         viewer.getList().addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetDefaultSelected(SelectionEvent e)
+            public void widgetDefaultSelected(SelectionEvent e)
             {
                 if(canFlipToNextPage()) {
                     IWizardPage nextPage = getNextPage();
@@ -334,7 +334,7 @@ public class InstallOptionsWizardPage extends WizardPage
 
         b.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mCreateFromTemplate = b.getSelection();
                 setPageComplete(validatePage());
@@ -346,7 +346,7 @@ public class InstallOptionsWizardPage extends WizardPage
     }
 
     @Override
-	public void setErrorMessage(String message)
+    public void setErrorMessage(String message)
     {
         super.setMessage(message,ERROR);
     }
@@ -461,12 +461,12 @@ public class InstallOptionsWizardPage extends WizardPage
                     if(exists) {
                         if(saveExternal) {
                             if(file != null) {
-                            	file.delete();
+                                file.delete();
                             }
                         }
                         else {
                             if(ifile != null) {
-                            	ifile.delete(true,true,null);
+                                ifile.delete(true,true,null);
                             }
                         }
                     }
@@ -481,17 +481,17 @@ public class InstallOptionsWizardPage extends WizardPage
                         }
 
                         if (file != null) {
-							IFile[] files = root.findFilesForLocationURI(file.toURI());
-							if (!Common.isEmptyArray(files)) {
-								for (int i = 0; i < files.length; i++) {
-									files[i].refreshLocal(IResource.DEPTH_ZERO, null);
-								}
-							}
-						}
+                            IFile[] files = root.findFilesForLocationURI(file.toURI());
+                            if (!Common.isEmptyArray(files)) {
+                                for (int i = 0; i < files.length; i++) {
+                                    files[i].refreshLocal(IResource.DEPTH_ZERO, null);
+                                }
+                            }
+                        }
                     }
                     else {
                         if(ifile != null) {
-                        	ifile.create(new ByteArrayInputStream(getContents().getBytes()),true,null);
+                            ifile.create(new ByteArrayInputStream(getContents().getBytes()),true,null);
                         }
                     }
                 }

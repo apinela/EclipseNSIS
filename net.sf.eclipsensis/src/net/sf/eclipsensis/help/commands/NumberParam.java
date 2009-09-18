@@ -28,7 +28,7 @@ public class NumberParam extends RegexpParam
     }
 
     @Override
-	protected void init(Node node)
+    protected void init(Node node)
     {
         String domain = XMLUtil.getStringValue(node.getAttributes(), ATTR_DOMAIN);
         if(DOMAIN_NATURAL.equalsIgnoreCase(domain)) {
@@ -44,7 +44,7 @@ public class NumberParam extends RegexpParam
     }
 
     @Override
-	protected String getRegexp()
+    protected String getRegexp()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if(isAcceptVar()) {
@@ -66,7 +66,7 @@ public class NumberParam extends RegexpParam
     }
 
     @Override
-	protected String getDefaultValue2()
+    protected String getDefaultValue2()
     {
         if(mDomain == DOMAIN_NATURAL) {
             return "0"; //$NON-NLS-1$
@@ -80,13 +80,13 @@ public class NumberParam extends RegexpParam
     }
 
     @Override
-	protected String getValidateErrorMessage()
+    protected String getValidateErrorMessage()
     {
         return EclipseNSISPlugin.getResourceString("number.param.error"); //$NON-NLS-1$
     }
 
     @Override
-	public boolean verifyText(String text)
+    public boolean verifyText(String text)
     {
         if(text != null && text.length() > 0) {
             return ((isAcceptSymbol() || isAcceptVar()) && text.charAt(0)=='$') || mPattern.matcher(text).matches() || (mDomain == null && "-".equals(text)); //$NON-NLS-1$

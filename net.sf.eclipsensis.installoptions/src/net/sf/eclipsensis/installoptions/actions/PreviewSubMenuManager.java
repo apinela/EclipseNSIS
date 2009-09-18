@@ -25,7 +25,7 @@ public class PreviewSubMenuManager extends MenuManager
     }
 
     @Override
-	public void fill(Menu parent, int index)
+    public void fill(Menu parent, int index)
     {
         super.fill(parent, index);
         MenuItem item = getMenu().getParentItem();

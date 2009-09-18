@@ -40,12 +40,12 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
 
     public AbstractNSISWizardPage(String pageName, String title, String description)
     {
-		super(pageName,title,cImage);
+        super(pageName,title,cImage);
         setDescription(description);
-	}
+    }
 
     @Override
-	public void setErrorMessage(String message)
+    public void setErrorMessage(String message)
     {
         super.setMessage(message,ERROR);
     }
@@ -163,7 +163,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
      * @see org.eclipse.jface.wizard.IWizardPage#setWizard(org.eclipse.jface.wizard.IWizard)
      */
     @Override
-	public void setWizard(IWizard newWizard)
+    public void setWizard(IWizard newWizard)
     {
         if(mWizard != null) {
             IPageChangeProvider pageChangeProvider = (IPageChangeProvider)mWizard.getAdapter(IPageChangeProvider.class);
@@ -183,7 +183,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
 
 
     @Override
-	public final void setVisible(boolean visible)
+    public final void setVisible(boolean visible)
     {
         super.setVisible(visible);
         if(mWizard != null) {
@@ -219,7 +219,7 @@ public abstract class AbstractNSISWizardPage extends WizardPage implements INSIS
     }
 
     @Override
-	protected boolean isCurrentPage()
+    protected boolean isCurrentPage()
     {
         return mCurrentPage;
     }

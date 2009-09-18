@@ -32,7 +32,7 @@ public class InstallOptionsAnnotationModelFactory extends ResourceMarkerAnnotati
     }
 
     @Override
-	public IAnnotationModel createAnnotationModel(IPath location)
+    public IAnnotationModel createAnnotationModel(IPath location)
     {
         String editorId = null;
         try {

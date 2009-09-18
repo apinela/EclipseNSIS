@@ -29,7 +29,7 @@ public class ExclusiveEndSequenceRule extends BeginningOfLineRule
     }
 
     @Override
-	protected boolean endSequenceDetected(ICharacterScanner scanner)
+    protected boolean endSequenceDetected(ICharacterScanner scanner)
     {
         int offset1 = ((IInstallOptionsScanner)scanner).getOffset();
         if(super.endSequenceDetected(scanner)) {

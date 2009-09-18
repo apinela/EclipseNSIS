@@ -36,7 +36,7 @@ public class CreateTemplateAction extends SelectionAction
      * Initializes this action's text and images.
      */
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         setText(InstallOptionsPlugin.getResourceString("create.template.action.label")); //$NON-NLS-1$
@@ -50,7 +50,7 @@ public class CreateTemplateAction extends SelectionAction
     }
 
     @Override
-	protected boolean calculateEnabled()
+    protected boolean calculateEnabled()
     {
         List<?> objects = getSelectedObjects();
         if (objects.isEmpty()) {
@@ -68,7 +68,7 @@ public class CreateTemplateAction extends SelectionAction
     }
 
     @Override
-	public void run()
+    public void run()
     {
         List<InstallOptionsWidget> objects = new ArrayList<InstallOptionsWidget>();
 

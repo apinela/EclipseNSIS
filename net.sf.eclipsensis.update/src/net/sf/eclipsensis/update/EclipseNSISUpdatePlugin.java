@@ -33,7 +33,7 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
     public static final String PLUGIN_CONTEXT_PREFIX = "net.sf.eclipsensis."; //$NON-NLS-1$
 
     //The shared instance.
-	private static EclipseNSISUpdatePlugin cPlugin;
+    private static EclipseNSISUpdatePlugin cPlugin;
     private static File cStateLocation = null;
     private static Image cShellImage;
 
@@ -42,9 +42,9 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
     private String mPluginId;
 
     /**
-	 * The constructor.
-	 */
-	public EclipseNSISUpdatePlugin()
+     * The constructor.
+     */
+    public EclipseNSISUpdatePlugin()
     {
         cPlugin = this;
         try {
@@ -53,7 +53,7 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
         catch(MissingResourceException mre) {
             mResourceBundle = null;
         }
-	}
+    }
 
     public static synchronized File getPluginStateLocation()
     {
@@ -67,7 +67,7 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
     }
 
     @Override
-	public void start(BundleContext context) throws Exception
+    public void start(BundleContext context) throws Exception
     {
         mPluginId = context.getBundle().getSymbolicName();
         super.start(context);
@@ -87,28 +87,28 @@ public class EclipseNSISUpdatePlugin extends AbstractUIPlugin
     }
 
     /**
-	 * This method is called when the plug-in is stopped
-	 */
-	@Override
-	public void stop(BundleContext context) throws Exception
+     * This method is called when the plug-in is stopped
+     */
+    @Override
+    public void stop(BundleContext context) throws Exception
     {
         Scheduler scheduler = Scheduler.getInstance();
         if(scheduler != null) {
             scheduler.shutDown();
         }
-		super.stop(context);
-		cPlugin = null;
-	}
+        super.stop(context);
+        cPlugin = null;
+    }
 
-	/**
-	 * Returns the shared instance.
-	 *
-	 * @return the shared instance.
-	 */
-	public static EclipseNSISUpdatePlugin getDefault()
+    /**
+     * Returns the shared instance.
+     *
+     * @return the shared instance.
+     */
+    public static EclipseNSISUpdatePlugin getDefault()
     {
-		return cPlugin;
-	}
+        return cPlugin;
+    }
 
     public static String getFormattedString(String key, Object[] args)
     {

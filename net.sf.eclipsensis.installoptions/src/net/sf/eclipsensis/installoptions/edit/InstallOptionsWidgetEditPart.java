@@ -89,7 +89,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     }
 
     @Override
-	public DragTracker getDragTracker(Request req)
+    public DragTracker getDragTracker(Request req)
     {
         return new InstallOptionsDragEditPartsTracker(this);
     }
@@ -105,8 +105,8 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class key)
+    @SuppressWarnings("unchecked")
+    public Object getAdapter(Class key)
     {
         if(IDirectEditLabelProvider.class.equals(key)) {
             if(!Common.isEmpty(getDirectEditLabel())) {
@@ -142,15 +142,15 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     }
 
     @Override
-	protected final AccessibleEditPart createAccessible() {
+    protected final AccessibleEditPart createAccessible() {
         return new AccessibleGraphicalEditPart(){
             @Override
-			public void getValue(AccessibleControlEvent e) {
+            public void getValue(AccessibleControlEvent e) {
                 e.result = getAccessibleControlEventResult();
             }
 
             @Override
-			public void getName(AccessibleEvent e) {
+            public void getName(AccessibleEvent e) {
                 e.result = getTypeName();
             }
         };
@@ -191,7 +191,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     }
 
     @SuppressWarnings("unchecked")
-	protected void doPropertyChange(PropertyChangeEvent evt)
+    protected void doPropertyChange(PropertyChangeEvent evt)
     {
         String prop = evt.getPropertyName();
         if(InstallOptionsModel.PROPERTY_FLAGS.equals(prop)) {
@@ -251,7 +251,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     }
 
     @Override
-	protected final IFigure createFigure()
+    protected final IFigure createFigure()
     {
         IInstallOptionsFigure figure2 = createInstallOptionsFigure();
         figure2.setFocusTraversable(true);
@@ -263,7 +263,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
      * Updates the visual aspect of this.
      */
     @Override
-	protected void refreshVisuals()
+    protected void refreshVisuals()
     {
         InstallOptionsWidget widget = (InstallOptionsWidget)getInstallOptionsElement();
         Position pos = widget.getPosition();
@@ -274,7 +274,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     }
 
     @Override
-	public void performRequest(Request request)
+    public void performRequest(Request request)
     {
         if(request.getType().equals(IInstallOptionsConstants.REQ_EXTENDED_EDIT)) {
             performExtendedEdit(request);
@@ -321,13 +321,13 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
     }
 
     @Override
-	public void addNotify()
+    public void addNotify()
     {
         super.addNotify();
     }
 
     @Override
-	public void removeNotify()
+    public void removeNotify()
     {
         super.removeNotify();
     }
@@ -345,7 +345,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         }
 
         @Override
-		protected boolean handleDragStarted()
+        protected boolean handleDragStarted()
         {
             List<?> list = getSourceEditPart().getViewer().getSelectedEditParts();
             if(!Common.isEmptyCollection(list)) {
@@ -395,7 +395,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         }
 
         @SuppressWarnings("unchecked")
-		protected void init(IPropertySource propertySource)
+        protected void init(IPropertySource propertySource)
         {
             List<String> flags = (List<String>)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
             setDisabled(flags != null && flags.contains(InstallOptionsModel.FLAGS_DISABLED));
@@ -475,7 +475,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         }
 
         @Override
-		public void setBounds(Rectangle newBounds)
+        public void setBounds(Rectangle newBounds)
         {
             if(!bounds.getSize().equals(newBounds.getSize())) {
                 updateBounds(newBounds);
@@ -484,7 +484,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         }
 
         @Override
-		protected boolean supportsScrollBars()
+        protected boolean supportsScrollBars()
         {
             return true;
         }

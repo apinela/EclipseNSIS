@@ -49,7 +49,7 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
      * Initializes this action's text and images.
      */
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
@@ -80,7 +80,7 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
     }
 
     @Override
-	protected boolean calculateEnabled() {
+    protected boolean calculateEnabled() {
         Command command = null;
         if(Clipboard.getDefault().isContentsAvailable()) {
             command = createPasteCommand();
@@ -89,7 +89,7 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
     }
 
     @Override
-	public void run() {
+    public void run() {
         PasteCommand command = createPasteCommand();
         if(command != null) {
             InstallOptionsDesignEditor editor = (InstallOptionsDesignEditor)getWorkbenchPart();
@@ -99,7 +99,7 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
             List<InstallOptionsEditPart> selection = Common.makeGenericList(InstallOptionsEditPart.class, ((IStructuredSelection)viewer.getSelection()).toList());
             List<InstallOptionsWidget> modelSelection = new ArrayList<InstallOptionsWidget>();
             for (Iterator<InstallOptionsEditPart> iter = selection.iterator(); iter.hasNext();) {
-            	InstallOptionsEditPart part = iter.next();
+                InstallOptionsEditPart part = iter.next();
                 modelSelection.add((InstallOptionsWidget) part.getModel());
             }
             command.setSelection(modelSelection);

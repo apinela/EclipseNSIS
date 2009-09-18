@@ -58,11 +58,11 @@ public abstract class AbstractNSISScriptElementContainer extends AbstractNSISScr
         int index = mElements.indexOf(afterElement);
         if(index >= 0) {
             index++;
-	        mElements.add(index, element);
-	        return element;
+            mElements.add(index, element);
+            return element;
         }
         else {
-    	    throw new IndexOutOfBoundsException(Integer.toString(index));
+            throw new IndexOutOfBoundsException(Integer.toString(index));
         }
     }
 

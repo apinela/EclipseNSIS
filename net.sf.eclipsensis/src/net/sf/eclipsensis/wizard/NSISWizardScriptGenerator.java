@@ -800,15 +800,15 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
             if(mSettings.isEnableLanguageSupport() && mSettings.isSelectLanguage() && languages.size() > 1) {
                 if(mIsMUI) {
-                	if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 &&
-                	   !mSettings.isDisplaySupportedLanguages()) {
-                		mOnInitFunction.addElement(new NSISScriptDefine("MUI_LANGDLL_ALLLANGUAGES"));
-                	}
+                    if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 &&
+                       !mSettings.isDisplaySupportedLanguages()) {
+                        mOnInitFunction.addElement(new NSISScriptDefine("MUI_LANGDLL_ALLLANGUAGES"));
+                    }
                     mOnInitFunction.addElement(new NSISScriptInsertMacro("MUI_LANGDLL_DISPLAY")); //$NON-NLS-1$
                 }
                 else {
-                	boolean useCodePage = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 &&
-             	   						  mSettings.isDisplaySupportedLanguages();
+                    boolean useCodePage = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 &&
+                                              mSettings.isDisplaySupportedLanguages();
                     mOnInitFunction.addElement(new NSISScriptInstruction("Push","")); //$NON-NLS-1$ //$NON-NLS-2$
                     for (Iterator<NSISLanguage> iter = languages.iterator(); iter.hasNext();) {
                         NSISLanguage language = iter.next();
@@ -1027,10 +1027,10 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
         if(mSettings.isCreateUninstaller()) {
             String sectionId = MessageFormat.format("SEC{0,number,0000}",new Object[]{new Integer(mSectionCounter++)}); //$NON-NLS-1$
             if (postSection != null) {
-				postSection.setIndex(sectionId);
-				mScript.insertElement(mSectionsPlaceHolder, postSection);
-			}
-			if(!Common.isEmptyCollection(mUnSectionList)) {
+                postSection.setIndex(sectionId);
+                mScript.insertElement(mSectionsPlaceHolder, postSection);
+            }
+            if(!Common.isEmptyCollection(mUnSectionList)) {
                 Collections.reverse(mUnSectionList);
                 for(Iterator<NSISScriptSection> iter=mUnSectionList.iterator(); iter.hasNext(); ) {
                     mScript.insertElement(mUnsectionsPlaceHolder,iter.next());
@@ -1038,9 +1038,9 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 }
             }
             if (unPostSection != null) {
-				unPostSection.setIndex("UN" + sectionId); //$NON-NLS-1$
-				mScript.insertElement(mUnsectionsPlaceHolder, unPostSection);
-			}
+                unPostSection.setIndex("UN" + sectionId); //$NON-NLS-1$
+                mScript.insertElement(mUnsectionsPlaceHolder, unPostSection);
+            }
         }
 
         if(secDescMap != null && secDescMap.size() > 0) {
@@ -1192,7 +1192,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
      */
     private NSISScriptAttribute createVersionInfoKey(String langId, String[] args)
     {
-    	String[] args2 = args;
+        String[] args2 = args;
         if(langId != null) {
             String[] temp = new String[Common.isEmptyArray(args2)?1:args2.length+1];
             temp[0]=langId;
@@ -1539,8 +1539,8 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                                     libType = "REGEXE"; //$NON-NLS-1$
                                     break;
                                 }
-	                            //$FALL-THROUGH$
-							default:
+                                //$FALL-THROUGH$
+                            default:
                                 libType = "DLL"; //$NON-NLS-1$
                         }
                         String installType;

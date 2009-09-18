@@ -29,7 +29,7 @@ public class CheckBoxPropertySectionCreator extends UneditableElementPropertySec
     }
 
     @Override
-	protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
+    protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
         Composite composite = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
         InstallOptionsCheckBox checkbox = (InstallOptionsCheckBox)getWidget();

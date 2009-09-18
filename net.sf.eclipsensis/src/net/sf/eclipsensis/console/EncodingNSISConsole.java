@@ -26,7 +26,7 @@ public class EncodingNSISConsole implements INSISConsole
 
     public void appendLine(NSISConsoleLine line)
     {
-    	NSISConsoleLine line2 = line;
+        NSISConsoleLine line2 = line;
         try {
             String text = new String(line.toString().getBytes(),mEncoding);
             line2 = new NSISConsoleLine(text, line.getType(),line.getSource(),line.getLineNum());

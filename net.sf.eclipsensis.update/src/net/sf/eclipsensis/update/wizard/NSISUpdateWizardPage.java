@@ -2,7 +2,7 @@
  * Copyright (c) 2005-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.update.wizard;
@@ -60,7 +60,7 @@ public class NSISUpdateWizardPage extends WizardPage
 
     public void createControl(Composite parent)
     {
-    	Composite parent2 = new Composite(parent, SWT.NONE);
+        Composite parent2 = new Composite(parent, SWT.NONE);
         parent2.setLayout(new GridLayout(1, false));
 
         Group group1 = createActionGroup(parent2);
@@ -69,7 +69,7 @@ public class NSISUpdateWizardPage extends WizardPage
         link.setText(LINK_TEXT);
         link.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 if (e.text != null)
                 {
@@ -100,7 +100,7 @@ public class NSISUpdateWizardPage extends WizardPage
         notify.setSelection(mAction == SchedulerConstants.UPDATE_NOTIFY);
         notify.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 if (notify.getSelection())
                 {
@@ -115,7 +115,7 @@ public class NSISUpdateWizardPage extends WizardPage
         download.setSelection(mAction == SchedulerConstants.UPDATE_DOWNLOAD);
         download.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 if (download.getSelection())
                 {
@@ -130,7 +130,7 @@ public class NSISUpdateWizardPage extends WizardPage
         install.setSelection(mAction == SchedulerConstants.UPDATE_INSTALL);
         install.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 if (install.getSelection())
                 {
@@ -155,7 +155,7 @@ public class NSISUpdateWizardPage extends WizardPage
         ignorePreview.setSelection(mIgnorePreview);
         ignorePreview.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mIgnorePreview = ignorePreview.getSelection();
             }

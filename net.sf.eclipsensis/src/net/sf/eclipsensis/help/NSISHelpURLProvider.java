@@ -241,7 +241,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     }
 
     @SuppressWarnings("unchecked")
-	private void loadHelpURLs()
+    private void loadHelpURLs()
     {
         mTOC = null;
         mIndex = null;
@@ -371,7 +371,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                                     CaseInsensitiveSet keywords = new CaseInsensitiveSet(keywordHelpMap.keySet());
                                     CaseInsensitiveMap<String> urlKeywordMap = new CaseInsensitiveMap<String>();
                                     for (Iterator<Map.Entry<String, String>> iter = keywordHelpMap.entrySet().iterator(); iter.hasNext();) {
-                                    	Map.Entry<String, String> entry = iter.next();
+                                        Map.Entry<String, String> entry = iter.next();
                                         urlKeywordMap.put(entry.getValue(),entry.getKey());
                                     }
                                     for (Iterator<String> iter = urlKeywordMap.keySet().iterator(); iter.hasNext();) {

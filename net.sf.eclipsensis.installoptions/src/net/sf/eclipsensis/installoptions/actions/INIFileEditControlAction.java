@@ -31,7 +31,7 @@ public class INIFileEditControlAction extends INIFileCreateControlAction
     }
 
     @Override
-	protected INISection getSection(INIFile iniFile)
+    protected INISection getSection(INIFile iniFile)
     {
         INISection section = null;
         INISection currSection = mEditor.getCurrentSection();
@@ -51,7 +51,7 @@ public class INIFileEditControlAction extends INIFileCreateControlAction
     }
 
     @Override
-	protected boolean doRun(INIFile iniFile, INISection section)
+    protected boolean doRun(INIFile iniFile, INISection section)
     {
         if (section != null) {
             return doRun2(iniFile, section);

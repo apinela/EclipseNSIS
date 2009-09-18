@@ -31,13 +31,13 @@ public class ModifyListItemsCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         mModel.setListItems(mNewListItems);
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         mModel.setListItems(mOldListItems);
     }

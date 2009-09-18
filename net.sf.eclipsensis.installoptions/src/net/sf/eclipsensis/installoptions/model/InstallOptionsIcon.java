@@ -27,7 +27,7 @@ public class InstallOptionsIcon extends InstallOptionsPicture
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_ICON;
     }
@@ -36,19 +36,19 @@ public class InstallOptionsIcon extends InstallOptionsPicture
      * @see net.sf.eclipsensis.installoptions.model.InstallOptionsPicture#getImageName()
      */
     @Override
-	public Image getImage()
+    public Image getImage()
     {
         return ICON_IMAGE;
     }
 
     @Override
-	public String getFileExtension()
+    public String getFileExtension()
     {
         return ".ico"; //$NON-NLS-1$
     }
 
     @Override
-	public int getSWTImageType()
+    public int getSWTImageType()
     {
         return SWT.IMAGE_ICO;
     }

@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.*;
 public abstract class InstallOptionsPicture extends InstallOptionsUneditableElement
 {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2617864864963263131L;
     public static final String PROPERTY_IMAGE = "Image"; //$NON-NLS-1$
@@ -30,7 +30,7 @@ public abstract class InstallOptionsPicture extends InstallOptionsUneditableElem
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("SWTImageType"); //$NON-NLS-1$
@@ -39,20 +39,20 @@ public abstract class InstallOptionsPicture extends InstallOptionsUneditableElem
     }
 
     @Override
-	protected String getDefaultText()
+    protected String getDefaultText()
     {
         return ""; //$NON-NLS-1$
     }
 
     @Override
-	protected Position getDefaultPosition()
+    protected Position getDefaultPosition()
     {
         Rectangle rect = getImage().getBounds();
         return new Position(0,0,rect.width-1,rect.height-1);
     }
 
     @Override
-	public Object getPropertyValue(Object propName)
+    public Object getPropertyValue(Object propName)
     {
         if(PROPERTY_IMAGE.equals(propName)) {
             return getImage();
@@ -63,7 +63,7 @@ public abstract class InstallOptionsPicture extends InstallOptionsUneditableElem
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new PicturePropertySectionCreator(this);
     }

@@ -16,7 +16,7 @@ import net.sf.eclipsensis.util.Common;
 public class ToggleKeyValueValidator extends PositiveNumberKeyValueValidator
 {
     @Override
-	public boolean validate(final INIKeyValue keyValue, int fixFlag)
+    public boolean validate(final INIKeyValue keyValue, int fixFlag)
     {
         boolean b = super.validate(keyValue, fixFlag);
         if(b) {
@@ -38,7 +38,7 @@ public class ToggleKeyValueValidator extends PositiveNumberKeyValueValidator
                                                                 new String[]{keyValue.getKey()}));
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.set.valid.value")) { //$NON-NLS-1$
                         @Override
-						protected INIProblemFix[] createFixes()
+                        protected INIProblemFix[] createFixes()
                         {
                             return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(0,radix,prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                         }

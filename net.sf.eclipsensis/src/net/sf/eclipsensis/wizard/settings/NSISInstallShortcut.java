@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class NSISInstallShortcut extends AbstractNSISInstallItem
 {
-	private static final long serialVersionUID = 7567273788917909918L;
+    private static final long serialVersionUID = 7567273788917909918L;
     public static final String STARTMENUGROUP_SHORTCUT_LOCATION;
 
     public static final String TYPE = "Shortcut"; //$NON-NLS-1$
@@ -197,7 +197,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#setSettings(net.sf.eclipsensis.wizard.settings.NSISWizardSettings)
      */
     @Override
-	public void setSettings(NSISWizardSettings settings)
+    public void setSettings(NSISWizardSettings settings)
     {
         super.setSettings(settings);
         if(settings != null && !Common.isEmpty(getSettings().getStartMenuGroup()) && Common.isEmpty(mLocation)) {
@@ -205,7 +205,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
         }
     }
     @Override
-	public String doValidate()
+    public String doValidate()
     {
         if(isCreateInStartMenuGroup()) {
             if(!getSettings().isCreateStartMenuGroup()) {
@@ -231,7 +231,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     }
 
     @Override
-	public void setTargetPlatform(int targetPlatform)
+    public void setTargetPlatform(int targetPlatform)
     {
         super.setTargetPlatform(targetPlatform);
         setLocation(NSISWizardUtil.convertPath(targetPlatform, getLocation()));
@@ -239,7 +239,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -253,7 +253,7 @@ public class NSISInstallShortcut extends AbstractNSISInstallItem
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;

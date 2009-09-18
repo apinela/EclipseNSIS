@@ -25,7 +25,7 @@ public class LanguageFileParam extends ComboParam
     }
 
     @Override
-	protected ComboEntry[] getComboEntries()
+    protected ComboEntry[] getComboEntries()
     {
         ComboEntry[] entries = EMPTY_COMBO_ENTRIES;
         List<NSISLanguage> languages = NSISLanguageManager.getInstance().getLanguages();

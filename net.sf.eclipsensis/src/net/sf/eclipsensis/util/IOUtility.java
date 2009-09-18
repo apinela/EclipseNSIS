@@ -108,7 +108,7 @@ public class IOUtility
 
     public static String resolveFileName(String fileName, NSISEditor editor)
     {
-    	String fileName2 = fileName;
+        String fileName2 = fileName;
         String newFileName = IOUtility.encodePath(fileName2);
         if(editor != null && newFileName.equalsIgnoreCase(fileName2)) {
             IEditorInput editorInput = editor.getEditorInput();
@@ -183,7 +183,7 @@ public class IOUtility
 
     public static String encodePath(String path)
     {
-    	String path2 = path;
+        String path2 = path;
         if(!Common.isEmpty(path2)) {
             String nsisdirKeyword = NSISKeywords.getInstance().getKeyword("${NSISDIR}"); //$NON-NLS-1$
             String nsisHome = NSISPreferences.INSTANCE.getNSISHome().toLowerCase();
@@ -196,7 +196,7 @@ public class IOUtility
 
     public static String decodePath(String path)
     {
-    	String path2 = path;
+        String path2 = path;
         String nsisdirKeyword = NSISKeywords.getInstance().getKeyword("${NSISDIR}").toLowerCase(); //$NON-NLS-1$
         String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
         if(path2.toLowerCase().startsWith(nsisdirKeyword)) {
@@ -221,9 +221,9 @@ public class IOUtility
     }
 
     @SuppressWarnings("unchecked")
-	public static <T> T readObject(InputStream inputStream, final ClassLoader classLoader) throws IOException, ClassNotFoundException
+    public static <T> T readObject(InputStream inputStream, final ClassLoader classLoader) throws IOException, ClassNotFoundException
     {
-    	InputStream inputStream2 = inputStream;
+        InputStream inputStream2 = inputStream;
         ObjectInputStream ois = null;
         try {
             if(!(inputStream2 instanceof BufferedInputStream)) {
@@ -232,7 +232,7 @@ public class IOUtility
             ois = new ObjectInputStream(inputStream2){
 
                 @Override
-				protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
+                protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException
                 {
                     if(classLoader != null) {
                         try {
@@ -323,7 +323,7 @@ public class IOUtility
 
     public static void writeObject(OutputStream outputStream, Object object) throws IOException
     {
-    	OutputStream outputStream2 = outputStream;
+        OutputStream outputStream2 = outputStream;
         if(object != null) {
             ObjectOutputStream oos = null;
 
@@ -486,12 +486,12 @@ public class IOUtility
         }
         finally {
             if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-					EclipseNSISPlugin.getDefault().log(e);
-				}
-			}
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }
+            }
         }
     }
 
@@ -645,7 +645,7 @@ public class IOUtility
         }
 
         @Override
-		public boolean equals(Object obj)
+        public boolean equals(Object obj)
         {
             if(obj instanceof BundleResource) {
                 BundleResource other = (BundleResource)obj;
@@ -655,7 +655,7 @@ public class IOUtility
         }
 
         @Override
-		public int hashCode()
+        public int hashCode()
         {
             return mBundle.hashCode() << 16 + mResource.hashCode();
         }

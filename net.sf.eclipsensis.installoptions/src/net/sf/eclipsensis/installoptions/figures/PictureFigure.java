@@ -27,14 +27,14 @@ public class PictureFigure extends UneditableElementFigure
     }
 
     @Override
-	protected void init(IPropertySource propertySource)
+    protected void init(IPropertySource propertySource)
     {
         setImage((Image)propertySource.getPropertyValue(InstallOptionsPicture.PROPERTY_IMAGE));
         super.init(propertySource);
     }
 
     @Override
-	protected Control createUneditableSWTControl(Composite parent, int style)
+    protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Label label = new Label(parent, style);
         Image image = getImage();
@@ -45,7 +45,7 @@ public class PictureFigure extends UneditableElementFigure
     }
 
     @Override
-	public int getDefaultStyle()
+    public int getDefaultStyle()
     {
         return SWT.CENTER;
     }

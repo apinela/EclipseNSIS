@@ -21,7 +21,7 @@ public class NSISWizardTemplateReaderWriter extends AbstractTemplateReaderWriter
     }
 
     @Override
-	protected NSISWizardTemplate createTemplate()
+    protected NSISWizardTemplate createTemplate()
     {
         return new NSISWizardTemplate();
     }

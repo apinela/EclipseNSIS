@@ -23,7 +23,7 @@ public class ListboxCellEditorLocator extends InstallOptionsCellEditorLocator
     }
 
     @Override
-	protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
+    protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
         return editArea;
     }

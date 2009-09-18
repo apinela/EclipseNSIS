@@ -189,7 +189,7 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
     private void initializePreference(String associationId, boolean enablement, String bundleId, String enablementPref)
     {
         if(!PREFERENCES.contains(associationId)) {
-        	boolean enablement2 = enablement;
+            boolean enablement2 = enablement;
             if(enablementPref != null) {
                 Bundle bundle = Platform.getBundle(bundleId);
                 if(bundle != null) {
@@ -221,7 +221,7 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
                 }
 
                 @Override
-				public IStatus runInUIThread(final IProgressMonitor monitor)
+                public IStatus runInUIThread(final IProgressMonitor monitor)
                 {
                     if (monitor.isCanceled()) {
                         return Status.CANCEL_STATUS;
@@ -252,8 +252,8 @@ public class FileAssociationChecker implements IStartup,  IExtensionChangeHandle
                                                 ((EditorRegistry)mEditorRegistry).saveAssociations();
                                                 //Fall through to next case to save the toggle state
                                             }
-	                                            //$FALL-THROUGH$
-											case IDialogConstants.NO_ID:
+                                                //$FALL-THROUGH$
+                                            case IDialogConstants.NO_ID:
                                             {
                                                 boolean newToggleState = !dialog.getToggleState();
                                                 if (toggleState != newToggleState) {

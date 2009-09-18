@@ -40,7 +40,7 @@ public class NSISScriptWizard extends NSISWizard
     }
 
     @Override
-	public String getHelpContextId()
+    public String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizard_context"; //$NON-NLS-1$
     }
@@ -84,7 +84,7 @@ public class NSISScriptWizard extends NSISWizard
     }
 
     @Override
-	public boolean performFinish()
+    public boolean performFinish()
     {
         IPath path = new Path(getSettings().getSavePath());
         if(Common.isEmpty(path.getFileExtension())) {
@@ -109,9 +109,9 @@ public class NSISScriptWizard extends NSISWizard
             ifile = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
             exists = ifile != null && ifile.exists();
             if (ifile != null) {
-				path = ifile.getLocation();
-			}
-			if(path == null) {
+                path = ifile.getLocation();
+            }
+            if(path == null) {
                 Common.openError(getShell(),EclipseNSISPlugin.getResourceString("local.filesystem.error"),EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
                 return false;
             }
@@ -158,45 +158,45 @@ public class NSISScriptWizard extends NSISWizard
                 }
             }
         }
-    	IRunnableWithProgress op = new IRunnableWithProgress() {
-    		public void run(IProgressMonitor monitor) throws InvocationTargetException
+        IRunnableWithProgress op = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor) throws InvocationTargetException
             {
-    			try {
+                try {
                     if(exists) {
                         if(saveExternal) {
                             if (file != null) {
-								file.delete();
-							}
+                                file.delete();
+                            }
                         }
                         else {
                             if (ifile != null) {
-								ifile.delete(true, true, null);
-							}
+                                ifile.delete(true, true, null);
+                            }
                         }
                     }
                     new NSISWizardScriptGenerator(getSettings()).generate(getShell(),monitor);
                 }
-    			catch (Exception e) {
-    			    throw new InvocationTargetException(e);
+                catch (Exception e) {
+                    throw new InvocationTargetException(e);
                 }
-    		}
-    	};
-    	try {
-    		getContainer().run(true, false, op);
-    	}
+            }
+        };
+        try {
+            getContainer().run(true, false, op);
+        }
         catch (InterruptedException e) {
-    		return false;
-    	}
+            return false;
+        }
         catch (InvocationTargetException e) {
-    		Throwable realException = e.getTargetException();
-    		Common.openError(getShell(), realException.getLocalizedMessage(), EclipseNSISPlugin.getShellImage());
-    		return false;
-    	}
-    	return true;
+            Throwable realException = e.getTargetException();
+            Common.openError(getShell(), realException.getLocalizedMessage(), EclipseNSISPlugin.getShellImage());
+            return false;
+        }
+        return true;
     }
 
     @Override
-	public boolean performCancel()
+    public boolean performCancel()
     {
         if(isForcedCancel() || Common.openQuestion(getShell(),EclipseNSISPlugin.getResourceString("wizard.cancel.question"), //$NON-NLS-1$
                 EclipseNSISPlugin.getShellImage())) {
@@ -227,7 +227,7 @@ public class NSISScriptWizard extends NSISWizard
      *
      */
     @Override
-	protected void addStartPage()
+    protected void addStartPage()
     {
         addPage(new NSISWizardWelcomePage());
     }
@@ -236,7 +236,7 @@ public class NSISScriptWizard extends NSISWizard
      * @return Returns the template.
      */
     @Override
-	protected NSISWizardTemplate getTemplate()
+    protected NSISWizardTemplate getTemplate()
     {
         return mTemplate;
     }
@@ -245,7 +245,7 @@ public class NSISScriptWizard extends NSISWizard
      * @param template The template to set.
      */
     @Override
-	protected void setTemplate(NSISWizardTemplate template)
+    protected void setTemplate(NSISWizardTemplate template)
     {
         mTemplate = template;
     }

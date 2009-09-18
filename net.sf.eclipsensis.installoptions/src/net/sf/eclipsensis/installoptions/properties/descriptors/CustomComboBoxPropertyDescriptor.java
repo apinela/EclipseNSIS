@@ -44,7 +44,7 @@ public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
 
         setLabelProvider(new LabelProvider(){
             @Override
-			public String getText(Object element)
+            public String getText(Object element)
             {
                 if(element != null) {
                     for(int i=0; i<mData.length; i++) {
@@ -60,18 +60,18 @@ public class CustomComboBoxPropertyDescriptor extends ComboBoxPropertyDescriptor
     }
 
     @Override
-	public CellEditor createPropertyEditor(Composite parent)
+    public CellEditor createPropertyEditor(Composite parent)
     {
         return new ComboBoxCellEditor(parent,mDisplay,SWT.READ_ONLY) {
             @Override
-			protected Object doGetValue()
+            protected Object doGetValue()
             {
                 Integer i = (Integer)super.doGetValue();
                 return mData[i.intValue()];
             }
 
             @Override
-			protected void doSetValue(Object value)
+            protected void doSetValue(Object value)
             {
                 int val = mDefault;
                 for(int i=0; i<mData.length; i++) {

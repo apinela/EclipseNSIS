@@ -34,7 +34,7 @@ public class EditTemplateAction extends Action
     }
 
     @Override
-	public void run()
+    public void run()
     {
         InstallOptionsTemplateDialog dialog = new InstallOptionsTemplateDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), mTemplate);
         dialog.open();

@@ -29,7 +29,7 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
     }
 
     @Override
-	protected void paintGrid(Graphics g)
+    protected void paintGrid(Graphics g)
     {
         try {
             Font f = FontUtility.getInstallOptionsFont();
@@ -112,7 +112,7 @@ public class InstallOptionsGridLayer extends GridLayer implements IInstallOption
 
     public void setStyle(String style)
     {
-    	String style2 = style;
+        String style2 = style;
         if (style2 == null || !IInstallOptionsConstants.GRID_STYLE_DOTS.equals(style2)) {
             style2 = GRID_STYLE_LINES;
         }

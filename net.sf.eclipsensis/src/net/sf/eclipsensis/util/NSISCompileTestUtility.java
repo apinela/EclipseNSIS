@@ -50,7 +50,7 @@ public class NSISCompileTestUtility
             }
 
             @SuppressWarnings("unchecked")
-			private Map<File, MakeNSISResults> loadMap(File file)
+            private Map<File, MakeNSISResults> loadMap(File file)
             {
                 Map<File, MakeNSISResults> map = null;
                 if(IOUtility.isValidFile(file)) {
@@ -190,8 +190,8 @@ public class NSISCompileTestUtility
                                     }
                                     continue;
                                 }
-	                            //$FALL-THROUGH$
-							case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
+                                //$FALL-THROUGH$
+                            case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
                             case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_AUTO:
                                 if(scriptFile != null && input instanceof IFileEditorInput) {
                                     if(!scriptFile.equals(((IFileEditorInput)input).getFile())) {
@@ -238,7 +238,7 @@ public class NSISCompileTestUtility
 
     private boolean saveEditors(List<IEditorPart> editors, int beforeCompileSave)
     {
-    	List<IEditorPart> editors2 = editors;
+        List<IEditorPart> editors2 = editors;
         if (!Common.isEmptyCollection(editors2)) {
             boolean ok = false;
             String message = null;
@@ -254,8 +254,8 @@ public class NSISCompileTestUtility
                                 new String[]{buf.toString()});
                         break;
                     }
-	                //$FALL-THROUGH$
-				case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
+                    //$FALL-THROUGH$
+                case INSISPreferenceConstants.BEFORE_COMPILE_SAVE_CURRENT_CONFIRM:
                     IEditorPart editor = editors2.get(0);
                     if(editors2.size() > 1) {
                         editors2 = editors2.subList(0,1);
@@ -344,7 +344,7 @@ public class NSISCompileTestUtility
 
     private String getExeName(IPath script)
     {
-    	IPath script2 = getCompileScript(script);
+        IPath script2 = getCompileScript(script);
         if(script2 != null) {
             if(script2.getDevice() == null) {
                 return getExeName(getFile(script2));

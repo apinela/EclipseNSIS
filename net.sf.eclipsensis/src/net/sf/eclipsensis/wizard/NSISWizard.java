@@ -77,7 +77,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     }
 
     @SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapter)
+    public Object getAdapter(Class adapter)
     {
         if(IPageChangeProvider.class.equals(adapter)) {
             if(mPageChangeProvider == null) {
@@ -89,7 +89,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     }
 
     @Override
-	public void setContainer(IWizardContainer wizardContainer)
+    public void setContainer(IWizardContainer wizardContainer)
     {
         if(getContainer() == mPageChangeProvider) {
             mPageChangeProvider = null;
@@ -114,7 +114,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
      * Adding the page to the wizard.
      */
     @Override
-	public final void addPages()
+    public final void addPages()
     {
         if(EclipseNSISPlugin.getDefault().isConfigured()) {
             initSettings();
@@ -134,10 +134,10 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
                 public IStatus run(IProgressMonitor monitor)
                 {
                     IWizardContainer container = getContainer();
-					if (container != null) {
-						container.getShell().close();
-					}
-					return Status.OK_STATUS;
+                    if (container != null) {
+                        container.getShell().close();
+                    }
+                    return Status.OK_STATUS;
                 }
             });
         }
@@ -176,7 +176,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
      * @see org.eclipse.jface.wizard.IWizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
      */
     @Override
-	public IWizardPage getNextPage(IWizardPage page)
+    public IWizardPage getNextPage(IWizardPage page)
     {
         IWizardPage nextPage = super.getNextPage(page);
         if(mSettings.getInstallerType() == INSTALLER_TYPE_SILENT && nextPage != null &&
@@ -190,7 +190,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
      * @see org.eclipse.jface.wizard.IWizard#getPreviousPage(org.eclipse.jface.wizard.IWizardPage)
      */
     @Override
-	public IWizardPage getPreviousPage(IWizardPage page)
+    public IWizardPage getPreviousPage(IWizardPage page)
     {
         IWizardPage prevPage = super.getPreviousPage(page);
         if(mSettings.getInstallerType() == INSTALLER_TYPE_SILENT && prevPage != null &&
@@ -201,7 +201,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     }
 
     @Override
-	public void createPageControls(Composite pageContainer)
+    public void createPageControls(Composite pageContainer)
     {
         super.createPageControls(pageContainer);
         Object data = pageContainer.getLayoutData();
@@ -226,7 +226,7 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     /* (non-Javadoc)
      * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
      */
-    public void init(IWorkbench workbench, IStructuredSelection selection) 
+    public void init(IWorkbench workbench, IStructuredSelection selection)
     {
         mForcedCancel = false;
     }
@@ -250,10 +250,10 @@ public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizar
     {
         mTemplate = template;
     }
-    
+
     protected boolean isForcedCancel()
     {
-    	return mForcedCancel;
+        return mForcedCancel;
     }
 
     public abstract String getHelpContextId();

@@ -19,7 +19,7 @@ public class FilePattern implements Cloneable
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         return getPattern();
     }
@@ -35,7 +35,7 @@ public class FilePattern implements Cloneable
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         return new FilePattern(mPattern);
     }

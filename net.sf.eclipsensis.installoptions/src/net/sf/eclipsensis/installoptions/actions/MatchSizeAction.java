@@ -33,7 +33,7 @@ public class MatchSizeAction extends MatchWidthAction
     }
 
     @Override
-	protected double getPreciseHeightDelta(PrecisionRectangle precisePartBounds, PrecisionRectangle precisePrimaryBounds)
+    protected double getPreciseHeightDelta(PrecisionRectangle precisePartBounds, PrecisionRectangle precisePrimaryBounds)
     {
         return precisePrimaryBounds.preciseHeight - precisePartBounds.preciseHeight;
     }

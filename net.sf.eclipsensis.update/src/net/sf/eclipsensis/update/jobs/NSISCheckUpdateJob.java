@@ -48,13 +48,13 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
     }
 
     @Override
-	protected boolean shouldReschedule()
+    protected boolean shouldReschedule()
     {
         return getSettings().isAutomated() && ((getSettings().getAction() & SchedulerConstants.UPDATE_DOWNLOAD) == 0);
     }
 
     @Override
-	protected URL getURL() throws IOException
+    protected URL getURL() throws IOException
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
         if(version != null) {
@@ -78,7 +78,7 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
     }
 
     @Override
-	protected URL getDefaultURL() throws IOException
+    protected URL getDefaultURL() throws IOException
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
         if(version != null) {
@@ -90,7 +90,7 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
     }
 
     @Override
-	protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
+    protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
     {
         try {
             monitor.beginTask(getName(), 100);
@@ -170,7 +170,7 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
     }
 
     @Override
-	protected String formatException(Throwable e)
+    protected String formatException(Throwable e)
     {
         return new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("check.update.error")).format(new String[]{e.getMessage()}); //$NON-NLS-1$
     }

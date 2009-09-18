@@ -20,7 +20,7 @@ import org.eclipse.jface.text.rules.*;
 public class InstallOptionsRuleBasedScanner extends InstallOptionsSyntaxScanner
 {
     @Override
-	protected void reset()
+    protected void reset()
     {
         List<IRule> list = new ArrayList<IRule>();
         list.add(new BeginningOfLineWordPatternRule(new InstallOptionsWordDetector('[',']'),

@@ -158,9 +158,9 @@ public class NSISInstallElementFactory
         }
     }
 
-	private static <T extends INSISInstallElement > NSISInstallElementDescriptor<T> createDescriptor(Class<T> clasz, String typeName,Image image) throws NoSuchMethodException {
-		return new NSISInstallElementDescriptor<T>(clasz, typeName, image);
-	}
+    private static <T extends INSISInstallElement > NSISInstallElementDescriptor<T> createDescriptor(Class<T> clasz, String typeName,Image image) throws NoSuchMethodException {
+        return new NSISInstallElementDescriptor<T>(clasz, typeName, image);
+    }
 
     public static void unregister(String type, Class<? extends INSISInstallElement> clasz)
     {
@@ -170,9 +170,9 @@ public class NSISInstallElementFactory
     }
 
     @SuppressWarnings("unchecked")
-	private static <T extends INSISInstallElement> NSISInstallElementDescriptor<T> getDescriptor(String type)
+    private static <T extends INSISInstallElement> NSISInstallElementDescriptor<T> getDescriptor(String type)
     {
-    	String type2 = type;
+        String type2 = type;
         if(!cValidTypes.contains(type2)) {
             type2 = cTypeAliases.get(type2);
             if(type2 == null || !cValidTypes.contains(type2)) {

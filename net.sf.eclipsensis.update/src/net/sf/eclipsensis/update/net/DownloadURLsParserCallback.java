@@ -80,7 +80,7 @@ class DownloadURLsParserCallback extends ParserCallback
     }
 
     @Override
-	public void handleEndTag(Tag t, int pos)
+    public void handleEndTag(Tag t, int pos)
     {
         if(!mDone) {
             if(t.equals(Tag.FORM)) {
@@ -109,7 +109,7 @@ class DownloadURLsParserCallback extends ParserCallback
     }
 
     @Override
-	public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
+    public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(!mDone) {
             if(t.equals(Tag.LI)) {
@@ -140,15 +140,15 @@ class DownloadURLsParserCallback extends ParserCallback
                                 if(MIRROR.equalsIgnoreCase((String)a.getAttribute(Attribute.NAME))) {
                                     if(a.isDefined(Attribute.VALUE)) {
                                         String[] names = Common.tokenize((String)a.getAttribute(Attribute.VALUE),',');
-                                        for (int i = 0; i < names.length; i++) 
+                                        for (int i = 0; i < names.length; i++)
                                         {
-    										mCurrentSite[3] = names[i];
+                                            mCurrentSite[3] = names[i];
                                             mCurrentSite[0] = mImageURLs.getProperty(mCurrentSite[3]);
                                             if(mCurrentSite[0] != null)
                                             {
-                                            	break;
+                                                break;
                                             }
-										}
+                                        }
                                     }
                                 }
                             }
@@ -160,7 +160,7 @@ class DownloadURLsParserCallback extends ParserCallback
     }
 
     @Override
-	public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
+    public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(!mDone) {
             if(t.equals(Tag.FORM)) {
@@ -173,7 +173,7 @@ class DownloadURLsParserCallback extends ParserCallback
             }
             else if(t.equals(Tag.LI)) {
                 if(mInForm && !mInLI) {
-                	String id = (String)a.getAttribute(Attribute.ID);
+                    String id = (String)a.getAttribute(Attribute.ID);
                     mInLI = !AUTO_SELECT.equalsIgnoreCase(id);
                     if(mInLI) {
                         mCurrentSite = new String[4];
@@ -189,7 +189,7 @@ class DownloadURLsParserCallback extends ParserCallback
     }
 
     @Override
-	public void handleText(char[] data, int pos)
+    public void handleText(char[] data, int pos)
     {
         if(!mDone) {
             if(mInForm) {
@@ -200,11 +200,11 @@ class DownloadURLsParserCallback extends ParserCallback
                     }
                 }
                 else if(mInLI) {
-                	if(string.charAt(0) == '(' && string.charAt(string.length()-1) == ')')
-                	{
-                		string = string.substring(1,string.length()-1);
-                	}
-                	mCurrentSite[2] = string;
+                    if(string.charAt(0) == '(' && string.charAt(string.length()-1) == ')')
+                    {
+                        string = string.substring(1,string.length()-1);
+                    }
+                    mCurrentSite[2] = string;
                 }
             }
         }

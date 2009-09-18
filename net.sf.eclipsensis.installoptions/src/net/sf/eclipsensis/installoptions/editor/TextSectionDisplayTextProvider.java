@@ -19,7 +19,7 @@ import net.sf.eclipsensis.util.Common;
 public class TextSectionDisplayTextProvider extends LabelSectionDisplayTextProvider
 {
     @Override
-	protected boolean shouldUnescape(INISection section)
+    protected boolean shouldUnescape(INISection section)
     {
         INIKeyValue[] values = section.findKeyValues(InstallOptionsModel.PROPERTY_FLAGS);
         if(!Common.isEmptyArray(values)) {

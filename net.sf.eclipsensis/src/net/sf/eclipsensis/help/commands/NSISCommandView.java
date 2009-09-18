@@ -69,7 +69,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     }
 
     @Override
-	public void dispose()
+    public void dispose()
     {
         NSISPreferences.INSTANCE.removeListener(this);
         super.dispose();
@@ -81,7 +81,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         IMenuManager menu = getViewSite().getActionBars().getMenuManager();
         mHierarchicalLayoutAction = new Action() {
             @Override
-			public void run()
+            public void run()
             {
                 setFlatMode(false);
             }
@@ -95,7 +95,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
 
         mFlatLayoutAction = new Action() {
             @Override
-			public void run()
+            public void run()
             {
                 setFlatMode(true);
             }
@@ -109,7 +109,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
 
         mExpandAllAction = new Action() {
             @Override
-			public void run()
+            public void run()
             {
                 expandAll(true);
             }
@@ -123,7 +123,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
 
         mCollapseAllAction = new Action() {
             @Override
-			public void run()
+            public void run()
             {
                 expandAll(false);
             }
@@ -137,7 +137,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     }
 
     @Override
-	public void createPartControl(Composite parent)
+    public void createPartControl(Composite parent)
     {
         mFlatMode = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_COMMAND_VIEW_FLAT_MODE);
 
@@ -148,7 +148,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         mViewer.setContentProvider(new TreeContentProvider());
         mViewer.setLabelProvider(new LabelProvider() {
             @Override
-			public String getText(Object element)
+            public String getText(Object element)
             {
                 if(element instanceof TreeNode) {
                     return ((TreeNode)element).getName();
@@ -157,7 +157,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
             }
 
             @Override
-			public Image getImage(Object element)
+            public Image getImage(Object element)
             {
                 if(element instanceof TreeNode) {
                     if(((TreeNode)element).getCommand() != null) {
@@ -204,7 +204,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
             new Transfer[]{NSISCommandTransfer.INSTANCE},
             new DragSourceAdapter() {
                 @Override
-				public void dragStart(DragSourceEvent e)
+                public void dragStart(DragSourceEvent e)
                 {
                     IEditorPart editor = getSite().getWorkbenchWindow().getActivePage().getActiveEditor();
                     if (!(editor instanceof NSISEditor)) {
@@ -218,7 +218,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                 }
 
                 @Override
-				public void dragSetData(DragSourceEvent e)
+                public void dragSetData(DragSourceEvent e)
                 {
                     IStructuredSelection sel = (IStructuredSelection)mViewer.getSelection();
                     if(sel != null && !sel.isEmpty() && sel.getFirstElement() instanceof TreeNode &&
@@ -233,7 +233,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         );
         mViewer.getTree().addKeyListener(new KeyAdapter() {
             @Override
-			public void keyReleased(KeyEvent e)
+            public void keyReleased(KeyEvent e)
             {
                 if( (e.character == SWT.CR || e.character == SWT.LF) && e.stateMask == 0) {
                     insertCommand(mViewer.getSelection());
@@ -271,7 +271,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     }
 
     @Override
-	public void setFocus()
+    public void setFocus()
     {
         mViewer.getControl().setFocus();
     }
@@ -303,17 +303,17 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
                 mHierarchicalRootNode = (mFlatMode?null:new TreeNode("")); //$NON-NLS-1$
                 TreeNode rootNode = (mFlatMode?mFlatRootNode:mHierarchicalRootNode);
                 if (commands != null) {
-					for (int i = 0; i < commands.length; i++) {
-						TreeNode parent = rootNode;
+                    for (int i = 0; i < commands.length; i++) {
+                        TreeNode parent = rootNode;
 
-						if (!mFlatMode) {
-							parent = findParent(parent, commands[i]);
-						}
-						parent.addChild(new TreeNode(commands[i].getName(),
-								commands[i]));
-					}
-				}
-				rootNode.sort();
+                        if (!mFlatMode) {
+                            parent = findParent(parent, commands[i]);
+                        }
+                        parent.addChild(new TreeNode(commands[i].getName(),
+                                commands[i]));
+                    }
+                }
+                rootNode.sort();
                 updateInput(rootNode);
             }
         }
@@ -407,7 +407,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
 
     private TreeNode findParent(TreeNode parent, NSISCommand cmd)
     {
-    	TreeNode parent2 = parent;
+        TreeNode parent2 = parent;
         String category = cmd.getCategory();
         if(Common.isEmpty(category)) {
             category = DEFAULT_CATEGORY;
@@ -562,8 +562,8 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
 
     private class TreeContentProvider extends EmptyContentProvider
     {
-		@Override
-		public Object[] getChildren(Object parentElement)
+        @Override
+        public Object[] getChildren(Object parentElement)
         {
             if(parentElement instanceof TreeNode) {
                 List<TreeNode> children = ((TreeNode)parentElement).getChildren();
@@ -573,7 +573,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         }
 
         @Override
-		public Object getParent(Object element)
+        public Object getParent(Object element)
         {
             if(element instanceof TreeNode) {
                 return ((TreeNode)element).getParent();
@@ -582,13 +582,13 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         }
 
         @Override
-		public boolean hasChildren(Object element)
+        public boolean hasChildren(Object element)
         {
             return !Common.isEmptyArray(getChildren(element));
         }
 
         @Override
-		public Object[] getElements(Object inputElement)
+        public Object[] getElements(Object inputElement)
         {
             if(inputElement == (mFlatMode?mFlatRootNode:mHierarchicalRootNode)) {
                return getChildren(inputElement);

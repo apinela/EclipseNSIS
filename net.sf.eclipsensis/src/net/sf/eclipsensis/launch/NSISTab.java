@@ -93,7 +93,7 @@ abstract class NSISTab extends AbstractLaunchConfigurationTab implements INSISSe
         return new ControlAdapter() {
             boolean ok=false;
             @Override
-			public void controlResized(ControlEvent e)
+            public void controlResized(ControlEvent e)
             {
                 final Table table = (Table)e.widget;
                 if(table.getShell().isVisible()) {

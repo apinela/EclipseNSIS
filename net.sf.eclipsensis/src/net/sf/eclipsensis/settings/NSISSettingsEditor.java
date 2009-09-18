@@ -85,7 +85,7 @@ public abstract class NSISSettingsEditor implements INSISSettingsEditorPageListe
         folder.addSelectionListener(new SelectionAdapter()
         {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 try {
                     TabItem item = folder.getSelection()[0];

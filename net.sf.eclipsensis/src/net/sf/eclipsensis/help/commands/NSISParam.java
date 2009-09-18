@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
@@ -102,7 +102,7 @@ public abstract class NSISParam
 
     protected String maybeQuote(String text)
     {
-    	String text2 = text;
+        String text2 = text;
         if (shouldQuote(text2))
         {
             text2 = Common.quote(text2);
@@ -282,7 +282,7 @@ public abstract class NSISParam
 
         public Control createControl(Composite parent)
         {
-        	Composite parent2 = parent;
+            Composite parent2 = parent;
             if (Common.isValid(mControl))
             {
                 throw new RuntimeException(EclipseNSISPlugin.getResourceString("create.editor.error")); //$NON-NLS-1$
@@ -387,7 +387,7 @@ public abstract class NSISParam
                 {
                     mOptionalButton.addSelectionListener(new SelectionAdapter() {
                         @Override
-						public void widgetSelected(SelectionEvent e)
+                        public void widgetSelected(SelectionEvent e)
                         {
                             updateState(mOptionalButton.getSelection());
                         }

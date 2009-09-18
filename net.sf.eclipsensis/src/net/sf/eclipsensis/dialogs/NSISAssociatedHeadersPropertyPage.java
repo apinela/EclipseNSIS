@@ -40,24 +40,24 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
     }
 
     @Override
-	public boolean canEnableControls()
+    public boolean canEnableControls()
     {
         return true;
     }
 
     @Override
-	public void enableControls(boolean state)
+    public void enableControls(boolean state)
     {
     }
 
     @Override
-	public boolean supportsEnablement()
+    public boolean supportsEnablement()
     {
         return false;
     }
 
     @Override
-	public Control createControl(final Composite parent)
+    public Control createControl(final Composite parent)
     {
         mOriginalHeaders = mHeaderAssociationManager.getAssociatedHeaders((IFile)((NSISProperties)mSettings).getResource());
         mHeaders = new HashSet<IFile>();
@@ -96,7 +96,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         mViewer.setContentProvider(new CollectionContentProvider());
         mViewer.setLabelProvider(new CollectionLabelProvider() {
             @Override
-			public String getColumnText(Object element, int columnIndex)
+            public String getColumnText(Object element, int columnIndex)
             {
                 if(element instanceof IFile) {
                     return ((IFile)element).getFullPath().toString();
@@ -106,7 +106,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         });
         mViewer.setComparator(new ViewerComparator() {
             @Override
-			public int compare(Viewer viewer, Object e1, Object e2)
+            public int compare(Viewer viewer, Object e1, Object e2)
             {
                 if(e1 instanceof IFile && e2 instanceof IFile) {
                     return ((IFile)e1).getFullPath().toString().compareTo(((IFile)e2).getFullPath().toString());
@@ -122,7 +122,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         addButton.setToolTipText(EclipseNSISPlugin.getResourceString("add.associated.header.toolip")); //$NON-NLS-1$
         addButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent arg0)
+            public void widgetSelected(SelectionEvent arg0)
             {
                 FileSelectionDialog dialog = new FileSelectionDialog(parent.getShell(), ((NSISProperties)mSettings).getResource().getParent(), filter);
                 dialog.setDialogMessage(EclipseNSISPlugin.getResourceString("nsis.script.prompt")); //$NON-NLS-1$
@@ -163,7 +163,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         removeButton.setEnabled(false);
         removeButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent arg0)
+            public void widgetSelected(SelectionEvent arg0)
             {
                 IStructuredSelection sel = (IStructuredSelection)mViewer.getSelection();
                 if(!sel.isEmpty()) {
@@ -218,7 +218,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
     }
 
     @Override
-	public void reset()
+    public void reset()
     {
         if(mViewer != null && mHeaders != null) {
             initHeaders();
@@ -230,7 +230,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
     }
 
     @Override
-	public void setDefaults()
+    public void setDefaults()
     {
         if(mViewer != null && mHeaders != null) {
             mHeaders.clear();
@@ -242,7 +242,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
     }
 
     @Override
-	protected boolean performApply(NSISSettings settings)
+    protected boolean performApply(NSISSettings settings)
     {
         IFile file = (IFile)((NSISProperties)mSettings).getResource();
         Set<IFile> removedHeaders = new HashSet<IFile>(mOriginalHeaders);

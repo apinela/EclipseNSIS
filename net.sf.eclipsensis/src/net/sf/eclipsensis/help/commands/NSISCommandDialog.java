@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
@@ -157,7 +157,7 @@ public class NSISCommandDialog extends StatusMessageDialog
 
         private boolean isChildOf(Control parent, Control child)
         {
-        	Control child2 = child;
+            Control child2 = child;
             while (child2 != null)
             {
                 if (child2 == parent)
@@ -222,7 +222,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     }
 
     @Override
-	protected Point getInitialSize()
+    protected Point getInitialSize()
     {
         Point p = super.getInitialSize();
         if (p.y < MIN_WINDOW_HEIGHT)
@@ -246,7 +246,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     }
 
     @Override
-	public void create()
+    public void create()
     {
         super.create();
 
@@ -270,7 +270,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     }
 
     @Override
-	public boolean close()
+    public boolean close()
     {
         mParamEditor = null;
         getShell().getDisplay().removeFilter(SWT.Modify, mFilter);
@@ -299,7 +299,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     }
 
     @Override
-	protected void cancelPressed()
+    protected void cancelPressed()
     {
         saveDialogSettings();
         super.cancelPressed();
@@ -311,7 +311,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     }
 
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         saveDialogSettings();
         if (mRemember)
@@ -326,7 +326,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     }
 
     @Override
-	protected Control createHelpControl(Composite parent)
+    protected Control createHelpControl(Composite parent)
     {
         Control helpControl = super.createHelpControl(parent);
         Listener listener = new Listener() {
@@ -368,7 +368,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     }
 
     @Override
-	protected void createControlAndMessageArea(Composite parent)
+    protected void createControlAndMessageArea(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2, false);
@@ -438,7 +438,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         textWidget.getCaret().setVisible(false);
         textWidget.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 textWidget.setSelectionRange(e.x, 0);
             }
@@ -447,7 +447,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     }
 
     @Override
-	protected Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         final Composite child = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2, false);
@@ -576,7 +576,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         revertButton.setText(EclipseNSISPlugin.getResourceString("revert.label")); //$NON-NLS-1$
         revertButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
                     public void run()
@@ -600,7 +600,7 @@ public class NSISCommandDialog extends StatusMessageDialog
 
         rememberButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mRemember = rememberButton.getSelection();
                 setParamEditorState();
@@ -612,7 +612,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         clearButton.setText(EclipseNSISPlugin.getResourceString("clear.label")); //$NON-NLS-1$
         clearButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
                     public void run()
@@ -630,7 +630,7 @@ public class NSISCommandDialog extends StatusMessageDialog
             mTray.setCurrentCommand(mCommand.getName());
             toolItem.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     openTray(mTray);
                 }
@@ -650,7 +650,7 @@ public class NSISCommandDialog extends StatusMessageDialog
     }
 
     @Override
-	public void openTray(DialogTray tray) throws IllegalStateException, UnsupportedOperationException
+    public void openTray(DialogTray tray) throws IllegalStateException, UnsupportedOperationException
     {
         DialogTray oldTray = getTray();
         if (oldTray != null)
@@ -730,11 +730,11 @@ public class NSISCommandDialog extends StatusMessageDialog
         };
 
         @Override
-		protected Control createContents(final Composite parent)
+        protected Control createContents(final Composite parent)
         {
             Composite contents = new Composite(parent, SWT.NONE) {
                 @Override
-				public Point computeSize(int wHint, int hHint, boolean changed)
+                public Point computeSize(int wHint, int hHint, boolean changed)
                 {
                     Point size = super.computeSize(wHint, hHint, changed);
                     if (wHint == SWT.DEFAULT && size.x < MIN_WINDOW_WIDTH)
@@ -963,7 +963,7 @@ public class NSISCommandDialog extends StatusMessageDialog
 
         private String fixStyle(String text)
         {
-        	String text2 = text;
+            String text2 = text;
             int n = text2.indexOf(STYLE_LINK);
             if (n >= 0)
             {
@@ -1006,7 +1006,7 @@ public class NSISCommandDialog extends StatusMessageDialog
             {
                 mBrowser.addLocationListener(new LocationAdapter() {
                     @Override
-					public void changing(LocationEvent event)
+                    public void changing(LocationEvent event)
                     {
                         if (!NSISBrowserUtility.ABOUT_BLANK.equalsIgnoreCase(event.location))
                         {

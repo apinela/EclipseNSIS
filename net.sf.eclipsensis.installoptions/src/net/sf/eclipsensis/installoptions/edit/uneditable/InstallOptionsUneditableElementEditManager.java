@@ -28,26 +28,26 @@ public abstract class InstallOptionsUneditableElementEditManager extends Install
     }
 
     @Override
-	protected String getInitialText(InstallOptionsWidget control)
+    protected String getInitialText(InstallOptionsWidget control)
     {
         return ((InstallOptionsUneditableElement)control).getText();
     }
 
     @Override
-	protected void selectCellEditorText()
+    protected void selectCellEditorText()
     {
         Text text = (Text)getCellEditor().getControl();
         text.selectAll();
     }
 
     @Override
-	protected TextCellEditor createCellEditor(Composite composite)
+    protected TextCellEditor createCellEditor(Composite composite)
     {
         return new TextCellEditor(composite, getCellEditorStyle());
     }
 
     @Override
-	protected String getDirectEditProperty()
+    protected String getDirectEditProperty()
     {
         return InstallOptionsModel.PROPERTY_TEXT;
     }

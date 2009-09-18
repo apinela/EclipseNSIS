@@ -40,7 +40,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
     }
 
     @Override
-	protected void buildActions()
+    protected void buildActions()
     {
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
         RetargetAction retargetAction;
@@ -258,7 +258,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
     }
 
     @Override
-	public void dispose()
+    public void dispose()
     {
         for (int i = 0; i < mDropDownActions.size(); i++) {
             DropDownAction action = mDropDownActions.get(i);
@@ -272,14 +272,14 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
     }
 
     @Override
-	public void setActiveEditor(IEditorPart editor)
+    public void setActiveEditor(IEditorPart editor)
     {
         mSetDialogSizeMenu.setEditor(editor);
         mXYStatusContribution.editorChanged(editor);
         if(editor.getAdapter(ActionRegistry.class) == null) {
             Platform.getAdapterManager().registerAdapters(new IAdapterFactory(){
                     @SuppressWarnings("unchecked")
-					public Object getAdapter(Object adaptableObject, Class adapterType)
+                    public Object getAdapter(Object adaptableObject, Class adapterType)
                     {
                         if(adapterType.equals(ActionRegistry.class)) {
                             return new ActionRegistry();
@@ -288,7 +288,7 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
                     }
 
                     @SuppressWarnings("unchecked")
-					public Class[] getAdapterList()
+                    public Class[] getAdapterList()
                     {
                         return new Class[]{ActionRegistry.class};
                     }
@@ -298,14 +298,14 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
     }
 
     @Override
-	protected void declareGlobalActionKeys()
+    protected void declareGlobalActionKeys()
     {
         addGlobalActionKey(ActionFactory.PRINT.getId());
         addGlobalActionKey(ActionFactory.SELECT_ALL.getId());
     }
 
     @Override
-	public void contributeToToolBar(IToolBarManager tbm)
+    public void contributeToToolBar(IToolBarManager tbm)
     {
         tbm.add(getAction(ActionFactory.UNDO.getId()));
         tbm.add(getAction(ActionFactory.REDO.getId()));
@@ -339,13 +339,13 @@ public class InstallOptionsDesignActionContributor extends ActionBarContributor
     }
 
     @Override
-	public void contributeToMenu(IMenuManager menubar)
+    public void contributeToMenu(IMenuManager menubar)
     {
         menubar.insertBefore(IWorkbenchActionConstants.M_WINDOW, mInstallOptionsMenu);
     }
 
     @Override
-	public void contributeToStatusLine(IStatusLineManager statusLineManager)
+    public void contributeToStatusLine(IStatusLineManager statusLineManager)
     {
         statusLineManager.add(mXYStatusContribution);
     }

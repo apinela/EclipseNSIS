@@ -27,7 +27,7 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
 
     private static final int DEFAULT_STATE = 0;
     private static final Integer[] STATE_DATA = {InstallOptionsModel.STATE_DEFAULT,
-    											 InstallOptionsModel.STATE_UNCHECKED,
+                                                 InstallOptionsModel.STATE_UNCHECKED,
                                                  InstallOptionsModel.STATE_CHECKED};
     private static final String[] STATE_DISPLAY = {InstallOptionsPlugin.getResourceString("state.default"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("state.unchecked"), //$NON-NLS-1$
@@ -41,7 +41,7 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("stateDefault"); //$NON-NLS-1$
@@ -50,22 +50,22 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         mState = null;
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
-    	InstallOptionsCheckBox clone = (InstallOptionsCheckBox)super.clone();
+        InstallOptionsCheckBox clone = (InstallOptionsCheckBox)super.clone();
         clone.setState(getState());
         return clone;
     }
 
     @Override
-	protected void addPropertyName(List<String> list, String setting)
+    protected void addPropertyName(List<String> list, String setting)
     {
         if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
             list.add(InstallOptionsModel.PROPERTY_STATE);
@@ -76,7 +76,7 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
     }
 
     @Override
-	public Object getPropertyValue(Object propName)
+    public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_STATE.equals(propName)) {
             return getState();
@@ -85,7 +85,7 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
     }
 
     @Override
-	public void setPropertyValue(Object id, Object value)
+    public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_STATE)) {
             setState((Integer)value);
@@ -103,7 +103,7 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
     public void setState(Integer state)
     {
         if(!Common.objectsAreEqual(mState,state)) {
-        	Integer oldState = mState;
+            Integer oldState = mState;
             mState = state;
             firePropertyChange(InstallOptionsModel.PROPERTY_STATE, oldState, mState);
             setDirty(true);
@@ -111,25 +111,25 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_CHECKBOX;
     }
 
     @Override
-	protected Position getDefaultPosition()
+    protected Position getDefaultPosition()
     {
         return new Position(0,0,65,10);
     }
 
     @Override
-	protected String getDefaultText()
+    protected String getDefaultText()
     {
         return InstallOptionsPlugin.getResourceString("checkbox.text.default"); //$NON-NLS-1$
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$
@@ -168,14 +168,14 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new CheckBoxPropertySectionCreator(this);
     }
 
     @Override
-	protected TypeConverter<?> loadTypeConverter(String property, Object value)
-	{
+    protected TypeConverter<?> loadTypeConverter(String property, Object value)
+    {
         if (InstallOptionsModel.PROPERTY_STATE.equals(property)) {
             if(value instanceof String) {
                 if(((String)value).regionMatches(true,0,"0x",0,2)) { //$NON-NLS-1$
@@ -187,5 +187,5 @@ public class InstallOptionsCheckBox extends InstallOptionsUneditableElement
         else {
             return super.loadTypeConverter(property, value);
         }
-	}
+    }
 }

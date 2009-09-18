@@ -21,13 +21,13 @@ public class FileNameParam extends RegexpParam
     }
 
     @Override
-	protected String getRegexp()
+    protected String getRegexp()
     {
         return "(\\.?[a-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+"; //$NON-NLS-1$
     }
 
     @Override
-	protected String getValidateErrorMessage()
+    protected String getValidateErrorMessage()
     {
         return EclipseNSISPlugin.getResourceString("file.name.param.error"); //$NON-NLS-1$
     }

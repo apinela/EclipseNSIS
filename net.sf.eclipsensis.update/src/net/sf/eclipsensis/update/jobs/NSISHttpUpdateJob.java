@@ -37,7 +37,7 @@ public abstract class NSISHttpUpdateJob extends NSISUpdateJob
     }
 
     @Override
-	protected final IStatus doRun(IProgressMonitor monitor)
+    protected final IStatus doRun(IProgressMonitor monitor)
     {
         monitor.beginTask(getName(), 110);
         try {

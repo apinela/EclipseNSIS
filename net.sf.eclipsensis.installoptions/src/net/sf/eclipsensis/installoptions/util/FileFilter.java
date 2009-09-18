@@ -46,7 +46,7 @@ public class FileFilter implements Cloneable
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         return new FileFilter(this);
     }
@@ -72,7 +72,7 @@ public class FileFilter implements Cloneable
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         StringBuffer buf = new StringBuffer(mDescription);
         buf.append(IInstallOptionsConstants.LIST_SEPARATOR);
@@ -86,13 +86,13 @@ public class FileFilter implements Cloneable
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         return toString().hashCode();
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this != obj) {
             if (obj instanceof FileFilter) {

@@ -31,13 +31,13 @@ class NSISSymbolsTab extends NSISTab
     }
 
     @Override
-	protected NSISSettingsEditorPage createPage()
+    protected NSISSettingsEditorPage createPage()
     {
         return new NSISSettingsEditorSymbolsPage(mSettings);
     }
 
     @Override
-	protected IFilter createSettingsFilter()
+    protected IFilter createSettingsFilter()
     {
         return new IFilter() {
             public boolean select(Object toTest)
@@ -48,13 +48,13 @@ class NSISSymbolsTab extends NSISTab
     }
 
     @Override
-	public Image getImage()
+    public Image getImage()
     {
         return EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString("nsis.symbols.tab.icon")); //$NON-NLS-1$
     }
 
     @Override
-	public void createControl(Composite parent)
+    public void createControl(Composite parent)
     {
         super.createControl(parent);
         if (mBuilder) {

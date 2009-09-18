@@ -22,32 +22,32 @@ import org.eclipse.swt.widgets.Composite;
 public abstract class InstallOptionsLineEditPart extends InstallOptionsWidgetEditPart
 {
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return ""; //$NON-NLS-1$
     }
 
     @Override
-	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
     {
         return null;
     }
 
     @Override
-	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return null;
     }
 
     @Override
-	protected IInstallOptionsFigure createInstallOptionsFigure()
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         InstallOptionsLine line = (InstallOptionsLine)getInstallOptionsWidget();
         return new LineFigure((Composite)getViewer().getControl(), line, line.isHorizontal()?SWT.HORIZONTAL:SWT.VERTICAL);
     }
 
     @Override
-	protected String getAccessibleControlEventResult()
+    protected String getAccessibleControlEventResult()
     {
         return ""; //$NON-NLS-1$
     }

@@ -21,19 +21,19 @@ public class LineFigure extends SWTControlFigure
     }
 
     @Override
-	protected void setControlBounds(Control control, int x, int y, int width, int height)
+    protected void setControlBounds(Control control, int x, int y, int width, int height)
     {
         boolean isHorizontal = (getStyle() & SWT.HORIZONTAL) > 0;
         super.setControlBounds(control, x, y, isHorizontal?width:2, isHorizontal?2:height);
     }
 
     @Override
-	protected void handleClickThrough(Control control)
+    protected void handleClickThrough(Control control)
     {
     }
 
     @Override
-	protected boolean isTransparentAt(int x, int y)
+    protected boolean isTransparentAt(int x, int y)
     {
         if( (getStyle() & SWT.HORIZONTAL) > 0) {
             return y > TRANSPARENCY_TOLERANCE + 2;
@@ -44,25 +44,25 @@ public class LineFigure extends SWTControlFigure
     }
 
     @Override
-	public boolean isClickThrough()
+    public boolean isClickThrough()
     {
         return true;
     }
 
     @Override
-	protected Control createSWTControl(Composite parent, int style)
+    protected Control createSWTControl(Composite parent, int style)
     {
         return new Label(parent, SWT.SEPARATOR|style);
     }
 
     @Override
-	public int getDefaultStyle()
+    public int getDefaultStyle()
     {
         return SWT.HORIZONTAL;
     }
 
     @Override
-	protected boolean supportsScrollBars()
+    protected boolean supportsScrollBars()
     {
         return false;
     }

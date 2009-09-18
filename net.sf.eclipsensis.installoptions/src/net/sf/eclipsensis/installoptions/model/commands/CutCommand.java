@@ -27,7 +27,7 @@ public class CutCommand extends CopyCommand
     }
 
     @Override
-	public void addWidget(InstallOptionsWidget widget)
+    public void addWidget(InstallOptionsWidget widget)
     {
         mOriginals.add(widget);
         super.addWidget(widget);
@@ -39,7 +39,7 @@ public class CutCommand extends CopyCommand
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         Collections.sort(mOriginals, InstallOptionsWidgetComparator.REVERSE_INSTANCE);
         Collections.sort(mCopies, InstallOptionsWidgetComparator.REVERSE_INSTANCE);
@@ -47,7 +47,7 @@ public class CutCommand extends CopyCommand
     }
 
     @Override
-	public void redo()
+    public void redo()
     {
         super.redo();
         for (Iterator<InstallOptionsWidget> iter = mOriginals.iterator(); iter.hasNext();) {
@@ -57,7 +57,7 @@ public class CutCommand extends CopyCommand
         }
     }
     @Override
-	public void undo()
+    public void undo()
     {
         while(mUndoStack.size() > 0) {
             CutInfo cutInfo = mUndoStack.pop();

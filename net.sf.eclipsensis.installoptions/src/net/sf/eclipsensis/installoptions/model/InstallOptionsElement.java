@@ -43,7 +43,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public abstract class InstallOptionsElement extends AbstractNodeConvertible implements IPropertySource
 {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9064593091880736332L;
 
@@ -120,13 +120,13 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
     }
 
     @Override
-	protected String getChildNodeName()
+    protected String getChildNodeName()
     {
         return CHILD_NODE_NAME;
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("editableValue"); //$NON-NLS-1$
@@ -276,7 +276,7 @@ public abstract class InstallOptionsElement extends AbstractNodeConvertible impl
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         try {
             InstallOptionsElement element = (InstallOptionsElement)super.clone();

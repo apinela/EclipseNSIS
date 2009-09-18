@@ -65,7 +65,7 @@ public class ColorManager
 
     public static RGB getRGB(int pixel)
     {
-    	int pixel2 = pixel;
+        int pixel2 = pixel;
         int blue = pixel2 % 256;
         pixel2 /= 256;
         int green = pixel2 % 256;

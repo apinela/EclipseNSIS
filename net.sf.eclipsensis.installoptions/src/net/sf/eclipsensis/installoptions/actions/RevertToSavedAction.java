@@ -25,13 +25,13 @@ public class RevertToSavedAction extends EditorPartAction
     }
 
     @Override
-	protected boolean calculateEnabled()
+    protected boolean calculateEnabled()
     {
         return getEditorPart().isDirty();
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         setText(InstallOptionsPlugin.getResourceString("revert.action.label")); //$NON-NLS-1$
         setToolTipText(InstallOptionsPlugin.getResourceString("revert.action.tooltip")); //$NON-NLS-1$
@@ -39,7 +39,7 @@ public class RevertToSavedAction extends EditorPartAction
     }
 
     @Override
-	public void run()
+    public void run()
     {
         ((InstallOptionsDesignEditor)getEditorPart()).doRevertToSaved();
     }

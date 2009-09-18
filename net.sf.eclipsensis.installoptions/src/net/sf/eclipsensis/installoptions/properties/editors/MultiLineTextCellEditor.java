@@ -49,7 +49,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
      * @see org.eclipse.jface.viewers.DialogCellEditor#openDialogBox(org.eclipse.swt.widgets.Control)
      */
     @Override
-	protected Object openDialogBox(Control cellEditorWindow)
+    protected Object openDialogBox(Control cellEditorWindow)
     {
         Object oldValue = getValue();
         MultiLineTextDialog dialog = new MultiLineTextDialog(cellEditorWindow.getShell(),(String)oldValue);
@@ -59,7 +59,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
     }
 
     @Override
-	protected void updateContents(Object value)
+    protected void updateContents(Object value)
     {
         Label label = getDefaultLabel();
         if (label != null && !label.isDisposed()) {
@@ -109,7 +109,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
         }
 
         @Override
-		protected void configureShell(Shell newShell)
+        protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
             newShell.setText(InstallOptionsPlugin.getResourceString("multiline.text.dialog.title")); //$NON-NLS-1$
@@ -122,7 +122,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
         }
 
         @Override
-		protected Control createDialogArea(Composite parent)
+        protected Control createDialogArea(Composite parent)
         {
             Composite composite = (Composite)super.createDialogArea(parent);
             final Text text = new Text(composite,SWT.LEFT|SWT.BORDER|SWT.MULTI|SWT.WRAP|SWT.V_SCROLL);
@@ -145,7 +145,7 @@ public class MultiLineTextCellEditor extends DialogCellEditor
         }
 
         @Override
-		protected void okPressed()
+        protected void okPressed()
         {
             ICellEditorValidator validator = getValidator();
             if(validator != null) {

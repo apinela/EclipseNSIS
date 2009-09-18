@@ -24,7 +24,7 @@ class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter<II
     }
 
     @Override
-	public Collection<IInstallOptionsTemplate> import$(File file) throws IOException
+    public Collection<IInstallOptionsTemplate> import$(File file) throws IOException
     {
         Collection<IInstallOptionsTemplate> templates = super.import$(file);
         List<IInstallOptionsTemplate> list = new ArrayList<IInstallOptionsTemplate>(templates);
@@ -45,7 +45,7 @@ class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter<II
     }
 
     @Override
-	protected IInstallOptionsTemplate createTemplate()
+    protected IInstallOptionsTemplate createTemplate()
     {
         return new InstallOptionsTemplate2();
     }

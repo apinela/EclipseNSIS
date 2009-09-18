@@ -75,7 +75,7 @@ import org.eclipse.ui.part.FileEditorInput;
 public class NSISEditorUtilities
 {
     private static Map<String, INSISMarkerAssistant> mMarkerAssistants = new MRUMap<String, INSISMarkerAssistant>(10);
-    
+
     private NSISEditorUtilities()
     {
     }
@@ -118,7 +118,7 @@ public class NSISEditorUtilities
 
     public static INSISMarkerAssistant getMarkerAssistant(IFile file)
     {
-    	String path = file.getFullPath().toString();
+        String path = file.getFullPath().toString();
         INSISMarkerAssistant assistant = mMarkerAssistants.get(path);
         if(assistant == null) {
             assistant = new NSISFileMarkerAssistant(file);
@@ -129,7 +129,7 @@ public class NSISEditorUtilities
 
     public static INSISMarkerAssistant getMarkerAssistant(File file)
     {
-    	String path = file.getAbsolutePath();
+        String path = file.getAbsolutePath();
         INSISMarkerAssistant assistant = mMarkerAssistants.get(path);
         if(assistant == null) {
             assistant = new NSISExternalFileMarkerAssistant(file);
@@ -403,7 +403,7 @@ public class NSISEditorUtilities
         if(file != null) {
             Runnable r = new Runnable() {
                 @SuppressWarnings("null")
-				public void run()
+                public void run()
                 {
                     IWorkbenchPage p = null;
                     if(page == null) {
@@ -681,7 +681,7 @@ public class NSISEditorUtilities
          * @see org.eclipse.core.resources.IMarker#getAttributes()
          */
         @SuppressWarnings("unchecked")
-		public Map getAttributes()
+        public Map getAttributes()
         {
             return null;
         }
@@ -763,7 +763,7 @@ public class NSISEditorUtilities
          * @see org.eclipse.core.resources.IMarker#setAttributes(java.util.Map)
          */
         @SuppressWarnings("unchecked")
-		public void setAttributes(Map attributes)
+        public void setAttributes(Map attributes)
         {
         }
 
@@ -778,7 +778,7 @@ public class NSISEditorUtilities
          * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
          */
         @SuppressWarnings("unchecked")
-		public Object getAdapter(Class adapter)
+        public Object getAdapter(Class adapter)
         {
             return null;
         }

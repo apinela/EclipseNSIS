@@ -47,7 +47,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         String storePass = getStringDialogSetting(STORE_PASS);
@@ -93,13 +93,13 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
     }
 
     @Override
-	protected String getDialogTitle()
+    protected String getDialogTitle()
     {
         return JARSignerPlugin.getResourceString("jarsigner.dialog.title"); //$NON-NLS-1$
     }
 
     @Override
-	protected void createValuesDialogArea(Composite parent)
+    protected void createValuesDialogArea(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -113,7 +113,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
 
         SelectionAdapter sa = new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 Button b = (Button)e.widget;
                 Text text = (Text)b.getData(ATTR_TEXT);
@@ -186,7 +186,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
     }
 
     @Override
-	protected void createFlagsDialogArea(Composite parent)
+    protected void createFlagsDialogArea(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -202,7 +202,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
     }
 
     @Override
-	protected boolean isValid()
+    protected boolean isValid()
     {
         if(super.isValid()) {
             boolean state = !Common.isEmpty(getAlias());
@@ -219,7 +219,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
     }
 
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         getDialogSettings().put(STORE_PASS,getStorePass());
         getDialogSettings().put(ALIAS,getAlias());

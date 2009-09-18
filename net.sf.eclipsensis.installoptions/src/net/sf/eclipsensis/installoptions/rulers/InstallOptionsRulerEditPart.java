@@ -26,13 +26,13 @@ public class InstallOptionsRulerEditPart extends RulerEditPart
     }
 
     @Override
-	protected GraphicalViewer getDiagramViewer()
+    protected GraphicalViewer getDiagramViewer()
     {
         return super.getDiagramViewer();
     }
 
     @Override
-	public DragTracker getDragTracker(Request request) {
+    public DragTracker getDragTracker(Request request) {
         if (request.getType().equals(REQ_SELECTION) && ((SelectionRequest)request).getLastButtonPressed() != 1) {
             return null;
         }
@@ -40,7 +40,7 @@ public class InstallOptionsRulerEditPart extends RulerEditPart
     }
 
     @Override
-	protected IFigure createFigure()
+    protected IFigure createFigure()
     {
         RulerFigure ruler =  new InstallOptionsRulerFigure(this, isHorizontal(), getRulerProvider().getUnit());
         ruler.setInterval(100, 10);

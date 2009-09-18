@@ -61,7 +61,7 @@ public class DialogSize
     }
 
     @Override
-	public boolean equals(Object o)
+    public boolean equals(Object o)
     {
         if(o instanceof DialogSize) {
             DialogSize ds = (DialogSize)o;
@@ -71,7 +71,7 @@ public class DialogSize
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         return mName.hashCode()+mSize.hashCode();
     }

@@ -2,12 +2,12 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
- * 
+ *
  * Based upon org.eclipse.jdt.internal.ui.text.hover.BrowserInformationControl
  * Copyright (c) 2000-2009 IBM Corporation and others.
- * 
+ *
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
@@ -471,7 +471,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
 
     public void setInformation(String content)
     {
-    	String content2 = content;
+        String content2 = content;
         mKeyword = null;
         mBrowserHasContent = content2 != null && content2.length() > 0;
 
@@ -726,7 +726,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         {
             mBrowser.addLocationListener(new LocationAdapter() {
                 @Override
-				public void changing(LocationEvent event)
+                public void changing(LocationEvent event)
                 {
                     if (!NSISBrowserUtility.ABOUT_BLANK.equalsIgnoreCase(event.location))
                     {

@@ -33,7 +33,7 @@ public class NSISWordPatternRule extends NSISSingleLineRule
      * @see org.eclipse.jface.text.rules.IPredicateRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner, boolean)
      */
     @Override
-	public IToken evaluate(ICharacterScanner scanner, boolean resume)
+    public IToken evaluate(ICharacterScanner scanner, boolean resume)
     {
         mStartSequenceSize = 0;
         return super.evaluate(scanner, resume);
@@ -43,7 +43,7 @@ public class NSISWordPatternRule extends NSISSingleLineRule
      * @see net.sf.eclipsensis.editor.text.NSISPatternRule#startSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner, char[][])
      */
     @Override
-	protected boolean startSequenceDetected(ICharacterScanner scanner)
+    protected boolean startSequenceDetected(ICharacterScanner scanner)
     {
         int n = ((NSISScanner)scanner).getOffset();
         boolean result = super.startSequenceDetected(scanner);
@@ -57,7 +57,7 @@ public class NSISWordPatternRule extends NSISSingleLineRule
     }
 
     @Override
-	protected boolean endSequenceDetected(ICharacterScanner scanner, boolean resume)
+    protected boolean endSequenceDetected(ICharacterScanner scanner, boolean resume)
     {
         StringBuffer buffer = new StringBuffer();
         int offset = ((NSISScanner)scanner).getOffset();

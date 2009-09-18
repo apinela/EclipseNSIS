@@ -44,7 +44,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
      * @see PreferencePage#createControl(Composite)
      */
     @Override
-	public void createControl(Composite parent) {
+    public void createControl(Composite parent) {
         super.createControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_scrtmpltprefs_context"); //$NON-NLS-1$
     }
@@ -53,23 +53,23 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected Control createContents(Composite ancestor)
+    protected Control createContents(Composite ancestor)
     {
         mTemplateSettings =  new AbstractTemplateSettings<NSISWizardTemplate>(ancestor, SWT.NONE, new NSISWizardTemplateManager()) {
             @Override
-			protected boolean canAdd()
+            protected boolean canAdd()
             {
                 return true;
             }
 
             @Override
-			protected NSISWizardTemplate createTemplate(String name)
+            protected NSISWizardTemplate createTemplate(String name)
             {
                 return new NSISWizardTemplate(name);
             }
 
             @Override
-			protected Dialog createDialog(NSISWizardTemplate template)
+            protected Dialog createDialog(NSISWizardTemplate template)
             {
                 final NSISWizardTemplate wizardTemplate = template;
                 final NSISTemplateWizardDialog[] wizardDialog = new NSISTemplateWizardDialog[1];
@@ -86,7 +86,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
             }
 
             @Override
-			protected Image getShellImage()
+            protected Image getShellImage()
             {
                 return EclipseNSISPlugin.getShellImage();
             }
@@ -106,7 +106,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
      * @see PreferencePage#performDefaults()
      */
     @Override
-	protected void performDefaults()
+    protected void performDefaults()
     {
         mTemplateSettings.performDefaults();
     }
@@ -115,7 +115,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
      * @see PreferencePage#performOk()
      */
     @Override
-	public boolean performOk()
+    public boolean performOk()
     {
         if(mTemplateSettings.performOk()) {
             return super.performOk();
@@ -124,7 +124,7 @@ public class NSISWizardTemplatePreferencePage extends PreferencePage implements 
     }
 
     @Override
-	public boolean performCancel()
+    public boolean performCancel()
     {
         return mTemplateSettings.performCancel();
     }

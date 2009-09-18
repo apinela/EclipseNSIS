@@ -36,7 +36,7 @@ public abstract class NSISConfigWizard extends Wizard
     }
 
     @Override
-	public final boolean performFinish()
+    public final boolean performFinish()
     {
         if(doPerformFinish()) {
             if(isValidateNSISConfig()) {

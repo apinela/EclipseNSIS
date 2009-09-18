@@ -37,7 +37,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
     }
 
     @Override
-	public Command getCommand(Request request)
+    public Command getCommand(Request request)
     {
         if((REQ_RESIZE.equals(request.getType()) || REQ_MOVE.equals(request.getType())) &&
                 ((InstallOptionsWidget)mEditPart.getModel()).isLocked()) {
@@ -49,7 +49,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
     }
 
     @Override
-	public void showSourceFeedback(Request request)
+    public void showSourceFeedback(Request request)
     {
         if(!((InstallOptionsWidget)mEditPart.getModel()).isLocked()) {
             super.showSourceFeedback(request);
@@ -58,7 +58,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
 
 
     @Override
-	public void deactivate()
+    public void deactivate()
     {
         Object model = getHost().getModel();
         if(model instanceof InstallOptionsWidget) {
@@ -68,7 +68,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
     }
 
     @Override
-	public void activate()
+    public void activate()
     {
         super.activate();
         Object model = getHost().getModel();
@@ -88,7 +88,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
     }
 
     @Override
-	protected List<Handle> createSelectionHandles()
+    protected List<Handle> createSelectionHandles()
     {
         List<Handle> list = new ArrayList<Handle>();
 
@@ -185,7 +185,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
     }
 
     @Override
-	protected void showChangeBoundsFeedback(ChangeBoundsRequest request)
+    protected void showChangeBoundsFeedback(ChangeBoundsRequest request)
     {
         IFigure f = getDragSourceFeedbackFigure();
         if(f instanceof ResizeFeedbackFigure) {
@@ -201,7 +201,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
      * @return the new feedback figure
      */
     @Override
-	protected IFigure createDragSourceFeedbackFigure()
+    protected IFigure createDragSourceFeedbackFigure()
     {
         IFigure figure = createFigure((GraphicalEditPart)getHost());
 
@@ -231,7 +231,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
      * @return the feedback layer
      */
     @Override
-	protected IFigure getFeedbackLayer()
+    protected IFigure getFeedbackLayer()
     {
         return getLayer(LayerConstants.SCALED_FEEDBACK_LAYER);
     }
@@ -250,7 +250,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
      * @see org.eclipse.gef.editpolicies.NonResizableEditPolicy#initialFeedbackRectangle()
      */
     @Override
-	protected Rectangle getInitialFeedbackBounds()
+    protected Rectangle getInitialFeedbackBounds()
     {
         return getHostFigure().getBounds();
     }
@@ -282,7 +282,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         }
 
         @Override
-		public void setBounds(Rectangle rect)
+        public void setBounds(Rectangle rect)
         {
             if(mInit) {
                 if(mResizeDirection == 0) {
@@ -429,7 +429,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
             if (mSizeFigure == null) {
                 mSizeFigure = new RectangleFigure() {
                     @Override
-					public void paintClientArea(Graphics graphics)
+                    public void paintClientArea(Graphics graphics)
                     {
                         super.paintClientArea(graphics);
                         if (mText != null) {
@@ -447,7 +447,7 @@ public class InstallOptionsResizableEditPolicy extends ResizableEditPolicy imple
         }
 
         @Override
-		public void removeNotify()
+        public void removeNotify()
         {
             if(mSizeFigure != null) {
                 getResizeFeedbackLayer().remove(mSizeFigure);

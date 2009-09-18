@@ -38,7 +38,7 @@ public class NSISInstaller extends AbstractNSISInstallGroup
      * @see net.sf.eclipsensis.wizard.settings.AbstractNSISInstallGroup#resetChildTypes()
      */
     @Override
-	public void setChildTypes()
+    public void setChildTypes()
     {
         clearChildTypes();
         addChildType(NSISSection.TYPE);
@@ -81,7 +81,7 @@ public class NSISInstaller extends AbstractNSISInstallGroup
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isRemovable()
      */
     @Override
-	public boolean isRemovable()
+    public boolean isRemovable()
     {
         return false;
     }
@@ -92,7 +92,7 @@ public class NSISInstaller extends AbstractNSISInstallGroup
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         final int PRIME = 31;
         int result = super.hashCode();
@@ -101,7 +101,7 @@ public class NSISInstaller extends AbstractNSISInstallGroup
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;

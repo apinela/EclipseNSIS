@@ -22,7 +22,7 @@ public class LocalSaveFileParam extends LocalFileParam
     }
 
     @Override
-	protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    protected LocalFilesystemObjectParamEditor createLocalFilesystemObjectParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new LocalSaveFileParamEditor(command, parentEditor);
     }
@@ -35,13 +35,13 @@ public class LocalSaveFileParam extends LocalFileParam
         }
 
         @Override
-		protected boolean isSave()
+        protected boolean isSave()
         {
             return true;
         }
 
         @Override
-		protected String validateLocalFilesystemObjectParam()
+        protected String validateLocalFilesystemObjectParam()
         {
             if(Common.isValid(mFileText)) {
                 String file = IOUtility.decodePath(mFileText.getText());

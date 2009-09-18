@@ -32,7 +32,7 @@ public abstract class WidgetPropertySectionCreator extends PropertySectionCreato
 
     public final Control createPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
-    	Composite parent2 = widgetFactory.createComposite(parent);
+        Composite parent2 = widgetFactory.createComposite(parent);
         GridLayout layout = new GridLayout(1,false);
         layout.marginHeight = layout.marginWidth = 0;
         parent2.setLayout(layout);

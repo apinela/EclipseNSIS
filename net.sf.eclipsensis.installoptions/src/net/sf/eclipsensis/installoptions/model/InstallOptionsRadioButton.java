@@ -26,13 +26,13 @@ public class InstallOptionsRadioButton extends InstallOptionsCheckBox
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_RADIOBUTTON;
     }
 
     @Override
-	protected Position getDefaultPosition()
+    protected Position getDefaultPosition()
     {
         return new Position(0,0,76,11);
     }
@@ -41,13 +41,13 @@ public class InstallOptionsRadioButton extends InstallOptionsCheckBox
      * @return
      */
     @Override
-	public String[] getStateDisplay()
+    public String[] getStateDisplay()
     {
         return STATE_DISPLAY;
     }
 
     @Override
-	protected String getDefaultText()
+    protected String getDefaultText()
     {
         return InstallOptionsPlugin.getResourceString("radiobutton.text.default"); //$NON-NLS-1$
     }

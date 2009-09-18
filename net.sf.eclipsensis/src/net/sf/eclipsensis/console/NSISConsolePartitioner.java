@@ -338,7 +338,7 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
         }
 
         @Override
-		protected IStatus run(IProgressMonitor monitor)
+        protected IStatus run(IProgressMonitor monitor)
         {
             synchronized (mOverflowLock) {
                 Display display = ConsolePlugin.getStandardDisplay();
@@ -364,36 +364,36 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
                     }
                 }
                 if (display != null && buffer != null) {
-					final ArrayList<PendingPartition> finalCopy = pendingCopy;
-					final String toAppend = buffer.toString();
-					final boolean notifyClosed = consoleClosed;
-					display.asyncExec(new Runnable() {
-						public void run() {
-							if (mConnected) {
-								setUpdateInProgress(true);
-								mUpdatePartitions = finalCopy;
-								mFirstOffset = mDocument.getLength();
-								try {
-									mDocument.replace(mFirstOffset, 0, toAppend
-											.toString());
-								} catch (BadLocationException e) {
-								}
-								mUpdatePartitions = null;
-								setUpdateInProgress(false);
-							}
-							if (notifyClosed) {
-								mConsole.partitionerFinished();
-							}
-							checkBufferSize();
-						}
-					});
-				}
+                    final ArrayList<PendingPartition> finalCopy = pendingCopy;
+                    final String toAppend = buffer.toString();
+                    final boolean notifyClosed = consoleClosed;
+                    display.asyncExec(new Runnable() {
+                        public void run() {
+                            if (mConnected) {
+                                setUpdateInProgress(true);
+                                mUpdatePartitions = finalCopy;
+                                mFirstOffset = mDocument.getLength();
+                                try {
+                                    mDocument.replace(mFirstOffset, 0, toAppend
+                                            .toString());
+                                } catch (BadLocationException e) {
+                                }
+                                mUpdatePartitions = null;
+                                setUpdateInProgress(false);
+                            }
+                            if (notifyClosed) {
+                                mConsole.partitionerFinished();
+                            }
+                            checkBufferSize();
+                        }
+                    });
+                }
             }
             return Status.OK_STATUS;
         }
 
         @Override
-		public boolean shouldRun()
+        public boolean shouldRun()
         {
             boolean shouldRun = mConnected && mPendingPartitions != null && mPendingPartitions.size() > 0;
             return shouldRun;
@@ -415,7 +415,7 @@ public class NSISConsolePartitioner implements IConsoleDocumentPartitioner, IDoc
         }
 
         @Override
-		public IStatus runInUIThread(IProgressMonitor monitor)
+        public IStatus runInUIThread(IProgressMonitor monitor)
         {
             if (mDocument == null) {
                 return Status.OK_STATUS;

@@ -44,7 +44,7 @@ public class FigureUtility
 
     private static long muldiv(long v, int multiplicand, int divisor)
     {
-    	long value = v;
+        long value = v;
         if (multiplicand == 0) {
             return 0;
         }

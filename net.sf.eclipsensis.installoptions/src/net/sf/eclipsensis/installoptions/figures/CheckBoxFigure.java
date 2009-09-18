@@ -34,8 +34,8 @@ public class CheckBoxFigure extends ButtonFigure
     }
 
     @SuppressWarnings("unchecked")
-	@Override
-	protected void init(IPropertySource propertySource)
+    @Override
+    protected void init(IPropertySource propertySource)
     {
         List<String> flags = (List<String>)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_FLAGS);
         setLeftText(flags != null && flags.contains(InstallOptionsModel.FLAGS_RIGHT));
@@ -59,7 +59,7 @@ public class CheckBoxFigure extends ButtonFigure
     }
 
     @Override
-	public int getDefaultStyle()
+    public int getDefaultStyle()
     {
         return SWT.LEFT|SWT.CHECK;
     }
@@ -68,13 +68,13 @@ public class CheckBoxFigure extends ButtonFigure
      * @return
      */
     @Override
-	protected Control createUneditableSWTControl(Composite parent, int style)
+    protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Button button = (Button)super.createUneditableSWTControl(parent, style);
         button.setSelection(mState);
         if(mLeftText) {
             WinAPI.SetWindowLong(button.handle,WinAPI.GWL_STYLE,
-            		WinAPI.GetWindowLong(button.handle,WinAPI.GWL_STYLE)|WinAPI.BS_LEFTTEXT);
+                    WinAPI.GetWindowLong(button.handle,WinAPI.GWL_STYLE)|WinAPI.BS_LEFTTEXT);
         }
         return button;
     }

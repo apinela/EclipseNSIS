@@ -23,10 +23,10 @@ public class INIKeyValueValidatorRegistry
         init();
     }
 
-	@SuppressWarnings("unchecked")
-	private static void init() 
-	{
-		ResourceBundle bundle;
+    @SuppressWarnings("unchecked")
+    private static void init()
+    {
+        ResourceBundle bundle;
         try {
             bundle = ResourceBundle.getBundle(INIKeyValueValidatorRegistry.class.getName());
         } catch (MissingResourceException x) {
@@ -57,7 +57,7 @@ public class INIKeyValueValidatorRegistry
                 }
             }
         }
-	}
+    }
 
     private INIKeyValueValidatorRegistry()
     {

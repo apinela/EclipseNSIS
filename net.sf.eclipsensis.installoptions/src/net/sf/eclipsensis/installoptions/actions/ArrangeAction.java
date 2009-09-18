@@ -97,7 +97,7 @@ public class ArrangeAction extends SelectionAction
                 EditPart element = (EditPart)iter.next();
                 if(element instanceof InstallOptionsWidgetEditPart)
                 {
-                	modelSelection.add((InstallOptionsWidget) element.getModel());
+                    modelSelection.add((InstallOptionsWidget) element.getModel());
                 }
             }
             command.setSelection(modelSelection);
@@ -107,7 +107,7 @@ public class ArrangeAction extends SelectionAction
     }
 
     @Override
-	protected boolean calculateEnabled() {
+    protected boolean calculateEnabled() {
         Command cmd = createArrangeCommand();
         if (cmd == null) {
             return false;
@@ -116,7 +116,7 @@ public class ArrangeAction extends SelectionAction
     }
 
     @Override
-	public void run() {
+    public void run() {
         execute(createArrangeCommand());
     }
 }

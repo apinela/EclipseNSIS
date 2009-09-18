@@ -79,7 +79,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
     }
 
     @Override
-	protected boolean hasRequiredFields()
+    protected boolean hasRequiredFields()
     {
         return isScriptWizard();
     }
@@ -147,7 +147,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
     }
 
     @Override
-	public boolean validatePage(int flag)
+    public boolean validatePage(int flag)
     {
         if (isTemplateWizard())
         {
@@ -171,13 +171,13 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_wizattrib_context"; //$NON-NLS-1$
     }
 
     @Override
-	protected Control createPageControl(Composite parent)
+    protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
 
@@ -226,7 +226,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 settings.isMultiUserInstallation(), settings.getInstallerType() == INSTALLER_TYPE_MUI2, null, false);
         multiUser.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = multiUser.getSelection();
                 mWizard.getSettings().setMultiUserInstallation(selection);
@@ -279,7 +279,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         execLevel.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setMultiUserExecLevel(execLevel.getSelectionIndex());
                 m.updateSlaves();
@@ -294,7 +294,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         ((GridData) instMode.getLayoutData()).horizontalAlignment = SWT.FILL;
         instMode.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setMultiUserInstallMode(instMode.getSelectionIndex());
                 validateField(MULTIUSER_CHECK);
@@ -317,7 +317,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         ((GridData) instModeRemember.getLayoutData()).horizontalSpan = 1;
         instModeRemember.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setMultiUserInstallModeRemember(instModeRemember.getSelection());
                 validateField(MULTIUSER_CHECK);
@@ -331,7 +331,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         ((GridData) instModeAsk.getLayoutData()).horizontalSpan = 1;
         instModeAsk.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setMultiUserInstallModeAsk(instModeAsk.getSelection());
                 validateField(MULTIUSER_CHECK);
@@ -384,7 +384,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 "enable.language.support.label", settings.isEnableLanguageSupport(), true, null, false); //$NON-NLS-1$
         enableLangSupport.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = enableLangSupport.getSelection();
                 mWizard.getSettings().setEnableLanguageSupport(selection);
@@ -497,14 +497,14 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         final ListViewerUpDownMover<java.util.List<NSISLanguage>, NSISLanguage> mover = new ListViewerUpDownMover<java.util.List<NSISLanguage>, NSISLanguage>() {
             @Override
-			@SuppressWarnings("unchecked")
-			protected java.util.List<NSISLanguage> getAllElements()
+            @SuppressWarnings("unchecked")
+            protected java.util.List<NSISLanguage> getAllElements()
             {
-            	return (java.util.List<NSISLanguage>) ((ListViewer) getViewer()).getInput();
+                return (java.util.List<NSISLanguage>) ((ListViewer) getViewer()).getInput();
             }
 
             @Override
-			protected void updateStructuredViewerInput(java.util.List<NSISLanguage> input, java.util.List<NSISLanguage> elements, java.util.List<NSISLanguage> move,
+            protected void updateStructuredViewerInput(java.util.List<NSISLanguage> input, java.util.List<NSISLanguage> elements, java.util.List<NSISLanguage> move,
                     boolean isDown)
             {
                 (input).clear();
@@ -536,12 +536,12 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 EclipseNSISPlugin.getResourceString("down.icon"))); //$NON-NLS-1$
         downButton.setToolTipText(EclipseNSISPlugin.getResourceString("down.tooltip")); //$NON-NLS-1$
         m.addSlave(downButton);
-        
+
         Composite langOptions = langGroup;
         boolean showSupportedLangOption = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
-		if(showSupportedLangOption)
+        if(showSupportedLangOption)
         {
-        	langOptions = new Composite(langGroup, SWT.None);
+            langOptions = new Composite(langGroup, SWT.None);
             layout = new GridLayout(2, false);
             layout.marginHeight = 0;
             layout.marginWidth = 0;
@@ -552,27 +552,27 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 
         final Button selectLang = NSISWizardDialogUtil.createCheckBox(langOptions,
                 "select.language.label", settings.isSelectLanguage(), true, m, false); //$NON-NLS-1$
-        
+
         final Button displaySupported;
         if (showSupportedLangOption) {
-        	((GridData)selectLang.getLayoutData()).horizontalSpan = 1;
-			displaySupported = NSISWizardDialogUtil
-					.createCheckBox(
-							langOptions,
-							"display.supported.languages.label", settings.isDisplaySupportedLanguages(),  //$NON-NLS-1$
-							true, m, false);
-        	((GridData)displaySupported.getLayoutData()).horizontalSpan = 1;
-			displaySupported.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					mWizard.getSettings().setDisplaySupportedLanguages(
-							displaySupported.getSelection());
-				}
-			});
-		}
+            ((GridData)selectLang.getLayoutData()).horizontalSpan = 1;
+            displaySupported = NSISWizardDialogUtil
+                    .createCheckBox(
+                            langOptions,
+                            "display.supported.languages.label", settings.isDisplaySupportedLanguages(),  //$NON-NLS-1$
+                            true, m, false);
+            ((GridData)displaySupported.getLayoutData()).horizontalSpan = 1;
+            displaySupported.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    mWizard.getSettings().setDisplaySupportedLanguages(
+                            displaySupported.getSelection());
+                }
+            });
+        }
         else
         {
-        	displaySupported = null;
+            displaySupported = null;
         }
 
         final MasterSlaveEnabler mse = new MasterSlaveEnabler() {
@@ -581,7 +581,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
             }
 
             @SuppressWarnings("unchecked")
-			public boolean canEnable(Control control)
+            public boolean canEnable(Control control)
             {
                 NSISWizardSettings settings = mWizard.getSettings();
 
@@ -634,19 +634,19 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         m.setEnabler(upButton, mse);
         m.setEnabler(downButton, mse);
         m.setEnabler(selectLang, mse);
-        if (displaySupported != null) 
+        if (displaySupported != null)
         {
-			m.setEnabler(displaySupported, mse);
-		}
+            m.setEnabler(displaySupported, mse);
+        }
 
         selectLang.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setSelectLanguage(selectLang.getSelection());
                 if (displaySupported != null) {
-					displaySupported.setEnabled(mse.canEnable(displaySupported));
-				}
+                    displaySupported.setEnabled(mse.canEnable(displaySupported));
+                }
             }
         });
 
@@ -663,15 +663,15 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 downButton.setEnabled(mse.canEnable(downButton));
                 selectLang.setEnabled(mse.canEnable(selectLang));
                 if (displaySupported != null) {
-					displaySupported.setEnabled(mse.canEnable(displaySupported));
-				}
-				setPageComplete(validateField(LANG_CHECK));
+                    displaySupported.setEnabled(mse.canEnable(displaySupported));
+                }
+                setPageComplete(validateField(LANG_CHECK));
             }
         };
 
         rightButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent se)
+            public void widgetSelected(SelectionEvent se)
             {
                 moveAcross(availableLangViewer, selectedLangViewer, Common.makeGenericList(NSISLanguage.class,((IStructuredSelection) availableLangViewer
                         .getSelection()).toList()));
@@ -680,8 +680,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         });
         allRightButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			@SuppressWarnings("unchecked")
-			public void widgetSelected(SelectionEvent se)
+            @SuppressWarnings("unchecked")
+            public void widgetSelected(SelectionEvent se)
             {
                 moveAcross(availableLangViewer, selectedLangViewer, (java.util.List<NSISLanguage>) availableLangViewer.getInput());
                 langRunnable.run();
@@ -689,7 +689,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         });
         leftButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent se)
+            public void widgetSelected(SelectionEvent se)
             {
                 moveAcross(selectedLangViewer, availableLangViewer, Common.makeGenericList(NSISLanguage.class,((IStructuredSelection) selectedLangViewer
                         .getSelection()).toList()));
@@ -698,8 +698,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         });
         allLeftButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			@SuppressWarnings("unchecked")
-			public void widgetSelected(SelectionEvent se)
+            @SuppressWarnings("unchecked")
+            public void widgetSelected(SelectionEvent se)
             {
                 moveAcross(selectedLangViewer, availableLangViewer, (java.util.List<NSISLanguage>) selectedLangViewer.getInput());
                 langRunnable.run();
@@ -707,7 +707,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         });
         upButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent se)
+            public void widgetSelected(SelectionEvent se)
             {
                 mover.moveUp();
                 langRunnable.run();
@@ -715,7 +715,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         });
         downButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent se)
+            public void widgetSelected(SelectionEvent se)
             {
                 mover.moveDown();
                 langRunnable.run();
@@ -731,7 +731,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         });
         availableLangViewer.getList().addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetDefaultSelected(SelectionEvent event)
+            public void widgetDefaultSelected(SelectionEvent event)
             {
                 IStructuredSelection sel = (IStructuredSelection) availableLangViewer.getSelection();
                 if (!sel.isEmpty())
@@ -750,16 +750,16 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 upButton.setEnabled(mse.canEnable(upButton));
                 downButton.setEnabled(mse.canEnable(downButton));
                 selectLang.setEnabled(mse.canEnable(selectLang));
-                if (displaySupported != null) 
+                if (displaySupported != null)
                 {
-					displaySupported
-							.setEnabled(mse.canEnable(displaySupported));
-				}
+                    displaySupported
+                            .setEnabled(mse.canEnable(displaySupported));
+                }
             }
         });
         selectedLangViewer.getList().addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetDefaultSelected(SelectionEvent event)
+            public void widgetDefaultSelected(SelectionEvent event)
             {
                 IStructuredSelection sel = (IStructuredSelection) selectedLangViewer.getSelection();
                 if (!sel.isEmpty())
@@ -818,11 +818,11 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 if (isCurrentPage())
                 {
                     selectLang.setEnabled(mse.canEnable(selectLang));
-                    if (displaySupported != null) 
+                    if (displaySupported != null)
                     {
-    					displaySupported
-    							.setEnabled(mse.canEnable(displaySupported));
-    				}
+                        displaySupported
+                                .setEnabled(mse.canEnable(displaySupported));
+                    }
                 }
             }
         });
@@ -833,11 +833,11 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 enableLangSupport.setSelection(newSettings.isEnableLanguageSupport());
                 m.updateSlaves();
                 selectLang.setSelection(newSettings.isSelectLanguage());
-                if (displaySupported != null) 
+                if (displaySupported != null)
                 {
-					displaySupported
-							.setEnabled(mse.canEnable(displaySupported));
-				}
+                    displaySupported
+                            .setEnabled(mse.canEnable(displaySupported));
+                }
                 java.util.List<NSISLanguage> selectedLanguages = newSettings.getLanguages();
                 java.util.List<NSISLanguage> availableLanguages = NSISLanguageManager.getInstance().getLanguages();
                 if (selectedLanguages.isEmpty())
@@ -864,7 +864,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
     }
 
     @SuppressWarnings("unchecked")
-	private void moveAcross(ListViewer fromLV, ListViewer toLV, java.util.List<NSISLanguage> move)
+    private void moveAcross(ListViewer fromLV, ListViewer toLV, java.util.List<NSISLanguage> move)
     {
         java.util.List<NSISLanguage> from = (java.util.List<NSISLanguage>) fromLV.getInput();
         java.util.List<NSISLanguage> to = (java.util.List<NSISLanguage>) toLV.getInput();
@@ -1025,7 +1025,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 settings.isChangeInstallDir(), (settings.getInstallerType() != INSTALLER_TYPE_SILENT), null, false);
         changeInstDir.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setChangeInstallDir(((Button) e.widget).getSelection());
             }
@@ -1084,7 +1084,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 true, null, false);
         createStartMenu.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = createStartMenu.getSelection();
                 mWizard.getSettings().setCreateStartMenuGroup(selection);
@@ -1125,7 +1125,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         ((GridData) changeStartMenu.getLayoutData()).horizontalSpan = 1;
         changeStartMenu.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setChangeStartMenuGroup(((Button) e.widget).getSelection());
             }
@@ -1158,7 +1158,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         ((GridData) disableShortcuts.getLayoutData()).horizontalSpan = 1;
         disableShortcuts.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setDisableStartMenuShortcuts(((Button) e.widget).getSelection());
             }

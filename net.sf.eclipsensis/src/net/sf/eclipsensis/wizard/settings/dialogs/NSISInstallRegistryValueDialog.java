@@ -39,7 +39,7 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
     }
 
     @Override
-	protected void browseRegistry()
+    protected void browseRegistry()
     {
         RegistryValueSelectionDialog dialog = new RegistryValueSelectionDialog(getShell());
         dialog.setText(EclipseNSISPlugin.getResourceString("wizard.select.regval.message")); //$NON-NLS-1$
@@ -74,7 +74,7 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected Control createControlContentsArea(Composite parent)
+    protected Control createControlContentsArea(Composite parent)
     {
         Composite composite = (Composite)super.createControlContentsArea(parent);
         final Composite c1 = new Composite(composite,SWT.NONE);
@@ -121,7 +121,7 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
         });
         text2.addVerifyListener(new NumberVerifyListener() {
             @Override
-			public void verifyText(VerifyEvent e)
+            public void verifyText(VerifyEvent e)
             {
                 int index = combo.getSelectionIndex();
                 if(index == INSISWizardConstants.REG_DWORD) {
@@ -142,7 +142,7 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
 
         combo.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 int oldIndex = mStore.getInt("valueType"); //$NON-NLS-1$
                 int index = combo.getSelectionIndex();
                 mStore.setValue("valueType",index); //$NON-NLS-1$
@@ -207,13 +207,13 @@ public class NSISInstallRegistryValueDialog extends NSISInstallRegistryKeyDialog
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_regval_context"; //$NON-NLS-1$
     }
 
     @Override
-	protected String checkForErrors()
+    protected String checkForErrors()
     {
         String error = super.checkForErrors();
         if(Common.isEmpty(error)) {

@@ -87,7 +87,7 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
         button.setLayoutData(data);
         button.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 fireChanged();
             }
@@ -191,7 +191,7 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
         upButton.setEnabled(mover.canMoveUp());
         upButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveUp();
             }
@@ -202,7 +202,7 @@ public abstract class NSISSettingsEditorPage implements DisposeListener
         downButton.setEnabled(mover.canMoveDown());
         downButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveDown();
             }

@@ -27,23 +27,23 @@ import org.eclipse.swt.widgets.Composite;
 public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEditPart<TextCellEditor>
 {
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return "text.direct.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected IInstallOptionsFigure createInstallOptionsFigure()
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new TextFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
     @Override
-	protected EditableElementDirectEditPolicy createDirectEditPolicy()
+    protected EditableElementDirectEditPolicy createDirectEditPolicy()
     {
         return new EditableElementDirectEditPolicy() {
             @Override
-			protected String getDirectEditValue(DirectEditRequest edit)
+            protected String getDirectEditValue(DirectEditRequest edit)
             {
                 String text = super.getDirectEditValue(edit);
                 if(getInstallOptionsEditableElement().getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) &&
@@ -56,7 +56,7 @@ public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEdi
     }
 
     @Override
-	protected void handleFlagAdded(String flag)
+    protected void handleFlagAdded(String flag)
     {
         TextFigure figure = (TextFigure)getFigure();
         if(flag.equals(InstallOptionsModel.FLAGS_ONLY_NUMBERS)) {
@@ -80,7 +80,7 @@ public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEdi
         }
     }
     @Override
-	protected void handleFlagRemoved(String flag)
+    protected void handleFlagRemoved(String flag)
     {
         TextFigure figure = (TextFigure)getFigure();
         if(flag.equals(InstallOptionsModel.FLAGS_ONLY_NUMBERS)) {
@@ -107,26 +107,26 @@ public class InstallOptionsTextEditPart extends InstallOptionsEditableElementEdi
      * @return
      */
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("text.type.name"); //$NON-NLS-1$
     }
 
     @Override
-	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<TextCellEditor> clasz, CellEditorLocator locator)
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<TextCellEditor> clasz, CellEditorLocator locator)
     {
         return new InstallOptionsTextEditManager(part, clasz, locator);
     }
 
     @Override
-	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new TextCellEditorLocator((TextFigure)getFigure());
     }
 
-	@Override
-	protected Class<TextCellEditor> getCellEditorClass() 
-	{
-		return TextCellEditor.class;
-	}
+    @Override
+    protected Class<TextCellEditor> getCellEditorClass()
+    {
+        return TextCellEditor.class;
+    }
 }

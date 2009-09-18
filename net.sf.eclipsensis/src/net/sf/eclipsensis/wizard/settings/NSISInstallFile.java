@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
@@ -44,7 +44,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
     private boolean mPreserveAttributes = false;
 
     @Override
-	public String doValidate()
+    public String doValidate()
     {
         if (!IOUtility.isValidFile(IOUtility.decodePath(getName())))
         {
@@ -66,7 +66,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj)
         {
@@ -120,7 +120,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * net.sf.eclipsensis.wizard.settings.INSISInstallElement#getDisplayName()
      */
@@ -131,7 +131,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getImage()
      */
     public Image getImage()
@@ -185,7 +185,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#getType()
      */
     public String getType()
@@ -194,7 +194,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -206,7 +206,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see net.sf.eclipsensis.wizard.settings.INSISInstallElement#isEditable()
      */
     public boolean isEditable()
@@ -254,7 +254,7 @@ public class NSISInstallFile extends AbstractNSISInstallItem implements INSISIns
     }
 
     @Override
-	public void setTargetPlatform(int targetPlatform)
+    public void setTargetPlatform(int targetPlatform)
     {
         super.setTargetPlatform(targetPlatform);
         setDestination(NSISWizardUtil.convertPath(targetPlatform, getDestination()));

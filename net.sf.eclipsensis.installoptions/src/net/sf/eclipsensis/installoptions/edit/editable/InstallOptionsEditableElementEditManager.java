@@ -26,7 +26,7 @@ public abstract class InstallOptionsEditableElementEditManager<T extends CellEdi
     }
 
     @Override
-	protected String getInitialText(InstallOptionsWidget control)
+    protected String getInitialText(InstallOptionsWidget control)
     {
         return ((InstallOptionsEditableElement)control).getState();
     }
@@ -34,7 +34,7 @@ public abstract class InstallOptionsEditableElementEditManager<T extends CellEdi
     protected abstract int getCellEditorStyle();
 
     @Override
-	protected String getDirectEditProperty()
+    protected String getDirectEditProperty()
     {
         return InstallOptionsModel.PROPERTY_STATE;
     }

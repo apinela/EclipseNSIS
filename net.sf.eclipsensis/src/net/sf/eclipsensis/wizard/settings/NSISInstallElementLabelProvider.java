@@ -54,7 +54,7 @@ public class NSISInstallElementLabelProvider extends CellLabelProvider
     }
 
     @Override
-	public boolean isLabelProperty(Object element, String property) {
+    public boolean isLabelProperty(Object element, String property) {
         if(element instanceof INSISInstallElement) {
             return false;
         }
@@ -71,14 +71,14 @@ public class NSISInstallElementLabelProvider extends CellLabelProvider
             EclipseNSISPlugin.getImageManager().putImageDescriptor(name,
                     new CompositeImageDescriptor(){
                         @Override
-						protected void drawCompositeImage(int width, int height)
+                        protected void drawCompositeImage(int width, int height)
                         {
                             drawImage(image.getImageData(),0,0);
                             drawImage(cErrorImageData,0,getSize().y-cErrorImageData.height);
                         }
 
                         @Override
-						protected Point getSize()
+                        protected Point getSize()
                         {
                             return new Point(image.getBounds().width,image.getBounds().height);
                         }
@@ -89,25 +89,25 @@ public class NSISInstallElementLabelProvider extends CellLabelProvider
     }
 
     @Override
-	public String getToolTipText(Object element)
+    public String getToolTipText(Object element)
     {
         return (element instanceof INSISInstallElement?((INSISInstallElement)element).getError():null);
     }
 
     @Override
-	public Image getToolTipImage(Object element)
+    public Image getToolTipImage(Object element)
     {
         return (element instanceof INSISInstallElement?(((INSISInstallElement)element).getError()!= null?cErrorImage:null):null);
     }
 
     @Override
-	public boolean useNativeToolTip(Object object)
+    public boolean useNativeToolTip(Object object)
     {
         return false;
     }
 
     @Override
-	public void update(ViewerCell cell)
+    public void update(ViewerCell cell)
     {
         cell.setImage(getImage(cell.getElement()));
         cell.setText(getText(cell.getElement()));

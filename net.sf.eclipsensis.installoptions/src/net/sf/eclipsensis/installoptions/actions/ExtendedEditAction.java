@@ -26,7 +26,7 @@ public class ExtendedEditAction extends SelectionAction
     }
 
     @Override
-	protected boolean calculateEnabled() {
+    protected boolean calculateEnabled() {
         if (getSelectedObjects().size() == 1 && (getSelectedObjects().get(0) instanceof EditPart)) {
             EditPart part = (EditPart)getSelectedObjects().get(0);
             return part.understandsRequest(mRequest);
@@ -38,7 +38,7 @@ public class ExtendedEditAction extends SelectionAction
      * @see org.eclipse.jface.action.IAction#run()
      */
     @Override
-	public void run() {
+    public void run() {
         try {
             EditPart part = (EditPart)getSelectedObjects().get(0);
             mRequest.setEditPart(part);
@@ -56,7 +56,7 @@ public class ExtendedEditAction extends SelectionAction
      * @see org.eclipse.gef.ui.actions.WorkbenchPartAction#init()
      */
     @Override
-	protected void init() {
+    protected void init() {
         super.init();
         setId(ID);
     }

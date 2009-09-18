@@ -36,20 +36,20 @@ public abstract class AbstractJARUtil extends AbstractToolsUtility
     }
 
     @Override
-	protected String getProgramArguments(Object target)
+    protected String getProgramArguments(Object target)
     {
         return mArgsFormat.format(new String[]{maybeQuote(((IFile)target).getLocation().toOSString())});
     }
 
     @Override
-	public IStatus run(IProgressMonitor monitor)
+    public IStatus run(IProgressMonitor monitor)
     {
         mArgsFormat = createArgsFormat();
         return super.run(monitor);
     }
 
     @Override
-	protected Plugin getPlugin()
+    protected Plugin getPlugin()
     {
         return JARSignerPlugin.getDefault();
     }

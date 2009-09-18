@@ -52,7 +52,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
     @Override
-	protected List<String> getProperties()
+    protected List<String> getProperties()
     {
         return cProperties;
     }
@@ -66,7 +66,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected final Control createControlContents(Composite parent)
+    protected final Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -79,7 +79,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
         b.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,false,false));
         b.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 browseRegistry();
             }
@@ -169,7 +169,7 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
                             true,"wizard.root.key.label",true,null,false); //$NON-NLS-1$
         c1.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 mStore.setValue("rootKey",c1.getSelectionIndex()); //$NON-NLS-1$
                 validate();
             }
@@ -220,19 +220,19 @@ public class NSISInstallRegistryKeyDialog extends AbstractNSISInstallItemDialog
     }
 
     @Override
-	protected boolean hasRequiredFields()
+    protected boolean hasRequiredFields()
     {
         return true;
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_regkeydlg_context"; //$NON-NLS-1$
     }
 
     @Override
-	protected String checkForErrors()
+    protected String checkForErrors()
     {
         int rootKey = mStore.getInt("rootKey"); //$NON-NLS-1$
         if(rootKey < 0 || rootKey >= NSISWizardDisplayValues.HKEY_NAMES.length) {

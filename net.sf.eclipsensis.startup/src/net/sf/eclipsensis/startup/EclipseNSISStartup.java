@@ -27,20 +27,20 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class EclipseNSISStartup extends AbstractUIPlugin
 {
-	// The plug-in ID
-	public static final String PLUGIN_ID = "net.sf.eclipsensis.startup"; //$NON-NLS-1$
+    // The plug-in ID
+    public static final String PLUGIN_ID = "net.sf.eclipsensis.startup"; //$NON-NLS-1$
 
-	// The shared instance
-	private static EclipseNSISStartup cPlugin;
+    // The shared instance
+    private static EclipseNSISStartup cPlugin;
 
     private BundleContext mBundleContext;
     private ResourceBundle mResourceBundle;
     private IEclipsePreferences mPreferences;
 
-	/**
-	 * The constructor
-	 */
-	public EclipseNSISStartup()
+    /**
+     * The constructor
+     */
+    public EclipseNSISStartup()
     {
         try {
             mResourceBundle = ResourceBundle.getBundle("net.sf.eclipsensis.startup.EclipseNSISStartupMessages"); //$NON-NLS-1$
@@ -48,48 +48,48 @@ public class EclipseNSISStartup extends AbstractUIPlugin
         catch(MissingResourceException mre) {
             mResourceBundle = null;
         }
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
-	@Override
-	public void start(BundleContext context) throws Exception
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void start(BundleContext context) throws Exception
     {
         cPlugin = this;
         mBundleContext = context;
         String name = (String)context.getBundle().getHeaders().get("Bundle-Name"); //$NON-NLS-1$
         mPreferences = new InstanceScope().getNode(name);
-		super.start(context);
-	}
+        super.start(context);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
-	@Override
-	public void stop(BundleContext context) throws Exception
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void stop(BundleContext context) throws Exception
     {
-		super.stop(context);
+        super.stop(context);
         cPlugin = null;
         mBundleContext = null;
-	}
+    }
 
-	BundleContext getBundleContext()
+    BundleContext getBundleContext()
     {
         return mBundleContext;
     }
 
     /**
-	 * Returns the shared instance
-	 *
-	 * @return the shared instance
-	 */
-	public static EclipseNSISStartup getDefault()
+     * Returns the shared instance
+     *
+     * @return the shared instance
+     */
+    public static EclipseNSISStartup getDefault()
     {
-		return cPlugin;
-	}
+        return cPlugin;
+    }
 
     public ResourceBundle getResourceBundle()
     {
@@ -109,15 +109,15 @@ public class EclipseNSISStartup extends AbstractUIPlugin
         }
         return key;
     }
-    
+
     public void savePreferences()
     {
-    	try {
-			mPreferences.flush();
-		} 
-    	catch (BackingStoreException e) {
-			log(e);
-		}    	
+        try {
+            mPreferences.flush();
+        }
+        catch (BackingStoreException e) {
+            log(e);
+        }
     }
 
     public void log(Throwable t)

@@ -93,7 +93,7 @@ public class NSISHeaderAssociationManager implements IEclipseNSISService/*, IRes
         }
     }
 
-	private void load()
+    private void load()
     {
         Map<String,List<String>> cache = null;
         if(IOUtility.isValidFile(cCacheFile)) {
@@ -119,7 +119,7 @@ public class NSISHeaderAssociationManager implements IEclipseNSISService/*, IRes
                             try {
                                 IFile header = cRoot.getFile(new Path(iterator.next()));
                                 if(IOUtility.isValidFile(header)) {
-                                	headers.add(header);
+                                    headers.add(header);
                                     mHeaderMap.put(header,script);
                                 }
                                 else {

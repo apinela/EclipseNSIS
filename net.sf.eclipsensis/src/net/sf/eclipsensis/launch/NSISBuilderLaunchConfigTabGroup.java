@@ -24,11 +24,11 @@ public class NSISBuilderLaunchConfigTabGroup extends AbstractLaunchConfiguration
         super();
     }
 
-	public void createTabs(ILaunchConfigurationDialog dialog, String mode)
+    public void createTabs(ILaunchConfigurationDialog dialog, String mode)
     {
         ExternalToolsBuilderTab buildTab = new ExternalToolsBuilderTab() {
             @Override
-			public void createControl(Composite parent)
+            public void createControl(Composite parent)
             {
                 super.createControl(parent);
                 PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_buildconfig_build_context"); //$NON-NLS-1$

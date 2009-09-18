@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IFile;
 public class NSISClearMarkersHandler extends NSISHandler
 {
     @Override
-	protected void handleScript(IFile file)
+    protected void handleScript(IFile file)
     {
         NSISEditorUtilities.clearMarkers(file.getFullPath());
     }

@@ -13,7 +13,7 @@ package net.sf.eclipsensis.installoptions.ini.validators;
 public class PositiveNumberKeyValueValidator extends NumberKeyValueValidator
 {
     @Override
-	protected boolean isNegativeAllowed()
+    protected boolean isNegativeAllowed()
     {
         return false;
     }

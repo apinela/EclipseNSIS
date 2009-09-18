@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
@@ -29,7 +29,7 @@ public class StringParam extends SubstitutableParam
     }
 
     @Override
-	protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new StringParamEditor(command, parentEditor);
     }
@@ -58,7 +58,7 @@ public class StringParam extends SubstitutableParam
         }
 
         @Override
-		public void clear()
+        public void clear()
         {
             if (Common.isValid(mText))
             {
@@ -68,7 +68,7 @@ public class StringParam extends SubstitutableParam
         }
 
         @Override
-		protected String getPrefixableParamText()
+        protected String getPrefixableParamText()
         {
             if (Common.isValid(mText))
             {
@@ -78,7 +78,7 @@ public class StringParam extends SubstitutableParam
         }
 
         @Override
-		protected String validateParam()
+        protected String validateParam()
         {
             if (Common.isValid(mText))
             {
@@ -88,7 +88,7 @@ public class StringParam extends SubstitutableParam
         }
 
         @Override
-		public void saveSettings()
+        public void saveSettings()
         {
             super.saveSettings();
             if (Common.isValid(mText) && getSettings() != null)
@@ -98,7 +98,7 @@ public class StringParam extends SubstitutableParam
         }
 
         @Override
-		protected Control createParamControl(Composite parent)
+        protected Control createParamControl(Composite parent)
         {
             mText = new Text(parent, SWT.BORDER);
             setToolTip(mText);
@@ -121,7 +121,7 @@ public class StringParam extends SubstitutableParam
         }
 
         @Override
-		protected void initParamEditor()
+        protected void initParamEditor()
         {
             super.initParamEditor();
             if (Common.isValid(mText))

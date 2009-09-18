@@ -28,25 +28,25 @@ public class JARVerifierAction implements IObjectActionDelegate
     ISelection mSelection = null;
     IWorkbenchPart mPart = null;
 
-	/**
-	 * Constructor for JNIGenAction.
-	 */
-	public JARVerifierAction() {
-		super();
-	}
+    /**
+     * Constructor for JNIGenAction.
+     */
+    public JARVerifierAction() {
+        super();
+    }
 
-	/**
-	 * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
-	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart)
+    /**
+     * @see IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
+     */
+    public void setActivePart(IAction action, IWorkbenchPart targetPart)
     {
         mPart = targetPart;
-	}
+    }
 
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action)
+    /**
+     * @see IActionDelegate#run(IAction)
+     */
+    public void run(IAction action)
     {
         if ((mSelection != null) && !mSelection.isEmpty() && (mSelection instanceof IStructuredSelection)) {
             IStructuredSelection sel = (IStructuredSelection)mSelection;
@@ -73,14 +73,14 @@ public class JARVerifierAction implements IObjectActionDelegate
                 MessageDialog.openError(Display.getDefault().getActiveShell(),UtilitiesPlugin.getResourceString("error.title"),e.getMessage()); //$NON-NLS-1$
             }
         }
-	}
+    }
 
     /**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection)
+     * @see IActionDelegate#selectionChanged(IAction, ISelection)
+     */
+    public void selectionChanged(IAction action, ISelection selection)
     {
         mSelection = selection;
-	}
+    }
 
 }

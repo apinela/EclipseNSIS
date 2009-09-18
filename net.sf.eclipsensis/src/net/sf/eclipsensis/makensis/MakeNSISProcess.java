@@ -150,49 +150,49 @@ public class MakeNSISProcess extends Process
     }
 
     @Override
-	public InputStream getErrorStream()
+    public InputStream getErrorStream()
     {
         checkHandle();
         return mErrorStream;
     }
 
     @Override
-	public InputStream getInputStream()
+    public InputStream getInputStream()
     {
         checkHandle();
         return mInputStream;
     }
 
     @Override
-	public OutputStream getOutputStream()
+    public OutputStream getOutputStream()
     {
         checkHandle();
         return mOutputStream;
     }
 
     @Override
-	public int exitValue()
+    public int exitValue()
     {
         checkHandle();
         return exitValue(mHandle);
     }
 
     @Override
-	public int waitFor() throws InterruptedException
+    public int waitFor() throws InterruptedException
     {
         checkHandle();
         return waitFor(mHandle);
     }
 
     @Override
-	public void destroy()
+    public void destroy()
     {
         checkHandle();
         destroy(mHandle);
     }
 
     @Override
-	protected void finalize() throws Throwable
+    protected void finalize() throws Throwable
     {
         if(mHandle > 0) {
             close(mHandle);

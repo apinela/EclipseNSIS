@@ -28,14 +28,14 @@ public class VarParam extends ComboParam
     }
 
     @Override
-	protected void init(Node node)
+    protected void init(Node node)
     {
         mVarPattern = Pattern.compile("\\$[0-9a-z_]+",Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
         super.init(node);
     }
 
     @Override
-	protected ComboEntry[] getComboEntries()
+    protected ComboEntry[] getComboEntries()
     {
         ComboEntry[] entries = EMPTY_COMBO_ENTRIES;
         String[] vars = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.REGISTERS);
@@ -51,13 +51,13 @@ public class VarParam extends ComboParam
     }
 
     @Override
-	protected boolean isUserEditable()
+    protected boolean isUserEditable()
     {
         return true;
     }
 
     @Override
-	protected String validateUserValue(String value)
+    protected String validateUserValue(String value)
     {
         if(value != null) {
             Matcher m = mVarPattern.matcher(value);

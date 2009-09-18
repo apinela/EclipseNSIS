@@ -44,7 +44,7 @@ public class ToggleEnablementAction extends SelectionAction
      * Initializes this action's text and images.
      */
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         setId(ID);
@@ -99,7 +99,7 @@ public class ToggleEnablementAction extends SelectionAction
     }
 
     @Override
-	protected boolean calculateEnabled() {
+    protected boolean calculateEnabled() {
         Command cmd = createToggleEnablementCommand(getSelectedObjects());
         if (cmd == null) {
             return false;
@@ -108,7 +108,7 @@ public class ToggleEnablementAction extends SelectionAction
     }
 
     @Override
-	public void run() {
+    public void run() {
         execute(createToggleEnablementCommand(getSelectedObjects()));
     }
 }

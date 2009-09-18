@@ -26,19 +26,19 @@ public class InstallOptionsUnknownEditManager extends InstallOptionsUneditableEl
     }
 
     @Override
-	protected String getInitialText(InstallOptionsWidget control)
+    protected String getInitialText(InstallOptionsWidget control)
     {
         return ((InstallOptionsUnknown)control).getType();
     }
 
     @Override
-	protected String getDirectEditProperty()
+    protected String getDirectEditProperty()
     {
         return InstallOptionsModel.PROPERTY_TYPE;
     }
 
     @Override
-	protected int getCellEditorStyle()
+    protected int getCellEditorStyle()
     {
         return SWT.SINGLE|SWT.CENTER;
     }

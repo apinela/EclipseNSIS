@@ -67,7 +67,7 @@ import org.w3c.dom.Node;
 public abstract class InstallOptionsWidget extends InstallOptionsElement
 {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -2009939141357319271L;
     public static final String PROPERTY_BOUNDS = "Bounds"; //$NON-NLS-1$
@@ -80,7 +80,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     private static LabelProvider cPositionLabelProvider = new LabelProvider(){
         @Override
-		public String getText(Object element)
+        public String getText(Object element)
         {
             if(element instanceof Position) {
                 Position pos = (Position)element;
@@ -98,7 +98,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         private final String NO = InstallOptionsPlugin.getResourceString("option.no"); //$NON-NLS-1$
 
         @Override
-		public String getText(Object element)
+        public String getText(Object element)
         {
             if(element instanceof Boolean) {
                 return (((Boolean)element).booleanValue()?YES:NO);
@@ -125,7 +125,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("defaultPosition"); //$NON-NLS-1$
@@ -144,7 +144,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         mIndex = -1;
@@ -160,7 +160,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	protected void setDefaults()
+    protected void setDefaults()
     {
         super.setDefaults();
         mPosition = getDefaultPosition();
@@ -170,7 +170,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
      *
      */
     @Override
-	protected final Collection<String> getPropertyNames()
+    protected final Collection<String> getPropertyNames()
     {
         if(mPropertyNames == null) {
             mPropertyNames = new CaseInsensitiveSet();
@@ -186,7 +186,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
      *
      */
     @Override
-	protected final Collection<String> doGetPropertyNames()
+    protected final Collection<String> doGetPropertyNames()
     {
         List<String> list = new ArrayList<String>();
         list.add(InstallOptionsModel.PROPERTY_TYPE);
@@ -220,12 +220,12 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_TYPE)) {
             return new PropertyDescriptor(InstallOptionsModel.PROPERTY_TYPE, InstallOptionsPlugin.getResourceString("type.property.name")) { //$NON-NLS-1$
                 @Override
-				public CellEditor createPropertyEditor(Composite parent)
+                public CellEditor createPropertyEditor(Composite parent)
                 {
                     Collection<InstallOptionsModelTypeDef> coll = InstallOptionsModel.INSTANCE.getControlTypeDefs();
                     List<String> types = new ArrayList<String>();
@@ -284,7 +284,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	public Object getPropertyValue(Object id)
+    public Object getPropertyValue(Object id)
     {
         if (PROPERTY_BOUNDS.equals(id)) {
             return toGraphical(getPosition()).getBounds();
@@ -319,7 +319,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	protected TypeConverter<?> loadTypeConverter(String property, Object value)
+    protected TypeConverter<?> loadTypeConverter(String property, Object value)
     {
         if (InstallOptionsModel.PROPERTY_LEFT.equals(property) ||
             InstallOptionsModel.PROPERTY_TOP.equals(property) ||
@@ -341,8 +341,8 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	public void setPropertyValue(Object id, Object value)
+    @SuppressWarnings("unchecked")
+    public void setPropertyValue(Object id, Object value)
     {
         if(InstallOptionsModel.PROPERTY_POSITION.equals(id)) {
             setPosition((Position)value);
@@ -399,7 +399,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	public final String toString()
+    public final String toString()
     {
         String displayName = getDisplayName();
         return InstallOptionsPlugin.getFormattedString("design.outline.display.name.format", //$NON-NLS-1$
@@ -417,7 +417,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     private List<String> retainSupportedFlags(List<String> flags)
     {
-    	List<String> flags2 = new ArrayList<String>(flags);
+        List<String> flags2 = new ArrayList<String>(flags);
         Collection<String> supportedFlags = getTypeDef().getFlags();
         for (Iterator<String> iter = flags2.iterator(); iter.hasNext();) {
             String flag = iter.next();
@@ -446,7 +446,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         List<String> newFlags = retainSupportedFlags(flags);
         boolean dirty = false;
         if (!getFlags().equals(flags)) {
-        	dirty = true;
+            dirty = true;
             mFlags = new ArrayList<String>(flags);
         }
         if(!oldFlags.equals(newFlags)) {
@@ -557,7 +557,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
 
     private Position toModel(Position p, Dimension size, boolean fromPixels, Font font)
     {
-    	Position p2 = p;
+        Position p2 = p;
         if(fromPixels) {
             p2 = FigureUtility.pixelsToDialogUnits(p2,font);
         }
@@ -604,7 +604,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         InstallOptionsWidget element = (InstallOptionsWidget)super.clone();
         element.setPropertySectionCreator(null);
@@ -634,13 +634,13 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	protected String getSectionName()
+    protected String getSectionName()
     {
         return InstallOptionsModel.SECTION_FIELD_FORMAT.format(new Object[]{new Integer(getIndex()+1)});
     }
 
     @Override
-	public final Image getIconImage()
+    public final Image getIconImage()
     {
         return InstallOptionsPlugin.getImageManager().getImage(getTypeDef().getSmallIcon());
     }
@@ -669,7 +669,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	public void fromNode(Node node)
+    public void fromNode(Node node)
     {
         String nodeType = node.getAttributes().getNamedItem(TYPE_ATTRIBUTE).getNodeValue();
         if(nodeType.equals(getType())) {
@@ -678,7 +678,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	public Node toNode(Document document)
+    public Node toNode(Document document)
     {
         Node node = super.toNode(document);
         XMLUtil.addAttribute(document,node,TYPE_ATTRIBUTE,getType());
@@ -686,7 +686,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	protected String convertToString(String name, Object obj)
+    protected String convertToString(String name, Object obj)
     {
         if(obj instanceof Position) {
             return TypeConverter.POSITION_CONVERTER.asString((Position) obj);
@@ -697,7 +697,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     }
 
     @Override
-	protected Object convertFromString(String string, Class<?> clasz)
+    protected Object convertFromString(String string, Class<?> clasz)
     {
         if(clasz.equals(Position.class)) {
             return TypeConverter.POSITION_CONVERTER.asType(string);
@@ -710,13 +710,13 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
     @Override
     protected boolean isConvertibleAttributeType(Class<?> clasz)
     {
-    	if(Position.class.equals(clasz))
-    	{
-    		return true;
-    	}
-    	return super.isConvertibleAttributeType(clasz);
+        if(Position.class.equals(clasz))
+        {
+            return true;
+        }
+        return super.isConvertibleAttributeType(clasz);
     }
-    
+
     private class IndexPropertyDescriptor extends ComboBoxPropertyDescriptor
     {
         public IndexPropertyDescriptor()
@@ -724,7 +724,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             super(InstallOptionsModel.PROPERTY_INDEX, InstallOptionsPlugin.getResourceString("index.property.name"), new String[0]); //$NON-NLS-1$
             setLabelProvider(new LabelProvider(){
                 @Override
-				public String getText(Object element)
+                public String getText(Object element)
                 {
                     return Integer.toString(((Integer)element).intValue()+1);
                 }
@@ -732,7 +732,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
 
         @Override
-		public CellEditor createPropertyEditor(Composite parent)
+        public CellEditor createPropertyEditor(Composite parent)
         {
             CellEditor editor = null;
             InstallOptionsDialog dialog = getParent();
@@ -757,7 +757,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
 
         @Override
-		public CellEditor createPropertyEditor(Composite parent)
+        public CellEditor createPropertyEditor(Composite parent)
         {
             final FlagsCellEditor cellEditor = new FlagsCellEditor(parent);
             ICellEditorValidator validator = getValidator();
@@ -777,7 +777,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
 
         @Override
-		protected void updateContents(Object value)
+        protected void updateContents(Object value)
         {
             Label label = getDefaultLabel();
             if (label != null) {
@@ -786,8 +786,8 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
 
         @Override
-		@SuppressWarnings("unchecked")
-		protected Object openDialogBox(Control cellEditorWindow)
+        @SuppressWarnings("unchecked")
+        protected Object openDialogBox(Control cellEditorWindow)
         {
             FlagsDialog dialog = new FlagsDialog(cellEditorWindow.getShell(), (List<String>)getValue(), getType());
             dialog.setValidator(getValidator());
@@ -796,7 +796,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
 
         @Override
-		public void dispose()
+        public void dispose()
         {
             InstallOptionsWidget.this.removePropertyChangeListener(this);
             super.dispose();
@@ -838,7 +838,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
 
         @Override
-		protected void configureShell(Shell newShell)
+        protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
             newShell.setText(InstallOptionsPlugin.getFormattedString("flags.dialog.name", new String[]{mType})); //$NON-NLS-1$
@@ -851,7 +851,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
 
         @Override
-		protected Control createDialogArea(Composite parent)
+        protected Control createDialogArea(Composite parent)
         {
             Composite composite = (Composite)super.createDialogArea(parent);
             Composite composite2 = new Composite(composite,SWT.NONE);
@@ -869,7 +869,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             });
             mTable.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     int selectedIndex = mTable.getSelectionIndex();
                     if(selectedIndex != -1) {
@@ -902,7 +902,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             b.setText(InstallOptionsPlugin.getResourceString("select.all.label")); //$NON-NLS-1$
             b.addSelectionListener(new SelectionAdapter(){
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     selectAll(true);
                 }
@@ -912,7 +912,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
             b.setText(InstallOptionsPlugin.getResourceString("deselect.all.label")); //$NON-NLS-1$
             b.addSelectionListener(new SelectionAdapter(){
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     selectAll(false);
                 }
@@ -930,7 +930,7 @@ public abstract class InstallOptionsWidget extends InstallOptionsElement
         }
 
         @Override
-		protected void okPressed()
+        protected void okPressed()
         {
             if(mTable != null) {
                 mValues.removeAll(mAvailableFlags);

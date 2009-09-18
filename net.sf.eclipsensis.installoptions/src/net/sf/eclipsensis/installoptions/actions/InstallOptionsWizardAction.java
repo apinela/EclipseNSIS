@@ -31,7 +31,7 @@ public class InstallOptionsWizardAction extends Action
     }
 
     @Override
-	public void run()
+    public void run()
     {
         final IWorkbench workbench = PlatformUI.getWorkbench();
         final Shell shell = workbench.getActiveWorkbenchWindow().getShell();

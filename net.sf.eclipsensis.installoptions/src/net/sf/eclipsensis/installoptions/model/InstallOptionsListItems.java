@@ -30,7 +30,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 public abstract class InstallOptionsListItems extends InstallOptionsEditableElement
 {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5321738343148820961L;
     protected static LabelProvider cListItemsLabelProvider = new ListLabelProvider();
@@ -42,7 +42,7 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("multiSelect"); //$NON-NLS-1$
@@ -51,20 +51,20 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         mListItems = new ArrayList<String>();
     }
 
     @Override
-	protected Position getDefaultPosition()
+    protected Position getDefaultPosition()
     {
         return new Position(0,0,99,99);
     }
 
     @Override
-	protected void addPropertyName(List<String> list, String setting)
+    protected void addPropertyName(List<String> list, String setting)
     {
         if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_LISTITEMS)) {
             list.add(InstallOptionsModel.PROPERTY_LISTITEMS);
@@ -75,7 +75,7 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
     }
 
     @Override
-	protected TypeConverter<?> loadTypeConverter(String property, Object value)
+    protected TypeConverter<?> loadTypeConverter(String property, Object value)
     {
         if(InstallOptionsModel.PROPERTY_LISTITEMS.equals(property)) {
             return TypeConverter.STRING_LIST_CONVERTER;
@@ -86,7 +86,7 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
             return new ListItemsPropertyDescriptor();
@@ -95,7 +95,7 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
     }
 
     @Override
-	public Object getPropertyValue(Object propName)
+    public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_LISTITEMS.equals(propName)) {
             return getListItems();
@@ -104,8 +104,8 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	public void setPropertyValue(Object id, Object value)
+    @SuppressWarnings("unchecked")
+    public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
             setListItems((List<String>)value);
@@ -131,13 +131,13 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new ListItemsPropertySectionCreator(this);
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         InstallOptionsListItems clone = (InstallOptionsListItems)super.clone();
         clone.setListItems(new ArrayList<String>(mListItems));
@@ -159,7 +159,7 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         }
 
         @Override
-		public CellEditor createPropertyEditor(Composite parent)
+        public CellEditor createPropertyEditor(Composite parent)
         {
             final ListItemsCellEditor cellEditor = new ListItemsCellEditor(parent);
             ICellEditorValidator validator = getValidator();
@@ -179,7 +179,7 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         }
 
         @Override
-		public void dispose()
+        public void dispose()
         {
             InstallOptionsListItems.this.removePropertyChangeListener(this);
             super.dispose();
@@ -193,7 +193,7 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         }
 
         @Override
-		protected void updateContents(Object value)
+        protected void updateContents(Object value)
         {
             Label label = getDefaultLabel();
             if (label != null) {
@@ -202,8 +202,8 @@ public abstract class InstallOptionsListItems extends InstallOptionsEditableElem
         }
 
         @Override
-		@SuppressWarnings("unchecked")
-		protected Object openDialogBox(Control cellEditorWindow)
+        @SuppressWarnings("unchecked")
+        protected Object openDialogBox(Control cellEditorWindow)
         {
             Object oldValue = getValue();
             ListItemsDialog dialog = new ListItemsDialog(cellEditorWindow.getShell(), (List<String>)oldValue, getType());

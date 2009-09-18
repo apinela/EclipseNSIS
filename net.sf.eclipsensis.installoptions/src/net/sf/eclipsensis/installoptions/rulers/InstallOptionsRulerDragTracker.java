@@ -21,7 +21,7 @@ public class InstallOptionsRulerDragTracker extends RulerDragTracker
     }
 
     @Override
-	protected boolean isCreationValid()
+    protected boolean isCreationValid()
     {
         if(getCurrentPosition() < 0) {
             return false;

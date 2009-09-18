@@ -319,7 +319,7 @@ public class Common
 
     public static String leftPad(String text, int length, char padChar)
     {
-    	String text2 = text;
+        String text2 = text;
         if(text2.length() < length) {
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             for(int i=text2.length(); i<length; i++) {
@@ -448,8 +448,8 @@ public class Common
 
     public static String replaceAll(String input, String search, String replace, boolean ignoreCase)
     {
-    	String input2 = input;
-    	String search2 = search;
+        String input2 = input;
+        String search2 = search;
         if(!Common.isEmpty(input2) && !Common.isEmpty(search2) &&
                 search2.length() <= input2.length()) {
             String replace2 = (replace == null?"":replace); //$NON-NLS-1$
@@ -661,7 +661,7 @@ public class Common
 
     public static String maybeQuote(String text)
     {
-    	String text2 = text;
+        String text2 = text;
         if(shouldQuote(text2)) {
             text2 = quote(text2);
         }
@@ -697,7 +697,7 @@ public class Common
 
     public static String maybeUnquote(String text)
     {
-    	String text2 = text;
+        String text2 = text;
         if(isQuoted(text2)) {
             text2 = text2.substring(1,text2.length()-1);
         }
@@ -801,7 +801,7 @@ public class Common
 
     public static String padString(String str, int length)
     {
-    	String str2 = str;
+        String str2 = str;
         if(str2 != null) {
             if(str2.length() < length) {
                 char[] c = new char[length-str2.length()];
@@ -827,7 +827,7 @@ public class Common
 
     private static void printChildren(String prefix, IConfigurationElement[] elements) {
         if(!Common.isEmptyArray(elements)) {
-        	String prefix2 = prefix + "\t"; //$NON-NLS-1$
+            String prefix2 = prefix + "\t"; //$NON-NLS-1$
             for (int j = 0; j < elements.length; j++) {
                 String[] attr = elements[j].getAttributeNames();
                 if(!Common.isEmptyArray(attr)) {
@@ -961,20 +961,20 @@ public class Common
                         case 3:
                             defaultName = pieces[2];
                             //$FALL-THROUGH$
-					    case 2:
+                        case 2:
                             String[] ids = tokenize(pieces[1],'@');
                             switch(ids.length) {
                                 case 2:
                                     lcid = parseInt(ids[1],0);
-        	                        //$FALL-THROUGH$
+                                    //$FALL-THROUGH$
                                 case 1:
                                     id = Math.abs(parseInt(ids[0],-1));
-        	                        //$FALL-THROUGH$
+                                    //$FALL-THROUGH$
                                 default:
                                     break;
                             }
-	                        //$FALL-THROUGH$
-						default:
+                            //$FALL-THROUGH$
+                        default:
                             library = pieces[0];
                             break;
                     }
@@ -1057,22 +1057,22 @@ public class Common
             return null;
         }
     }
-    
+
     public static <T> List<T> makeGenericList(Class<T> clasz, List<?> list)
     {
-    	List<T> newList = new ArrayList<T>();
-    	for(Object o : list)
-    	{
-    		if(o != null)
-    		{
-    			if(clasz.isAssignableFrom(o.getClass()))
-    			{
-    				newList.add(clasz.cast(o));
-    			}
-    			continue;
-    		}
-    		newList.add(null);
-    	}
-    	return newList;
+        List<T> newList = new ArrayList<T>();
+        for(Object o : list)
+        {
+            if(o != null)
+            {
+                if(clasz.isAssignableFrom(o.getClass()))
+                {
+                    newList.add(clasz.cast(o));
+                }
+                continue;
+            }
+            newList.add(null);
+        }
+        return newList;
     }
 }

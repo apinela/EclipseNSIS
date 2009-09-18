@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
@@ -53,7 +53,7 @@ public class KeyboardShortcutParam extends PrefixableParam
     }
 
     @Override
-	protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new KeyboardShortcutParamEditor(command, parentEditor);
     }
@@ -69,7 +69,7 @@ public class KeyboardShortcutParam extends PrefixableParam
         }
 
         @Override
-		public void clear()
+        public void clear()
         {
             if (Common.isValid(mKeyCombo))
             {
@@ -89,7 +89,7 @@ public class KeyboardShortcutParam extends PrefixableParam
         }
 
         @Override
-		protected void updateState(boolean state)
+        protected void updateState(boolean state)
         {
             if (Common.isValid(mKeyCombo))
             {
@@ -109,7 +109,7 @@ public class KeyboardShortcutParam extends PrefixableParam
         }
 
         @Override
-		protected String getPrefixableParamText()
+        protected String getPrefixableParamText()
         {
             if (!Common.isEmptyArray(mModifierButtons) && Common.isValid(mKeyCombo))
             {
@@ -128,7 +128,7 @@ public class KeyboardShortcutParam extends PrefixableParam
         }
 
         @Override
-		protected String validateParam()
+        protected String validateParam()
         {
             boolean found = false;
             if (!Common.isEmptyArray(mModifierButtons))
@@ -165,7 +165,7 @@ public class KeyboardShortcutParam extends PrefixableParam
         }
 
         @Override
-		public void saveSettings()
+        public void saveSettings()
         {
             super.saveSettings();
             if (getSettings() != null)
@@ -189,7 +189,7 @@ public class KeyboardShortcutParam extends PrefixableParam
         }
 
         @Override
-		protected void initParamEditor()
+        protected void initParamEditor()
         {
             super.initParamEditor();
             if (!Common.isEmptyArray(mModifierButtons))
@@ -219,9 +219,9 @@ public class KeyboardShortcutParam extends PrefixableParam
         }
 
         @Override
-		protected Control createParamControl(Composite parent)
+        protected Control createParamControl(Composite parent)
         {
-        	Composite parent2 = new Composite(parent, SWT.NONE);
+            Composite parent2 = new Composite(parent, SWT.NONE);
             GridLayout layout = new GridLayout(cModifiers.length + 1, false);
             layout.marginHeight = layout.marginWidth = 0;
             parent2.setLayout(layout);

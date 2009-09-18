@@ -65,8 +65,8 @@ public class RegistryKey
 
     public synchronized void setValues(List<RegistryValue> values)
     {
-    	mValues.clear();
-    	mValues.addAll(values);
+        mValues.clear();
+        mValues.addAll(values);
     }
 
     void setName(String name)
@@ -165,13 +165,13 @@ public class RegistryKey
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         return mName.hashCode();
     }
 
     @Override
-	public boolean equals(Object o)
+    public boolean equals(Object o)
     {
         if(o != this) {
             if(o instanceof RegistryKey) {
@@ -186,7 +186,7 @@ public class RegistryKey
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         if(mString == null) {
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$

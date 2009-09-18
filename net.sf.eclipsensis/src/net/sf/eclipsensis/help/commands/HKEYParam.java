@@ -22,7 +22,7 @@ public class HKEYParam extends ComboParam
     }
 
     @Override
-	protected ComboEntry[] getComboEntries()
+    protected ComboEntry[] getComboEntries()
     {
         ComboEntry[] entries = EMPTY_COMBO_ENTRIES;
         String[] hkeys = NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.HKEY_LONG_PARAMETERS);

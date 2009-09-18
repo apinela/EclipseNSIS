@@ -17,7 +17,7 @@ public class InstallOptionsWidgetList
 
     public void add(InstallOptionsWidget widget)
     {
-    	InstallOptionsWidget widget2 = (InstallOptionsWidget)widget.clone();
+        InstallOptionsWidget widget2 = (InstallOptionsWidget)widget.clone();
         widget2.setIndex(mWidgets.size());
         widget2.setDirty(false);
         mWidgets.add(widget2);

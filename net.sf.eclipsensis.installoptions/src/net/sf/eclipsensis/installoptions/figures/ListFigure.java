@@ -37,8 +37,8 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	protected void init(IPropertySource propertySource)
+    @SuppressWarnings("unchecked")
+    protected void init(IPropertySource propertySource)
     {
         setListItems((java.util.List<String>)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_LISTITEMS));
         super.init(propertySource);
@@ -60,7 +60,7 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
     }
 
     @Override
-	public void setState(String state)
+    public void setState(String state)
     {
         super.setState(state);
         if(mSelected == null) {
@@ -74,7 +74,7 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
      * @return
      */
     @Override
-	protected Control createSWTControl(Composite parent, int style)
+    protected Control createSWTControl(Composite parent, int style)
     {
         List list = new List(parent, style);
         java.util.List<String> selected = getSelected();
@@ -161,7 +161,7 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
      * @return
      */
     @Override
-	public int getDefaultStyle()
+    public int getDefaultStyle()
     {
         return SWT.BORDER|SWT.MULTI;
     }

@@ -86,18 +86,18 @@ public class RegistryRoot extends RegistryKey
     }
 
     @Override
-	protected void expandName(StringBuffer buf)
+    protected void expandName(StringBuffer buf)
     {
     }
 
     @Override
-	public Image getImage()
+    public Image getImage()
     {
         return REGROOT_IMAGE;
     }
 
     @Override
-	public Image getExpandedImage()
+    public Image getExpandedImage()
     {
         return REGROOT_IMAGE;
     }

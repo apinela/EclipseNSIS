@@ -26,7 +26,7 @@ public class NSISLaunchConfigTabGroup extends AbstractLaunchConfigurationTabGrou
     {
         CommonTab commonTab = new CommonTab() {
             @Override
-			public void createControl(Composite parent)
+            public void createControl(Composite parent)
             {
                 super.createControl(parent);
                 PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_launchconfig_common_context"); //$NON-NLS-1$

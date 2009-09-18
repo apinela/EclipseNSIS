@@ -46,7 +46,7 @@ public class ToggleLockAction extends SelectionAction
      * Initializes this action's text and images.
      */
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         setId(ID);
@@ -67,7 +67,7 @@ public class ToggleLockAction extends SelectionAction
             boolean shouldLock = !part.isLocked();
             list.add(part);
             while (iter.hasNext()) {
-            	part = (InstallOptionsWidget) iter.next().getModel();
+                part = (InstallOptionsWidget) iter.next().getModel();
                 if(part != null) {
                     if(shouldLock != part.isLocked()) {
                         list.add(part);
@@ -97,7 +97,7 @@ public class ToggleLockAction extends SelectionAction
     }
 
     @Override
-	protected boolean calculateEnabled() {
+    protected boolean calculateEnabled() {
         Command cmd = createToggleLockCommand(getSelectedObjects());
         if (cmd == null) {
             return false;
@@ -106,7 +106,7 @@ public class ToggleLockAction extends SelectionAction
     }
 
     @Override
-	public void run() {
+    public void run() {
         execute(createToggleLockCommand(getSelectedObjects()));
         setEnabled(calculateEnabled());
     }

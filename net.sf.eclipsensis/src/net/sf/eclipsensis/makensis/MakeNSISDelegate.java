@@ -23,10 +23,10 @@ class MakeNSISDelegate extends AbstractMakeNSISDelegate
     }
 
     @Override
-	protected native long init();
+    protected native long init();
 
     @Override
-	protected native void destroy();
+    protected native void destroy();
 
     public native void reset();
 

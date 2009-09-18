@@ -36,7 +36,7 @@ public abstract class AbstractTemplateDialog<T extends ITemplate> extends TrayDi
      * @param parentShell
      */
     @SuppressWarnings("unchecked")
-	public AbstractTemplateDialog(Shell parentShell, AbstractTemplateManager<T> templateManager, T template, boolean create)
+    public AbstractTemplateDialog(Shell parentShell, AbstractTemplateManager<T> templateManager, T template, boolean create)
     {
         super(parentShell);
         setCreate(create);
@@ -67,7 +67,7 @@ public abstract class AbstractTemplateDialog<T extends ITemplate> extends TrayDi
     }
 
     @Override
-	public void create()
+    public void create()
     {
         super.create();
         getButton(IDialogConstants.OK_ID).setEnabled(!Common.isEmpty(mTemplateName.getText()));
@@ -77,7 +77,7 @@ public abstract class AbstractTemplateDialog<T extends ITemplate> extends TrayDi
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */
     @Override
-	protected void configureShell(Shell newShell)
+    protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(getShellTitle());
@@ -88,7 +88,7 @@ public abstract class AbstractTemplateDialog<T extends ITemplate> extends TrayDi
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected Control createDialogArea(Composite parent)
+    protected Control createDialogArea(Composite parent)
     {
         Composite composite = (Composite)super.createDialogArea(parent);
         ((GridLayout)composite.getLayout()).numColumns=2;
@@ -134,7 +134,7 @@ public abstract class AbstractTemplateDialog<T extends ITemplate> extends TrayDi
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         createUpdateTemplate();
         boolean ok;

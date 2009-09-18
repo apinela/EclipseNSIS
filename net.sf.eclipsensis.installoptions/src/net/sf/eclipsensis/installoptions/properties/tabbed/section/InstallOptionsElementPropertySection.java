@@ -29,24 +29,24 @@ import org.eclipse.ui.views.properties.tabbed.*;
 
 public abstract class InstallOptionsElementPropertySection extends AbstractPropertySection
 {
-	private InstallOptionsElement mElement;
+    private InstallOptionsElement mElement;
     private InstallOptionsCommandHelper mCommandHelper;
 
     private TabbedPropertySheetPage mPage;
     private Composite mParent;
 
     @Override
-	public void createControls(Composite parent, TabbedPropertySheetPage page)
+    public void createControls(Composite parent, TabbedPropertySheetPage page)
     {
         super.createControls(parent, page);
         mPage = page;
-    	getWidgetFactory().setBorderStyle(SWT.BORDER);
+        getWidgetFactory().setBorderStyle(SWT.BORDER);
         mParent = getWidgetFactory().createComposite(parent);
         mParent.setLayout(new GridLayout(1,false));
     }
 
     @Override
-	public void dispose()
+    public void dispose()
     {
         super.dispose();
         mPage = null;
@@ -55,13 +55,13 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
         }
     }
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySection#setInput(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	@Override
-	public final void setInput(IWorkbenchPart part, ISelection selection) {
-		super.setInput(part, selection);
-		if(selection instanceof IStructuredSelection && !selection.isEmpty()) {
+    /**
+     * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySection#setInput(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+     */
+    @Override
+    public final void setInput(IWorkbenchPart part, ISelection selection) {
+        super.setInput(part, selection);
+        if(selection instanceof IStructuredSelection && !selection.isEmpty()) {
             Object input = ((IStructuredSelection)selection).getFirstElement();
             InstallOptionsElement element = getElement(input);
             if(element != null && !Common.objectsAreEqual(mElement, element)) {
@@ -82,7 +82,7 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
                 inputChanged(mElement);
             }
         }
-	}
+    }
 
     private InstallOptionsElement getElement(Object input)
     {
@@ -102,7 +102,7 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
     {
         mCommandHelper = new InstallOptionsCommandHelper(stack) {
             @Override
-			protected void refresh()
+            protected void refresh()
             {
                 InstallOptionsElementPropertySection.this.refresh();
             }
@@ -125,18 +125,18 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
             if(c != null) {
                 c.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
                 mParent.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						if(!mParent.isDisposed() && !c.isDisposed()) {
-							mParent.getShell().layout(new Control[] {c});
-						}
-					}
+                    public void run() {
+                        if(!mParent.isDisposed() && !c.isDisposed()) {
+                            mParent.getShell().layout(new Control[] {c});
+                        }
+                    }
                 });
             }
         }
     }
 
     @Override
-	public boolean shouldUseExtraSpace()
+    public boolean shouldUseExtraSpace()
     {
         return true;
     }
@@ -144,32 +144,32 @@ public abstract class InstallOptionsElementPropertySection extends AbstractPrope
     protected Composite createSectionComposite(Composite parent)
     {
         final Composite section = getWidgetFactory().createComposite(parent);
-		section.setLayoutDeferred(true);
-		final JobScheduler scheduler = EclipseNSISPlugin.getDefault()
-				.getJobScheduler();
-		final Object jobFamily = new Object();
-		section.addControlListener(new ControlAdapter() {
-			private IJobStatusRunnable mRunnable = new IJobStatusRunnable() {
-				public IStatus run(IProgressMonitor monitor)
-				{
-					if(!section.isDisposed()) {
-						section.setLayoutDeferred(false);
-						section.setLayoutDeferred(true);
-					}
-					return Status.OK_STATUS;
-				}
-			};
+        section.setLayoutDeferred(true);
+        final JobScheduler scheduler = EclipseNSISPlugin.getDefault()
+                .getJobScheduler();
+        final Object jobFamily = new Object();
+        section.addControlListener(new ControlAdapter() {
+            private IJobStatusRunnable mRunnable = new IJobStatusRunnable() {
+                public IStatus run(IProgressMonitor monitor)
+                {
+                    if(!section.isDisposed()) {
+                        section.setLayoutDeferred(false);
+                        section.setLayoutDeferred(true);
+                    }
+                    return Status.OK_STATUS;
+                }
+            };
 
-			@Override
-			public void controlResized(ControlEvent e)
-			{
-				if (!scheduler.isScheduled(jobFamily)) {
-					scheduler.scheduleUIJob(jobFamily, InstallOptionsPlugin.getResourceString("tabbed.property.update.layout.job.name"), //$NON-NLS-1$
-							mRunnable);
-				}
-			}
-		});
-		return section;
+            @Override
+            public void controlResized(ControlEvent e)
+            {
+                if (!scheduler.isScheduled(jobFamily)) {
+                    scheduler.scheduleUIJob(jobFamily, InstallOptionsPlugin.getResourceString("tabbed.property.update.layout.job.name"), //$NON-NLS-1$
+                            mRunnable);
+                }
+            }
+        });
+        return section;
     }
 
     protected abstract Control createSection(InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, InstallOptionsCommandHelper commandHelper);

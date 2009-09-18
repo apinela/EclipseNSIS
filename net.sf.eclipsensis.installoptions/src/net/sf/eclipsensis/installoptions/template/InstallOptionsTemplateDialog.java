@@ -37,13 +37,13 @@ public class InstallOptionsTemplateDialog extends AbstractTemplateDialog<IInstal
     }
 
     @Override
-	protected IInstallOptionsTemplate createTemplate(String name)
+    protected IInstallOptionsTemplate createTemplate(String name)
     {
         return new InstallOptionsTemplate2(name);
     }
 
     @Override
-	protected void createUpdateTemplate()
+    protected void createUpdateTemplate()
     {
         super.createUpdateTemplate();
         if(isCreate()) {
@@ -52,13 +52,13 @@ public class InstallOptionsTemplateDialog extends AbstractTemplateDialog<IInstal
     }
 
     @Override
-	protected Image getShellImage()
+    protected Image getShellImage()
     {
         return InstallOptionsPlugin.getShellImage();
     }
 
     @Override
-	protected String getShellTitle()
+    protected String getShellTitle()
     {
         return InstallOptionsPlugin.getResourceString((isCreate()?"create.template.dialog.title":"edit.template.dialog.title")); //$NON-NLS-1$ //$NON-NLS-2$
     }

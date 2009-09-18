@@ -54,7 +54,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
      * @see org.eclipse.jface.text.rules.ICharacterScanner#read()
      */
     @Override
-	public int read()
+    public int read()
     {
         int c = super.read();
         if(!isCaseSensitive() && Character.isUpperCase((char)c)) {
@@ -92,7 +92,7 @@ public abstract class NSISRuleBasedScanner extends BufferedRuleBasedScanner impl
      * @see org.eclipse.jface.text.rules.ITokenScanner#setRange(org.eclipse.jface.text.IDocument, int, int)
      */
     @Override
-	public void setRange(IDocument document, int offset, int length)
+    public void setRange(IDocument document, int offset, int length)
     {
         super.setRange(document, offset, length);
         Arrays.sort(fDelimiters,new Comparator<char[]>() {

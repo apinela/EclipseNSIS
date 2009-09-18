@@ -46,8 +46,8 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
     };
 
     @SuppressWarnings("unchecked")
-	@Override
-	public Object getAdapter(Class key)
+    @Override
+    public Object getAdapter(Class key)
     {
         if(IExtendedEditSupport.class.equals(key)) {
             return mExtendedEditSupport;
@@ -56,50 +56,50 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
     }
 
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return "checkbox.direct.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected IInstallOptionsFigure createInstallOptionsFigure()
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new CheckBoxFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
     @Override
-	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new CheckBoxCellEditorLocator((CheckBoxFigure)figure);
     }
 
     @Override
-	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
     {
         return new InstallOptionsCheckBoxEditManager(part, locator);
     }
 
     @Override
-	protected void createEditPolicies()
+    protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsCheckBoxExtendedEditPolicy(this));
     }
 
     @Override
-	protected String getExtendedEditLabelProperty()
+    protected String getExtendedEditLabelProperty()
     {
         return "checkbox.extended.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("checkbox.type.name"); //$NON-NLS-1$
     }
 
     @Override
-	protected void handleFlagAdded(String flag)
+    protected void handleFlagAdded(String flag)
     {
         if(flag.equals(InstallOptionsModel.FLAGS_RIGHT)) {
             ((CheckBoxFigure)getFigure()).setLeftText(true);
@@ -111,7 +111,7 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
     }
 
     @Override
-	protected void handleFlagRemoved(String flag)
+    protected void handleFlagRemoved(String flag)
     {
         if(flag.equals(InstallOptionsModel.FLAGS_RIGHT)) {
             ((CheckBoxFigure)getFigure()).setLeftText(false);
@@ -123,7 +123,7 @@ public class InstallOptionsCheckBoxEditPart extends InstallOptionsButtonEditPart
     }
 
     @Override
-	protected void doPropertyChange(PropertyChangeEvent evt)
+    protected void doPropertyChange(PropertyChangeEvent evt)
     {
         if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
             CheckBoxFigure figure2 = (CheckBoxFigure)getFigure();

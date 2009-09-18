@@ -258,7 +258,7 @@ public class NSISInformationUtility implements INSISConstants
                 }
                 String text = NSISTextUtility.getRegionText(doc,region);
                 if(!Common.isEmpty(text)) {
-                	List<CompletionProposal> list = new ArrayList<CompletionProposal>();
+                    List<CompletionProposal> list = new ArrayList<CompletionProposal>();
                     int pos = text.indexOf("::"); //$NON-NLS-1$
                     if(pos > 0) {
                         String pluginName = text.substring(0,pos);
@@ -350,7 +350,7 @@ public class NSISInformationUtility implements INSISConstants
          * @see net.sf.eclipsensis.editor.text.INSISTextProcessor#isValid(int)
          */
         @Override
-		public boolean isValid(int c)
+        public boolean isValid(int c)
         {
             if(testComplete()) {
                 return false;
@@ -381,7 +381,7 @@ public class NSISInformationUtility implements INSISConstants
         }
 
         @Override
-		protected boolean testComplete()
+        protected boolean testComplete()
         {
             boolean isComplete = false;
             if(mBuffer.length() > 1) {
@@ -429,7 +429,7 @@ public class NSISInformationUtility implements INSISConstants
          * @see net.sf.eclipsensis.editor.text.INSISTextProcessor#setScanner(org.eclipse.jface.text.rules.ICharacterScanner)
          */
         @Override
-		public void setScanner(ICharacterScanner scanner)
+        public void setScanner(ICharacterScanner scanner)
         {
             super.setScanner(scanner);
             mIsSymbol = false;
@@ -445,7 +445,7 @@ public class NSISInformationUtility implements INSISConstants
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#createToken()
          */
         @Override
-		public IToken createToken()
+        public IToken createToken()
         {
             if(mStringChar != (char)0) {
                 return new Token(new Region(mStartOffset+1,(((NSISScanner)mScanner).getOffset()-mStartOffset-1)));
@@ -459,7 +459,7 @@ public class NSISInformationUtility implements INSISConstants
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#isValid(int)
          */
         @Override
-		public boolean isValid(int c)
+        public boolean isValid(int c)
         {
             if(mStringChar == 0) {
                 if(c == '"' || c == '\'' || c == '`') {
@@ -500,7 +500,7 @@ public class NSISInformationUtility implements INSISConstants
          * @see net.sf.eclipsensis.editor.text.INSISTextProcessor#isValid(int)
          */
         @Override
-		public boolean isValid(int c)
+        public boolean isValid(int c)
         {
             boolean b = super.isValid(c);
             if(!b) {
@@ -548,7 +548,7 @@ public class NSISInformationUtility implements INSISConstants
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#createToken()
          */
         @Override
-		public IToken createToken()
+        public IToken createToken()
         {
             if(mOffset >=0 && mFirstNonWhitespaceOffset >= 0 && mBuffer.length() > 0) {
                 int offset = ((NSISScanner)mScanner).getOffset();
@@ -563,7 +563,7 @@ public class NSISInformationUtility implements INSISConstants
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#isValid(int)
          */
         @Override
-		public boolean isValid(int c)
+        public boolean isValid(int c)
         {
             if(!Character.isWhitespace((char)c)) {
                 if(mFirstNonWhitespaceOffset < 0) {
@@ -587,7 +587,7 @@ public class NSISInformationUtility implements INSISConstants
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#setScanner(org.eclipse.jface.text.rules.ICharacterScanner)
          */
         @Override
-		public void setScanner(ICharacterScanner scanner)
+        public void setScanner(ICharacterScanner scanner)
         {
             super.setScanner(scanner);
             mFirstNonWhitespaceOffset = -1;
@@ -608,7 +608,7 @@ public class NSISInformationUtility implements INSISConstants
          * @see net.sf.eclipsensis.editor.codeassist.NSISTextUtility.INSISTextProcessor#isValid(int)
          */
         @Override
-		public boolean isValid(int c)
+        public boolean isValid(int c)
         {
             if(!Character.isWhitespace((char)c)) {
                 if(mFirstNonWhitespaceOffset < 0) {

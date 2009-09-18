@@ -82,25 +82,25 @@ public class InstallOptionsRulerProvider extends RulerProvider
     }
 
     @Override
-	public List<InstallOptionsWidget> getAttachedModelObjects(Object guide)
+    public List<InstallOptionsWidget> getAttachedModelObjects(Object guide)
     {
         return new ArrayList<InstallOptionsWidget>(((InstallOptionsGuide)guide).getWidgets());
     }
 
     @Override
-	public Command getCreateGuideCommand(int position)
+    public Command getCreateGuideCommand(int position)
     {
         return new CreateGuideCommand(mRuler, position);
     }
 
     @Override
-	public Command getDeleteGuideCommand(Object guide)
+    public Command getDeleteGuideCommand(Object guide)
     {
         return new DeleteGuideCommand((InstallOptionsGuide)guide, mRuler);
     }
 
     @Override
-	public Command getMoveGuideCommand(Object guide, int pDelta)
+    public Command getMoveGuideCommand(Object guide, int pDelta)
     {
         return new MoveGuideCommand((InstallOptionsGuide)guide, pDelta);
     }
@@ -111,7 +111,7 @@ public class InstallOptionsRulerProvider extends RulerProvider
     }
 
     @Override
-	public int[] getGuidePositions()
+    public int[] getGuidePositions()
     {
         List<InstallOptionsGuide> guides = getGuides();
         Font f = FontUtility.getInstallOptionsFont();
@@ -123,31 +123,31 @@ public class InstallOptionsRulerProvider extends RulerProvider
     }
 
     @Override
-	public Object getRuler()
+    public Object getRuler()
     {
         return mRuler;
     }
 
     @Override
-	public int getUnit()
+    public int getUnit()
     {
         return mRuler.getUnit();
     }
 
     @Override
-	public void setUnit(int newUnit)
+    public void setUnit(int newUnit)
     {
         mRuler.setUnit(newUnit);
     }
 
     @Override
-	public int getGuidePosition(Object guide)
+    public int getGuidePosition(Object guide)
     {
         return convertGuidePosition(FontUtility.getInstallOptionsFont(),(InstallOptionsGuide)guide);
     }
 
     @Override
-	public List<InstallOptionsGuide> getGuides()
+    public List<InstallOptionsGuide> getGuides()
     {
         return mRuler.getGuides();
     }

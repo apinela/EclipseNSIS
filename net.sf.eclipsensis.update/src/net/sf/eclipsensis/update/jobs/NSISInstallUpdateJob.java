@@ -51,7 +51,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
     }
 
     @Override
-	protected boolean shouldReschedule()
+    protected boolean shouldReschedule()
     {
         return getSettings().isAutomated();
     }
@@ -107,7 +107,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
     }
 
     @Override
-	protected IStatus doRun(final IProgressMonitor monitor)
+    protected IStatus doRun(final IProgressMonitor monitor)
     {
         if(IOUtility.isValidFile(mSetupExe)) {
             monitor.beginTask(getName(), IProgressMonitor.UNKNOWN);
@@ -130,7 +130,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                                             setShellStyle(getShellStyle()|SWT.RESIZE);
                                         }
                                         @Override
-										protected int getTableStyle()
+                                        protected int getTableStyle()
                                         {
                                             return super.getTableStyle() | SWT.READ_ONLY;
                                         }
@@ -154,8 +154,8 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                 final List<String> cmd = new ArrayList<String>();
                 if(EclipseNSISPlugin.getDefault().isWinVista())
                 {
-                	cmd.add("cmd.exe"); //$NON-NLS-1$
-                	cmd.add("/c"); //$NON-NLS-1$
+                    cmd.add("cmd.exe"); //$NON-NLS-1$
+                    cmd.add("/c"); //$NON-NLS-1$
                 }
                 cmd.add(mSetupExe.getAbsolutePath());
                 boolean install = ((settings.getAction() & SchedulerConstants.UPDATE_INSTALL) == SchedulerConstants.UPDATE_INSTALL);
@@ -278,7 +278,7 @@ class NSISInstallUpdateJob extends NSISUpdateJob
     }
 
     @Override
-	protected String formatException(Throwable e)
+    protected String formatException(Throwable e)
     {
         return new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("install.update.error")).format(new String[] {mVersion,e.getMessage()}); //$NON-NLS-1$
     }

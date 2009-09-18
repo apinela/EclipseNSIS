@@ -34,15 +34,15 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
 
     public static final TypeConverter<List<FileFilter>> FILEFILTER_LIST_CONVERTER = new TypeConverter<List<FileFilter>>(){
         @Override
-		public String asString(List<FileFilter> o)
+        public String asString(List<FileFilter> o)
         {
             return Common.flatten(o.toArray(new FileFilter[o.size()]),IInstallOptionsConstants.LIST_SEPARATOR);
         }
 
         @Override
-		public List<FileFilter> asType(String s)
+        public List<FileFilter> asType(String s)
         {
-        	List<FileFilter> list = new ArrayList<FileFilter>();
+            List<FileFilter> list = new ArrayList<FileFilter>();
             String[] tokens = Common.tokenize(s,IInstallOptionsConstants.LIST_SEPARATOR,false);
             for (int i = 0; i < (tokens.length-1); i+= 2) {
                 String description = tokens[i];
@@ -57,9 +57,9 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
         }
 
         @Override
-		public List<FileFilter> makeCopy(List<FileFilter> o)
+        public List<FileFilter> makeCopy(List<FileFilter> o)
         {
-        	List<FileFilter> list = new ArrayList<FileFilter>();
+            List<FileFilter> list = new ArrayList<FileFilter>();
             for(Iterator<FileFilter> iter=o.iterator(); iter.hasNext(); ) {
                 list.add((FileFilter) iter.next().clone());
             }
@@ -69,8 +69,8 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
 
     public static final LabelProvider FILTER_LABEL_PROVIDER = new LabelProvider(){
         @Override
-		@SuppressWarnings("unchecked")
-		public String getText(Object element)
+        @SuppressWarnings("unchecked")
+        public String getText(Object element)
         {
             if(element instanceof List) {
                 return FILEFILTER_LIST_CONVERTER.asString((List<FileFilter>) element);
@@ -89,27 +89,27 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("text"); //$NON-NLS-1$
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         mFilter = new ArrayList<FileFilter>();
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_FILEREQUEST;
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         InstallOptionsFileRequest clone = (InstallOptionsFileRequest)super.clone();
         clone.mFilter = new ArrayList<FileFilter>();
@@ -118,7 +118,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	protected void addPropertyName(List<String> list, String setting)
+    protected void addPropertyName(List<String> list, String setting)
     {
         if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_FILTER)) {
             list.add(InstallOptionsModel.PROPERTY_FILTER);
@@ -129,7 +129,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	protected TypeConverter<?> loadTypeConverter(String property, Object value)
+    protected TypeConverter<?> loadTypeConverter(String property, Object value)
     {
         if(property.equals(InstallOptionsModel.PROPERTY_FILTER)) {
             return FILEFILTER_LIST_CONVERTER;
@@ -140,19 +140,19 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new PathRequestPropertySectionCreator(this);
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_FILTER)) {
             String propertyName = InstallOptionsPlugin.getResourceString("filter.property.name"); //$NON-NLS-1$
             PropertyDescriptor descriptor = new PropertyDescriptor(InstallOptionsModel.PROPERTY_FILTER, propertyName){
                 @Override
-				public CellEditor createPropertyEditor(Composite parent)
+                public CellEditor createPropertyEditor(Composite parent)
                 {
                     final FileFilterCellEditor editor = new FileFilterCellEditor(InstallOptionsFileRequest.this, parent);
                     editor.setValidator(getValidator());
@@ -184,7 +184,7 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	public Object getPropertyValue(Object propName)
+    public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_FILTER.equals(propName)) {
             return getFilter();
@@ -193,8 +193,8 @@ public class InstallOptionsFileRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	public void setPropertyValue(Object id, Object value)
+    @SuppressWarnings("unchecked")
+    public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_FILTER)) {
             setFilter((List<FileFilter>)value);

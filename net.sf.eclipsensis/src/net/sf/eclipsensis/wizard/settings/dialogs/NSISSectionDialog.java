@@ -46,7 +46,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_sectiondlg_context"; //$NON-NLS-1$
     }
@@ -55,7 +55,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
     @Override
-	protected List<String> getProperties()
+    protected List<String> getProperties()
     {
         return cProperties;
     }
@@ -64,7 +64,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected Control createControlContents(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(2,false);
@@ -142,7 +142,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
         final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.hidden.label",mStore.getBoolean("hidden"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb1.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 mStore.setValue("hidden",cb1.getSelection()); //$NON-NLS-1$
             }
         });
@@ -152,7 +152,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
         final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.bold.label",mStore.getBoolean("bold"),true,m,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb2.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 mStore.setValue("bold",cb2.getSelection()); //$NON-NLS-1$
             }
         });
@@ -161,7 +161,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
         final Button cb3 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.unselected.label",mStore.getBoolean("defaultUnselected"),true,m,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb3.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 mStore.setValue("defaultUnselected",cb3.getSelection()); //$NON-NLS-1$
             }
         });
@@ -170,13 +170,13 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
     }
 
     @Override
-	protected boolean hasRequiredFields()
+    protected boolean hasRequiredFields()
     {
         return false;
     }
 
     @Override
-	protected String checkForErrors()
+    protected String checkForErrors()
     {
         return ""; //$NON-NLS-1$
     }
@@ -185,7 +185,7 @@ public class NSISSectionDialog extends AbstractNSISInstallItemDialog
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         if(Common.isEmpty(mStore.getString("name"))) { //$NON-NLS-1$
             mStore.setValue("hidden",true); //$NON-NLS-1$

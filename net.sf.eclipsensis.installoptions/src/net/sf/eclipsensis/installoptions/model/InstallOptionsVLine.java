@@ -21,13 +21,13 @@ public class InstallOptionsVLine extends InstallOptionsLine
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_VLINE;
     }
 
     @Override
-	public boolean isHorizontal()
+    public boolean isHorizontal()
     {
         return false;
     }

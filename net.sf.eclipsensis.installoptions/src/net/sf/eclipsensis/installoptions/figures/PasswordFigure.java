@@ -26,7 +26,7 @@ public class PasswordFigure extends TextFigure
     }
 
     @Override
-	protected void init(IPropertySource propertySource)
+    protected void init(IPropertySource propertySource)
     {
         super.init(propertySource);
         setOnlyNumbers(false);
@@ -36,7 +36,7 @@ public class PasswordFigure extends TextFigure
    }
 
     @Override
-	public int getDefaultStyle()
+    public int getDefaultStyle()
     {
         int style = super.getDefaultStyle();
         return style|SWT.PASSWORD;

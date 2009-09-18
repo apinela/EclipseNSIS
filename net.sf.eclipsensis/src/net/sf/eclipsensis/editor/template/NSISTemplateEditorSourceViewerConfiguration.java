@@ -33,7 +33,7 @@ public class NSISTemplateEditorSourceViewerConfiguration extends NSISTemplateSou
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
     @Override
-	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer)
+    public IContentAssistant getContentAssistant(ISourceViewer sourceViewer)
     {
         return NSISSourceViewerConfigurationTools.createContentAssistant(sourceViewer,
                         new IContentAssistProcessor[] {new NSISTemplateVariableProcessor(mTemplateContextType),

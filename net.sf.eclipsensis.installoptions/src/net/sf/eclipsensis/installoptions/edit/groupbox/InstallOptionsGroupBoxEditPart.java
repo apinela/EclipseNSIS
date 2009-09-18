@@ -22,13 +22,13 @@ import org.eclipse.swt.widgets.Composite;
 public class InstallOptionsGroupBoxEditPart extends InstallOptionsUneditableElementEditPart
 {
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return "groupbox.direct.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected IInstallOptionsFigure createInstallOptionsFigure()
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new GroupBoxFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
@@ -37,7 +37,7 @@ public class InstallOptionsGroupBoxEditPart extends InstallOptionsUneditableElem
      * @return
      */
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("groupbox.type.name"); //$NON-NLS-1$
     }
@@ -46,7 +46,7 @@ public class InstallOptionsGroupBoxEditPart extends InstallOptionsUneditableElem
      * @see net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart#creatDirectEditManager(net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart, java.lang.Class, org.eclipse.gef.tools.CellEditorLocator)
      */
     @Override
-	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
     {
         return new InstallOptionsGroupBoxEditManager(part, locator);
     }
@@ -55,7 +55,7 @@ public class InstallOptionsGroupBoxEditPart extends InstallOptionsUneditableElem
      * @see net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditPart#createCellEditorLocator(net.sf.eclipsensis.installoptions.figures.UneditableElementFigure)
      */
     @Override
-	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new GroupBoxCellEditorLocator((GroupBoxFigure)getFigure());
     }

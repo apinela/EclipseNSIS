@@ -33,13 +33,13 @@ public class ReorderPartCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         parent.moveChild(child, newIndex);
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         parent.moveChild(child, oldIndex);
     }

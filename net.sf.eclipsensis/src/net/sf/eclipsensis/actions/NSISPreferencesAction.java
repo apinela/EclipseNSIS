@@ -19,7 +19,7 @@ public class NSISPreferencesAction extends NSISAction
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     @Override
-	public void run(IAction action)
+    public void run(IAction action)
     {
         NSISPreferencePage.show();
     }

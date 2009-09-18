@@ -59,7 +59,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
     }
 
     @Override
-	public void handleEndTag(Tag t, int pos)
+    public void handleEndTag(Tag t, int pos)
     {
         if(mCollecting) {
             if(t.equals(Tag.A) && mBuffer.length() == NSISHelpURLProvider.KEYWORD_HELP_HTML_PREFIX.length()) {
@@ -101,7 +101,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
     }
 
     @Override
-	public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
+    public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(mCollecting) {
             if(HEADINGS.contains(t)) {
@@ -148,7 +148,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
     }
 
     @Override
-	public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
+    public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(t.equals(Tag.A)) {
             if(a != null && a.isDefined(Attribute.NAME)) {
@@ -171,7 +171,7 @@ public class NSISHelpFileParserCallback extends ParserCallback
     }
 
     @Override
-	public void handleText(char[] data, int pos)
+    public void handleText(char[] data, int pos)
     {
         if(mCollecting) {
             boolean isNewLine = false; //For some reason CR is being converted to NL by the parser.

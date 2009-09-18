@@ -24,7 +24,7 @@ public class ComboboxPropertySectionCreator extends ListItemsPropertySectionCrea
     }
 
     @Override
-	protected CheckboxTableViewer createListItemsAndStateSection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
+    protected CheckboxTableViewer createListItemsAndStateSection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
         createTextSection(parent, InstallOptionsModel.PROPERTY_STATE, widgetFactory, commandHelper);
         return super.createListItemsAndStateSection(parent, widgetFactory, commandHelper);

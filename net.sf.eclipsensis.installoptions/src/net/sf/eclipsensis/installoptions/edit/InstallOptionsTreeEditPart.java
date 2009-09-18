@@ -42,7 +42,7 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
     }
 
     @Override
-	public void activate()
+    public void activate()
     {
         super.activate();
         InstallOptionsElement element = getInstallOptionsElement();
@@ -55,7 +55,7 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
      * Creates and installs pertinent EditPolicies for this.
      */
     @Override
-	protected void createEditPolicies()
+    protected void createEditPolicies()
     {
         EditPolicy component = new InstallOptionsEditPolicy();
         installEditPolicy(EditPolicy.COMPONENT_ROLE, component);
@@ -63,7 +63,7 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
     }
 
     @Override
-	public void deactivate()
+    public void deactivate()
     {
         InstallOptionsElement element = getInstallOptionsElement();
         if(element != null) {
@@ -89,7 +89,7 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
      * @return <code>null</code>
      */
     @Override
-	protected List<InstallOptionsWidget> getModelChildren()
+    protected List<InstallOptionsWidget> getModelChildren()
     {
         return Collections.emptyList();
     }
@@ -132,7 +132,7 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
     }
 
     @SuppressWarnings("unchecked")
-	protected void replaceChild(EditPart oldChild, EditPart newChild)
+    protected void replaceChild(EditPart oldChild, EditPart newChild)
     {
         Assert.isNotNull(oldChild);
         Assert.isNotNull(newChild);
@@ -169,7 +169,7 @@ public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements 
      *            Property to be refreshed.
      */
     @Override
-	protected void refreshVisuals()
+    protected void refreshVisuals()
     {
         if (getWidget() instanceof Tree) {
             for(Iterator<?> iter = getChildren().iterator(); iter.hasNext();) {

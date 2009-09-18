@@ -47,7 +47,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_shortcutdlg_context"; //$NON-NLS-1$
     }
@@ -56,7 +56,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
     @Override
-	protected List<String> getProperties()
+    protected List<String> getProperties()
     {
         return cProperties;
     }
@@ -65,7 +65,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected Control createControlContents(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(3,false);
@@ -81,7 +81,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog
                                                                createInSMGroup, true, null, false);
             b1.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     if(b1.getSelection()) {
                         mStore.setValue("createInStartMenuGroup", true); //$NON-NLS-1$
@@ -93,7 +93,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog
                     !createInSMGroup, true, null, false);
             b2.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     if(b2.getSelection()) {
                         mStore.setValue("createInStartMenuGroup", false); //$NON-NLS-1$
@@ -144,7 +144,7 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog
                             "wizard.shortcut.type.label",true,null,false); //$NON-NLS-1$
         SelectionAdapter sa = new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 Button b = (Button)e.widget;
                 if(b.getSelection()) {
                     int n=-1;
@@ -192,13 +192,13 @@ public class NSISInstallShortcutDialog extends AbstractNSISInstallItemDialog
     }
 
     @Override
-	protected boolean hasRequiredFields()
+    protected boolean hasRequiredFields()
     {
         return true;
     }
 
     @Override
-	protected String checkForErrors()
+    protected String checkForErrors()
     {
         if(mStore.getBoolean("createInStartMenuGroup")) { //$NON-NLS-1$
             if(!mWizard.getSettings().isCreateStartMenuGroup()) {

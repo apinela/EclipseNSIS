@@ -22,13 +22,13 @@ import org.eclipse.jface.viewers.TextCellEditor;
 public abstract class InstallOptionsUneditableElementEditPart extends InstallOptionsWidgetEditPart
 {
     @Override
-	protected String getAccessibleControlEventResult()
+    protected String getAccessibleControlEventResult()
     {
         return getInstallOptionsUneditableElement().getText();
     }
 
     @Override
-	protected void createEditPolicies()
+    protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, createDirectEditPolicy());
@@ -53,7 +53,7 @@ public abstract class InstallOptionsUneditableElementEditPart extends InstallOpt
     }
 
     @Override
-	protected void doPropertyChange(PropertyChangeEvent evt)
+    protected void doPropertyChange(PropertyChangeEvent evt)
     {
         if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_TEXT)) {
             IUneditableElementFigure figure2 = (IUneditableElementFigure)getFigure();

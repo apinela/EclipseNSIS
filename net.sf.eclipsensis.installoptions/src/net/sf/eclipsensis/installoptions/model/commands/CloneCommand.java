@@ -29,7 +29,7 @@ public class CloneCommand extends Command
     private InstallOptionsDialog mParent;
 
     private Map<InstallOptionsWidget, Rectangle> mBounds;
-    
+
     private Map<InstallOptionsWidget, Integer> mIndices;
 
     private ChangeGuideCommand mVerticalGuideCommand, mHorizontalGuideCommand;
@@ -95,7 +95,7 @@ public class CloneCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         mNewTopLevelWidgets = new LinkedList<InstallOptionsElement>();
 
@@ -136,7 +136,7 @@ public class CloneCommand extends Command
     }
 
     @Override
-	public void redo()
+    public void redo()
     {
         for (Iterator<InstallOptionsElement> iter = mNewTopLevelWidgets.iterator(); iter.hasNext();) {
             mParent.addChild((InstallOptionsWidget)iter.next());
@@ -162,7 +162,7 @@ public class CloneCommand extends Command
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         if (mHorizontalGuideCommand != null) {
             mHorizontalGuideCommand.undo();

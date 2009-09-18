@@ -14,7 +14,7 @@ import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 public class InstallOptionsVLineEditPart extends InstallOptionsLineEditPart
 {
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("vline.type.name"); //$NON-NLS-1$
     }

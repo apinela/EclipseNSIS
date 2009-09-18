@@ -41,7 +41,7 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
      * @see org.eclipse.jface.text.source.ISourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)
      */
     @Override
-	public void configure(SourceViewerConfiguration configuration)
+    public void configure(SourceViewerConfiguration configuration)
     {
         mColorRegistry = JFaceResources.getColorRegistry();
         mColorRegistry.addListener(this);
@@ -59,7 +59,7 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
      * @see org.eclipse.jface.text.source.ISourceViewerExtension2#unconfigure()
      */
     @Override
-	public void unconfigure()
+    public void unconfigure()
     {
         mColorRegistry.removeListener(this);
         if (mInsertTemplateVariableAssistant != null) {
@@ -74,7 +74,7 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
      * @see org.eclipse.jface.text.ITextOperationTargetExtension#enableOperation(int, boolean)
      */
     @Override
-	public void enableOperation(int operation, boolean enable)
+    public void enableOperation(int operation, boolean enable)
     {
         switch(operation) {
             case INSERT_TEMPLATE_VARIABLE:
@@ -101,7 +101,7 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
      * @see org.eclipse.jface.text.ITextOperationTarget#canDoOperation(int)
      */
     @Override
-	public boolean canDoOperation(int operation)
+    public boolean canDoOperation(int operation)
     {
         switch(operation) {
             case INSERT_TEMPLATE_VARIABLE:
@@ -115,7 +115,7 @@ public class NSISTemplateSourceViewer extends NSISSourceViewer
      * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
      */
     @Override
-	public void doOperation(int operation)
+    public void doOperation(int operation)
     {
         switch(operation) {
             case INSERT_TEMPLATE_VARIABLE:

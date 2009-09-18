@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help;
@@ -335,13 +335,13 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets
      * .Composite)
      */
     @Override
-	public void createPartControl(Composite parent)
+    public void createPartControl(Composite parent)
     {
         mShowNav = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_HELP_VIEW_SHOW_NAV);
         mSynched = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_HELP_VIEW_SYNCHED);
@@ -405,7 +405,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                     {
                         try
                         {
-                        	String location = encodeFileURI(fixFileURI(event.location));
+                            String location = encodeFileURI(fixFileURI(event.location));
                             URI url = new URI(location);
                             if (url.getFragment() != null)
                             {
@@ -631,7 +631,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     }
 
     @Override
-	public void dispose()
+    public void dispose()
     {
         NSISHelpURLProvider.getInstance().removeListener(mHelpURLListener);
         super.dispose();
@@ -716,7 +716,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             toolItem.setToolTipText(EclipseNSISPlugin.getResourceString("help.browser.search.syntax.tooltip")); //$NON-NLS-1$
             toolItem.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     mBrowser.setUrl(searchSyntaxURL);
                 }
@@ -742,7 +742,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         final Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
         SelectionAdapter menuAdapter = new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 MenuItem mi = (MenuItem) e.widget;
                 searchText.insert(mi.getText());
@@ -758,7 +758,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
         b.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 if (menu.isVisible())
                 {
@@ -853,7 +853,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
         SelectionListener colummSortListener = new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 NSISHelpSearchResult[] results = (NSISHelpSearchResult[]) mSearchViewer.getInput();
                 if (!Common.isEmptyArray(results))
@@ -886,7 +886,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mSearchViewer.setContentProvider(new ArrayContentProvider());
         mSearchViewer.setLabelProvider(new CollectionLabelProvider() {
             @Override
-			public String getColumnText(Object element, int columnIndex)
+            public String getColumnText(Object element, int columnIndex)
             {
                 if (element instanceof NSISHelpSearchResult)
                 {
@@ -917,7 +917,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
         mSearchingDialog = new SearchingDialog(getSite().getShell()) {
             @Override
-			public void searchCompleted(final NSISHelpSearchResult[] results, Collection<String> highlightTerms)
+            public void searchCompleted(final NSISHelpSearchResult[] results, Collection<String> highlightTerms)
             {
                 super.searchCompleted(results, highlightTerms);
                 getSite().getShell().getDisplay().asyncExec(new Runnable() {
@@ -936,7 +936,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             }
 
             @Override
-			public int open()
+            public int open()
             {
                 int rv = super.open();
                 NSISHelpURLProvider.getInstance().getSearchManager().search(
@@ -1002,20 +1002,20 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                             }
                             mBrowser.addLocationListener(new LocationAdapter() {
                                 @Override
-								public void changed(LocationEvent event)
+                                public void changed(LocationEvent event)
                                 {
                                     String location = event.location;
                                     if (!Common.isEmpty(location))
                                     {
                                         if (!isFileURI(location))
                                         {
-                                        	location.replace("+", " ");
+                                            location.replace("+", " ");
                                             // This is a windows file name
                                             location = decode(IOUtility.getFileURLString(new File(location)));
                                         }
                                         else
                                         {
-                                        	location = fixFileURI(location);
+                                            location = fixFileURI(location);
                                         }
                                         String file;
                                         int n = location.lastIndexOf('#');
@@ -1046,7 +1046,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         };
         display.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 displaySearchRunnable.run();
             }
@@ -1069,7 +1069,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         };
         searchText.addKeyListener(new KeyAdapter() {
             @Override
-			public void keyPressed(KeyEvent e)
+            public void keyPressed(KeyEvent e)
             {
                 if (e.character == SWT.CR || e.character == SWT.LF)
                 {
@@ -1081,7 +1081,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
         listTopics.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 searchRunnable.run();
             }
@@ -1107,7 +1107,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mIndexViewer = new ListViewer(list);
         mIndexViewer.setContentProvider(new EmptyContentProvider() {
             @Override
-			public Object[] getElements(Object inputElement)
+            public Object[] getElements(Object inputElement)
             {
                 if (inputElement instanceof NSISHelpIndex)
                 {
@@ -1118,7 +1118,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         });
         mIndexViewer.setLabelProvider(new LabelProvider() {
             @Override
-			public String getText(Object element)
+            public String getText(Object element)
             {
                 if (element instanceof NSISHelpIndexEntry)
                 {
@@ -1194,7 +1194,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         b.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
         b.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 IStructuredSelection sel = (IStructuredSelection) mIndexViewer.getSelection();
                 if (!sel.isEmpty())
@@ -1220,7 +1220,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         mContentsViewer = new TreeViewer(tree);
         final ITreeContentProvider contentProvider = new EmptyContentProvider() {
             @Override
-			public Object[] getChildren(Object parentElement)
+            public Object[] getChildren(Object parentElement)
             {
                 if (parentElement instanceof NSISHelpTOC)
                 {
@@ -1234,7 +1234,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             }
 
             @Override
-			public Object getParent(Object element)
+            public Object getParent(Object element)
             {
                 if (element instanceof NSISHelpTOCNode)
                 {
@@ -1244,7 +1244,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             }
 
             @Override
-			public boolean hasChildren(Object element)
+            public boolean hasChildren(Object element)
             {
                 if (element instanceof NSISHelpTOC)
                 {
@@ -1258,7 +1258,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             }
 
             @Override
-			public Object[] getElements(Object inputElement)
+            public Object[] getElements(Object inputElement)
             {
                 if (inputElement instanceof NSISHelpTOC)
                 {
@@ -1274,7 +1274,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         final Image helpPage = imageManager.getImage(EclipseNSISPlugin.getResourceString("help.page.icon")); //$NON-NLS-1$
         mContentsViewer.setLabelProvider(new LabelProvider() {
             @Override
-			public Image getImage(Object element)
+            public Image getImage(Object element)
             {
                 if (element instanceof NSISHelpTOCNode)
                 {
@@ -1299,7 +1299,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             }
 
             @Override
-			public String getText(Object element)
+            public String getText(Object element)
             {
                 if (element instanceof NSISHelpTOCNode)
                 {
@@ -1711,11 +1711,11 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
      */
     @Override
-	public void setFocus()
+    public void setFocus()
     {
         if (isActivated())
         {
@@ -1723,32 +1723,32 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
     }
 
-    private boolean isFileURI(String location) 
+    private boolean isFileURI(String location)
     {
-		return location.regionMatches(true, 0, FILE_URI_SCHEME, 0, FILE_URI_SCHEME.length());
-	}
+        return location.regionMatches(true, 0, FILE_URI_SCHEME, 0, FILE_URI_SCHEME.length());
+    }
 
     private String fixFileURI(String location)
     {
-    	Matcher matcher = cW3CFileUriPattern.matcher(location);
-    	if(matcher.matches())
-    	{
-    		return "file:///" + matcher.group(1).replace("+", "%20");
-    	}
-		return location;
-	}
+        Matcher matcher = cW3CFileUriPattern.matcher(location);
+        if(matcher.matches())
+        {
+            return "file:///" + matcher.group(1).replace("+", "%20");
+        }
+        return location;
+    }
 
     private String encodeFileURI(String location) throws IOException
     {
-    	Matcher matcher = cFileUriPattern.matcher(location);
-    	if(matcher.matches())
-    	{
-    		return "file:///" + URLEncoder.encode(matcher.group(1),System.getProperty("file.encoding")).replace("+", "%20");
-    	}
-		return location;
-	}
+        Matcher matcher = cFileUriPattern.matcher(location);
+        if(matcher.matches())
+        {
+            return "file:///" + URLEncoder.encode(matcher.group(1),System.getProperty("file.encoding")).replace("+", "%20");
+        }
+        return location;
+    }
 
-	private class NSISHelpIndexEntryDialog extends Dialog
+    private class NSISHelpIndexEntryDialog extends Dialog
     {
         private NSISHelpIndexEntry mEntry;
         private NSISHelpIndexURL mURL;
@@ -1766,7 +1766,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
 
         @Override
-		protected void configureShell(Shell newShell)
+        protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
             newShell.setText(EclipseNSISPlugin.getResourceString("help.browser.index.entry.dialog.title")); //$NON-NLS-1$
@@ -1774,7 +1774,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
 
         @Override
-		protected void createButtonsForButtonBar(Composite parent)
+        protected void createButtonsForButtonBar(Composite parent)
         {
             super.createButtonsForButtonBar(parent);
             getButton(IDialogConstants.OK_ID)
@@ -1782,9 +1782,9 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
 
         @Override
-		protected Control createDialogArea(Composite parent)
+        protected Control createDialogArea(Composite parent)
         {
-        	Composite parent2 = (Composite) super.createDialogArea(parent);
+            Composite parent2 = (Composite) super.createDialogArea(parent);
             Label l = new Label(parent2, SWT.NONE);
             l.setText(EclipseNSISPlugin.getResourceString("help.browser.index.entry.dialog.header")); //$NON-NLS-1$
             l.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
@@ -1809,7 +1809,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             final TableViewer viewer = new TableViewer(table);
             viewer.setContentProvider(new EmptyContentProvider() {
                 @Override
-				public Object[] getElements(Object inputElement)
+                public Object[] getElements(Object inputElement)
                 {
                     if (inputElement instanceof NSISHelpIndexEntry)
                     {
@@ -1820,7 +1820,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
             });
             viewer.setLabelProvider(new CollectionLabelProvider() {
                 @Override
-				public String getColumnText(Object element, int columnIndex)
+                public String getColumnText(Object element, int columnIndex)
                 {
                     if (element instanceof NSISHelpIndexURL)
                     {
@@ -1887,7 +1887,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
 
         @Override
-		protected Point getInitialSize()
+        protected Point getInitialSize()
         {
             Point size = super.getInitialSize();
             GC gc = new GC(getShell());
@@ -1985,21 +1985,21 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
 
         @Override
-		protected void cancelPressed()
+        protected void cancelPressed()
         {
             mCanceled = true;
             super.cancelPressed();
         }
 
         @Override
-		public int open()
+        public int open()
         {
             mCanceled = false;
             return super.open();
         }
 
         @Override
-		protected void configureShell(Shell newShell)
+        protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
             newShell.setText(SEARCHING_DIALOG_TITLE);
@@ -2007,7 +2007,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
 
         @Override
-		protected Control createButtonBar(Composite parent)
+        protected Control createButtonBar(Composite parent)
         {
             Composite composite = new Composite(parent, SWT.NONE);
             GridLayout layout = new GridLayout(1, false);
@@ -2026,7 +2026,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         }
 
         @Override
-		protected Control createDialogArea(Composite parent)
+        protected Control createDialogArea(Composite parent)
         {
             Composite composite = (Composite) super.createDialogArea(parent);
             Label l = new Label(composite, SWT.NONE);

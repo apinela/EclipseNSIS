@@ -24,13 +24,13 @@ import org.eclipse.gef.requests.CreateRequest;
 public class InstallOptionsDialogEditPolicy extends ContainerEditPolicy implements IInstallOptionsConstants
 {
     @Override
-	protected Command getCreateCommand(CreateRequest request)
+    protected Command getCreateCommand(CreateRequest request)
     {
         return null;
     }
 
     @Override
-	public Command getCommand(Request request)
+    public Command getCommand(Request request)
     {
         if(REQ_REORDER_PART.equals(request.getType())) {
             return getReorderPartCommand((ReorderPartRequest)request);

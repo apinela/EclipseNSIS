@@ -19,16 +19,16 @@ public class NSISLanguageNodeConverter extends AbstractNodeConverter<NSISLanguag
     private static final String LANGUAGE_NODE = "language"; //$NON-NLS-1$
 
     @Override
-	public NSISLanguage fromNode(Node node, Class<?> clasz)
+    public NSISLanguage fromNode(Node node, Class<?> clasz)
     {
         if (NSISLanguage.class.isAssignableFrom(clasz)) {
-			if (LANGUAGE_NODE.equals(node.getNodeName())) {
-				NamedNodeMap attributes = node.getAttributes();
-				String langName = XMLUtil.getStringValue(attributes, NAME_ATTR);
-				return NSISLanguageManager.getInstance().getLanguage(langName);
-			}
-		}
-		throw new IllegalArgumentException(clasz.getName());
+            if (LANGUAGE_NODE.equals(node.getNodeName())) {
+                NamedNodeMap attributes = node.getAttributes();
+                String langName = XMLUtil.getStringValue(attributes, NAME_ATTR);
+                return NSISLanguageManager.getInstance().getLanguage(langName);
+            }
+        }
+        throw new IllegalArgumentException(clasz.getName());
     }
 
     public Node toNode(Document document, NSISLanguage object)

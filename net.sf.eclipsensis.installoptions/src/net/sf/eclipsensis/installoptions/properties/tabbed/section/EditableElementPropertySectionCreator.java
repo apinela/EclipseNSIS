@@ -26,9 +26,9 @@ public class EditableElementPropertySectionCreator extends WidgetPropertySection
     }
 
     @Override
-	protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
+    protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
-    	Composite parent2 = (Composite)super.createOtherPropertySection(parent, widgetFactory, commandHelper);
+        Composite parent2 = (Composite)super.createOtherPropertySection(parent, widgetFactory, commandHelper);
         Text text = createTextSection(parent2, InstallOptionsModel.PROPERTY_MINLEN, widgetFactory, commandHelper);
         if(text != null) {
             text.addVerifyListener(getNumberVerifyListener());
@@ -52,7 +52,7 @@ public class EditableElementPropertySectionCreator extends WidgetPropertySection
     }
 
     @Override
-	protected boolean shouldCreateOtherPropertySection()
+    protected boolean shouldCreateOtherPropertySection()
     {
         return true;
     }

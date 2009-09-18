@@ -32,7 +32,7 @@ public class InstallOptionsTemplateCreationTool extends CreationTool
     }
 
     @Override
-	public void setFactory(CreationFactory factory)
+    public void setFactory(CreationFactory factory)
     {
         if(factory instanceof InstallOptionsTemplateCreationFactory) {
             super.setFactory(factory);
@@ -40,7 +40,7 @@ public class InstallOptionsTemplateCreationTool extends CreationTool
     }
 
     @Override
-	protected Request createTargetRequest()
+    protected Request createTargetRequest()
     {
         Request request = super.createTargetRequest();
         request.setType(IInstallOptionsConstants.REQ_CREATE_FROM_TEMPLATE);
@@ -48,7 +48,7 @@ public class InstallOptionsTemplateCreationTool extends CreationTool
     }
 
     @Override
-	protected void performCreation(int button) {
+    protected void performCreation(int button) {
         executeCurrentCommand();
         selectAddedObjects();
     }

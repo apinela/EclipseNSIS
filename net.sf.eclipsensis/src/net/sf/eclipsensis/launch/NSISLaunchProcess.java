@@ -109,7 +109,7 @@ class NSISLaunchProcess implements IProcess, IMakeNSISRunListener, IWorkbenchAda
     }
 
     @SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapter)
+    public Object getAdapter(Class adapter)
     {
         if(IWorkbenchAdapter.class.equals(adapter)) {
             return this;

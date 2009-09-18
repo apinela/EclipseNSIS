@@ -45,7 +45,7 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
     }
 
     @Override
-	protected void configureShell(Shell newShell)
+    protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(InstallOptionsPlugin.getResourceString("grid.snap.glue.settings.dialog.name")); //$NON-NLS-1$
@@ -53,9 +53,9 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
     }
 
     @SuppressWarnings("unchecked")
-	private <T> T makeCopy(T o)
+    private <T> T makeCopy(T o)
     {
-    	T o2 = o;
+        T o2 = o;
         if(o2 instanceof Point) {
             o2 = (T)new Point((Point)o2);
         }
@@ -66,7 +66,7 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
     }
 
     @SuppressWarnings("unchecked")
-	private <T> void loadViewerProperty(Map<String, ? super T> map, String mapName, String name, T defaultValue)
+    private <T> void loadViewerProperty(Map<String, ? super T> map, String mapName, String name, T defaultValue)
     {
         T o = null;
         try {
@@ -81,7 +81,7 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
     }
 
     @SuppressWarnings("unchecked")
-	private <T> void saveViewerProperty(Map<String, ? super T> map, String mapName, String name, T defaultValue)
+    private <T> void saveViewerProperty(Map<String, ? super T> map, String mapName, String name, T defaultValue)
     {
         T o = null;
         try {
@@ -96,7 +96,7 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
     }
 
     @Override
-	protected Control createDialogArea(Composite parent)
+    protected Control createDialogArea(Composite parent)
     {
         Composite composite = (Composite)super.createDialogArea(parent);
 
@@ -110,7 +110,7 @@ public class GridSnapGlueSettingsDialog extends Dialog implements IInstallOption
     }
 
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         saveViewerProperty(mGridSettingsMap, PREFERENCE_GRID_ORIGIN, SnapToGrid.PROPERTY_GRID_ORIGIN, GRID_ORIGIN_DEFAULT);
         saveViewerProperty(mGridSettingsMap, PREFERENCE_GRID_SPACING, SnapToGrid.PROPERTY_GRID_SPACING, GRID_SPACING_DEFAULT);

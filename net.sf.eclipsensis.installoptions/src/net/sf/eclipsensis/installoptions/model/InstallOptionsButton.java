@@ -30,22 +30,22 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         mState = ""; //$NON-NLS-1$
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
-    	InstallOptionsButton clone = (InstallOptionsButton)super.clone();
+        InstallOptionsButton clone = (InstallOptionsButton)super.clone();
         clone.setState(getState());
         return clone;
     }
 
     @Override
-	protected void addPropertyName(List<String> list, String setting)
+    protected void addPropertyName(List<String> list, String setting)
     {
         if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_STATE)) {
             list.add(InstallOptionsModel.PROPERTY_STATE);
@@ -56,7 +56,7 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$;
@@ -70,7 +70,7 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
     }
 
     @Override
-	public Object getPropertyValue(Object propName)
+    public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_STATE.equals(propName)) {
             return getState();
@@ -79,7 +79,7 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
     }
 
     @Override
-	public void setPropertyValue(Object id, Object value)
+    public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_STATE)) {
             setState((String)value);
@@ -105,7 +105,7 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_BUTTON;
     }
@@ -114,19 +114,19 @@ public class InstallOptionsButton extends InstallOptionsUneditableElement
      * @return
      */
     @Override
-	protected Position getDefaultPosition()
+    protected Position getDefaultPosition()
     {
         return new Position(0,0,50,15);
     }
 
     @Override
-	protected String getDefaultText()
+    protected String getDefaultText()
     {
         return InstallOptionsPlugin.getResourceString("button.text.default"); //$NON-NLS-1$
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new ButtonPropertySectionCreator(this);
     }

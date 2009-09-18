@@ -29,7 +29,7 @@ public abstract class EditableElementFigure extends SWTControlFigure implements 
     }
 
     @Override
-	protected void init(IPropertySource propertySource)
+    protected void init(IPropertySource propertySource)
     {
         setState((String)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_STATE));
         super.init(propertySource);
@@ -46,7 +46,7 @@ public abstract class EditableElementFigure extends SWTControlFigure implements 
     }
 
     @Override
-	protected boolean supportsScrollBars()
+    protected boolean supportsScrollBars()
     {
         return false;
     }

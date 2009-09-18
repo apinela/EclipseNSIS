@@ -21,8 +21,8 @@ import org.eclipse.ui.views.properties.*;
 
 public abstract class InstallOptionsDirectEditManager<T extends CellEditor> extends DirectEditManager
 {
-	private Class<T> mEditorType;
-	
+    private Class<T> mEditorType;
+
     /**
      * @param source
      * @param editorType
@@ -36,7 +36,7 @@ public abstract class InstallOptionsDirectEditManager<T extends CellEditor> exte
     }
 
     @Override
-	protected final T createCellEditorOn(Composite composite)
+    protected final T createCellEditorOn(Composite composite)
     {
         InstallOptionsModelTypeDef typeDef = ((InstallOptionsWidget)getEditPart().getModel()).getTypeDef();
         if(typeDef == null || !typeDef.getSettings().contains(getDirectEditProperty())) {
@@ -53,7 +53,7 @@ public abstract class InstallOptionsDirectEditManager<T extends CellEditor> exte
     }
 
     @Override
-	protected final void initCellEditor()
+    protected final void initCellEditor()
     {
         InstallOptionsWidget control = (InstallOptionsWidget)getEditPart().getModel();
         IPropertyDescriptor descriptor = control.getPropertyDescriptor(getDirectEditProperty());

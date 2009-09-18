@@ -31,9 +31,9 @@ public class TextPropertySectionCreator extends EditableElementPropertySectionCr
     }
 
     @Override
-	protected Control createAppearancePropertySection(Composite parent, final TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
+    protected Control createAppearancePropertySection(Composite parent, final TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
-    	Composite parent2 = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
+        Composite parent2 = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
         final Composite composite = widgetFactory.createComposite(parent2);
         GridLayout layout = new GridLayout(2,false);
         layout.marginWidth = layout.marginHeight = 0;
@@ -43,57 +43,57 @@ public class TextPropertySectionCreator extends EditableElementPropertySectionCr
         composite.setLayoutData(data);
         final Text[] text = {createStatePropertySection(composite, widgetFactory, commandHelper)};
         Collection<String> flags = getWidget().getTypeDef().getFlags();
-		final boolean supportMultiLine = flags.contains(InstallOptionsModel.FLAGS_MULTILINE);
-		final boolean supportOnlyNumbers = flags.contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS);
+        final boolean supportMultiLine = flags.contains(InstallOptionsModel.FLAGS_MULTILINE);
+        final boolean supportOnlyNumbers = flags.contains(InstallOptionsModel.FLAGS_ONLY_NUMBERS);
 
-		if (supportMultiLine || supportOnlyNumbers) {
-		    final PropertyChangeListener listener = new PropertyChangeListener() {
-		        private boolean checkFlag(List<String> flags, String flag)
-		        {
-		            for (Iterator<String> iter = flags.iterator(); iter.hasNext();) {
-		                String f = iter.next();
-		                if(flag.equalsIgnoreCase(f)) {
-		                    return true;
-		                }
-		            }
-		            return false;
-		        }
-		        @SuppressWarnings("unchecked")
-				public void propertyChange(PropertyChangeEvent evt)
-		        {
-		            if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_FLAGS)) {
-		                List<String> oldFlags = (List<String>)evt.getOldValue();
-		                List<String> newFlags = (List<String>)evt.getNewValue();
-		                boolean hasFlag = false;
-		                if(supportMultiLine && checkFlag(oldFlags, InstallOptionsModel.FLAGS_MULTILINE) != checkFlag(newFlags,InstallOptionsModel.FLAGS_MULTILINE)) {
-		                    Control[] controls = composite.getChildren();
-		                    for (int i = 0; i < controls.length; i++) {
-		                        controls[i].dispose();
-		                    }
-		                    text[0] = createStatePropertySection(composite, widgetFactory, commandHelper);
-		                    forceLayout(composite);
-		                }
-		                else if(supportOnlyNumbers && checkFlag(oldFlags,InstallOptionsModel.FLAGS_ONLY_NUMBERS) != (hasFlag = checkFlag(newFlags,InstallOptionsModel.FLAGS_ONLY_NUMBERS))) {
-		                    if(Common.isValid(text[0])) {
-		                        if(hasFlag) {
-		                            text[0].addVerifyListener(getNumberVerifyListener());
-		                        }
-		                        else {
-		                            text[0].removeVerifyListener(getNumberVerifyListener());
-		                        }
-		                    }
-		                }
-		            }
-		        }
-		    };
-		    getWidget().addPropertyChangeListener(listener);
-		    composite.addDisposeListener(new DisposeListener() {
-		        public void widgetDisposed(DisposeEvent e)
-		        {
-		            getWidget().removePropertyChangeListener(listener);
-		        }
-		    });
-		}
+        if (supportMultiLine || supportOnlyNumbers) {
+            final PropertyChangeListener listener = new PropertyChangeListener() {
+                private boolean checkFlag(List<String> flags, String flag)
+                {
+                    for (Iterator<String> iter = flags.iterator(); iter.hasNext();) {
+                        String f = iter.next();
+                        if(flag.equalsIgnoreCase(f)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                @SuppressWarnings("unchecked")
+                public void propertyChange(PropertyChangeEvent evt)
+                {
+                    if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_FLAGS)) {
+                        List<String> oldFlags = (List<String>)evt.getOldValue();
+                        List<String> newFlags = (List<String>)evt.getNewValue();
+                        boolean hasFlag = false;
+                        if(supportMultiLine && checkFlag(oldFlags, InstallOptionsModel.FLAGS_MULTILINE) != checkFlag(newFlags,InstallOptionsModel.FLAGS_MULTILINE)) {
+                            Control[] controls = composite.getChildren();
+                            for (int i = 0; i < controls.length; i++) {
+                                controls[i].dispose();
+                            }
+                            text[0] = createStatePropertySection(composite, widgetFactory, commandHelper);
+                            forceLayout(composite);
+                        }
+                        else if(supportOnlyNumbers && checkFlag(oldFlags,InstallOptionsModel.FLAGS_ONLY_NUMBERS) != (hasFlag = checkFlag(newFlags,InstallOptionsModel.FLAGS_ONLY_NUMBERS))) {
+                            if(Common.isValid(text[0])) {
+                                if(hasFlag) {
+                                    text[0].addVerifyListener(getNumberVerifyListener());
+                                }
+                                else {
+                                    text[0].removeVerifyListener(getNumberVerifyListener());
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            getWidget().addPropertyChangeListener(listener);
+            composite.addDisposeListener(new DisposeListener() {
+                public void widgetDisposed(DisposeEvent e)
+                {
+                    getWidget().removePropertyChangeListener(listener);
+                }
+            });
+        }
         return parent2;
     }
 
@@ -110,7 +110,7 @@ public class TextPropertySectionCreator extends EditableElementPropertySectionCr
     }
 
     @Override
-	protected boolean shouldCreateAppearancePropertySection()
+    protected boolean shouldCreateAppearancePropertySection()
     {
         return true;
     }

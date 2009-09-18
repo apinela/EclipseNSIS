@@ -48,7 +48,7 @@ public class INISection extends INILine implements IINIContainer
     }
 
     @Override
-	public void setDirty(boolean dirty)
+    public void setDirty(boolean dirty)
     {
         mDirty = dirty;
         super.setDirty(dirty);
@@ -144,7 +144,7 @@ public class INISection extends INILine implements IINIContainer
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         StringBuffer buf = new StringBuffer(super.toString());
         for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
@@ -154,7 +154,7 @@ public class INISection extends INILine implements IINIContainer
     }
 
     @Override
-	public boolean hasErrors()
+    public boolean hasErrors()
     {
         if(!super.hasErrors()) {
             for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
@@ -168,7 +168,7 @@ public class INISection extends INILine implements IINIContainer
     }
 
     @Override
-	public boolean hasWarnings()
+    public boolean hasWarnings()
     {
         if(!super.hasWarnings()) {
             for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
@@ -218,7 +218,7 @@ public class INISection extends INILine implements IINIContainer
     }
 
     @Override
-	protected void checkProblems(int fixFlag)
+    protected void checkProblems(int fixFlag)
     {
         //Validate section
         final INIFile parent = (INIFile)getParent();
@@ -238,7 +238,7 @@ public class INISection extends INILine implements IINIContainer
                     addProblem(problem);
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.dup.sections")) { //$NON-NLS-1$
                         @Override
-						protected INIProblemFix[] createFixes()
+                        protected INIProblemFix[] createFixes()
                         {
                             List<INIProblemFix> fixes = new ArrayList<INIProblemFix>();
                             int count = 0;
@@ -310,7 +310,7 @@ public class INISection extends INILine implements IINIContainer
                         final INIKeyValue keyValue = keyValues[i];
                         problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.unrecognized.key")) { //$NON-NLS-1$
                             @Override
-							protected INIProblemFix[] createFixes()
+                            protected INIProblemFix[] createFixes()
                             {
                                 return new INIProblemFix[] {new INIProblemFix(keyValue)};
                             }
@@ -350,7 +350,7 @@ public class INISection extends INILine implements IINIContainer
                     addProblem(problem);
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.insert.missing.keys")) { //$NON-NLS-1$
                         @Override
-						protected INIProblemFix[] createFixes()
+                        protected INIProblemFix[] createFixes()
                         {
                             StringBuffer buf = new StringBuffer(INISection.this.getText());
                             INILine previous = INISection.this;
@@ -387,7 +387,7 @@ public class INISection extends INILine implements IINIContainer
                                     final INIKeyValue keyValue = keyValues[i];
                                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.unrecognized.key")) { //$NON-NLS-1$
                                         @Override
-										protected INIProblemFix[] createFixes()
+                                        protected INIProblemFix[] createFixes()
                                         {
                                             return new INIProblemFix[] {new INIProblemFix(keyValue)};
                                         }
@@ -409,7 +409,7 @@ public class INISection extends INILine implements IINIContainer
                         addProblem(problem);
                         problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.insert.missing.key")) { //$NON-NLS-1$
                             @Override
-							protected INIProblemFix[] createFixes()
+                            protected INIProblemFix[] createFixes()
                             {
                                 StringBuffer buf = new StringBuffer(INISection.this.getText());
                                 buf.append(INISection.this.getDelimiter() == null?INSISConstants.LINE_SEPARATOR:INISection.this.getDelimiter());
@@ -433,7 +433,7 @@ public class INISection extends INILine implements IINIContainer
     }
 
     @Override
-	public void update()
+    public void update()
     {
         if(!Common.stringsAreEqual(mName,mOriginalName)) {
             String newText = buildText(mName);
@@ -478,7 +478,7 @@ public class INISection extends INILine implements IINIContainer
     }
 
     @Override
-	public INILine copy()
+    public INILine copy()
     {
         INISection sec = (INISection)clone();
         if(mPosition != null) {
@@ -488,7 +488,7 @@ public class INISection extends INILine implements IINIContainer
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         INISection section = (INISection)super.clone();
         section.mPosition = null;
@@ -521,7 +521,7 @@ public class INISection extends INILine implements IINIContainer
     }
 
     @Override
-	public boolean isEqualTo(INILine line)
+    public boolean isEqualTo(INILine line)
     {
         if (this == line) {
             return true;

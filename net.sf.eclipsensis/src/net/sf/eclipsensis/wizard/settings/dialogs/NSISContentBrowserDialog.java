@@ -48,7 +48,7 @@ public class NSISContentBrowserDialog extends Dialog
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
      */
     @Override
-	protected void configureShell(Shell newShell)
+    protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(EclipseNSISPlugin.getResourceString("wizard.content.browser.title")); //$NON-NLS-1$
@@ -75,7 +75,7 @@ public class NSISContentBrowserDialog extends Dialog
      * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
      */
     @Override
-	protected void cancelPressed()
+    protected void cancelPressed()
     {
         mElement = null;
         super.cancelPressed();
@@ -85,7 +85,7 @@ public class NSISContentBrowserDialog extends Dialog
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected Control createDialogArea(Composite parent)
+    protected Control createDialogArea(Composite parent)
     {
         Composite composite = (Composite)super.createDialogArea(parent);
         NSISWizardDialogUtil.createLabel(composite,"wizard.select.shortcut.message",true,null,false); //$NON-NLS-1$
@@ -102,7 +102,7 @@ public class NSISContentBrowserDialog extends Dialog
                                                  }));
 
             @Override
-			public boolean select(Viewer viewer, Object parentElement, Object element)
+            public boolean select(Viewer viewer, Object parentElement, Object element)
             {
                 if(element instanceof INSISInstallElement) {
                     return mFilterTypes.contains(((INSISInstallElement)element).getType());
@@ -124,7 +124,7 @@ public class NSISContentBrowserDialog extends Dialog
         });
         tree.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetDefaultSelected(SelectionEvent e) {
+            public void widgetDefaultSelected(SelectionEvent e) {
                 if(setElement(tv.getSelection())) {
                     buttonPressed(IDialogConstants.OK_ID);
                 }

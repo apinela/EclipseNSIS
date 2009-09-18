@@ -57,14 +57,14 @@ public class NSISTaskTagDialog extends StatusMessageDialog
      * @see org.eclipse.jface.window.Window#create()
      */
     @Override
-	public void create()
+    public void create()
     {
         super.create();
         validate();
     }
 
     @Override
-	protected Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout gridLayout = new GridLayout(2,false);
@@ -104,7 +104,7 @@ public class NSISTaskTagDialog extends StatusMessageDialog
         }
         combo.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mTaskTag.setPriority(combo.getSelectionIndex());
             }

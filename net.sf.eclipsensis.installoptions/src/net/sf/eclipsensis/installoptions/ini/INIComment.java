@@ -24,7 +24,7 @@ public class INIComment extends INILine
     }
 
     @Override
-	protected void checkProblems(int fixFlag)
+    protected void checkProblems(int fixFlag)
     {
     }
 }

@@ -51,7 +51,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
     }
 
     @Override
-	protected int getMessageLabelStyle()
+    protected int getMessageLabelStyle()
     {
         return SWT.NONE;
     }
@@ -94,7 +94,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
     }
 
     @Override
-	protected Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -131,7 +131,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
         mValuesViewer.setContentProvider(new CollectionContentProvider());
         mValuesViewer.setLabelProvider(new CollectionLabelProvider() {
             @Override
-			public Image getColumnImage(Object element, int columnIndex)
+            public Image getColumnImage(Object element, int columnIndex)
             {
                 if(element instanceof RegistryValue && columnIndex == 0) {
                     switch(((RegistryValue)element).getType()) {
@@ -146,7 +146,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
             }
 
             @Override
-			public String getColumnText(Object element, int columnIndex)
+            public String getColumnText(Object element, int columnIndex)
             {
                 if(element instanceof RegistryValue) {
                     RegistryValue regValue = (RegistryValue)element;
@@ -168,8 +168,8 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                                 case WinAPI.REG_EXPAND_SZ:
                                     return "REG_EXPAND_SZ"; //$NON-NLS-1$
                             }
-	                        //$FALL-THROUGH$
-						case 2:
+                            //$FALL-THROUGH$
+                        case 2:
                             switch(type) {
                                 case WinAPI.REG_BINARY:
                                     if(data == null) {
@@ -211,7 +211,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
         });
         mBrowser.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 loadRegistryValues();
                 if(mRegValue != null) {
@@ -232,7 +232,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
     }
 
     @Override
-	public void create()
+    public void create()
     {
         super.create();
         ISelection selection = mValuesViewer.getSelection();
@@ -240,14 +240,14 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
     }
 
     @Override
-	protected void cancelPressed()
+    protected void cancelPressed()
     {
         mRegValue = null;
         super.cancelPressed();
     }
 
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         saveSelection();
         super.okPressed();
@@ -261,7 +261,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
         RegistryKey regKey = mBrowser.getSelectedKey();
         List<RegistryValue> list;
         if(regKey != null) {
-            list = regKey.getValues(); 
+            list = regKey.getValues();
             if(Common.isEmptyCollection(list)) {
                 list = new ArrayList<RegistryValue>();
                 int hKey = regKey.getHandle();
@@ -280,8 +280,8 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                                             list.add(0,regValue);
                                             break;
                                         }
-	                                    //$FALL-THROUGH$
-									case WinAPI.REG_BINARY:
+                                        //$FALL-THROUGH$
+                                    case WinAPI.REG_BINARY:
                                     case WinAPI.REG_DWORD:
                                     case WinAPI.REG_EXPAND_SZ:
                                         list.add(regValue);
@@ -293,7 +293,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                         list.add(0,new RegistryValue(regKey.toString(),null,WinAPI.REG_SZ,null));
                     }
                 }
-                regKey.setValues(list); 
+                regKey.setValues(list);
             }
         }
         else {

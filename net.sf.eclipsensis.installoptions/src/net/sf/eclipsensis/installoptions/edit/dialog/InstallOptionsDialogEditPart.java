@@ -71,7 +71,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     }
 
     @SuppressWarnings("unchecked")
-	public void propertyChange(PropertyChangeEvent evt)
+    public void propertyChange(PropertyChangeEvent evt)
     {
         String prop = evt.getPropertyName();
         if (InstallOptionsDialog.PROPERTY_SELECTION.equals(prop)) {
@@ -117,7 +117,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
             int n = Math.min(modelChildren.size(), children.size());
             int i=0;
             for(; i<n; i++) {
-            	InstallOptionsWidget model = modelChildren.get(i);
+                InstallOptionsWidget model = modelChildren.get(i);
                 EditPart part = (EditPart)children.get(i);
                 if(model != part.getModel()) {
                     break;
@@ -171,19 +171,19 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
      * @return Children of this as a List.
      */
     @Override
-	protected List<InstallOptionsWidget> getModelChildren()
+    protected List<InstallOptionsWidget> getModelChildren()
     {
-    	List<InstallOptionsWidget> list = new ArrayList<InstallOptionsWidget>(getInstallOptionsDialog().getChildren());
+        List<InstallOptionsWidget> list = new ArrayList<InstallOptionsWidget>(getInstallOptionsDialog().getChildren());
         Collections.reverse(list);
         return list;
     }
 
     @Override
-	protected AccessibleEditPart createAccessible()
+    protected AccessibleEditPart createAccessible()
     {
         return new AccessibleGraphicalEditPart() {
             @Override
-			public void getName(AccessibleEvent e)
+            public void getName(AccessibleEvent e)
             {
                 e.result = InstallOptionsPlugin.getResourceString("install.options.dialog.name"); //$NON-NLS-1$
             }
@@ -194,7 +194,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
      * Installs EditPolicies specific to this.
      */
     @Override
-	protected void createEditPolicies()
+    protected void createEditPolicies()
     {
         super.createEditPolicies();
 
@@ -223,7 +223,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
      * @return Figure.
      */
     @Override
-	protected IFigure createFigure()
+    protected IFigure createFigure()
     {
         InstallOptionsDialogLayer f = new InstallOptionsDialogLayer();
         f.setDialogSize(getInstallOptionsDialog().getDialogSize().getSize());
@@ -237,8 +237,8 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
     @Override
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapter)
+    @SuppressWarnings("unchecked")
+    public Object getAdapter(Class adapter)
     {
         if (adapter == SnapToHelper.class) {
             List<SnapToHelper> snapStrategies = new ArrayList<SnapToHelper>();
@@ -281,7 +281,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     }
 
     @Override
-	public void addNotify()
+    public void addNotify()
     {
         super.addNotify();
         getViewer().setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE,
@@ -292,14 +292,14 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     }
 
     @Override
-	public void removeNotify()
+    public void removeNotify()
     {
         getViewer().removePropertyChangeListener(mPropertyChangeListener);
         super.removeNotify();
     }
 
     @Override
-	public DragTracker getDragTracker(Request req)
+    public DragTracker getDragTracker(Request req)
     {
         if (req instanceof SelectionRequest
                 && ((SelectionRequest)req).getLastButtonPressed() == 3) {
@@ -309,7 +309,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     }
 
     @Override
-	protected void refreshVisuals()
+    protected void refreshVisuals()
     {
         getFigure().setLayoutManager(mLayout);
         List<?> children = getChildren();
@@ -320,7 +320,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     }
 
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("install.options.dialog.name"); //$NON-NLS-1$
     }

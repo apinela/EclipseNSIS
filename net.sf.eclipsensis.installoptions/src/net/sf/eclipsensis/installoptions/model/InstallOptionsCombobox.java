@@ -35,7 +35,7 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("stateReadOnly"); //$NON-NLS-1$
@@ -43,13 +43,13 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_COMBOBOX;
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             ComboStatePropertyDescriptor descriptor = new ComboStatePropertyDescriptor();
@@ -65,7 +65,7 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         if(isStateReadOnly()) {
             return super.createPropertySectionCreator();
@@ -108,7 +108,7 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
         }
 
         @SuppressWarnings("unchecked")
-		public void propertyChange(PropertyChangeEvent evt)
+        public void propertyChange(PropertyChangeEvent evt)
         {
             if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
                 setListItems((List<String>)evt.getNewValue());
@@ -117,7 +117,7 @@ public class InstallOptionsCombobox extends InstallOptionsListItems
         }
 
         @Override
-		public CellEditor createPropertyEditor(Composite parent)
+        public CellEditor createPropertyEditor(Composite parent)
         {
             if(mEditor == null) {
                 mEditor = new CustomComboBoxCellEditor(parent, getListItems(), mStyle);

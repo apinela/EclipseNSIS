@@ -22,7 +22,7 @@ public class NSISUpdateWizardDialog extends WizardDialog
     }
 
     @Override
-	protected void configureShell(Shell newShell)
+    protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setImage(EclipseNSISUpdatePlugin.getShellImage());

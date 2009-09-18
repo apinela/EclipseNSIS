@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
@@ -51,7 +51,7 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
      * @see PreferencePage#createControl(Composite)
      */
     @Override
-	public void createControl(Composite parent)
+    public void createControl(Composite parent)
     {
         super.createControl(parent);
         TableViewer viewer = getTableViewer();
@@ -72,7 +72,7 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
      * isShowFormatterSetting()
      */
     @Override
-	protected boolean isShowFormatterSetting()
+    protected boolean isShowFormatterSetting()
     {
         return false;
     }
@@ -82,20 +82,20 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
      * getFormatterPreferenceKey()
      */
     @Override
-	protected String getFormatterPreferenceKey()
+    protected String getFormatterPreferenceKey()
     {
         return null;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createViewer
      * (org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected SourceViewer createViewer(Composite parent)
+    protected SourceViewer createViewer(Composite parent)
     {
         mViewer = new NSISTemplateSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         NSISTextUtility.hookSourceViewer(mViewer);
@@ -115,7 +115,7 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
     @Override
-	public boolean performOk()
+    public boolean performOk()
     {
         boolean ok = super.performOk();
 
@@ -126,11 +126,11 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
      */
     @Override
-	public void setVisible(boolean visible)
+    public void setVisible(boolean visible)
     {
         if (visible)
         {
@@ -143,7 +143,7 @@ public class NSISTemplatePreferencePage extends TemplatePreferencePage
     }
 
     @Override
-	protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable)
+    protected Template editTemplate(Template template, boolean edit, boolean isNameModifiable)
     {
         NSISTemplateEditorDialog dialog = new NSISTemplateEditorDialog(getShell(), template, edit, isNameModifiable,
                 getContextTypeRegistry());

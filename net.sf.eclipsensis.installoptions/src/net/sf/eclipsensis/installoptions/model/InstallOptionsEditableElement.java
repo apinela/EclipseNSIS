@@ -22,7 +22,7 @@ import org.eclipse.ui.views.properties.*;
 public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
 {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9002023506652287815L;
     private String mText;
@@ -37,7 +37,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("defaultMaxLen"); //$NON-NLS-1$
@@ -46,7 +46,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         mText = ""; //$NON-NLS-1$
@@ -57,14 +57,14 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     }
 
     @Override
-	protected void setDefaults()
+    protected void setDefaults()
     {
         super.setDefaults();
         mState = getDefaultState();
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         InstallOptionsEditableElement clone = (InstallOptionsEditableElement)super.clone();
         clone.setMaxLen(getMaxLen());
@@ -81,7 +81,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     }
 
     @Override
-	protected void addPropertyName(List<String> list, String setting)
+    protected void addPropertyName(List<String> list, String setting)
     {
         if(setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_TEXT)) {
             list.add(InstallOptionsModel.PROPERTY_TEXT);
@@ -104,7 +104,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_TEXT)) {
             String propertyName = InstallOptionsPlugin.getResourceString("text.property.name"); //$NON-NLS-1$;
@@ -123,7 +123,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_MAXLEN, propertyName);
             NumberCellEditorValidator validator = new NumberCellEditorValidator(propertyName,getDefaultMinLen(),getDefaultMaxLen(),true) {
                 @Override
-				public int getMinValue()
+                public int getMinValue()
                 {
                     String minLen = getMinLen();
                     try {
@@ -142,7 +142,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
             TextPropertyDescriptor descriptor = new TextPropertyDescriptor(InstallOptionsModel.PROPERTY_MINLEN, propertyName);
             NumberCellEditorValidator validator = new NumberCellEditorValidator(propertyName,getDefaultMinLen(),getDefaultMaxLen(),true) {
                 @Override
-				public int getMaxValue()
+                public int getMaxValue()
                 {
                     String maxLen = getMaxLen();
                     try {
@@ -178,7 +178,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     }
 
     @Override
-	public Object getPropertyValue(Object propName)
+    public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_TEXT.equals(propName)) {
             return getText();
@@ -199,7 +199,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     }
 
     @Override
-	public void setPropertyValue(Object id, Object value)
+    public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_TEXT)) {
             setText((String)value);
@@ -222,7 +222,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     }
 
     @Override
-	protected Position getDefaultPosition()
+    protected Position getDefaultPosition()
     {
         return new Position(0,0,122,13);
     }
@@ -303,7 +303,7 @@ public abstract class InstallOptionsEditableElement extends InstallOptionsWidget
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new EditableElementPropertySectionCreator(this);
     }

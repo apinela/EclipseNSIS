@@ -36,7 +36,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
      * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#addRules(java.util.List, org.eclipse.jface.text.rules.IToken)
      */
     @Override
-	protected void addRules(List<IRule> rules)
+    protected void addRules(List<IRule> rules)
     {
         rules.add(getTemplateVariableRule());
         super.addRules(rules);
@@ -46,7 +46,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
      * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#reset(boolean)
      */
     @Override
-	public void reset(boolean full)
+    public void reset(boolean full)
     {
         if(full) {
             mTemplateVariableRule = null;
@@ -73,7 +73,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
                 }
 
                 @Override
-				public boolean isWordPart(char character)
+                public boolean isWordPart(char character)
                 {
                     if(!mFoundEndSequence) {
                         if(character == INSISTemplateConstants.IDENTIFIER_BOUNDARY) {
@@ -99,7 +99,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
      * @see net.sf.eclipsensis.settings.IPropertyAdaptable#adaptToProperty(org.eclipse.jface.preference.IPreferenceStore, java.lang.String)
      */
     @Override
-	public void adaptToProperty(IPreferenceStore store, String property)
+    public void adaptToProperty(IPreferenceStore store, String property)
     {
         if(property.equals(INSISPreferenceConstants.TEMPLATE_VARIABLE_COLOR)) {
             mTemplateVariableRule = null;
@@ -114,7 +114,7 @@ public class NSISTemplateCodeScanner extends NSISCodeScanner
      * @see net.sf.eclipsensis.settings.IPropertyAdaptable#canAdaptToProperty(org.eclipse.jface.preference.IPreferenceStore, java.lang.String)
      */
     @Override
-	public boolean canAdaptToProperty(IPreferenceStore store, String property)
+    public boolean canAdaptToProperty(IPreferenceStore store, String property)
     {
         if(property.equals(INSISPreferenceConstants.TEMPLATE_VARIABLE_COLOR)) {
             return true;

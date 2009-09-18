@@ -82,7 +82,7 @@ public class NSISLaunchSettings extends NSISSettings
     }
 
     @Override
-	public void load()
+    public void load()
     {
         mScript = getString(SCRIPT);
         mRunInstaller = getBoolean(RUN_INSTALLER);
@@ -90,7 +90,7 @@ public class NSISLaunchSettings extends NSISSettings
     }
 
     @Override
-	public void store()
+    public void store()
     {
         String file = null;
         try {
@@ -117,7 +117,7 @@ public class NSISLaunchSettings extends NSISSettings
      * @see net.sf.eclipsensis.settings.NSISSettings#getBoolean(java.lang.String)
      */
     @Override
-	public boolean getBoolean(String name)
+    public boolean getBoolean(String name)
     {
         if(mFilter == null || mFilter.select(name)) {
             boolean defaultValue = mParent.getBoolean(name);
@@ -138,7 +138,7 @@ public class NSISLaunchSettings extends NSISSettings
      * @see net.sf.eclipsensis.settings.NSISSettings#getInt(java.lang.String)
      */
     @Override
-	public int getInt(String name)
+    public int getInt(String name)
     {
         if (mFilter == null || mFilter.select(name)) {
             int defaultValue = mParent.getInt(name);
@@ -159,7 +159,7 @@ public class NSISLaunchSettings extends NSISSettings
      * @see net.sf.eclipsensis.settings.NSISSettings#getString(java.lang.String)
      */
     @Override
-	public String getString(String name)
+    public String getString(String name)
     {
         if (mFilter == null || mFilter.select(name)) {
             String defaultValue = mParent.getString(name);
@@ -180,7 +180,7 @@ public class NSISLaunchSettings extends NSISSettings
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, boolean)
      */
     @Override
-	public void setValue(String name, boolean value)
+    public void setValue(String name, boolean value)
     {
         if (mFilter == null || mFilter.select(name)) {
             if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
@@ -193,7 +193,7 @@ public class NSISLaunchSettings extends NSISSettings
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, int)
      */
     @Override
-	public void setValue(String name, int value)
+    public void setValue(String name, int value)
     {
         if (mFilter == null || mFilter.select(name)) {
             if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
@@ -206,7 +206,7 @@ public class NSISLaunchSettings extends NSISSettings
      * @see net.sf.eclipsensis.settings.NSISSettings#setValue(java.lang.String, java.lang.String)
      */
     @Override
-	public void setValue(String name, String value)
+    public void setValue(String name, String value)
     {
         if (mFilter == null || mFilter.select(name)) {
             if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
@@ -219,7 +219,7 @@ public class NSISLaunchSettings extends NSISSettings
      * @see net.sf.eclipsensis.settings.NSISSettings#removeBoolean(java.lang.String)
      */
     @Override
-	public void removeBoolean(String name)
+    public void removeBoolean(String name)
     {
         remove(name);
     }
@@ -237,7 +237,7 @@ public class NSISLaunchSettings extends NSISSettings
      * @see net.sf.eclipsensis.settings.NSISSettings#removeInt(java.lang.String)
      */
     @Override
-	public void removeInt(String name)
+    public void removeInt(String name)
     {
         remove(name);
     }
@@ -246,7 +246,7 @@ public class NSISLaunchSettings extends NSISSettings
      * @see net.sf.eclipsensis.settings.NSISSettings#removeString(java.lang.String)
      */
     @Override
-	public void removeString(String name)
+    public void removeString(String name)
     {
         remove(name);
     }
@@ -301,8 +301,8 @@ public class NSISLaunchSettings extends NSISSettings
     }
 
     @SuppressWarnings("unchecked")
-	@Override
-	public <T> void storeObject(String name, T object)
+    @Override
+    public <T> void storeObject(String name, T object)
     {
         if (mFilter == null || mFilter.select(name)) {
             if (mLaunchConfig != null && mLaunchConfig.isWorkingCopy()) {
@@ -329,14 +329,14 @@ public class NSISLaunchSettings extends NSISSettings
     }
 
     @Override
-	public void removeObject(String name)
+    public void removeObject(String name)
     {
         storeObject(name, null);
     }
 
     @SuppressWarnings("unchecked")
-	@Override
-	public <T> T loadObject(String name)
+    @Override
+    public <T> T loadObject(String name)
     {
         if (mFilter == null || mFilter.select(name)) {
             if (mLaunchConfig != null) {

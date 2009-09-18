@@ -50,7 +50,7 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
     }
 
     @Override
-	public final Control createControl(Composite parent)
+    public final Control createControl(Composite parent)
     {
         if(mDialog != null) {
             Integer rtl = mDialog.getRTL();
@@ -70,7 +70,7 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
                 {
                     String property = evt.getPropertyName();
                     if(property.equals(InstallOptionsModel.PROPERTY_RTL)) {
-                    	Integer rtl = (Integer)evt.getNewValue();
+                        Integer rtl = (Integer)evt.getNewValue();
                         int windowsStyle = WinAPI.GetWindowLong(canvas.handle,WinAPI.GWL_EXSTYLE);
                         int style = canvas.getStyle();
                         if(InstallOptionsModel.OPTION_YES.equals(rtl)) {
@@ -138,7 +138,7 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
     }
 
     @Override
-	public void reveal(EditPart part)
+    public void reveal(EditPart part)
     {
         super.reveal(part);
         Viewport port = getFigureCanvas().getViewport();
@@ -174,20 +174,20 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
     }
 
     @Override
-	protected IFigure getRootFigure()
+    protected IFigure getRootFigure()
     {
         return mRootFigure;
     }
 
     @Override
-	protected void setRootFigure(IFigure figure)
+    protected void setRootFigure(IFigure figure)
     {
         mRootFigure = figure;
         installRootFigure();
     }
 
     @Override
-	public void addDropTargetListener(final TransferDropTargetListener listener)
+    public void addDropTargetListener(final TransferDropTargetListener listener)
     {
         if(listener.getTransfer() instanceof TemplateTransfer) {
             super.addDropTargetListener(new TransferDropTargetListener() {

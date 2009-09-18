@@ -22,7 +22,7 @@ public class NSISConfigWizardDialog extends AbstractNSISWizardDialog
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_config_wizard_context"; //$NON-NLS-1$
     }

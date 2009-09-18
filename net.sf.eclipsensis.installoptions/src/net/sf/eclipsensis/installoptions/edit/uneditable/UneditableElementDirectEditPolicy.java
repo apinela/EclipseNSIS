@@ -19,7 +19,7 @@ import org.eclipse.gef.requests.DirectEditRequest;
 public class UneditableElementDirectEditPolicy extends DirectEditPolicy
 {
     @Override
-	protected Command getDirectEditCommand(DirectEditRequest edit)
+    protected Command getDirectEditCommand(DirectEditRequest edit)
     {
         String text = getDirectEditValue(edit);
         InstallOptionsUneditableElementEditPart control = (InstallOptionsUneditableElementEditPart)getHost();
@@ -40,7 +40,7 @@ public class UneditableElementDirectEditPolicy extends DirectEditPolicy
      * @see org.eclipse.gef.editpolicies.DirectEditPolicy#showCurrentEditValue(org.eclipse.gef.requests.DirectEditRequest)
      */
     @Override
-	protected void showCurrentEditValue(DirectEditRequest request)
+    protected void showCurrentEditValue(DirectEditRequest request)
     {
     }
 }

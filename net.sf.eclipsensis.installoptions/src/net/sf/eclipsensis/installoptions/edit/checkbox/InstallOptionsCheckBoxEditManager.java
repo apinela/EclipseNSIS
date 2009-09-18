@@ -26,7 +26,7 @@ public class InstallOptionsCheckBoxEditManager extends InstallOptionsButtonEditM
      * @see net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditManager#getCellEditorStyle()
      */
     @Override
-	protected int getCellEditorStyle()
+    protected int getCellEditorStyle()
     {
         return SWT.SINGLE|SWT.LEFT;
     }

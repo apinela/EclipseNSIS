@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
@@ -49,7 +49,7 @@ public class SubCommandParam extends NSISParam
     }
 
     @Override
-	protected void init(Node node)
+    protected void init(Node node)
     {
         super.init(node);
         loadSubCommands(node);
@@ -75,7 +75,7 @@ public class SubCommandParam extends NSISParam
     }
 
     @Override
-	protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new SubCommandParamEditor(command, parentEditor);
     }
@@ -91,7 +91,7 @@ public class SubCommandParam extends NSISParam
         }
 
         @Override
-		public void clear()
+        public void clear()
         {
             if (mComboViewer != null && Common.isValid(mComboViewer.getControl()))
             {
@@ -101,7 +101,7 @@ public class SubCommandParam extends NSISParam
         }
 
         @Override
-		public void reset()
+        public void reset()
         {
             super.reset();
             if (mCommandEditor != null)
@@ -113,7 +113,7 @@ public class SubCommandParam extends NSISParam
         }
 
         @Override
-		protected String validateParam()
+        protected String validateParam()
         {
             if (isSelected())
             {
@@ -133,7 +133,7 @@ public class SubCommandParam extends NSISParam
         }
 
         @SuppressWarnings("unchecked")
-		protected Map.Entry<String,String> getCurrentCommand()
+        protected Map.Entry<String,String> getCurrentCommand()
         {
             Map.Entry<String,String> command = null;
             if (mComboViewer != null && Common.isValid(mComboViewer.getControl()))
@@ -152,7 +152,7 @@ public class SubCommandParam extends NSISParam
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf, boolean preview)
+        protected void appendParamText(StringBuffer buf, boolean preview)
         {
             if (mCommandEditor != null)
             {
@@ -170,7 +170,7 @@ public class SubCommandParam extends NSISParam
         }
 
         @Override
-		protected void updateState(boolean state)
+        protected void updateState(boolean state)
         {
             super.updateState(state);
             if (mComboViewer != null)
@@ -187,8 +187,8 @@ public class SubCommandParam extends NSISParam
         }
 
         @Override
-		@SuppressWarnings("unchecked")
-		public void setSettings(Map<String,Object> settings)
+        @SuppressWarnings("unchecked")
+        public void setSettings(Map<String,Object> settings)
         {
             super.setSettings(settings);
             if (mCommandEditor != null)
@@ -215,7 +215,7 @@ public class SubCommandParam extends NSISParam
         }
 
         @Override
-		public void saveSettings()
+        public void saveSettings()
         {
             super.saveSettings();
             if (getSettings() != null)
@@ -233,7 +233,7 @@ public class SubCommandParam extends NSISParam
         }
 
         @Override
-		protected Control createParamControl(Composite parent)
+        protected Control createParamControl(Composite parent)
         {
             if (mSubCommands.size() > 1)
             {
@@ -254,7 +254,7 @@ public class SubCommandParam extends NSISParam
                     {
                         BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
                             @SuppressWarnings("unchecked")
-							public void run()
+                            public void run()
                             {
                                 boolean changed = false;
                                 if (mCommandEditor != null && Common.isValid(mCommandEditor.getControl()))
@@ -301,7 +301,7 @@ public class SubCommandParam extends NSISParam
         }
 
         @Override
-		protected void initParamEditor()
+        protected void initParamEditor()
         {
             super.initParamEditor();
             if (mComboViewer != null && Common.isValid(mComboViewer.getControl()))
@@ -329,7 +329,7 @@ public class SubCommandParam extends NSISParam
          * @param cmd
          */
         @SuppressWarnings("unchecked")
-		private void createCommandEditor(Composite container, NSISCommand cmd)
+        private void createCommandEditor(Composite container, NSISCommand cmd)
         {
             mCommandEditor = cmd.createEditor();
             if (getSettings() != null)

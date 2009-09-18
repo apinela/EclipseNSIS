@@ -57,7 +57,7 @@ public class NSISScriptWriter extends PrintWriter
     }
 
     @Override
-	public void print(String s)
+    public void print(String s)
     {
         printIndent();
         super.print(s);
@@ -82,14 +82,14 @@ public class NSISScriptWriter extends PrintWriter
     }
 
     @Override
-	public void println()
+    public void println()
     {
         super.println();
         mPosition = 0;
     }
 
     @Override
-	public void println(String s)
+    public void println(String s)
     {
         print(s);
         println();
@@ -99,7 +99,7 @@ public class NSISScriptWriter extends PrintWriter
      * @see java.io.PrintWriter#print(boolean)
      */
     @Override
-	public void print(boolean b)
+    public void print(boolean b)
     {
         print(b ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -108,7 +108,7 @@ public class NSISScriptWriter extends PrintWriter
      * @see java.io.PrintWriter#print(char)
      */
     @Override
-	public void print(char c)
+    public void print(char c)
     {
         printIndent();
         super.print(c);
@@ -119,7 +119,7 @@ public class NSISScriptWriter extends PrintWriter
      * @see java.io.PrintWriter#print(char[])
      */
     @Override
-	public void print(char[] s)
+    public void print(char[] s)
     {
         printIndent();
         super.print(s);
@@ -130,7 +130,7 @@ public class NSISScriptWriter extends PrintWriter
      * @see java.io.PrintWriter#print(double)
      */
     @Override
-	public void print(double d)
+    public void print(double d)
     {
         print(String.valueOf(d));
     }
@@ -139,7 +139,7 @@ public class NSISScriptWriter extends PrintWriter
      * @see java.io.PrintWriter#print(float)
      */
     @Override
-	public void print(float f)
+    public void print(float f)
     {
         print(String.valueOf(f));
     }
@@ -148,7 +148,7 @@ public class NSISScriptWriter extends PrintWriter
      * @see java.io.PrintWriter#print(int)
      */
     @Override
-	public void print(int i)
+    public void print(int i)
     {
         print(String.valueOf(i));
     }
@@ -157,7 +157,7 @@ public class NSISScriptWriter extends PrintWriter
      * @see java.io.PrintWriter#print(long)
      */
     @Override
-	public void print(long l)
+    public void print(long l)
     {
         print(String.valueOf(l));
     }
@@ -166,7 +166,7 @@ public class NSISScriptWriter extends PrintWriter
      * @see java.io.PrintWriter#print(java.lang.Object)
      */
     @Override
-	public void print(Object obj)
+    public void print(Object obj)
     {
         print(String.valueOf(obj));
     }

@@ -93,7 +93,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
                     Filter filter = mRequester.getFilter();
                     HitCollector collector = new HitCollector() {
                         @Override
-						public void collect(int doc, float score)
+                        public void collect(int doc, float score)
                         {
                             checkCanceled(monitor);
                             if(!monitor.isCanceled()) {
@@ -198,7 +198,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
         }
 
         @Override
-		public boolean equals(Object obj)
+        public boolean equals(Object obj)
         {
             if(this != obj) {
                 if(obj instanceof HitDoc) {
@@ -210,7 +210,7 @@ public class NSISHelpSearcher implements INSISHelpSearchConstants
         }
 
         @Override
-		public int hashCode()
+        public int hashCode()
         {
             return (int)score;
         }

@@ -23,7 +23,7 @@ import java.util.Map;
  * be ignored if the value is added subsequently in a different case.
  * <p>
  * The value may be <code>null</code>.
- * 
+ *
  * @param <T> The types of values being stored in the Set.
  */
 public class CaseInsensitiveSet extends AbstractSet<String> implements Serializable
@@ -48,7 +48,7 @@ public class CaseInsensitiveSet extends AbstractSet<String> implements Serializa
 
     /**
      * Constructs a new, empty set with the specified initial capacity.
-     * 
+     *
      * @param initialCapacity The initial capacity of the hash table.
      * @throws IllegalArgumentException if the initial capacity is negative
      */
@@ -63,7 +63,7 @@ public class CaseInsensitiveSet extends AbstractSet<String> implements Serializa
 
     /**
      * Constructs a new set containing the elements in the specified collection.
-     * 
+     *
      * @param c The collection whose elements are to be placed into this set.
      */
     public CaseInsensitiveSet(Collection<String> c)
@@ -86,19 +86,19 @@ public class CaseInsensitiveSet extends AbstractSet<String> implements Serializa
     }
 
     @Override
-	public int size()
+    public int size()
     {
         return mValueMap.size();
     }
 
     @Override
-	public boolean contains(Object value)
+    public boolean contains(Object value)
     {
         return (value != null && !(value instanceof String)?false:mValueMap.containsKey(toUpperCase((String)value)));
     }
 
     @Override
-	public boolean add(String value)
+    public boolean add(String value)
     {
         String uppercaseValue = toUpperCase(value);
         if(!mValueMap.containsKey(uppercaseValue)) {
@@ -111,7 +111,7 @@ public class CaseInsensitiveSet extends AbstractSet<String> implements Serializa
     }
 
     @Override
-	public boolean remove(Object value)
+    public boolean remove(Object value)
     {
         if(value != null && !(value instanceof String))
         {
@@ -128,7 +128,7 @@ public class CaseInsensitiveSet extends AbstractSet<String> implements Serializa
     }
 
     @Override
-	public Iterator<String> iterator()
+    public Iterator<String> iterator()
     {
         return mValueMap.values().iterator();
     }

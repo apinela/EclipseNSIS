@@ -140,7 +140,7 @@ public class PositionPropertySource implements IPropertySource
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         return new StringBuffer("(").append(mPosition.left).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
             mPosition.top).append(",").append(mPosition.right).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
@@ -182,7 +182,7 @@ public class PositionPropertySource implements IPropertySource
         }
 
         @Override
-		public CellEditor createPropertyEditor(Composite parent)
+        public CellEditor createPropertyEditor(Composite parent)
         {
             if(mWidget.isLocked()) {
                 return null;

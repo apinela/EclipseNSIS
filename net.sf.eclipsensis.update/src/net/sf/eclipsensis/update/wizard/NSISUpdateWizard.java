@@ -77,7 +77,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
     }
 
     @Override
-	public void createPageControls(Composite pageContainer)
+    public void createPageControls(Composite pageContainer)
     {
         super.createPageControls(pageContainer);
         Object data = pageContainer.getLayoutData();
@@ -89,13 +89,13 @@ public class NSISUpdateWizard extends NSISConfigWizard
     }
 
     @Override
-	public void addPages()
+    public void addPages()
     {
         addPage(new NSISUpdateWizardPage(mAction, mIgnorePreview));
     }
 
     @Override
-	public int getPageCount()
+    public int getPageCount()
     {
         int n = super.getPageCount();
         if(n == 0) {
@@ -106,7 +106,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
     }
 
     @Override
-	public IWizardPage[] getPages()
+    public IWizardPage[] getPages()
     {
         IWizardPage[] wizpages = super.getPages();
         if(Common.isEmptyArray(wizpages)) {
@@ -117,7 +117,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
     }
 
     @Override
-	public IWizardPage getStartingPage()
+    public IWizardPage getStartingPage()
     {
         IWizardPage wizardPage = super.getStartingPage();
         if(wizardPage == null) {
@@ -128,7 +128,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
     }
 
     @Override
-	public void setContainer(IWizardContainer wizardContainer)
+    public void setContainer(IWizardContainer wizardContainer)
     {
         if(getContainer() instanceof IPageChangeProvider) {
             if(mPageChangedListener != null) {
@@ -145,7 +145,7 @@ public class NSISUpdateWizard extends NSISConfigWizard
     }
 
     @Override
-	public boolean doPerformFinish()
+    public boolean doPerformFinish()
     {
         if(getPageCount() > 0) {
             IDialogSettings settings = getDialogSettings();

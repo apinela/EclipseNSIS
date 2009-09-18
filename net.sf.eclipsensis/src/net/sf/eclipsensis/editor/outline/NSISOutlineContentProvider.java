@@ -110,7 +110,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     private NSISOutlineElement openElement(NSISOutlineElement current, NSISOutlineElement element,
                                            int[] invalidParents)
     {
-    	NSISOutlineElement current2 = current;
+        NSISOutlineElement current2 = current;
         boolean found = false;
         if(!Common.isEmptyArray(invalidParents)) {
             for(int i=0; i<invalidParents.length; i++) {
@@ -130,7 +130,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     private NSISOutlineElement closeElement(IDocument document, NSISOutlineElement current, NSISOutlineElement element,
                                             int[] validTypes) throws BadLocationException, BadPositionCategoryException
     {
-    	NSISOutlineElement current2 = current;
+        NSISOutlineElement current2 = current;
         if(!Common.isEmptyArray(validTypes)) {
             List<NSISOutlineElement> elementsToClose = new ArrayList<NSISOutlineElement>();
             boolean found = false;
@@ -572,7 +572,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
      * @see IContentProvider#inputChanged(Viewer, Object, Object)
      */
     @Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
     {
         inputChanged(oldInput, newInput);
     }
@@ -581,7 +581,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
      * @see IContentProvider#dispose
      */
     @Override
-	public void dispose()
+    public void dispose()
     {
         if(mRootElement != null) {
             mRootElement = null;
@@ -600,7 +600,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
      * @see IStructuredContentProvider#getElements(Object)
      */
     @Override
-	public Object[] getElements(Object element)
+    public Object[] getElements(Object element)
     {
         return mRootElement;
     }
@@ -609,7 +609,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
      * @see ITreeContentProvider#hasChildren(Object)
      */
     @Override
-	public boolean hasChildren(Object element)
+    public boolean hasChildren(Object element)
     {
         if(element instanceof NSISOutlineElement) {
             for (Iterator<NSISOutlineElement> iter = ((NSISOutlineElement)element).getChildren().iterator(); iter.hasNext();) {
@@ -629,7 +629,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
      * @see ITreeContentProvider#getParent(Object)
      */
     @Override
-	public Object getParent(Object element)
+    public Object getParent(Object element)
     {
         if (element instanceof NSISOutlineElement) {
             NSISOutlineElement parent = ((NSISOutlineElement)element).getParent();
@@ -649,7 +649,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
      * @see ITreeContentProvider#getChildren(Object)
      */
     @Override
-	public Object[] getChildren(Object element)
+    public Object[] getChildren(Object element)
     {
         return getChildren(element, true);
     }
@@ -824,7 +824,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
 
         protected IToken createToken(String text, int startOffset, int length)
         {
-        	String text2 = text;
+            String text2 = text;
             if(mMatchKeywords) {
                 if(text2.length()==0 && !mIsString) {
                     return Token.WHITESPACE;

@@ -86,7 +86,7 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
     }
 
     @Override
-	protected TextConsoleViewer createViewer(Composite parent)
+    protected TextConsoleViewer createViewer(Composite parent)
     {
         return new NSISConsoleViewer(parent, (NSISConsole)getConsole());
     }
@@ -112,7 +112,7 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
     }
 
     @Override
-	public void createControl(Composite parent)
+    public void createControl(Composite parent)
     {
         super.createControl(parent);
         String id = "#ContextMenu"; //$NON-NLS-1$
@@ -153,7 +153,7 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
     }
 
     @Override
-	protected void createActions()
+    protected void createActions()
     {
         super.createActions();
         ImageManager imageManager = EclipseNSISPlugin.getImageManager();
@@ -184,7 +184,7 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
         mCancelAction = makeAction(
                 new Action() {
                     @Override
-					public void run()
+                    public void run()
                     {
                         cancelActionDelegate.init(this);
                         cancelActionDelegate.run(this);
@@ -204,7 +204,7 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
     }
 
     @Override
-	protected void contextMenuAboutToShow(IMenuManager menuManager)
+    protected void contextMenuAboutToShow(IMenuManager menuManager)
     {
         super.contextMenuAboutToShow(menuManager);
         menuManager.add(mRemoveAction);
@@ -215,7 +215,7 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
     }
 
     @Override
-	protected void configureToolBar(IToolBarManager mgr)
+    protected void configureToolBar(IToolBarManager mgr)
     {
         mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, mRemoveAction);
         mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, mCancelAction);
@@ -232,7 +232,7 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
     }
 
     @Override
-	public void dispose()
+    public void dispose()
     {
         mDisposed = true;
         ((NSISConsole)getConsole()).getDocument().removeDocumentListener(this);
@@ -265,7 +265,7 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
         }
 
         @Override
-		public void run()
+        public void run()
         {
             setAutoScroll(!isChecked());
         }
@@ -288,7 +288,7 @@ public class NSISConsolePage extends TextConsolePage implements IMakeNSISRunList
         }
 
         @Override
-		public void run()
+        public void run()
         {
             NSISConsoleFactory.closeConsole();
         }

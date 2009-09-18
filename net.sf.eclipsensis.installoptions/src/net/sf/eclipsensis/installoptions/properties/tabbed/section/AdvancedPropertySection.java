@@ -29,7 +29,7 @@ public class AdvancedPropertySection extends AbstractPropertySection
      *      org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage)
      */
     @Override
-	public void createControls(Composite parent, TabbedPropertySheetPage page)
+    public void createControls(Composite parent, TabbedPropertySheetPage page)
     {
         super.createControls(parent, page);
         Composite composite = getWidgetFactory().createFlatFormComposite(parent);
@@ -61,7 +61,7 @@ public class AdvancedPropertySection extends AbstractPropertySection
      *      org.eclipse.jface.viewers.ISelection)
      */
     @Override
-	public void setInput(IWorkbenchPart part, ISelection selection)
+    public void setInput(IWorkbenchPart part, ISelection selection)
     {
         super.setInput(part, selection);
         mPage.selectionChanged(part, selection);
@@ -71,7 +71,7 @@ public class AdvancedPropertySection extends AbstractPropertySection
      * @see org.eclipse.ui.views.properties.tabbed.ISection#dispose()
      */
     @Override
-	public void dispose()
+    public void dispose()
     {
         super.dispose();
 
@@ -85,7 +85,7 @@ public class AdvancedPropertySection extends AbstractPropertySection
      * @see org.eclipse.ui.views.properties.tabbed.ISection#refresh()
      */
     @Override
-	public void refresh()
+    public void refresh()
     {
         mPage.refresh();
     }
@@ -94,7 +94,7 @@ public class AdvancedPropertySection extends AbstractPropertySection
      * @see org.eclipse.ui.views.properties.tabbed.ISection#shouldUseExtraSpace()
      */
     @Override
-	public boolean shouldUseExtraSpace()
+    public boolean shouldUseExtraSpace()
     {
         return true;
     }

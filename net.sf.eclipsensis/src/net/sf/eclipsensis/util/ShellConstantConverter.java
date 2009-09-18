@@ -31,7 +31,7 @@ public class ShellConstantConverter
 
     public String encodeConstants(String line)
     {
-    	String line2 = line;
+        String line2 = line;
         if(!Common.isEmpty(line2)) {
             for (Iterator<ShellConstant> iter = mShellConstants.iterator(); iter.hasNext();) {
                 ShellConstant constant = iter.next();
@@ -54,7 +54,7 @@ public class ShellConstantConverter
 
     public String decodeConstants(String line)
     {
-    	String line2 = line;
+        String line2 = line;
         if(!Common.isEmpty(line2)) {
             for (Iterator<ShellConstant> iter = mShellConstants.iterator(); iter.hasNext();) {
                 ShellConstant constant = iter.next();

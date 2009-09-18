@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
@@ -26,7 +26,7 @@ public abstract class PrefixableParam extends NSISParam
     }
 
     @Override
-	protected void init(Node node)
+    protected void init(Node node)
     {
         super.init(node);
         NamedNodeMap attributes = node.getAttributes();
@@ -54,13 +54,13 @@ public abstract class PrefixableParam extends NSISParam
     }
 
     @Override
-	protected final NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    protected final NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return createPrefixableParamEditor(command, parentEditor);
     }
 
     @Override
-	protected final String getDefaultValue()
+    protected final String getDefaultValue()
     {
         if (mAllowBlank)
         {
@@ -87,7 +87,7 @@ public abstract class PrefixableParam extends NSISParam
         }
 
         @Override
-		protected final void appendParamText(StringBuffer buf, boolean preview)
+        protected final void appendParamText(StringBuffer buf, boolean preview)
         {
             String text = getPrefixableParamText();
             if (text != null)
@@ -111,13 +111,13 @@ public abstract class PrefixableParam extends NSISParam
         }
 
         @Override
-		protected boolean shouldDecorate()
+        protected boolean shouldDecorate()
         {
             return true;
         }
 
         @Override
-		protected String validateParam()
+        protected String validateParam()
         {
             return null;
         }

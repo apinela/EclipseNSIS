@@ -114,7 +114,7 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
     }
 
     @Override
-	protected boolean calculateEnabled()
+    protected boolean calculateEnabled()
     {
         Command cmd = createDistributeCommand(getSelectedObjects());
         if (cmd == null) {
@@ -129,7 +129,7 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
      * @return The command to resize the selected objects.
      */
     @SuppressWarnings("unchecked")
-	private Command createDistributeCommand(List<?> objects) {
+    private Command createDistributeCommand(List<?> objects) {
         if (objects.size() < 3) {
             return null;
         }
@@ -259,7 +259,7 @@ public class DistributeAction extends SelectionAction implements IInstallOptions
     }
 
     @Override
-	public void run() {
+    public void run() {
         execute(createDistributeCommand(getSelectedObjects()));
     }
 }

@@ -66,7 +66,7 @@ public class InstallOptionsExternalFileEditorInput implements IInstallOptionsEdi
     }
 
     @Override
-	public boolean equals(Object o)
+    public boolean equals(Object o)
     {
         if (o == this) {
             return true;
@@ -185,9 +185,9 @@ public class InstallOptionsExternalFileEditorInput implements IInstallOptionsEdi
         return null;
     }
 
-	@Override
-	public int hashCode() 
-	{
-		return mInput.hashCode();
-	}
+    @Override
+    public int hashCode()
+    {
+        return mInput.hashCode();
+    }
 }

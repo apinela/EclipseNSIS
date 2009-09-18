@@ -26,7 +26,7 @@ public class AddCommand extends org.eclipse.gef.commands.Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         if (mIndex < 0) {
             mParent.addChild(mChild);
@@ -42,7 +42,7 @@ public class AddCommand extends org.eclipse.gef.commands.Command
     }
 
     @Override
-	public void redo()
+    public void redo()
     {
         if (mIndex < 0) {
             mParent.addChild(mChild);
@@ -68,7 +68,7 @@ public class AddCommand extends org.eclipse.gef.commands.Command
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         mParent.removeChild(mChild);
     }

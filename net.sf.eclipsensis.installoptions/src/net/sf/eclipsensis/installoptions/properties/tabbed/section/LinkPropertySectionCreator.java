@@ -35,7 +35,7 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
     }
 
     @Override
-	protected Control createAppearancePropertySection(final Composite parent, final TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
+    protected Control createAppearancePropertySection(final Composite parent, final TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
         final Composite composite = widgetFactory.createComposite(parent);
         GridLayout layout = new GridLayout(2,false);
@@ -92,7 +92,7 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
         colorEditor.getButton().setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         colorEditor.getButton().addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 RGB newRGB = colorEditor.getRGB();
                 if(validator != null) {
@@ -109,7 +109,7 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
         //Reject focus
         colorText.addFocusListener(new FocusAdapter() {
             @Override
-			public void focusGained(FocusEvent e)
+            public void focusGained(FocusEvent e)
             {
                 colorEditor.getButton().setFocus();
             }
@@ -120,7 +120,7 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
         resetButton.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         resetButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 updateRGB(commandHelper, descriptor, labelProvider, colorText, null);
             }
@@ -184,7 +184,7 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
      */
     private void updateRGB(final InstallOptionsCommandHelper commandHelper, final IPropertyDescriptor descriptor, final ILabelProvider labelProvider, final Text colorText, RGB rgb)
     {
-    	RGB newRGB = rgb;
+        RGB newRGB = rgb;
         RGB oldRGB = (RGB)getWidget().getPropertyValue(InstallOptionsModel.PROPERTY_TXTCOLOR);
         if(InstallOptionsLink.DEFAULT_TXTCOLOR.equals(newRGB)) {
             newRGB = null;
@@ -197,7 +197,7 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
     }
 
     @Override
-	protected boolean isTextPropertyMultiline()
+    protected boolean isTextPropertyMultiline()
     {
         return ((InstallOptionsLink)getWidget()).isMultiLine();
     }

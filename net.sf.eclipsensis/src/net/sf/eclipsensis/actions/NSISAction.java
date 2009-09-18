@@ -23,19 +23,19 @@ public abstract class NSISAction extends ActionDelegate implements IObjectAction
     protected NSISEditor mEditor = null;
     protected IAction mAction = null;
 
-	/**
-	 * The constructor.
-	 */
-	public NSISAction()
+    /**
+     * The constructor.
+     */
+    public NSISAction()
     {
         mPlugin = EclipseNSISPlugin.getDefault();
-	}
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
     @Override
-	public void init(IAction action)
+    public void init(IAction action)
     {
         super.init(action);
         mAction = action;
@@ -45,7 +45,7 @@ public abstract class NSISAction extends ActionDelegate implements IObjectAction
      * @see org.eclipse.ui.IActionDelegate2#dispose()
      */
     @Override
-	public void dispose()
+    public void dispose()
     {
         super.dispose();
         mAction = null;

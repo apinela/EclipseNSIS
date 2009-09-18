@@ -20,7 +20,7 @@ public class NSISAboutAction extends NSISAction
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     @Override
-	public void run(IAction action)
+    public void run(IAction action)
     {
         new NSISAboutDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()).open();
     }

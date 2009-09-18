@@ -37,7 +37,7 @@ public class LabelFigure extends UneditableElementFigure implements ILabelFigure
      * @return
      */
     @Override
-	protected Control createUneditableSWTControl(Composite parent, int style)
+    protected Control createUneditableSWTControl(Composite parent, int style)
     {
         Label label = new Label(parent, style);
         label.setText(isMultiLine()?TypeConverter.ESCAPED_STRING_CONVERTER.asString(mText):mText);
@@ -48,7 +48,7 @@ public class LabelFigure extends UneditableElementFigure implements ILabelFigure
      * @return
      */
     @Override
-	public int getDefaultStyle()
+    public int getDefaultStyle()
     {
         return SWT.LEFT|SWT.WRAP;
     }

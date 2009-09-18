@@ -36,7 +36,7 @@ public class NSISPagetypeVariableResolver extends TemplateVariableResolver
      * @see org.eclipse.jface.text.templates.TemplateVariableResolver#resolveAll(org.eclipse.jface.text.templates.TemplateContext)
      */
     @Override
-	protected String[] resolveAll(TemplateContext context)
+    protected String[] resolveAll(TemplateContext context)
     {
         return NSISKeywords.getInstance().getKeywordsGroup(NSISKeywords.INSTALLER_PAGES);
     }

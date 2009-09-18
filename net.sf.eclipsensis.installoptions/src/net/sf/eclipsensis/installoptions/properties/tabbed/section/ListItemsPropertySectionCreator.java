@@ -40,15 +40,15 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
     }
 
     @Override
-	protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
+    protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
-    	Composite parent2 = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
+        Composite parent2 = (Composite)super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
         createListItemsAndStateSection(parent2, widgetFactory, commandHelper);
         return parent2;
     }
 
     @Override
-	protected boolean shouldCreateAppearancePropertySection()
+    protected boolean shouldCreateAppearancePropertySection()
     {
         return true;
     }
@@ -94,7 +94,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
 
                 public int hashCode(Object element)
                 {
-                	Object element2 = element;
+                    Object element2 = element;
                     if(element2 != null) {
                         if(element2 instanceof String) {
                             element2 = ((String)element2).toLowerCase();
@@ -143,7 +143,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
             viewer.setCheckedElements(state);
             final PropertyChangeListener listener = new PropertyChangeListener() {
                 @SuppressWarnings("unchecked")
-				public void propertyChange(PropertyChangeEvent evt)
+                public void propertyChange(PropertyChangeEvent evt)
                 {
                     nonUserChange[0]=true;
                     try {
@@ -238,7 +238,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
             }
 
             @SuppressWarnings("unchecked")
-			public void modify(Object element, String property, Object value)
+            public void modify(Object element, String property, Object value)
             {
                 if(value == null) {
                     Common.openError(viewer.getTable().getShell(),textEditor.getErrorMessage(), InstallOptionsPlugin.getShellImage());
@@ -308,7 +308,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         add.addListener(SWT.Selection, new Listener() {
             @SuppressWarnings("unchecked")
-			public void handleEvent(Event e) {
+            public void handleEvent(Event e) {
                 List<String> list = (List<String>)viewer.getInput();
                 if(list != null) {
                     int counter = 1;
@@ -342,7 +342,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         del.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         del.addListener(SWT.Selection, new Listener() {
             @SuppressWarnings("unchecked")
-			public void handleEvent(Event e) {
+            public void handleEvent(Event e) {
                 List<String> list = (List<String>)viewer.getInput();
                 if(list != null) {
                     IStructuredSelection selection= (IStructuredSelection) viewer.getSelection();
@@ -370,14 +370,14 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
 
         final TableViewerUpDownMover<List<String>, String> mover = new TableViewerUpDownMover<List<String>, String>() {
             @Override
-			@SuppressWarnings("unchecked")
-			protected List<String> getAllElements()
+            @SuppressWarnings("unchecked")
+            protected List<String> getAllElements()
             {
                 return (List<String>)((TableViewer)getViewer()).getInput();
             }
 
             @Override
-			protected void updateStructuredViewerInput(List<String> input, List<String> elements, List<String> move, boolean isDown)
+            protected void updateStructuredViewerInput(List<String> input, List<String> elements, List<String> move, boolean isDown)
             {
                 String error = listItemsValidator.isValid(elements);
                 if(Common.isEmpty(error)) {
@@ -398,7 +398,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         up.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         up.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveUp();
             }
@@ -411,7 +411,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
         down.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         down.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveDown();
             }

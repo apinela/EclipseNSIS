@@ -21,8 +21,8 @@ public abstract class StructuredViewerUpDownMover<S, T> extends UpDownMover<T>
      * @see net.sf.eclipsensis.util.UpDownMover#updateElements(java.util.List, java.util.List, boolean)
      */
     @Override
-	@SuppressWarnings("unchecked")
-	protected final void updateElements(List<T> elements, List<T> move, boolean isDown)
+    @SuppressWarnings("unchecked")
+    protected final void updateElements(List<T> elements, List<T> move, boolean isDown)
     {
         StructuredViewer viewer = getViewer();
         updateStructuredViewerInput((S) viewer.getInput(), elements, move, isDown);

@@ -63,7 +63,7 @@ public class InstallOptionsRulerComposite extends Composite
     }
 
     @SuppressWarnings("restriction")
-	private GraphicalViewer createRulerContainer(InstallOptionsDialog dialog, int orientation)
+    private GraphicalViewer createRulerContainer(InstallOptionsDialog dialog, int orientation)
     {
         RulerViewer viewer = new RulerViewer(dialog);
         final boolean isHorizontal = orientation == PositionConstants.NORTH
@@ -208,7 +208,7 @@ public class InstallOptionsRulerComposite extends Composite
      * @see org.eclipse.swt.widgets.Composite#layout(boolean)
      */
     @Override
-	public void layout(boolean change) {
+    public void layout(boolean change) {
         if (!mLayingOut && !isDisposed()) {
             checkWidget();
             if (change || mNeedToLayout) {
@@ -389,7 +389,7 @@ public class InstallOptionsRulerComposite extends Composite
         /**
          * Constructor
          */
-        public RulerViewer(InstallOptionsDialog dialog) 
+        public RulerViewer(InstallOptionsDialog dialog)
         {
             super(dialog);
             init();
@@ -398,9 +398,9 @@ public class InstallOptionsRulerComposite extends Composite
          * @see org.eclipse.gef.EditPartViewer#appendSelection(org.eclipse.gef.EditPart)
          */
         @Override
-		public void appendSelection(EditPart editpart) 
+        public void appendSelection(EditPart editpart)
         {
-        	EditPart editpart2 = editpart;
+            EditPart editpart2 = editpart;
             if (editpart2 instanceof RootEditPart) {
                 editpart2 = ((RootEditPart)editpart2).getContents();
             }
@@ -411,8 +411,8 @@ public class InstallOptionsRulerComposite extends Composite
          * @see org.eclipse.gef.GraphicalViewer#findHandleAt(org.eclipse.draw2d.geometry.Point)
          */
         @Override
-		@SuppressWarnings({ "restriction", "unchecked" })
-		public Handle findHandleAt(org.eclipse.draw2d.geometry.Point p) {
+        @SuppressWarnings({ "restriction", "unchecked" })
+        public Handle findHandleAt(org.eclipse.draw2d.geometry.Point p) {
             final GraphicalEditPart gep =
                     (GraphicalEditPart)findObjectAtExcluding(p, new ArrayList());
             if (!(gep instanceof GuideEditPart)) {
@@ -431,8 +431,8 @@ public class InstallOptionsRulerComposite extends Composite
          * @see org.eclipse.gef.ui.parts.AbstractEditPartViewer#init()
          */
         @Override
-		@SuppressWarnings("restriction")
-		protected void init() {
+        @SuppressWarnings("restriction")
+        protected void init() {
             setContextMenu(new RulerContextMenuProvider(this));
             setKeyHandler(new RulerKeyHandler(this));
         }
@@ -443,7 +443,7 @@ public class InstallOptionsRulerComposite extends Composite
          * @see org.eclipse.gef.EditPartViewer#reveal(org.eclipse.gef.EditPart)
          */
         @Override
-		public void reveal(EditPart part) {
+        public void reveal(EditPart part) {
             if (part != getContents()) {
                 super.reveal(part);
             }
@@ -452,7 +452,7 @@ public class InstallOptionsRulerComposite extends Composite
          * @see org.eclipse.gef.EditPartViewer#setContents(org.eclipse.gef.EditPart)
          */
         @Override
-		public void setContents(EditPart editpart) {
+        public void setContents(EditPart editpart) {
             super.setContents(editpart);
             setFocus(getContents());
         }
@@ -469,8 +469,8 @@ public class InstallOptionsRulerComposite extends Composite
              * @see org.eclipse.gef.KeyHandler#keyPressed(org.eclipse.swt.events.KeyEvent)
              */
             @Override
-			@SuppressWarnings("restriction")
-			public boolean keyPressed(KeyEvent event) {
+            @SuppressWarnings("restriction")
+            public boolean keyPressed(KeyEvent event) {
                 if (event.keyCode == SWT.DEL) {
                     // If a guide has focus, delete it
                     if (getFocusEditPart() instanceof GuideEditPart) {

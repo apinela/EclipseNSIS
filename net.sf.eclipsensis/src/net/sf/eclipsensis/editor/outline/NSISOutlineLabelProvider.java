@@ -37,7 +37,7 @@ public class NSISOutlineLabelProvider extends LabelProvider
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
     @Override
-	public Image getImage(Object element)
+    public Image getImage(Object element)
     {
         if(element instanceof NSISOutlineElement) {
             return decorateImage((NSISOutlineElement)element);
@@ -108,14 +108,14 @@ public class NSISOutlineLabelProvider extends LabelProvider
             EclipseNSISPlugin.getImageManager().putImageDescriptor(hashCode,
                     new CompositeImageDescriptor(){
                         @Override
-						protected void drawCompositeImage(int width, int height)
+                        protected void drawCompositeImage(int width, int height)
                         {
                             drawImage(image.getImageData(),0,0);
                             drawImage(data,0,getSize().y-data.height);
                         }
 
                         @Override
-						protected Point getSize()
+                        protected Point getSize()
                         {
                             return new Point(image.getBounds().width,image.getBounds().height);
                         }
@@ -129,7 +129,7 @@ public class NSISOutlineLabelProvider extends LabelProvider
      * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
      */
     @Override
-	public boolean isLabelProperty(Object element, String property)
+    public boolean isLabelProperty(Object element, String property)
     {
         return false;
     }

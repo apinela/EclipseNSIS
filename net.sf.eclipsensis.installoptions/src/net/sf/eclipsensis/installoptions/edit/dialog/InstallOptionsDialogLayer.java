@@ -25,7 +25,7 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
     private boolean mShowDialogSize = false;
 
     @Override
-	protected void paintFigure(Graphics graphics)
+    protected void paintFigure(Graphics graphics)
     {
         super.paintFigure(graphics);
         if(mShowDialogSize && !mDialogSize.equals(0,0)) {
@@ -39,14 +39,14 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
     }
 
     @Override
-	public void add(IFigure child, Object constraint, int index)
+    public void add(IFigure child, Object constraint, int index)
     {
         mChildren.add(child);
         super.add(child, constraint, index);
     }
 
     @Override
-	public void remove(IFigure child)
+    public void remove(IFigure child)
     {
         if ((child.getParent() == this) && getChildren().contains(child)) {
             mChildren.remove(child);
@@ -55,7 +55,7 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
     }
 
     @Override
-	protected void paintChildren(Graphics graphics)
+    protected void paintChildren(Graphics graphics)
     {
         IFigure child;
 
@@ -99,7 +99,7 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
     }
 
     @Override
-	public IFigure findFigureAt(int x, int y, TreeSearch search)
+    public IFigure findFigureAt(int x, int y, TreeSearch search)
     {
         IFigure figure = super.findFigureAt(x, y, search);
         if(figure instanceof IInstallOptionsFigure) {
@@ -138,7 +138,7 @@ public class InstallOptionsDialogLayer extends FreeformLayer implements IInstall
         }
 
         @Override
-		public boolean prune(IFigure f)
+        public boolean prune(IFigure f)
         {
             if(!mDelegate.prune(f)) {
                 return super.prune(f);

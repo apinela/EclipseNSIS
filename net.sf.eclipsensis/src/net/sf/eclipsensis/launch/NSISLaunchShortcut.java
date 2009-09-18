@@ -68,7 +68,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
     private void launch(IPath path, String mode)
     {
         try {
-        	IPath path2 = NSISCompileTestUtility.INSTANCE.getCompileScript(path);
+            IPath path2 = NSISCompileTestUtility.INSTANCE.getCompileScript(path);
             if (path2 != null && INSISConstants.NSI_EXTENSION.equalsIgnoreCase(path2.getFileExtension())) {
                 ILaunchConfiguration config = findConfiguration(path2);
                 if(config != null) {

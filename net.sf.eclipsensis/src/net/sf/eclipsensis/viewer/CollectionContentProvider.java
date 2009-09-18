@@ -18,7 +18,7 @@ public class CollectionContentProvider extends EmptyContentProvider
      * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
      */
     @Override
-	public Object[] getElements(Object inputElement)
+    public Object[] getElements(Object inputElement)
     {
         if(inputElement != null && inputElement instanceof Collection<?>) {
             return ((Collection<?>)inputElement).toArray();

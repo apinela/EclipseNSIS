@@ -25,34 +25,34 @@ public class NSISWizardAction extends NSISAction
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     @Override
-	public void run(IAction action)
+    public void run(IAction action)
     {
         IWorkbench workbench = PlatformUI.getWorkbench();
         final Shell shell = workbench.getActiveWorkbenchWindow().getShell();
         if (isEnabled()) {
-			final NSISWizardDialog[] wizardDialog = new NSISWizardDialog[1];
-			BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
-				public void run() {
-					try {
-						wizardDialog[0] = new NSISWizardDialog(shell,
-								new NSISScriptWizard());
-						wizardDialog[0].create();
-					} catch (Exception e) {
-						wizardDialog[0] = null;
-						EclipseNSISPlugin.getDefault().log(e);
-					}
-				}
-			});
-			if (wizardDialog[0] != null) {
-				wizardDialog[0].open();
-			}
-		}
-    	else
-    	{
+            final NSISWizardDialog[] wizardDialog = new NSISWizardDialog[1];
+            BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+                public void run() {
+                    try {
+                        wizardDialog[0] = new NSISWizardDialog(shell,
+                                new NSISScriptWizard());
+                        wizardDialog[0].create();
+                    } catch (Exception e) {
+                        wizardDialog[0] = null;
+                        EclipseNSISPlugin.getDefault().log(e);
+                    }
+                }
+            });
+            if (wizardDialog[0] != null) {
+                wizardDialog[0].open();
+            }
+        }
+        else
+        {
             Common.openError(shell,
-            		EclipseNSISPlugin.getResourceString("unconfigured.confirm"), //$NON-NLS-1$
-            		EclipseNSISPlugin.getShellImage());
-    	}
+                    EclipseNSISPlugin.getResourceString("unconfigured.confirm"), //$NON-NLS-1$
+                    EclipseNSISPlugin.getShellImage());
+        }
     }
 
     public boolean isEnabled()

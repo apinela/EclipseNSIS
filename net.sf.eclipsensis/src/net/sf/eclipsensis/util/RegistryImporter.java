@@ -86,7 +86,7 @@ public class RegistryImporter
             winDir = WinAPI.GetEnvironmentVariable("windir"); //$NON-NLS-1$
         }
         if(winDir != null) {
-        	File sys32Dir = new File(winDir,"system32");
+            File sys32Dir = new File(winDir,"system32");
             regExe = new File(sys32Dir,REG_EXE);
         }
         if(IOUtility.isValidFile(regExe)) {
@@ -155,7 +155,7 @@ public class RegistryImporter
                             }
                             mRegKey = dialog.getRegKey();
                             String[] cmdArray = {regExe.getAbsolutePath(),"export", //$NON-NLS-1$
-                                    			 mRegKey,
+                                                 mRegKey,
                                                  regFile.getAbsolutePath()};
                             try {
                                 Process p = Runtime.getRuntime().exec(cmdArray);

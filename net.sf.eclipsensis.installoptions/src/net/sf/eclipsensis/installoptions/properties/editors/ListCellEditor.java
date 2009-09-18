@@ -75,14 +75,14 @@ public class ListCellEditor extends CellEditor
      * (non-Javadoc) Method declared on CellEditor.
      */
     @Override
-	protected Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         mList = new List(parent, getStyle());
         mList.setFont(parent.getFont());
 
         mList.addKeyListener(new KeyAdapter() {
             @Override
-			public void keyPressed(KeyEvent e)
+            public void keyPressed(KeyEvent e)
             {
                 keyReleaseOccured(e);
             }
@@ -90,13 +90,13 @@ public class ListCellEditor extends CellEditor
 
         mList.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetDefaultSelected(SelectionEvent event)
+            public void widgetDefaultSelected(SelectionEvent event)
             {
                 applyEditorValueAndDeactivate();
             }
 
             @Override
-			public void widgetSelected(SelectionEvent event)
+            public void widgetSelected(SelectionEvent event)
             {
                 computeSelection();
             }
@@ -114,7 +114,7 @@ public class ListCellEditor extends CellEditor
 
         mList.addFocusListener(new FocusAdapter() {
             @Override
-			public void focusLost(FocusEvent e)
+            public void focusLost(FocusEvent e)
             {
                 ListCellEditor.this.focusLost();
             }
@@ -138,7 +138,7 @@ public class ListCellEditor extends CellEditor
     }
 
     @Override
-	protected Object doGetValue()
+    protected Object doGetValue()
     {
         return mSelection;
     }
@@ -147,13 +147,13 @@ public class ListCellEditor extends CellEditor
      * (non-Javadoc) Method declared on CellEditor.
      */
     @Override
-	protected void doSetFocus()
+    protected void doSetFocus()
     {
         mList.setFocus();
     }
 
     @Override
-	public LayoutData getLayoutData()
+    public LayoutData getLayoutData()
     {
         LayoutData layoutData = super.getLayoutData();
         if ((mList == null) || mList.isDisposed()) {
@@ -169,7 +169,7 @@ public class ListCellEditor extends CellEditor
     }
 
     @Override
-	protected void doSetValue(Object value)
+    protected void doSetValue(Object value)
     {
         java.util.List<String> list = Common.tokenizeToList((String)value,IInstallOptionsConstants.LIST_SEPARATOR,false);
         java.util.List<String> items = getItems();
@@ -236,7 +236,7 @@ public class ListCellEditor extends CellEditor
      * @see org.eclipse.jface.viewers.CellEditor#focusLost()
      */
     @Override
-	protected void focusLost()
+    protected void focusLost()
     {
         if (isActivated()) {
             applyEditorValueAndDeactivate();
@@ -248,7 +248,7 @@ public class ListCellEditor extends CellEditor
      * @see org.eclipse.jface.viewers.CellEditor#keyReleaseOccured(org.eclipse.swt.events.KeyEvent)
      */
     @Override
-	protected void keyReleaseOccured(KeyEvent keyEvent)
+    protected void keyReleaseOccured(KeyEvent keyEvent)
     {
         if (keyEvent.character == '\t') { // tab key
             applyEditorValueAndDeactivate();

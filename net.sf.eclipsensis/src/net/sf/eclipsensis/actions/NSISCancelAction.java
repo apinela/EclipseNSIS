@@ -20,8 +20,8 @@ public class NSISCancelAction extends NSISScriptAction
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-	@Override
-	public void run(IAction action) {
+    @Override
+    public void run(IAction action) {
         try {
             MakeNSISRunner.cancel();
         }
@@ -29,10 +29,10 @@ public class NSISCancelAction extends NSISScriptAction
         {
             EclipseNSISPlugin.getDefault().log(ex);
         }
-	}
+    }
 
     @Override
-	protected void started(IPath script)
+    protected void started(IPath script)
     {
         if(mAction != null && !mAction.isEnabled()) {
             mAction.setEnabled(true);
@@ -40,7 +40,7 @@ public class NSISCancelAction extends NSISScriptAction
     }
 
     @Override
-	protected void stopped(IPath script, MakeNSISResults results)
+    protected void stopped(IPath script, MakeNSISResults results)
     {
         if(mAction != null && mAction.isEnabled()) {
             mAction.setEnabled(false);
@@ -51,7 +51,7 @@ public class NSISCancelAction extends NSISScriptAction
      * @see net.sf.eclipsensis.actions.NSISAction#isEnabled()
      */
     @Override
-	public boolean isEnabled()
+    public boolean isEnabled()
     {
         if(super.isEnabled()) {
             return MakeNSISRunner.isCompiling();

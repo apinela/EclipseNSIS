@@ -108,7 +108,7 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
     }
 
     @Override
-	public IMenuCreator getMenuCreator()
+    public IMenuCreator getMenuCreator()
     {
         return mMenuCreator;
     }
@@ -138,21 +138,21 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
     }
 
     @Override
-	public void partActivated(IWorkbenchPart part)
+    public void partActivated(IWorkbenchPart part)
     {
         super.partActivated(part);
         updateEnabled();
     }
 
     @Override
-	public void partClosed(IWorkbenchPart part)
+    public void partClosed(IWorkbenchPart part)
     {
         updateEnabled();
         super.partClosed(part);
     }
 
     @Override
-	public void partDeactivated(IWorkbenchPart part)
+    public void partDeactivated(IWorkbenchPart part)
     {
         super.partDeactivated(part);
         updateEnabled();
@@ -205,7 +205,7 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
     }
 
     @Override
-	public void run()
+    public void run()
     {
         mCurrent.run();
     }
@@ -275,7 +275,7 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
         }
 
         @Override
-		public void run()
+        public void run()
         {
             if(mDelegate != null) {
                 mDelegate.run();
@@ -284,7 +284,7 @@ public class DropDownAction extends PartEventAction implements IPropertyChangeLi
         }
 
         @Override
-		public void runWithEvent(Event event)
+        public void runWithEvent(Event event)
         {
             if(mDelegate != null) {
                 mDelegate.runWithEvent(event);

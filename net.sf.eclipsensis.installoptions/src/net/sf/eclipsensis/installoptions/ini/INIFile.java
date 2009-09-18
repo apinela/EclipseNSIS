@@ -392,7 +392,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
 
     private static IINIContainer loadLine(INIFile iniFile, IINIContainer container, String text, String delimiter)
     {
-    	IINIContainer container2 = container;
+        IINIContainer container2 = container;
         INILine line = parse(text, delimiter);
         iniFile.mLines.add(line);
         if(line instanceof IINIContainer) {
@@ -572,7 +572,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         for (Iterator<INILine> iter = mChildren.iterator(); iter.hasNext();) {
@@ -725,7 +725,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                         final INILine line2 = line;
                         problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.add.settings.section")) { //$NON-NLS-1$
                             @Override
-							protected INIProblemFix[] createFixes()
+                            protected INIProblemFix[] createFixes()
                             {
                                 StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                                 buf.append(section.buildText(section.getName())).append(section.getDelimiter()==null?INSISConstants.LINE_SEPARATOR:section.getDelimiter());
@@ -769,7 +769,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                                                                         new String[]{InstallOptionsModel.PROPERTY_NUMFIELDS}));
                         problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.add.numfields.value")) { //$NON-NLS-1$
                             @Override
-							protected INIProblemFix[] createFixes()
+                            protected INIProblemFix[] createFixes()
                             {
                                 StringBuffer buf = new StringBuffer(section.getText()).append(section.getDelimiter()==null?INSISConstants.LINE_SEPARATOR:section.getDelimiter());
                                 buf.append(keyValue.buildText(Integer.toString(n))).append(section.getDelimiter()==null?"":section.getDelimiter()); //$NON-NLS-1$
@@ -801,7 +801,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                             final INIKeyValue keyValue = keyValues[0];
                             problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.correct.numfields.value")) { //$NON-NLS-1$
                                 @Override
-								protected INIProblemFix[] createFixes()
+                                protected INIProblemFix[] createFixes()
                                 {
                                     return new INIProblemFix[] {new INIProblemFix(keyValue, keyValue.buildText(Integer.toString(n))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                                 }
@@ -855,7 +855,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                                                                                 numFields2}));
                         problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString(nextIndex > bitsSize?"quick.fix.remove.field":"quick.fix.correct.field.index")) { //$NON-NLS-1$ //$NON-NLS-2$
                             @Override
-							protected INIProblemFix[] createFixes()
+                            protected INIProblemFix[] createFixes()
                             {
                                 if(nextIndex > bitsSize) {
                                     List<INIProblemFix> fixes = new ArrayList<INIProblemFix>();
@@ -911,7 +911,7 @@ public class INIFile implements IDocumentListener, IINIContainer, IINIProblemCon
                             new Object[]{InstallOptionsModel.SECTION_FIELD_PREFIX, new Integer(missing), missingBuf.toString()}));
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.add.missing.fields")) { //$NON-NLS-1$
                         @Override
-						protected INIProblemFix[] createFixes()
+                        protected INIProblemFix[] createFixes()
                         {
                             List<INIProblemFix> fixes = new ArrayList<INIProblemFix>();
                             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$

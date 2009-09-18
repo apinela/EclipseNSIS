@@ -50,7 +50,7 @@ public class ListItemsDialog extends Dialog
     }
 
     @Override
-	protected void configureShell(Shell newShell)
+    protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
         newShell.setText(InstallOptionsPlugin.getFormattedString("listitems.dialog.name", new String[]{mType})); //$NON-NLS-1$
@@ -63,7 +63,7 @@ public class ListItemsDialog extends Dialog
     }
 
     @Override
-	protected Control createDialogArea(Composite parent)
+    protected Control createDialogArea(Composite parent)
     {
         final Composite composite = (Composite)super.createDialogArea(parent);
         GridLayout layout = (GridLayout)composite.getLayout();
@@ -105,7 +105,7 @@ public class ListItemsDialog extends Dialog
             }
 
             @SuppressWarnings("unchecked")
-			public void modify(Object element, String property, Object value)
+            public void modify(Object element, String property, Object value)
             {
                 if(value == null) {
                     Common.openError(getShell(),textEditor.getErrorMessage(), InstallOptionsPlugin.getShellImage());
@@ -140,7 +140,7 @@ public class ListItemsDialog extends Dialog
         add.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         add.addListener(SWT.Selection, new Listener() {
             @SuppressWarnings("unchecked")
-			public void handleEvent(Event e) {
+            public void handleEvent(Event e) {
                 List<String> list = (List<String>)viewer.getInput();
                 if(list != null) {
                     int counter = 1;
@@ -164,7 +164,7 @@ public class ListItemsDialog extends Dialog
         del.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         del.addListener(SWT.Selection, new Listener() {
             @SuppressWarnings("unchecked")
-			public void handleEvent(Event e) {
+            public void handleEvent(Event e) {
                 List<String> list = (List<String>)viewer.getInput();
                 if(list != null) {
                     IStructuredSelection selection= (IStructuredSelection) viewer.getSelection();
@@ -181,14 +181,14 @@ public class ListItemsDialog extends Dialog
 
         final TableViewerUpDownMover<List<String>, String> mover = new TableViewerUpDownMover<List<String>, String>() {
             @Override
-			@SuppressWarnings("unchecked")
-			protected List<String> getAllElements()
+            @SuppressWarnings("unchecked")
+            protected List<String> getAllElements()
             {
                 return (List<String>)((TableViewer)getViewer()).getInput();
             }
 
-			@Override
-			protected void updateStructuredViewerInput(List<String> input, List<String> elements, List<String> move, boolean isDown)
+            @Override
+            protected void updateStructuredViewerInput(List<String> input, List<String> elements, List<String> move, boolean isDown)
             {
                 (input).clear();
                 (input).addAll(elements);
@@ -203,7 +203,7 @@ public class ListItemsDialog extends Dialog
         up.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         up.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveUp();
             }
@@ -216,7 +216,7 @@ public class ListItemsDialog extends Dialog
         down.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         down.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mover.moveDown();
             }
@@ -239,7 +239,7 @@ public class ListItemsDialog extends Dialog
     }
 
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         ICellEditorValidator validator = getValidator();
         if(validator != null) {

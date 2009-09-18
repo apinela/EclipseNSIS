@@ -66,7 +66,7 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
         viewer.setLabelProvider(new LabelProvider() {
             ImageManager mImageManager = EclipseNSISPlugin.getImageManager();
             @Override
-			public Image getImage(Object element)
+            public Image getImage(Object element)
             {
                 if(element instanceof NSISConfigWizardNode) {
                     NSISConfigWizardDescriptor descriptor = ((NSISConfigWizardNode)element).getDescriptor();
@@ -83,7 +83,7 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
             }
 
             @Override
-			public String getText(Object element)
+            public String getText(Object element)
             {
                 if(element instanceof NSISConfigWizardNode) {
                     return ((NSISConfigWizardNode)element).getDescriptor().getName();
@@ -108,7 +108,7 @@ public class NSISConfigSelectionPage extends WizardSelectionPage
         });
         viewer.getTable().addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetDefaultSelected(SelectionEvent e)
+            public void widgetDefaultSelected(SelectionEvent e)
             {
                 if(canFlipToNextPage()) {
                     IWizardPage nextPage = getNextPage();

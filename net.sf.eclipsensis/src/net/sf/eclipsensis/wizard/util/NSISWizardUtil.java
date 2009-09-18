@@ -26,7 +26,7 @@ public class NSISWizardUtil
 
     public static String convertPath(int targetPlatform, String path)
     {
-    	String path2 = path;
+        String path2 = path;
         switch(targetPlatform) {
             case INSISWizardConstants.TARGET_PLATFORM_X64:
                 path2 = IOUtility.convertPathTo64bit(path2);

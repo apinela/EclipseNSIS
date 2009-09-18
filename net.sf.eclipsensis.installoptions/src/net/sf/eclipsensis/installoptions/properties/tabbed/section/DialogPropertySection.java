@@ -31,7 +31,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 public class DialogPropertySection extends InstallOptionsElementPropertySection
 {
     @Override
-	protected Control createSection(InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, InstallOptionsCommandHelper commandHelper)
+    protected Control createSection(InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, InstallOptionsCommandHelper commandHelper)
     {
         if(element instanceof InstallOptionsDialog) {
             return new DialogPropertySectionCreator((InstallOptionsDialog)element).createPropertySection(parent, getWidgetFactory(), commandHelper);

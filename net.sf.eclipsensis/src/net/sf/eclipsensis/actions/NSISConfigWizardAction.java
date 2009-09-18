@@ -28,7 +28,7 @@ public class NSISConfigWizardAction extends Action
     }
 
     @Override
-	public void run()
+    public void run()
     {
         IWorkbench workbench = PlatformUI.getWorkbench();
         final Shell shell = workbench.getActiveWorkbenchWindow().getShell();

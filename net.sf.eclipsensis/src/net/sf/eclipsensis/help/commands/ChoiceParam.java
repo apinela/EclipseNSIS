@@ -28,7 +28,7 @@ public class ChoiceParam extends ComboParam
     }
 
     @Override
-	protected void init(Node node)
+    protected void init(Node node)
     {
         super.init(node);
         loadChoices(node);
@@ -50,7 +50,7 @@ public class ChoiceParam extends ComboParam
     }
 
     @Override
-	protected ComboEntry[] getComboEntries()
+    protected ComboEntry[] getComboEntries()
     {
         return mChoices;
     }

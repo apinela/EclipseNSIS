@@ -47,7 +47,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     }
 
     @Override
-	protected boolean hasRequiredFields()
+    protected boolean hasRequiredFields()
     {
         return isScriptWizard();
     }
@@ -90,7 +90,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     }
 
     @Override
-	public boolean validatePage(int flag)
+    public boolean validatePage(int flag)
     {
         if(isTemplateWizard()) {
             return true;
@@ -122,13 +122,13 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizcomplete_context"; //$NON-NLS-1$
     }
 
     @Override
-	protected Control createPageControl(Composite parent)
+    protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
 
@@ -162,7 +162,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         data.grabExcessHorizontalSpace = true;
         showInstDetails.addSelectionListener(new SelectionAdapter(){
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setShowInstDetails(((Button)e.widget).getSelection());
             }
@@ -176,7 +176,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         data.grabExcessHorizontalSpace = true;
         autoclose.addSelectionListener(new SelectionAdapter(){
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setAutoCloseInstaller(((Button)e.widget).getSelection());
             }
@@ -188,7 +188,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
 
         uninstShortcut.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setCreateUninstallerStartMenuShortcut(((Button)e.widget).getSelection());
             }
@@ -199,7 +199,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                                         settings.isCreateUninstaller(), null, false);
         uninstControlPanel.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setCreateUninstallerControlPanelEntry(((Button)e.widget).getSelection());
             }
@@ -349,7 +349,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         });
         SelectionAdapter selectionAdapter = new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 boolean saveExternal = saveTypes[1].getSelection();
                 if(saveExternal != mWizard.getSettings().isSaveExternal()) {
@@ -366,7 +366,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         browseSave.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         browseSave.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 String savePath = mWizard.getSettings().getSavePath();
                 if(Common.isEmpty(savePath)) {
                     savePath = EclipseNSISPlugin.getResourceString("default.save.name"); //$NON-NLS-1$
@@ -414,7 +414,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 mWizard.getSettings().isMakePathsRelative(),true, null, false);
         relativePaths.addSelectionListener(new SelectionAdapter(){
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setMakePathsRelative(((Button)e.widget).getSelection());
             }
@@ -431,7 +431,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         ((GridData)compile.getLayoutData()).horizontalSpan = 1;
         compile.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setCompileScript(((Button)e.widget).getSelection());
             }
@@ -444,7 +444,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         ((GridData)testInstaller.getLayoutData()).horizontalSpan = 1;
         testInstaller.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setTestScript(((Button)e.widget).getSelection());
             }
@@ -455,7 +455,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             final Button button = NSISWizardDialogUtil.createCheckBox(saveGroup,"save.wizard.template.label",scriptWizard.isSaveAsTemplate(),true,null,false); //$NON-NLS-1$
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     scriptWizard.setSaveAsTemplate(button.getSelection());
                 }
@@ -496,7 +496,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 settings.isSilentUninstaller(),true, null, false);
         silentUninst.addSelectionListener(new SelectionAdapter(){
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setSilentUninstaller(((Button)e.widget).getSelection());
             }
@@ -520,7 +520,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         data.grabExcessHorizontalSpace = true;
         showUninstDetails.addSelectionListener(new SelectionAdapter(){
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setShowUninstDetails(((Button)e.widget).getSelection());
             }
@@ -534,7 +534,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
         data.grabExcessHorizontalSpace = true;
         autocloseUninst.addSelectionListener(new SelectionAdapter(){
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setAutoCloseUninstaller(((Button)e.widget).getSelection());
             }

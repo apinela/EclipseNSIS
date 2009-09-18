@@ -19,13 +19,13 @@ import org.eclipse.core.resources.IFile;
 public class NSISOpenAssociatedScriptHandler extends NSISHandler
 {
     @Override
-	protected void handleScript(IFile file)
+    protected void handleScript(IFile file)
     {
         NSISEditorUtilities.openAssociatedFiles(null,file);
     }
 
     @Override
-	protected Pattern createExtensionPattern()
+    protected Pattern createExtensionPattern()
     {
         return Pattern.compile(INSISConstants.NSH_EXTENSION,Pattern.CASE_INSENSITIVE);
     }

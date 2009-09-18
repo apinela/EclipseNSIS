@@ -44,7 +44,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_sectiongrpdlg_context"; //$NON-NLS-1$
     }
@@ -53,7 +53,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
      * @see net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog#getProperties()
      */
     @Override
-	protected List<String> getProperties()
+    protected List<String> getProperties()
     {
         return cProperties;
     }
@@ -62,7 +62,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected Control createControlContents(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         Dialog.applyDialogFont(composite);
@@ -143,7 +143,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         final Button cb1 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.bold.label",mStore.getBoolean("bold"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb1.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 mStore.setValue("bold",cb1.getSelection()); //$NON-NLS-1$
             }
         });
@@ -151,7 +151,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         final Button cb2 = NSISWizardDialogUtil.createCheckBox(composite2,"wizard.default.expanded.label",mStore.getBoolean("defaultExpanded"),true,null,false); //$NON-NLS-1$ //$NON-NLS-2$
         cb2.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 mStore.setValue("defaultExpanded",cb2.getSelection()); //$NON-NLS-1$
             }
         });
@@ -161,13 +161,13 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
     }
 
     @Override
-	protected boolean hasRequiredFields()
+    protected boolean hasRequiredFields()
     {
         return true;
     }
 
     @Override
-	protected String checkForErrors()
+    protected String checkForErrors()
     {
         if(Common.isEmpty(mStore.getString("caption"))) { //$NON-NLS-1$
             return EclipseNSISPlugin.getResourceString("wizard.missing.sectiongroup.caption"); //$NON-NLS-1$

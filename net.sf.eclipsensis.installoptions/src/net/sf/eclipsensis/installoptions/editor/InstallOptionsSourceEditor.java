@@ -174,9 +174,9 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     private JobScheduler mJobScheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
 
     static {
-    	init();
+        init();
     }
-    
+
     @SuppressWarnings("unchecked")
     private static void init()
     {
@@ -291,7 +291,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     }
 
     @Override
-	protected void createActions()
+    protected void createActions()
     {
         super.createActions();
         IAction action = new SwitchEditorAction(this, INSTALLOPTIONS_DESIGN_EDITOR_ID,InstallOptionsPlugin.getResourceString("switch.design.editor.action.name")); //$NON-NLS-1$);
@@ -306,7 +306,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             private HTMLExporter mHTMLExporter;
 
             @Override
-			public void run()
+            public void run()
             {
                 if(mHTMLExporter == null) {
                     mHTMLExporter = new HTMLExporter(InstallOptionsSourceEditor.this,getSourceViewer());
@@ -409,7 +409,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     }
 
     @Override
-	protected void editorContextMenuAboutToShow(IMenuManager menu)
+    protected void editorContextMenuAboutToShow(IMenuManager menu)
     {
         super.editorContextMenuAboutToShow(menu);
         menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(INSTALLOPTIONS_MENU_GROUP));
@@ -425,7 +425,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     }
 
     @Override
-	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
+    protected void rulerContextMenuAboutToShow(IMenuManager menu) {
         super.rulerContextMenuAboutToShow(menu);
         IMenuManager foldingMenu= new MenuManager(InstallOptionsPlugin.getResourceString("folding.menu.name"), "net.sf.eclipsensis.installoptions.projection"); //$NON-NLS-1$ //$NON-NLS-2$
         menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
@@ -439,7 +439,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     }
 
     @Override
-	protected String[] collectContextMenuPreferencePages()
+    protected String[] collectContextMenuPreferencePages()
     {
         String[] pages = {IInstallOptionsConstants.INSTALLOPTIONS_PREFERENCE_PAGE_ID};
         return (String[])Common.joinArrays(new Object[]{pages,super.collectContextMenuPreferencePages()});
@@ -449,13 +449,13 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
      * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeKeyBindingScopes()
      */
     @Override
-	protected void initializeKeyBindingScopes()
+    protected void initializeKeyBindingScopes()
     {
         setKeyBindingScopes(KEY_BINDING_SCOPES);
     }
 
     @Override
-	public void dispose()
+    public void dispose()
     {
         InstallOptionsModel.INSTANCE.removeModelListener(mModelListener);
         mJobScheduler.cancelJobs(mJobFamily);
@@ -493,9 +493,9 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     }
 
     @Override
-	protected void doSetInput(IEditorInput input) throws CoreException
+    protected void doSetInput(IEditorInput input) throws CoreException
     {
-    	IEditorInput input2 = input;
+        IEditorInput input2 = input;
         IInstallOptionsEditorInput editorInput = (IInstallOptionsEditorInput)getEditorInput();
         if(editorInput != null) {
             Object source = editorInput.getSource();
@@ -618,14 +618,14 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     }
 
     @Override
-	protected void initializeEditor()
+    protected void initializeEditor()
     {
         super.initializeEditor();
         setSourceViewerConfiguration(new InstallOptionsSourceViewerConfiguration());
     }
 
     @Override
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles)
+    protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles)
     {
 //        fAnnotationAccess= createAnnotationAccess();
         fOverviewRuler= createOverviewRuler(getSharedColors());
@@ -639,7 +639,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     }
 
     @Override
-	public void createPartControl(Composite parent)
+    public void createPartControl(Composite parent)
     {
         super.createPartControl(parent);
         ProjectionViewer sourceViewer = (ProjectionViewer)getSourceViewer();
@@ -744,8 +744,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class type)
+    @SuppressWarnings("unchecked")
+    public Object getAdapter(Class type)
     {
         if (type == IContentOutlinePage.class) {
             if(mOutlinePage == null || mOutlinePage.getControl() == null || mOutlinePage.getControl().isDisposed()) {
@@ -940,7 +940,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         private String mOutlineJobFamily = getClass().getName()+System.currentTimeMillis();
 
         @Override
-		public void createControl(Composite parent)
+        public void createControl(Composite parent)
         {
             super.createControl(parent);
 
@@ -948,7 +948,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             WinAPI.SetWindowLong(viewer.getControl().handle, WinAPI.GWL_STYLE, WinAPI.GetWindowLong(viewer.getControl().handle, WinAPI.GWL_STYLE) ^ (WinAPI.TVS_HASLINES  | WinAPI.TVS_HASBUTTONS));
             viewer.setContentProvider(new EmptyContentProvider(){
                 @Override
-				public Object[] getChildren(Object parentElement)
+                public Object[] getChildren(Object parentElement)
                 {
                     if(parentElement instanceof INIFile) {
                         return ((INIFile)parentElement).getSections();
@@ -957,13 +957,13 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 }
 
                 @Override
-				public boolean hasChildren(Object element)
+                public boolean hasChildren(Object element)
                 {
                     return !Common.isEmptyArray(getChildren(element));
                 }
 
                 @Override
-				public Object[] getElements(Object inputElement)
+                public Object[] getElements(Object inputElement)
                 {
                     return getChildren(inputElement);
                 }
@@ -1044,7 +1044,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
 
         @Override
-		public void dispose()
+        public void dispose()
         {
             mJobScheduler.cancelJobs(mOutlineJobFamily);
             TreeViewer viewer = getTreeViewer();
@@ -1081,7 +1081,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
 
         @Override
-		public void setSelection(ISelection selection)
+        public void setSelection(ISelection selection)
         {
             TreeViewer viewer = getTreeViewer();
             if (viewer != null) {
@@ -1124,7 +1124,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         private static Image cSectionImage = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("inisection.icon")); //$NON-NLS-1$
 
         @Override
-		public String getText(Object element)
+        public String getText(Object element)
         {
             if(element instanceof INISection) {
                 String name = ((INISection)element).getName();
@@ -1149,7 +1149,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         }
 
         @Override
-		public Image getImage(Object element) {
+        public Image getImage(Object element) {
             if(element instanceof INISection) {
                 Image image = null;
                 String name = ((INISection)element).getName();
@@ -1201,14 +1201,14 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                 InstallOptionsPlugin.getImageManager().putImageDescriptor(hashCode,
                         new CompositeImageDescriptor(){
                             @Override
-							protected void drawCompositeImage(int width, int height)
+                            protected void drawCompositeImage(int width, int height)
                             {
                                 drawImage(image.getImageData(),0,0);
                                 drawImage(data,0,getSize().y-data.height);
                             }
 
                             @Override
-							protected Point getSize()
+                            protected Point getSize()
                             {
                                 return new Point(image.getBounds().width,image.getBounds().height);
                             }

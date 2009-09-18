@@ -34,20 +34,20 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         mRoot = ""; //$NON-NLS-1$
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_DIRREQUEST;
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         InstallOptionsDirRequest clone = (InstallOptionsDirRequest)super.clone();
         clone.setRoot(getRoot());
@@ -55,7 +55,7 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	protected void addPropertyName(List<String> list, String setting)
+    protected void addPropertyName(List<String> list, String setting)
     {
         if (setting.equalsIgnoreCase(InstallOptionsModel.PROPERTY_ROOT)) {
             list.add(InstallOptionsModel.PROPERTY_ROOT);
@@ -66,7 +66,7 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_ROOT)) {
             String propertyName = InstallOptionsPlugin.getResourceString("root.property.name"); //$NON-NLS-1$
@@ -80,7 +80,7 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	public Object getPropertyValue(Object propName)
+    public Object getPropertyValue(Object propName)
     {
         if (InstallOptionsModel.PROPERTY_ROOT.equals(propName)) {
             return getRoot();
@@ -89,7 +89,7 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	public void setPropertyValue(Object id, Object value)
+    public void setPropertyValue(Object id, Object value)
     {
         if(id.equals(InstallOptionsModel.PROPERTY_ROOT)) {
             setRoot((String)value);
@@ -115,7 +115,7 @@ public class InstallOptionsDirRequest extends InstallOptionsPathRequest
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new DirRequestPropertySectionCreator(this);
     }

@@ -25,31 +25,31 @@ import org.osgi.framework.BundleContext;
  */
 public class UtilitiesPlugin extends AbstractUIPlugin
 {
-	//The shared instance.
-	private static UtilitiesPlugin cPlugin;
+    //The shared instance.
+    private static UtilitiesPlugin cPlugin;
     private ResourceBundle mResourceBundle;
     private Image mShellImage;
     private JobScheduler mJobScheduler = new JobScheduler();
 
-	/**
-	 * The constructor.
-	 */
-	public UtilitiesPlugin()
+    /**
+     * The constructor.
+     */
+    public UtilitiesPlugin()
     {
-		cPlugin = this;
+        cPlugin = this;
         try {
             mResourceBundle = ResourceBundle.getBundle("net.sf.eclipsensis.utilities.UtilitiesPluginResources"); //$NON-NLS-1$
         } catch (MissingResourceException x) {
             mResourceBundle = null;
         }
-	}
-	/**
-	 * Returns the shared instance.
-	 */
-	public static UtilitiesPlugin getDefault()
+    }
+    /**
+     * Returns the shared instance.
+     */
+    public static UtilitiesPlugin getDefault()
     {
-		return cPlugin;
-	}
+        return cPlugin;
+    }
 
     /**
      * Returns the string from the plugin's resource bundle,
@@ -78,7 +78,7 @@ public class UtilitiesPlugin extends AbstractUIPlugin
     }
 
     @Override
-	public void start(BundleContext context) throws Exception
+    public void start(BundleContext context) throws Exception
     {
         super.start(context);
         mJobScheduler.start();
@@ -98,7 +98,7 @@ public class UtilitiesPlugin extends AbstractUIPlugin
     }
 
     @Override
-	public void stop(BundleContext context) throws Exception
+    public void stop(BundleContext context) throws Exception
     {
         mJobScheduler.stop();
         mShellImage = null;

@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
-public class NSISPreferencePage	extends NSISSettingsPage implements INSISPreferenceConstants
+public class NSISPreferencePage    extends NSISSettingsPage implements INSISPreferenceConstants
 {
     public static final List<String> NSIS_HOMES;
 
@@ -69,9 +69,9 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
         }
     }
 
-	private static Collection<String> loadNSISHomes() 
-	{
-		Collection<String> nsisHomes;
+    private static Collection<String> loadNSISHomes()
+    {
+        Collection<String> nsisHomes;
         if(cNSISHomesListFile.exists()) {
             try {
                 nsisHomes = IOUtility.readObject(cNSISHomesListFile);
@@ -86,8 +86,8 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
         else {
             nsisHomes = new ArrayList<String>();
         }
-		return nsisHomes;
-	}
+        return nsisHomes;
+    }
 
     public static boolean addNSISHome(String nsisHome)
     {
@@ -136,19 +136,19 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
     }
 
     @Override
-	protected String getContextId()
+    protected String getContextId()
     {
         return PLUGIN_CONTEXT_PREFIX + "nsis_prefs_context"; //$NON-NLS-1$
     }
 
     @Override
-	protected String getPageDescription()
+    protected String getPageDescription()
     {
         return EclipseNSISPlugin.getResourceString("preferences.header.text"); //$NON-NLS-1$
     }
 
     @Override
-	protected NSISSettingsEditor createSettingsEditor()
+    protected NSISSettingsEditor createSettingsEditor()
     {
         return new PreferencesEditor();
     }
@@ -160,19 +160,19 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
         private Version mNSISVersion = Version.EMPTY_VERSION;
 
         @Override
-		public boolean isValid()
+        public boolean isValid()
         {
             return mNSISExe != null;
         }
 
         @Override
-		protected NSISSettingsEditorGeneralPage createGeneralPage()
+        protected NSISSettingsEditorGeneralPage createGeneralPage()
         {
             return new PreferencesEditorGeneralPage(getSettings());
         }
 
         @Override
-		protected NSISSettings loadSettings()
+        protected NSISSettings loadSettings()
         {
             mNSISVersion = NSISPreferences.INSTANCE.getNSISVersion();
             mNSISExe = NSISPreferences.INSTANCE.getNSISExeFile();
@@ -223,7 +223,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             }
 
             @Override
-			protected boolean isProcessPrioritySupported()
+            protected boolean isProcessPrioritySupported()
             {
                 if(mNSISVersion.compareTo(INSISVersions.VERSION_2_24) >= 0) {
                     if(IOUtility.isValidFile(mNSISExe)) {
@@ -295,7 +295,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             }
 
             @Override
-			public void setDefaults()
+            public void setDefaults()
             {
                 super.setDefaults();
                 mUseEclipseHelp.setSelection(true);
@@ -326,7 +326,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             }
 
             @Override
-			public void reset()
+            public void reset()
             {
                 NSISPreferences prefs = (NSISPreferences)getSettings();
                 mNSISHome.getCombo().setText(prefs.getNSISHome());
@@ -339,8 +339,8 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             }
 
             @SuppressWarnings("unchecked")
-			@Override
-			protected boolean performApply(NSISSettings settings)
+            @Override
+            protected boolean performApply(NSISSettings settings)
             {
                 if (getControl() != null) {
                     if(!handleNSISHomeChange(true)) {
@@ -392,7 +392,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             }
 
             @Override
-			public void enableControls(boolean state)
+            public void enableControls(boolean state)
             {
                 enableControl(mAutoShowConsole, state);
                 enableControl(mBeforeCompileSave, state);
@@ -415,13 +415,13 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             }
 
             @Override
-			public boolean canEnableControls()
+            public boolean canEnableControls()
             {
                 return !Common.isEmpty(mNSISHome.getCombo().getText());
             }
 
             @Override
-			protected void createProcessPriorityCombo(Composite parent)
+            protected void createProcessPriorityCombo(Composite parent)
             {
                 super.createProcessPriorityCombo(parent);
                 mWarnProcessPriority = new Button(parent,SWT.CHECK);
@@ -434,7 +434,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             }
 
             @Override
-			protected void internalSetProcessPriorityVisible(boolean visible)
+            protected void internalSetProcessPriorityVisible(boolean visible)
             {
                 super.internalSetProcessPriorityVisible(visible);
                 if(mWarnProcessPriority != null && !mWarnProcessPriority.isDisposed()) {
@@ -444,7 +444,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             }
 
             @Override
-			protected boolean isWarnProcessPriority()
+            protected boolean isWarnProcessPriority()
             {
                 if(mWarnProcessPriority != null && !mWarnProcessPriority.isDisposed()) {
                     return mWarnProcessPriority.getSelection();
@@ -453,7 +453,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             }
 
             @Override
-			protected void setWarnProcessPriority(boolean warnProcessPriority)
+            protected void setWarnProcessPriority(boolean warnProcessPriority)
             {
                 if(mWarnProcessPriority != null && !mWarnProcessPriority.isDisposed()) {
                     mWarnProcessPriority.setSelection(warnProcessPriority);
@@ -464,7 +464,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
             }
 
             @Override
-			protected Composite createMasterControl(Composite parent)
+            protected Composite createMasterControl(Composite parent)
             {
                 Composite composite = new Composite(parent,SWT.NONE);
                 GridLayout layout = new GridLayout(3,false);
@@ -499,7 +499,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                 });
                 c.addSelectionListener(new SelectionAdapter(){
                     @Override
-					public void widgetSelected(SelectionEvent e)
+                    public void widgetSelected(SelectionEvent e)
                     {
                         mNSISHomeDirty = true;
                         handleNSISHomeChange(true);
@@ -507,7 +507,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                 });
                 c.addFocusListener(new FocusAdapter() {
                     @Override
-					public void focusLost(FocusEvent e)
+                    public void focusLost(FocusEvent e)
                     {
                         handleNSISHomeChange(false);
                     }
@@ -517,7 +517,7 @@ public class NSISPreferencePage	extends NSISSettingsPage implements INSISPrefere
                                              EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
                 button.addSelectionListener(new SelectionAdapter() {
                     @Override
-					public void widgetSelected(SelectionEvent e)
+                    public void widgetSelected(SelectionEvent e)
                     {
                         Shell shell = getShell();
                         DirectoryDialog dialog = new DirectoryDialog(shell);

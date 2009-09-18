@@ -22,7 +22,7 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
      * @see net.sf.eclipsensis.installoptions.ini.validators.IINIKeyValueValidator#validate(net.sf.eclipsensis.installoptions.ini.INIKeyValue)
      */
     @Override
-	public boolean validate(INIKeyValue keyValue, int fixFlag)
+    public boolean validate(INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
         return super.validate(keyValue, fixFlag) &&
@@ -67,7 +67,7 @@ public class DropListStateKeyValueValidator extends ComboboxStateKeyValueValidat
                                         new String[]{InstallOptionsModel.PROPERTY_STATE,InstallOptionsModel.PROPERTY_LISTITEMS}));
                 problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.invalid.selected.values")) { //$NON-NLS-1$
                     @Override
-					protected INIProblemFix[] createFixes()
+                    protected INIProblemFix[] createFixes()
                     {
                         return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(validValues)+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                     }

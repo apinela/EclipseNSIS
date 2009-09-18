@@ -20,7 +20,7 @@ public class PathStateValidator extends NSISStringLengthValidator
     }
 
     @Override
-	public String isValid(Object value)
+    public String isValid(Object value)
     {
         String error = super.isValid(value);
         if(error==null) {

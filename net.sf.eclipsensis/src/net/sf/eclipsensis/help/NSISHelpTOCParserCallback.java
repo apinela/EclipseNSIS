@@ -45,7 +45,7 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
      * @see javax.swing.text.html.HTMLEditorKit.ParserCallback#handleEndTag(javax.swing.text.html.HTML.Tag, int)
      */
     @Override
-	public void handleEndTag(Tag t, int pos)
+    public void handleEndTag(Tag t, int pos)
     {
         if(t.equals(Tag.OBJECT) && mCanProcess) {
             if(mLocal != null && mName != null) {
@@ -108,7 +108,7 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
      * @see javax.swing.text.html.HTMLEditorKit.ParserCallback#handleSimpleTag(javax.swing.text.html.HTML.Tag, javax.swing.text.MutableAttributeSet, int)
      */
     @Override
-	public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
+    public void handleSimpleTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(mCanProcess && t.equals(Tag.PARAM)) {
             if(a.isDefined(Attribute.NAME) && a.isDefined(Attribute.VALUE)) {
@@ -128,7 +128,7 @@ public class NSISHelpTOCParserCallback extends HTMLEditorKit.ParserCallback
      * @see javax.swing.text.html.HTMLEditorKit.ParserCallback#handleStartTag(javax.swing.text.html.HTML.Tag, javax.swing.text.MutableAttributeSet, int)
      */
     @Override
-	public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
+    public void handleStartTag(Tag t, MutableAttributeSet a, int pos)
     {
         if(t.equals(Tag.OBJECT)) {
             if(a.isDefined(Attribute.TYPE)) {

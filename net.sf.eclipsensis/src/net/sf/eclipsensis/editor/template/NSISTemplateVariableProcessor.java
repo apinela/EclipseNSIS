@@ -73,7 +73,7 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
      * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
      */
     @Override
-	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset)
+    public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int documentOffset)
     {
         List<NSISTemplateVariableProposal> proposals= new ArrayList<NSISTemplateVariableProposal>();
         if (mContextType != null) {
@@ -208,7 +208,7 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
      * @see IContentAssistProcessor#computeContextInformation(ITextViewer, int)
      */
     @Override
-	public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset)
+    public IContextInformation[] computeContextInformation(ITextViewer viewer, int documentOffset)
     {
         return null;
     }
@@ -217,7 +217,7 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
      * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
      */
     @Override
-	public char[] getCompletionProposalAutoActivationCharacters()
+    public char[] getCompletionProposalAutoActivationCharacters()
     {
         return mAutoActivationChars;
     }
@@ -226,7 +226,7 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
      * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters()
      */
     @Override
-	public char[] getContextInformationAutoActivationCharacters()
+    public char[] getContextInformationAutoActivationCharacters()
     {
         return null;
     }
@@ -235,7 +235,7 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
      * @see IContentAssistProcessor#getErrorMessage()
      */
     @Override
-	public String getErrorMessage()
+    public String getErrorMessage()
     {
         return null;
     }
@@ -244,7 +244,7 @@ public class NSISTemplateVariableProcessor extends NSISCompletionProcessor imple
      * @see IContentAssistProcessor#getContextInformationValidator()
      */
     @Override
-	public IContextInformationValidator getContextInformationValidator()
+    public IContextInformationValidator getContextInformationValidator()
     {
         return null;
     }

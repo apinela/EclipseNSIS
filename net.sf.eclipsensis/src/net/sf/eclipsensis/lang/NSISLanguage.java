@@ -25,8 +25,8 @@ import net.sf.eclipsensis.util.IOUtility;
 
 public class NSISLanguage implements Serializable
 {
-	private static final long serialVersionUID = -3444530357264653581L;
- 
+    private static final long serialVersionUID = -3444530357264653581L;
+
     private String mName;
     private String mDisplayName;
     private int mLangId;
@@ -49,15 +49,15 @@ public class NSISLanguage implements Serializable
         mLangDef = new StringBuffer("${LANG_").append(name.toUpperCase()).append("}").toString(); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-	/**
+    /**
      * @return Returns the codePage.
      */
-    public int getCodePage() 
+    public int getCodePage()
     {
-		return mCodePage;
-	}
+        return mCodePage;
+    }
 
-	/**
+    /**
      * @return Returns the langId.
      */
     public int getLangId()
@@ -90,19 +90,19 @@ public class NSISLanguage implements Serializable
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         return getDisplayName();
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         return mName.hashCode() | mLangId << 16;
     }
 
     @Override
-	public boolean equals(Object o)
+    public boolean equals(Object o)
     {
         if(o instanceof NSISLanguage) {
             NSISLanguage language = (NSISLanguage)o;

@@ -24,7 +24,7 @@ public class StaticParam extends NSISParam
     }
 
     @Override
-	protected void init(Node node)
+    protected void init(Node node)
     {
         super.init(node);
         setValue(XMLUtil.getStringValue(node.getAttributes(), ATTR_VALUE,getName()));
@@ -41,13 +41,13 @@ public class StaticParam extends NSISParam
     }
 
     @Override
-	protected String getDefaultValue()
+    protected String getDefaultValue()
     {
         return getValue();
     }
 
     @Override
-	protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new StaticParamEditor(command, parentEditor);
     }
@@ -60,7 +60,7 @@ public class StaticParam extends NSISParam
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf, boolean preview)
+        protected void appendParamText(StringBuffer buf, boolean preview)
         {
             if(!Common.isEmpty(getValue())) {
                 buf.append(" ").append(maybeQuote(getValue())); //$NON-NLS-1$
@@ -68,13 +68,13 @@ public class StaticParam extends NSISParam
         }
 
         @Override
-		protected Control createParamControl(Composite parent)
+        protected Control createParamControl(Composite parent)
         {
             return null;
         }
 
         @Override
-		public String validateParam()
+        public String validateParam()
         {
             return null;
         }

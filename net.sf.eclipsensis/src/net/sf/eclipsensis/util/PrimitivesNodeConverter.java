@@ -20,14 +20,14 @@ public class PrimitivesNodeConverter extends AbstractNodeConverter<Object>
     private Map<Class<? extends Object>,String> mClassNameMap = new HashMap<Class<? extends Object>,String>();
 
     @Override
-	public void addNameClassMapping(String name, Class<? extends Object> clasz)
+    public void addNameClassMapping(String name, Class<? extends Object> clasz)
     {
         super.addNameClassMapping(name, clasz);
         mClassNameMap.put(clasz, name);
     }
 
     @Override
-	public Object fromNode(Node node, Class<? extends Object> clasz)
+    public Object fromNode(Node node, Class<? extends Object> clasz)
     {
         NamedNodeMap attr = node.getAttributes();
         if(Integer.class.equals(clasz) || Integer.TYPE.equals(clasz)) {

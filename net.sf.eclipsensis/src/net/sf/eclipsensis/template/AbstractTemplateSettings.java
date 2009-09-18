@@ -113,7 +113,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
              * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
              */
             @Override
-			public Object[] getElements(Object inputElement)
+            public Object[] getElements(Object inputElement)
             {
                 if(inputElement != null && inputElement.equals(mTemplateManager)) {
                     return mTemplateManager.getTemplates().toArray();
@@ -128,8 +128,8 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
 
         ViewerFilter filter = new ViewerFilter() {
             @Override
-			@SuppressWarnings("unchecked")
-			public boolean select(Viewer viewer, Object parentElement, Object element)
+            @SuppressWarnings("unchecked")
+            public boolean select(Viewer viewer, Object parentElement, Object element)
             {
                 if(element != null && mTemplateManager.getTemplateClass().isAssignableFrom(element.getClass())) {
                     T template = (T)element;
@@ -174,7 +174,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
 
         mTableViewer.addCheckStateListener(new ICheckStateListener() {
             @SuppressWarnings("unchecked")
-			public void checkStateChanged(CheckStateChangedEvent event) {
+            public void checkStateChanged(CheckStateChangedEvent event) {
                 T oldTemplate= (T)event.getElement();
                 T newTemplate= (T)oldTemplate.clone();
                 newTemplate.setEnabled(!oldTemplate.isEnabled());
@@ -319,7 +319,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
     }
 
     @SuppressWarnings("unchecked")
-	private T[] getEnabledTemplates()
+    private T[] getEnabledTemplates()
     {
         List<T> enabled= new ArrayList<T>();
         Collection<T> coll = mTemplateManager.getTemplates();
@@ -342,7 +342,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
      * Updates the description.
      */
     @SuppressWarnings("unchecked")
-	protected void updateViewerInput()
+    protected void updateViewerInput()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
@@ -356,7 +356,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
     }
 
     @SuppressWarnings("unchecked")
-	private void duplicate()
+    private void duplicate()
     {
         T template = (T)((T)((IStructuredSelection)getTableViewer().getSelection()).getFirstElement()).clone();
         template.setName(EclipseNSISPlugin.getFormattedString("template.settings.duplicate.format",new Object[] {template.getName()})); //$NON-NLS-1$
@@ -388,7 +388,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
      * Updates the buttons.
      */
     @SuppressWarnings("unchecked")
-	protected void updateButtons()
+    protected void updateButtons()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
         int selectionCount= selection.size();
@@ -411,7 +411,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
     }
 
     @SuppressWarnings("unchecked")
-	private void edit()
+    private void edit()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
@@ -425,7 +425,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
     }
 
     @SuppressWarnings("unchecked")
-	private void edit(T oldTemplate)
+    private void edit(T oldTemplate)
     {
         T newTemplate = (T)oldTemplate.clone();
         Dialog dialog= createDialog(newTemplate);
@@ -524,7 +524,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
     }
 
     @SuppressWarnings("unchecked")
-	private void remove()
+    private void remove()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
@@ -548,7 +548,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
     }
 
     @SuppressWarnings("unchecked")
-	private void revert()
+    private void revert()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 

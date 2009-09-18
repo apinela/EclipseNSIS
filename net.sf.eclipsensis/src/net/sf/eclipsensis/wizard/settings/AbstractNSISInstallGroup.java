@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElement
 {
-	private static final long serialVersionUID = 6871218426689788748L;
+    private static final long serialVersionUID = 6871218426689788748L;
 
     private Set<String> mChildTypes = new LinkedHashSet<String>();
     private ArrayList<INSISInstallElement> mChildren = new ArrayList<INSISInstallElement>();
@@ -34,7 +34,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     }
 
     @Override
-	public Object clone() throws CloneNotSupportedException
+    public Object clone() throws CloneNotSupportedException
     {
         AbstractNSISInstallGroup group = (AbstractNSISInstallGroup)super.clone();
         group.mChildren = new ArrayList<INSISInstallElement>();
@@ -48,7 +48,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("expanded"); //$NON-NLS-1$
@@ -235,7 +235,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     }
 
     @Override
-	public final void setSettings(NSISWizardSettings settings)
+    public final void setSettings(NSISWizardSettings settings)
     {
         super.setSettings(settings);
         if(!Common.isEmptyCollection(mChildren)) {
@@ -283,7 +283,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     }
 
     @Override
-	public String validate(Collection<INSISInstallElement> changedElements)
+    public String validate(Collection<INSISInstallElement> changedElements)
     {
         String error = super.validate(changedElements);
         if(hasChildren()) {
@@ -300,7 +300,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     }
 
     @Override
-	public String doValidate()
+    public String doValidate()
     {
         if(!hasChildren()) {
             return EclipseNSISPlugin.getFormattedString("empty.contents.error",new Object[]{getDisplayName()}); //$NON-NLS-1$
@@ -309,7 +309,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -318,7 +318,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;
@@ -342,7 +342,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
     }
 
     @Override
-	public void setTargetPlatform(int targetPlatform)
+    public void setTargetPlatform(int targetPlatform)
     {
         int oldTargetPlatform = getTargetPlatform();
         super.setTargetPlatform(targetPlatform);
@@ -354,7 +354,7 @@ public abstract class AbstractNSISInstallGroup extends AbstractNSISInstallElemen
                 }
             }
         }
-	}
+    }
 
-	public abstract void setChildTypes();
+    public abstract void setChildTypes();
 }

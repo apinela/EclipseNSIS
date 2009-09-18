@@ -12,7 +12,7 @@ package net.sf.eclipsensis.installoptions.ini.validators;
 public class RequiredNumberKeyValueValidator extends NumberKeyValueValidator
 {
     @Override
-	protected boolean isEmptyAllowed()
+    protected boolean isEmptyAllowed()
     {
         return false;
     }

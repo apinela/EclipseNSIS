@@ -163,7 +163,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
      * @see org.eclipse.jface.text.source.ISourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)
      */
     @Override
-	public void configure(SourceViewerConfiguration configuration)
+    public void configure(SourceViewerConfiguration configuration)
     {
         if(configuration instanceof NSISSourceViewerConfiguration) {
             mPreferenceStore = ((NSISSourceViewerConfiguration)configuration).getPreferenceStore();
@@ -193,7 +193,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             ruler.getControl().addMouseListener(new MouseAdapter()
             {
                 @Override
-				public void mouseUp(MouseEvent e)
+                public void mouseUp(MouseEvent e)
                 {
                     try {
                         IAnnotationModel model = getAnnotationModel();
@@ -236,7 +236,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
      * @see org.eclipse.jface.text.source.ISourceViewerExtension2#unconfigure()
      */
     @Override
-	public void unconfigure()
+    public void unconfigure()
     {
         mScrollTipHelper.disconnect();
 
@@ -335,7 +335,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
      * @see org.eclipse.jface.text.ITextOperationTargetExtension#enableOperation(int, boolean)
      */
     @Override
-	public void enableOperation(int operation, boolean enable)
+    public void enableOperation(int operation, boolean enable)
     {
         switch(operation) {
             case INSERT_TEMPLATE:
@@ -362,7 +362,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
      * @see org.eclipse.jface.text.ITextOperationTarget#canDoOperation(int)
      */
     @Override
-	public boolean canDoOperation(int operation)
+    public boolean canDoOperation(int operation)
     {
         switch(operation) {
             case GOTO_HELP:
@@ -389,7 +389,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
      * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
      */
     @Override
-	public void doOperation(int operation)
+    public void doOperation(int operation)
     {
         String text = null;
         switch(operation) {
@@ -508,8 +508,8 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
                 }
                 //Fall through
             }
-	            //$FALL-THROUGH$
-			default:
+                //$FALL-THROUGH$
+            default:
             {
                 super.doOperation(operation);
                 return;
@@ -661,28 +661,28 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
             }
 
             if (region != null) {
-				int startPos = doc.getLineOffset(startLine);
-				int length = region.getOffset() + region.getLength() - startPos;
-				StringBuffer newText = new StringBuffer(""); //$NON-NLS-1$
-				for (int i = startLine; i <= endLine; i++) {
-					if (i > startLine) {
-						newText.append(doc.getLineDelimiter(i - 1));
-					}
-					if (allAreCommented) {
-						String text2 = text[i - startLine].trim();
-						int n = text[i - startLine].indexOf(text2);
-						newText.append(text[i - startLine].substring(0, n));
-						if (n < (text[i - startLine].length() - 1)) {
-							newText
-									.append(text[i - startLine]
-											.substring(n + 1));
-						}
-					} else {
-						newText.append(";").append(text[i - startLine]); //$NON-NLS-1$
-					}
-				}
-				doc.replace(startPos, length, newText.toString());
-			}
+                int startPos = doc.getLineOffset(startLine);
+                int length = region.getOffset() + region.getLength() - startPos;
+                StringBuffer newText = new StringBuffer(""); //$NON-NLS-1$
+                for (int i = startLine; i <= endLine; i++) {
+                    if (i > startLine) {
+                        newText.append(doc.getLineDelimiter(i - 1));
+                    }
+                    if (allAreCommented) {
+                        String text2 = text[i - startLine].trim();
+                        int n = text[i - startLine].indexOf(text2);
+                        newText.append(text[i - startLine].substring(0, n));
+                        if (n < (text[i - startLine].length() - 1)) {
+                            newText
+                                    .append(text[i - startLine]
+                                            .substring(n + 1));
+                        }
+                    } else {
+                        newText.append(";").append(text[i - startLine]); //$NON-NLS-1$
+                    }
+                }
+                doc.replace(startPos, length, newText.toString());
+            }
         }
         catch (BadLocationException e) {
             EclipseNSISPlugin.getDefault().log(e);
@@ -738,7 +738,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
     }
 
     @Override
-	protected void ensureOverviewHoverManagerInstalled()
+    protected void ensureOverviewHoverManagerInstalled()
     {
         // This is a hack so that the Hover control creator for hover help isn't used in the
         // Overview ruler.
@@ -755,7 +755,7 @@ public class NSISSourceViewer extends ProjectionViewer implements IPropertyChang
 
     private String convertTabsToSpaces(IDocument doc, int textOffset, String text, int tabWidth)
     {
-    	String text2 = text;
+        String text2 = text;
         if (text2 != null) {
             int index= text2.indexOf('\t');
             if (index > -1) {

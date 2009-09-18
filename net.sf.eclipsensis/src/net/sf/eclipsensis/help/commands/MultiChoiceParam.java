@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
@@ -26,7 +26,7 @@ public class MultiChoiceParam extends ChoiceParam
     }
 
     @Override
-	protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    protected PrefixableParamEditor createPrefixableParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new MultiChoiceParamEditor(command, parentEditor);
     }
@@ -42,7 +42,7 @@ public class MultiChoiceParam extends ChoiceParam
         }
 
         @Override
-		public void clear()
+        public void clear()
         {
             if (!Common.isEmptyArray(mChoiceButtons))
             {
@@ -58,8 +58,8 @@ public class MultiChoiceParam extends ChoiceParam
         }
 
         @Override
-		@SuppressWarnings("null")
-		protected String getPrefixableParamText()
+        @SuppressWarnings("null")
+        protected String getPrefixableParamText()
         {
             if (!Common.isEmptyArray(mChoiceButtons))
             {
@@ -87,7 +87,7 @@ public class MultiChoiceParam extends ChoiceParam
         }
 
         @Override
-		protected void updateState(boolean state)
+        protected void updateState(boolean state)
         {
             super.updateState(state);
             if (!Common.isEmptyArray(mChoiceButtons))
@@ -103,7 +103,7 @@ public class MultiChoiceParam extends ChoiceParam
         }
 
         @Override
-		public void saveSettings()
+        public void saveSettings()
         {
             super.saveSettings();
             if (!Common.isEmptyArray(mChoiceButtons) && getSettings() != null)
@@ -120,9 +120,9 @@ public class MultiChoiceParam extends ChoiceParam
         }
 
         @Override
-		protected Control createParamControl(Composite parent)
+        protected Control createParamControl(Composite parent)
         {
-        	Composite parent2 = new Composite(parent, SWT.NONE);
+            Composite parent2 = new Composite(parent, SWT.NONE);
             GridLayout layout = new GridLayout(1, false);
             layout.marginHeight = layout.marginWidth = 0;
             parent2.setLayout(layout);
@@ -144,7 +144,7 @@ public class MultiChoiceParam extends ChoiceParam
         }
 
         @Override
-		protected void initParamEditor()
+        protected void initParamEditor()
         {
             super.initParamEditor();
             if (!Common.isEmptyArray(mChoiceButtons))
@@ -161,7 +161,7 @@ public class MultiChoiceParam extends ChoiceParam
         }
 
         @Override
-		public String validateParam()
+        public String validateParam()
         {
             if (!Common.isEmptyArray(mChoiceButtons))
             {

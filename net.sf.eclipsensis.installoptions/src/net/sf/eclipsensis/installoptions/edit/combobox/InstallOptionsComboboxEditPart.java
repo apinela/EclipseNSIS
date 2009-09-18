@@ -23,24 +23,24 @@ import org.eclipse.swt.widgets.Composite;
 public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditPart<EditableComboBoxCellEditor>
 {
     @Override
-	protected void createEditPolicies()
+    protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy("ShowDropdown", new SelectionEditPolicy() { //$NON-NLS-1$
             @Override
-			protected void hideSelection()
+            protected void hideSelection()
             {
                 setShowDropdown(false);
             }
 
             @Override
-			protected void showSelection()
+            protected void showSelection()
             {
                 setShowDropdown(false);
             }
 
             @Override
-			protected void showPrimarySelection()
+            protected void showPrimarySelection()
             {
                 setShowDropdown(true);
             }
@@ -56,19 +56,19 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditP
     }
 
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return "combobox.direct.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected String getExtendedEditLabelProperty()
+    protected String getExtendedEditLabelProperty()
     {
         return "combobox.extended.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected IListItemsFigure createListItemsFigure()
+    protected IListItemsFigure createListItemsFigure()
     {
         ComboboxFigure comboboxFigure = new ComboboxFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
         comboboxFigure.setShowDropdown(getSelected()==SELECTED_PRIMARY);
@@ -76,7 +76,7 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditP
     }
 
     @Override
-	protected boolean supportsScrolling()
+    protected boolean supportsScrolling()
     {
         return false;
     }
@@ -85,25 +85,25 @@ public class InstallOptionsComboboxEditPart extends InstallOptionsListItemsEditP
      * @return
      */
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("combobox.type.name"); //$NON-NLS-1$
     }
 
     @Override
-	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<EditableComboBoxCellEditor> clasz, CellEditorLocator locator)
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<EditableComboBoxCellEditor> clasz, CellEditorLocator locator)
     {
         return new InstallOptionsComboboxEditManager(part,clasz,locator);
     }
 
     @Override
-	protected Class<EditableComboBoxCellEditor> getCellEditorClass()
+    protected Class<EditableComboBoxCellEditor> getCellEditorClass()
     {
         return EditableComboBoxCellEditor.class;
     }
 
     @Override
-	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new ComboboxCellEditorLocator((ComboboxFigure)figure);
     }

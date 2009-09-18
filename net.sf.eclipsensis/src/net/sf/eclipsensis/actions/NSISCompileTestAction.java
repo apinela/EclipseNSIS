@@ -12,7 +12,7 @@ package net.sf.eclipsensis.actions;
 public class NSISCompileTestAction extends NSISCompileAction
 {
     @Override
-	protected boolean shouldTest()
+    protected boolean shouldTest()
     {
         return true;
     }

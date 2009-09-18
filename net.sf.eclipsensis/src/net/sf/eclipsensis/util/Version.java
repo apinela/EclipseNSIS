@@ -88,13 +88,13 @@ public class Version extends AbstractNodeConvertible implements Comparable<Versi
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         return new Version(this);
     }
 
     @Override
-	protected String getChildNodeName()
+    protected String getChildNodeName()
     {
         return CHILD_NODE;
     }
@@ -108,7 +108,7 @@ public class Version extends AbstractNodeConvertible implements Comparable<Versi
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if(obj instanceof Version) {
             Version v2 = (Version)obj;
@@ -131,7 +131,7 @@ public class Version extends AbstractNodeConvertible implements Comparable<Versi
      * @see java.lang.Object#hashCode()
      */
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         int hashCode = 0;
         for (int i = 0; i < mNumbers.length; i++) {
@@ -147,7 +147,7 @@ public class Version extends AbstractNodeConvertible implements Comparable<Versi
      * @see java.lang.Object#toString()
      */
     @Override
-	public String toString()
+    public String toString()
     {
         return mDisplayText;
     }
@@ -220,7 +220,7 @@ public class Version extends AbstractNodeConvertible implements Comparable<Versi
     }
 
     @Override
-	public void fromNode(Node node)
+    public void fromNode(Node node)
     {
         if(node.getNodeName().equals(getNodeName())) {
             NodeList childNodes = node.getChildNodes();
@@ -248,7 +248,7 @@ public class Version extends AbstractNodeConvertible implements Comparable<Versi
     }
 
     @Override
-	public Node toNode(Document document)
+    public Node toNode(Document document)
     {
         Node node = document.createElement(getNodeName());
         node.appendChild(createChildNode(document, NUMBERS_ATTRIBUTE, mNumbers));

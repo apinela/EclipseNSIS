@@ -16,7 +16,7 @@ import net.sf.eclipsensis.installoptions.util.TypeConverter;
 public class LabelSectionDisplayTextProvider extends DefaultSectionDisplayTextProvider
 {
     @Override
-	protected String getDisplayText(InstallOptionsModelTypeDef typeDef, INISection section)
+    protected String getDisplayText(InstallOptionsModelTypeDef typeDef, INISection section)
     {
         String text = super.getDisplayText(typeDef, section);
         return (shouldUnescape(section)?TypeConverter.ESCAPED_STRING_CONVERTER.asString(text):text);

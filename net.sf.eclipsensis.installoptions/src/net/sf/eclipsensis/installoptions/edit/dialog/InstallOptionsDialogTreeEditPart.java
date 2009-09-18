@@ -34,7 +34,7 @@ public class InstallOptionsDialogTreeEditPart extends InstallOptionsTreeEditPart
      * Creates and installs pertinent EditPolicies.
      */
     @Override
-	protected void createEditPolicies() {
+    protected void createEditPolicies() {
         super.createEditPolicies();
         installEditPolicy(EditPolicy.TREE_CONTAINER_ROLE, new InstallOptionsTreeContainerEditPolicy());
         //If this editpart is the contents of the viewer, then it is not deletable!
@@ -59,7 +59,7 @@ public class InstallOptionsDialogTreeEditPart extends InstallOptionsTreeEditPart
      * @return  List of children.
      */
     @Override
-	protected List<InstallOptionsWidget> getModelChildren() {
+    protected List<InstallOptionsWidget> getModelChildren() {
         return getInstallOptionsDialog().getChildren();
     }
 

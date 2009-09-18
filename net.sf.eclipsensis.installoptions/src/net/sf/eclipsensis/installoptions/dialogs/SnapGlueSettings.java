@@ -33,7 +33,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
     public SnapGlueSettings(Composite parent, Map<String, Boolean> settings)
     {
         super(parent, SWT.NONE);
-		initialize();
+        initialize();
         setSettings(settings);
     }
 
@@ -78,7 +78,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
         mSnapToGrid.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mSnapToGrid.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 mSettings.put(PREFERENCE_SNAP_TO_GRID,Boolean.valueOf(mSnapToGrid.getSelection()));
             }
         });
@@ -89,7 +89,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
         mSnapToGeometry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mSnapToGeometry.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 mSettings.put(PREFERENCE_SNAP_TO_GEOMETRY,Boolean.valueOf(mSnapToGeometry.getSelection()));
             }
         });
@@ -100,7 +100,7 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
         mSnapToGuides.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         mSnapToGuides.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 mSettings.put(PREFERENCE_SNAP_TO_GUIDES,Boolean.valueOf(mSnapToGuides.getSelection()));
             }
         });
@@ -113,9 +113,9 @@ public class SnapGlueSettings extends Composite implements IInstallOptionsConsta
         mGlueToGuides.setLayoutData(data);
         mGlueToGuides.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 mSettings.put(PREFERENCE_GLUE_TO_GUIDES,Boolean.valueOf(mGlueToGuides.getSelection()));
             }
         });
-	}
+    }
 }

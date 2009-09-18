@@ -18,13 +18,13 @@ import org.eclipse.swt.widgets.Composite;
 public class InstallOptionsPasswordEditPart extends InstallOptionsTextEditPart
 {
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return "password.direct.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected IInstallOptionsFigure createInstallOptionsFigure()
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new PasswordFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
@@ -33,7 +33,7 @@ public class InstallOptionsPasswordEditPart extends InstallOptionsTextEditPart
      * @return
      */
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("password.type.name"); //$NON-NLS-1$
     }

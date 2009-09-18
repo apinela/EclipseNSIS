@@ -61,15 +61,15 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
 
     public static final int DEFAULT_OPTION = 0;
     public static final Integer[] OPTION_DATA = {InstallOptionsModel.OPTION_DEFAULT,
-    											 InstallOptionsModel.OPTION_NO,
-    											 InstallOptionsModel.OPTION_YES};
+                                                 InstallOptionsModel.OPTION_NO,
+                                                 InstallOptionsModel.OPTION_YES};
     public static final String[] OPTION_DISPLAY = {InstallOptionsPlugin.getResourceString("option.default"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("option.no"), //$NON-NLS-1$
                                  InstallOptionsPlugin.getResourceString("option.yes")}; //$NON-NLS-1$
     public static final Image INSTALLOPTIONS_ICON = InstallOptionsPlugin.getImageManager().getImage(InstallOptionsPlugin.getResourceString("installoptions.dialog.icon")); //$NON-NLS-1$
     private static LabelProvider cDefaultLabelProvider = new LabelProvider(){
         @Override
-		public String getText(Object element)
+        public String getText(Object element)
         {
             if(element instanceof String) {
                 if(Common.isEmpty((String)element)) {
@@ -112,7 +112,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("dialogSize"); //$NON-NLS-1$
@@ -126,7 +126,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         mChildren = new ArrayList<InstallOptionsWidget>();
@@ -179,19 +179,19 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         mHorizontalRuler.addPropertyChangeListener(rulerListener);
         mUpDownMover = new UpDownMover<InstallOptionsWidget>() {
             @Override
-			protected int[] getSelectedIndices()
+            protected int[] getSelectedIndices()
             {
                 return mSelectedIndices;
             }
 
             @Override
-			protected List<InstallOptionsWidget> getAllElements()
+            protected List<InstallOptionsWidget> getAllElements()
             {
                 return mChildren;
             }
 
             @Override
-			protected void updateElements(List<InstallOptionsWidget> elements, List<InstallOptionsWidget> move, boolean isDown)
+            protected void updateElements(List<InstallOptionsWidget> elements, List<InstallOptionsWidget> move, boolean isDown)
             {
                 setChildren(elements);
             }
@@ -199,7 +199,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_DIALOG;
     }
@@ -331,13 +331,13 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
         firePropertyChange(PROPERTY_SELECTION,null,list);
     }
 
-	@SuppressWarnings("null")
-	private int[] parseSelection(List<InstallOptionsWidget> list)
+    @SuppressWarnings("null")
+    private int[] parseSelection(List<InstallOptionsWidget> list)
     {
         if (list != null) {
-			list.retainAll(mChildren);
-		}
-		if(Common.isEmptyCollection(list)) {
+            list.retainAll(mChildren);
+        }
+        if(Common.isEmptyCollection(list)) {
             return new int[0];
         }
         int[] selectedIndices = new int[list.size()];
@@ -349,7 +349,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         PropertyDescriptor descriptor = null;
         if(name.equals(InstallOptionsModel.PROPERTY_TITLE)) {
@@ -398,7 +398,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	public void setPropertyValue(Object id, Object value)
+    public void setPropertyValue(Object id, Object value)
     {
         if(InstallOptionsModel.PROPERTY_TITLE.equals(id)) {
             setTitle((String)value);
@@ -528,7 +528,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     public void setRTL(Integer rtl)
     {
         if(!Common.objectsAreEqual(mRTL,rtl)) {
-        	Integer oldRTL = mRTL;
+            Integer oldRTL = mRTL;
             mRTL = rtl;
             setDirty(true);
             firePropertyChange(InstallOptionsModel.PROPERTY_RTL,oldRTL,mRTL);
@@ -549,7 +549,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	public Object getPropertyValue(Object id)
+    public Object getPropertyValue(Object id)
     {
         if (InstallOptionsModel.PROPERTY_NUMFIELDS.equals(id)) {
             return new Integer(Common.isEmptyCollection(mChildren)?0:mChildren.size());
@@ -615,7 +615,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
 
     public void addChild(InstallOptionsWidget child, int index)
     {
-    	int index2 = index;
+        int index2 = index;
         if (index2 >= 0) {
             mChildren.add(index2,child);
         }
@@ -722,7 +722,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	public Image getIconImage()
+    public Image getIconImage()
     {
         return INSTALLOPTIONS_ICON;
     }
@@ -751,7 +751,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         InstallOptionsDialog dialog = (InstallOptionsDialog)super.clone();
         if(dialog.mSelectedIndices != null) {
@@ -782,13 +782,13 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	protected Collection<String> doGetPropertyNames()
+    protected Collection<String> doGetPropertyNames()
     {
         return InstallOptionsModel.INSTANCE.getDialogSettings();
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         return InstallOptionsPlugin.getResourceString("install.options.dialog.name"); //$NON-NLS-1$
     }
@@ -1037,7 +1037,7 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	public INISection getSection()
+    public INISection getSection()
     {
         INISection section = super.getSection();
         if(section.getPosition() == null) {
@@ -1194,14 +1194,14 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	protected TypeConverter<?> loadTypeConverter(String property, Object value)
+    protected TypeConverter<?> loadTypeConverter(String property, Object value)
     {
         if (InstallOptionsModel.PROPERTY_NUMFIELDS.equals(property)||
-        	InstallOptionsModel.PROPERTY_CANCEL_ENABLED.equals(property)||
-        	InstallOptionsModel.PROPERTY_CANCEL_SHOW.equals(property)||
-        	InstallOptionsModel.PROPERTY_BACK_ENABLED.equals(property)||
-        	InstallOptionsModel.PROPERTY_RTL.equals(property)||
-        	InstallOptionsModel.PROPERTY_RECT.equals(property)) {
+            InstallOptionsModel.PROPERTY_CANCEL_ENABLED.equals(property)||
+            InstallOptionsModel.PROPERTY_CANCEL_SHOW.equals(property)||
+            InstallOptionsModel.PROPERTY_BACK_ENABLED.equals(property)||
+            InstallOptionsModel.PROPERTY_RTL.equals(property)||
+            InstallOptionsModel.PROPERTY_RECT.equals(property)) {
             if(value instanceof String) {
                 if(((String)value).regionMatches(true,0,"0x",0,2)) { //$NON-NLS-1$
                     return TypeConverter.HEX_CONVERTER;
@@ -1267,13 +1267,13 @@ public class InstallOptionsDialog extends InstallOptionsElement implements IInst
     }
 
     @Override
-	protected String getSectionName()
+    protected String getSectionName()
     {
         return InstallOptionsModel.SECTION_SETTINGS;
     }
 
     @Override
-	public void modelChanged()
+    public void modelChanged()
     {
         super.modelChanged();
         if(!Common.isEmptyCollection(mChildren)) {

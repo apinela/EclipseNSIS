@@ -22,7 +22,7 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
     private AccessibleEditPart mAccessible;
 
     @Override
-	public void activate()
+    public void activate()
     {
         if (isActive()) {
             return;
@@ -32,7 +32,7 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
     }
 
     @Override
-	protected void createEditPolicies()
+    protected void createEditPolicies()
     {
         installEditPolicy(EditPolicy.COMPONENT_ROLE, new InstallOptionsEditPolicy());
     }
@@ -44,7 +44,7 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
      * from the model's list of mListeners.
      */
     @Override
-	public void deactivate()
+    public void deactivate()
     {
         if (!isActive()) {
             return;
@@ -54,7 +54,7 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
     }
 
     @Override
-	protected AccessibleEditPart getAccessibleEditPart()
+    protected AccessibleEditPart getAccessibleEditPart()
     {
         if (mAccessible == null) {
             mAccessible = createAccessible();
@@ -68,7 +68,7 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
     }
 
     @Override
-	public void addNotify()
+    public void addNotify()
     {
         super.addNotify();
         ((InstallOptionsElement)getModel()).addModelCommandListener(getModelCommandListener());
@@ -80,7 +80,7 @@ public abstract class InstallOptionsEditPart extends AbstractGraphicalEditPart i
     }
 
     @Override
-	public void removeNotify()
+    public void removeNotify()
     {
         ((InstallOptionsElement)getModel()).removeModelCommandListener(getModelCommandListener());
         super.removeNotify();

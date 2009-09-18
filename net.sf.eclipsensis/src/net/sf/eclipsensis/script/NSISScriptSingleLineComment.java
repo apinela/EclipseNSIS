@@ -57,7 +57,7 @@ public class NSISScriptSingleLineComment extends NSISScriptMultiLineComment
      * @see net.sf.eclipsensis.script.INSISScriptElement#write(net.sf.eclipsensis.script.NSISScriptWriter)
      */
     @Override
-	public void write(NSISScriptWriter writer)
+    public void write(NSISScriptWriter writer)
     {
         String[] lines = Common.formatLines(getText(),SCRIPT_MAX_LINE_LENGTH-2);
         if(!Common.isEmptyArray(lines)) {

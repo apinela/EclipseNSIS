@@ -135,7 +135,7 @@ public class NSISBrowserUtility
 
     public static void handleURL(String url, INSISBrowserKeywordURLHandler keywordURLHandler, INSISBrowserFileURLHandler fileURLHandler)
     {
-    	String url2 = url;
+        String url2 = url;
         if (url2.regionMatches(true, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME, 0, NSISHelpURLProvider.KEYWORD_URI_SCHEME.length())) {
             String keyword = url2.substring(NSISHelpURLProvider.KEYWORD_URI_SCHEME.length());
             keywordURLHandler.handleKeyword(keyword);

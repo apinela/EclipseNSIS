@@ -36,13 +36,13 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         return mInput.hashCode();
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if(obj instanceof InstallOptionsEditorInput) {
             return mInput.equals(((InstallOptionsEditorInput)obj).mInput);
@@ -85,7 +85,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
      * @see org.eclipse.ui.IFileEditorInput#getFile()
      */
     @Override
-	public IFile getFile()
+    public IFile getFile()
     {
         return mInput.getFile();
     }
@@ -99,7 +99,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
      * @see org.eclipse.ui.IStorageEditorInput#getStorage()
      */
     @Override
-	public IStorage getStorage()
+    public IStorage getStorage()
     {
         try {
             return mInput.getStorage();
@@ -114,7 +114,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
      * @see org.eclipse.ui.IEditorInput#exists()
      */
     @Override
-	public boolean exists()
+    public boolean exists()
     {
         return mInput.exists();
     }
@@ -123,7 +123,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
      * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
      */
     @Override
-	public ImageDescriptor getImageDescriptor()
+    public ImageDescriptor getImageDescriptor()
     {
         return mInput.getImageDescriptor();
     }
@@ -132,7 +132,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
      * @see org.eclipse.ui.IEditorInput#getName()
      */
     @Override
-	public String getName()
+    public String getName()
     {
         return mInput.getName();
     }
@@ -141,7 +141,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
      * @see org.eclipse.ui.IEditorInput#getPersistable()
      */
     @Override
-	public IPersistableElement getPersistable()
+    public IPersistableElement getPersistable()
     {
         return mInput.getPersistable();
     }
@@ -150,7 +150,7 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
      * @see org.eclipse.ui.IEditorInput#getToolTipText()
      */
     @Override
-	public String getToolTipText()
+    public String getToolTipText()
     {
         return mInput.getToolTipText();
     }
@@ -159,8 +159,8 @@ public class InstallOptionsEditorInput extends FileEditorInput implements IInsta
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
     @SuppressWarnings("unchecked")
-	@Override
-	public Object getAdapter(Class adapter)
+    @Override
+    public Object getAdapter(Class adapter)
     {
         if(adapter == TextFileDocumentProvider.class) {
             return mDocumentProvider;

@@ -57,13 +57,13 @@ public class JobScheduler
 
         new UIJob(name) {
             @Override
-			public IStatus runInUIThread(IProgressMonitor monitor)
+            public IStatus runInUIThread(IProgressMonitor monitor)
             {
                 return runnable.run(monitor);
             }
 
             @Override
-			public boolean belongsTo(Object family)
+            public boolean belongsTo(Object family)
             {
                 return jobFamily.equals(family);
             }
@@ -82,13 +82,13 @@ public class JobScheduler
 
         new Job(name) {
             @Override
-			public IStatus run(IProgressMonitor monitor)
+            public IStatus run(IProgressMonitor monitor)
             {
                 return runnable.run(monitor);
             }
 
             @Override
-			public boolean belongsTo(Object family)
+            public boolean belongsTo(Object family)
             {
                 return jobFamily.equals(family);
             }

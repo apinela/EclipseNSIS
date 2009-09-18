@@ -46,7 +46,7 @@ public class NSISCommentScanner extends NSISRuleBasedScanner implements INSISBac
      * @return
      */
     @Override
-	protected IToken getDefaultToken()
+    protected IToken getDefaultToken()
     {
         return createTokenFromPreference(INSISEditorPreferenceConstants.COMMENTS_STYLE);
     }
@@ -55,7 +55,7 @@ public class NSISCommentScanner extends NSISRuleBasedScanner implements INSISBac
      * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#isCaseSensitive()
      */
     @Override
-	protected boolean isCaseSensitive()
+    protected boolean isCaseSensitive()
     {
         return mCaseSensitive;
     }
@@ -64,7 +64,7 @@ public class NSISCommentScanner extends NSISRuleBasedScanner implements INSISBac
      * @see net.sf.eclipsensis.editor.text.NSISRuleBasedScanner#addRules(java.util.List, org.eclipse.jface.text.rules.IToken)
      */
     @Override
-	protected void addRules(List<IRule> rules)
+    protected void addRules(List<IRule> rules)
     {
         mCaseSensitive = getPreferenceStore().getBoolean(INSISEditorPreferenceConstants.CASE_SENSITIVE_TASK_TAGS);
         IRule taskTagsRule = getTaskTagsRule();

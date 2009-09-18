@@ -31,7 +31,7 @@ public class InstallOptionsSourceViewer extends InstallOptionsSourcePreviewer
     }
 
     @Override
-	protected void createControl(Composite parent, int styles)
+    protected void createControl(Composite parent, int styles)
     {
         super.createControl(parent, styles);
         final IPropertyChangeListener listener = new IPropertyChangeListener(){
@@ -53,14 +53,14 @@ public class InstallOptionsSourceViewer extends InstallOptionsSourcePreviewer
     }
 
     @Override
-	public void configure(SourceViewerConfiguration configuration)
+    public void configure(SourceViewerConfiguration configuration)
     {
         super.configure(configuration);
         mScrollTipHelper.connect();
     }
 
     @Override
-	public void unconfigure()
+    public void unconfigure()
     {
         mScrollTipHelper.disconnect();
         super.unconfigure();

@@ -20,7 +20,7 @@ public class DefaultSectionDisplayTextProvider implements IINISectionDisplayText
 
     public String formatDisplayText(String type, INISection section)
     {
-    	String type2 = type;
+        String type2 = type;
         InstallOptionsModelTypeDef typeDef = InstallOptionsModel.INSTANCE.getControlTypeDef(type2);
         if(typeDef != null) {
             String displayText = getDisplayText(typeDef, section);

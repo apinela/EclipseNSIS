@@ -63,7 +63,7 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
     }
 
     @Override
-	public void fromNode(Node node)
+    public void fromNode(Node node)
     {
         super.fromNode(node);
         NamedNodeMap attributes= node.getAttributes();
@@ -89,13 +89,13 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
     }
 
     @Override
-	protected String getChildNodeName()
+    protected String getChildNodeName()
     {
         return "attribute"; //$NON-NLS-1$
     }
 
     @Override
-	public Node toNode(Document document)
+    public Node toNode(Document document)
     {
         Node node = super.toNode(document);
         if (!Common.isEmpty(getId())) {
@@ -110,7 +110,7 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("id"); //$NON-NLS-1$
@@ -181,7 +181,7 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
      * @see java.lang.Object#toString()
      */
     @Override
-	public String toString()
+    public String toString()
     {
         return getName();
     }
@@ -232,7 +232,7 @@ public abstract class AbstractTemplate extends AbstractNodeConvertible implement
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         try {
             return super.clone();

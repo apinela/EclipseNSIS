@@ -22,26 +22,26 @@ import org.eclipse.swt.widgets.Composite;
 public abstract class InstallOptionsPathRequestEditPart extends InstallOptionsEditableElementEditPart<TextCellEditor>
 {
     @Override
-	protected IInstallOptionsFigure createInstallOptionsFigure()
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         return new PathRequestFigure((Composite)getViewer().getControl(), getInstallOptionsWidget());
     }
 
     @Override
-	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<TextCellEditor> clasz, CellEditorLocator locator)
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<TextCellEditor> clasz, CellEditorLocator locator)
     {
         return new InstallOptionsPathRequestEditManager(part, clasz, locator);
     }
 
     @Override
-	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new PathRequestCellEditorLocator((PathRequestFigure)getFigure());
     }
 
-	@Override
-	protected Class<TextCellEditor> getCellEditorClass() 
-	{
-		return TextCellEditor.class;
-	}
+    @Override
+    protected Class<TextCellEditor> getCellEditorClass()
+    {
+        return TextCellEditor.class;
+    }
 }

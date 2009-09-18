@@ -39,7 +39,7 @@ public class SetDialogSizeAction extends Action implements IUpdate
     }
 
     @Override
-	public void run()
+    public void run()
     {
         if(isEnabled()) {
             ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer().setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE,mDialogSize.getCopy());
@@ -47,7 +47,7 @@ public class SetDialogSizeAction extends Action implements IUpdate
     }
 
     @Override
-	public boolean isEnabled()
+    public boolean isEnabled()
     {
         if (mDialogSize != null && mEditor instanceof InstallOptionsDesignEditor &&
                 !((InstallOptionsDesignEditor)mEditor).isDisposed() && ((InstallOptionsDesignEditor)mEditor).getGraphicalViewer() != null) {

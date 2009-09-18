@@ -22,8 +22,8 @@ import org.eclipse.gef.internal.ui.rulers.DragGuidePolicy;
 @SuppressWarnings("restriction")
 public class InstallOptionsDragGuidePolicy extends DragGuidePolicy
 {
-	@Override
-	protected boolean isMoveValid(int zoomedPosition)
+    @Override
+    protected boolean isMoveValid(int zoomedPosition)
     {
         if(zoomedPosition < 0) {
             return false;

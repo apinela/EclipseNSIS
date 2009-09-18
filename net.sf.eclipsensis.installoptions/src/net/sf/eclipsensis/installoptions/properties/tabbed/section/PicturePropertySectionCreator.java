@@ -23,25 +23,25 @@ public class PicturePropertySectionCreator extends UneditableElementPropertySect
     }
 
     @Override
-	protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
+    protected Control createAppearancePropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
         return null;
     }
 
     @Override
-	protected boolean shouldCreateAppearancePropertySection()
+    protected boolean shouldCreateAppearancePropertySection()
     {
         return false;
     }
 
     @Override
-	protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
+    protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
         return super.createAppearancePropertySection(parent, widgetFactory, commandHelper);
     }
 
     @Override
-	protected boolean shouldCreateOtherPropertySection()
+    protected boolean shouldCreateOtherPropertySection()
     {
         return true;
     }

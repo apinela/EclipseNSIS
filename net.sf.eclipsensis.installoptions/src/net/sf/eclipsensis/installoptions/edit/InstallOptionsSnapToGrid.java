@@ -27,14 +27,14 @@ public class InstallOptionsSnapToGrid extends SnapToGrid
     }
 
     @Override
-	public int snapRectangle(Request request, int snapLocations, PrecisionRectangle rect, PrecisionRectangle result)
+    public int snapRectangle(Request request, int snapLocations, PrecisionRectangle rect, PrecisionRectangle result)
     {
         Font f = FontUtility.getInstallOptionsFont();
         double dpuX = ((double)FigureUtility.dialogUnitsToPixelsX(1000,f))/1000;
         double dpuY = ((double)FigureUtility.dialogUnitsToPixelsY(1000,f))/1000;
         PrecisionRectangle rect2 = rect.getPreciseCopy();
         int snapLocations2 = snapLocations;
-        
+
         makeRelative(container.getContentPane(), rect2);
         PrecisionRectangle correction = new PrecisionRectangle();
         makeRelative(container.getContentPane(), correction);

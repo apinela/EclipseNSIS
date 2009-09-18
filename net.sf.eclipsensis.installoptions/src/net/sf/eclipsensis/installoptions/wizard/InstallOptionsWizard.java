@@ -48,10 +48,10 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
      * Method declared on Wizard.
      */
     @Override
-	public void addPages()
+    public void addPages()
     {
         if(EclipseNSISPlugin.getDefault().isConfigured()) {
-        	addPage(new InstallOptionsWizardPage());
+            addPage(new InstallOptionsWizardPage());
         }
         else {
             String error = EclipseNSISPlugin.getFormattedString("wizard.unconfigured.error", new Object[]{getWindowTitle()}); //$NON-NLS-1$
@@ -60,10 +60,10 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
                 public IStatus run(IProgressMonitor monitor)
                 {
                     IWizardContainer container = getContainer();
-					if (container != null) {
-						container.getShell().close();
-					}
-					return Status.OK_STATUS;
+                    if (container != null) {
+                        container.getShell().close();
+                    }
+                    return Status.OK_STATUS;
                 }
             });
         }
@@ -74,12 +74,12 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
      */
     public void init(IWorkbench workbench,IStructuredSelection selection)
     {
-    	setWindowTitle(InstallOptionsPlugin.getResourceString("wizard.window.title")); //$NON-NLS-1$
-    	setDefaultPageImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("wizard.title.image"))); //$NON-NLS-1$
+        setWindowTitle(InstallOptionsPlugin.getResourceString("wizard.window.title")); //$NON-NLS-1$
+        setDefaultPageImageDescriptor(InstallOptionsPlugin.getImageManager().getImageDescriptor(InstallOptionsPlugin.getResourceString("wizard.title.image"))); //$NON-NLS-1$
     }
 
     @Override
-	public void setContainer(IWizardContainer wizardContainer)
+    public void setContainer(IWizardContainer wizardContainer)
     {
         if(getContainer() instanceof IPageChangeProvider) {
             ((IPageChangeProvider)getContainer()).removePageChangedListener(mPageChangedListener);
@@ -104,8 +104,8 @@ public class InstallOptionsWizard extends Wizard implements INewWizard
      * Method declared on IWizard
      */
     @Override
-	public boolean performFinish()
+    public boolean performFinish()
     {
-    	return ((InstallOptionsWizardPage)getPages()[0]).finish();
+        return ((InstallOptionsWizardPage)getPages()[0]).finish();
     }
 }

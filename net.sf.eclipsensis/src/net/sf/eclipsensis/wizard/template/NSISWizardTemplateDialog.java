@@ -30,13 +30,13 @@ public class NSISWizardTemplateDialog extends AbstractTemplateDialog<NSISWizardT
     }
 
     @Override
-	protected NSISWizardTemplate createTemplate(String name)
+    protected NSISWizardTemplate createTemplate(String name)
     {
         return new NSISWizardTemplate(name);
     }
 
     @Override
-	protected void createUpdateTemplate()
+    protected void createUpdateTemplate()
     {
         super.createUpdateTemplate();
         NSISWizardTemplate template = getTemplate();
@@ -44,13 +44,13 @@ public class NSISWizardTemplateDialog extends AbstractTemplateDialog<NSISWizardT
     }
 
     @Override
-	protected Image getShellImage()
+    protected Image getShellImage()
     {
         return EclipseNSISPlugin.getShellImage();
     }
 
     @Override
-	protected String getShellTitle()
+    protected String getShellTitle()
     {
         return EclipseNSISPlugin.getResourceString("wizard.template.dialog.title"); //$NON-NLS-1$
     }

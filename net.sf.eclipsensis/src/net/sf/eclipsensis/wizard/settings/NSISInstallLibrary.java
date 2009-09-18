@@ -58,7 +58,7 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
     private boolean mX64 = false;
 
     @Override
-	public String doValidate()
+    public String doValidate()
     {
         if (!IOUtility.isValidFile(IOUtility.decodePath(getName()))) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.file.name.error"); //$NON-NLS-1$
@@ -77,7 +77,7 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;
@@ -160,7 +160,7 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -239,7 +239,7 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
 
     public void setLibType(int libType)
     {
-    	int libType2 = libType;
+        int libType2 = libType;
         switch (libType2)
         {
             case LIBTYPE_DLL:
@@ -251,8 +251,8 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
                 if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_42) >= 0) {
                     break;
                 }
-	            //$FALL-THROUGH$
-			default:
+                //$FALL-THROUGH$
+            default:
                 libType2 = LIBTYPE_DLL;
         }
         if (mLibType != libType2) {
@@ -310,7 +310,7 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
     }
 
     @Override
-	public void setTargetPlatform(int targetPlatform)
+    public void setTargetPlatform(int targetPlatform)
     {
         super.setTargetPlatform(targetPlatform);
         setDestination(NSISWizardUtil.convertPath(targetPlatform, getDestination()));

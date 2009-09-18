@@ -46,7 +46,7 @@ public class NSISHeaderPropertyPage extends PropertyPage
     }
 
     @Override
-	protected Control createContents(Composite parent)
+    protected Control createContents(Composite parent)
     {
         setDescription(EclipseNSISPlugin.getResourceString("header.properties.description")); //$NON-NLS-1$
 
@@ -70,7 +70,7 @@ public class NSISHeaderPropertyPage extends PropertyPage
         mBrowseButton.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         mBrowseButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 String scriptName = mNSISScriptName.getText();
                 IFile file = null;
@@ -102,7 +102,7 @@ public class NSISHeaderPropertyPage extends PropertyPage
     }
 
     @Override
-	protected void performDefaults()
+    protected void performDefaults()
     {
         super.performDefaults();
         mNSISScriptName.setText(""); //$NON-NLS-1$
@@ -120,7 +120,7 @@ public class NSISHeaderPropertyPage extends PropertyPage
     }
 
     @Override
-	public boolean performOk()
+    public boolean performOk()
     {
         if(super.performOk()) {
             String nsisScriptName = mNSISScriptName.getText();

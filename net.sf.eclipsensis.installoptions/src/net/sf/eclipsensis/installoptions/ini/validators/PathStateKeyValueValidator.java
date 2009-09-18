@@ -23,7 +23,7 @@ public class PathStateKeyValueValidator implements IINIKeyValueValidator
                 INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR, InstallOptionsPlugin.getResourceString("invalid.path.error")); //$NON-NLS-1$
                 problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.clear.invalid.path")) { //$NON-NLS-1$
                             @Override
-							protected INIProblemFix[] createFixes()
+                            protected INIProblemFix[] createFixes()
                             {
                                 return new INIProblemFix[]{new INIProblemFix(keyValue, keyValue.buildText("") //$NON-NLS-1$
                                         + (keyValue.getDelimiter() == null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$

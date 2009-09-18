@@ -50,11 +50,11 @@ public class InstallOptionsPaletteProvider
                     return l1.compareTo(l2);
                 }
                 else {
-                	return 0;
+                    return 0;
                 }
             }
             else {
-            	return 0;
+                return 0;
             }
         }
     };

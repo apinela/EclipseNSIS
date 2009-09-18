@@ -32,7 +32,7 @@ public class InstallOptionsTextEditManager extends InstallOptionsGenericTextEdit
     }
 
     @Override
-	protected String getInitialText(InstallOptionsWidget control)
+    protected String getInitialText(InstallOptionsWidget control)
     {
         String text = super.getInitialText(control);
         if(control.getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) &&
@@ -43,7 +43,7 @@ public class InstallOptionsTextEditManager extends InstallOptionsGenericTextEdit
     }
 
     @Override
-	protected TextCellEditor createCellEditor(Composite composite)
+    protected TextCellEditor createCellEditor(Composite composite)
     {
         TextCellEditor cellEditor = super.createCellEditor(composite);
         TextFigure figure = (TextFigure)getEditPart().getFigure();
@@ -54,7 +54,7 @@ public class InstallOptionsTextEditManager extends InstallOptionsGenericTextEdit
     }
 
     @Override
-	protected int getCellEditorStyle()
+    protected int getCellEditorStyle()
     {
         TextFigure figure = (TextFigure)getEditPart().getFigure();
         int style = SWT.LEFT;

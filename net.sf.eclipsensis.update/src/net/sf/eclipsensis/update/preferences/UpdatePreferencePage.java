@@ -2,7 +2,7 @@
  * Copyright (c) 2005-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.update.preferences;
@@ -89,15 +89,15 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     private Button mSelectSourceforgeMirror;
 
     @Override
-	protected IPreferenceStore doGetPreferenceStore()
+    protected IPreferenceStore doGetPreferenceStore()
     {
         return EclipseNSISUpdatePlugin.getDefault().getPreferenceStore();
     }
 
     @Override
-	protected Control createContents(Composite parent)
+    protected Control createContents(Composite parent)
     {
-    	Composite parent2 = new Composite(parent, SWT.NONE);
+        Composite parent2 = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(1, false);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
@@ -113,7 +113,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
         link.setText(LINK_TEXT);
         link.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 if (e.text != null)
                 {
@@ -231,13 +231,13 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
 
         mSelectSourceforgeMirror.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
                     public void run()
                     {
-                    	List<DownloadSite> downloadSites = getDownloadSites(false);
-						if (!Common.isEmptyCollection(downloadSites))
+                        List<DownloadSite> downloadSites = getDownloadSites(false);
+                        if (!Common.isEmptyCollection(downloadSites))
                         {
                             DownloadSite selectedSite = null;
                             String str = mSourceforgeMirror.getText();
@@ -274,7 +274,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
 
         SelectionAdapter adapter = new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 updateMirrorSelector(e.widget == mManualSelectMirror);
             }
@@ -340,7 +340,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
                 BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
                     public void run()
                     {
-                    	List<DownloadSite> downloadSites = getDownloadSites(false);
+                        List<DownloadSite> downloadSites = getDownloadSites(false);
                         if (getSelectedDownloadSite(downloadSites, site) == null)
                         {
                             if (!mRefreshedSites
@@ -427,7 +427,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     }
 
     @Override
-	public boolean performOk()
+    public boolean performOk()
     {
         boolean ok = super.performOk();
         if (ok)
@@ -442,7 +442,7 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     }
 
     @Override
-	protected void performDefaults()
+    protected void performDefaults()
     {
         loadDefaults();
         super.performDefaults();
@@ -451,32 +451,32 @@ public class UpdatePreferencePage extends PreferencePage implements IWorkbenchPr
     public void init(IWorkbench workbench)
     {
     }
-    
+
     private List<DownloadSite> getDownloadSites(boolean forceRefresh)
     {
-    	List<DownloadSite> downloadSites = null;
-    	HttpURLConnection connection = null;
+        List<DownloadSite> downloadSites = null;
+        HttpURLConnection connection = null;
         try {
-        	if(mLatestVersion == null)
-        	{
-				String version = INSISVersions.MINIMUM_VERSION
-						.toString();
-				URL url = NSISUpdateURLs.getUpdateURL(version);
-				connection = NetworkUtil
-						.makeConnection(new NullProgressMonitor(),
-								url, null);
-				String[] result = NetworkUtil.getLatestVersion(connection);
-				mLatestVersion = result[1];
-        	}
-			downloadSites = NetworkUtil.getDownloadSites(mLatestVersion, new NullProgressMonitor(),
-							EclipseNSISUpdatePlugin.getResourceString("retrieving.sourceforge.mirrors"), null, forceRefresh); //$NON-NLS-1$
-		} 
+            if(mLatestVersion == null)
+            {
+                String version = INSISVersions.MINIMUM_VERSION
+                        .toString();
+                URL url = NSISUpdateURLs.getUpdateURL(version);
+                connection = NetworkUtil
+                        .makeConnection(new NullProgressMonitor(),
+                                url, null);
+                String[] result = NetworkUtil.getLatestVersion(connection);
+                mLatestVersion = result[1];
+            }
+            downloadSites = NetworkUtil.getDownloadSites(mLatestVersion, new NullProgressMonitor(),
+                            EclipseNSISUpdatePlugin.getResourceString("retrieving.sourceforge.mirrors"), null, forceRefresh); //$NON-NLS-1$
+        }
         catch (IOException e) {
-			EclipseNSISUpdatePlugin.getDefault().log(e);
-		}
+            EclipseNSISUpdatePlugin.getDefault().log(e);
+        }
         finally
         {
-    		IOUtility.closeIO(connection);
+            IOUtility.closeIO(connection);
         }
         return downloadSites;
     }

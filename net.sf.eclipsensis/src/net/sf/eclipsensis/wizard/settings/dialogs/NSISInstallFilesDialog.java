@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings.dialogs;
@@ -77,32 +77,32 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * net.sf.eclipsensis.wizard.settings.dialogs.AbstractNSISInstallItemDialog
      * #getProperties()
      */
     @Override
-	protected List<String> getProperties()
+    protected List<String> getProperties()
     {
         return cProperties;
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_filesetdlg_context"; //$NON-NLS-1$
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
      * .Composite)
      */
     @Override
-	protected Control createControlContents(Composite parent)
+    protected Control createControlContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         Dialog.applyDialogFont(composite);
@@ -147,10 +147,10 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 
         final TableViewerUpDownMover<Collection<String>, String> mover = new TableViewerUpDownMover<Collection<String>, String>() {
             @Override
-			@SuppressWarnings("unchecked")
-			protected List<String> getAllElements()
+            @SuppressWarnings("unchecked")
+            protected List<String> getAllElements()
             {
-            	Collection<String> collection = (Collection<String>) ((TableViewer) getViewer()).getInput();
+                Collection<String> collection = (Collection<String>) ((TableViewer) getViewer()).getInput();
                 if (collection instanceof List<?>)
                 {
                     return (List<String>) collection;
@@ -162,7 +162,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
             }
 
             @Override
-			protected void updateStructuredViewerInput(Collection<String> input, List<String> elements, List<String> move, boolean isDown)
+            protected void updateStructuredViewerInput(Collection<String> input, List<String> elements, List<String> move, boolean isDown)
             {
                 input.clear();
                 input.addAll(elements);
@@ -213,7 +213,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
             String filterPath = ""; //$NON-NLS-1$
 
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.MULTI | SWT.PRIMARY_MODAL);
                 dialog.setText(EclipseNSISPlugin.getResourceString("wizard.files.dialog.title")); //$NON-NLS-1$
@@ -240,7 +240,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 
         removeButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
                 for (Iterator<?> iter = selection.iterator(); iter.hasNext();)
@@ -254,7 +254,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 
         upButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent se)
+            public void widgetSelected(SelectionEvent se)
             {
                 mover.moveUp();
             }
@@ -262,7 +262,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
 
         downButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent se)
+            public void widgetSelected(SelectionEvent se)
             {
                 mover.moveDown();
             }
@@ -297,7 +297,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
                 true, "wizard.overwrite.label", true, null, false); //$NON-NLS-1$
         c2.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("overwriteMode", c2.getSelectionIndex()); //$NON-NLS-1$
             }
@@ -320,7 +320,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         gd.grabExcessHorizontalSpace = true;
         b1.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("preserveAttributes", b1.getSelection()); //$NON-NLS-1$
             }
@@ -333,7 +333,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
         gd.grabExcessHorizontalSpace = true;
         b2.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mStore.setValue("nonFatal", b2.getSelection()); //$NON-NLS-1$
             }
@@ -343,18 +343,18 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
     }
 
     @Override
-	protected boolean hasRequiredFields()
+    protected boolean hasRequiredFields()
     {
         return true;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         if (mFiles.size() > 0)
@@ -371,7 +371,7 @@ public class NSISInstallFilesDialog extends AbstractNSISInstallItemDialog
     }
 
     @Override
-	protected String checkForErrors()
+    protected String checkForErrors()
     {
         if (mFiles.size() == 0)
         {

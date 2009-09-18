@@ -98,7 +98,7 @@ public abstract class AbstractTemplateManager<T extends ITemplate>
         return mReaderWriter;
     }
 
-	protected Map<String, T> loadDefaultTemplateStore() throws IOException, ClassNotFoundException
+    protected Map<String, T> loadDefaultTemplateStore() throws IOException, ClassNotFoundException
     {
         Map<String, T> map = null;
         if(mDefaultTemplatesStore != null) {
@@ -110,7 +110,7 @@ public abstract class AbstractTemplateManager<T extends ITemplate>
     }
 
     @SuppressWarnings("unchecked")
-	protected List<T> loadUserTemplateStore() throws IOException, ClassNotFoundException
+    protected List<T> loadUserTemplateStore() throws IOException, ClassNotFoundException
     {
         List<T> list = null;
         if(IOUtility.isValidFile(mUserTemplatesStore)) {
@@ -142,7 +142,7 @@ public abstract class AbstractTemplateManager<T extends ITemplate>
                                 }
                             }
                             //$FALL-THROUGH$
-					    case ITemplate.TYPE_USER:
+                        case ITemplate.TYPE_USER:
                             list.add(template);
                     }
                 }
@@ -211,7 +211,7 @@ public abstract class AbstractTemplateManager<T extends ITemplate>
     }
 
     @SuppressWarnings("unchecked")
-	public boolean removeTemplate(T template)
+    public boolean removeTemplate(T template)
     {
         checkClass(template);
         if(containsTemplate(template)) {
@@ -223,7 +223,7 @@ public abstract class AbstractTemplateManager<T extends ITemplate>
                     t.setDeleted(true);
                     mTemplates.add(t);
                     //$FALL-THROUGH$
-			    case ITemplate.TYPE_USER:
+                case ITemplate.TYPE_USER:
                     mTemplates.remove(template);
             }
             return true;

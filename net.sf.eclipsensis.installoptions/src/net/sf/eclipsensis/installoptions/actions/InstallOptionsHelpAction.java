@@ -32,7 +32,7 @@ public class InstallOptionsHelpAction extends Action
     }
 
     @Override
-	public void run()
+    public void run()
     {
         PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(
                 PLUGIN_HELP_URL);

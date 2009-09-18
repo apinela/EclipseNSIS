@@ -19,7 +19,7 @@ public abstract class TableViewerUpDownMover<S, T> extends StructuredViewerUpDow
      * @see net.sf.eclipsensis.util.UpDownMover#setInput(java.lang.Object)
      */
     @Override
-	public void setViewer(StructuredViewer viewer)
+    public void setViewer(StructuredViewer viewer)
     {
         mTableViewer = (TableViewer)viewer;
     }
@@ -28,7 +28,7 @@ public abstract class TableViewerUpDownMover<S, T> extends StructuredViewerUpDow
      * @see net.sf.eclipsensis.util.UpDownMover#getInput()
      */
     @Override
-	public StructuredViewer getViewer()
+    public StructuredViewer getViewer()
     {
         return mTableViewer;
     }
@@ -37,7 +37,7 @@ public abstract class TableViewerUpDownMover<S, T> extends StructuredViewerUpDow
      * @see net.sf.eclipsensis.util.UpDownMover#getSelectedIndices()
      */
     @Override
-	protected int[] getSelectedIndices()
+    protected int[] getSelectedIndices()
     {
         return mTableViewer.getTable().getSelectionIndices();
     }

@@ -249,36 +249,36 @@ public class InstallOptionsModel implements IPropertyChangeListener
         mCachedControlTypes.putAll(mControlTypes);
         mControlTypes.clear();
         if (bundle != null) {
-			for (Iterator<String> iter = controlTypes.iterator(); iter
-					.hasNext();) {
-				String type = iter.next();
-				InstallOptionsModelTypeDef typeDef = mCachedControlTypes
-						.remove(type);
-				if (typeDef == null) {
-					String name = bundle.getString(type + ".Name"); //$NON-NLS-1$
-					String description = bundle
-							.getString(type + ".Description"); //$NON-NLS-1$
-					String largeIcon = bundle.getString(type + ".LargeIcon"); //$NON-NLS-1$
-					String smallIcon = bundle.getString(type + ".SmallIcon"); //$NON-NLS-1$
-					String displayProperty = bundle.getString(type
-							+ ".DisplayProperty"); //$NON-NLS-1$
-					String model = bundle.getString(type + ".Model"); //$NON-NLS-1$
-					String part = bundle.getString(type + ".Part"); //$NON-NLS-1$
-					typeDef = new InstallOptionsModelTypeDef(type, name,
-							description, smallIcon, largeIcon, displayProperty,
-							model, part);
-				}
-				mControlTypes.put(type, typeDef);
-				List<String> list = controlSettings.get(type);
-				if (list == null) {
-					list = new ArrayList<String>();
-				}
-				list.addAll(0, mControlRequiredSettings.keySet());
-				typeDef.setSettings(list);
-				typeDef.setFlags(controlFlags.get(type));
-			}
-		}
-		InstallOptionsModelTypeDef typeDef = mControlTypes.remove(TYPE_UNKNOWN);
+            for (Iterator<String> iter = controlTypes.iterator(); iter
+                    .hasNext();) {
+                String type = iter.next();
+                InstallOptionsModelTypeDef typeDef = mCachedControlTypes
+                        .remove(type);
+                if (typeDef == null) {
+                    String name = bundle.getString(type + ".Name"); //$NON-NLS-1$
+                    String description = bundle
+                            .getString(type + ".Description"); //$NON-NLS-1$
+                    String largeIcon = bundle.getString(type + ".LargeIcon"); //$NON-NLS-1$
+                    String smallIcon = bundle.getString(type + ".SmallIcon"); //$NON-NLS-1$
+                    String displayProperty = bundle.getString(type
+                            + ".DisplayProperty"); //$NON-NLS-1$
+                    String model = bundle.getString(type + ".Model"); //$NON-NLS-1$
+                    String part = bundle.getString(type + ".Part"); //$NON-NLS-1$
+                    typeDef = new InstallOptionsModelTypeDef(type, name,
+                            description, smallIcon, largeIcon, displayProperty,
+                            model, part);
+                }
+                mControlTypes.put(type, typeDef);
+                List<String> list = controlSettings.get(type);
+                if (list == null) {
+                    list = new ArrayList<String>();
+                }
+                list.addAll(0, mControlRequiredSettings.keySet());
+                typeDef.setSettings(list);
+                typeDef.setFlags(controlFlags.get(type));
+            }
+        }
+        InstallOptionsModelTypeDef typeDef = mControlTypes.remove(TYPE_UNKNOWN);
         if(typeDef != null) {
             mControlTypes.put(typeDef.getType(),typeDef);
         }

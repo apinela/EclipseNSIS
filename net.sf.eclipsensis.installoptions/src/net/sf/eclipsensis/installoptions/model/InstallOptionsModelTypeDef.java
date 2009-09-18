@@ -45,7 +45,7 @@ public class InstallOptionsModelTypeDef
     }
 
     @SuppressWarnings("unchecked")
-	private <T> Constructor<T> createConstructor(String name, Class<?>[] paramTypes)
+    private <T> Constructor<T> createConstructor(String name, Class<?>[] paramTypes)
     {
         Constructor<T> constructor = null;
 

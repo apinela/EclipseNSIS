@@ -17,7 +17,7 @@ import net.sf.eclipsensis.util.Common;
 public class TextStateKeyValueValidator extends MultiLineKeyValueValidator
 {
     @Override
-	public boolean validate(final INIKeyValue keyValue, int fixFlag)
+    public boolean validate(final INIKeyValue keyValue, int fixFlag)
     {
         String value = keyValue.getValue();
         boolean hasProblems = false;
@@ -54,7 +54,7 @@ public class TextStateKeyValueValidator extends MultiLineKeyValueValidator
                                                                                         InstallOptionsModel.FLAGS_ONLY_NUMBERS}));
                                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.non.numeric.chars")) { //$NON-NLS-1$
                                         @Override
-										protected INIProblemFix[] createFixes()
+                                        protected INIProblemFix[] createFixes()
                                         {
                                             return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(buf.toString())+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                                         }

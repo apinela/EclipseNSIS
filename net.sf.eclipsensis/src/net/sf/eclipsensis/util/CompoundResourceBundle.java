@@ -49,7 +49,7 @@ public class CompoundResourceBundle extends ResourceBundle
      * @see java.util.ResourceBundle#getKeys()
      */
     @Override
-	public Enumeration<String> getKeys()
+    public Enumeration<String> getKeys()
     {
         List<String> list = null;
         for(int i=0; i<mResourceBundles.length; i++) {
@@ -74,7 +74,7 @@ public class CompoundResourceBundle extends ResourceBundle
      * @see java.util.ResourceBundle#handleGetObject(java.lang.String)
      */
     @Override
-	protected Object handleGetObject(String key)
+    protected Object handleGetObject(String key)
     {
         for(int i=0; i<mResourceBundles.length; i++) {
             if(mResourceBundles[i] != null) {
@@ -92,7 +92,7 @@ public class CompoundResourceBundle extends ResourceBundle
      * @see java.util.ResourceBundle#getLocale()
      */
     @Override
-	public Locale getLocale()
+    public Locale getLocale()
     {
         for(int i=mResourceBundles.length-1; i>=0; i--) {
             if(mResourceBundles[i] != null) {
@@ -110,7 +110,7 @@ public class CompoundResourceBundle extends ResourceBundle
      * @see java.util.ResourceBundle#setParent(java.util.ResourceBundle)
      */
     @Override
-	protected void setParent(ResourceBundle parent)
+    protected void setParent(ResourceBundle parent)
     {
     }
 }

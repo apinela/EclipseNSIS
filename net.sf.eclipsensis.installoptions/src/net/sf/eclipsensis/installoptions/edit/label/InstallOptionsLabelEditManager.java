@@ -31,7 +31,7 @@ public class InstallOptionsLabelEditManager extends InstallOptionsUneditableElem
      * @return
      */
     @Override
-	protected String getInitialText(InstallOptionsWidget control)
+    protected String getInitialText(InstallOptionsWidget control)
     {
         if(((InstallOptionsLabel)control).isMultiLine()) {
             return TypeConverter.ESCAPED_STRING_CONVERTER.asString(((InstallOptionsUneditableElement)control).getText());
@@ -42,7 +42,7 @@ public class InstallOptionsLabelEditManager extends InstallOptionsUneditableElem
     }
 
     @Override
-	protected int getCellEditorStyle()
+    protected int getCellEditorStyle()
     {
         if(((InstallOptionsLabel)((InstallOptionsLabelEditPart)getEditPart()).getModel()).isMultiLine()) {
             return SWT.MULTI|SWT.LEFT|SWT.WRAP|SWT.V_SCROLL;

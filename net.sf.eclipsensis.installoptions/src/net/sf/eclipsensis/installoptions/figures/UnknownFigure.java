@@ -51,7 +51,7 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
         final Rectangle[] childBounds = calculateBounds((Rectangle)propertySource.getPropertyValue(InstallOptionsWidget.PROPERTY_BOUNDS), hScroll, vScroll);
         mOuterLabelFigure = new LabelFigure(parent, new PropertySourceWrapper(propertySource){
             @Override
-			public Object getPropertyValue(Object id)
+            public Object getPropertyValue(Object id)
             {
                 if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
                     return childBounds[0];
@@ -72,7 +72,7 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
         add(mFigure);
         mInnerLabelFigure = new LabelFigure(parent, new PropertySourceWrapper(propertySource){
             @Override
-			public Object getPropertyValue(Object id)
+            public Object getPropertyValue(Object id)
             {
                 if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
                     return childBounds[2];
@@ -89,7 +89,7 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
             }
         }, SWT.CENTER|SWT.SINGLE) {
             @Override
-			protected Control createUneditableSWTControl(Composite parent, int style)
+            protected Control createUneditableSWTControl(Composite parent, int style)
             {
                 Control control = super.createUneditableSWTControl(parent, style);
                 control.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
@@ -124,7 +124,7 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
     }
 
     @Override
-	public void setBounds(Rectangle rect)
+    public void setBounds(Rectangle rect)
     {
         Dimension oldSize = bounds.getSize();
         super.setBounds(rect);

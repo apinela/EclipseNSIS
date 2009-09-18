@@ -6,20 +6,20 @@ import net.sf.eclipsensis.util.XMLUtil;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-public class PatternParam extends RegexpParam 
+public class PatternParam extends RegexpParam
 {
     public static final String ATTR_REGEXP = "regexp"; //$NON-NLS-1$
     public static final String ATTR_ERROR_MESSAGE = "errorMessage"; //$NON-NLS-1$
     private String mRegexp;
     private String mValidateErrorMessage;
 
-	public PatternParam(Node node) 
-	{
-		super(node);
-	}
+    public PatternParam(Node node)
+    {
+        super(node);
+    }
 
     @Override
-	protected void init(Node node)
+    protected void init(Node node)
     {
         NamedNodeMap attributes = node.getAttributes();
         mRegexp = XMLUtil.getStringValue(attributes, ATTR_REGEXP);
@@ -27,16 +27,16 @@ public class PatternParam extends RegexpParam
         super.init(node);
     }
 
-	@Override
-	protected String getRegexp() 
-	{
-		return mRegexp;
-	}
+    @Override
+    protected String getRegexp()
+    {
+        return mRegexp;
+    }
 
-	@Override
-	protected String getValidateErrorMessage() 
-	{
-		return mValidateErrorMessage;
-	}
+    @Override
+    protected String getValidateErrorMessage()
+    {
+        return mValidateErrorMessage;
+    }
 
 }

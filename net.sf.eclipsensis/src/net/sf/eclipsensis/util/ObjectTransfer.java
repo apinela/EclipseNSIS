@@ -21,7 +21,7 @@ public abstract class ObjectTransfer extends ByteArrayTransfer
     }
 
     @Override
-	public void javaToNative(Object object, TransferData transferData)
+    public void javaToNative(Object object, TransferData transferData)
     {
         setObject(object);
         mStartTime = System.currentTimeMillis();
@@ -31,7 +31,7 @@ public abstract class ObjectTransfer extends ByteArrayTransfer
     }
 
     @Override
-	public Object nativeToJava(TransferData transferData)
+    public Object nativeToJava(TransferData transferData)
     {
         byte[] bytes = (byte[])super.nativeToJava(transferData);
         //Now, only retain numeric bytes

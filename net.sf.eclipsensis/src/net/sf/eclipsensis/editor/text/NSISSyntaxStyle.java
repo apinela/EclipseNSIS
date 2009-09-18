@@ -39,7 +39,7 @@ public class NSISSyntaxStyle implements Cloneable
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         try {
             return super.clone();
@@ -50,7 +50,7 @@ public class NSISSyntaxStyle implements Cloneable
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if(obj instanceof NSISSyntaxStyle) {
             NSISSyntaxStyle style = (NSISSyntaxStyle)obj;
@@ -76,7 +76,7 @@ public class NSISSyntaxStyle implements Cloneable
         }
     }
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         int hashCode = 0;
         if(mForeground != null) {
@@ -97,7 +97,7 @@ public class NSISSyntaxStyle implements Cloneable
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         RGB rgb = mForeground;

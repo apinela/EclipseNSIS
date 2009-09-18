@@ -23,7 +23,7 @@ public class ExclusiveEndSequenceWordPatternRule extends BeginningOfLineRule
     }
 
     @Override
-	protected boolean endSequenceDetected(ICharacterScanner scanner)
+    protected boolean endSequenceDetected(ICharacterScanner scanner)
     {
         mBuffer.setLength(0);
         if(mDetector instanceof InstallOptionsWordDetector) {

@@ -65,14 +65,14 @@ public class CustomComboBoxCellEditor extends CellEditor
      * Method declared on CellEditor.
      */
     @Override
-	protected Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         mCombo = new CCombo(parent, getStyle());
         mCombo.setFont(parent.getFont());
 
         mCombo.addKeyListener(new KeyAdapter() {
             @Override
-			public void keyPressed(KeyEvent e)
+            public void keyPressed(KeyEvent e)
             {
                 keyReleaseOccured(e);
             }
@@ -87,7 +87,7 @@ public class CustomComboBoxCellEditor extends CellEditor
 
         mCombo.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetDefaultSelected(SelectionEvent event)
+            public void widgetDefaultSelected(SelectionEvent event)
             {
                 applyEditorValueAndDeactivate();
             }
@@ -109,7 +109,7 @@ public class CustomComboBoxCellEditor extends CellEditor
 
         mCombo.addFocusListener(new FocusAdapter() {
             @Override
-			public void focusLost(FocusEvent e)
+            public void focusLost(FocusEvent e)
             {
                 CustomComboBoxCellEditor.this.focusLost();
             }
@@ -118,19 +118,19 @@ public class CustomComboBoxCellEditor extends CellEditor
     }
 
     @Override
-	protected Object doGetValue()
+    protected Object doGetValue()
     {
         return mSelection;
     }
 
     @Override
-	protected void doSetFocus()
+    protected void doSetFocus()
     {
         mCombo.setFocus();
     }
 
     @Override
-	public LayoutData getLayoutData()
+    public LayoutData getLayoutData()
     {
         LayoutData layoutData = super.getLayoutData();
         if ((mCombo == null) || mCombo.isDisposed()) {
@@ -147,7 +147,7 @@ public class CustomComboBoxCellEditor extends CellEditor
     }
 
     @Override
-	protected void doSetValue(Object value)
+    protected void doSetValue(Object value)
     {
         mSelection = (String)value;
         int n = -1;
@@ -200,7 +200,7 @@ public class CustomComboBoxCellEditor extends CellEditor
     }
 
     @Override
-	protected void focusLost()
+    protected void focusLost()
     {
         if (isActivated()) {
             applyEditorValueAndDeactivate();
@@ -208,7 +208,7 @@ public class CustomComboBoxCellEditor extends CellEditor
     }
 
     @Override
-	protected void keyReleaseOccured(KeyEvent keyEvent)
+    protected void keyReleaseOccured(KeyEvent keyEvent)
     {
         if (keyEvent.character == '\u001b') { // Escape character
             fireCancelEditor();

@@ -60,7 +60,7 @@ public class NodeConverterFactory implements IExtensionChangeHandler
     }
 
     @SuppressWarnings("unchecked")
-	public <T> INodeConverter<? super T> getNodeConverter(Class<T> clasz)
+    public <T> INodeConverter<? super T> getNodeConverter(Class<T> clasz)
     {
         synchronized (mLock) {
             INodeConverter<? super T> nodeConverter = (INodeConverter<? super T>) mClassNodeConverterMap.get(clasz);
@@ -71,7 +71,7 @@ public class NodeConverterFactory implements IExtensionChangeHandler
                     if(nodeConverter != null) {
                         return nodeConverter;
                     }
-                    
+
                     parent = parent.getSuperclass();
                 }
 
@@ -92,7 +92,7 @@ public class NodeConverterFactory implements IExtensionChangeHandler
     }
 
     @SuppressWarnings("unchecked")
-	private <T> INodeConverter<? super T> getNodeConverter2(Class<T> clasz)
+    private <T> INodeConverter<? super T> getNodeConverter2(Class<T> clasz)
     {
         Class<?>[] interfaces = clasz.getInterfaces();
         if(!Common.isEmptyArray(interfaces)) {

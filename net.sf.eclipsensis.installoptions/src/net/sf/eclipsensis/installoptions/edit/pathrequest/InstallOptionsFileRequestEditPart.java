@@ -49,8 +49,8 @@ public class InstallOptionsFileRequestEditPart extends InstallOptionsPathRequest
     };
 
     @SuppressWarnings("unchecked")
-	@Override
-	public Object getAdapter(Class key)
+    @Override
+    public Object getAdapter(Class key)
     {
         if(IExtendedEditSupport.class.equals(key)) {
             return mExtendedEditSupport;
@@ -59,38 +59,38 @@ public class InstallOptionsFileRequestEditPart extends InstallOptionsPathRequest
     }
 
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return "filerequest.direct.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected String getExtendedEditLabelProperty()
+    protected String getExtendedEditLabelProperty()
     {
         return "filerequest.extended.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("filerequest.type.name"); //$NON-NLS-1$
     }
 
     @Override
-	protected void createEditPolicies()
+    protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsExtendedEditPolicy(this) {
             @SuppressWarnings("unchecked")
-			@Override
-			protected Command getExtendedEditCommand(ExtendedEditRequest request)
+            @Override
+            protected Command getExtendedEditCommand(ExtendedEditRequest request)
             {
                 ModifyFilterCommand command = new ModifyFilterCommand((InstallOptionsFileRequest)request.getEditPart().getModel(), (List<FileFilter>)request.getNewValue());
                 return command;
             }
 
             @Override
-			protected String getExtendedEditProperty()
+            protected String getExtendedEditProperty()
             {
                 return InstallOptionsModel.PROPERTY_FILTER;
             }

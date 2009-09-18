@@ -40,7 +40,7 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
     }
 
     @Override
-	protected Point getInitialSize()
+    protected Point getInitialSize()
     {
         Point result = super.getInitialSize();
         if(result.x > MAX_WIDTH) {
@@ -50,7 +50,7 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
     }
 
     @Override
-	protected Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -79,7 +79,7 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         mViewer.setContentProvider(new CollectionContentProvider());
         mViewer.setLabelProvider(new CollectionLabelProvider() {
             @Override
-			public Image getColumnImage(Object element, int columnIndex)
+            public Image getColumnImage(Object element, int columnIndex)
             {
                 if(element instanceof String && columnIndex == 0) {
                     return mResources.getImage((String)element);
@@ -88,7 +88,7 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
             }
 
             @Override
-			public String getColumnText(Object element, int columnIndex)
+            public String getColumnText(Object element, int columnIndex)
             {
                 if(element instanceof String && columnIndex == 0) {
                     return mResources.getTypeName((String)element);
@@ -129,7 +129,7 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         b.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         b.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mFilteredTypes.addAll(types);
                 mViewer.setAllChecked(true);
@@ -141,7 +141,7 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         b.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         b.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mFilteredTypes.clear();
                 mViewer.setAllChecked(false);

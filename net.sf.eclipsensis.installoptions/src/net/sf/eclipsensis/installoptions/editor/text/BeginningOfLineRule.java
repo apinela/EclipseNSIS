@@ -28,7 +28,7 @@ public class BeginningOfLineRule extends SingleLineRule
     }
 
     @Override
-	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume)
+    protected IToken doEvaluate(ICharacterScanner scanner, boolean resume)
     {
         try {
             int n = 0;

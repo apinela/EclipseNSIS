@@ -31,7 +31,7 @@ public class INIFileCreateControlAction extends INIFileAction
     }
 
     @Override
-	public boolean doRun(INIFile iniFile)
+    public boolean doRun(INIFile iniFile)
     {
         return doRun(iniFile, getSection(iniFile));
     }

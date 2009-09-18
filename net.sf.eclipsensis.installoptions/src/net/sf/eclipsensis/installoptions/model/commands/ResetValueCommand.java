@@ -40,7 +40,7 @@ public class ResetValueCommand extends Command
      * @see org.eclipse.gef.commands.Command#canExecute()
      */
     @Override
-	public boolean canExecute()
+    public boolean canExecute()
     {
         boolean answer = false;
         if (target != null && propertyName != null) {
@@ -57,7 +57,7 @@ public class ResetValueCommand extends Command
      * @see org.eclipse.gef.commands.Command#execute()
      */
     @Override
-	public void execute()
+    public void execute()
     {
         undoValue = target.getPropertyValue(propertyName);
         if (undoValue instanceof IPropertySource) {
@@ -80,7 +80,7 @@ public class ResetValueCommand extends Command
      * @see org.eclipse.gef.commands.Command#redo()
      */
     @Override
-	public void redo()
+    public void redo()
     {
         target.resetPropertyValue(propertyName);
     }
@@ -99,7 +99,7 @@ public class ResetValueCommand extends Command
      * @see org.eclipse.gef.commands.Command#undo()
      */
     @Override
-	public void undo()
+    public void undo()
     {
         target.setPropertyValue(propertyName, undoValue);
     }

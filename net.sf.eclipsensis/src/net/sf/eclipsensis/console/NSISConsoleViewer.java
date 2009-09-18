@@ -112,7 +112,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
         if(mRevealJob == null) {
             mRevealJob = new WorkbenchJob(EclipseNSISPlugin.getResourceString("console.reveal.job.name")){ //$NON-NLS-1$
                 @Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
+                public IStatus runInUIThread(IProgressMonitor monitor) {
                     StyledText textWidget = getTextWidget();
                     if (textWidget != null) {
                         int lineCount = textWidget.getLineCount();
@@ -127,19 +127,19 @@ public class NSISConsoleViewer extends TextConsoleViewer
     }
 
     @Override
-	protected void revealEndOfDocument()
+    protected void revealEndOfDocument()
     {
         getRevealJob().schedule(REVEAL_SCHEDULE_DELAY);
     }
 
     @Override
-	protected void createControl(Composite parent, int styles)
+    protected void createControl(Composite parent, int styles)
     {
         mHitDetectionCursor= parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
         mRuler = new CompositeRuler(VERTICAL_RULER_WIDTH);
         AnnotationRulerColumn rulerColumn = new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, new DefaultMarkerAnnotationAccess()) {
             @Override
-			protected void doPaint(GC gc)
+            protected void doPaint(GC gc)
             {
                 try {
                     super.doPaint(gc);
@@ -149,7 +149,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
             }
 
             @Override
-			protected void doPaint1(GC gc)
+            protected void doPaint1(GC gc)
             {
                 try {
                     super.doPaint1(gc);
@@ -172,7 +172,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
         rulerColumn.getControl().setBackground(getTextWidget().getBackground());
         mRuler.getControl().addMouseListener(new MouseAdapter() {
             @Override
-			public void mouseUp(MouseEvent e)
+            public void mouseUp(MouseEvent e)
             {
                 NSISConsoleAnnotation a = getAnnotation(e.y);
                 if(a != null) {
@@ -234,13 +234,13 @@ public class NSISConsoleViewer extends TextConsoleViewer
     }
 
     @Override
-	public Control getControl()
+    public Control getControl()
     {
         return mComposite;
     }
 
     @Override
-	public void setDocument(IDocument document)
+    public void setDocument(IDocument document)
     {
         IDocument oldDocument= getDocument();
 
@@ -264,7 +264,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
     }
 
     @Override
-	protected void handleDispose()
+    protected void handleDispose()
     {
         JFaceResources.getColorRegistry().removeListener(mPropertyChangeListener);
         JFaceResources.getFontRegistry().removeListener(mPropertyChangeListener);
@@ -295,8 +295,8 @@ public class NSISConsoleViewer extends TextConsoleViewer
     }
 
     //Need to replace the following 3 methods because I want my own link colors.
-	@Override
-	public void lineGetStyle(LineStyleEvent event)
+    @Override
+    public void lineGetStyle(LineStyleEvent event)
     {
         IDocument document = getDocument();
         if (document != null && document.getLength() > 0) {
@@ -345,14 +345,14 @@ public class NSISConsoleViewer extends TextConsoleViewer
             if(newRanges.size() > 0) {
                 StyleRange existingRange = iter.next();
                 for(ListIterator<StyleRange> iter2=newRanges.listIterator(); iter2.hasNext(); ) {
-                	StyleRange newRange2 = iter2.next();
+                    StyleRange newRange2 = iter2.next();
                     int offset1 = existingRange.start;
                     int offset2 = newRange2.start;
                     int end1 = offset1 + existingRange.length - 1;
                     int end2 = offset2 + newRange2.length - 1;
                     if(offset1 >= 0 && end1 >= offset1 && offset2 >= 0 && end2 >= offset2) {
                         if(offset1 == offset2 && end1 == end2) {
-                        	newRange2.foreground = existingRange.foreground;
+                            newRange2.foreground = existingRange.foreground;
                             iter2.remove();
                             iter.set(newRange2);
                             continue;
@@ -402,7 +402,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
                         }
                         else {
                             if(offset1 <= end2) {
-                            	newRange2.length = offset1-offset2+1;
+                                newRange2.length = offset1-offset2+1;
                                 if(end2 < end1) {
                                     StyleRange range2 = (StyleRange)newRange2.clone();
                                     range2.start=offset1;
@@ -512,7 +512,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
         }
 
         @Override
-		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache)
+        protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache)
         {
             Control[] children= composite.getChildren();
             Point s= children[children.length - 1].computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
@@ -523,7 +523,7 @@ public class NSISConsoleViewer extends TextConsoleViewer
         }
 
         @Override
-		protected void layout(Composite composite, boolean flushCache)
+        protected void layout(Composite composite, boolean flushCache)
         {
             Rectangle clArea= composite.getClientArea();
             Rectangle trim= getTextWidget().computeTrim(0, 0, 0, 0);

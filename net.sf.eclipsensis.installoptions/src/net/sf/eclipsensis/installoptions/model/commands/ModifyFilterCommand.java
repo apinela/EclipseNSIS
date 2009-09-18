@@ -32,13 +32,13 @@ public class ModifyFilterCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         mModel.setFilter(mNewFilter);
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         mModel.setFilter(mOldFilter);
     }

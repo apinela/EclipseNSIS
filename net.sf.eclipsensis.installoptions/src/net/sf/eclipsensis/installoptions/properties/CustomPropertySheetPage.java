@@ -15,13 +15,13 @@ public class CustomPropertySheetPage extends PropertySheetPage
 {
     private static final PropertySheetSorter cNonSorter = new PropertySheetSorter() {
         @Override
-		public int compare(IPropertySheetEntry entryA, IPropertySheetEntry entryB)
+        public int compare(IPropertySheetEntry entryA, IPropertySheetEntry entryB)
         {
             return -1;
         }
 
         @Override
-		public int compareCategories(String categoryA, String categoryB)
+        public int compareCategories(String categoryA, String categoryB)
         {
             return -1;
         }
@@ -34,7 +34,7 @@ public class CustomPropertySheetPage extends PropertySheetPage
     }
 
     @Override
-	protected void setSorter(PropertySheetSorter sorter)
+    protected void setSorter(PropertySheetSorter sorter)
     {
     }
 }

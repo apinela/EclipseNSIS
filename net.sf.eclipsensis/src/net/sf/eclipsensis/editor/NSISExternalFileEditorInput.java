@@ -106,13 +106,13 @@ public class NSISExternalFileEditorInput implements IPathEditorInput, ILocationP
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         return mFile.hashCode();
     }
 
     @Override
-	public boolean equals(Object o)
+    public boolean equals(Object o)
     {
         if (o == this) {
             return true;

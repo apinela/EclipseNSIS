@@ -34,7 +34,7 @@ public class InstallOptionsTreeViewerDragSourceListener extends AbstractTransfer
     }
 
     @Override
-	public void dragStart(DragSourceEvent event)
+    public void dragStart(DragSourceEvent event)
     {
         InstallOptionsTreeViewerTransfer.INSTANCE.setViewer(getViewer());
         List<EditPart> selection = Common.makeGenericList(EditPart.class, getViewer().getSelectedEditParts());
@@ -43,7 +43,7 @@ public class InstallOptionsTreeViewerDragSourceListener extends AbstractTransfer
     }
 
     @Override
-	public void dragFinished(DragSourceEvent event)
+    public void dragFinished(DragSourceEvent event)
     {
         InstallOptionsTreeViewerTransfer.INSTANCE.setObject(null);
         InstallOptionsTreeViewerTransfer.INSTANCE.setViewer(null);

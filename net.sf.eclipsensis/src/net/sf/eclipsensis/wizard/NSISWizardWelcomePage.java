@@ -57,19 +57,19 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
     }
 
     @Override
-	protected boolean hasRequiredFields()
+    protected boolean hasRequiredFields()
     {
         return true;
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizwelcome_context"; //$NON-NLS-1$
     }
 
     @Override
-	protected Control createPageControl(Composite parent)
+    protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
 
@@ -175,7 +175,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
 
         ViewerFilter filter = new ViewerFilter() {
             @Override
-			public boolean select(Viewer viewer, Object parentElement, Object element)
+            public boolean select(Viewer viewer, Object parentElement, Object element)
             {
                 if(element instanceof NSISWizardTemplate) {
                     NSISWizardTemplate template = (NSISWizardTemplate)element;
@@ -206,7 +206,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
 
         templatesViewer.getList().addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetDefaultSelected(SelectionEvent e)
+            public void widgetDefaultSelected(SelectionEvent e)
             {
                 if(canFlipToNextPage()) {
                     IWizardPage nextPage = getNextPage();
@@ -219,7 +219,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
 
         createFromTemplate.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mCreateFromTemplate = createFromTemplate.getSelection();
                 validatePage(VALIDATE_ALL);
@@ -256,7 +256,7 @@ public class NSISWizardWelcomePage extends AbstractNSISWizardStartPage
     }
 
     @Override
-	public boolean validatePage(int flag)
+    public boolean validatePage(int flag)
     {
         boolean b = !mCreateFromTemplate || mTemplate != null;
         setPageComplete(b);

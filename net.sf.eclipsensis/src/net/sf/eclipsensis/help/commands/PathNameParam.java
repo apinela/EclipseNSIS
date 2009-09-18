@@ -21,13 +21,13 @@ public class PathNameParam extends RegexpParam
     }
 
     @Override
-	protected String getRegexp()
+    protected String getRegexp()
     {
         return "([a-z]:)?\\\\?(((\\.?[a-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+|\\.{1,2}+)\\\\)*(\\.?[a-z0-9\\$%\\'`\\-@\\{\\}~\\!#\\(\\)\\&_\\^\\x20\\+\\,\\=\\[\\]])+"; //$NON-NLS-1$
     }
 
     @Override
-	protected String getValidateErrorMessage()
+    protected String getValidateErrorMessage()
     {
         return EclipseNSISPlugin.getResourceString("path.name.param.error"); //$NON-NLS-1$
     }

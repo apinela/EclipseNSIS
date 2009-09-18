@@ -41,11 +41,11 @@ public class Clipboard
             private final String TYPE_NAME = "net.sf.eclipsensis.clipboard.transfer"; //$NON-NLS-1$
             private final int TYPE_ID = registerType(TYPE_NAME);
             @Override
-			protected int[] getTypeIds() {
+            protected int[] getTypeIds() {
                 return new int[] {TYPE_ID};
             }
             @Override
-			protected String[] getTypeNames() {
+            protected String[] getTypeNames() {
                 return new String[] {TYPE_NAME};
             }
         };
@@ -60,14 +60,14 @@ public class Clipboard
             };
 
             @Override
-			public void run()
+            public void run()
             {
                 Thread.currentThread().setName(InstallOptionsPlugin.getResourceString("clipboard.monitor.thread.name")); //$NON-NLS-1$
-				try {
-					Display.getDefault().asyncExec(runnable);
-				} catch (Exception e) {
-					InstallOptionsPlugin.getDefault().log(e);
-				}
+                try {
+                    Display.getDefault().asyncExec(runnable);
+                } catch (Exception e) {
+                    InstallOptionsPlugin.getDefault().log(e);
+                }
             }
         },0,10);
         Display.getDefault().disposeExec(new Runnable() {

@@ -32,49 +32,49 @@ public class JARVerifier extends AbstractJARUtil
     }
 
     @Override
-	protected String getSuccessMessage(Object target)
+    protected String getSuccessMessage(Object target)
     {
         return JARSignerPlugin.getFormattedString("jar.verified.message",new Object[]{target}); //$NON-NLS-1$
     }
 
     @Override
-	protected String getFailMessage(Object target)
+    protected String getFailMessage(Object target)
     {
         return JARSignerPlugin.getFormattedString("jar.not.verified.message",new Object[]{target}); //$NON-NLS-1$
     }
 
     @Override
-	protected String getCancelMessage()
+    protected String getCancelMessage()
     {
         return JARSignerPlugin.getResourceString("jarverifier.cancel.message"); //$NON-NLS-1$
     }
 
     @Override
-	protected String getTaskName()
+    protected String getTaskName()
     {
         return JARSignerPlugin.getResourceString("jarverifier.task.name"); //$NON-NLS-1$
     }
 
     @Override
-	protected String getSubTaskName(Object target)
+    protected String getSubTaskName(Object target)
     {
         return JARSignerPlugin.getFormattedString("jarverifier.subtask.name", new Object[]{target}); //$NON-NLS-1$
     }
 
     @Override
-	protected String getConsoleTitle()
+    protected String getConsoleTitle()
     {
         return JARSignerPlugin.getResourceString("jarverifier.console.title"); //$NON-NLS-1$
     }
 
     @Override
-	protected String getLaunchTitle()
+    protected String getLaunchTitle()
     {
         return JARSignerPlugin.getResourceString("jarverifier.launch.title"); //$NON-NLS-1$
     }
 
     @Override
-	protected MessageFormat createArgsFormat()
+    protected MessageFormat createArgsFormat()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         buf.append("-verify"); //$NON-NLS-1$

@@ -36,7 +36,7 @@ public class CutAction extends SelectionAction
      * Initializes this action's text and images.
      */
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
@@ -75,7 +75,7 @@ public class CutAction extends SelectionAction
     }
 
     @Override
-	protected boolean calculateEnabled() {
+    protected boolean calculateEnabled() {
         Command cmd = createCutCommand(getSelectedObjects());
         if (cmd == null) {
             return false;
@@ -84,7 +84,7 @@ public class CutAction extends SelectionAction
     }
 
     @Override
-	public void run() {
+    public void run() {
         execute(createCutCommand(getSelectedObjects()));
     }
 }

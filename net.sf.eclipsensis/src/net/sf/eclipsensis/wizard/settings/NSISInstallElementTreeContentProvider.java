@@ -24,7 +24,7 @@ public class NSISInstallElementTreeContentProvider extends EmptyContentProvider
     }
 
     @Override
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput)
     {
         if(newInput == null || newInput instanceof NSISWizardSettings) {
             mSettings = (NSISWizardSettings)newInput;
@@ -32,7 +32,7 @@ public class NSISInstallElementTreeContentProvider extends EmptyContentProvider
     }
 
     @Override
-	public Object[] getElements(Object inputElement)
+    public Object[] getElements(Object inputElement)
     {
         if(mSettings == inputElement) {
             return new Object[]{mSettings.getInstaller()};
@@ -43,7 +43,7 @@ public class NSISInstallElementTreeContentProvider extends EmptyContentProvider
     }
 
     @Override
-	public Object[] getChildren(Object parentElement)
+    public Object[] getChildren(Object parentElement)
     {
         if(parentElement instanceof INSISInstallElement) {
             return ((INSISInstallElement)parentElement).getChildren();
@@ -54,7 +54,7 @@ public class NSISInstallElementTreeContentProvider extends EmptyContentProvider
     }
 
     @Override
-	public Object getParent(Object element)
+    public Object getParent(Object element)
     {
         if(element instanceof INSISInstallElement) {
             return ((INSISInstallElement)element).getParent();
@@ -65,7 +65,7 @@ public class NSISInstallElementTreeContentProvider extends EmptyContentProvider
     }
 
     @Override
-	public boolean hasChildren(Object element)
+    public boolean hasChildren(Object element)
     {
         if(element instanceof INSISInstallElement) {
             return !Common.isEmptyArray(((INSISInstallElement)element).getChildren());

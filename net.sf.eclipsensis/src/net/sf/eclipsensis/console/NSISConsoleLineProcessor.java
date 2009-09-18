@@ -93,33 +93,33 @@ public class NSISConsoleLineProcessor implements INSISConsoleLineProcessor
 
     private void setLineInfo(NSISConsoleLine line, IPath path, int lineNum)
     {
-    	IPath path2 = path;
-    	int lineNum2 = lineNum;
+        IPath path2 = path;
+        int lineNum2 = lineNum;
         if(path2 != null) {
             if(path2.toString().startsWith("macro:")) { //$NON-NLS-1$
                 //TODO Add macro discovery here.
-            	path2 = null;
-            	lineNum2 = 1;
+                path2 = null;
+                lineNum2 = 1;
             }
         }
         if(path2 == null) {
-        	path2 = mScript;
+            path2 = mScript;
         }
         else {
             if(mScript.getDevice() == null) {
                 if(!path2.isAbsolute()) {
-                	path2 = ResourcesPlugin.getWorkspace().getRoot().getFile(mScript).getParent().getFullPath().append(path2);
+                    path2 = ResourcesPlugin.getWorkspace().getRoot().getFile(mScript).getParent().getFullPath().append(path2);
                 }
                 else {
                     IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path2);
                     if(file != null) {
-                    	path2 = file.getFullPath();
+                        path2 = file.getFullPath();
                     }
                 }
             }
             else {
                 if(!path2.isAbsolute()) {
-                	path2 = mScript.removeLastSegments(1).append(path2);
+                    path2 = mScript.removeLastSegments(1).append(path2);
                 }
             }
         }

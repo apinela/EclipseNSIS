@@ -24,13 +24,13 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
      * @see org.eclipse.jface.text.templates.TemplateTranslator#getErrorMessage()
      */
     @Override
-	public String getErrorMessage()
+    public String getErrorMessage()
     {
         return mErrorMessage;
     }
 
     @Override
-	public TemplateBuffer translate(Template template) throws TemplateException
+    public TemplateBuffer translate(Template template) throws TemplateException
     {
         return translate(template.getPattern());
     }
@@ -39,7 +39,7 @@ public class NSISTemplateTranslator extends TemplateTranslator implements INSIST
      * @see org.eclipse.jface.text.templates.TemplateTranslator#translate(java.lang.String)
      */
     @Override
-	public TemplateBuffer translate(String string) throws TemplateException
+    public TemplateBuffer translate(String string) throws TemplateException
     {
         StringBuffer buffer = new StringBuffer(""); //$NON-NLS-1$
 

@@ -38,8 +38,8 @@ public class GraphicalPartFactory implements EditPartFactory
                 child = new InstallOptionsDialogEditPart();
             }
             if (child != null) {
-				child.setModel(model);
-			}
+                child.setModel(model);
+            }
         }
         return child;
     }

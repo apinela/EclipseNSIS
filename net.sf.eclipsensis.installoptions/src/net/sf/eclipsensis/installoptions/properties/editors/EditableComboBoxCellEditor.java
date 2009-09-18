@@ -33,7 +33,7 @@ public class EditableComboBoxCellEditor extends CellEditor
     private boolean mCaseInsensitive = false;
     private FocusAdapter mAutoDropDownFocusAdapter = new FocusAdapter(){
         @Override
-		public void focusGained(FocusEvent e) {
+        public void focusGained(FocusEvent e) {
             WinAPI.SendMessage(mCombo.handle, WinAPI.CB_SHOWDROPDOWN,1,0);
         }
     };
@@ -55,7 +55,7 @@ public class EditableComboBoxCellEditor extends CellEditor
     }
 
     @Override
-	public void deactivate()
+    public void deactivate()
     {
         super.deactivate();
         mDownArrowPressed = false;
@@ -104,7 +104,7 @@ public class EditableComboBoxCellEditor extends CellEditor
      * (non-Javadoc) Method declared on CellEditor.
      */
     @Override
-	protected Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         mCombo = new Combo(parent, getStyle());
         mCombo.setFont(parent.getFont());
@@ -118,7 +118,7 @@ public class EditableComboBoxCellEditor extends CellEditor
 
         mCombo.addKeyListener(new KeyAdapter() {
             @Override
-			public void keyPressed(KeyEvent e)
+            public void keyPressed(KeyEvent e)
             {
                 if(e.keyCode == SWT.ARROW_DOWN) {
                     mDownArrowPressed = true;
@@ -127,7 +127,7 @@ public class EditableComboBoxCellEditor extends CellEditor
             }
 
             @Override
-			public void keyReleased(KeyEvent e) {
+            public void keyReleased(KeyEvent e) {
                 if(e.keyCode == SWT.ARROW_DOWN) {
                     mDownArrowPressed = false;
                 }
@@ -136,13 +136,13 @@ public class EditableComboBoxCellEditor extends CellEditor
 
         mCombo.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetDefaultSelected(SelectionEvent event)
+            public void widgetDefaultSelected(SelectionEvent event)
             {
                 applyEditorValueAndDeactivate();
             }
 
             @Override
-			public void widgetSelected(SelectionEvent event)
+            public void widgetSelected(SelectionEvent event)
             {
                 computeSelection();
                 if(isAutoApplyEditorValue()) {
@@ -166,7 +166,7 @@ public class EditableComboBoxCellEditor extends CellEditor
 
         mCombo.addFocusListener(new FocusAdapter() {
             @Override
-			public void focusLost(FocusEvent e)
+            public void focusLost(FocusEvent e)
             {
                 EditableComboBoxCellEditor.this.focusLost();
             }
@@ -190,7 +190,7 @@ public class EditableComboBoxCellEditor extends CellEditor
     }
 
     @Override
-	protected Object doGetValue()
+    protected Object doGetValue()
     {
         return mSelection;
     }
@@ -199,13 +199,13 @@ public class EditableComboBoxCellEditor extends CellEditor
      * (non-Javadoc) Method declared on CellEditor.
      */
     @Override
-	protected void doSetFocus()
+    protected void doSetFocus()
     {
         mCombo.setFocus();
     }
 
     @Override
-	public LayoutData getLayoutData()
+    public LayoutData getLayoutData()
     {
         LayoutData layoutData = super.getLayoutData();
         if ((mCombo == null) || mCombo.isDisposed()) {
@@ -232,7 +232,7 @@ public class EditableComboBoxCellEditor extends CellEditor
     }
 
     @Override
-	protected void doSetValue(Object value)
+    protected void doSetValue(Object value)
     {
         String val = (String)value;
         String selection = checkValue(val);
@@ -299,7 +299,7 @@ public class EditableComboBoxCellEditor extends CellEditor
      * @see org.eclipse.jface.viewers.CellEditor#focusLost()
      */
     @Override
-	protected void focusLost()
+    protected void focusLost()
     {
         if (isActivated()) {
             applyEditorValueAndDeactivate();
@@ -311,7 +311,7 @@ public class EditableComboBoxCellEditor extends CellEditor
      * @see org.eclipse.jface.viewers.CellEditor#keyReleaseOccured(org.eclipse.swt.events.KeyEvent)
      */
     @Override
-	protected void keyReleaseOccured(KeyEvent keyEvent)
+    protected void keyReleaseOccured(KeyEvent keyEvent)
     {
         if (keyEvent.character == '\u001b') { // Escape character
             fireCancelEditor();

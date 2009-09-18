@@ -57,7 +57,7 @@ public class NSISConsoleLine
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         return mText;
     }

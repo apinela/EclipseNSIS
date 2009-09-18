@@ -90,7 +90,7 @@ public class CustomColorCellEditor extends DialogCellEditor
      * Method declared on DialogCellEditor.
      */
     @Override
-	protected Control createContents(Composite cell)
+    protected Control createContents(Composite cell)
     {
         Color bg = cell.getBackground();
         mComposite = new Composite(cell, getStyle());
@@ -106,7 +106,7 @@ public class CustomColorCellEditor extends DialogCellEditor
         mButton.setFont(cell.getFont());
         mButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent event)
+            public void widgetSelected(SelectionEvent event)
             {
                 markDirty();
                 doSetValue(null);
@@ -119,7 +119,7 @@ public class CustomColorCellEditor extends DialogCellEditor
      * Method declared on CellEditor.
      */
     @Override
-	public void dispose()
+    public void dispose()
     {
         if (mImage != null) {
             mImage.dispose();
@@ -132,7 +132,7 @@ public class CustomColorCellEditor extends DialogCellEditor
      * Method declared on DialogCellEditor.
      */
     @Override
-	protected Object openDialogBox(Control cellEditorWindow)
+    protected Object openDialogBox(Control cellEditorWindow)
     {
         ColorDialog dialog = new ColorDialog(cellEditorWindow.getShell());
         RGB value = (RGB)getValue();
@@ -173,7 +173,7 @@ public class CustomColorCellEditor extends DialogCellEditor
      * Method declared on DialogCellEditor.
      */
     @Override
-	protected void updateContents(Object value)
+    protected void updateContents(Object value)
     {
         RGB rgb = (RGB) value;
         if (rgb == null) {
@@ -202,7 +202,7 @@ public class CustomColorCellEditor extends DialogCellEditor
     private class ColorCellLayout extends Layout
     {
         @Override
-		public Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache)
+        public Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache)
         {
             if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT) {
                 return new Point(wHint, hHint);
@@ -215,7 +215,7 @@ public class CustomColorCellEditor extends DialogCellEditor
         }
 
         @Override
-		public void layout(Composite composite, boolean flushCache)
+        public void layout(Composite composite, boolean flushCache)
         {
             Rectangle bounds = composite.getClientArea();
             Point colorSize = mColorLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);

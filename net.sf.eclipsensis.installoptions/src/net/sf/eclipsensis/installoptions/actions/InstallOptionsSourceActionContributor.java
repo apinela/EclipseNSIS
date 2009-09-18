@@ -162,14 +162,14 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
     }
 
     @Override
-	public void contributeToMenu(IMenuManager menu)
+    public void contributeToMenu(IMenuManager menu)
     {
         super.contributeToMenu(menu);
         menu.insertBefore(IWorkbenchActionConstants.M_WINDOW, mInstallOptionsMenu);
     }
 
     @Override
-	public void contributeToToolBar(IToolBarManager tbm)
+    public void contributeToToolBar(IToolBarManager tbm)
     {
         tbm.add(mWizardAction);
         tbm.add(new Separator());
@@ -190,27 +190,27 @@ public class InstallOptionsSourceActionContributor extends TextEditorActionContr
     }
 
     @Override
-	public void init(IActionBars bars)
+    public void init(IActionBars bars)
     {
         buildActions();
         super.init(bars);
     }
 
     @Override
-	public void setActiveEditor(IEditorPart part)
+    public void setActiveEditor(IEditorPart part)
     {
         super.setActiveEditor(part);
         IActionBars bars = getActionBars();
         ITextEditor editor = (part instanceof ITextEditor?(ITextEditor)part:null);
         for (Iterator<RetargetAction> iter = mRetargetActions.iterator(); iter.hasNext();) {
             String id = iter.next().getId();
-			bars.setGlobalActionHandler(id,(editor == null?null:editor.getAction(id)));
+            bars.setGlobalActionHandler(id,(editor == null?null:editor.getAction(id)));
         }
         bars.updateActionBars();
     }
 
     @Override
-	public void dispose()
+    public void dispose()
     {
         for (Iterator<RetargetAction> iter = mRetargetActions.iterator(); iter.hasNext();) {
             RetargetAction action = iter.next();

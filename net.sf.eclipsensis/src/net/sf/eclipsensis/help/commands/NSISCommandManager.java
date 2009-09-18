@@ -36,10 +36,10 @@ public class NSISCommandManager
         load();
     }
 
-	@SuppressWarnings("unchecked")
-	private static void load() 
-	{
-		Properties props = new Properties();
+    @SuppressWarnings("unchecked")
+    private static void load()
+    {
+        Properties props = new Properties();
         try {
             props.load(NSISCommandManager.class.getResourceAsStream("NSISCommandParams.properties")); //$NON-NLS-1$
         }
@@ -119,7 +119,7 @@ public class NSISCommandManager
         finally {
             IOUtility.closeIO(is);
         }
-	}
+    }
 
     public static NSISCommand getCommand(String name)
     {

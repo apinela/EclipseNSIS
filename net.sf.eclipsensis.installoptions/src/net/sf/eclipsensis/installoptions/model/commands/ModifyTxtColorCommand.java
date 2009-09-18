@@ -30,13 +30,13 @@ public class ModifyTxtColorCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         mModel.setTxtColor(mNewTxtColor);
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         mModel.setTxtColor(mOldTxtColor);
     }

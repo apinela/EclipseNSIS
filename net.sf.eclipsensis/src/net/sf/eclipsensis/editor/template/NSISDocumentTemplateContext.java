@@ -32,7 +32,7 @@ public class NSISDocumentTemplateContext extends DocumentTemplateContext
      * @see org.eclipse.jface.text.templates.TemplateContext#canEvaluate(org.eclipse.jface.text.templates.Template)
      */
     @Override
-	public boolean canEvaluate(Template template)
+    public boolean canEvaluate(Template template)
     {
         String key = getKey();
         return super.canEvaluate(template) &&
@@ -44,7 +44,7 @@ public class NSISDocumentTemplateContext extends DocumentTemplateContext
      * @see org.eclipse.jface.text.templates.TemplateContext#evaluate(org.eclipse.jface.text.templates.Template)
      */
     @Override
-	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException
+    public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException
     {
         if (!canEvaluate(template)) {
             return null;

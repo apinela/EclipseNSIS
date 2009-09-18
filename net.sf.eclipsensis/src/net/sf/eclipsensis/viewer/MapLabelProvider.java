@@ -42,7 +42,7 @@ public class MapLabelProvider extends LabelProvider implements ITableLabelProvid
     }
 
     @Override
-	public String getText(Object element)
+    public String getText(Object element)
     {
         if(element instanceof Map.Entry<?,?>) {
             return getColumnText(element, 1);

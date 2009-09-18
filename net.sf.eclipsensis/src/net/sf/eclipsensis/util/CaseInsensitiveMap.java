@@ -14,7 +14,7 @@ import java.util.*;
 
 public class CaseInsensitiveMap<T> extends AbstractMap<String, T> implements Serializable
 {
-	private static final long serialVersionUID = 7710930539504135243L;
+    private static final long serialVersionUID = 7710930539504135243L;
 
     private Map<String, T> mValueMap = new LinkedHashMap<String, T>();
     private Map<String, String> mKeyMap = new HashMap<String, String>();
@@ -26,7 +26,7 @@ public class CaseInsensitiveMap<T> extends AbstractMap<String, T> implements Ser
     public CaseInsensitiveMap(Map<String, T> map)
     {
         for(Iterator<String> iter=map.keySet().iterator(); iter.hasNext(); ) {
-        	String key = iter.next();
+            String key = iter.next();
             put(key,  map.get(key));
         }
     }
@@ -37,56 +37,56 @@ public class CaseInsensitiveMap<T> extends AbstractMap<String, T> implements Ser
     }
 
     @Override
-	public void clear()
+    public void clear()
     {
         mValueMap.clear();
         mKeyMap.clear();
     }
 
     @Override
-	public boolean containsKey(Object key)
+    public boolean containsKey(Object key)
     {
         return key == null || key instanceof String?mKeyMap.containsKey(toUpperCase((String)key)):false;
     }
 
     @Override
-	public Set<Map.Entry<String, T>> entrySet()
+    public Set<Map.Entry<String, T>> entrySet()
     {
         return mValueMap.entrySet();
     }
 
     @Override
-	public T get(Object key)
+    public T get(Object key)
     {
-    	Object key2 = key;
-    	if (key2 == null || key2 instanceof String) {
-			String uppercaseKey = toUpperCase((String) key2);
-			if (mKeyMap.containsKey(uppercaseKey)) {
-				key2 = mKeyMap.get(uppercaseKey);
-				return mValueMap.get(key2);
-			}
-		}
-		return null;
+        Object key2 = key;
+        if (key2 == null || key2 instanceof String) {
+            String uppercaseKey = toUpperCase((String) key2);
+            if (mKeyMap.containsKey(uppercaseKey)) {
+                key2 = mKeyMap.get(uppercaseKey);
+                return mValueMap.get(key2);
+            }
+        }
+        return null;
     }
 
     @Override
-	public T remove(Object key)
+    public T remove(Object key)
     {
-    	Object key2 = key;
-    	if (key2 == null || key2 instanceof String) {
-			String fixedKey = toUpperCase((String) key2);
-			if (mKeyMap.containsKey(fixedKey)) {
-				key2 = mKeyMap.remove(fixedKey);
-				return mValueMap.remove(key2);
-			}
-		}
-		return null;
+        Object key2 = key;
+        if (key2 == null || key2 instanceof String) {
+            String fixedKey = toUpperCase((String) key2);
+            if (mKeyMap.containsKey(fixedKey)) {
+                key2 = mKeyMap.remove(fixedKey);
+                return mValueMap.remove(key2);
+            }
+        }
+        return null;
     }
 
     @Override
-	public T put(String key, T value)
+    public T put(String key, T value)
     {
-    	String oldKey = mKeyMap.put(toUpperCase(key),key);
+        String oldKey = mKeyMap.put(toUpperCase(key),key);
         if(oldKey != null) {
             mValueMap.remove(oldKey);
         }
@@ -94,7 +94,7 @@ public class CaseInsensitiveMap<T> extends AbstractMap<String, T> implements Ser
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         return mValueMap.toString();
     }

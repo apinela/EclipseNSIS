@@ -40,7 +40,7 @@ public class RepeatableParam extends NSISParam
     }
 
     @Override
-	protected void init(Node node)
+    protected void init(Node node)
     {
         super.init(node);
         mLabel = EclipseNSISPlugin.getResourceString(XMLUtil.getStringValue(node.getAttributes(), ATTR_LABEL), ""); //$NON-NLS-1$
@@ -57,7 +57,7 @@ public class RepeatableParam extends NSISParam
     }
 
     @Override
-	protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new RepeatableParamEditor(command, parentEditor);
     }
@@ -74,7 +74,7 @@ public class RepeatableParam extends NSISParam
         }
 
         @Override
-		public void clear()
+        public void clear()
         {
             int n = mChildParamEditors.size();
             if (n > 1) {
@@ -105,7 +105,7 @@ public class RepeatableParam extends NSISParam
         }
 
         @Override
-		protected String validateParam()
+        protected String validateParam()
         {
             String error = null;
             for (Iterator<INSISParamEditor> iter = mChildParamEditors.iterator(); iter.hasNext();) {
@@ -118,7 +118,7 @@ public class RepeatableParam extends NSISParam
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf, boolean preview)
+        protected void appendParamText(StringBuffer buf, boolean preview)
         {
             for (Iterator<INSISParamEditor> iter = mChildParamEditors.iterator(); iter.hasNext();) {
                 (iter.next()).appendText(buf, preview);
@@ -126,7 +126,7 @@ public class RepeatableParam extends NSISParam
         }
 
         @Override
-		public void setSettings(Map<String, Object> settings)
+        public void setSettings(Map<String, Object> settings)
         {
             super.setSettings(settings);
             if(settings != null) {
@@ -160,7 +160,7 @@ public class RepeatableParam extends NSISParam
         }
 
         @Override
-		public void saveSettings()
+        public void saveSettings()
         {
             List<Map<String,Object>> childSettingsList = getChildSettingsList();
             if(childSettingsList != null) {
@@ -176,7 +176,7 @@ public class RepeatableParam extends NSISParam
         }
 
         @SuppressWarnings("unchecked")
-		private List<Map<String,Object>> getChildSettingsList()
+        private List<Map<String,Object>> getChildSettingsList()
         {
             List<Map<String,Object>> childSettingsList;
             if(getSettings() != null) {
@@ -192,7 +192,7 @@ public class RepeatableParam extends NSISParam
         }
 
         @Override
-		public void reset()
+        public void reset()
         {
             super.reset();
             if (mChildParamEditors.size() > 0) {
@@ -207,7 +207,7 @@ public class RepeatableParam extends NSISParam
         }
 
         @Override
-		protected void initParamEditor()
+        protected void initParamEditor()
         {
             super.initParamEditor();
 
@@ -248,7 +248,7 @@ public class RepeatableParam extends NSISParam
         }
 
         @Override
-		protected Control createParamControl(Composite parent)
+        protected Control createParamControl(Composite parent)
         {
             Composite container = new Composite(parent,SWT.NONE);
             GridLayout gridLayout = new GridLayout(1,false);
@@ -258,7 +258,7 @@ public class RepeatableParam extends NSISParam
         }
 
         @Override
-		protected boolean createMissing()
+        protected boolean createMissing()
         {
             return false;
         }
@@ -301,7 +301,7 @@ public class RepeatableParam extends NSISParam
 
                 delButton.addSelectionListener(new SelectionAdapter() {
                     @Override
-					public void widgetSelected(SelectionEvent e)
+                    public void widgetSelected(SelectionEvent e)
                     {
                         BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
                             public void run()
@@ -316,7 +316,7 @@ public class RepeatableParam extends NSISParam
                 });
                 addButton.addSelectionListener(new SelectionAdapter() {
                     @Override
-					public void widgetSelected(SelectionEvent e)
+                    public void widgetSelected(SelectionEvent e)
                     {
                         BusyIndicator.showWhile(Display.getCurrent(),new Runnable() {
                             public void run()
@@ -335,7 +335,7 @@ public class RepeatableParam extends NSISParam
         }
 
         @Override
-		protected void updateState(boolean state)
+        protected void updateState(boolean state)
         {
             updateEditors(state);
             super.updateState(state);

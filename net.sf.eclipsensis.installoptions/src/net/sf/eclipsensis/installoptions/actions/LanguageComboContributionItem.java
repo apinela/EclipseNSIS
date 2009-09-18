@@ -73,8 +73,8 @@ public class LanguageComboContributionItem extends ContributionItem implements P
 
     static
     {
-    	String defaultLang = InstallOptionsPlugin.getResourceString("option.default","(Default)"); //$NON-NLS-1$ //$NON-NLS-2$
-    	DEFAULT = new NSISLanguage(defaultLang, defaultLang, 0, 0);
+        String defaultLang = InstallOptionsPlugin.getResourceString("option.default","(Default)"); //$NON-NLS-1$ //$NON-NLS-2$
+        DEFAULT = new NSISLanguage(defaultLang, defaultLang, 0, 0);
     }
 
     public LanguageComboContributionItem(IPartService partService)
@@ -192,7 +192,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
         mComboViewer.setContentProvider(new CollectionContentProvider());
         mComboViewer.setLabelProvider(new LabelProvider() {
             @Override
-			public String getText(Object element)
+            public String getText(Object element)
             {
                 if(element instanceof NSISLanguage) {
                     return ((NSISLanguage)element).getDisplayName();
@@ -211,7 +211,7 @@ public class LanguageComboContributionItem extends ContributionItem implements P
     }
 
     @Override
-	public void dispose()
+    public void dispose()
     {
         NSISLanguageManager.getInstance().removePropertyChangedListener(this);
         mPreferenceStore.removePropertyChangeListener(this);
@@ -231,18 +231,18 @@ public class LanguageComboContributionItem extends ContributionItem implements P
     }
 
     @Override
-	public final void fill(Composite parent)
+    public final void fill(Composite parent)
     {
         createControl(parent);
     }
 
     @Override
-	public final void fill(Menu parent, int index)
+    public final void fill(Menu parent, int index)
     {
     }
 
     @Override
-	public void fill(ToolBar parent, int index)
+    public void fill(ToolBar parent, int index)
     {
         mToolitem = new ToolItem(parent, SWT.SEPARATOR, index);
         Control control = createControl(parent);

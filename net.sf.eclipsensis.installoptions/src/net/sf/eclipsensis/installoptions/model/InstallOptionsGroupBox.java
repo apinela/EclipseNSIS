@@ -22,7 +22,7 @@ public class InstallOptionsGroupBox extends InstallOptionsUneditableElement
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_GROUPBOX;
     }
@@ -31,7 +31,7 @@ public class InstallOptionsGroupBox extends InstallOptionsUneditableElement
      * @return
      */
     @Override
-	protected String getDefaultText()
+    protected String getDefaultText()
     {
         return InstallOptionsPlugin.getResourceString("groupbox.text.default"); //$NON-NLS-1$
     }
@@ -40,7 +40,7 @@ public class InstallOptionsGroupBox extends InstallOptionsUneditableElement
      * @return
      */
     @Override
-	protected Position getDefaultPosition()
+    protected Position getDefaultPosition()
     {
         return new Position(0,0,124,64);
     }

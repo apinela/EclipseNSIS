@@ -37,7 +37,7 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         String keyStore = getStringDialogSetting(KEY_STORE);
@@ -60,7 +60,7 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
     }
 
     @Override
-	protected void okPressed()
+    protected void okPressed()
     {
        getDialogSettings().put(KEY_STORE,getKeyStore());
        super.okPressed();
@@ -72,25 +72,25 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
     }
 
     @Override
-	protected AbstractUIPlugin getPlugin()
+    protected AbstractUIPlugin getPlugin()
     {
         return JARSignerPlugin.getDefault();
     }
 
     @Override
-	protected Version getMinJDKVersion()
+    protected Version getMinJDKVersion()
     {
         return cMinJDKVersion;
     }
 
     @Override
-	protected String getToolsMainClassName(Version toolsJarVersion)
+    protected String getToolsMainClassName(Version toolsJarVersion)
     {
         return AbstractJARUtil.JAR_SIGNER_MAIN_CLASS_NAME;
     }
 
     @Override
-	protected boolean isValid()
+    protected boolean isValid()
     {
         if(super.isValid()) {
             boolean state = true;

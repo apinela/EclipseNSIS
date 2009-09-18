@@ -49,7 +49,7 @@ public class NSISOutlineElement
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         if(isRoot()) {
             if(!Common.isEmpty(mName)) {

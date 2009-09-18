@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 public class ListLabelProvider extends LabelProvider
 {
     @Override
-	public String getText(Object element)
+    public String getText(Object element)
     {
         if(element instanceof List<?>) {
             return Common.flatten(((List<?>)element).toArray(),IInstallOptionsConstants.LIST_SEPARATOR);

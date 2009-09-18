@@ -209,7 +209,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("wizard"); //$NON-NLS-1$
@@ -1251,7 +1251,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     }
 
     @Override
-	protected Object getNodeValue(Node node, String name, Class<?> clasz)
+    protected Object getNodeValue(Node node, String name, Class<?> clasz)
     {
         Object obj = super.getNodeValue(node, name, clasz);
         if(name.equals("installer")) { //$NON-NLS-1$
@@ -1288,13 +1288,13 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     }
 
     @Override
-	protected String getChildNodeName()
+    protected String getChildNodeName()
     {
         return CHILD_NODE;
     }
 
     @Override
-	public Object clone() throws CloneNotSupportedException
+    public Object clone() throws CloneNotSupportedException
     {
         NSISWizardSettings settings = (NSISWizardSettings)super.clone();
         settings.mBGTopColor = cloneRGB(mBGTopColor);
@@ -1316,7 +1316,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         final int PRIME = 31;
         int result = 1;
@@ -1385,7 +1385,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if (this == obj) {
             return true;
@@ -1671,7 +1671,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
 
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException
     {
-    	mDisplaySupportedLanguages = true;
+        mDisplaySupportedLanguages = true;
         in.defaultReadObject();
     }
 }

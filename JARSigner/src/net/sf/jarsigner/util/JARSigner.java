@@ -70,31 +70,31 @@ public class JARSigner extends AbstractJARUtil
     }
 
     @Override
-	protected String getSuccessMessage(Object target)
+    protected String getSuccessMessage(Object target)
     {
         return JARSignerPlugin.getFormattedString("jar.signed.message",new Object[]{target}); //$NON-NLS-1$
     }
 
     @Override
-	protected String getFailMessage(Object target)
+    protected String getFailMessage(Object target)
     {
         return JARSignerPlugin.getFormattedString("jar.not.signed.message",new Object[]{target}); //$NON-NLS-1$
     }
 
     @Override
-	protected String getConsoleTitle()
+    protected String getConsoleTitle()
     {
         return JARSignerPlugin.getResourceString("jarsigner.console.title"); //$NON-NLS-1$
     }
 
     @Override
-	protected String getLaunchTitle()
+    protected String getLaunchTitle()
     {
         return JARSignerPlugin.getResourceString("jarsigner.launch.title"); //$NON-NLS-1$
     }
 
     @Override
-	protected MessageFormat createArgsFormat()
+    protected MessageFormat createArgsFormat()
     {
         StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
         buf.append("-keystore ").append(mKeyStore); //$NON-NLS-1$
@@ -126,25 +126,25 @@ public class JARSigner extends AbstractJARUtil
     }
 
     @Override
-	protected String getCancelMessage()
+    protected String getCancelMessage()
     {
         return JARSignerPlugin.getResourceString("jarsigner.cancel.message"); //$NON-NLS-1$
     }
 
     @Override
-	protected String getTaskName()
+    protected String getTaskName()
     {
         return JARSignerPlugin.getResourceString("jarsigner.task.name"); //$NON-NLS-1$
     }
 
     @Override
-	protected String getSubTaskName(Object target)
+    protected String getSubTaskName(Object target)
     {
         return JARSignerPlugin.getFormattedString("jarsigner.subtask.name", new Object[]{target}); //$NON-NLS-1$
     }
 
     @Override
-	protected IStatus postProcess(Object target, IProgressMonitor monitor)
+    protected IStatus postProcess(Object target, IProgressMonitor monitor)
     {
         if(Common.isEmpty(mSignedJar)) {
             try {

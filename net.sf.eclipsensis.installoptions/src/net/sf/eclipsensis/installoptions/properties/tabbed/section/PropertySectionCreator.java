@@ -40,7 +40,7 @@ import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 public abstract class PropertySectionCreator implements IPropertySectionCreator
 {
-	private InstallOptionsElement mElement;
+    private InstallOptionsElement mElement;
     private NumberVerifyListener mNumberVerifyListener;
 
     public PropertySectionCreator(InstallOptionsElement element)
@@ -67,7 +67,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
      */
     protected final Text createTextSection(Composite composite, final String propertyId, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper, boolean multiline)
     {
-    	Composite composite2 = composite;
+        Composite composite2 = composite;
         final IPropertyDescriptor descriptor = getElement().getPropertyDescriptor(propertyId);
         if (descriptor != null) {
             final TypeConverter<String> converter = (multiline?TypeConverter.ESCAPED_STRING_CONVERTER:TypeConverter.STRING_CONVERTER);
@@ -91,13 +91,13 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
             text.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,multiline));
             final TextChangeHelper helper = new TextChangeHelper(validator) {
                 @Override
-				protected String getResetValue(Text text)
+                protected String getResetValue(Text text)
                 {
                     return converter.asString(getElement().getStringPropertyValue(propertyId));
                 }
 
                 @Override
-				protected void handleTextChange(Text text)
+                protected void handleTextChange(Text text)
                 {
                     if(!isNonUserChange()) {
                         String t = converter.asType(text.getText());
@@ -143,7 +143,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
 
     protected final CCombo createComboSection(Composite composite, final String propertyId, final Map<Integer,String> comboData, Object defaultValue, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
-    	Composite composite2 = composite;
+        Composite composite2 = composite;
         final IPropertyDescriptor descriptor = getElement().getPropertyDescriptor(propertyId);
         if (descriptor != null) {
             GridLayout layout;
@@ -181,7 +181,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
             final boolean[] nonUserChange = { false };
             combo.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     if(!nonUserChange[0]) {
                         int n = combo.getSelectionIndex();

@@ -17,73 +17,73 @@ import org.eclipse.core.runtime.CoreException;
 
 public class InstallOptionsNature implements IProjectNature
 {
-	private IProject mProject;
+    private IProject mProject;
 
     /*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.resources.IProjectNature#configure()
-	 */
-	public void configure() throws CoreException
+     * (non-Javadoc)
+     *
+     * @see org.eclipse.core.resources.IProjectNature#configure()
+     */
+    public void configure() throws CoreException
     {
-		IProjectDescription desc = mProject.getDescription();
-		ICommand[] commands = desc.getBuildSpec();
+        IProjectDescription desc = mProject.getDescription();
+        ICommand[] commands = desc.getBuildSpec();
 
-		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(IInstallOptionsConstants.INSTALLOPTIONS_BUILDER_ID)) {
-				return;
-			}
-		}
+        for (int i = 0; i < commands.length; ++i) {
+            if (commands[i].getBuilderName().equals(IInstallOptionsConstants.INSTALLOPTIONS_BUILDER_ID)) {
+                return;
+            }
+        }
 
-		commands = (ICommand[])Common.resizeArray(commands,commands.length + 1);
-		ICommand command = desc.newCommand();
-		command.setBuilderName(IInstallOptionsConstants.INSTALLOPTIONS_BUILDER_ID);
+        commands = (ICommand[])Common.resizeArray(commands,commands.length + 1);
+        ICommand command = desc.newCommand();
+        command.setBuilderName(IInstallOptionsConstants.INSTALLOPTIONS_BUILDER_ID);
         commands[commands.length - 1] = command;
-		desc.setBuildSpec(commands);
-		mProject.setDescription(desc, null);
-	}
+        desc.setBuildSpec(commands);
+        mProject.setDescription(desc, null);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
-	 */
-	public void deconfigure() throws CoreException
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.eclipse.core.resources.IProjectNature#deconfigure()
+     */
+    public void deconfigure() throws CoreException
     {
-		IProjectDescription description = getProject().getDescription();
-		ICommand[] commands = description.getBuildSpec();
-		for (int i = 0; i < commands.length; ++i) {
-			if (commands[i].getBuilderName().equals(IInstallOptionsConstants.INSTALLOPTIONS_BUILDER_ID)) {
-				ICommand[] newCommands = new ICommand[commands.length - 1];
-				System.arraycopy(commands, 0, newCommands, 0, i);
-				System.arraycopy(commands, i + 1, newCommands, i, commands.length - i - 1);
-				description.setBuildSpec(newCommands);
-				return;
-			}
-		}
-	}
+        IProjectDescription description = getProject().getDescription();
+        ICommand[] commands = description.getBuildSpec();
+        for (int i = 0; i < commands.length; ++i) {
+            if (commands[i].getBuilderName().equals(IInstallOptionsConstants.INSTALLOPTIONS_BUILDER_ID)) {
+                ICommand[] newCommands = new ICommand[commands.length - 1];
+                System.arraycopy(commands, 0, newCommands, 0, i);
+                System.arraycopy(commands, i + 1, newCommands, i, commands.length - i - 1);
+                description.setBuildSpec(newCommands);
+                return;
+            }
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.resources.IProjectNature#getProject()
-	 */
-	public IProject getProject()
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.eclipse.core.resources.IProjectNature#getProject()
+     */
+    public IProject getProject()
     {
-		return mProject;
-	}
+        return mProject;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core.resources.IProject)
-	 */
-	public void setProject(IProject project)
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.eclipse.core.resources.IProjectNature#setProject(org.eclipse.core.resources.IProject)
+     */
+    public void setProject(IProject project)
     {
-		mProject = project;
-	}
+        mProject = project;
+    }
 
-	public static void addNature(IProject project)
+    public static void addNature(IProject project)
     {
         try {
             IProjectDescription description = project.getDescription();

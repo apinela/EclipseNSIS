@@ -22,7 +22,7 @@ public class NSISWizardDialog extends AbstractNSISWizardDialog
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return ((NSISWizard)getWizard()).getHelpContextId();
     }

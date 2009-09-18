@@ -3,7 +3,7 @@
  * All rights reserved.
  * This program is made available under the terms of the Common Public License
  * v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ public final class MRUMap<K,V> extends LinkedHashMap<K,V>
     }
 
     @Override
-	public V put(K key, V value)
+    public V put(K key, V value)
     {
         V object= remove(key);
         super.put(key, value);
@@ -38,7 +38,7 @@ public final class MRUMap<K,V> extends LinkedHashMap<K,V>
     }
 
     @Override
-	protected boolean removeEldestEntry(Map.Entry<K,V> eldest)
+    protected boolean removeEldestEntry(Map.Entry<K,V> eldest)
     {
         return (mMaxSize > 0 && size() > mMaxSize);
     }

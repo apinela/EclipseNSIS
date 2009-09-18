@@ -58,7 +58,7 @@ public class NSISWizardTemplate extends AbstractTemplate
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         NSISWizardTemplate template = (NSISWizardTemplate)super.clone();
         try {
@@ -72,7 +72,7 @@ public class NSISWizardTemplate extends AbstractTemplate
     }
 
     @Override
-	public boolean isAvailable()
+    public boolean isAvailable()
     {
         return (mSettings != null && (mSettings.getMinimumNSISVersion() == null ||
                 NSISPreferences.INSTANCE.getNSISVersion().compareTo(mSettings.getMinimumNSISVersion()) >= 0));
@@ -85,14 +85,14 @@ public class NSISWizardTemplate extends AbstractTemplate
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("settings"); //$NON-NLS-1$
     }
 
     @Override
-	public Node toNode(Document document)
+    public Node toNode(Document document)
     {
         Node node = super.toNode(document);
         if(mSettings != null) {
@@ -102,7 +102,7 @@ public class NSISWizardTemplate extends AbstractTemplate
     }
 
     @Override
-	public void fromNode(Node node)
+    public void fromNode(Node node)
     {
         super.fromNode(node);
         Node[] settingsNode = XMLUtil.findChildren(node,NSISWizardSettings.NODE);
@@ -162,7 +162,7 @@ public class NSISWizardTemplate extends AbstractTemplate
     }
 
     @Override
-	public boolean isEqualTo(ITemplate template)
+    public boolean isEqualTo(ITemplate template)
     {
         if (this == template) {
             return true;

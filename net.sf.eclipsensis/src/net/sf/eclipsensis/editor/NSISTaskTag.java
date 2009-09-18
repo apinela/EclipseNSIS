@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IMarker;
 public class NSISTaskTag implements Serializable
 {
     public static final String[] PRIORITY_LABELS;
-	private static final long serialVersionUID = -5058661625944134857L;
+    private static final long serialVersionUID = -5058661625944134857L;
 
     private String mTag;
     private int mPriority;
@@ -110,13 +110,13 @@ public class NSISTaskTag implements Serializable
      * @see java.lang.Object#toString()
      */
     @Override
-	public String toString()
+    public String toString()
     {
         return getTag();
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if(obj instanceof NSISTaskTag) {
             NSISTaskTag tag = (NSISTaskTag)obj;
@@ -127,7 +127,7 @@ public class NSISTaskTag implements Serializable
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         return mTag.hashCode()+mPriority+(mDefault?1:0);
     }

@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 
@@ -27,25 +27,25 @@ public class NodeConversionUtility
     }
 
     @SuppressWarnings("unchecked")
-	public static final Object readArrayNode(Node node, Class<?> clasz)
+    public static final Object readArrayNode(Node node, Class<?> clasz)
     {
         if (clasz.isArray())
         {
             Class clasz2 = clasz.getComponentType();
-	        INodeConverter nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz2);
-	        Node[] children = XMLUtil.findChildren(node);
-	        Object array = Array.newInstance(clasz2, children.length);
-	        for (int i = 0; i < children.length; i++)
-	        {
-	            Array.set(array, i, readComponentNode(children[i], nodeConverter, clasz2));
-	        }
-	        return array;
+            INodeConverter nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz2);
+            Node[] children = XMLUtil.findChildren(node);
+            Object array = Array.newInstance(clasz2, children.length);
+            for (int i = 0; i < children.length; i++)
+            {
+                Array.set(array, i, readComponentNode(children[i], nodeConverter, clasz2));
+            }
+            return array;
         }
         throw new IllegalArgumentException(clasz.getName());
     }
 
     @SuppressWarnings("unchecked")
-	private static <T> T readComponentNode(Node node, INodeConverter<T> nodeConverter, Class<T> clasz)
+    private static <T> T readComponentNode(Node node, INodeConverter<T> nodeConverter, Class<T> clasz)
     {
         if (!AbstractNodeConvertible.NULL_NODE.equals(node.getNodeName()))
         {
@@ -67,7 +67,7 @@ public class NodeConversionUtility
     }
 
     @SuppressWarnings("unchecked")
-	public static final <T> void createArrayNode(Document document, Node parent, Object value)
+    public static final <T> void createArrayNode(Document document, Node parent, Object value)
     {
         if (value.getClass().isArray())
         {
@@ -90,7 +90,7 @@ public class NodeConversionUtility
     }
 
     @SuppressWarnings("unchecked")
-	public static final <T extends Collection> T readCollectionNode(Node node, Class<T> clasz)
+    public static final <T extends Collection> T readCollectionNode(Node node, Class<T> clasz)
     {
         T collection = null;
         if (!Modifier.isAbstract(clasz.getModifiers()))
@@ -116,7 +116,7 @@ public class NodeConversionUtility
         return collection;
     }
 
-	public static final void createCollectionNode(Document document, Node parent, Collection<?> collection)
+    public static final void createCollectionNode(Document document, Node parent, Collection<?> collection)
     {
         if (!Common.isEmptyCollection(collection))
         {
@@ -128,7 +128,7 @@ public class NodeConversionUtility
     }
 
     @SuppressWarnings("unchecked")
-	private static <T> void createComponentNode(Document document, Node parent, INodeConverter<? super T> nodeConverter, T obj)
+    private static <T> void createComponentNode(Document document, Node parent, INodeConverter<? super T> nodeConverter, T obj)
     {
         if (obj != null)
         {

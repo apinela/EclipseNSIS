@@ -114,7 +114,7 @@ public class MasterSlaveController extends SelectionAdapter
      * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
      */
     @Override
-	public void widgetSelected(SelectionEvent e)
+    public void widgetSelected(SelectionEvent e)
     {
         updateSlaves();
     }

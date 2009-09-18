@@ -64,7 +64,7 @@ public class NSISConsoleOutputStream extends OutputStream
     }
 
     @Override
-	public synchronized void close() throws IOException
+    public synchronized void close() throws IOException
     {
         if(mClosed) {
             throw new IOException(EclipseNSISPlugin.getResourceString("console.outputstream.closed.error")); //$NON-NLS-1$
@@ -74,7 +74,7 @@ public class NSISConsoleOutputStream extends OutputStream
     }
 
     @Override
-	public void flush() throws IOException
+    public void flush() throws IOException
     {
         if(mClosed) {
             throw new IOException(EclipseNSISPlugin.getResourceString("console.outputstream.closed.error")); //$NON-NLS-1$
@@ -106,19 +106,19 @@ public class NSISConsoleOutputStream extends OutputStream
     }
 
     @Override
-	public void write(byte[] b, int off, int len) throws IOException
+    public void write(byte[] b, int off, int len) throws IOException
     {
         checkWrite(new String(b, off, len));
     }
 
     @Override
-	public void write(byte[] b) throws IOException
+    public void write(byte[] b) throws IOException
     {
         write(b, 0, b.length);
     }
 
     @Override
-	public void write(int b) throws IOException
+    public void write(int b) throws IOException
     {
         write(new byte[] {(byte)b}, 0, 1);
     }

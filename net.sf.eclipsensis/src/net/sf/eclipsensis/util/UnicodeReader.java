@@ -97,8 +97,8 @@ public class UnicodeReader extends Reader
                                     unread -= 4;
                                     break;
                                 }
-	                            //$FALL-THROUGH$
-							default:
+                                //$FALL-THROUGH$
+                            default:
                                 encoding = "UTF-16LE"; //$NON-NLS-1$
                                 unread -= 2;
                         }
@@ -123,7 +123,7 @@ public class UnicodeReader extends Reader
     }
 
     @Override
-	public void close() throws IOException
+    public void close() throws IOException
     {
         if(mInternalReader != null) {
             mInternalReader.close();
@@ -137,7 +137,7 @@ public class UnicodeReader extends Reader
     }
 
     @Override
-	public int read(char[] cbuf, int off, int len) throws IOException
+    public int read(char[] cbuf, int off, int len) throws IOException
     {
         if(mClosed) {
             throw new IOException("Reader is closed"); //$NON-NLS-1$

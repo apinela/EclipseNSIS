@@ -34,20 +34,20 @@ public class InstallOptionsText extends InstallOptionsEditableElement
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_TEXT;
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("text"); //$NON-NLS-1$
     }
 
     @Override
-	protected ILabelProvider getDisplayLabelProvider()
+    protected ILabelProvider getDisplayLabelProvider()
     {
         if(getTypeDef().getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE) &&
            getFlags().contains(InstallOptionsModel.FLAGS_MULTILINE)) {
@@ -60,13 +60,13 @@ public class InstallOptionsText extends InstallOptionsEditableElement
      * @return
      */
     @Override
-	protected String getDefaultState()
+    protected String getDefaultState()
     {
         return InstallOptionsPlugin.getResourceString("text.state.default"); //$NON-NLS-1$
     }
 
     @Override
-	public void setFlags(List<String> flags)
+    public void setFlags(List<String> flags)
     {
         String oldState = getState();
         String newState = oldState;
@@ -95,8 +95,8 @@ public class InstallOptionsText extends InstallOptionsEditableElement
                                     i++;
                                 }
                             }
-	                        //$FALL-THROUGH$
-						case SWT.LF:
+                            //$FALL-THROUGH$
+                        case SWT.LF:
                             buf.append(SWT.CR).append(SWT.LF);
                             break;
                         default:
@@ -114,13 +114,13 @@ public class InstallOptionsText extends InstallOptionsEditableElement
     }
 
     @Override
-	protected Position getDefaultPosition()
+    protected Position getDefaultPosition()
     {
         return new Position(0,0,122,13);
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             String propertyName = InstallOptionsPlugin.getResourceString("state.property.name"); //$NON-NLS-1$
@@ -161,7 +161,7 @@ public class InstallOptionsText extends InstallOptionsEditableElement
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new TextPropertySectionCreator(this);
     }

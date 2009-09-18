@@ -14,72 +14,72 @@ import net.sf.eclipsensis.settings.NSISSettings;
 public class DummyNSISSettings extends NSISSettings
 {
     @Override
-	public boolean showStatistics()
+    public boolean showStatistics()
     {
         return false;
     }
 
     @Override
-	public boolean getBoolean(String name)
+    public boolean getBoolean(String name)
     {
         return false;
     }
 
     @Override
-	public int getInt(String name)
+    public int getInt(String name)
     {
         return 0;
     }
 
     @Override
-	public String getString(String name)
+    public String getString(String name)
     {
         return ""; //$NON-NLS-1$
     }
 
     @Override
-	public <T> T loadObject(String name)
+    public <T> T loadObject(String name)
     {
         return null;
     }
 
     @Override
-	public void removeBoolean(String name)
+    public void removeBoolean(String name)
     {
     }
 
     @Override
-	public void removeInt(String name)
+    public void removeInt(String name)
     {
     }
 
     @Override
-	public void removeString(String name)
+    public void removeString(String name)
     {
     }
 
     @Override
-	public void removeObject(String name)
+    public void removeObject(String name)
     {
     }
 
     @Override
-	public void setValue(String name, boolean value)
+    public void setValue(String name, boolean value)
     {
     }
 
     @Override
-	public void setValue(String name, int value)
+    public void setValue(String name, int value)
     {
     }
 
     @Override
-	public void setValue(String name, String value)
+    public void setValue(String name, String value)
     {
     }
 
     @Override
-	public <T> void storeObject(String name, T object)
+    public <T> void storeObject(String name, T object)
     {
     }
 

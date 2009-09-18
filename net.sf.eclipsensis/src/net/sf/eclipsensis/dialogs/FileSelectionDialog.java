@@ -106,14 +106,14 @@ public class FileSelectionDialog extends TitleAreaDialog
     }
 
     @Override
-	protected void configureShell(Shell shell) {
+    protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText(mDialogTitle==null?EclipseNSISPlugin.getResourceString("fileselection.dialog.title"):mDialogTitle); //$NON-NLS-1$
         shell.setImage(EclipseNSISPlugin.getShellImage());
     }
 
     @Override
-	protected Control createContents(Composite parent) {
+    protected Control createContents(Composite parent) {
 
         Control contents = super.createContents(parent);
         setTitle(mDialogHeader==null?EclipseNSISPlugin.getResourceString("fileselection.dialog.header"):mDialogHeader); //$NON-NLS-1$
@@ -127,9 +127,9 @@ public class FileSelectionDialog extends TitleAreaDialog
         return contents;
     }
     @Override
-	protected Control createDialogArea(Composite parent)
+    protected Control createDialogArea(Composite parent)
     {
-    	Composite parent2 = (Composite)super.createDialogArea(parent);
+        Composite parent2 = (Composite)super.createDialogArea(parent);
         Composite composite = new Composite(parent2,SWT.NONE);
         composite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
         GridLayout layout = new GridLayout(1,true);
@@ -185,7 +185,7 @@ public class FileSelectionDialog extends TitleAreaDialog
         if(mFilter != null) {
             tv2.addFilter(new ViewerFilter() {
                 @Override
-				public boolean select(Viewer viewer, Object parentElement, Object element)
+                public boolean select(Viewer viewer, Object parentElement, Object element)
                 {
                     return mFilter.select(element);
                 }
@@ -256,7 +256,7 @@ public class FileSelectionDialog extends TitleAreaDialog
     private class ContainerContentProvider extends EmptyContentProvider
     {
         @Override
-		public Object[] getChildren(Object element)
+        public Object[] getChildren(Object element)
         {
             if (element instanceof IWorkspace) {
                 return ((IWorkspace) element).getRoot().getProjects();
@@ -283,13 +283,13 @@ public class FileSelectionDialog extends TitleAreaDialog
         }
 
         @Override
-		public Object[] getElements(Object element)
+        public Object[] getElements(Object element)
         {
             return getChildren(element);
         }
 
         @Override
-		public Object getParent(Object element)
+        public Object getParent(Object element)
         {
             if (element instanceof IResource) {
                 return ((IResource) element).getParent();
@@ -298,7 +298,7 @@ public class FileSelectionDialog extends TitleAreaDialog
         }
 
         @Override
-		public boolean hasChildren(Object element)
+        public boolean hasChildren(Object element)
         {
             return getChildren(element).length > 0;
         }
@@ -322,7 +322,7 @@ public class FileSelectionDialog extends TitleAreaDialog
     private class FilesContentProvider extends EmptyContentProvider
     {
         @Override
-		public Object[] getElements(Object element)
+        public Object[] getElements(Object element)
         {
             if (element instanceof IContainer) {
                 IContainer container = (IContainer) element;

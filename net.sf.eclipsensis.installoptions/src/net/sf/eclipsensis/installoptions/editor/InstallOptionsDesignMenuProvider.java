@@ -46,7 +46,7 @@ public class InstallOptionsDesignMenuProvider extends org.eclipse.gef.ContextMen
      * @see org.eclipse.gef.ContextMenuProvider#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
      */
     @Override
-	public void buildContextMenu(IMenuManager manager)
+    public void buildContextMenu(IMenuManager manager)
     {
         GEFActionConstants.addStandardActionGroups(manager);
 

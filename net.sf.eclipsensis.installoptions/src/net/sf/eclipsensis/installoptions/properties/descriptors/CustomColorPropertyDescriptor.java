@@ -84,7 +84,7 @@ public class CustomColorPropertyDescriptor extends PropertyDescriptor implements
     }
 
     @Override
-	public CellEditor createPropertyEditor(Composite parent)
+    public CellEditor createPropertyEditor(Composite parent)
     {
         final CustomColorCellEditor editor = new CustomColorCellEditor(parent);
         final PropertyChangeListener listener = new PropertyChangeListener(){

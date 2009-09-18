@@ -56,7 +56,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
      * @see net.sf.eclipsensis.script.INSISScriptElement#write(net.sf.eclipsensis.script.NSISScriptWriter)
      */
     @Override
-	public void write(NSISScriptWriter writer)
+    public void write(NSISScriptWriter writer)
     {
         super.write(writer);
         writer.println();
@@ -81,7 +81,7 @@ public class NSISScript extends AbstractNSISScriptElementContainer
      * @see net.sf.eclipsensis.script.AbstractNSISScriptElementContainer#validateElement(net.sf.eclipsensis.script.INSISScriptElement)
      */
     @Override
-	protected void validateElement(INSISScriptElement element) throws InvalidNSISScriptElementException
+    protected void validateElement(INSISScriptElement element) throws InvalidNSISScriptElementException
     {
         if(element != null) {
             if(element instanceof NSISScriptAttribute || element instanceof NSISScriptFunction ||

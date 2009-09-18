@@ -24,12 +24,12 @@ public class InstallOptionsRulerEditPartFactory extends RulerEditPartFactory
     }
 
     @Override
-	protected EditPart createRulerEditPart(EditPart parentEditPart, Object model) {
+    protected EditPart createRulerEditPart(EditPart parentEditPart, Object model) {
         return new InstallOptionsRulerEditPart(model);
     }
 
     @Override
-	protected EditPart createGuideEditPart(EditPart parentEditPart, Object model)
+    protected EditPart createGuideEditPart(EditPart parentEditPart, Object model)
     {
         return new InstallOptionsGuideEditPart(model);
     }

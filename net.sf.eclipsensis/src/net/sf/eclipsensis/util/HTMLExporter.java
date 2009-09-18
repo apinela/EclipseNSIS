@@ -109,7 +109,7 @@ public class HTMLExporter
     }
 
     @SuppressWarnings("restriction")
-	private void writeHTML(File file, IProgressMonitor monitor)
+    private void writeHTML(File file, IProgressMonitor monitor)
     {
         try {
             reset();

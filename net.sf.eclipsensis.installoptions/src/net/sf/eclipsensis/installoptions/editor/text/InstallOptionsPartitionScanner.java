@@ -41,7 +41,7 @@ public class InstallOptionsPartitionScanner extends RuleBasedPartitionScanner im
      * @see org.eclipse.jface.text.rules.IPartitionTokenScanner#setPartialRange(org.eclipse.jface.text.IDocument, int, int, java.lang.String, int)
      */
     @Override
-	public void setPartialRange(IDocument document, int offset, int length,
+    public void setPartialRange(IDocument document, int offset, int length,
             String contentType, int partitionOffset)
     {
         super.setPartialRange(document, offset, length, contentType, partitionOffset);

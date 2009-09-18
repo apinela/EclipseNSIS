@@ -37,13 +37,13 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
     }
 
     @Override
-	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer)
+    public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer)
     {
         return mAnnotationHover;
     }
 
     @Override
-	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType)
+    public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType)
     {
         return mAnnotationHover;
     }
@@ -52,7 +52,7 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
      * (non-Javadoc) Method declared on SourceViewerConfiguration
      */
     @Override
-	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer)
+    public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer)
     {
         PresentationReconciler reconciler = new PresentationReconciler();
         reconciler.setDocumentPartitioning(InstallOptionsPartitionScanner.INSTALLOPTIONS_PARTITIONING);
@@ -68,7 +68,7 @@ public class InstallOptionsSourceViewerConfiguration extends SourceViewerConfigu
     }
 
     @Override
-	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer)
+    public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer)
     {
         QuickAssistAssistant quickAssistAssistant = new QuickAssistAssistant();
         quickAssistAssistant.setQuickAssistProcessor(new IQuickAssistProcessor() {

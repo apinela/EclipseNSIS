@@ -42,7 +42,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
     public GridSettings(Composite parent, Map<String,Object> settings)
     {
         super(parent, SWT.NONE);
-		initialize();
+        initialize();
         setSettings(settings);
     }
 
@@ -130,7 +130,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         mGridSpacingWidth.addVerifyListener(mPositiveNumberVerifyListener);
         mGridSpacingWidth.addFocusListener(new FocusAdapter() {
             @Override
-			public void focusLost(FocusEvent e)
+            public void focusLost(FocusEvent e)
             {
                 String text = mGridSpacingWidth.getText();
                 if(Common.isEmpty(text)) {
@@ -147,7 +147,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         mGridSpacingHeight.addVerifyListener(mPositiveNumberVerifyListener);
         mGridSpacingHeight.addFocusListener(new FocusAdapter() {
             @Override
-			public void focusLost(FocusEvent e)
+            public void focusLost(FocusEvent e)
             {
                 String text = mGridSpacingHeight.getText();
                 if(Common.isEmpty(text)) {
@@ -169,7 +169,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         mGridOriginX.addVerifyListener(mNumberVerifyListener);
         mGridOriginX.addFocusListener(new FocusAdapter() {
             @Override
-			public void focusLost(FocusEvent e)
+            public void focusLost(FocusEvent e)
             {
                 String text = mGridOriginX.getText();
                 if(Common.isEmpty(text)) {
@@ -187,7 +187,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         mGridOriginY.addVerifyListener(mNumberVerifyListener);
         mGridOriginY.addFocusListener(new FocusAdapter() {
             @Override
-			public void focusLost(FocusEvent e)
+            public void focusLost(FocusEvent e)
             {
                 String text = mGridOriginY.getText();
                 if(Common.isEmpty(text)) {
@@ -210,7 +210,7 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
         mGridStyleViewer.setContentProvider(new ArrayContentProvider());
         mGridStyleViewer.setLabelProvider(new LabelProvider() {
             @Override
-			public String getText(Object element)
+            public String getText(Object element)
             {
                 return ((String[])element)[1];
             }
@@ -224,5 +224,5 @@ public class GridSettings extends Composite implements IInstallOptionsConstants
                 mSettings.put(PREFERENCE_GRID_STYLE,((String[])ssel.getFirstElement())[0]);
             }
         });
-	}
+    }
 }

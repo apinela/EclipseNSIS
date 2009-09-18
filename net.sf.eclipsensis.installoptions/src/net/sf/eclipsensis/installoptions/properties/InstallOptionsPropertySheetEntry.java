@@ -38,7 +38,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
      * @see org.eclipse.ui.views.properties.PropertySheetEntry#createChildEntry()
      */
     @Override
-	protected PropertySheetEntry createChildEntry()
+    protected PropertySheetEntry createChildEntry()
     {
         return new InstallOptionsPropertySheetEntry();
     }
@@ -47,7 +47,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
      * @see org.eclipse.ui.views.properties.IPropertySheetEntry#dispose()
      */
     @Override
-	public void dispose()
+    public void dispose()
     {
         if(mHelper != null) {
             mHelper.dispose();
@@ -61,7 +61,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
         if(mHelper == null) {
             mHelper = new InstallOptionsCommandHelper(getCommandStack()) {
                 @Override
-				protected void refresh()
+                protected void refresh()
                 {
                     refreshFromRoot();
                 }
@@ -71,7 +71,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
     }
 
     @Override
-	public Object getHelpContextIds()
+    public Object getHelpContextIds()
     {
         Object helpContextIds = super.getHelpContextIds();
         if(helpContextIds == null) {
@@ -93,7 +93,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
      * @see org.eclipse.ui.views.properties.IPropertySheetEntry#resetPropertyValue()
      */
     @Override
-	public void resetPropertyValue()
+    public void resetPropertyValue()
     {
         if (getParent() == null) {
             // root does not have a default value
@@ -125,7 +125,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
      * @see PropertySheetEntry#valueChanged(PropertySheetEntry)
      */
     @Override
-	protected void valueChanged(PropertySheetEntry child)
+    protected void valueChanged(PropertySheetEntry child)
     {
         valueChanged((InstallOptionsPropertySheetEntry)child, new ForwardUndoCompoundCommand());
     }
@@ -139,7 +139,7 @@ public class InstallOptionsPropertySheetEntry extends PropertySheetEntry
             IPropertySource source = getPropertySource(getValues()[i]);
             if (source != null) {
                 sources.add(source);
-				newValues.add(childValues[i]);
+                newValues.add(childValues[i]);
             }
         }
 

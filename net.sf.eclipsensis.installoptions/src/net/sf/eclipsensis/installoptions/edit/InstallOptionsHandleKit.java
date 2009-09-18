@@ -50,13 +50,13 @@ public class InstallOptionsHandleKit
     {
         handles.add(new MoveHandle(part) {
             @Override
-			protected DragTracker createDragTracker()
+            protected DragTracker createDragTracker()
             {
                 return null;
             }
 
             @Override
-			protected void initialize()
+            protected void initialize()
             {
                 super.initialize();
                 setCursor(null);
@@ -194,7 +194,7 @@ public class InstallOptionsHandleKit
         }
 
         @Override
-		protected DragTracker createDragTracker()
+        protected DragTracker createDragTracker()
         {
             return null;
         }

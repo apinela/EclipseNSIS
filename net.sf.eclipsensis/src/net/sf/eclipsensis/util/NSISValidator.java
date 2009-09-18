@@ -100,8 +100,8 @@ public class NSISValidator implements INSISConstants
         Properties props = new Properties();
         String exeName = nsisEXE.getAbsoluteFile().getAbsolutePath();
         String[] output = MakeNSISRunner.runProcessWithOutput(exeName,
-	                                                          new String[]{MakeNSISRunner.MAKENSIS_HDRINFO_OPTION},
-	                                                          nsisEXE.getParentFile(),1);
+                                                              new String[]{MakeNSISRunner.MAKENSIS_HDRINFO_OPTION},
+                                                              nsisEXE.getParentFile(),1);
         if(!Common.isEmptyArray(output)) {
             for (int i = 0; i < output.length; i++) {
                 if(output[i].startsWith(DEFINED_SYMBOLS_PREFIX)) {

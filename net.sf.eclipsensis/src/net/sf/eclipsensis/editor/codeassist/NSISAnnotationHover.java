@@ -68,14 +68,14 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
     }
 
     /* (non-Javadoc)
-	 * Method declared on IAnnotationHover
-	 */
-	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber)
+     * Method declared on IAnnotationHover
+     */
+    public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber)
     {
-		try {
+        try {
             IAnnotationModel model = sourceViewer.getAnnotationModel();
             IDocument document= sourceViewer.getDocument();
-			IRegion info= document.getLineInformation(lineNumber);
+            IRegion info= document.getLineInformation(lineNumber);
 
             if (model != null) {
                 List<String> messages = new ArrayList<String>();
@@ -108,12 +108,12 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
                 return EclipseNSISPlugin.getFormattedString("line.number.tooltip", new String[] { Integer.toString(lineNumber + 1) }); //$NON-NLS-1$
             }
 
-		}
+        }
         catch (Exception ex) {
-		}
+        }
 
-		return null;
-	}
+        return null;
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#canHandleMouseCursor()
@@ -233,7 +233,7 @@ public class NSISAnnotationHover implements IAnnotationHover, INSISConstants, IA
         }
 
         @Override
-		public String toString()
+        public String toString()
         {
             return getContent();
         }

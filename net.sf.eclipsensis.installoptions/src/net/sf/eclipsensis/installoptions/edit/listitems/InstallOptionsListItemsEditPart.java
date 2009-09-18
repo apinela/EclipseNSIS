@@ -53,15 +53,15 @@ public abstract class InstallOptionsListItemsEditPart<T extends CellEditor> exte
     };
 
     @Override
-	protected void createEditPolicies()
+    protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(InstallOptionsExtendedEditPolicy.ROLE, new InstallOptionsListItemsExtendedEditPolicy(this));
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class key)
+    @SuppressWarnings("unchecked")
+    public Object getAdapter(Class key)
     {
         if(IExtendedEditSupport.class.equals(key)) {
             return mExtendedEditSupport;
@@ -70,14 +70,14 @@ public abstract class InstallOptionsListItemsEditPart<T extends CellEditor> exte
     }
 
     @Override
-	protected final IInstallOptionsFigure createInstallOptionsFigure()
+    protected final IInstallOptionsFigure createInstallOptionsFigure()
     {
         return createListItemsFigure();
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	public void doPropertyChange(PropertyChangeEvent evt)
+    @SuppressWarnings("unchecked")
+    public void doPropertyChange(PropertyChangeEvent evt)
     {
         if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_LISTITEMS)) {
             IListItemsFigure figure2 = (IListItemsFigure)getFigure();

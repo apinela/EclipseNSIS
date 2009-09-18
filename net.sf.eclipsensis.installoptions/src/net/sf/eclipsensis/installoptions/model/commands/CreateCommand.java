@@ -32,13 +32,13 @@ public class CreateCommand extends org.eclipse.gef.commands.Command
     }
 
     @Override
-	public boolean canExecute()
+    public boolean canExecute()
     {
         return mRect != null && mRect.x >= 0 && mRect.y >= 0;
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         if (mRect != null) {
             Position p  = mChild.getPosition();
@@ -56,7 +56,7 @@ public class CreateCommand extends org.eclipse.gef.commands.Command
     }
 
     @Override
-	public void redo()
+    public void redo()
     {
         mParent.addChild(mChild, mIndex);
     }
@@ -82,7 +82,7 @@ public class CreateCommand extends org.eclipse.gef.commands.Command
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         mParent.removeChild(mChild);
     }

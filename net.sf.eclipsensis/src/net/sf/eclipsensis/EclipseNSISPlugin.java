@@ -72,28 +72,28 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 
     private NSISConsole mConsole = null;
 
-	/**
-	 * The constructor.
-	 */
-	public EclipseNSISPlugin()
+    /**
+     * The constructor.
+     */
+    public EclipseNSISPlugin()
     {
-		super();
-		cPlugin = this;
+        super();
+        cPlugin = this;
         mLocale = Locale.getDefault();
-		try {
-			mResourceBundles.put(mLocale,new CompoundResourceBundle(mLocale, BUNDLE_NAMES));
-		}
+        try {
+            mResourceBundles.put(mLocale,new CompoundResourceBundle(mLocale, BUNDLE_NAMES));
+        }
         catch (MissingResourceException x) {
             log(x);
-		}
+        }
         mImageManager = new ImageManager(this);
-	}
+    }
 
-	/**
-	 * This method is called upon plug-in activation
-	 */
-	@Override
-	public void start(BundleContext context) throws Exception
+    /**
+     * This method is called upon plug-in activation
+     */
+    @Override
+    public void start(BundleContext context) throws Exception
     {
         super.start(context);
         mBundleContext = context;
@@ -127,7 +127,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 //            }
 //
 //        });
-	}
+    }
 
     /**
      *
@@ -154,8 +154,8 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 if(wwindow != null && wwindow.getShell().isVisible()) {
                     if (!Boolean.getBoolean("net.sf.eclipsensis.config.IsConfiguring"))  //$NON-NLS-1$
                     {
-						configOp.run();
-					}
+                        configOp.run();
+                    }
                 }
                 else {
                     getWorkbench().addWindowListener(new IWindowListener(){
@@ -218,7 +218,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             final IRunnableWithProgress op = new IRunnableWithProgress(){
                 public void run(IProgressMonitor monitor)
                 {
-                	IProgressMonitor monitor2 = new DisplayUpdateProgressMonitor(monitor);
+                    IProgressMonitor monitor2 = new DisplayUpdateProgressMonitor(monitor);
                     try {
                         String taskName = EclipseNSISPlugin.getResourceString("starting.eclipsensis.message"); //$NON-NLS-1$
                         monitor2.beginTask(taskName,services.length+1);
@@ -413,16 +413,16 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
             }
             String osError = getResourceString("unsupported.os.error"); //$NON-NLS-1$
             IWorkbench workbench = getWorkbench();
-			if (workbench != null) 
-			{
-				IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-				if (window != null) 
-				{
-					Common.openError(window.getShell(), osError,
-							getShellImage());
-				}
-			}
-			cInvalidException = osError;
+            if (workbench != null)
+            {
+                IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+                if (window != null)
+                {
+                    Common.openError(window.getShell(), osError,
+                            getShellImage());
+                }
+            }
+            cInvalidException = osError;
             throw new CoreException(new Status(IStatus.ERROR,PLUGIN_ID,IStatus.ERROR,osError,
                                     new RuntimeException(osError)));
         }
@@ -469,10 +469,10 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     }
 
     /**
-	 * This method is called when the plug-in is stopped
-	 */
-	@Override
-	public void stop(BundleContext context) throws Exception
+     * This method is called when the plug-in is stopped
+     */
+    @Override
+    public void stop(BundleContext context) throws Exception
     {
         mJobScheduler.stop();
         MakeNSISRunner.shutdown();
@@ -485,10 +485,10 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         mConsole.destroy();
         mConsole = null;
         mBundleContext = null;
-		super.stop(context);
-	}
+        super.stop(context);
+    }
 
-	public BundleContext getBundleContext()
+    public BundleContext getBundleContext()
     {
         return mBundleContext;
     }
@@ -504,11 +504,11 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     }
 
     /**
-	 * Returns the shared instance.
-	 */
-	public static EclipseNSISPlugin getDefault() {
-		return cPlugin;
-	}
+     * Returns the shared instance.
+     */
+    public static EclipseNSISPlugin getDefault() {
+        return cPlugin;
+    }
 
     public static synchronized File getPluginStateLocation()
     {
@@ -548,14 +548,14 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         return Platform.getResourceString(getDefault().getBundle(), key);
     }
 
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 */
-	public static String getResourceString(String key)
+    /**
+     * Returns the string from the plugin's resource bundle,
+     * or 'key' if not found.
+     */
+    public static String getResourceString(String key)
    {
         return getResourceString(key, key);
-	}
+    }
 
     public static String getResourceString(Locale locale, String key)
     {
@@ -581,13 +581,13 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
         return defaultValue;
     }
 
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle()
+    /**
+     * Returns the plugin's resource bundle,
+     */
+    public ResourceBundle getResourceBundle()
     {
-		return getResourceBundle(mLocale);
-	}
+        return getResourceBundle(mLocale);
+    }
 
     /**
      * Returns the plugin's resource bundle,
@@ -700,14 +700,14 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         return cShellImage;
     }
-    
+
     public void savePreferences()
     {
-    	try {
-			mPreferences.flush();
-		} 
-    	catch (BackingStoreException e) {
-			log(e);
-		}    	
+        try {
+            mPreferences.flush();
+        }
+        catch (BackingStoreException e) {
+            log(e);
+        }
     }
 }

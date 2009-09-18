@@ -165,7 +165,7 @@ public class NSISWizardDialogUtil
 
     public static Composite checkParentLayoutColumns(Composite parent, int numColumns)
     {
-    	Composite parent2 = parent;
+        Composite parent2 = parent;
         GridLayout layout = (GridLayout)parent2.getLayout();
         if (layout.numColumns < numColumns) {
             parent2 = new Composite(parent2, SWT.NONE);
@@ -211,7 +211,7 @@ public class NSISWizardDialogUtil
 
     public static Text createDirectoryBrowser(Composite parent, String value, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-    	Composite parent2 = checkParentLayoutColumns(parent, 3);
+        Composite parent2 = checkParentLayoutColumns(parent, 3);
         GridLayout layout = (GridLayout)parent2.getLayout();
         final Text t = createText(parent2, value, labelResource, enabled, masterSlaveController, isRequired);
         ((GridData)t.getLayoutData()).horizontalSpan = layout.numColumns - 2;
@@ -221,7 +221,7 @@ public class NSISWizardDialogUtil
         button.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 Shell shell = button.getShell();
                 DirectoryDialog dialog = new DirectoryDialog(shell, SWT.NONE);
@@ -242,7 +242,7 @@ public class NSISWizardDialogUtil
     public static Text createFileBrowser(Composite parent, String value, final boolean isSave, final String[] filterNames, final String[] filterExtensions, String labelResource, boolean enabled,
             MasterSlaveController masterSlaveController, boolean isRequired)
     {
-    	Composite parent2 = checkParentLayoutColumns(parent, 3);
+        Composite parent2 = checkParentLayoutColumns(parent, 3);
         GridLayout layout = (GridLayout)parent2.getLayout();
         final Text t = createText(parent2, value, labelResource, enabled, masterSlaveController, isRequired);
         ((GridData)t.getLayoutData()).horizontalSpan = layout.numColumns - 2;
@@ -268,7 +268,7 @@ public class NSISWizardDialogUtil
         button.setToolTipText(EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 Shell shell = button.getShell();
                 FileDialog dialog = new FileDialog(shell, (isSave?SWT.SAVE:SWT.OPEN));
@@ -292,7 +292,7 @@ public class NSISWizardDialogUtil
     public static Text createImageBrowser(Composite parent, String value, Point size, final String[] filterNames, final String[] filterExtensions, String labelResource, boolean enabled,
             MasterSlaveController masterSlaveController, boolean isRequired)
     {
-    	Composite parent2 = checkParentLayoutColumns(parent, 2);
+        Composite parent2 = checkParentLayoutColumns(parent, 2);
         GridLayout layout = (GridLayout)parent2.getLayout();
         Label l = createLabel(parent2, labelResource, enabled, masterSlaveController, isRequired);
         parent2 = new Composite(parent2, SWT.NONE);
@@ -393,7 +393,7 @@ public class NSISWizardDialogUtil
     public static Combo createCombo(Composite parent, String[] items, String selectedItem, boolean isReadOnly, String labelResource, boolean enabled, MasterSlaveController masterSlaveController,
             boolean isRequired)
     {
-    	Composite parent2 = checkParentLayoutColumns(parent, 2);
+        Composite parent2 = checkParentLayoutColumns(parent, 2);
         Label l = null;
         if (labelResource != null) {
             l = createLabel(parent2, labelResource, enabled, masterSlaveController, isRequired);
@@ -455,7 +455,7 @@ public class NSISWizardDialogUtil
 
     public static ColorEditor createColorEditor(Composite parent, RGB value, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-    	Composite parent2 = checkParentLayoutColumns(parent, 2);
+        Composite parent2 = checkParentLayoutColumns(parent, 2);
         Label l = createLabel(parent2, labelResource, enabled, masterSlaveController, isRequired);
 
         GridLayout layout = (GridLayout)parent2.getLayout();
@@ -474,7 +474,7 @@ public class NSISWizardDialogUtil
 
     public static Button[] createRadioGroup(Composite parent, String[] items, int selectedItem, String labelResource, boolean enabled, MasterSlaveController masterSlaveController, boolean isRequired)
     {
-    	Composite parent2 = checkParentLayoutColumns(parent, labelResource != null?2:1);
+        Composite parent2 = checkParentLayoutColumns(parent, labelResource != null?2:1);
         Label l = null;
         if(labelResource != null) {
             l = createLabel(parent2, labelResource, enabled, masterSlaveController, isRequired);
@@ -568,7 +568,7 @@ public class NSISWizardDialogUtil
     public static Combo createContentBrowser(Composite parent, String labelResource, String value, String[] items, final NSISWizard wizard, boolean enabled,
             MasterSlaveController masterSlaveController, boolean isRequired)
     {
-    	Composite parent2 = checkParentLayoutColumns(parent, 3);
+        Composite parent2 = checkParentLayoutColumns(parent, 3);
         int numColumns = ((GridLayout)parent2.getLayout()).numColumns;
         GridData gd;
         Label l = createLabel(parent2, labelResource, enabled, masterSlaveController, isRequired);
@@ -593,7 +593,7 @@ public class NSISWizardDialogUtil
         b.setLayoutData(gd);
         b.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 NSISContentBrowserDialog dialog = new NSISContentBrowserDialog(b.getShell(), wizard.getSettings());
                 if (dialog.open() == Window.OK) {

@@ -157,7 +157,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
     }
 
     @Override
-	public void run()
+    public void run()
     {
         if(mEditor != null) {
             Shell shell = mEditor.getSite().getShell();
@@ -230,7 +230,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
             public void run() {
                 final ProgressMonitorDialog pmd = new ProgressMonitorDialog(shell) {
                     @Override
-					protected void configureShell(Shell shell)
+                    protected void configureShell(Shell shell)
                     {
                         super.configureShell(shell);
                         Rectangle rect = shell.getDisplay().getBounds();
@@ -238,7 +238,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                     }
 
                     @Override
-					protected Rectangle getConstrainedShellBounds(Rectangle preferredSize)
+                    protected Rectangle getConstrainedShellBounds(Rectangle preferredSize)
                     {
                         Rectangle rect = shell.getDisplay().getBounds();
                         return new Rectangle(rect.x+rect.width+1,rect.y+rect.height+1,preferredSize.width,preferredSize.height);
@@ -249,8 +249,8 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                     ModalContext.run(new IRunnableWithProgress() {
                         private File createPreviewFile(File previewFile, INIFile inifile, final NSISLanguage lang) throws IOException
                         {
-                        	File previewFile2 = previewFile;
-                        	INIFile inifile2 = inifile;
+                            File previewFile2 = previewFile;
+                            INIFile inifile2 = inifile;
                             if(previewFile2 == null) {
                                 previewFile2 = File.createTempFile("preview",".ini"); //$NON-NLS-1$ //$NON-NLS-2$
                                 previewFile2.deleteOnExit();
@@ -473,7 +473,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         }
 
         @Override
-		public int hashCode()
+        public int hashCode()
         {
             int result = 31 + ((mFile == null)?0:mFile.hashCode());
             result = 31 * result + ((mLanguage == null)?0:mLanguage.hashCode());
@@ -481,7 +481,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         }
 
         @Override
-		public boolean equals(Object obj)
+        public boolean equals(Object obj)
         {
             if(obj != this) {
                 if(obj instanceof PreviewCacheKey) {

@@ -23,9 +23,9 @@ public class DirRequestPropertySectionCreator extends PathRequestPropertySection
     }
 
     @Override
-	protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
+    protected Control createOtherPropertySection(Composite parent, TabbedPropertySheetWidgetFactory widgetFactory, InstallOptionsCommandHelper commandHelper)
     {
-    	Composite parent2 = (Composite)super.createOtherPropertySection(parent, widgetFactory, commandHelper);
+        Composite parent2 = (Composite)super.createOtherPropertySection(parent, widgetFactory, commandHelper);
         Text text = createTextSection(parent2, InstallOptionsModel.PROPERTY_TEXT, widgetFactory, commandHelper);
         //Move it to top
         if(text.getParent().equals(parent2)) {

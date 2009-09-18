@@ -81,7 +81,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
 
         expandAllAction = new Action() {
             @Override
-			public void run()
+            public void run()
             {
                 getTreeViewer().getTree().setRedraw(false);
                 try {
@@ -101,7 +101,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
 
         collapseAllAction = new Action() {
             @Override
-			public void run()
+            public void run()
             {
                 getTreeViewer().getTree().setRedraw(false);
                 try {
@@ -121,7 +121,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
 
         filterAction = new Action() {
             @Override
-			public void run()
+            public void run()
             {
                 List<String> oldList = mEditor.getOutlineContentProvider().getFilteredTypes();
                 List<String> newList = new ArrayList<String>(oldList);
@@ -155,7 +155,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
      * (non-Javadoc) Method declared on ContentOutlinePage
      */
     @Override
-	public void createControl(Composite parent)
+    public void createControl(Composite parent)
     {
         super.createControl(parent);
         if(mEditor != null) {
@@ -185,7 +185,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
      * @see org.eclipse.ui.part.IPage#dispose()
      */
     @Override
-	public void dispose()
+    public void dispose()
     {
         super.dispose();
         if(mEditor != null) {

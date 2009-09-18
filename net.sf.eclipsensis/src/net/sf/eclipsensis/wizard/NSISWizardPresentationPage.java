@@ -75,19 +75,19 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     }
 
     @Override
-	protected boolean hasRequiredFields()
+    protected boolean hasRequiredFields()
     {
         return isScriptWizard();
     }
 
     @Override
-	protected String getHelpContextId()
+    protected String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_wizpresentation_context"; //$NON-NLS-1$
     }
 
     @Override
-	protected Control createPageControl(Composite parent)
+    protected Control createPageControl(Composite parent)
     {
         final Composite composite = new Composite(parent, SWT.NONE);
 
@@ -155,7 +155,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
         SelectionAdapter sa = new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 NSISWizardSettings settings = mWizard.getSettings();
 
                 Button b = (Button)e.widget;
@@ -193,7 +193,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         preview.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
         preview.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 previewBackground();
             }
@@ -220,7 +220,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         m.addSlave(preview, mse);
         showBackground.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = showBackground.getSelection();
                 mWizard.getSettings().setShowBackground(selection);
@@ -275,7 +275,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                                         true, null, false);
         showLicense.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = showLicense.getSelection();
                 mWizard.getSettings().setShowLicense(selection);
@@ -303,7 +303,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
         licenseButtons.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 mWizard.getSettings().setLicenseButtonType(((Combo)e.widget).getSelectionIndex());
             }
@@ -437,7 +437,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         m.addSlave(preview, mse);
         showSplash.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 boolean selection = ((Button)e.widget).getSelection();
                 mWizard.getSettings().setShowSplash(selection);
@@ -493,7 +493,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
         preview.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 previewSplash();
             }
@@ -557,7 +557,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         final Shell parentShell = getShell();
         shell.addKeyListener(new KeyAdapter(){
             @Override
-			public void keyReleased(KeyEvent e) {
+            public void keyReleased(KeyEvent e) {
                 if(e.character == SWT.ESC) {
                     shell.close();
                     shell.dispose();
@@ -694,7 +694,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     }
 
     @Override
-	public boolean validatePage(int flag)
+    public boolean validatePage(int flag)
     {
         if(isTemplateWizard()) {
             return true;
@@ -810,7 +810,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         }
 
         @Override
-		public void run(){
+        public void run(){
             Thread.currentThread().setName(EclipseNSISPlugin.getResourceString("splash.preview.thread.name")); //$NON-NLS-1$
             final int newAlpha;
             switch(mState) {
@@ -823,8 +823,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                         newAlpha = ((mFadeInDelay - mTimeLeft)*255)/mFadeInDelay;
                         break;
                     }
-	                //$FALL-THROUGH$
-				case STATE_DISPLAY:
+                    //$FALL-THROUGH$
+                case STATE_DISPLAY:
                     if(mTimeLeft == 0) {
                         mTimeLeft = mFadeOutDelay;
                         mState = STATE_FADE_OUT;
@@ -833,7 +833,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                         newAlpha = 255;
                         break;
                     }
-	                //$FALL-THROUGH$
+                    //$FALL-THROUGH$
                 case STATE_FADE_OUT:
                     if(mTimeLeft == 0) {
                       mDisplay.asyncExec(new Runnable(){

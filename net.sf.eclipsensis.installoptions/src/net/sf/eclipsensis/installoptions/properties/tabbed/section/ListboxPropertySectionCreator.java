@@ -33,7 +33,7 @@ public class ListboxPropertySectionCreator extends ListItemsPropertySectionCreat
     }
 
     @Override
-	protected void createListAndStateButtons(Composite buttons, final CheckboxTableViewer viewer, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
+    protected void createListAndStateButtons(Composite buttons, final CheckboxTableViewer viewer, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
         super.createListAndStateButtons(buttons, viewer, widgetFactory, commandHelper);
         final IPropertyDescriptor stateDescriptor = getWidget().getPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE);

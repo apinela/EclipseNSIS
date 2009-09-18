@@ -14,18 +14,18 @@ import org.w3c.dom.*;
 public class NodeConvertibleNodeConverter extends AbstractNodeConverter<INodeConvertible>
 {
     @SuppressWarnings("unchecked")
-	@Override
-	public INodeConvertible fromNode(Node node, Class<?> clasz)
+    @Override
+    public INodeConvertible fromNode(Node node, Class<?> clasz)
     {
-    	if(INodeConvertible.class.isAssignableFrom(clasz))
-    	{
-    		Class<? extends INodeConvertible> clasz2 = (Class<? extends INodeConvertible>) clasz;
-	    	INodeConvertible nodeConvertible = Common.createDefaultObject(clasz2);
-	        if(Common.stringsAreEqual(node.getNodeName(), nodeConvertible.getNodeName())) {
-	            nodeConvertible.fromNode(node);
-	            return nodeConvertible;
-	        }
-    	}
+        if(INodeConvertible.class.isAssignableFrom(clasz))
+        {
+            Class<? extends INodeConvertible> clasz2 = (Class<? extends INodeConvertible>) clasz;
+            INodeConvertible nodeConvertible = Common.createDefaultObject(clasz2);
+            if(Common.stringsAreEqual(node.getNodeName(), nodeConvertible.getNodeName())) {
+                nodeConvertible.fromNode(node);
+                return nodeConvertible;
+            }
+        }
         throw new IllegalArgumentException(clasz.getName());
     }
 

@@ -24,7 +24,7 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
     }
 
     @Override
-	protected void loadSection(INISection section)
+    protected void loadSection(INISection section)
     {
         String type = null;
         if(section != null) {
@@ -38,14 +38,14 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
     }
 
     @Override
-	protected void setDefaults()
+    protected void setDefaults()
     {
         super.setDefaults();
         mType = InstallOptionsPlugin.getResourceString("unknown.type.default"); //$NON-NLS-1$
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return mType;
     }
@@ -61,7 +61,7 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
     }
 
     @Override
-	public void setPropertyValue(Object id, Object value)
+    public void setPropertyValue(Object id, Object value)
     {
         if (InstallOptionsModel.PROPERTY_TYPE.equals(id)) {
             setType((String)value);
@@ -72,7 +72,7 @@ public class InstallOptionsUnknown extends InstallOptionsWidget
     }
 
     @Override
-	protected Position getDefaultPosition()
+    protected Position getDefaultPosition()
     {
         return new Position(0,0,50,50);
     }

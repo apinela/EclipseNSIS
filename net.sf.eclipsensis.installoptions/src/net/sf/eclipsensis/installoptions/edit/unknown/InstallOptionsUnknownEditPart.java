@@ -35,7 +35,7 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
     protected static boolean cIsNT = "Windows NT".equals(System.getProperty("os.name")); //$NON-NLS-1$ //$NON-NLS-2$
 
     @Override
-	protected String getAccessibleControlEventResult()
+    protected String getAccessibleControlEventResult()
     {
         return getInstallOptionsUnknown().getType();
     }
@@ -46,12 +46,12 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
     }
 
     @Override
-	protected void createEditPolicies()
+    protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(EditPolicy.DIRECT_EDIT_ROLE, new DirectEditPolicy(){
             @Override
-			protected Command getDirectEditCommand(DirectEditRequest request)
+            protected Command getDirectEditCommand(DirectEditRequest request)
             {
                 String type = (String)request.getCellEditor().getValue();
                 Command command = new InstallOptionsDirectEditCommand(getInstallOptionsUnknown(),InstallOptionsModel.PROPERTY_TYPE,
@@ -61,26 +61,26 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
             }
 
             @Override
-			protected void showCurrentEditValue(DirectEditRequest request)
+            protected void showCurrentEditValue(DirectEditRequest request)
             {
             }
         });
     }
 
     @Override
-	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, CellEditorLocator locator)
     {
         return new InstallOptionsUnknownEditManager(part, locator);
     }
 
     @Override
-	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new UnknownCellEditorLocator((IUnknownFigure)figure);
     }
 
     @Override
-	protected IInstallOptionsFigure createInstallOptionsFigure()
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         if(cIsNT) {
             //This is a hack because Windows NT Labels don't seem to respond to the
@@ -93,7 +93,7 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
     }
 
     @Override
-	public void doPropertyChange(PropertyChangeEvent evt)
+    public void doPropertyChange(PropertyChangeEvent evt)
     {
         if (evt.getPropertyName().equalsIgnoreCase(InstallOptionsModel.PROPERTY_TYPE)) {
             IUnknownFigure figure2 = (IUnknownFigure)getFigure();
@@ -107,13 +107,13 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
     }
 
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return "unknown.direct.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         String type = getInstallOptionsWidget().getType();
         return (Common.isEmpty(type)?InstallOptionsPlugin.getResourceString("unknown.type.name"):type); //$NON-NLS-1$
@@ -137,18 +137,18 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
         }
 
         @Override
-		protected void init(IPropertySource propertySource)
+        protected void init(IPropertySource propertySource)
         {
             super.init(propertySource);
             setType((String)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_TYPE));
         }
 
         @Override
-		protected void createChildFigures()
+        protected void createChildFigures()
         {
             mFigure = new Figure() {
                 @Override
-				public void paintClientArea(Graphics graphics)
+                public void paintClientArea(Graphics graphics)
                 {
                     graphics.pushState();
 
@@ -179,7 +179,7 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
                 }
 
                 @Override
-				public void setBounds(Rectangle rect)
+                public void setBounds(Rectangle rect)
                 {
                     super.setBounds(rect);
                     repaint();
@@ -192,7 +192,7 @@ public class InstallOptionsUnknownEditPart extends InstallOptionsWidgetEditPart
         }
 
         @Override
-		protected void setChildConstraints(Rectangle bounds)
+        protected void setChildConstraints(Rectangle bounds)
         {
             setConstraint(mFigure, bounds);
         }

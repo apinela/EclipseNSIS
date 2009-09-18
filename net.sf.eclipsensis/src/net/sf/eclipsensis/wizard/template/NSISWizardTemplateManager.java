@@ -33,7 +33,7 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager<NSISWizar
     }
 
     @Override
-	protected List<NSISWizardTemplate> loadUserTemplateStore() throws IOException, ClassNotFoundException
+    protected List<NSISWizardTemplate> loadUserTemplateStore() throws IOException, ClassNotFoundException
     {
         List<NSISWizardTemplate> list = null;
         try {
@@ -92,31 +92,31 @@ public class NSISWizardTemplateManager extends AbstractTemplateManager<NSISWizar
     }
 
     @Override
-	protected Plugin getPlugin()
+    protected Plugin getPlugin()
     {
         return EclipseNSISPlugin.getDefault();
     }
 
     @Override
-	protected Class<NSISWizardTemplate> getTemplateClass()
+    protected Class<NSISWizardTemplate> getTemplateClass()
     {
         return NSISWizardTemplate.class;
     }
 
     @Override
-	protected IPath getTemplatesPath()
+    protected IPath getTemplatesPath()
     {
         return cPath;
     }
 
     @Override
-	protected NSISWizardTemplateReaderWriter createReaderWriter()
+    protected NSISWizardTemplateReaderWriter createReaderWriter()
     {
         return NSISWizardTemplateReaderWriter.INSTANCE;
     }
 
     @Override
-	protected Image getShellImage()
+    protected Image getShellImage()
     {
         return EclipseNSISPlugin.getShellImage();
     }

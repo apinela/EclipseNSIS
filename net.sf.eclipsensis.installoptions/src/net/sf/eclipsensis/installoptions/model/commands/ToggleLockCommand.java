@@ -27,7 +27,7 @@ public class ToggleLockCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         setLocked(mShouldLock);
     }
@@ -40,7 +40,7 @@ public class ToggleLockCommand extends Command
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         setLocked(!mShouldLock);
     }

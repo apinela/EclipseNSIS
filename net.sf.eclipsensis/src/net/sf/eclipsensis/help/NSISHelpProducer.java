@@ -40,7 +40,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
 
     private String stripPrefixes(String href)
     {
-    	String href2 = href;
+        String href2 = href;
         for (int i = 0; i < mHelpURLPrefixes.length; i++) {
             if(href2.charAt(0) == '/') {
                 href2 = href2.substring(1);
@@ -57,7 +57,7 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
      */
     public InputStream getInputStream(String pluginID, String href, Locale locale)
     {
-    	String href2 = href;
+        String href2 = href;
         if(pluginID.equals(mPluginId)) {
             if(href2.equals(NSISCONTRIB_JS_LOCATION)) {
                 return new ByteArrayInputStream(NSIS_CONTRIB_JS);

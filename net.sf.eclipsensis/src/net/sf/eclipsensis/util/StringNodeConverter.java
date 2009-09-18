@@ -16,14 +16,14 @@ public class StringNodeConverter extends AbstractNodeConverter<String>
     private static final String STRING_NODE = "string"; //$NON-NLS-1$
 
     @Override
-	public String fromNode(Node node, Class<?> clasz)
+    public String fromNode(Node node, Class<?> clasz)
     {
         if (String.class.isAssignableFrom(clasz)) {
-			if (STRING_NODE.equals(node.getNodeName())) {
-				return XMLUtil.readTextNode(node);
-			}
-		}
-		throw new IllegalArgumentException(clasz.getName());
+            if (STRING_NODE.equals(node.getNodeName())) {
+                return XMLUtil.readTextNode(node);
+            }
+        }
+        throw new IllegalArgumentException(clasz.getName());
     }
 
     public Node toNode(Document document, String object)

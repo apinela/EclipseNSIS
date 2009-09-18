@@ -28,7 +28,7 @@ public class NSISTemplateWizardDialog extends NSISWizardDialog
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected void createButtonsForButtonBar(Composite parent)
+    protected void createButtonsForButtonBar(Composite parent)
     {
         super.createButtonsForButtonBar(parent);
         getButton(IDialogConstants.FINISH_ID).setText(IDialogConstants.OK_LABEL);

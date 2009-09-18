@@ -51,16 +51,16 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
     }
 
     @Override
-	public void beginTask(String name, int totalWork)
+    public void beginTask(String name, int totalWork)
     {
         mScale = totalWork <= 0 ? 0 : (double) mTicks / (double) totalWork;
         setTaskName(name);
     }
 
     @Override
-	public void setTaskName(String name)
+    public void setTaskName(String name)
     {
-    	String name2 = name;
+        String name2 = name;
         if(!Common.isEmpty(name2)) {
             if(!Common.isEmpty(mPrefix)) {
                 if(!mPrefix.substring(0,mPrefix.length()-3).equalsIgnoreCase(name2) && !mPrefix.regionMatches(true,0,name2,0,mPrefix.length())) {
@@ -72,7 +72,7 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
     }
 
     @Override
-	public void done()
+    public void done()
     {
         double remaining = mTicks - mUsed;
         if (remaining > 0) {
@@ -87,7 +87,7 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
     }
 
     @Override
-	public void internalWorked(double work)
+    public void internalWorked(double work)
     {
         if (mCompleted) {
             return;
@@ -102,14 +102,14 @@ public class NestedProgressMonitor extends ProgressMonitorWrapper
     }
 
     @Override
-	public void subTask(String name)
+    public void subTask(String name)
     {
         mHasSubTask = true;
         super.subTask(name);
     }
 
     @Override
-	public void worked(int work) {
+    public void worked(int work) {
         internalWorked(work);
     }
 }

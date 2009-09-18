@@ -92,7 +92,7 @@ public class PreferenceStoreWrapper implements IPreferenceStore
     public void update()
     {
         for(Iterator<Map.Entry<String,Class<?>>> iter = mNamesMap.entrySet().iterator(); iter.hasNext(); ) {
-        	Map.Entry<String,Class<?>> entry = iter.next();
+            Map.Entry<String,Class<?>> entry = iter.next();
             String name = entry.getKey();
             Class<?> type = entry.getValue();
             if(type.equals(Boolean.class)) {

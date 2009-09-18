@@ -19,22 +19,22 @@ import org.eclipse.ui.PlatformUI;
 public class NSISExportHTMLAction extends NSISAction
 {
     @Override
-	public void run(IAction action)
+    public void run(IAction action)
     {
-    	if(mPlugin != null && mPlugin.isConfigured())
-    	{
-    		mEditor.exportHTML();
-    	}
-    	else
-    	{
+        if(mPlugin != null && mPlugin.isConfigured())
+        {
+            mEditor.exportHTML();
+        }
+        else
+        {
             Common.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-            		EclipseNSISPlugin.getResourceString("unconfigured.confirm"), //$NON-NLS-1$
-            		EclipseNSISPlugin.getShellImage());
-    	}
+                    EclipseNSISPlugin.getResourceString("unconfigured.confirm"), //$NON-NLS-1$
+                    EclipseNSISPlugin.getShellImage());
+        }
     }
 
     @Override
-	public void selectionChanged(IAction action, ISelection selection)
+    public void selectionChanged(IAction action, ISelection selection)
     {
 
     }

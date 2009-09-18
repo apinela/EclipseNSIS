@@ -25,7 +25,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelEditPart
 {
     @Override
-	protected IInstallOptionsFigure createInstallOptionsFigure()
+    protected IInstallOptionsFigure createInstallOptionsFigure()
     {
         if(cIsNT) {
             //This is a hack because Windows NT Labels don't seem to respond to the
@@ -38,7 +38,7 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
     }
 
     @Override
-	protected UneditableElementDirectEditPolicy createDirectEditPolicy()
+    protected UneditableElementDirectEditPolicy createDirectEditPolicy()
     {
         return null;
     }
@@ -50,7 +50,7 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
     }
 
     @Override
-	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return null;
     }
@@ -68,7 +68,7 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
         }
 
         @Override
-		protected void createChildFigures()
+        protected void createChildFigures()
         {
             mImageFigure = new ImageFigure();
             mImageFigure.setBorder(new DashedLineBorder());
@@ -76,14 +76,14 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
         }
 
         @Override
-		protected void init(IPropertySource propertySource)
+        protected void init(IPropertySource propertySource)
         {
             super.init(propertySource);
             setImage((Image)propertySource.getPropertyValue(InstallOptionsPicture.PROPERTY_IMAGE));
         }
 
         @Override
-		protected void setChildConstraints(Rectangle rect)
+        protected void setChildConstraints(Rectangle rect)
         {
             setConstraint(mImageFigure, new Rectangle(0,0,rect.width,rect.height));
         }
@@ -97,7 +97,7 @@ public abstract class InstallOptionsPictureEditPart extends InstallOptionsLabelE
         }
 
         @Override
-		public void refresh()
+        public void refresh()
         {
             super.refresh();
             mImageFigure.setImage(mImage);

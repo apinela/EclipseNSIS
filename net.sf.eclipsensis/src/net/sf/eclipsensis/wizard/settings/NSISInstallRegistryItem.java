@@ -16,7 +16,7 @@ import net.sf.eclipsensis.wizard.*;
 public abstract class NSISInstallRegistryItem extends AbstractNSISInstallItem
 {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 6851931721096996387L;
     /* (non-Javadoc)
@@ -56,7 +56,7 @@ public abstract class NSISInstallRegistryItem extends AbstractNSISInstallItem
      */
     public void setRootKey(int rootKey)
     {
-    	int rootKey2 = rootKey;
+        int rootKey2 = rootKey;
         if(rootKey2 >= NSISWizardDisplayValues.HKEY_NAMES.length) {
             rootKey2 = INSISWizardConstants.HKCU;
         }
@@ -80,7 +80,7 @@ public abstract class NSISInstallRegistryItem extends AbstractNSISInstallItem
     }
 
     @Override
-	public String doValidate()
+    public String doValidate()
     {
         if(getRootKey() < 0) {
             return EclipseNSISPlugin.getResourceString("wizard.invalid.root.key.error"); //$NON-NLS-1$

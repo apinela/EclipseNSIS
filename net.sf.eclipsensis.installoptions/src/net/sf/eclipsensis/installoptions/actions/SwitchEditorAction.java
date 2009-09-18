@@ -38,7 +38,7 @@ public class SwitchEditorAction extends Action
     }
 
     @Override
-	public void run()
+    public void run()
     {
         if(mEditor.canSwitch()) {
             BusyIndicator.showWhile(null,new Runnable(){

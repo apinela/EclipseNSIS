@@ -269,14 +269,14 @@ public class RegistryKeyBrowser extends Composite
     }
 
     @Override
-	public void redraw ()
+    public void redraw ()
     {
         super.redraw();
         mTree.redraw();
     }
 
     @Override
-	public void setToolTipText (String string)
+    public void setToolTipText (String string)
     {
         checkWidget();
         super.setToolTipText(string);
@@ -284,13 +284,13 @@ public class RegistryKeyBrowser extends Composite
     }
 
     @Override
-	public void redraw (int x, int y, int width, int height, boolean all)
+    public void redraw (int x, int y, int width, int height, boolean all)
     {
         super.redraw(x, y, width, height, true);
     }
 
     @Override
-	public void setBackground (Color color)
+    public void setBackground (Color color)
     {
         super.setBackground(color);
         if (mTree != null) {
@@ -299,7 +299,7 @@ public class RegistryKeyBrowser extends Composite
     }
 
     @Override
-	public void setForeground (Color color)
+    public void setForeground (Color color)
     {
         super.setForeground(color);
         if (mTree != null) {
@@ -308,7 +308,7 @@ public class RegistryKeyBrowser extends Composite
     }
 
     @Override
-	public void setFont (Font font)
+    public void setFont (Font font)
     {
         super.setFont(font);
         if (mTree != null) {
@@ -326,7 +326,7 @@ public class RegistryKeyBrowser extends Composite
     }
 
     @Override
-	public void setEnabled (boolean enabled)
+    public void setEnabled (boolean enabled)
     {
         super.setEnabled(enabled);
         if (mTree != null) {
@@ -335,21 +335,21 @@ public class RegistryKeyBrowser extends Composite
     }
 
     @Override
-	public boolean setFocus ()
+    public boolean setFocus ()
     {
         checkWidget();
         return mTree.setFocus ();
     }
 
     @Override
-	public void setLayout (Layout layout)
+    public void setLayout (Layout layout)
     {
         checkWidget ();
         return;
     }
 
     @Override
-	public boolean isFocusControl ()
+    public boolean isFocusControl ()
     {
         checkWidget();
         if (mTree.isFocusControl ()) {
@@ -359,7 +359,7 @@ public class RegistryKeyBrowser extends Composite
     }
 
     @Override
-	public Control [] getChildren ()
+    public Control [] getChildren ()
     {
         checkWidget();
         return new Control [0];
@@ -413,7 +413,7 @@ public class RegistryKeyBrowser extends Composite
     }
 
     @Override
-	public Point computeSize(int wHint, int hHint, boolean changed)
+    public Point computeSize(int wHint, int hHint, boolean changed)
     {
         checkWidget ();
         Point size = mTree.computeSize(wHint, hHint, changed);

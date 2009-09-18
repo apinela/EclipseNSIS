@@ -17,7 +17,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 public class StemmingAnalyzer extends StandardAnalyzer
 {
     @Override
-	public TokenStream tokenStream(String fieldName, Reader reader)
+    public TokenStream tokenStream(String fieldName, Reader reader)
     {
         return new PorterStemFilter(super.tokenStream(fieldName, reader));
     }

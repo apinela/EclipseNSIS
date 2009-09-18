@@ -34,13 +34,13 @@ public class DeleteGuideCommand extends Command
     }
 
     @Override
-	public boolean canUndo()
+    public boolean canUndo()
     {
         return true;
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         mOldWidgets = new HashMap<InstallOptionsWidget, Integer>(mGuide.getMap());
         Iterator<InstallOptionsWidget> iter = mOldWidgets.keySet().iterator();
@@ -51,7 +51,7 @@ public class DeleteGuideCommand extends Command
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         mParent.addGuide(mGuide);
         Iterator<InstallOptionsWidget> iter = mOldWidgets.keySet().iterator();

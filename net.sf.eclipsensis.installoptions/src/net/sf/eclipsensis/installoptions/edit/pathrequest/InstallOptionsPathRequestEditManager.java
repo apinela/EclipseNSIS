@@ -24,7 +24,7 @@ public class InstallOptionsPathRequestEditManager extends InstallOptionsGenericT
     }
 
     @Override
-	protected int getCellEditorStyle()
+    protected int getCellEditorStyle()
     {
         return SWT.SINGLE|SWT.LEFT;
     }

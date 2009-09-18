@@ -49,7 +49,7 @@ public class DeleteCommand extends Command
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         detachFromGuides(mChild);
         mIndex = mChild.getIndex();
@@ -67,13 +67,13 @@ public class DeleteCommand extends Command
     }
 
     @Override
-	public void redo()
+    public void redo()
     {
         execute();
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         mParent.addChild(mChild, mIndex);
         reattachToGuides(mChild);

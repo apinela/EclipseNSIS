@@ -31,7 +31,7 @@ public class InstallOptionsComboboxEditManager extends InstallOptionsEditableEle
     }
 
     @Override
-	protected EditableComboBoxCellEditor createCellEditor(Composite composite)
+    protected EditableComboBoxCellEditor createCellEditor(Composite composite)
     {
         InstallOptionsCombobox combobox = (InstallOptionsCombobox)getEditPart().getModel();
         List<String> items = combobox.getListItems();
@@ -43,7 +43,7 @@ public class InstallOptionsComboboxEditManager extends InstallOptionsEditableEle
     }
 
     @Override
-	protected void selectCellEditorText()
+    protected void selectCellEditorText()
     {
         Combo combo = (Combo)getCellEditor().getControl();
         String text = combo.getText();
@@ -53,7 +53,7 @@ public class InstallOptionsComboboxEditManager extends InstallOptionsEditableEle
     }
 
     @Override
-	protected int getCellEditorStyle()
+    protected int getCellEditorStyle()
     {
         return SWT.DROP_DOWN;
     }

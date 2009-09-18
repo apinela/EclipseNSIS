@@ -141,7 +141,7 @@ public class NSISHelpTOC implements Serializable
         }
 
         @Override
-		public String toString()
+        public String toString()
         {
             return new StringBuffer(mName).append(" - ").append(mURL).toString(); //$NON-NLS-1$
         }

@@ -33,7 +33,7 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
     }
 
     @Override
-	public Object clone() throws CloneNotSupportedException
+    public Object clone() throws CloneNotSupportedException
     {
         AbstractNSISInstallElement element = (AbstractNSISInstallElement)super.clone();
         element.mSettings = null;
@@ -42,7 +42,7 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
     }
 
     @Override
-	protected void addSkippedProperties(Collection<String> skippedProperties)
+    protected void addSkippedProperties(Collection<String> skippedProperties)
     {
         super.addSkippedProperties(skippedProperties);
         skippedProperties.add("removable"); //$NON-NLS-1$
@@ -81,7 +81,7 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
     }
 
     @Override
-	public void fromNode(Node node)
+    public void fromNode(Node node)
     {
         String nodeType = node.getAttributes().getNamedItem(TYPE_ATTRIBUTE).getNodeValue();
         if(nodeType.equals(getType()) || nodeType.equals(NSISInstallElementFactory.getAlias(getType()))) {
@@ -90,7 +90,7 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
     }
 
     @Override
-	public Node toNode(Document document)
+    public Node toNode(Document document)
     {
         Node node = super.toNode(document);
         XMLUtil.addAttribute(document,node,TYPE_ATTRIBUTE,getType());
@@ -98,7 +98,7 @@ public abstract class AbstractNSISInstallElement extends AbstractNodeConvertible
     }
 
     @Override
-	protected String getChildNodeName()
+    protected String getChildNodeName()
     {
         return CHILD_NODE;
     }

@@ -27,7 +27,7 @@ public class NSISTemplateWizard extends NSISWizard
     }
 
     @Override
-	public String getHelpContextId()
+    public String getHelpContextId()
     {
         return INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_scrtmpltdlg_context"; //$NON-NLS-1$
     }
@@ -36,7 +36,7 @@ public class NSISTemplateWizard extends NSISWizard
      * @see net.sf.eclipsensis.wizard.NSISWizard#initSettings()
      */
     @Override
-	protected void initSettings()
+    protected void initSettings()
     {
         NSISWizardTemplate template = getTemplate();
         if(template != null) {
@@ -58,7 +58,7 @@ public class NSISTemplateWizard extends NSISWizard
     }
 
     @Override
-	public void setTemplate(NSISWizardTemplate template)
+    public void setTemplate(NSISWizardTemplate template)
     {
         NSISWizardTemplate oldTemplate = getTemplate();
         super.setTemplate(template);
@@ -76,7 +76,7 @@ public class NSISTemplateWizard extends NSISWizard
      * @see net.sf.eclipsensis.wizard.NSISWizard#addStartPage()
      */
     @Override
-	protected void addStartPage()
+    protected void addStartPage()
     {
         addPage(new NSISWizardTemplatePage());
     }
@@ -85,7 +85,7 @@ public class NSISTemplateWizard extends NSISWizard
      * @see org.eclipse.jface.wizard.IWizard#performFinish()
      */
     @Override
-	public boolean performFinish()
+    public boolean performFinish()
     {
         getTemplate().setSettings(getSettings());
         return true;

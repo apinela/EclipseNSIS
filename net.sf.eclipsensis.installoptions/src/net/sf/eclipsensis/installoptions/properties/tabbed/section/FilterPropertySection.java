@@ -35,7 +35,7 @@ import org.eclipse.ui.views.properties.tabbed.*;
 public class FilterPropertySection extends InstallOptionsElementPropertySection
 {
     @Override
-	protected Control createSection(final InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, final InstallOptionsCommandHelper commandHelper)
+    protected Control createSection(final InstallOptionsElement element, Composite parent, TabbedPropertySheetPage page, final InstallOptionsCommandHelper commandHelper)
     {
         if(element instanceof InstallOptionsFileRequest) {
             final FileFilter[] current = { null };
@@ -83,7 +83,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             summaryAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             summaryAdd.addListener(SWT.Selection, new Listener() {
                 @SuppressWarnings("unchecked")
-				public void handleEvent(Event e) {
+                public void handleEvent(Event e) {
                     if(!nonUserChange[0]) {
                         List<FileFilter> list = (List<FileFilter>)summaryViewer.getInput();
                         if(list != null) {
@@ -121,7 +121,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             summaryDel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             summaryDel.addListener(SWT.Selection, new Listener() {
                 @SuppressWarnings("unchecked")
-				public void handleEvent(Event e) {
+                public void handleEvent(Event e) {
                     List<FileFilter> list = (List<FileFilter>)summaryViewer.getInput();
                     if(list != null) {
                         IStructuredSelection selection= (IStructuredSelection) summaryViewer.getSelection();
@@ -148,14 +148,14 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
 
             final TableViewerUpDownMover<List<FileFilter>, FileFilter> summaryMover = new TableViewerUpDownMover<List<FileFilter>, FileFilter>() {
                 @Override
-				@SuppressWarnings("unchecked")
-				protected List<FileFilter> getAllElements()
+                @SuppressWarnings("unchecked")
+                protected List<FileFilter> getAllElements()
                 {
                     return (List<FileFilter>)((TableViewer)getViewer()).getInput();
                 }
 
                 @Override
-				protected void updateStructuredViewerInput(List<FileFilter> input, List<FileFilter> elements, List<FileFilter> move, boolean isDown)
+                protected void updateStructuredViewerInput(List<FileFilter> input, List<FileFilter> elements, List<FileFilter> move, boolean isDown)
                 {
                     List<FileFilter> old = new ArrayList<FileFilter>(input);
                     input.clear();
@@ -181,7 +181,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             summaryUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             summaryUp.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     summaryMover.moveUp();
                 }
@@ -194,7 +194,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             summaryDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             summaryDown.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     summaryMover.moveDown();
                 }
@@ -220,7 +220,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             descriptionText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             final TextChangeHelper helper = new TextChangeHelper() {
                 @Override
-				protected String getResetValue(Text text)
+                protected String getResetValue(Text text)
                 {
                     if(current[0] != null) {
                         return current[0].getDescription();
@@ -229,8 +229,8 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                 }
 
                 @Override
-				@SuppressWarnings("unchecked")
-				protected void handleTextChange(Text text)
+                @SuppressWarnings("unchecked")
+                protected void handleTextChange(Text text)
                 {
                     if(current[0] != null) {
                         String oldDescription = current[0].getDescription();
@@ -314,7 +314,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                 }
 
                 @SuppressWarnings("unchecked")
-				public void modify(Object item, String property, Object value)
+                public void modify(Object item, String property, Object value)
                 {
                     if(value == null) {
                         Common.openError(patternsTable.getShell(),textEditor.getErrorMessage(), InstallOptionsPlugin.getShellImage());
@@ -352,7 +352,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             patternsAdd.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             patternsAdd.addListener(SWT.Selection, new Listener() {
                 @SuppressWarnings("unchecked")
-				public void handleEvent(Event e) {
+                public void handleEvent(Event e) {
                     if(current[0] != null) {
                         FilePattern[] oldPatterns = (FilePattern[])patternsViewer.getInput();
                         FilePattern[] patterns = (FilePattern[])Common.resizeArray(oldPatterns,oldPatterns.length+1);
@@ -385,7 +385,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             patternsDel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             patternsDel.addListener(SWT.Selection, new Listener() {
                 @SuppressWarnings("unchecked")
-				public void handleEvent(Event e)
+                public void handleEvent(Event e)
                 {
                     if(current[0] != null) {
                         FilePattern[] oldPatterns = (FilePattern[])patternsViewer.getInput();
@@ -423,7 +423,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
 
             final TableViewerUpDownMover<FilePattern[], FilePattern> patternsMover = new TableViewerUpDownMover<FilePattern[], FilePattern>() {
                 @Override
-				protected List<FilePattern> getAllElements()
+                protected List<FilePattern> getAllElements()
                 {
                     if(current[0] != null) {
                         return Common.makeList((FilePattern[])((TableViewer)getViewer()).getInput());
@@ -432,8 +432,8 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                 }
 
                 @Override
-				@SuppressWarnings("unchecked")
-				protected void updateStructuredViewerInput(FilePattern[] input, List<FilePattern> elements, List<FilePattern> move, boolean isDown)
+                @SuppressWarnings("unchecked")
+                protected void updateStructuredViewerInput(FilePattern[] input, List<FilePattern> elements, List<FilePattern> move, boolean isDown)
                 {
                     if(current[0] != null) {
                         FilePattern[] oldPatterns = input.clone();
@@ -463,7 +463,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             patternsUp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             patternsUp.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     patternsMover.moveUp();
                 }
@@ -476,7 +476,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             patternsDown.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             patternsDown.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     patternsMover.moveDown();
                 }
@@ -528,7 +528,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
 
             final PropertyChangeListener listener = new PropertyChangeListener() {
                 @SuppressWarnings("unchecked")
-				public void propertyChange(PropertyChangeEvent evt)
+                public void propertyChange(PropertyChangeEvent evt)
                 {
                     if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_FILTER)) {
                         List<FileFilter> newFilter = (List<FileFilter>)evt.getNewValue();

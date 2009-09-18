@@ -30,7 +30,7 @@ public class MessageBoxOptionsParam extends NSISParam
     }
 
     @Override
-	protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new MessageBoxOptionsParamEditor(command, parentEditor);
     }
@@ -48,7 +48,7 @@ public class MessageBoxOptionsParam extends NSISParam
         }
 
         @Override
-		public void clear()
+        public void clear()
         {
             resetCombo(mButtonsCombo);
             resetCombo(mIconCombo);
@@ -71,13 +71,13 @@ public class MessageBoxOptionsParam extends NSISParam
         }
 
         @Override
-		protected String validateParam()
+        protected String validateParam()
         {
             return null;
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf, boolean preview)
+        protected void appendParamText(StringBuffer buf, boolean preview)
         {
             StringBuffer buf2 = new StringBuffer(""); //$NON-NLS-1$
             buf.append(" "); //$NON-NLS-1$
@@ -111,7 +111,7 @@ public class MessageBoxOptionsParam extends NSISParam
         }
 
         @Override
-		public void saveSettings()
+        public void saveSettings()
         {
             super.saveSettings();
             if(getSettings() != null) {
@@ -135,9 +135,9 @@ public class MessageBoxOptionsParam extends NSISParam
         }
 
         @Override
-		protected Control createParamControl(Composite parent)
+        protected Control createParamControl(Composite parent)
         {
-        	Composite parent2 = new Group(parent,SWT.NONE);
+            Composite parent2 = new Group(parent,SWT.NONE);
             GridLayout gridLayout = new GridLayout(2,false);
             gridLayout.marginWidth = gridLayout.marginHeight = 2;
             parent2.setLayout(gridLayout);
@@ -161,7 +161,7 @@ public class MessageBoxOptionsParam extends NSISParam
         }
 
         @Override
-		protected void initParamEditor()
+        protected void initParamEditor()
         {
             super.initParamEditor();
             initCombo(mButtonsCombo, SETTING_BUTTONS);

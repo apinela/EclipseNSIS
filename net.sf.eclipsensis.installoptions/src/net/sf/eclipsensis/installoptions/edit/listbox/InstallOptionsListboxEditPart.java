@@ -29,24 +29,24 @@ import org.eclipse.swt.widgets.Composite;
 public class InstallOptionsListboxEditPart extends InstallOptionsListItemsEditPart<ListCellEditor>
 {
     @Override
-	protected String getDirectEditLabelProperty()
+    protected String getDirectEditLabelProperty()
     {
         return "listbox.direct.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected String getExtendedEditLabelProperty()
+    protected String getExtendedEditLabelProperty()
     {
         return "listbox.extended.edit.label"; //$NON-NLS-1$
     }
 
     @Override
-	protected IListItemsFigure createListItemsFigure()
+    protected IListItemsFigure createListItemsFigure()
     {
         return new ListFigure((Composite)getViewer().getControl(), new PropertySourceWrapper(getInstallOptionsWidget()) {
             @Override
-			@SuppressWarnings("unchecked")
-			public Object getPropertyValue(Object id)
+            @SuppressWarnings("unchecked")
+            public Object getPropertyValue(Object id)
             {
                 if(InstallOptionsModel.PROPERTY_FLAGS.equals(id)) {
                     List<String> list = (List<String>)getDelegate().getPropertyValue(id);
@@ -62,7 +62,7 @@ public class InstallOptionsListboxEditPart extends InstallOptionsListItemsEditPa
     }
 
     @Override
-	protected boolean supportsScrolling()
+    protected boolean supportsScrolling()
     {
         return true;
     }
@@ -71,25 +71,25 @@ public class InstallOptionsListboxEditPart extends InstallOptionsListItemsEditPa
      * @return
      */
     @Override
-	protected String getTypeName()
+    protected String getTypeName()
     {
         return InstallOptionsPlugin.getResourceString("listbox.type.name"); //$NON-NLS-1$
     }
 
     @Override
-	protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<ListCellEditor> clasz, CellEditorLocator locator) 
+    protected DirectEditManager creatDirectEditManager(InstallOptionsWidgetEditPart part, Class<ListCellEditor> clasz, CellEditorLocator locator)
     {
-    	return new InstallOptionsListboxEditManager(part,clasz,locator);
-	}
+        return new InstallOptionsListboxEditManager(part,clasz,locator);
+    }
 
-	@Override
-	protected Class<ListCellEditor> getCellEditorClass()
+    @Override
+    protected Class<ListCellEditor> getCellEditorClass()
     {
         return ListCellEditor.class;
     }
 
     @Override
-	protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
+    protected CellEditorLocator createCellEditorLocator(IInstallOptionsFigure figure)
     {
         return new ListboxCellEditorLocator((ListFigure)figure);
     }

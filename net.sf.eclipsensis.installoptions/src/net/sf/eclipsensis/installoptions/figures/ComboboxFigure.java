@@ -62,19 +62,19 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
     }
 
     @Override
-	public boolean isClickThrough()
+    public boolean isClickThrough()
     {
         return true;
     }
 
     @Override
-	public boolean isDefaultClickThroughFigure()
+    public boolean isDefaultClickThroughFigure()
     {
         return false;
     }
 
     @Override
-	protected boolean isTransparentAt(int x, int y)
+    protected boolean isTransparentAt(int x, int y)
     {
         if(!mShowDropdown) {
             Rectangle r = mComboFigure.getBounds();
@@ -130,7 +130,7 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
     }
 
     @Override
-	public void setBounds(Rectangle rect)
+    public void setBounds(Rectangle rect)
     {
         Rectangle[] bounds = calculateBounds(rect);
         getLayoutManager().setConstraint(mComboFigure,bounds[0]);
@@ -191,8 +191,8 @@ public class ComboboxFigure extends AbstractInstallOptionsFigure implements ILis
         }
 
         @Override
-		@SuppressWarnings("unchecked")
-		public Object getPropertyValue(Object id)
+        @SuppressWarnings("unchecked")
+        public Object getPropertyValue(Object id)
         {
             if(InstallOptionsWidget.PROPERTY_BOUNDS.equals(id)) {
                 return mBounds;

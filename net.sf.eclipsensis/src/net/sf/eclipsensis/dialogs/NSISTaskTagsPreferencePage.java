@@ -52,7 +52,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
      * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
      */
     @Override
-	public void dispose()
+    public void dispose()
     {
         if(mBoldFont != null) {
             mBoldFont.dispose();
@@ -64,7 +64,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
      * @see PreferencePage#createControl(Composite)
      */
     @Override
-	public void createControl(Composite parent) {
+    public void createControl(Composite parent) {
         super.createControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_tasktagprefs_context"); //$NON-NLS-1$
     }
@@ -73,7 +73,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
     @Override
-	protected Control createContents(Composite parent)
+    protected Control createContents(Composite parent)
     {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -112,7 +112,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
 
         mTableViewer.addCheckStateListener(new ICheckStateListener() {
             @SuppressWarnings("unchecked")
-			public void checkStateChanged(CheckStateChangedEvent event) {
+            public void checkStateChanged(CheckStateChangedEvent event) {
                 NSISTaskTag taskTag= (NSISTaskTag)event.getElement();
                 boolean checked = event.getChecked();
                 if(checked) {
@@ -225,7 +225,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     }
 
     @SuppressWarnings("unchecked")
-	private void edit()
+    private void edit()
     {
         IStructuredSelection sel = (IStructuredSelection)mTableViewer.getSelection();
         if(!sel.isEmpty() && sel.size() == 1) {
@@ -250,7 +250,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     }
 
     @SuppressWarnings("unchecked")
-	private void add()
+    private void add()
     {
         NSISTaskTag tag = new NSISTaskTag();
         HashSet<String> set = new HashSet<String>();
@@ -268,7 +268,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     }
 
     @SuppressWarnings("unchecked")
-	private void remove()
+    private void remove()
     {
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
         if(!selection.isEmpty()) {
@@ -285,8 +285,8 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
     @SuppressWarnings("unchecked")
-	@Override
-	public boolean performOk()
+    @Override
+    public boolean performOk()
     {
         if (super.performOk()) {
             Collection<NSISTaskTag> taskTags = (Collection<NSISTaskTag>)mTableViewer.getInput();
@@ -361,7 +361,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
     @Override
-	protected void performDefaults()
+    protected void performDefaults()
     {
         mTableViewer.setInput(NSISPreferences.INSTANCE.getDefaultTaskTags());
         mTableViewer.refresh(true);
@@ -406,8 +406,8 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                     if(n >= 0 && n < NSISTaskTag.PRIORITY_LABELS.length) {
                         return NSISTaskTag.PRIORITY_LABELS[n];
                     }
-	                //$FALL-THROUGH$
-				default:
+                    //$FALL-THROUGH$
+                default:
                     return ""; //$NON-NLS-1$
             }
         }

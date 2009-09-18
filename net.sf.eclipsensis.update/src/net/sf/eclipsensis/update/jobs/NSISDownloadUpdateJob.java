@@ -38,13 +38,13 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
     }
 
     @Override
-	protected boolean shouldReschedule()
+    protected boolean shouldReschedule()
     {
         return getSettings().isAutomated() && ((getSettings().getAction() & SchedulerConstants.UPDATE_INSTALL) == 0);
     }
 
     @Override
-	protected URL getURL() throws IOException
+    protected URL getURL() throws IOException
     {
         if(cPreferenceStore.getBoolean(IUpdatePreferenceConstants.AUTOSELECT_SOURCEFORGE_MIRROR)) {
             return NSISUpdateURLs.getAutoDownloadURL(mVersion);
@@ -59,13 +59,13 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
     }
 
     @Override
-	protected URL getDefaultURL() throws IOException
+    protected URL getDefaultURL() throws IOException
     {
         return NSISUpdateURLs.getDownloadURL(mVersion);
     }
 
     @Override
-	protected HttpURLConnection makeConnection(IProgressMonitor monitor, URL url, URL defaultURL) throws IOException
+    protected HttpURLConnection makeConnection(IProgressMonitor monitor, URL url, URL defaultURL) throws IOException
     {
         try {
             monitor.beginTask(getName(),100);
@@ -127,7 +127,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
     }
 
     @Override
-	protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
+    protected IStatus handleConnection(HttpURLConnection conn, IProgressMonitor monitor) throws IOException
     {
         try {
             monitor.beginTask(getName(),100);
@@ -248,7 +248,7 @@ class NSISDownloadUpdateJob extends NSISHttpUpdateJob
     }
 
     @Override
-	protected String formatException(Throwable e)
+    protected String formatException(Throwable e)
     {
         return new MessageFormat(EclipseNSISUpdatePlugin.getResourceString("download.update.error")).format(new String[] {mVersion,e.getMessage()}); //$NON-NLS-1$
     }

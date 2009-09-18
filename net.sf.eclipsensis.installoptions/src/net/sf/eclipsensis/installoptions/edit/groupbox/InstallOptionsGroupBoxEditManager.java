@@ -23,7 +23,7 @@ public class InstallOptionsGroupBoxEditManager extends InstallOptionsUneditableE
     }
 
     @Override
-	protected int getCellEditorStyle()
+    protected int getCellEditorStyle()
     {
         return SWT.SINGLE|SWT.LEFT;
     }

@@ -115,60 +115,60 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
      */
     protected boolean matchBracketsAt()
     {
-    	char prevChar, nextChar;
+        char prevChar, nextChar;
 
-    	int i;
-    	int bracketIndex1= BRACKETS.length;
-    	int bracketIndex2= BRACKETS.length;
+        int i;
+        int bracketIndex1= BRACKETS.length;
+        int bracketIndex2= BRACKETS.length;
 
-    	mStartPos= -1;
-    	mEndPos= -1;
+        mStartPos= -1;
+        mEndPos= -1;
 
-    	try {
-    		prevChar= mDocument.getChar(Math.max(mPos - 1,0));
-    		nextChar= (mAlwaysUsePrevChar?prevChar:mDocument.getChar(mPos));
+        try {
+            prevChar= mDocument.getChar(Math.max(mPos - 1,0));
+            nextChar= (mAlwaysUsePrevChar?prevChar:mDocument.getChar(mPos));
 
-    		for (i= 0; i < BRACKETS.length; i= i + 2) {
-    			if (prevChar == BRACKETS[i]) {
-    				mStartPos= mPos - 1;
-    				bracketIndex1= i;
+            for (i= 0; i < BRACKETS.length; i= i + 2) {
+                if (prevChar == BRACKETS[i]) {
+                    mStartPos= mPos - 1;
+                    bracketIndex1= i;
                     break;
-    			}
-    		}
-    		for (i= 1; i < BRACKETS.length; i= i + 2) {
-    			if (nextChar == BRACKETS[i]) {
-    				mEndPos= mPos - (mAlwaysUsePrevChar?1:0);
-    				bracketIndex2= i;
+                }
+            }
+            for (i= 1; i < BRACKETS.length; i= i + 2) {
+                if (nextChar == BRACKETS[i]) {
+                    mEndPos= mPos - (mAlwaysUsePrevChar?1:0);
+                    bracketIndex2= i;
                     break;
-    			}
-    		}
+                }
+            }
 
-    		if (mStartPos > -1 && bracketIndex1 < bracketIndex2) {
+            if (mStartPos > -1 && bracketIndex1 < bracketIndex2) {
                 mAnchor= LEFT;
-    			mEndPos= searchForClosingBracket(mStartPos, BRACKETS[bracketIndex1], BRACKETS[bracketIndex1 + 1], mDocument);
-    			if (mEndPos > -1) {
-    				return true;
+                mEndPos= searchForClosingBracket(mStartPos, BRACKETS[bracketIndex1], BRACKETS[bracketIndex1 + 1], mDocument);
+                if (mEndPos > -1) {
+                    return true;
                 }
-    			else {
-    				mStartPos= -1;
+                else {
+                    mStartPos= -1;
                 }
-    		}
+            }
             else if (mEndPos > -1) {
                 mAnchor= RIGHT;
-    			mStartPos= searchForOpenBracket(mEndPos, BRACKETS[bracketIndex2 - 1], BRACKETS[bracketIndex2], mDocument);
-    			if (mStartPos > -1) {
-    				return true;
+                mStartPos= searchForOpenBracket(mEndPos, BRACKETS[bracketIndex2 - 1], BRACKETS[bracketIndex2], mDocument);
+                if (mStartPos > -1) {
+                    return true;
                 }
-    			else {
-    				mEndPos= -1;
+                else {
+                    mEndPos= -1;
                 }
-    		}
+            }
 
-    	}
+        }
         catch (BadLocationException x) {
-    	}
+        }
 
-    	return false;
+        return false;
     }
 
     /**
@@ -181,27 +181,27 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
      */
     protected int searchForClosingBracket(int startPosition, char openBracket, char closeBracket, IDocument document) throws BadLocationException
     {
-    	int stack= 1;
-    	int closePosition= startPosition + 1;
-    	int length= document.getLength();
-    	char nextChar;
+        int stack= 1;
+        int closePosition= startPosition + 1;
+        int length= document.getLength();
+        char nextChar;
 
-    	while (closePosition < length && stack > 0) {
-    		nextChar= document.getChar(closePosition);
-    		if (nextChar == openBracket && nextChar != closeBracket) {
-    			stack++;
+        while (closePosition < length && stack > 0) {
+            nextChar= document.getChar(closePosition);
+            if (nextChar == openBracket && nextChar != closeBracket) {
+                stack++;
             }
-    		else if (nextChar == closeBracket) {
-    			stack--;
+            else if (nextChar == closeBracket) {
+                stack--;
             }
-    		closePosition++;
-    	}
-
-    	if (stack == 0) {
-    		return closePosition - 1;
+            closePosition++;
         }
-    	else {
-    		return -1;
+
+        if (stack == 0) {
+            return closePosition - 1;
+        }
+        else {
+            return -1;
         }
     }
 
@@ -215,26 +215,26 @@ public class NSISCharacterPairMatcher implements ICharacterPairMatcher
      */
     protected int searchForOpenBracket(int startPosition, char openBracket, char closeBracket, IDocument document) throws BadLocationException
     {
-    	int stack= 1;
-    	int openPos= startPosition - 1;
-    	char nextChar;
+        int stack= 1;
+        int openPos= startPosition - 1;
+        char nextChar;
 
-    	while (openPos >= 0 && stack > 0) {
-    		nextChar= document.getChar(openPos);
-    		if (nextChar == closeBracket && nextChar != openBracket) {
-    			stack++;
+        while (openPos >= 0 && stack > 0) {
+            nextChar= document.getChar(openPos);
+            if (nextChar == closeBracket && nextChar != openBracket) {
+                stack++;
             }
-    		else if (nextChar == openBracket) {
-    			stack--;
+            else if (nextChar == openBracket) {
+                stack--;
             }
-    		openPos--;
-    	}
-
-    	if (stack == 0) {
-    		return openPos + 1;
+            openPos--;
         }
-    	else {
-    		return -1;
+
+        if (stack == 0) {
+            return openPos + 1;
+        }
+        else {
+            return -1;
         }
     }
 }

@@ -106,7 +106,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
     }
 
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         Display.getDefault().asyncExec(new Runnable() {
@@ -222,7 +222,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
     }
 
     @Override
-	protected void dispose()
+    protected void dispose()
     {
         // Here we can't call super.dispose() because we actually want the partitioner to remain
         // connected, but we won't show lines until the console is added to the console manager
@@ -307,13 +307,13 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
     }
 
     @Override
-	public IPageBookViewPage createPage(IConsoleView view)
+    public IPageBookViewPage createPage(IConsoleView view)
     {
         return new NSISConsolePage(this, view);
     }
 
     @Override
-	protected IConsoleDocumentPartitioner getPartitioner()
+    protected IConsoleDocumentPartitioner getPartitioner()
     {
         return mPartitioner;
     }
@@ -339,7 +339,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
     }
 
     @Override
-	public void clearConsole()
+    public void clearConsole()
     {
         synchronized (mPending) {
             if (mPartitioner != null) {

@@ -61,7 +61,7 @@ public class Position implements Cloneable, Serializable
     }
 
     @Override
-	protected Object clone()
+    protected Object clone()
     {
         try {
             return super.clone();
@@ -121,7 +121,7 @@ public class Position implements Cloneable, Serializable
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if(obj instanceof Position) {
             Position p = (Position)obj;
@@ -131,13 +131,13 @@ public class Position implements Cloneable, Serializable
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         return left+top+right+bottom;
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         return new StringBuffer("Position(").append(left).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$
             top).append(",").append(right).append(",").append( //$NON-NLS-1$ //$NON-NLS-2$

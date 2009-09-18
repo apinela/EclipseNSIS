@@ -31,13 +31,13 @@ public class InstallOptionsRulerFigure extends RulerFigure
     }
 
     @Override
-	public int getUnit()
+    public int getUnit()
     {
         return mUnit;
     }
 
     @Override
-	public void setUnit(int newUnit)
+    public void setUnit(int newUnit)
     {
         if (mUnit != newUnit) {
             mUnit = newUnit;
@@ -47,7 +47,7 @@ public class InstallOptionsRulerFigure extends RulerFigure
     }
 
     @Override
-	protected void handleZoomChanged()
+    protected void handleZoomChanged()
     {
         mDPU = -1.0;
         repaint();
@@ -58,14 +58,14 @@ public class InstallOptionsRulerFigure extends RulerFigure
      * @see org.eclipse.draw2d.Figure#invalidate()
      */
     @Override
-	public void invalidate()
+    public void invalidate()
     {
         super.invalidate();
         mDPU = -1.0;
     }
 
     @Override
-	protected double getDPU()
+    protected double getDPU()
     {
         if (mDPU <= 0) {
             if (getUnit() == RulerProvider.UNIT_PIXELS) {

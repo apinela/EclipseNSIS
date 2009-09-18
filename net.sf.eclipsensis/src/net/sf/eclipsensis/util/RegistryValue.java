@@ -124,7 +124,7 @@ public class RegistryValue
     }
 
     @Override
-	public int hashCode()
+    public int hashCode()
     {
         int result = 31 + ((mRegKey == null)?0:mRegKey.hashCode());
         result = 31 * result + ((mValue == null)?0:mValue.hashCode());
@@ -132,7 +132,7 @@ public class RegistryValue
     }
 
     @Override
-	public boolean equals(Object obj)
+    public boolean equals(Object obj)
     {
         if(this != obj) {
             if(obj instanceof RegistryValue) {

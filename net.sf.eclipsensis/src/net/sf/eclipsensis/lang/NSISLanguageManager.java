@@ -209,16 +209,16 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                                 break;
                             case 3: //font
                             case 4: //font size
-                            	break;
+                                break;
                             case 5: //codepage
-                            	try
-                            	{
-                            		codePage = Integer.parseInt(line);
-                            	}
-                            	catch(NumberFormatException nfe)
-                            	{
-                            		codePage = 0;
-                            	}
+                                try
+                                {
+                                    codePage = Integer.parseInt(line);
+                                }
+                                catch(NumberFormatException nfe)
+                                {
+                                    codePage = 0;
+                                }
                                 break outer;
                         }
                         line = skipComments(br);

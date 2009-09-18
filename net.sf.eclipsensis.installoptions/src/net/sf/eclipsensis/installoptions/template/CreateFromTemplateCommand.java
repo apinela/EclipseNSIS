@@ -31,13 +31,13 @@ public class CreateFromTemplateCommand extends org.eclipse.gef.commands.Command
     }
 
     @Override
-	public boolean canExecute()
+    public boolean canExecute()
     {
         return mRect != null && mRect.x >= 0 && mRect.y >= 0;
     }
 
     @Override
-	public void execute()
+    public void execute()
     {
         if (mRect != null) {
             int minX = Integer.MAX_VALUE;
@@ -97,7 +97,7 @@ public class CreateFromTemplateCommand extends org.eclipse.gef.commands.Command
     }
 
     @Override
-	public void redo()
+    public void redo()
     {
         for (int i = 0; i < mChildren.length; i++) {
             mParent.addChild(mChildren[i]);
@@ -121,7 +121,7 @@ public class CreateFromTemplateCommand extends org.eclipse.gef.commands.Command
     }
 
     @Override
-	public void undo()
+    public void undo()
     {
         for (int i = 0; i < mChildren.length; i++) {
             mParent.removeChild(mChildren[i]);

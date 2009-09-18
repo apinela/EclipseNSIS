@@ -40,19 +40,19 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     }
 
     @Override
-	protected Plugin getPlugin()
+    protected Plugin getPlugin()
     {
         return InstallOptionsPlugin.getDefault();
     }
 
     @Override
-	protected IPath getTemplatesPath()
+    protected IPath getTemplatesPath()
     {
         return cPath;
     }
 
     @Override
-	protected Class<IInstallOptionsTemplate> getTemplateClass()
+    protected Class<IInstallOptionsTemplate> getTemplateClass()
     {
         return IInstallOptionsTemplate.class;
     }
@@ -70,7 +70,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     }
 
     @Override
-	public boolean addTemplate(IInstallOptionsTemplate template)
+    public boolean addTemplate(IInstallOptionsTemplate template)
     {
         if(super.addTemplate(template)) {
             queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, template);
@@ -80,7 +80,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     }
 
     @Override
-	public boolean updateTemplate(IInstallOptionsTemplate oldTemplate, IInstallOptionsTemplate newTemplate)
+    public boolean updateTemplate(IInstallOptionsTemplate oldTemplate, IInstallOptionsTemplate newTemplate)
     {
         if(super.updateTemplate(oldTemplate, newTemplate)) {
             queueEvent(InstallOptionsTemplateEvent.TEMPLATE_UPDATED, oldTemplate, newTemplate);
@@ -92,7 +92,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     }
 
     @Override
-	public boolean removeTemplate(IInstallOptionsTemplate template)
+    public boolean removeTemplate(IInstallOptionsTemplate template)
     {
         if(super.removeTemplate(template)) {
             if(!template.isDeleted()) {
@@ -106,7 +106,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     }
 
     @Override
-	public void resetToDefaults()
+    public void resetToDefaults()
     {
         for(Iterator<IInstallOptionsTemplate> iter=getTemplates().iterator(); iter.hasNext(); ) {
             IInstallOptionsTemplate template = iter.next();
@@ -121,7 +121,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     }
 
     @Override
-	protected boolean restore(IInstallOptionsTemplate template)
+    protected boolean restore(IInstallOptionsTemplate template)
     {
         if(super.restore(template)) {
             queueEvent(InstallOptionsTemplateEvent.TEMPLATE_ADDED, null, template);
@@ -131,7 +131,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     }
 
     @Override
-	public IInstallOptionsTemplate revert(IInstallOptionsTemplate template)
+    public IInstallOptionsTemplate revert(IInstallOptionsTemplate template)
     {
         IInstallOptionsTemplate newTemplate = super.revert(template);
         if(newTemplate != null) {
@@ -173,7 +173,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     }
 
     @Override
-	protected Map<String, IInstallOptionsTemplate> loadDefaultTemplateStore() throws IOException, ClassNotFoundException
+    protected Map<String, IInstallOptionsTemplate> loadDefaultTemplateStore() throws IOException, ClassNotFoundException
     {
         Map<String, IInstallOptionsTemplate> map = super.loadDefaultTemplateStore();
         for (Iterator<Map.Entry<String, IInstallOptionsTemplate>> iter = map.entrySet().iterator(); iter.hasNext();) {
@@ -188,7 +188,7 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     }
 
     @Override
-	protected List<IInstallOptionsTemplate> loadUserTemplateStore() throws IOException, ClassNotFoundException
+    protected List<IInstallOptionsTemplate> loadUserTemplateStore() throws IOException, ClassNotFoundException
     {
         List<IInstallOptionsTemplate> list = super.loadUserTemplateStore();
         for (ListIterator<IInstallOptionsTemplate> iter = list.listIterator(); iter.hasNext();) {
@@ -202,14 +202,14 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     }
 
     @Override
-	public void save() throws IOException
+    public void save() throws IOException
     {
         super.save();
         notifyListeners();
     }
 
     @Override
-	public void discard()
+    public void discard()
     {
         for(Iterator<IInstallOptionsTemplate> iter=getTemplates().iterator(); iter.hasNext(); ) {
             IInstallOptionsTemplate template = iter.next();
@@ -226,13 +226,13 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     }
 
     @Override
-	protected InstallOptionsTemplateReaderWriter createReaderWriter()
+    protected InstallOptionsTemplateReaderWriter createReaderWriter()
     {
         return InstallOptionsTemplateReaderWriter.INSTANCE;
     }
 
     @Override
-	protected Image getShellImage()
+    protected Image getShellImage()
     {
         return InstallOptionsPlugin.getShellImage();
     }

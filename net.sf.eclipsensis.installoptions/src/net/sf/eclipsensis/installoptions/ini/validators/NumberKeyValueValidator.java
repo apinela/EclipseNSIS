@@ -35,7 +35,7 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
                             INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("positive.numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
                             problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.make.numeric.value.positive")) { //$NON-NLS-1$
                                 @Override
-								protected INIProblemFix[] createFixes()
+                                protected INIProblemFix[] createFixes()
                                 {
                                     return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(formatInt(-i,radix,prefix))+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                                 }
@@ -73,7 +73,7 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
                         INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
                         problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.replace.valid.numeric.value")) { //$NON-NLS-1$
                             @Override
-							protected INIProblemFix[] createFixes()
+                            protected INIProblemFix[] createFixes()
                             {
                                 return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText(buf.toString())+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$
                             }
@@ -96,7 +96,7 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
                     INIProblem problem = new INIProblem(INIProblem.TYPE_ERROR,InstallOptionsPlugin.getFormattedString("numeric.value.error",new String[]{keyValue.getKey()})); //$NON-NLS-1$
                     problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.set.valid.numeric.value")) { //$NON-NLS-1$
                         @Override
-						protected INIProblemFix[] createFixes()
+                        protected INIProblemFix[] createFixes()
                         {
                             return new INIProblemFix[] {new INIProblemFix(keyValue,keyValue.buildText("0")+(keyValue.getDelimiter()==null?"":keyValue.getDelimiter()))}; //$NON-NLS-1$ //$NON-NLS-2$
                         }
@@ -145,7 +145,7 @@ public class NumberKeyValueValidator implements IINIKeyValueValidator
 
     protected int parseInt(String value, int radix)
     {
-    	String value2 = value;
+        String value2 = value;
         switch(radix) {
             case 16:
                 value2 = value2.substring(2);

@@ -25,13 +25,13 @@ public class InstallOptionsTemplateTransfer extends ObjectTransfer
     }
 
     @Override
-	protected int[] getTypeIds()
+    protected int[] getTypeIds()
     {
         return TYPEIDS;
     }
 
     @Override
-	protected String[] getTypeNames()
+    protected String[] getTypeNames()
     {
         return TYPE_NAMES;
     }

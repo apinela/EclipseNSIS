@@ -33,7 +33,7 @@ public class ToggleGridVisibilityAction extends Action
     }
 
     @Override
-	public boolean isChecked()
+    public boolean isChecked()
     {
         Boolean val = (Boolean)mDiagramViewer.getProperty(SnapToGrid.PROPERTY_GRID_VISIBLE);
         if (val != null) {
@@ -43,7 +43,7 @@ public class ToggleGridVisibilityAction extends Action
     }
 
     @Override
-	public void run()
+    public void run()
     {
         mDiagramViewer.setProperty(SnapToGrid.PROPERTY_GRID_VISIBLE, (isChecked()?Boolean.FALSE:Boolean.TRUE));
     }

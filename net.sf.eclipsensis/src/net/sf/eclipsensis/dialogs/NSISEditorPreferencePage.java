@@ -124,7 +124,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
      * @see PreferencePage#createControl(Composite)
      */
     @Override
-	public void createControl(Composite parent) {
+    public void createControl(Composite parent) {
         super.createControl(parent);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),INSISConstants.PLUGIN_CONTEXT_PREFIX+"nsis_editorprefs_context"); //$NON-NLS-1$
     }
@@ -171,7 +171,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         button.setLayoutData(new GridData());
         button.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 PreferenceConverter.setValue(mPreferenceStore, MATCHING_DELIMITERS_COLOR, mMatchingDelimsColorEditor.getRGB());
             }
         });
@@ -217,7 +217,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         styleButton.setLayoutData(gd);
         styleButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 boolean state = styleButton.getSelection();
 
                 int i= mSyntaxStyleList.getSelectionIndex();
@@ -272,13 +272,13 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
         mSyntaxStyleList.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 handleSyntaxStyleListSelection();
             }
         });
         foregroundColorButton.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 int i= mSyntaxStyleList.getSelectionIndex();
                 String key= cSyntaxStyleListModel[i][1];
                 NSISSyntaxStyle style = getStyle(key);
@@ -344,9 +344,9 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
      * @see PreferencePage#createContents(Composite)
      */
     @Override
-	protected Control createContents(Composite parent)
+    protected Control createContents(Composite parent)
     {
-    	Composite parent2 = new Composite(parent,SWT.NONE);
+        Composite parent2 = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
@@ -356,7 +356,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
         link.setText(EclipseNSISPlugin.getResourceString("editor.preferences.note")); //$NON-NLS-1$
         link.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e) {
+            public void widgetSelected(SelectionEvent e) {
                 PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.ui.preferencePages.GeneralTextEditor", null, null); //$NON-NLS-1$
             }
         });
@@ -428,7 +428,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
      * @see PreferencePage#performOk()
      */
     @Override
-	public boolean performOk() {
+    public boolean performOk() {
         mPreferenceStore.update();
         NSISEditorUtilities.updatePresentations();
         NSISPreferences.INSTANCE.getPreferenceStore().setValue(DROP_EXTERNAL_FILES_ACTION,mDropExternalFilesCombo.getSelectionIndex());
@@ -440,7 +440,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
      * @see PreferencePage#performDefaults()
      */
     @Override
-	protected void performDefaults() {
+    protected void performDefaults() {
 
         mPreferenceStore.loadDefaults();
 
@@ -459,7 +459,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
      * @see DialogPage#dispose()
      */
     @Override
-	public void dispose() {
+    public void dispose() {
 
         if (mPreferenceStore != null) {
             mPreferenceStore.dispose();

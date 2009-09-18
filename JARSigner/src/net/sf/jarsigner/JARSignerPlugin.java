@@ -24,48 +24,48 @@ import org.osgi.framework.BundleContext;
  */
 public class JARSignerPlugin extends AbstractUIPlugin {
 
-	//The shared instance.
-	private static JARSignerPlugin cPlugin;
+    //The shared instance.
+    private static JARSignerPlugin cPlugin;
     private ResourceBundle mResourceBundle;
 
-	/**
-	 * The constructor.
-	 */
-	public JARSignerPlugin()
+    /**
+     * The constructor.
+     */
+    public JARSignerPlugin()
     {
-		cPlugin = this;
+        cPlugin = this;
         try {
             mResourceBundle = ResourceBundle.getBundle("net.sf.jarsigner.JARSignerPluginResources"); //$NON-NLS-1$
         } catch (MissingResourceException x) {
             mResourceBundle = null;
         }
-	}
-
-	/**
-	 * This method is called upon plug-in activation
-	 */
-	@Override
-	public void start(BundleContext context) throws Exception
-    {
-		super.start(context);
-	}
-
-	/**
-	 * This method is called when the plug-in is stopped
-	 */
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-		cPlugin = null;
-	}
+    }
 
     /**
-	 * Returns the shared instance.
-	 */
-	public static JARSignerPlugin getDefault()
+     * This method is called upon plug-in activation
+     */
+    @Override
+    public void start(BundleContext context) throws Exception
     {
-		return cPlugin;
-	}
+        super.start(context);
+    }
+
+    /**
+     * This method is called when the plug-in is stopped
+     */
+    @Override
+    public void stop(BundleContext context) throws Exception {
+        super.stop(context);
+        cPlugin = null;
+    }
+
+    /**
+     * Returns the shared instance.
+     */
+    public static JARSignerPlugin getDefault()
+    {
+        return cPlugin;
+    }
 
     /**
      * Returns the string from the plugin's resource bundle,

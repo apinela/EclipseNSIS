@@ -102,7 +102,7 @@ public class INILine implements Cloneable, Serializable
     }
 
     @Override
-	public String toString()
+    public String toString()
     {
         return (mText != null?mText:"")+(mDelimiter != null?mDelimiter:""); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -139,7 +139,7 @@ public class INILine implements Cloneable, Serializable
                 INIProblem problem = new INIProblem(INIProblem.TYPE_WARNING,InstallOptionsPlugin.getResourceString("line.ignored.warning")); //$NON-NLS-1$
                 problem.setFixer(new INIProblemFixer(InstallOptionsPlugin.getResourceString("quick.fix.remove.line")) { //$NON-NLS-1$
                     @Override
-					protected INIProblemFix[] createFixes()
+                    protected INIProblemFix[] createFixes()
                     {
                         return new INIProblemFix[] {new INIProblemFix(INILine.this)};
                     }
@@ -187,7 +187,7 @@ public class INILine implements Cloneable, Serializable
     }
 
     @Override
-	public Object clone()
+    public Object clone()
     {
         try {
             INILine line = (INILine)super.clone();

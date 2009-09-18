@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
@@ -38,14 +38,14 @@ public class RadioParam extends GroupParam
     }
 
     @Override
-	protected void init(Node node)
+    protected void init(Node node)
     {
         super.init(node);
         mDefaultIndex = XMLUtil.getIntValue(node.getAttributes(), ATTR_DEFAULT);
     }
 
     @Override
-	protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
+    protected NSISParamEditor createParamEditor(NSISCommand command, INSISParamEditor parentEditor)
     {
         return new RadioParamEditor(command, parentEditor);
     }
@@ -60,7 +60,7 @@ public class RadioParam extends GroupParam
         }
 
         @Override
-		protected void appendParamText(StringBuffer buf, boolean preview)
+        protected void appendParamText(StringBuffer buf, boolean preview)
         {
             if (!Common.isEmptyCollection(mParamEditors))
             {
@@ -85,14 +85,14 @@ public class RadioParam extends GroupParam
         }
 
         @Override
-		public void clear()
+        public void clear()
         {
             selectDefault();
             super.clear();
         }
 
         @Override
-		protected void initParamEditor()
+        protected void initParamEditor()
         {
             super.initParamEditor();
             if (!Common.isEmptyCollection(mParamEditors))
@@ -125,13 +125,13 @@ public class RadioParam extends GroupParam
         }
 
         @Override
-		protected int getLayoutNumColumns()
+        protected int getLayoutNumColumns()
         {
             return 1 + super.getLayoutNumColumns();
         }
 
         @Override
-		protected void createChildParamControl(Composite parent, final INSISParamEditor editor)
+        protected void createChildParamControl(Composite parent, final INSISParamEditor editor)
         {
             final Button radioButton = new Button(parent, SWT.RADIO);
             radioButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
@@ -170,7 +170,7 @@ public class RadioParam extends GroupParam
             }
             radioButton.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     editor.setEnabled(radioButton.getSelection());
                 }
@@ -179,7 +179,7 @@ public class RadioParam extends GroupParam
         }
 
         @Override
-		protected void updateState(boolean state)
+        protected void updateState(boolean state)
         {
             super.updateState(state);
             if (!Common.isEmptyCollection(mParamEditors))
@@ -205,7 +205,7 @@ public class RadioParam extends GroupParam
         }
 
         @Override
-		public void saveSettings()
+        public void saveSettings()
         {
             super.saveSettings();
             if (!Common.isEmptyCollection(mParamEditors))
@@ -229,7 +229,7 @@ public class RadioParam extends GroupParam
         }
 
         @Override
-		protected String validateParam()
+        protected String validateParam()
         {
             if (!Common.isEmptyCollection(mParamEditors))
             {

@@ -30,7 +30,7 @@ public class INIFileReorderAction extends INIFileAction
     }
 
     @Override
-	protected boolean doRun(INIFile iniFile)
+    protected boolean doRun(INIFile iniFile)
     {
         final List<INILine> original = iniFile.getChildren();
         List<INILine> sorted = new ArrayList<INILine>(original);

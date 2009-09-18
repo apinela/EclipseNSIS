@@ -23,14 +23,14 @@ public abstract class RegexpParam extends StringParam
     }
 
     @Override
-	protected void init(Node node)
+    protected void init(Node node)
     {
         super.init(node);
         mPattern = Pattern.compile(getRegexp(),Pattern.CASE_INSENSITIVE);
     }
 
     @Override
-	protected final String validateText(String text)
+    protected final String validateText(String text)
     {
         if((isAllowBlank() && text.length() == 0) || mPattern.matcher(text).matches()) {
             return null;

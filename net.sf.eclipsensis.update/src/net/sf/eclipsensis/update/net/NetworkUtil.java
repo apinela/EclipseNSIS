@@ -2,7 +2,7 @@
  * Copyright (c) 2005-2009 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.update.net;
@@ -111,7 +111,7 @@ public class NetworkUtil
     {
         try
         {
-        	URL url2 = url;
+            URL url2 = url;
             monitor.beginTask(cConnectionFormat.format(new String[] { url2.getHost() }), 100);
             HttpURLConnection conn = null;
             int responseCode;
@@ -333,10 +333,10 @@ public class NetworkUtil
         }
         return ok;
     }
-    
+
     public static String[] getLatestVersion(HttpURLConnection conn) throws IOException
     {
-    	InputStream is = null;
+        InputStream is = null;
         String type = null;
         String version = ""; //$NON-NLS-1$
         try {
@@ -383,7 +383,7 @@ public class NetworkUtil
             String content = null;
             try
             {
-            	//if(NSISPreferences)
+                //if(NSISPreferences)
                 conn2 = makeConnection(new NestedProgressMonitor(monitor, taskName, parentTaskName, 25), NSISUpdateURLs
                         .getSelectDownloadURL(version), null);
                 content = getContent(conn2);
@@ -502,7 +502,7 @@ public class NetworkUtil
                 EclipseNSISUpdatePlugin.getDefault().getPreferenceStore().setValue(
                         PREFERENCE_DOWNLOAD_SITES_REFRESH_TIMESTAMP, cDownloadSitesRefreshTimestamp);
                 EclipseNSISUpdatePlugin.getDefault().getPreferenceStore().setValue(
-                		PREFERENCE_DOWNLOAD_SITES_VERSION, version);
+                        PREFERENCE_DOWNLOAD_SITES_VERSION, version);
             }
             catch (Exception e)
             {

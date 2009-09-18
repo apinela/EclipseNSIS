@@ -27,7 +27,7 @@ public abstract class AbstractNodeConverter<T> implements INodeConverter<T>
         mNameClassMap.put(name, clasz);
     }
 
-	public T fromNode(Node node)
+    public T fromNode(Node node)
     {
         Class<?> clasz = mNameClassMap.get(node.getNodeName());
         if(clasz != null) {

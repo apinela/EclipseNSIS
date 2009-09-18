@@ -49,7 +49,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
     }
 
     @Override
-	protected Control createControl(Composite parent)
+    protected Control createControl(Composite parent)
     {
         Composite composite = new Composite(parent,SWT.NONE);
         GridLayout layout = new GridLayout(1,false);
@@ -68,7 +68,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
     }
 
     @Override
-	public void enableControls(boolean state)
+    public void enableControls(boolean state)
     {
         if(mGroup != null) {
             enableComposite(mGroup,state);
@@ -132,7 +132,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         mSolidCompression.setVisible(NSISPreferences.INSTANCE.isSolidCompressionSupported());
         mCompressor.addSelectionListener(new SelectionAdapter(){
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 setSolidCompressionState();
             }
@@ -157,7 +157,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         mProcessPriority.setData(LABELS,new Object[] {mProcessPriority.getData(LABEL),l});
         mProcessPriority.addSelectionListener(new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 if (isProcessPrioritySupported()) {
                     if (isWarnProcessPriority()) {
@@ -225,22 +225,22 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         Composite composite = new Composite(parent,SWT.NONE);
         SelectionAdapter addAdapter = new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 addOrEditInstruction(parent.getShell(),""); //$NON-NLS-1$
             }
         };
         SelectionAdapter editAdapter = new SelectionAdapter() {
             @Override
-			public void widgetSelected(SelectionEvent e)
+            public void widgetSelected(SelectionEvent e)
             {
                 addOrEditInstruction(parent.getShell(),((String)((IStructuredSelection)mInstructions.getSelection()).getFirstElement()).trim());
             }
         };
         SelectionAdapter removeAdapter = new SelectionAdapter() {
             @Override
-			@SuppressWarnings("unchecked")
-			public void widgetSelected(SelectionEvent e)
+            @SuppressWarnings("unchecked")
+            public void widgetSelected(SelectionEvent e)
             {
                 Collection<String> collection = (Collection<String>)mInstructions.getInput();
                 IStructuredSelection selection = (IStructuredSelection)mInstructions.getSelection();
@@ -255,14 +255,14 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         TableViewerUpDownMover<List<String>,String> mover = new TableViewerUpDownMover<List<String>,String>() {
 
             @Override
-			@SuppressWarnings("unchecked")
-			protected List<String> getAllElements()
+            @SuppressWarnings("unchecked")
+            protected List<String> getAllElements()
             {
                 return (List<String>)((TableViewer)getViewer()).getInput();
             }
 
             @Override
-			protected void updateStructuredViewerInput(List<String> input, List<String> elements, List<String> move, boolean isDown)
+            protected void updateStructuredViewerInput(List<String> input, List<String> elements, List<String> move, boolean isDown)
             {
                 input.clear();
                 input.addAll(elements);
@@ -294,8 +294,8 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
     }
 
     @Override
-	@SuppressWarnings("unchecked")
-	protected boolean performApply(NSISSettings settings)
+    @SuppressWarnings("unchecked")
+    protected boolean performApply(NSISSettings settings)
     {
         if(getControl() != null) {
             settings.setHdrInfo(mHdrInfo.getSelection());
@@ -314,7 +314,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
     }
 
     @Override
-	public void reset()
+    public void reset()
     {
         mHdrInfo.setSelection(mSettings.getHdrInfo());
         mLicense.setSelection(mSettings.getLicense());
@@ -331,7 +331,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
     }
 
     @Override
-	public void setDefaults()
+    public void setDefaults()
     {
         mHdrInfo.setSelection(mSettings.getDefaultHdrInfo());
         mLicense.setSelection(mSettings.getDefaultLicense());
@@ -348,7 +348,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
     }
 
     @SuppressWarnings("unchecked")
-	private void addOrEditInstruction(Shell shell, String oldInstruction)
+    private void addOrEditInstruction(Shell shell, String oldInstruction)
     {
         NSISInstructionDialog dialog = new NSISInstructionDialog(shell,oldInstruction);
         if(dialog.open() == Window.OK) {

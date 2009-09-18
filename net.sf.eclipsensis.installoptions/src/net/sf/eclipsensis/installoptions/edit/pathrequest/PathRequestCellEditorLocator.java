@@ -26,7 +26,7 @@ public class PathRequestCellEditorLocator extends InstallOptionsCellEditorLocato
     }
 
     @Override
-	protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
+    protected Rectangle transformLocation(Rectangle editArea, Point preferredSize)
     {
         return new Rectangle(editArea.x + X_OFFSET, editArea.y+(editArea.height-preferredSize.y)/2,
                              editArea.width + W_OFFSET, preferredSize.y);

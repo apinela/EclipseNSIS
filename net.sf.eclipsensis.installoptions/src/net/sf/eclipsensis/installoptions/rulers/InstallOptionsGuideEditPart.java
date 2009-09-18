@@ -28,14 +28,14 @@ public class InstallOptionsGuideEditPart extends GuideEditPart
     }
 
     @Override
-	protected void createEditPolicies()
+    protected void createEditPolicies()
     {
         super.createEditPolicies();
         installEditPolicy(EditPolicy.PRIMARY_DRAG_ROLE, new InstallOptionsDragGuidePolicy());
     }
 
     @Override
-	public void updateLocationOfFigures(int position)
+    public void updateLocationOfFigures(int position)
     {
         Font f = FontUtility.getInstallOptionsFont();
         int position2 = (isHorizontal()?FigureUtility.pixelsToDialogUnitsY(position,f):FigureUtility.pixelsToDialogUnitsX(position,f));

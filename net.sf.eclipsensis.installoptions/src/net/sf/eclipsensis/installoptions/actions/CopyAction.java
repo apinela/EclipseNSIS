@@ -36,7 +36,7 @@ public class CopyAction extends SelectionAction
      * Initializes this action's text and images.
      */
     @Override
-	protected void init()
+    protected void init()
     {
         super.init();
         ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
@@ -69,7 +69,7 @@ public class CopyAction extends SelectionAction
     }
 
     @Override
-	protected boolean calculateEnabled() {
+    protected boolean calculateEnabled() {
         Command cmd = createCopyCommand(getSelectedObjects());
         if (cmd == null) {
             return false;
@@ -78,7 +78,7 @@ public class CopyAction extends SelectionAction
     }
 
     @Override
-	public void run() {
+    public void run() {
         createCopyCommand(getSelectedObjects()).execute();
     }
 }

@@ -42,13 +42,13 @@ public class InstallOptionsListbox extends InstallOptionsListItems
     }
 
     @Override
-	public String getType()
+    public String getType()
     {
         return InstallOptionsModel.TYPE_LISTBOX;
     }
 
     @Override
-	protected IPropertyDescriptor createPropertyDescriptor(String name)
+    protected IPropertyDescriptor createPropertyDescriptor(String name)
     {
         if(name.equals(InstallOptionsModel.PROPERTY_STATE)) {
             SelectListItemsPropertyDescriptor descriptor = new SelectListItemsPropertyDescriptor();
@@ -59,13 +59,13 @@ public class InstallOptionsListbox extends InstallOptionsListItems
     }
 
     @Override
-	protected IPropertySectionCreator createPropertySectionCreator()
+    protected IPropertySectionCreator createPropertySectionCreator()
     {
         return new ListboxPropertySectionCreator(this);
     }
 
     @Override
-	public void setFlags(List<String> flags)
+    public void setFlags(List<String> flags)
     {
         if(!flags.contains(InstallOptionsModel.FLAGS_MULTISELECT)&&
            !flags.contains(InstallOptionsModel.FLAGS_EXTENDEDSELECT)) {
@@ -88,7 +88,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
     }
 
     @Override
-	public void setListItems(List<String> listItems)
+    public void setListItems(List<String> listItems)
     {
         super.setListItems(listItems);
         String oldState = getState();
@@ -99,7 +99,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
     }
 
     @Override
-	public boolean isMultiSelect()
+    public boolean isMultiSelect()
     {
         return hasFlag(InstallOptionsModel.FLAGS_MULTISELECT) ||
                hasFlag(InstallOptionsModel.FLAGS_EXTENDEDSELECT);
@@ -122,7 +122,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         }
 
         @SuppressWarnings("unchecked")
-		public void propertyChange(PropertyChangeEvent evt)
+        public void propertyChange(PropertyChangeEvent evt)
         {
             if(evt.getPropertyName().equals(InstallOptionsModel.PROPERTY_LISTITEMS)) {
                 setListItems((List<String>)evt.getNewValue());
@@ -149,7 +149,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         }
 
         @Override
-		public CellEditor createPropertyEditor(Composite parent)
+        public CellEditor createPropertyEditor(Composite parent)
         {
             if(mEditor == null) {
                 mEditor = new SelectListItemsCellEditor(parent,getListItems(),
@@ -179,7 +179,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         }
 
         @Override
-		public void dispose()
+        public void dispose()
         {
             InstallOptionsListbox.this.removePropertyChangeListener(this);
             super.dispose();
@@ -203,7 +203,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         }
 
         @Override
-		protected Object openDialogBox(Control cellEditorWindow)
+        protected Object openDialogBox(Control cellEditorWindow)
         {
             Object oldValue = getValue();
             List<String> selected = Common.tokenizeToList((String)oldValue,IInstallOptionsConstants.LIST_SEPARATOR,false);
@@ -243,7 +243,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             mValidator = validator;
         }
         @Override
-		protected void configureShell(Shell newShell)
+        protected void configureShell(Shell newShell)
         {
             super.configureShell(newShell);
             newShell.setText(InstallOptionsPlugin.getFormattedString("select.listitems.dialog.name", new String[]{mType})); //$NON-NLS-1$
@@ -256,7 +256,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         }
 
         @Override
-		protected Control createDialogArea(Composite parent)
+        protected Control createDialogArea(Composite parent)
         {
             final Composite composite = (Composite)super.createDialogArea(parent);
             GridLayout layout = (GridLayout)composite.getLayout();
@@ -300,7 +300,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             });
             mViewer.getTable().addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetDefaultSelected(SelectionEvent e)
+                public void widgetDefaultSelected(SelectionEvent e)
                 {
                     okPressed();
                 }
@@ -318,7 +318,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             selectAll.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             selectAll.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     mViewer.setSelection(new StructuredSelection(mValues));
                     mViewer.getTable().setFocus();
@@ -331,7 +331,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
             deselectAll.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
             deselectAll.addSelectionListener(new SelectionAdapter() {
                 @Override
-				public void widgetSelected(SelectionEvent e)
+                public void widgetSelected(SelectionEvent e)
                 {
                     mViewer.setSelection(StructuredSelection.EMPTY);
                     mViewer.getTable().setFocus();
@@ -344,7 +344,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         }
 
         @Override
-		public void create()
+        public void create()
         {
             super.create();
             // Set the initial selection here because of Windows bug which creates blank rows
@@ -353,7 +353,7 @@ public class InstallOptionsListbox extends InstallOptionsListItems
         }
 
         @Override
-		protected void okPressed()
+        protected void okPressed()
         {
             ICellEditorValidator validator = getValidator();
             if(validator != null) {
