@@ -114,7 +114,7 @@ public class NSISManualConfigWizardPage extends WizardPage
     public boolean performFinish()
     {
         final String nsisHome = mNSISHomeText.getText();
-        if(NSISValidator.validateNSISHome(nsisHome)) {
+        if(NSISValidator.findNSISExe(new File(nsisHome)) != null) {
             NSISPreferences.INSTANCE.setNSISHome(nsisHome);
             NSISPreferences.INSTANCE.store();
             return true;

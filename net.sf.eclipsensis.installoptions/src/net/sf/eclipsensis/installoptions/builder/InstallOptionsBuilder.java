@@ -67,7 +67,8 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
 
         String nsisVersion;
 
-        nsisVersion = InstallOptionsModel.INSTANCE.getNSISVersion().toString();
+        Version v = InstallOptionsModel.INSTANCE.getNSISVersion();
+        nsisVersion = v == null ? null : v.toString();
         try {
             mNSISVersion = getProject().getPersistentProperty(PROJECTPROPERTY_NSIS_VERSION);
         }
@@ -75,7 +76,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
             mNSISVersion = null;
         }
 
-        if(!nsisVersion.equals(mNSISVersion)) {
+        if(!Common.stringsAreEqual(nsisVersion, mNSISVersion)) {
             resetNSISVersion(nsisVersion);
         }
         else {
@@ -104,8 +105,9 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         final IModelListener modelListener = new IModelListener(){
             public void modelChanged()
             {
-                String nsisVersion = NSISPreferences.INSTANCE.getNSISVersion().toString();
-                if(!nsisVersion.equals(mNSISVersion)) {
+                Version v = NSISPreferences.INSTANCE.getNSISVersion();
+                String nsisVersion = v == null? null : v.toString();
+                if(!Common.stringsAreEqual(nsisVersion, mNSISVersion)) {
                     resetNSISVersion(nsisVersion);
                     buildProject(getProject(),FULL_BUILD,null);
                 }

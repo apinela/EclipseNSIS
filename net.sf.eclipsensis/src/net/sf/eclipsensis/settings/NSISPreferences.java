@@ -57,13 +57,11 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     public static final String NSIS_UNICODE_SUPPORT="NSIS_UNICODE"; //$NON-NLS-1$
 
     private IPreferenceStore mPreferenceStore = null;
-    private File mNSISExe = null;
+    private NSISExe mNSISExe = null;
     private String mNSISHome = null;
-    private Version mNSISVersion = null;
     private boolean mUseEclipseHelp = false;
     private int mAutoShowConsole = AUTO_SHOW_CONSOLE_DEFAULT;
     private int mBeforeCompileSave = BEFORE_COMPILE_SAVE_DEFAULT;
-    private Properties mNSISDefaultSymbols = null;
     private Collection<NSISTaskTag> mTaskTags = null;
     private Collection<NSISTaskTag> mDefaultTaskTags = null;
     private boolean mCaseSensitiveTaskTags = true;
@@ -402,23 +400,19 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     private void internalSetNSISHome(String nsisHome)
     {
         if(mNSISExe != null) {
-            FileMonitor.INSTANCE.unregister(mNSISExe,this);
+            FileMonitor.INSTANCE.unregister(mNSISExe.getFile(),this);
         }
-        mNSISExe = (nsisHome==null?null:NSISValidator.findNSISExe(new File(nsisHome)));
+        mNSISExe = (Common.isEmpty(nsisHome)?null:NSISValidator.findNSISExe(new File(nsisHome)));
         if(mNSISExe != null) {
             mNSISHome = nsisHome;
-            mNSISVersion = NSISValidator.getNSISVersion(mNSISExe);
-            mNSISDefaultSymbols = NSISValidator.loadNSISDefaultSymbols(mNSISExe);
-            mUnicode = mNSISDefaultSymbols.containsKey(NSIS_UNICODE_SUPPORT);
+            mUnicode = mNSISExe.getDefinedSymbols().containsKey(NSIS_UNICODE_SUPPORT);
             MakeNSISRunner.setUnicode(mUnicode);
-            FileMonitor.INSTANCE.register(mNSISExe,this);
-            mSolidCompressionSupported = (mNSISVersion.compareTo(INSISVersions.VERSION_2_07) >=0 && mNSISDefaultSymbols.containsKey(NSIS_CONFIG_COMPRESSION_SUPPORT));
-            mProcessPrioritySupported = mNSISVersion.compareTo(INSISVersions.VERSION_2_24) >=0;
+            FileMonitor.INSTANCE.register(mNSISExe.getFile(),this);
+            mSolidCompressionSupported = (mNSISExe.getVersion().compareTo(INSISVersions.VERSION_2_07) >=0 && mNSISExe.getDefinedSymbols().containsKey(NSIS_CONFIG_COMPRESSION_SUPPORT));
+            mProcessPrioritySupported = mNSISExe.getVersion().compareTo(INSISVersions.VERSION_2_24) >=0;
         }
         else {
             mNSISHome = ""; //$NON-NLS-1$
-            mNSISVersion = Version.EMPTY_VERSION;
-            mNSISDefaultSymbols = null;
             mSolidCompressionSupported = false;
             mProcessPrioritySupported = false;
         }
@@ -432,7 +426,8 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             dirty = true;
             NSISPreferencePage.removeNSISHome(nsisHome);
             if(NSISPreferencePage.NSIS_HOMES.size() > 0) {
-                internalSetNSISHome(NSISPreferencePage.NSIS_HOMES.get(0));
+                nsisHome = NSISPreferencePage.NSIS_HOMES.get(0);
+                internalSetNSISHome(nsisHome);
             }
             else {
                 break;
@@ -445,7 +440,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
 
     public void fileChanged(int type, File file)
     {
-        if(file.equals(mNSISExe)) {
+        if(file.equals(mNSISExe == null ? null : mNSISExe.getFile())) {
             final String message;
             switch(type) {
                 case FileMonitor.FILE_MODIFIED:
@@ -521,22 +516,22 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         }
     }
 
-    public String getNSISExe()
+    public String getNSISExePath()
     {
-        return (mNSISExe !=null?mNSISExe.getAbsolutePath():null);
+        return (mNSISExe !=null?mNSISExe.getFile().getAbsolutePath():null);
     }
 
-    public File getNSISExeFile()
+    public NSISExe getNSISExe()
     {
         return mNSISExe;
     }
 
     /**
-     * @return Returns the NSIS Options.
+     * @return Returns the NSIS Defined Symbols.
      */
-    public Properties getNSISDefaultSymbols()
+    public Properties getNSISDefinedSymbols()
     {
-        return mNSISDefaultSymbols;
+        return mNSISExe == null?null:mNSISExe.getDefinedSymbols();
     }
 
     /**
@@ -544,7 +539,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      */
     public Version getNSISVersion()
     {
-        return mNSISVersion;
+        return mNSISExe == null?Version.EMPTY_VERSION:mNSISExe.getVersion();
     }
 
     /**
@@ -670,9 +665,9 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         mPreferenceStore.setValue(name, IPreferenceStore.STRING_DEFAULT_DEFAULT);
     }
 
-    public String getNSISDefaultSymbol(String symbol)
+    public String getNSISDefinedSymbol(String symbol)
     {
-        return mNSISDefaultSymbols.getProperty(symbol);
+        return mNSISExe == null?null:mNSISExe.getDefinedSymbols().getProperty(symbol);
     }
 
     @Override

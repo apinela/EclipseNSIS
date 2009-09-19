@@ -88,7 +88,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         label.setBackground(background);
         label.setForeground(foreground);
         label.setFont(JFaceResources.getBannerFont());
-        if(NSISPreferences.INSTANCE.getNSISExe() != null) {
+        if(NSISPreferences.INSTANCE.getNSISExePath() != null) {
             StringBuffer buf = new StringBuffer(cAboutHeader).append(INSISConstants.LINE_SEPARATOR);
             buf.append(EclipseNSISPlugin.getFormattedString("about.header.format", //$NON-NLS-1$
                                                 new Object[]{EclipseNSISPlugin.getResourceString("makensis.display.name"),  //$NON-NLS-1$

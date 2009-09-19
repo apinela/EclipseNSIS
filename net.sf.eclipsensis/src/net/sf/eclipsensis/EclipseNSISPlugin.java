@@ -663,7 +663,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 
     public boolean isConfigured()
     {
-        return (NSISPreferences.INSTANCE.getNSISExe() != null);
+        return (NSISPreferences.INSTANCE.getNSISExePath() != null);
     }
 
     public void log(Throwable t)

@@ -40,7 +40,7 @@ class NSISLaunchProcess implements IProcess, IMakeNSISRunListener, IWorkbenchAda
         mLaunch = launch;
         MakeNSISRunner.addListener(this);
         fireCreationEvent();
-        mLabel = MessageFormat.format("{0} ({1})",new Object[]{NSISPreferences.INSTANCE.getNSISExe(), //$NON-NLS-1$
+        mLabel = MessageFormat.format("{0} ({1})",new Object[]{NSISPreferences.INSTANCE.getNSISExePath(), //$NON-NLS-1$
                                             cDateFormat.format(new Date(System.currentTimeMillis()))}).trim();
     }
 

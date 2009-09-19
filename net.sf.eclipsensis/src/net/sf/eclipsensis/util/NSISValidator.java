@@ -23,6 +23,7 @@ public class NSISValidator implements INSISConstants
     private static final Pattern cCVSVersionPattern = Pattern.compile("v?([0-3][0-9]-[a-zA-Z]{3}-20[0-9]{2})\\.cvs"); //$NON-NLS-1$
     private static final SimpleDateFormat cCVSDateFormat;
     private static final SimpleDateFormat cCVSEnglishDateFormat;
+    public static final String NSIS_VERSION="NSIS_VERSION"; //$NON-NLS-1$
     public static final String DEFINED_SYMBOLS_PREFIX = "Defined symbols: "; //$NON-NLS-1$
     private static Map<Version, Date> cVersionDateMap;
 
@@ -81,27 +82,31 @@ public class NSISValidator implements INSISConstants
         }
     }
 
-    public static File findNSISExe(File nsisHome)
+    public static NSISExe findNSISExe(File nsisHome)
     {
         if(IOUtility.isValidDirectory(nsisHome)) {
             File file = new File(nsisHome,MAKENSIS_EXE);
             if(IOUtility.isValidFile(file)) {
-                Version version = getNSISVersion(file);
-                if(version.compareTo(INSISVersions.MINIMUM_VERSION) >= 0) {
-                    return file;
+                String exeName = file.getAbsoluteFile().getAbsolutePath();
+                String[] output = MakeNSISRunner.runProcessWithOutput(exeName,
+                                                                      new String[]{MakeNSISRunner.MAKENSIS_HDRINFO_OPTION},
+                                                                      file.getParentFile(), 1);
+
+                Properties definedSymbols = loadNSISDefinedSymbols(output);
+                Version version = getNSISVersion(definedSymbols);
+
+                if(version.compareTo(INSISVersions.MINIMUM_VERSION) >= 0)
+                {
+                    return new NSISExe(file, version, definedSymbols);
                 }
             }
         }
         return null;
     }
 
-    public static Properties loadNSISDefaultSymbols(File nsisEXE)
+    private static Properties loadNSISDefinedSymbols(String[] output)
     {
         Properties props = new Properties();
-        String exeName = nsisEXE.getAbsoluteFile().getAbsolutePath();
-        String[] output = MakeNSISRunner.runProcessWithOutput(exeName,
-                                                              new String[]{MakeNSISRunner.MAKENSIS_HDRINFO_OPTION},
-                                                              nsisEXE.getParentFile(),1);
         if(!Common.isEmptyArray(output)) {
             for (int i = 0; i < output.length; i++) {
                 if(output[i].startsWith(DEFINED_SYMBOLS_PREFIX)) {
@@ -113,7 +118,7 @@ public class NSISValidator implements INSISConstants
                             props.put(token.substring(0,n).trim(),token.substring(n+1).trim());
                         }
                         else {
-                            props.setProperty(token,""); //$NON-NLS-1$
+                            props.setProperty(token,Boolean.TRUE.toString()); //$NON-NLS-1$
                         }
                     }
                 }
@@ -122,63 +127,66 @@ public class NSISValidator implements INSISConstants
         return props;
     }
 
-    public static boolean validateNSISHome(String nsisHome)
-    {
-        if(!Common.isEmpty(nsisHome)) {
-            return (findNSISExe(new File(nsisHome)) != null);
-        }
-        return false;
-    }
-
-    public static Version getNSISVersion(File exeFile)
+    private static Version getNSISVersion(Properties definedSymbols)
     {
         Version version = null;
-        String exeName = exeFile.getAbsoluteFile().getAbsolutePath();
-        String[] output = MakeNSISRunner.runProcessWithOutput(exeName,
-                                                              new String[]{MakeNSISRunner.MAKENSIS_VERSION_OPTION},
-                                                              exeFile.getParentFile());
-        if(!Common.isEmptyArray(output)) {
-            for (int i = 0; i < output.length; i++) {
-                Matcher matcher = cVersionPattern.matcher(output[i]);
-                if(matcher.matches()) {
+        if(definedSymbols != null)
+        {
+            String ver = definedSymbols.getProperty(NSIS_VERSION);
+            if (ver != null)
+            {
+                Matcher matcher = cVersionPattern.matcher(ver);
+                if (matcher.matches())
+                {
                     version = new Version(matcher.group(1));
-                    break;
                 }
-                else {
-                    matcher = cCVSVersionPattern.matcher(output[i]);
-                    if(matcher.matches()) {
+                else
+                {
+                    matcher = cCVSVersionPattern.matcher(ver);
+                    if (matcher.matches())
+                    {
                         Date cvsDate;
-                        try {
+                        try
+                        {
                             cvsDate = cCVSDateFormat.parse(matcher.group(1));
                         }
-                        catch (ParseException e) {
-                            if(cCVSEnglishDateFormat != null) {
-                                try {
+                        catch (ParseException e)
+                        {
+                            if (cCVSEnglishDateFormat != null)
+                            {
+                                try
+                                {
                                     cvsDate = cCVSEnglishDateFormat.parse(matcher.group(1));
                                 }
-                                catch (ParseException e1) {
+                                catch (ParseException e1)
+                                {
                                     EclipseNSISPlugin.getDefault().log(e1);
                                     cvsDate = new Date(0);
                                 }
                             }
-                            else {
+                            else
+                            {
                                 EclipseNSISPlugin.getDefault().log(e);
                                 cvsDate = new Date(0);
                             }
                         }
 
-                        for(Iterator<Version> iter=cVersionDateMap.keySet().iterator(); iter.hasNext(); ) {
+                        for (Iterator<Version> iter = cVersionDateMap.keySet().iterator(); iter.hasNext();)
+                        {
                             Version v = iter.next();
                             Date d = cVersionDateMap.get(v);
-                            if(cvsDate.compareTo(d) >= 0) {
+                            if (cvsDate.compareTo(d) >= 0)
+                            {
                                 version = v;
                             }
-                            else {
+                            else
+                            {
                                 break;
                             }
                         }
-                        if(version != null) {
-                            version = new Version(version, output[i].substring(1));
+                        if (version != null)
+                        {
+                            version = new Version(version, ver.substring(1));
                         }
                     }
                 }

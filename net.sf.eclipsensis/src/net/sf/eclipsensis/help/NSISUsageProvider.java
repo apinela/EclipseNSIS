@@ -83,9 +83,9 @@ public class NSISUsageProvider implements IEclipseNSISService
                 monitor.subTask(EclipseNSISPlugin.getResourceString("loading.cmdhelp.message")); //$NON-NLS-1$
             }
             mUsages.clear();
-            File exeFile = NSISPreferences.INSTANCE.getNSISExeFile();
-            if(exeFile != null && exeFile.exists()) {
-                long exeTimeStamp = exeFile.lastModified();
+            NSISExe exe = NSISPreferences.INSTANCE.getNSISExe();
+            if(exe != null && exe.getFile() != null && exe.getFile().exists()) {
+                long exeTimeStamp = exe.getFile().lastModified();
 
                 File stateLocation = EclipseNSISPlugin.getPluginStateLocation();
                 File cacheFile = new File(stateLocation,NSISUsageProvider.class.getName()+".Usages.ser"); //$NON-NLS-1$
@@ -95,7 +95,7 @@ public class NSISUsageProvider implements IEclipseNSISService
                 }
 
                 if(exeTimeStamp != cacheTimeStamp) {
-                    String[] output = MakeNSISRunner.runProcessWithOutput(exeFile.getAbsolutePath(),new String[]{
+                    String[] output = MakeNSISRunner.runProcessWithOutput(exe.getFile().getAbsolutePath(),new String[]{
                                                                           MakeNSISRunner.MAKENSIS_VERBOSITY_OPTION+"1", //$NON-NLS-1$
                                                                           MakeNSISRunner.MAKENSIS_CMDHELP_OPTION},
                                                                           null,1);

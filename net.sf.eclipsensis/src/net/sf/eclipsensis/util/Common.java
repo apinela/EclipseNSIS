@@ -906,12 +906,18 @@ public class Common
 
     public static String escapeQuotes(String text)
     {
+        return escapeQuotes(text, "\"'`", "$\\");
+    }
+
+    public static String escapeQuotes(String text, String quoteChars, String escape)
+    {
         if(!isEmpty(text)) {
             StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
             char[] chars = text.toCharArray();
             for (int i = 0; i < chars.length; i++) {
-                if(chars[i] == '"' || chars[i] == '\'' || chars[i] == '`') {
-                    buf.append("$\\"); //$NON-NLS-1$
+                if(quoteChars.indexOf(chars[i]) != -1)
+                {
+                    buf.append(escape);
                 }
                 buf.append(chars[i]);
             }

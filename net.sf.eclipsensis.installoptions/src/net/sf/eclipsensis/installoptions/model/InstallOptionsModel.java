@@ -284,7 +284,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
         }
 
         try {
-            mMaxLength = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefaultSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+            mMaxLength = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
         catch(Exception ex){
             mMaxLength = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;

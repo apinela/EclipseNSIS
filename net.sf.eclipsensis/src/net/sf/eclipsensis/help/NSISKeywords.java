@@ -365,7 +365,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
             set = new CaseInsensitiveSet();
             if(!Common.isEmpty(NSISPreferences.INSTANCE.getNSISHome())) {
-                Set<Object> keySet = NSISPreferences.INSTANCE.getNSISDefaultSymbols().keySet();
+                Set<Object> keySet = NSISPreferences.INSTANCE.getNSISDefinedSymbols().keySet();
                 StringBuffer buf = new StringBuffer("${"); //$NON-NLS-1$
                 for (Iterator<Object> iter = keySet.iterator(); iter.hasNext();) {
                     set.add(buf.append(String.valueOf(iter.next())).append("}").toString()); //$NON-NLS-1$

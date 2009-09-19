@@ -45,7 +45,7 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
         mWriteRegBin = NSISKeywords.getInstance().getKeyword("WriteRegBin"); //$NON-NLS-1$
         mBuffer = new StringBuffer(""); //$NON-NLS-1$
         try {
-            mTextLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefaultSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+            mTextLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
         catch(Exception e){
             mTextLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;

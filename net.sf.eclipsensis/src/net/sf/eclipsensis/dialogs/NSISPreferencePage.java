@@ -156,8 +156,7 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
 
     private class PreferencesEditor extends NSISSettingsEditor
     {
-        private File mNSISExe = null;
-        private Version mNSISVersion = Version.EMPTY_VERSION;
+        private NSISExe mNSISExe = null;
 
         @Override
         public boolean isValid()
@@ -174,8 +173,7 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
         @Override
         protected NSISSettings loadSettings()
         {
-            mNSISVersion = NSISPreferences.INSTANCE.getNSISVersion();
-            mNSISExe = NSISPreferences.INSTANCE.getNSISExeFile();
+            mNSISExe = NSISPreferences.INSTANCE.getNSISExe();
             return NSISPreferences.INSTANCE;
         }
 
@@ -197,25 +195,26 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
 
             protected boolean isSolidCompressionSupported()
             {
-                if(mNSISVersion.compareTo(INSISVersions.VERSION_2_07) >= 0) {
-                    if(IOUtility.isValidFile(mNSISExe)) {
-                        long[] data = cSolidCompressionMap.get(mNSISExe);
+                if(mNSISExe != null && mNSISExe.getVersion().compareTo(INSISVersions.VERSION_2_07) >= 0) {
+                    File exeFile = mNSISExe.getFile();
+                    if(IOUtility.isValidFile(exeFile)) {
+                        long[] data = cSolidCompressionMap.get(exeFile);
                         if(data != null) {
-                            if(data[0] == mNSISExe.lastModified() && data[1] == mNSISExe.length()) {
+                            if(data[0] == exeFile.lastModified() && data[1] == exeFile.length()) {
                                 return (data[2] == 1);
                             }
                         }
                         else {
                             data = new long[3];
                         }
-                        data[0] = mNSISExe.lastModified();
-                        data[1] = mNSISExe.length();
+                        data[0] = exeFile.lastModified();
+                        data[1] = exeFile.length();
                         data[2] = 0;
-                        Properties options = NSISValidator.loadNSISDefaultSymbols(mNSISExe);
-                        if(options.containsKey(NSISPreferences.NSIS_CONFIG_COMPRESSION_SUPPORT)) {
+                        Properties definedSymbols = mNSISExe.getDefinedSymbols();
+                        if(definedSymbols.containsKey(NSISPreferences.NSIS_CONFIG_COMPRESSION_SUPPORT)) {
                             data[2] = 1;
                         }
-                        cSolidCompressionMap.put(mNSISExe,data);
+                        cSolidCompressionMap.put(exeFile,data);
                         return (data[2] == 1);
                     }
                 }
@@ -225,20 +224,21 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
             @Override
             protected boolean isProcessPrioritySupported()
             {
-                if(mNSISVersion.compareTo(INSISVersions.VERSION_2_24) >= 0) {
-                    if(IOUtility.isValidFile(mNSISExe)) {
-                        long[] data = cProcessPriorityMap.get(mNSISExe);
+                if(mNSISExe != null && mNSISExe.getVersion().compareTo(INSISVersions.VERSION_2_24) >= 0) {
+                    File exeFile = mNSISExe.getFile();
+                    if(IOUtility.isValidFile(exeFile)) {
+                        long[] data = cProcessPriorityMap.get(exeFile);
                         if(data != null) {
-                            if(data[0] == mNSISExe.lastModified() && data[1] == mNSISExe.length()) {
+                            if(data[0] == exeFile.lastModified() && data[1] == exeFile.length()) {
                                 return true;
                             }
                         }
                         else {
                             data = new long[2];
                         }
-                        data[0] = mNSISExe.lastModified();
-                        data[1] = mNSISExe.length();
-                        cProcessPriorityMap.put(mNSISExe,data);
+                        data[0] = exeFile.lastModified();
+                        data[1] = exeFile.length();
+                        cProcessPriorityMap.put(exeFile,data);
                         return true;
                     }
                 }
@@ -257,7 +257,8 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
                                 nsisHome = nsisHome.substring(0,nsisHome.length()-1);
                                     mNSISHome.getCombo().setText(nsisHome);
                             }
-                            if (!NSISValidator.validateNSISHome(nsisHome)) {
+                            NSISExe nsisExe = NSISValidator.findNSISExe(new File(nsisHome));
+                            if (nsisExe == null) {
                                 if(eraseInvalid) {
                                     Common.openError(getShell(),
                                                      EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
@@ -265,15 +266,13 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
                                     mNSISHome.getCombo().forceFocus();
                                     mNSISHomeDirty = false;
                                 }
-                                mNSISVersion = Version.EMPTY_VERSION;
                                 mNSISExe = null;
                                 mSolidCompression.setVisible(false);
                                 setProcessPriorityVisible(false);
                             }
                             else {
                                 state = true;
-                                mNSISExe = new File(nsisHome, MAKENSIS_EXE);
-                                mNSISVersion = NSISValidator.getNSISVersion(mNSISExe);
+                                mNSISExe = nsisExe;
                                 mSolidCompression.setVisible(isSolidCompressionSupported());
                                 setProcessPriorityVisible(isProcessPrioritySupported());
                                 mNSISHomeDirty = false;
@@ -526,7 +525,7 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
                         dialog.setFilterPath(text);
                         String nsisHome = dialog.open();
                         if (!Common.isEmpty(nsisHome) && !Common.stringsAreEqual(nsisHome, text)) {
-                            if(NSISValidator.validateNSISHome(nsisHome)) {
+                            if(NSISValidator.findNSISExe(new File(nsisHome)) != null) {
                                 mNSISHome.getCombo().setText(nsisHome);
                                 mNSISHomeDirty = true;
                                 handleNSISHomeChange(false);

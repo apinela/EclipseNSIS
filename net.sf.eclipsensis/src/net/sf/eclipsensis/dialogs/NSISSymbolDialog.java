@@ -12,6 +12,7 @@ package net.sf.eclipsensis.dialogs;
 import java.util.Collection;
 
 import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -94,7 +95,14 @@ public class NSISSymbolDialog extends StatusMessageDialog
 
         mValueText = createText(composite, EclipseNSISPlugin.getResourceString("symbols.value.text"), //$NON-NLS-1$
                                EclipseNSISPlugin.getResourceString("symbols.value.tooltip"),mValue); //$NON-NLS-1$
-        mValueText.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
+        int textLimit;
+        try {
+            textLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+        }
+        catch(Exception ex){
+            textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
+        }
+        mValueText.setTextLimit(textLimit);
         Dialog.applyDialogFont(composite);
         return composite;
     }

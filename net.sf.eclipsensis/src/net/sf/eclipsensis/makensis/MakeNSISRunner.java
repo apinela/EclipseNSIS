@@ -287,7 +287,7 @@ public class MakeNSISRunner implements INSISConstants
     public static synchronized MakeNSISResults compile(final IPath script, NSISSettings settings, INSISConsole console, INSISConsoleLineProcessor outputProcessor, boolean notifyHwnd)
     {
         MakeNSISResults results = null;
-        if (NSISPreferences.INSTANCE.getNSISExe() != null && script != null) {
+        if (NSISPreferences.INSTANCE.getNSISExePath() != null && script != null) {
             IFile ifile = null;
             try {
                 try {
@@ -591,14 +591,14 @@ public class MakeNSISRunner implements INSISConstants
     {
         long n = System.currentTimeMillis();
         MakeNSISResults results = new MakeNSISResults(new File(cmdArray[cmdArray.length-1]));
-        String commandLine = new StringBuffer(NSISPreferences.INSTANCE.getNSISExe()).append(" ").append( //$NON-NLS-1$
+        String commandLine = new StringBuffer(NSISPreferences.INSTANCE.getNSISExePath()).append(" ").append( //$NON-NLS-1$
                 Common.flatten(cmdArray,' ')).toString();
         if(EclipseNSISPlugin.getDefault().isDebugging()) {
             EclipseNSISPlugin.getDefault().log(new StringBuffer("Command Line:").append(LINE_SEPARATOR).append(commandLine).toString()); //$NON-NLS-1$
         }
         try {
             notifyListeners(MakeNSISRunEvent.CREATED_PROCESS, script, commandLine);
-            MakeNSISProcess proc = createProcess(NSISPreferences.INSTANCE.getNSISExe(), cmdArray, env, workDir);
+            MakeNSISProcess proc = createProcess(NSISPreferences.INSTANCE.getNSISExePath(), cmdArray, env, workDir);
             setCompileProcess(script, proc);
             Process process = proc.getProcess();
             InputStream inputStream = process.getInputStream();
@@ -816,6 +816,16 @@ public class MakeNSISRunner implements INSISConstants
     private static MakeNSISProcess createProcess(String makeNSISExe, String[] cmdArray, String[] env, File workDir) throws IOException
     {
         MakeNSISProcess proc;
+        if(!Common.isEmptyArray(cmdArray))
+        {
+            String[] newCmdArray = new String[cmdArray.length];
+            for (int i = 0; i < cmdArray.length; i++)
+            {
+                newCmdArray[i] = Common.escapeQuotes(cmdArray[i],"\\","\\");
+                newCmdArray[i] = Common.escapeQuotes(newCmdArray[i],"\"","\\");
+            }
+            cmdArray = newCmdArray;
+        }
         if(EclipseNSISPlugin.getDefault().isWinNT()) {
             String[] newCmdArray = new String[1+ (Common.isEmptyArray(cmdArray)?0:cmdArray.length)];
             newCmdArray[0] = makeNSISExe;

@@ -11,6 +11,7 @@ package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
+import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.swt.SWT;
@@ -68,7 +69,14 @@ public class NSISInstructionDialog extends StatusMessageDialog
         mInstructionCombo = createCombo(composite, EclipseNSISPlugin.getResourceString("instructions.instruction.text"), //$NON-NLS-1$
                                         EclipseNSISPlugin.getResourceString("instructions.instruction.tooltip"), //$NON-NLS-1$
                                         instruction);
-        mInstructionCombo.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
+        int textLimit;
+        try {
+            textLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+        }
+        catch(Exception ex){
+            textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
+        }
+        mInstructionCombo.setTextLimit(textLimit);
         mInstructionCombo.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {

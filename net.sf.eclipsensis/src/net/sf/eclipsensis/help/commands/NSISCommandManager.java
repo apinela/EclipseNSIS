@@ -124,49 +124,65 @@ public class NSISCommandManager
     public static NSISCommand getCommand(String name)
     {
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
-        Set<String> removeSet = new HashSet<String>();
-        for (ListIterator<Version> iter = cVersionList.listIterator(cVersionList.size()); iter.hasPrevious();) {
-            Version v = iter.previous();
-            if(version.compareTo(v) >= 0) {
-                Set<String> removeCommandSet = cRemoveCommandsMap.get(v);
-                if(removeCommandSet != null) {
-                    removeSet.addAll(removeCommandSet);
-                }
+        if (version != null)
+        {
+            Set<String> removeSet = new HashSet<String>();
+            for (ListIterator<Version> iter = cVersionList.listIterator(cVersionList.size()); iter.hasPrevious();)
+            {
+                Version v = iter.previous();
+                if (version.compareTo(v) >= 0)
+                {
+                    Set<String> removeCommandSet = cRemoveCommandsMap.get(v);
+                    if (removeCommandSet != null)
+                    {
+                        removeSet.addAll(removeCommandSet);
+                    }
 
-                Map<String, NSISCommand> addCommandsMap = cAddCommandsMap.get(v);
-                if(addCommandsMap != null) {
-                    NSISCommand command = addCommandsMap.get(name);
-                    if(command != null && !removeSet.contains(command.getName())) {
-                        return command;
+                    Map<String, NSISCommand> addCommandsMap = cAddCommandsMap.get(v);
+                    if (addCommandsMap != null)
+                    {
+                        NSISCommand command = addCommandsMap.get(name);
+                        if (command != null && !removeSet.contains(command.getName()))
+                        {
+                            return command;
+                        }
                     }
                 }
-            }
-            else {
-                continue;
+                else
+                {
+                    continue;
+                }
             }
         }
-
         return null;
     }
 
     public static NSISCommand[] getCommands()
     {
-        Version version = NSISPreferences.INSTANCE.getNSISVersion();
         Map<String, NSISCommand> map = new HashMap<String, NSISCommand>();
-        for (Iterator<Version> iter = cVersionList.iterator(); iter.hasNext();) {
-            Version v = iter.next();
-            if(version.compareTo(v) >= 0) {
-                Map<String, NSISCommand> commandsMap = cAddCommandsMap.get(v);
-                if(commandsMap != null) {
-                    map.putAll(commandsMap);
+        Version version = NSISPreferences.INSTANCE.getNSISVersion();
+        if (version != null)
+        {
+            for (Iterator<Version> iter = cVersionList.iterator(); iter.hasNext();)
+            {
+                Version v = iter.next();
+                if (version.compareTo(v) >= 0)
+                {
+                    Map<String, NSISCommand> commandsMap = cAddCommandsMap.get(v);
+                    if (commandsMap != null)
+                    {
+                        map.putAll(commandsMap);
+                    }
+                    Set<String> commandsSet = cRemoveCommandsMap.get(v);
+                    if (commandsSet != null)
+                    {
+                        map.keySet().removeAll(commandsSet);
+                    }
                 }
-                Set<String> commandsSet = cRemoveCommandsMap.get(v);
-                if(commandsSet != null) {
-                    map.keySet().removeAll(commandsSet);
+                else
+                {
+                    break;
                 }
-            }
-            else {
-                break;
             }
         }
         return map.values().toArray(new NSISCommand[map.size()]);
