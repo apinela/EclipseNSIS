@@ -304,7 +304,7 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
             }
         };
         settings.addPropertyChangeListener(propertyListener);
-        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
+        final INSISWizardSettingsListener listener = new INSISWizardSettingsListener() {
             public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
                 if(oldSettings != null) {
@@ -314,7 +314,16 @@ public class NSISWizardCompletionPage extends AbstractNSISWizardPage
                 runParams.setText(newSettings.getRunProgramAfterInstallParams());
                 openReadme.setText(newSettings.getOpenReadmeAfterInstall());
                 newSettings.addPropertyChangeListener(propertyListener);
-            }});
+            }
+        };
+        mWizard.addSettingsListener(listener);
+        postInstGroup.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                mWizard.removeSettingsListener(listener);
+                mWizard.getSettings().removePropertyChangeListener(propertyListener);
+            }
+        });
     }
 
     /**

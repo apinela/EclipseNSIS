@@ -835,8 +835,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 selectLang.setSelection(newSettings.isSelectLanguage());
                 if (displaySupported != null)
                 {
-                    displaySupported
-                            .setEnabled(mse.canEnable(displaySupported));
+                    displaySupported.setSelection(newSettings.isDisplaySupportedLanguages());
                 }
                 java.util.List<NSISLanguage> selectedLanguages = newSettings.getLanguages();
                 java.util.List<NSISLanguage> availableLanguages = NSISLanguageManager.getInstance().getLanguages();
@@ -901,9 +900,8 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         Runnable r = new Runnable() {
             private String mInstDirParent = ""; //$NON-NLS-1$
 
-            private void updateInstDir()
+            private void updateInstDir(NSISWizardSettings settings)
             {
-                NSISWizardSettings settings = mWizard.getSettings();
                 Control topControl;
                 if (isMultiUser())
                 {
@@ -941,7 +939,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                         if (NSISWizardSettings.INSTALLER_TYPE.equals(evt.getPropertyName())
                                 || NSISWizardSettings.MULTIUSER_INSTALLATION.equals(evt.getPropertyName()))
                         {
-                            updateInstDir();
+                            updateInstDir(mWizard.getSettings());
                         }
                         else if (NSISWizardSettings.INSTALL_DIR.equals(evt.getPropertyName()))
                         {
@@ -953,7 +951,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                     }
                 };
                 final INSISWizardSettingsListener settingsListener = new INSISWizardSettingsListener() {
-                    public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
+                    public void settingsChanged(NSISWizardSettings oldSettings, final NSISWizardSettings newSettings)
                     {
                         if (oldSettings != null)
                         {
@@ -964,7 +962,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                         {
                             newSettings.addPropertyChangeListener(propertyListener);
                         }
-                        updateInstDir();
+                        updateInstDir(newSettings);
                     }
                 };
                 mWizard.addSettingsListener(settingsListener);
@@ -977,7 +975,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                     }
                 });
                 setInstDirParent(mWizard.getSettings());
-                updateInstDir();
+                updateInstDir(mWizard.getSettings());
             }
 
             private void setInstDirParent(NSISWizardSettings settings)
@@ -1055,7 +1053,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
             }
         };
         settings.addPropertyChangeListener(propertyListener);
-        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
+        final INSISWizardSettingsListener listener = new INSISWizardSettingsListener() {
             public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
             {
                 if (oldSettings != null)
@@ -1066,6 +1064,15 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
                 changeInstDir.setSelection(newSettings.isChangeInstallDir());
                 changeInstDir.setEnabled(newSettings.getInstallerType() != INSTALLER_TYPE_SILENT);
                 newSettings.addPropertyChangeListener(propertyListener);
+            }
+        };
+        mWizard.addSettingsListener(listener);
+
+        instDirGroup.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                mWizard.removeSettingsListener(listener);
+                mWizard.getSettings().removePropertyChangeListener(propertyListener);
             }
         });
     }

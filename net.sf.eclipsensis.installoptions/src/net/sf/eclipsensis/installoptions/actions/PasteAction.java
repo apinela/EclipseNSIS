@@ -102,8 +102,11 @@ public class PasteAction extends WorkbenchPartAction implements PropertyChangeLi
                 InstallOptionsEditPart part = iter.next();
                 modelSelection.add((InstallOptionsWidget) part.getModel());
             }
-            command.setSelection(modelSelection);
-            execute(command);
+            if (!modelSelection.isEmpty())
+            {
+                command.setSelection(modelSelection);
+                execute(command);
+            }
         }
     }
 }

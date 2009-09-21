@@ -73,7 +73,13 @@ public abstract class AbstractTemplateManager<T extends ITemplate>
     protected final void loadTemplates()
     {
         mTemplates.clear();
-        Map<Object, T> map = new HashMap<Object, T>(mDefaultTemplatesMap);
+        Map<String, T> map = new HashMap<String, T>();
+        if(mDefaultTemplatesMap != null) {
+            for (Iterator<T> iter = mDefaultTemplatesMap.values().iterator(); iter.hasNext();) {
+                T template = iter.next();
+                map.put(template.getName(),template);
+            }
+        }
 
         try {
             List<T> list = loadUserTemplateStore();
@@ -330,7 +336,7 @@ public abstract class AbstractTemplateManager<T extends ITemplate>
 
             if(System.getProperty("manage.default.templates") != null) { //$NON-NLS-1$
                 template.setType(ITemplate.TYPE_DEFAULT);
-                map.put(template.getName(),template);
+                map.put(template.getId(),template);
             }
             else {
                 if(template.getType() != ITemplate.TYPE_DEFAULT) {
@@ -339,17 +345,20 @@ public abstract class AbstractTemplateManager<T extends ITemplate>
             }
         }
         if(System.getProperty("manage.default.templates") != null) { //$NON-NLS-1$
-            try {
-                mDefaultTemplatesMap.clear();
-                mDefaultTemplatesMap.putAll(map);
-                mTemplates.clear();
-                URI uri = new URI(FileLocator.toFileURL(mDefaultTemplatesStore).toExternalForm());
-                File file = new File(uri);
-                IOUtility.writeObject(file, new HashMap<Object, T>(mDefaultTemplatesMap));
+            mDefaultTemplatesMap.clear();
+            mDefaultTemplatesMap.putAll(map);
+            mTemplates.clear();
+            URL fileURL = FileLocator.toFileURL(mDefaultTemplatesStore);
+            File file;
+            try
+            {
+                file = new File(fileURL.toURI());
             }
-            catch (URISyntaxException e) {
-                throw new IOException(e.getMessage());
+            catch(URISyntaxException e)
+            {
+                file = new File(fileURL.getPath());
             }
+            IOUtility.writeObject(file, new HashMap<Object, T>(mDefaultTemplatesMap));
         }
         else {
             IOUtility.writeObject(mUserTemplatesStore, new ArrayList<T>(map.values()));

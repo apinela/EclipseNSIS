@@ -191,11 +191,16 @@ public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInst
     protected List<IInstallOptionsTemplate> loadUserTemplateStore() throws IOException, ClassNotFoundException
     {
         List<IInstallOptionsTemplate> list = super.loadUserTemplateStore();
-        for (ListIterator<IInstallOptionsTemplate> iter = list.listIterator(); iter.hasNext();) {
-            IInstallOptionsTemplate template = iter.next();
-            if(template instanceof InstallOptionsTemplate) {
-                template = new InstallOptionsTemplate2(template);
-                iter.set(template);
+        if (list != null)
+        {
+            for (ListIterator<IInstallOptionsTemplate> iter = list.listIterator(); iter.hasNext();)
+            {
+                IInstallOptionsTemplate template = iter.next();
+                if (template instanceof InstallOptionsTemplate)
+                {
+                    template = new InstallOptionsTemplate2(template);
+                    iter.set(template);
+                }
             }
         }
         return list;

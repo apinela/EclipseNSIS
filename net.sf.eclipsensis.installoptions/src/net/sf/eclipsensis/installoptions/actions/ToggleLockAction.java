@@ -60,28 +60,36 @@ public class ToggleLockAction extends SelectionAction
         }
 
         ToggleLockCommand cmd = null;
-        Iterator<InstallOptionsWidgetEditPart> iter = Common.makeGenericList(InstallOptionsWidgetEditPart.class, objects).iterator();
-        InstallOptionsWidget part = (InstallOptionsWidget) iter.next().getModel();
-        if(part != null) {
-            List<InstallOptionsWidget> list = new ArrayList<InstallOptionsWidget>();
-            boolean shouldLock = !part.isLocked();
-            list.add(part);
-            while (iter.hasNext()) {
-                part = (InstallOptionsWidget) iter.next().getModel();
-                if(part != null) {
-                    if(shouldLock != part.isLocked()) {
-                        list.add(part);
-                        continue;
+        final List<InstallOptionsWidgetEditPart> editPartList = Common.makeGenericList(InstallOptionsWidgetEditPart.class, objects);
+        if (!editPartList.isEmpty())
+        {
+            Iterator<InstallOptionsWidgetEditPart> iter = editPartList.iterator();
+            InstallOptionsWidget part = (InstallOptionsWidget)iter.next().getModel();
+            if (part != null)
+            {
+                List<InstallOptionsWidget> list = new ArrayList<InstallOptionsWidget>();
+                boolean shouldLock = !part.isLocked();
+                list.add(part);
+                while (iter.hasNext())
+                {
+                    part = (InstallOptionsWidget)iter.next().getModel();
+                    if (part != null)
+                    {
+                        if (shouldLock != part.isLocked())
+                        {
+                            list.add(part);
+                            continue;
+                        }
                     }
+                    return null;
                 }
-                return null;
+                if (mShouldLock != shouldLock)
+                {
+                    mShouldLock = shouldLock;
+                    updateLabels();
+                }
+                cmd = new ToggleLockCommand(list.toArray(new InstallOptionsWidget[list.size()]), mShouldLock);
             }
-            if(mShouldLock != shouldLock) {
-                mShouldLock = shouldLock;
-                updateLabels();
-            }
-            cmd = new ToggleLockCommand(list.toArray(new InstallOptionsWidget[list.size()]),
-                    mShouldLock);
         }
         return cmd;
     }

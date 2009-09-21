@@ -451,8 +451,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             }
         };
         settings.addPropertyChangeListener(propertyListener);
-        mWizard.addSettingsListener(new INSISWizardSettingsListener() {
-            public void settingsChanged(NSISWizardSettings oldSettings, NSISWizardSettings newSettings)
+        final INSISWizardSettingsListener listener = new INSISWizardSettingsListener() {
+            public void settingsChanged(NSISWizardSettings oldSettings, final NSISWizardSettings newSettings)
             {
                 if(oldSettings != null) {
                     oldSettings.removePropertyChangeListener(propertyListener);
@@ -460,8 +460,17 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                 mContentsTreeViewer.setInput(newSettings);
                 mContentsTreeViewer.expandToLevel(newSettings.getInstaller(), AbstractTreeViewer.ALL_LEVELS);
                 newSettings.addPropertyChangeListener(propertyListener);
-            }}
-        );
+            }
+        };
+        mWizard.addSettingsListener(listener);
+
+        composite.addDisposeListener(new DisposeListener() {
+            public void widgetDisposed(DisposeEvent e)
+            {
+                mWizard.removeSettingsListener(listener);
+                mWizard.getSettings().removePropertyChangeListener(propertyListener);
+            }
+        });
 
         setPageComplete(validatePage(VALIDATE_ALL));
 

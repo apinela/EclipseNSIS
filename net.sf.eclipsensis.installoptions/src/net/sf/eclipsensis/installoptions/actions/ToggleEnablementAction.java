@@ -59,30 +59,38 @@ public class ToggleEnablementAction extends SelectionAction
 
         ToggleEnablementCommand cmd = null;
         List<InstallOptionsWidget> list = new ArrayList<InstallOptionsWidget>();
-        Iterator<InstallOptionsWidgetEditPart> iter = Common.makeGenericList(InstallOptionsWidgetEditPart.class, objects).iterator();
-        InstallOptionsWidget part = (InstallOptionsWidget) iter.next().getModel();
-        if(part != null) {
-            if(!getFlags(part).contains(InstallOptionsModel.FLAGS_DISABLED)) {
-                return null;
-            }
-            boolean shouldEnable = shouldEnable(part);
-            list.add(part);
-            while (iter.hasNext()) {
-                part = (InstallOptionsWidget) iter.next().getModel();
-                if(part != null) {
-                    if(getFlags(part).contains(InstallOptionsModel.FLAGS_DISABLED) &&
-                       shouldEnable == shouldEnable(part)) {
-                        list.add(part);
-                        continue;
-                    }
+        List<InstallOptionsWidgetEditPart> editPartList = Common.makeGenericList(InstallOptionsWidgetEditPart.class, objects);
+        if (!editPartList.isEmpty())
+        {
+            Iterator<InstallOptionsWidgetEditPart> iter = editPartList.iterator();
+            InstallOptionsWidget part = (InstallOptionsWidget)iter.next().getModel();
+            if (part != null)
+            {
+                if (!getFlags(part).contains(InstallOptionsModel.FLAGS_DISABLED))
+                {
+                    return null;
                 }
-                return null;
+                boolean shouldEnable = shouldEnable(part);
+                list.add(part);
+                while (iter.hasNext())
+                {
+                    part = (InstallOptionsWidget)iter.next().getModel();
+                    if (part != null)
+                    {
+                        if (getFlags(part).contains(InstallOptionsModel.FLAGS_DISABLED)
+                                && shouldEnable == shouldEnable(part))
+                        {
+                            list.add(part);
+                            continue;
+                        }
+                    }
+                    return null;
+                }
+                cmd = new ToggleEnablementCommand(list.toArray(new InstallOptionsWidget[list.size()]), shouldEnable);
+                String label = (shouldEnable ? "enable.action.name" : "disable.action.name"); //$NON-NLS-1$ //$NON-NLS-2$
+                setText(InstallOptionsPlugin.getResourceString(label));
+                setToolTipText(label);
             }
-            cmd = new ToggleEnablementCommand(list.toArray(new InstallOptionsWidget[list.size()]),
-                                               shouldEnable);
-            String label = (shouldEnable?"enable.action.name":"disable.action.name"); //$NON-NLS-1$ //$NON-NLS-2$
-            setText(InstallOptionsPlugin.getResourceString(label));
-            setToolTipText(label);
         }
         return cmd;
     }
