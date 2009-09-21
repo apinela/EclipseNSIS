@@ -691,7 +691,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
     private void updateAnnotations()
     {
-        mJobScheduler.cancelJobs(mJobFamily);
+        mJobScheduler.cancelJobs(mJobFamily, false);
         mJobScheduler.scheduleJob(mJobFamily, InstallOptionsPlugin.getResourceString("annotations.update.job.name"), //$NON-NLS-1$
                 new IJobStatusRunnable(){
                     public IStatus run(IProgressMonitor monitor)

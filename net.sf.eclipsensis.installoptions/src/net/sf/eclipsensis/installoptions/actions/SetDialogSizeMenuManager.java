@@ -9,21 +9,27 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.model.DialogSize;
+import net.sf.eclipsensis.installoptions.model.DialogSizeManager;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.IEditorPart;
 
-public class SetDialogSizeMenuManager extends MenuManager implements IPropertyChangeListener
+public class SetDialogSizeMenuManager extends MenuManager
 {
     private IEditorPart mEditor = null;
     private Map<DialogSize, SetDialogSizeAction> mActionMap = new LinkedHashMap<DialogSize, SetDialogSizeAction>();
-    private boolean mNeedsRebuild = true;
     private static final Action DUMMY_ACTION = new SetDialogSizeAction(null);
 
     public SetDialogSizeMenuManager(IMenuManager parent)
@@ -35,7 +41,6 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
     {
         super(InstallOptionsPlugin.getResourceString("set.dialog.size.menu.name"), id); //$NON-NLS-1$
         rebuild();
-        InstallOptionsPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
         parent.addMenuListener(new IMenuListener(){
             public void menuAboutToShow(IMenuManager manager)
             {
@@ -61,51 +66,30 @@ public class SetDialogSizeMenuManager extends MenuManager implements IPropertyCh
 
     public synchronized void rebuild()
     {
-        if(mNeedsRebuild) {
-            List<DialogSize> dialogSizes = DialogSizeManager.getDialogSizes();
-            mActionMap.keySet().retainAll(dialogSizes);
-            for (Iterator<DialogSize> iter = dialogSizes.iterator(); iter.hasNext();) {
-                DialogSize element = iter.next();
-                if(!mActionMap.containsKey(element)) {
-                    SetDialogSizeAction action = new SetDialogSizeAction(element);
-                    action.setEditor(mEditor);
-                    mActionMap.put(element,action);
-                }
+        List<DialogSize> dialogSizes = DialogSizeManager.getDialogSizes();
+        mActionMap.keySet().retainAll(dialogSizes);
+        for (Iterator<DialogSize> iter = dialogSizes.iterator(); iter.hasNext();) {
+            DialogSize element = iter.next();
+            if(!mActionMap.containsKey(element)) {
+                SetDialogSizeAction action = new SetDialogSizeAction(element);
+                action.setEditor(mEditor);
+                mActionMap.put(element,action);
             }
+        }
 
-            IContributionItem[] items = getItems();
-            for (int i = 0; i < items.length; i++) {
-                remove(items[i]);
-                items[i].dispose();
-            }
-            if(Common.isEmptyCollection(dialogSizes)) {
-                add(DUMMY_ACTION);
-            }
-            else {
-                for (Iterator<DialogSize> iter = dialogSizes.iterator(); iter.hasNext();) {
-                    add(mActionMap.get(iter.next()));
-                }
-            }
-            mNeedsRebuild = false;
+        IContributionItem[] items = getItems();
+        for (int i = 0; i < items.length; i++) {
+            remove(items[i]);
+            items[i].dispose();
+        }
+        if(Common.isEmptyCollection(dialogSizes)) {
+            add(DUMMY_ACTION);
         }
         else {
-            updateActions();
+            for (Iterator<DialogSize> iter = dialogSizes.iterator(); iter.hasNext();) {
+                add(mActionMap.get(iter.next()));
+            }
         }
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
-    public void propertyChange(PropertyChangeEvent event)
-    {
-        if(event.getProperty().startsWith(DialogSizeManager.PROPERTY_DIALOGSIZES_PREFIX)) {
-            mNeedsRebuild = true;
-        }
-    }
-
-    public boolean isNeedsRebuild()
-    {
-        return mNeedsRebuild;
     }
 
     @Override

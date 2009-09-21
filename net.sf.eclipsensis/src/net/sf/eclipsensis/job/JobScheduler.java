@@ -9,13 +9,19 @@
  *******************************************************************************/
 package net.sf.eclipsensis.job;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.progress.UIJob;
 
 public class JobScheduler
@@ -160,14 +166,24 @@ public class JobScheduler
 
     public void cancelJobs(Object family)
     {
+        cancelJobs(family, true);
+    }
+
+    public void cancelJobs(Object family, boolean wait)
+    {
         if(family != null && mRunning && mJobFamilies.contains(family)) {
             mJobFamilies.remove(family);
             Job.getJobManager().cancel(family);
-            try {
-                Job.getJobManager().join(family, new NullProgressMonitor());
-            }
-            catch (Exception e) {
-                EclipseNSISPlugin.getDefault().log(e);
+            if (wait)
+            {
+                try
+                {
+                    Job.getJobManager().join(family, new NullProgressMonitor());
+                }
+                catch (Exception e)
+                {
+                    EclipseNSISPlugin.getDefault().log(e);
+                }
             }
         }
     }
