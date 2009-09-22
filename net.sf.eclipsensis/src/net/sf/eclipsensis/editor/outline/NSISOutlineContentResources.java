@@ -29,7 +29,7 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
                                             "!else ifmacrondef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "SubSection", "SubSectionEnd", "SectionGroup", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                            "Page", "PageEx", "PageExEnd","!include","Var", "Name"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+                                            "Page", "PageEx", "PageExEnd","!include","Var", "Name","#label","#global label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
     private static final String[] cClosingTypes = {"!endif", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$
                                                     "FunctionEnd", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$
                                                     "SubSectionEnd", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$
@@ -50,17 +50,28 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
 
     private void load()
     {
+        mTypeList.clear();
         mTypes.clear();
         mTypeNames.clear();
         mImages.clear();
         for(int i=0; i<cTypes.length; i++) {
-            String typeName = NSISKeywords.getInstance().getKeyword(cTypes[i], false);
-            if(NSISKeywords.getInstance().isValidKeyword(typeName)) {
-                mTypes.put(typeName,cTypes[i]);
-                mTypeNames.put(cTypes[i], typeName);
-                mImages.put(cTypes[i],EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
-                                                                                cTypes[i].toLowerCase().replaceAll("!","").replaceAll(" ",".")).append(".icon").toString(),null))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+            String type = cTypes[i];
+            String typeName;
+            if(type.charAt(0) == '#') {
+                type = typeName = type.substring(1);
+                mTypeList.add(type);
             }
+            else {
+                mTypeList.add(type);
+                typeName = NSISKeywords.getInstance().getKeyword(type, false);
+                if(!NSISKeywords.getInstance().isValidKeyword(typeName)) {
+                    continue;
+                }
+            }
+            mTypes.put(typeName,type);
+            mTypeNames.put(type, typeName);
+            mImages.put(type,EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
+                    type.toLowerCase().replaceAll("!","").replaceAll(" ",".")).append(".icon").toString(),null))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
     }
 
@@ -75,7 +86,7 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
             try {
                 monitor.beginTask("", 1); //$NON-NLS-1$
                 monitor.subTask(EclipseNSISPlugin.getResourceString("loading.outline.message")); //$NON-NLS-1$
-                mTypeList = Arrays.asList(cTypes);
+                mTypeList = new ArrayList<String>();
                 mTypes = new CaseInsensitiveMap<String>();
                 mTypeNames = new HashMap<String, String>();
                 mImages = new HashMap<String, Image>();
@@ -171,6 +182,11 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
 
     public String getType(String typeName)
     {
+        if(typeName.endsWith(":"))
+        {
+            //label
+            return mTypes.get("label");
+        }
         return mTypes.get(typeName);
     }
 

@@ -9,8 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.outline;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 import net.sf.eclipsensis.util.Common;
 
@@ -20,14 +20,16 @@ import org.eclipse.swt.graphics.Image;
 /**
  * An outline element.
  */
-public class NSISOutlineElement
+public class NSISOutlineElement implements Serializable
 {
+    private static final long serialVersionUID = -7247998999735822359L;
+
     static final String ROOT = "ROOT"; //$NON-NLS-1$
 
     private String mType;
     private String mName;
-    private Position mSelectPosition;
-    private Position mPosition;
+    private transient Position mSelectPosition;
+    private transient Position mPosition;
     private List<NSISOutlineElement> mChildren = new ArrayList<NSISOutlineElement>();
     private NSISOutlineElement mParent = null;
 
@@ -41,6 +43,17 @@ public class NSISOutlineElement
         mType = type;
         mName = name;
         setPosition(position);
+    }
+
+    /**
+     * @param type
+     * @param name
+     * @param position
+     */
+    NSISOutlineElement(String type, String name, Position position, Position selectPosition)
+    {
+        this(type, name, position);
+        setSelectPosition(selectPosition);
     }
 
     void setName(String name)
@@ -174,9 +187,49 @@ public class NSISOutlineElement
         if(position != null) {
             int start = Math.min(mPosition.getOffset(),position.getOffset());
             int end = Math.max(mPosition.getOffset()+mPosition.getLength(),
-                               position.getOffset()+position.getLength());
+                    position.getOffset()+position.getLength());
             mPosition.setOffset(start);
             mPosition.setLength(end-start);
         }
+    }
+
+    private void writeObject(ObjectOutputStream stream) throws IOException
+    {
+        stream.defaultWriteObject();
+        writePosition(stream, mPosition);
+        writePosition(stream, mSelectPosition);
+    }
+
+    private void writePosition(ObjectOutputStream stream, Position position) throws IOException
+    {
+        if(position != null)
+        {
+            stream.writeInt(position.offset);
+            stream.writeInt(position.length);
+            stream.writeBoolean(position.isDeleted);
+        }
+        else
+        {
+            stream.writeInt(-1);
+        }
+    }
+
+    private Position readPosition(ObjectInputStream stream) throws IOException
+    {
+        int offset = stream.readInt();
+        if(offset >= 0) {
+            int length = stream.readInt();
+            Position position = new Position(offset, length);
+            position.isDeleted = stream.readBoolean();
+            return position;
+        }
+        return null;
+    }
+
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException
+    {
+        stream.defaultReadObject();
+        mPosition = readPosition(stream);
+        mSelectPosition = readPosition(stream);
     }
 }

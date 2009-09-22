@@ -69,7 +69,6 @@ public abstract class InstallOptionsEditableElementEditPart<T extends CellEditor
 
     @Override
     protected String getTypeName() {
-        // TODO Auto-generated method stub
         return null;
     }
 

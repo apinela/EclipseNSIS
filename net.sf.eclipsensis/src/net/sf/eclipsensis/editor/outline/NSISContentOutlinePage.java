@@ -23,13 +23,13 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 public class NSISContentOutlinePage extends ContentOutlinePage
 {
-    private Object mInput;
+    private IEditorInput mInput;
     private NSISEditor mEditor;
     private boolean mDisposed = false;
 
@@ -210,7 +210,7 @@ public class NSISContentOutlinePage extends ContentOutlinePage
     /**
      * Sets the input of the outline page
      */
-    public void setInput(Object input)
+    public void setInput(IEditorInput input)
     {
         mInput = input;
         update();

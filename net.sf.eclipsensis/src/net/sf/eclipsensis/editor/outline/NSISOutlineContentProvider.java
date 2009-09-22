@@ -66,6 +66,8 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     public static final int INCLUDE = PAGEEXEND+1;
     public static final int VAR = INCLUDE+1;
     public static final int NAME = VAR + 1;
+    public static final int LABEL = NAME + 1;
+    public static final int GLOBAL_LABEL = LABEL + 1;
 
     private ITextEditor mEditor;
     private IPath mPath = null;
@@ -144,8 +146,6 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                         for (Iterator<NSISOutlineElement> iter = elementsToClose.iterator(); iter.hasNext();) {
                             el = iter.next();
                             el.merge(element.getPosition());
-                            document.addPosition(NSIS_OUTLINE,el.getPosition());
-                            document.addPosition(NSIS_OUTLINE_SELECT,el.getSelectPosition());
                             if(mAnnotationModel != null) {
                                 mAnnotationModel.addAnnotation(new ProjectionAnnotation(), el.getPosition());
                             }
@@ -162,14 +162,6 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         return current2;
     }
 
-    private void addLine(IDocument document, NSISOutlineElement current,
-                         NSISOutlineElement element) throws BadLocationException, BadPositionCategoryException
-    {
-        document.addPosition(NSIS_OUTLINE,element.getPosition());
-        document.addPosition(NSIS_OUTLINE_SELECT,element.getSelectPosition());
-        current.addChild(element);
-    }
-
     /**
      * @param nsisLine
      * @return
@@ -179,6 +171,20 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         ITypedRegion lastRegion = nsisLine[nsisLine.length-1];
         int length = lastRegion.getOffset()+lastRegion.getLength() - nsisLine[0].getOffset();
         return new Position(nsisLine[0].getOffset(),length);
+    }
+
+    private void addPositions(IDocument document, NSISOutlineElement element)
+    {
+        try {
+            document.addPosition(NSIS_OUTLINE,element.getPosition());
+            document.addPosition(NSIS_OUTLINE_SELECT,element.getSelectPosition());
+        }
+        catch (Exception e) {
+        }
+        for(Iterator<NSISOutlineElement> iter = element.getChildren().iterator(); iter.hasNext(); )
+        {
+            addPositions(document, iter.next());
+        }
     }
 
     private void parse(IDocument document)
@@ -200,12 +206,6 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                                 EclipseNSISPlugin.getResourceString(isHeader?"outline.root.header.label":"outline.root.installer.label"), //$NON-NLS-1$ //$NON-NLS-2$
                                                 null);
         rootElement.setPosition(new Position(0,document.getLength()));
-        try {
-            document.addPosition(NSIS_OUTLINE,rootElement.getPosition());
-            document.addPosition(NSIS_OUTLINE_SELECT,rootElement.getSelectPosition());
-        }
-        catch (Exception e) {
-        }
         if(!Common.isEmptyArray(nsisLines)) {
             NSISOutlineElement current = rootElement;
             for (int i = 0; i < nsisLines.length; i++) {
@@ -268,6 +268,8 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                             case INCLUDE:
                             case VAR:
                             case NAME:
+                            case LABEL:
+                            case GLOBAL_LABEL:
                                 if(j < typedRegions.length) {
                                     ITypedRegion region = null;
                                     int k= j;
@@ -283,139 +285,139 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                         }
                                     }
                                     outer:
-                                    while(region != null && k<typedRegions.length) {
-                                        String regionType = region.getType();
-                                        NSISOutlineTextData data;
-                                        String temp = null;
-                                        if(!regionType.equals(NSISPartitionScanner.NSIS_STRING) &&
-                                           !regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
-                                            break;
-                                        }
-                                        NSISOutlineRule rule = null;
-                                        rule = new NSISOutlineRule(regionType.equals(NSISPartitionScanner.NSIS_STRING), false);
-                                        NSISRegionScanner regionScanner = new NSISRegionScanner(document, region);
+                                        while(region != null && k<typedRegions.length) {
+                                            String regionType = region.getType();
+                                            NSISOutlineTextData data;
+                                            String temp = null;
+                                            if(!regionType.equals(NSISPartitionScanner.NSIS_STRING) &&
+                                                    !regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+                                                break;
+                                            }
+                                            NSISOutlineRule rule = null;
+                                            rule = new NSISOutlineRule(regionType.equals(NSISPartitionScanner.NSIS_STRING), false);
+                                            NSISRegionScanner regionScanner = new NSISRegionScanner(document, region);
 
-                                        inner:
-                                        while(true) {
-                                            IToken token = rule.evaluate(regionScanner);
-                                            data = (NSISOutlineTextData) token.getData();
-                                            String name2 = data.getName();
-                                            if(!Common.isEmpty(name2)) {
-                                                temp = name2;
-                                            }
-                                            else {
-                                                if(regionScanner.getOffset() > newEnd) {
-                                                    k++;
-                                                    if(k < typedRegions.length) {
-                                                        region = typedRegions[k];
+                                            inner:
+                                                while(true) {
+                                                    IToken token = rule.evaluate(regionScanner);
+                                                    data = (NSISOutlineTextData) token.getData();
+                                                    String name2 = data.getName();
+                                                    if(!Common.isEmpty(name2)) {
+                                                        temp = name2;
                                                     }
-                                                    break inner;
-                                                }
-                                            }
-                                            if(temp != null) {
-                                                switch(type) {
-                                                    case IF:
-                                                    case IFDEF:
-                                                    case IFNDEF:
-                                                    case IFMACRODEF:
-                                                    case IFMACRONDEF:
-                                                    case ELSEIF:
-                                                    case ELSEIFDEF:
-                                                    case ELSEIFNDEF:
-                                                    case ELSEIFMACRODEF:
-                                                    case ELSEIFMACRONDEF:
-                                                        if(name.length() > 0) {
-                                                            name.append(" "); //$NON-NLS-1$
-                                                        }
-                                                        name.append(temp);
-                                                        continue;
-                                                    case ELSE:
-                                                        if(name.length() == 0) {
-                                                            name2 = new StringBuffer(nsisToken.getType()).append(" ").append(temp).toString(); //$NON-NLS-1$
-                                                            int type2 = mResources.getTypeIndex(name2);
-                                                            if(type2 >= 0) {
-                                                                type = type2;
-                                                                IRegion r1 = nsisToken.getRegion();
-                                                                IRegion r2 = data.getRegion();
-                                                                nsisToken = new NSISOutlineData(name2, new Region(r1.getOffset(),r2.getOffset()+r2.getLength()-r1.getOffset()));
-                                                                continue;
+                                                    else {
+                                                        if(regionScanner.getOffset() > newEnd) {
+                                                            k++;
+                                                            if(k < typedRegions.length) {
+                                                                region = typedRegions[k];
                                                             }
+                                                            break inner;
                                                         }
-                                                        name.append(" "); //$NON-NLS-1$
-                                                        name.append(temp);
-                                                        continue;
-                                                    case SECTION:
-                                                        if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
-                                                            if(temp.equalsIgnoreCase("/o")) { //$NON-NLS-1$
+                                                    }
+                                                    if(temp != null) {
+                                                        switch(type) {
+                                                            case IF:
+                                                            case IFDEF:
+                                                            case IFNDEF:
+                                                            case IFMACRODEF:
+                                                            case IFMACRONDEF:
+                                                            case ELSEIF:
+                                                            case ELSEIFDEF:
+                                                            case ELSEIFNDEF:
+                                                            case ELSEIFMACRODEF:
+                                                            case ELSEIFMACRONDEF:
+                                                                if(name.length() > 0) {
+                                                                    name.append(" "); //$NON-NLS-1$
+                                                                }
+                                                                name.append(temp);
                                                                 continue;
-                                                            }
-                                                        }
-                                                        else {
-                                                            if(temp.substring(1,temp.length()-1).equalsIgnoreCase("/o")) { //$NON-NLS-1$
-                                                                continue;
-                                                            }
-                                                        }
-                                                        if(temp.startsWith("-") || temp.startsWith("!")) { //$NON-NLS-1$ //$NON-NLS-2$
-                                                            temp = temp.substring(1);
-                                                        }
-                                                        if(temp != null && temp.length() > 0) {
-                                                            name.append(temp);
-                                                            break outer;
-                                                        }
-                                                        break;
-                                                    case SECTIONGROUP:
-                                                    case SUBSECTION:
-                                                        if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
-                                                            if(temp.equalsIgnoreCase("/e")) { //$NON-NLS-1$
-                                                                continue;
-                                                            }
-                                                        }
-                                                        else {
-                                                            if(temp.substring(1,temp.length()-1).equalsIgnoreCase("/e")) { //$NON-NLS-1$
-                                                                continue;
-                                                            }
-                                                        }
-                                                        if(temp.startsWith("!")) { //$NON-NLS-1$
-                                                            temp = temp.substring(1);
-                                                        }
-                                                        if(temp != null && temp.length() > 0) {
-                                                            name.append(temp);
-                                                            break outer;
-                                                        }
-                                                        break;
-                                                    case PAGE:
-                                                        if( (regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && temp.equalsIgnoreCase("custom"))|| //$NON-NLS-1$
-                                                            temp.substring(1,temp.length()-1).equalsIgnoreCase("custom")) { //$NON-NLS-1$
-                                                           name.append(temp);
-                                                        }
-                                                        else {
-                                                            if(name.length() > 0) {
+                                                            case ELSE:
+                                                                if(name.length() == 0) {
+                                                                    name2 = new StringBuffer(nsisToken.getType()).append(" ").append(temp).toString(); //$NON-NLS-1$
+                                                                    int type2 = mResources.getTypeIndex(name2);
+                                                                    if(type2 >= 0) {
+                                                                        type = type2;
+                                                                        IRegion r1 = nsisToken.getRegion();
+                                                                        IRegion r2 = data.getRegion();
+                                                                        nsisToken = new NSISOutlineData(name2, /*name2,*/ new Region(r1.getOffset(),r2.getOffset()+r2.getLength()-r1.getOffset()));
+                                                                        continue;
+                                                                    }
+                                                                }
                                                                 name.append(" "); //$NON-NLS-1$
-                                                            }
-                                                            name.append(temp);
-                                                            break outer;
+                                                                name.append(temp);
+                                                                continue;
+                                                            case SECTION:
+                                                                if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+                                                                    if(temp.equalsIgnoreCase("/o")) { //$NON-NLS-1$
+                                                                        continue;
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    if(temp.substring(1,temp.length()-1).equalsIgnoreCase("/o")) { //$NON-NLS-1$
+                                                                        continue;
+                                                                    }
+                                                                }
+                                                                if(temp.startsWith("-") || temp.startsWith("!")) { //$NON-NLS-1$ //$NON-NLS-2$
+                                                                    temp = temp.substring(1);
+                                                                }
+                                                                if(temp != null && temp.length() > 0) {
+                                                                    name.append(temp);
+                                                                    break outer;
+                                                                }
+                                                                break;
+                                                            case SECTIONGROUP:
+                                                            case SUBSECTION:
+                                                                if(regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+                                                                    if(temp.equalsIgnoreCase("/e")) { //$NON-NLS-1$
+                                                                        continue;
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    if(temp.substring(1,temp.length()-1).equalsIgnoreCase("/e")) { //$NON-NLS-1$
+                                                                        continue;
+                                                                    }
+                                                                }
+                                                                if(temp.startsWith("!")) { //$NON-NLS-1$
+                                                                    temp = temp.substring(1);
+                                                                }
+                                                                if(temp != null && temp.length() > 0) {
+                                                                    name.append(temp);
+                                                                    break outer;
+                                                                }
+                                                                break;
+                                                            case PAGE:
+                                                                if( regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && temp.equalsIgnoreCase("custom")|| //$NON-NLS-1$
+                                                                        temp.substring(1,temp.length()-1).equalsIgnoreCase("custom")) { //$NON-NLS-1$
+                                                                    name.append(temp);
+                                                                }
+                                                                else {
+                                                                    if(name.length() > 0) {
+                                                                        name.append(" "); //$NON-NLS-1$
+                                                                    }
+                                                                    name.append(temp);
+                                                                    break outer;
+                                                                }
+                                                                break;
+                                                            default:
+                                                                name.append(temp);
+                                                                break outer;
                                                         }
-                                                        break;
-                                                    default:
-                                                        name.append(temp);
-                                                        break outer;
+                                                    }
+                                                    ITypedRegion region3 = data.getRegion();
+                                                    newOffset = region3.getOffset()+region3.getLength();
+                                                    newEnd = typedRegions[k].getOffset()+typedRegions[k].getLength();
+                                                    if(newOffset < newEnd) {
+                                                        region = new TypedRegion(newOffset, newEnd-newOffset,typedRegions[j].getType());
+                                                    }
+                                                    else {
+                                                        k++;
+                                                        if(k < typedRegions.length) {
+                                                            region = typedRegions[k];
+                                                        }
+                                                    }
+                                                    break;
                                                 }
-                                            }
-                                            ITypedRegion region3 = data.getRegion();
-                                            newOffset = region3.getOffset()+region3.getLength();
-                                            newEnd = typedRegions[k].getOffset()+typedRegions[k].getLength();
-                                            if(newOffset < newEnd) {
-                                                region = new TypedRegion(newOffset, newEnd-newOffset,typedRegions[j].getType());
-                                            }
-                                            else {
-                                                k++;
-                                                if(k < typedRegions.length) {
-                                                    region = typedRegions[k];
-                                                }
-                                            }
-                                            break;
                                         }
-                                    }
                                 }
                                 break;
                             default:
@@ -440,7 +442,16 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                             int currentType = mResources.getTypeIndex(current.getType());
                             switch(type) {
                                 case DEFINE:
-                                    addLine(document, current, element);
+                                    current.addChild(element);
+                                    break;
+                                case LABEL:
+                                    if(text2.charAt(0) == '.')
+                                    {
+                                        element = new NSISOutlineElement("global label", name.toString(), position, element.getSelectPosition());
+                                    }
+                                case GLOBAL_LABEL:
+                                    element.setName(text2);
+                                    current.addChild(element);
                                     break;
                                 case IF:
                                 case IFDEF:
@@ -458,25 +469,25 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                     break;
                                 case ENDIF:
                                     current = closeElement(document, current, element,
-                                                         new int[]{IF, IFDEF, IFNDEF, IFMACRODEF, IFMACRONDEF});
+                                            new int[]{IF, IFDEF, IFNDEF, IFMACRODEF, IFMACRONDEF});
                                     break;
                                 case MACROEND:
                                     current = closeElement(document, current, element,
-                                                         new int[]{MACRO});
+                                            new int[]{MACRO});
                                     break;
                                 case FUNCTION:
                                     current = openElement(current, element, new int[]{SECTION,SUBSECTION,SECTIONGROUP,FUNCTION});
                                     break;
                                 case FUNCTIONEND:
                                     current = closeElement(document, current, element,
-                                                         new int[]{FUNCTION});
+                                            new int[]{FUNCTION});
                                     break;
                                 case SECTION:
                                     current = openElement(current, element, new int[]{SECTION,FUNCTION});
                                     break;
                                 case SECTIONEND:
                                     current = closeElement(document, current, element,
-                                                         new int[]{SECTION});
+                                            new int[]{SECTION});
                                     break;
                                 case SUBSECTION:
                                 case SECTIONGROUP:
@@ -485,15 +496,15 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                 case SUBSECTIONEND:
                                 case SECTIONGROUPEND:
                                     current = closeElement(document, current, element,
-                                                         new int[]{SECTIONGROUP,SUBSECTION});
+                                            new int[]{SECTIONGROUP,SUBSECTION});
                                     break;
                                 case PAGE:
                                 case INCLUDE:
                                 case VAR:
                                     if(current.getType() == NSISOutlineElement.ROOT || currentType == MACRO ||
-                                       currentType == IFDEF || currentType == IFNDEF ||
-                                       currentType == IFMACRODEF || currentType == IFMACRONDEF) {
-                                        addLine(document, current, element);
+                                            currentType == IFDEF || currentType == IFNDEF ||
+                                            currentType == IFMACRODEF || currentType == IFMACRONDEF) {
+                                        current.addChild(element);
                                     }
                                     break;
                                 case PAGEEX:
@@ -501,7 +512,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                     break;
                                 case PAGEEXEND:
                                     current = closeElement(document, current, element,
-                                                           new int[]{PAGEEX});
+                                            new int[]{PAGEEX});
                                     break;
                             }
                         }
@@ -511,7 +522,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                 }
             }
         }
-
+        addPositions(document, rootElement);
         mRootElement = new NSISOutlineElement[] {rootElement};
     }
 
@@ -680,7 +691,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
 
     private boolean positionContains(Position position, int offset, int length)
     {
-        return (offset >= position.getOffset() && offset+length <= position.getOffset()+position.getLength());
+        return offset >= position.getOffset() && offset+length <= position.getOffset()+position.getLength();
     }
 
     public NSISOutlineElement findElement(int offset, int length)
@@ -695,28 +706,28 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
             int high = elements.length-1;
 
             while (low <= high) {
-                int mid = (low + high) >> 1;
-                NSISOutlineElement midVal = (NSISOutlineElement)elements[mid];
-                Position position = midVal.getPosition();
-                if(position.includes(offset)) {
-                    if(positionContains(position,offset,length)) {
-                        NSISOutlineElement val = null;
-                        if(hasChildren(midVal)) {
-                            val = findElement(getChildren(midVal),offset,length);
-                        }
-                        return (val == null?midVal:val);
+                int mid = low + high >> 1;
+            NSISOutlineElement midVal = (NSISOutlineElement)elements[mid];
+            Position position = midVal.getPosition();
+            if(position.includes(offset)) {
+                if(positionContains(position,offset,length)) {
+                    NSISOutlineElement val = null;
+                    if(hasChildren(midVal)) {
+                        val = findElement(getChildren(midVal),offset,length);
                     }
-                    break;
+                    return val == null?midVal:val;
                 }
-                else if (position.getOffset() > offset) {
-                    high = mid - 1;
-                }
-                else if (position.getOffset() < offset) {
-                    low = mid + 1;
-                }
-                else {
-                    break;
-                }
+                break;
+            }
+            else if (position.getOffset() > offset) {
+                high = mid - 1;
+            }
+            else if (position.getOffset() < offset) {
+                low = mid + 1;
+            }
+            else {
+                break;
+            }
             }
         }
         return null;
@@ -752,6 +763,39 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
             mMatchKeywords = matchKeywords;
         }
 
+        private boolean evaluateQuoteEscapeSequence(ICharacterScanner scanner, int c, StringBuffer buf)
+        {
+            for (int i= 0; i < QUOTE_ESCAPE_SEQUENCES.length; i++) {
+                if (c == QUOTE_ESCAPE_SEQUENCES[i][0] && NSISTextUtility.sequenceDetected(scanner, QUOTE_ESCAPE_SEQUENCES[i], true, false)) {
+                    buf.append(QUOTE_ESCAPE_SEQUENCES[i][QUOTE_ESCAPE_SEQUENCES[i].length-1]);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private boolean evaluateWhitespaceEscapeSequence(ICharacterScanner scanner, int c, StringBuffer buf)
+        {
+            for (int i= 0; i < WHITESPACE_ESCAPE_SEQUENCES.length; i++) {
+                if (c == WHITESPACE_ESCAPE_SEQUENCES[i][0] && NSISTextUtility.sequenceDetected(scanner, WHITESPACE_ESCAPE_SEQUENCES[i], false, false)) {
+                    switch(WHITESPACE_ESCAPE_SEQUENCES[i][WHITESPACE_ESCAPE_SEQUENCES[i].length-1])
+                    {
+                        case 'n':
+                            buf.append('\n');
+                            break;
+                        case 'r':
+                            buf.append('\r');
+                            break;
+                        case 't':
+                            buf.append('\t');
+                            break;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /* (non-Javadoc)
          * @see org.eclipse.jface.text.rules.IRule#evaluate(org.eclipse.jface.text.rules.ICharacterScanner)
          */
@@ -763,56 +807,34 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
             int c;
             int offset = ((NSISScanner)scanner).getOffset();
             while((c = scanner.read()) != ICharacterScanner.EOF) {
-                outer: {
-                    if(c == LINE_CONTINUATION_CHAR) {
-                        int c2 = scanner.read();
-                        if(NSISTextUtility.delimitersDetected(scanner,c2)) {
-                            continue;
-                        }
-                        else {
-                            scanner.unread();
-                        }
-                    }
-                    if(mIsString) {
-                        for (int i= 0; i < QUOTE_ESCAPE_SEQUENCES.length; i++) {
-                            if (c == QUOTE_ESCAPE_SEQUENCES[i][0] && NSISTextUtility.sequenceDetected(scanner, QUOTE_ESCAPE_SEQUENCES[i], true, false)) {
-                                buf.append(QUOTE_ESCAPE_SEQUENCES[i][QUOTE_ESCAPE_SEQUENCES[i].length-1]);
-                                break outer;
-                            }
-                        }
-                        for (int i= 0; i < WHITESPACE_ESCAPE_SEQUENCES.length; i++) {
-                            if (c == WHITESPACE_ESCAPE_SEQUENCES[i][0] && NSISTextUtility.sequenceDetected(scanner, WHITESPACE_ESCAPE_SEQUENCES[i], false, false)) {
-                                switch(WHITESPACE_ESCAPE_SEQUENCES[i][WHITESPACE_ESCAPE_SEQUENCES[i].length-1])
-                                {
-                                    case 'n':
-                                        buf.append('\n');
-                                        break;
-                                    case 'r':
-                                        buf.append('\r');
-                                        break;
-                                    case 't':
-                                        buf.append('\t');
-                                        break;
-                                }
-                                break outer;
-                            }
-                        }
-
-                        buf.append((char)c);
+                if(c == LINE_CONTINUATION_CHAR) {
+                    int c2 = scanner.read();
+                    if(NSISTextUtility.delimitersDetected(scanner,c2)) {
+                        continue;
                     }
                     else {
-                        if(Character.isWhitespace((char)c)) {
-                            if(nonWhiteSpaceFound) {
-                                scanner.unread();
-                                break;
-                            }
-                        }
-                        else {
-                            if(!nonWhiteSpaceFound) {
-                                nonWhiteSpaceFound = true;
-                            }
+                        scanner.unread();
+                    }
+                }
+                if(mIsString) {
+                    if(!evaluateQuoteEscapeSequence(scanner, c, buf)) {
+                        if(!evaluateWhitespaceEscapeSequence(scanner, c, buf)) {
                             buf.append((char)c);
                         }
+                    }
+                }
+                else {
+                    if(Character.isWhitespace((char)c)) {
+                        if(nonWhiteSpaceFound) {
+                            scanner.unread();
+                            break;
+                        }
+                    }
+                    else {
+                        if(!nonWhiteSpaceFound) {
+                            nonWhiteSpaceFound = true;
+                        }
+                        buf.append((char)c);
                     }
                 }
             }
@@ -842,7 +864,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                     }
                     String type = mResources.getType(text2);
 
-                    return (type == null?Token.UNDEFINED:new Token(new NSISOutlineData(type, new Region(startOffset,length))));
+                    return type == null?Token.UNDEFINED:new Token(new NSISOutlineData(type, /*text2,*/ new Region(startOffset,length)));
                 }
             }
             else {
@@ -854,15 +876,17 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     private class NSISOutlineData
     {
         private String  mType;
+        //        private String mText;
         private IRegion mRegion;
 
         /**
          * @param type
          * @param region
          */
-        public NSISOutlineData(String type, IRegion region)
+        public NSISOutlineData(String type, /*String text,*/ IRegion region)
         {
             mType = type;
+            //            mText = text;
             mRegion = region;
         }
 
@@ -881,6 +905,14 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         {
             return mType;
         }
+
+        /**
+         * @return Returns the text.
+        public String getText()
+        {
+            return mText;
+        }
+         */
     }
 
     private class NSISOutlineTextData
