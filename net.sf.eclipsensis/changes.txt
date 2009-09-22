@@ -1,7 +1,9 @@
 Revision History
 ================
 
-0.9.7.3 (12/13/2008)
+0.9.7.3 (09/22/2009)
+    * Upgraded to Java 5.
+    * Upgraded to Eclipse 3.5 - no longer compliant with Eclipse 3.4.
     * Added support for !searchreplace command.
     * Added support for registering EXE COM servers in InstallLib macros.
     * Bug Fixes
