@@ -13,7 +13,7 @@
 <feature
       id="net.sf.eclipsensis.installoptions"
       label="%feature.name"
-      version="0.9.7.1"
+      version="0.9.7.3"
       provider-name="%provider.name"
       os="win32"
       ws="win32"
@@ -39,17 +39,17 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.gef" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.ide" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.editors" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.4.0" match="greaterOrEqual"/>
       <import plugin="net.sf.eclipsensis" version="0.9.7.3" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.expressions" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="net.sf.eclipsensis.startup" version="0.9.7" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gef" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.editors" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface.text" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.expressions" version="3.4.100" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.views.properties.tabbed" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="net.sf.eclipsensis.startup" version="0.9.7.3" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -59,7 +59,7 @@
          arch="x86"
          download-size="1791"
          install-size="1791"
-         version="0.9.7.1"
+         version="0.9.7.3"
          unpack="false"/>
 
 </feature>

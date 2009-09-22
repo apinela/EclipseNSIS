@@ -1,6 +1,10 @@
 Revision History
 ================
 
+0.9.7.3 (09/22/2009)
+    * Upgraded to Java 5.
+    * Upgraded to Eclipse 3.5 - no longer compliant with Eclipse 3.4.
+
 0.9.7 (09/29/2008)
     * Upgraded to Eclipse 3.4 - no longer compliant with Eclipse 3.3.
 

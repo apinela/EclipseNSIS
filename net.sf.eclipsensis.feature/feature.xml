@@ -70,7 +70,7 @@
          arch="x86"
          download-size="123"
          install-size="123"
-         version="0.9.7"
+         version="0.9.7.3"
          unpack="false"/>
 
    <plugin
@@ -80,7 +80,7 @@
          arch="x86"
          download-size="18"
          install-size="18"
-         version="0.9.7"
+         version="0.9.7.3"
          unpack="false"/>
 
 </feature>
