@@ -35,36 +35,36 @@
    </url>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime" version="3.3.100" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.core" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.ide" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.console" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.debug.core" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jdt.launching" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface" version="3.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.workbench" version="3.3.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.launching" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.core" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.workbench" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.console" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.debug.core" version="3.5.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
          id="net.sf.jarsigner"
-         download-size="40"
-         install-size="40"
+         download-size="68"
+         install-size="68"
          version="0.9.3"
          unpack="false"/>
 
    <plugin
          id="net.sf.jnigen"
-         download-size="34"
-         install-size="34"
+         download-size="39"
+         install-size="39"
          version="0.9.3"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsensis.utilities"
-         download-size="38"
-         install-size="38"
+         download-size="45"
+         install-size="45"
          version="0.9.3"
          unpack="false"/>
 

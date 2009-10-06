@@ -17,7 +17,7 @@
       provider-name="%provider.name"
       os="win32"
       ws="win32"
-      arch="x86,x86_64"
+      arch="x86"
       image="%splash.image">
    <install-handler/>
 
