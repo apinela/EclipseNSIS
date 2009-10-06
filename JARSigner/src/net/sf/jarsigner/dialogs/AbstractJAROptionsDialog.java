@@ -98,7 +98,7 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
             if(!Common.isEmpty(getKeyStore())) {
                 File f = new File(getKeyStore());
                 if(!Common.isValidFile(f)) {
-                    return createStatus(IStatus.ERROR, String.format("Keystore \"%1$s\" is not a valid file.",f.getAbsolutePath()));
+                    return createStatus(IStatus.ERROR, String.format(JARSignerPlugin.getResourceString("invalid.keystore.file"),f.getAbsolutePath())); //$NON-NLS-1$
                 }
             }
         }

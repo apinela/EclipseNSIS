@@ -33,7 +33,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
     /**
      *
      */
-    private static final char PATH_SEPARATOR = System.getProperty("path.separator").charAt(0);
+    private static final char PATH_SEPARATOR = System.getProperty("path.separator").charAt(0); //$NON-NLS-1$
 
     private static final Version JAVA_5_VERSION = new Version(1,5,0);
 
@@ -264,21 +264,21 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         makeCheckBox(composite,JARSignerPlugin.getResourceString(SECTIONS_ONLY),SECTIONS_ONLY,false);
 
         final Group tsGroup = new Group(composite,SWT.NONE);
-        tsGroup.setText("Time Stamping");
+        tsGroup.setText(JARSignerPlugin.getResourceString("time.stamping.label")); //$NON-NLS-1$
         gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         tsGroup.setLayoutData(gd);
         layout = new GridLayout(2,false);
         tsGroup.setLayout(layout);
 
-        final Button useTimeStamping = makeCheckBox(tsGroup, "Time Stamp signature", USE_TIMESTAMPING, false);
+        final Button useTimeStamping = makeCheckBox(tsGroup, JARSignerPlugin.getResourceString("time.stamp.signature.label"), USE_TIMESTAMPING, false); //$NON-NLS-1$
 
-        final Button tsaOption = makeRadio(tsGroup, "TSA URL:", TSA_CERT_OPTION, true, Boolean.FALSE);
+        final Button tsaOption = makeRadio(tsGroup, JARSignerPlugin.getResourceString("tsa.url.label"), TSA_CERT_OPTION, true, Boolean.FALSE); //$NON-NLS-1$
         ((GridData)tsaOption.getLayoutData()).horizontalSpan = 1;
 
-        final Text tsa = makeText(tsGroup, "", TSA, false);
+        final Text tsa = makeText(tsGroup, "", TSA, false); //$NON-NLS-1$
         ((GridData)tsa.getLayoutData()).horizontalSpan = 1;
 
-        final Button tsaCertOption = makeRadio(tsGroup, "TSA Certificate Alias:", TSA_CERT_OPTION, true, Boolean.TRUE);
+        final Button tsaCertOption = makeRadio(tsGroup, JARSignerPlugin.getResourceString("tsa.cert.label"), TSA_CERT_OPTION, true, Boolean.TRUE); //$NON-NLS-1$
         ((GridData)tsaCertOption.getLayoutData()).horizontalSpan = 1;
 
         mTSACertAliasesComboViewer = makeAliasesComboViewer(tsGroup, TSA_CERT);
@@ -319,16 +319,16 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
 
 
         final Group asGroup = new Group(composite,SWT.NONE);
-        asGroup.setText("Alternate Signing Method");
+        asGroup.setText(JARSignerPlugin.getResourceString("alt.signing.method.label")); //$NON-NLS-1$
         gd = new GridData(SWT.FILL, SWT.FILL, true, true);
         asGroup.setLayoutData(gd);
         layout = new GridLayout(3,false);
         asGroup.setLayout(layout);
 
-        final Button useAltSigning = makeCheckBox(asGroup, "Use Alternate Signing Method", USE_ALT_SIGNING, false);
+        final Button useAltSigning = makeCheckBox(asGroup, JARSignerPlugin.getResourceString("use.alt.signing.label"), USE_ALT_SIGNING, false); //$NON-NLS-1$
 
-        final Text altSigner = makeText(asGroup, "Class", ALT_SIGNER, true);
-        final Text altSignerPath = makeBrowser(asGroup, "Classpath", ALT_SIGNER_PATH, new SelectionAdapter() {
+        final Text altSigner = makeText(asGroup, JARSignerPlugin.getResourceString("alt.signing.class.label"), ALT_SIGNER, true); //$NON-NLS-1$
+        final Text altSignerPath = makeBrowser(asGroup, JARSignerPlugin.getResourceString("alt.signing.classpath.label"), ALT_SIGNER_PATH, new SelectionAdapter() { //$NON-NLS-1$
             public void widgetSelected(SelectionEvent e)
             {
                 Button b = (Button)e.widget;
@@ -418,7 +418,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         IStatus status = super.validate();
         if(status.isOK()) {
             if(Common.isEmpty(getAlias())) {
-                status = createStatus(IStatus.ERROR, "JAR signing certificate alias has not been specified.");
+                status = createStatus(IStatus.ERROR, JARSignerPlugin.getResourceString("missing.jar.signing.cert.alias")); //$NON-NLS-1$
             }
             if(status.isOK()) {
                 String signedJar = getSignedJar();
@@ -426,7 +426,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
                     File file = new File(signedJar);
                     if(Common.isValidDirectory(file))
                     {
-                        status = createStatus(IStatus.ERROR, String.format("Signed JAR \"%1$s\" is a directory name.",file.getAbsolutePath()));
+                        status = createStatus(IStatus.ERROR, String.format(JARSignerPlugin.getResourceString("signed.jar.name.error"),file.getAbsolutePath())); //$NON-NLS-1$
                     }
                 }
             }
@@ -440,7 +440,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
                         if (isTSACertOption())
                         {
                             if(Common.isEmpty(getTSACert())) {
-                                status = createStatus(IStatus.ERROR, "Time Stamping Authority certificate alias has not been specified.");
+                                status = createStatus(IStatus.ERROR, JARSignerPlugin.getResourceString("missing.tsa.cert.alias")); //$NON-NLS-1$
                             }
                         }
                         else
@@ -454,12 +454,12 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
                                 }
                                 catch (URISyntaxException e)
                                 {
-                                    status = createStatus(IStatus.ERROR, "Time Stamping Authority URL alias is invalid.");
+                                    status = createStatus(IStatus.ERROR, JARSignerPlugin.getResourceString("invalid.tsa.url")); //$NON-NLS-1$
                                 }
 
                             }
                             else {
-                                status = createStatus(IStatus.ERROR, "Time Stamping Authority URL alias has not been specified.");
+                                status = createStatus(IStatus.ERROR, JARSignerPlugin.getResourceString("missing.tsa.url")); //$NON-NLS-1$
                             }
                         }
                     }
@@ -480,14 +480,14 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
                             {
                                 if (!isJavaIdentifier(part))
                                 {
-                                    status = createStatus(IStatus.ERROR, String.format("Alternate Signer class name \"%1$s\" is invalid.",altSigner));
+                                    status = createStatus(IStatus.ERROR, String.format(JARSignerPlugin.getResourceString("alt.signer.class.name.invalid"),altSigner)); //$NON-NLS-1$
                                     break;
                                 }
                             }
                         }
                         else
                         {
-                            status = createStatus(IStatus.ERROR, String.format("Alternate Signer class name has not been specified.",altSigner));
+                            status = createStatus(IStatus.ERROR, String.format(JARSignerPlugin.getResourceString("missing.alt.signer.class.name"),altSigner)); //$NON-NLS-1$
                         }
 
                         if (status.isOK())
@@ -500,7 +500,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
                                 {
                                     if (!new File(string).exists())
                                     {
-                                        status = createStatus(IStatus.ERROR, String.format("Alternate Signer classpath element \"%1$s\" is not a valid path.",string));
+                                        status = createStatus(IStatus.ERROR, String.format(JARSignerPlugin.getResourceString("invalid.alt.signer.classpath.element"),string)); //$NON-NLS-1$
                                         break;
                                     }
                                 }
@@ -585,7 +585,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
 
     public String getSignedJar()
     {
-        return getSelection().size()>1?"":(String)getValues().get(SIGNED_JAR);
+        return getSelection().size()>1?"":(String)getValues().get(SIGNED_JAR); //$NON-NLS-1$
     }
 
     public String getStorePass()

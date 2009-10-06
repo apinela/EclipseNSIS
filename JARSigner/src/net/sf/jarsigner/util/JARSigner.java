@@ -163,15 +163,15 @@ public class JARSigner extends AbstractJARUtil
         {
             if(!Common.isEmpty(mTSA))
             {
-                buf.append(" -tsa ").append(mTSA);
+                buf.append(" -tsa ").append(mTSA); //$NON-NLS-1$
             }
             else if(!Common.isEmpty(mTSACert))
             {
-                buf.append(" -tsacert ").append(mTSACert);
+                buf.append(" -tsacert ").append(mTSACert); //$NON-NLS-1$
             }
             else
             {
-                throw new IllegalArgumentException("Either the TSA URL or the TSA certificate alias must be provided for timestamping.");
+                throw new IllegalArgumentException(JARSignerPlugin.getResourceString("missing.tsa.info")); //$NON-NLS-1$
             }
         }
 
@@ -179,15 +179,15 @@ public class JARSigner extends AbstractJARUtil
         {
             if(!Common.isEmpty(mAltSigner))
             {
-                buf.append(" -altsigner ").append(mAltSigner);
+                buf.append(" -altsigner ").append(mAltSigner); //$NON-NLS-1$
             }
             if(!Common.isEmpty(mAltSignerPath))
             {
-                buf.append(" -altsignerpath ").append(mAltSignerPath);
+                buf.append(" -altsignerpath ").append(mAltSignerPath); //$NON-NLS-1$
             }
             else
             {
-                throw new IllegalArgumentException("The name of the signer class must be provided for alternate signing.");
+                throw new IllegalArgumentException(JARSignerPlugin.getResourceString("missing.signer.class.name")); //$NON-NLS-1$
             }
         }
 

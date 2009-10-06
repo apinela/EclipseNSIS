@@ -320,7 +320,7 @@ public abstract class AbstractToolsUtilityDialog extends StatusDialog
         createFlagsDialogArea(composite);
 
         Group group = new Group(composite,SWT.NONE);
-        group.setText("JRE Settings");
+        group.setText(UtilitiesPlugin.getResourceString("jre.settings.label")); //$NON-NLS-1$
         gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         gridData.horizontalSpan = layout.numColumns;
         group.setLayoutData(gridData);
@@ -334,7 +334,7 @@ public abstract class AbstractToolsUtilityDialog extends StatusDialog
                         UtilitiesPlugin.getResourceString("tools.jar.name"),false), //$NON-NLS-1$
                         true);
 
-        makeLabel(group, "JRE:", true);
+        makeLabel(group, UtilitiesPlugin.getResourceString("jre.label"), true); //$NON-NLS-1$
         final Combo combo = new Combo(group,SWT.BORDER|SWT.DROP_DOWN|SWT.READ_ONLY);
         GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
         gd.horizontalSpan = 2;
@@ -413,7 +413,7 @@ public abstract class AbstractToolsUtilityDialog extends StatusDialog
                             if (vmInstall == null)
                             {
                                 MessageDialog.openError(getShell(), UtilitiesPlugin.getResourceString("error.title"), //$NON-NLS-1$
-                                        UtilitiesPlugin.getResourceString("mismatched.tools.jar.vm.version"));
+                                        UtilitiesPlugin.getResourceString("mismatched.tools.jar.vm.version")); //$NON-NLS-1$
                             }
                         }
                     }
@@ -535,7 +535,7 @@ public abstract class AbstractToolsUtilityDialog extends StatusDialog
                 return Status.OK_STATUS;
             }
         }
-        return createStatus(IStatus.ERROR, "No JRE has been selected.");
+        return createStatus(IStatus.ERROR, UtilitiesPlugin.getResourceString("missing.jre")); //$NON-NLS-1$
     }
 
     protected final IStatus createStatus(int severity, String message)

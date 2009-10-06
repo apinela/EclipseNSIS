@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.utilities.util.Common;
+import net.sf.jarsigner.JARSignerPlugin;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
@@ -24,6 +25,8 @@ import org.eclipse.swt.widgets.*;
 
 public class ClasspathDialog extends Dialog
 {
+    private static final String FILE_SEPARATOR = System.getProperty("file.separator"); //$NON-NLS-1$
+
     private List<String> mClasspath = null;
     private TableViewer mTableViewer;
 
@@ -37,7 +40,7 @@ public class ClasspathDialog extends Dialog
     protected void configureShell(Shell newShell)
     {
         super.configureShell(newShell);
-        newShell.setText("Edit Classpath");
+        newShell.setText(JARSignerPlugin.getResourceString("edit.classpath.label")); //$NON-NLS-1$
     }
 
     @Override
@@ -51,7 +54,7 @@ public class ClasspathDialog extends Dialog
         composite.setLayout(layout);
 
         Group group = new Group(composite,SWT.NONE);
-        group.setText("Classpath Entries");
+        group.setText(JARSignerPlugin.getResourceString("classpath.entries.label")); //$NON-NLS-1$
         group.setLayout(new GridLayout(1,false));
         group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
@@ -96,7 +99,7 @@ public class ClasspathDialog extends Dialog
         table.setLayoutData(gd);
 
         TableColumn[] columns = { new TableColumn(table, SWT.LEFT, 0) };
-        columns[0].setText("File/Folder");
+        columns[0].setText(JARSignerPlugin.getResourceString("file.folder.label")); //$NON-NLS-1$
 
         mTableViewer = new TableViewer(table);
         mTableViewer.setContentProvider(ArrayContentProvider.getInstance());
@@ -114,17 +117,17 @@ public class ClasspathDialog extends Dialog
         composite2.setLayout(layout);
 
         final Button addFileButton = new Button(composite2, SWT.PUSH);
-        addFileButton.setText("Add File");
+        addFileButton.setText(JARSignerPlugin.getResourceString("add.file.label")); //$NON-NLS-1$
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         addFileButton.setLayoutData(gd);
 
         final Button addFolderButton = new Button(composite2, SWT.PUSH);
-        addFolderButton.setText("Add Folder");
+        addFolderButton.setText(JARSignerPlugin.getResourceString("add.folder.label")); //$NON-NLS-1$
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         addFolderButton.setLayoutData(gd);
 
         final Button removeButton = new Button(composite2, SWT.PUSH);
-        removeButton.setText("Remove");
+        removeButton.setText(JARSignerPlugin.getResourceString("remove.label")); //$NON-NLS-1$
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         removeButton.setLayoutData(gd);
         removeButton.setEnabled(false);
@@ -132,37 +135,37 @@ public class ClasspathDialog extends Dialog
         final Button topButton = new Button(composite2, SWT.PUSH);
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         topButton.setLayoutData(gd);
-        topButton.setText("Move To Top");
+        topButton.setText(JARSignerPlugin.getResourceString("move.to.top.label")); //$NON-NLS-1$
         topButton.setEnabled(canMoveUp());
 
         final Button upButton = new Button(composite2, SWT.PUSH);
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         upButton.setLayoutData(gd);
-        upButton.setText("Move Up");
+        upButton.setText(JARSignerPlugin.getResourceString("move.up.label")); //$NON-NLS-1$
         upButton.setEnabled(canMoveUp());
 
         final Button downButton = new Button(composite2, SWT.PUSH);
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         downButton.setLayoutData(gd);
-        downButton.setText("Move Down");
+        downButton.setText(JARSignerPlugin.getResourceString("move.down.label")); //$NON-NLS-1$
         downButton.setEnabled(canMoveDown());
 
         final Button bottomButton = new Button(composite2, SWT.PUSH);
         gd = new GridData(SWT.FILL, SWT.BEGINNING, false, false);
         bottomButton.setLayoutData(gd);
-        bottomButton.setText("Move To Bottom");
+        bottomButton.setText(JARSignerPlugin.getResourceString("move.to.bottom.label")); //$NON-NLS-1$
         bottomButton.setEnabled(canMoveDown());
 
         addFileButton.addSelectionListener(new SelectionAdapter() {
-            String[] filterNames = {"Java Archives","All Files"};
-            String[] filters = {"*.jar;*.zip","*.*"};
-            String filterPath = "";
+            String[] filterNames = {JARSignerPlugin.getResourceString("java.archives.label"),JARSignerPlugin.getResourceString("all.files.label")}; //$NON-NLS-1$ //$NON-NLS-2$
+            String[] filters = {JARSignerPlugin.getResourceString("java.archives.filter"),JARSignerPlugin.getResourceString("all.files.filter")}; //$NON-NLS-1$ //$NON-NLS-2$
+            String filterPath = ""; //$NON-NLS-1$
 
             @Override
             public void widgetSelected(SelectionEvent e)
             {
                 FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.MULTI | SWT.PRIMARY_MODAL);
-                dialog.setText("Choose Classpath Files");
+                dialog.setText(JARSignerPlugin.getResourceString("choose.classpath.files.label")); //$NON-NLS-1$
                 dialog.setFilterNames(filterNames);
                 dialog.setFilterExtensions(filters);
                 if (!Common.isEmpty(filterPath))
@@ -175,7 +178,13 @@ public class ClasspathDialog extends Dialog
                     String[] fileNames = dialog.getFileNames();
                     for (int i = 0; i < fileNames.length; i++)
                     {
-                        String file = new StringBuilder(filterPath).append("\\").append(fileNames[i]).toString();
+                        StringBuilder buf = new StringBuilder(filterPath);
+                        if(!filterPath.endsWith(FILE_SEPARATOR))
+                        {
+                            buf.append(FILE_SEPARATOR);
+                        }
+                        buf.append(fileNames[i]);
+                        String file = buf.toString();
                         if (!mClasspath.contains(file))
                         {
                             mClasspath.add(file);
@@ -187,7 +196,7 @@ public class ClasspathDialog extends Dialog
         });
 
         addFolderButton.addSelectionListener(new SelectionAdapter() {
-            String filterPath = "";
+            String filterPath = ""; //$NON-NLS-1$
 
             @Override
             public void widgetSelected(SelectionEvent e)
