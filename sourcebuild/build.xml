@@ -93,7 +93,7 @@
 		<antcall target="sign.jar.run"/>
 	</target>
 	<target name="sign.jar.run" if="sign.jar.ok">
-		<signjar jar="${jar}" keystore="${keystore}" storepass="${storepass}" alias="${alias}"/>
+		<signjar jar="${jar}" keystore="${keystore}" storepass="${storepass}" alias="${alias}" tsaurl="${tsaurl}"/>
 	</target>
 	<target name="sign.jar.precheck">
 		<condition property="sign.jar.ok">
