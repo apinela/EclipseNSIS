@@ -9,6 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.utilities.dialogs;
 
+import java.beans.*;
+import java.beans.PropertyChangeEvent;
 import java.io.*;
 import java.security.KeyStoreException;
 import java.util.*;
@@ -21,9 +23,10 @@ import java.util.zip.ZipEntry;
 import net.sf.eclipsensis.utilities.UtilitiesPlugin;
 import net.sf.eclipsensis.utilities.util.Common;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -32,12 +35,13 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Version;
 
-public abstract class AbstractToolsUtilityDialog extends Dialog
+public abstract class AbstractToolsUtilityDialog extends StatusDialog
 {
     protected static final String ATTR_BUTTON = "button"; //$NON-NLS-1$
     protected static final String ATTR_LABEL = "label"; //$NON-NLS-1$
     protected static final String ATTR_TEXT = "text"; //$NON-NLS-1$
 
+    protected static final String TOOLS_JAR_VERSION = "toolsjarversion"; //$NON-NLS-1$
     protected static final String TOOLS_JAR = "tools.jar"; //$NON-NLS-1$
     protected static final String VERBOSE = "verbose"; //$NON-NLS-1$
     protected static final String IGNORE_ERRORS = "ignore.errors"; //$NON-NLS-1$
@@ -50,6 +54,10 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     private String mToolsMainClassName = null;
     private List<?> mSelection = Collections.emptyList();
 
+    protected final PropertyChangeSupport mPropertyChangeSupport = new PropertyChangeSupport(this);
+    private ComboViewer mVmInstalls;
+    private Version mToolsJarVersion;
+
     /**
      * @param parentShell
      * @throws KeyStoreException
@@ -57,7 +65,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     public AbstractToolsUtilityDialog(Shell parentShell, List<?> selection)
     {
         super(parentShell);
-        mSelection = (selection == null?Collections.emptyList():selection);
+        mSelection = selection == null?Collections.emptyList():selection;
         IDialogSettings dialogSettings = getPlugin().getDialogSettings();
         String name = getClass().getName();
         mDialogSettings = dialogSettings.getSection(name);
@@ -65,6 +73,12 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
             mDialogSettings = dialogSettings.addNewSection(name);
         }
         mValues = new HashMap<String, Object>();
+        mPropertyChangeSupport.addPropertyChangeListener(TOOLS_JAR, new PropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent evt)
+            {
+                handleToolsJarChanged((String)evt.getOldValue(), (String)evt.getNewValue());
+            }
+        });
         init();
     }
 
@@ -109,7 +123,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     protected final String getStringDialogSetting(String name)
     {
         String str = mDialogSettings.get(name);
-        return (str==null?"":str); //$NON-NLS-1$
+        return str==null?"":str; //$NON-NLS-1$
     }
 
     protected final Integer getIntDialogSetting(String name)
@@ -147,7 +161,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     }
 
     protected final Button makeRadio(Composite parent, String label, final String property, boolean isRequired,
-                                     final Object data)
+            final Object data)
     {
         GridLayout layout = (GridLayout)parent.getLayout();
         final Button b = new Button(parent,SWT.RADIO|SWT.RIGHT);
@@ -199,7 +213,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         final Text text = new Text(composite,SWT.BORDER);
         text.setText((String)mValues.get(property));
         GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        gd.horizontalSpan = layout.numColumns - 1;
+        gd.horizontalSpan = layout.numColumns - ( l == null?0:1);
         text.setLayoutData(gd);
         text.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
@@ -208,18 +222,24 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
             }
         });
 
-        text.setData(ATTR_LABEL,l);
+        text.setData(ATTR_LABEL, l);
         return text;
     }
 
-    protected final Text makeFileBrowser(Composite composite, String label, final String property,
-                                 SelectionListener listener, boolean isRequired)
+    protected final Text makeBrowser(Composite composite, String label, final String property,
+            SelectionListener listener, boolean isRequired)
+    {
+        return makeBrowser(composite, label, property, listener, isRequired, false);
+    }
+
+    protected final Text makeBrowser(Composite composite, String label, final String property,
+            SelectionListener listener, boolean isRequired, boolean isReadOnly)
     {
         Label l = null;
         if(label != null) {
             l = makeLabel(composite, label, isRequired);
         }
-        final Text text = new Text(composite,SWT.BORDER);
+        final Text text = new Text(composite,SWT.BORDER | (isReadOnly?SWT.READ_ONLY:SWT.NONE));
         text.setText((String)mValues.get(property));
         text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         text.addModifyListener(new ModifyListener() {
@@ -240,8 +260,32 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         return text;
     }
 
+    protected void setEnabled(Control control, boolean enabled)
+    {
+        if(control != null && !control.isDisposed() && !control.isEnabled() == enabled)
+        {
+            control.setEnabled(enabled);
+            Label l = (Label) control.getData(ATTR_LABEL);
+            setEnabled(l, enabled);
+            Button b = (Button) control.getData(ATTR_BUTTON);
+            if(b != null)
+            {
+                setEnabled(b, enabled);
+            }
+            else
+            {
+                Text t = (Text) control.getData(ATTR_TEXT);
+                setEnabled(t, enabled);
+            }
+        }
+    }
+
     protected final Label makeLabel(Composite composite, String label, boolean isRequired)
     {
+        if(label == null || label.length() == 0)
+        {
+            return null;
+        }
         Label l = new Label(composite, SWT.NONE);
         if(isRequired) {
             makeBold(l);
@@ -275,20 +319,48 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         makeCheckBox(composite,UtilitiesPlugin.getResourceString(VERBOSE+".label"),VERBOSE,false); //$NON-NLS-1$
         createFlagsDialogArea(composite);
 
-        Composite composite2 = new Composite(composite,SWT.NONE);
+        Group group = new Group(composite,SWT.NONE);
+        group.setText("JRE Settings");
         gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
         gridData.horizontalSpan = layout.numColumns;
-        composite2.setLayoutData(gridData);
+        group.setLayoutData(gridData);
         layout = new GridLayout(3, false);
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        composite2.setLayout(layout);
-        applyDialogFont(composite2);
-        makeFileBrowser(composite2,UtilitiesPlugin.getResourceString("tools.jar.location"), TOOLS_JAR,  //$NON-NLS-1$
+        //        layout.marginHeight = 0;
+        //        layout.marginWidth = 0;
+        group.setLayout(layout);
+        applyDialogFont(group);
+        makeBrowser(group,UtilitiesPlugin.getResourceString("tools.jar.location"), TOOLS_JAR,  //$NON-NLS-1$
                 new FileSelectionAdapter(UtilitiesPlugin.getResourceString("tools.jar.location.message"), //$NON-NLS-1$
                         UtilitiesPlugin.getResourceString("tools.jar.name"),false), //$NON-NLS-1$
-                true);
+                        true);
 
+        makeLabel(group, "JRE:", true);
+        final Combo combo = new Combo(group,SWT.BORDER|SWT.DROP_DOWN|SWT.READ_ONLY);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        gd.horizontalSpan = 2;
+        combo.setLayoutData(gd);
+        mVmInstalls = new ComboViewer(combo);
+        mVmInstalls.setContentProvider(new ArrayContentProvider());
+        mVmInstalls.setLabelProvider(new LabelProvider() {
+
+            @Override
+            public String getText(Object element)
+            {
+                if(element instanceof IVMInstall)
+                {
+                    return ((IVMInstall)element).getName();
+                }
+                return super.getText(element);
+            }
+
+        });
+        mVmInstalls.addSelectionChangedListener(new ISelectionChangedListener(){
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+                mVMInstall = (IVMInstall) (event.getSelection().isEmpty()?null:((IStructuredSelection)event.getSelection()).getFirstElement());
+            }
+        });
+        setVMInstall(mVMInstall);
         return parent2;
     }
 
@@ -296,61 +368,84 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
     public void create()
     {
         super.create();
-        updateButtons();
+        updateStatus();
     }
 
-    protected void handleToolsJarChanged(String oldToolsJar, String newToolsJar)
+    private void setToolsJarVersion(Version version)
+    {
+        Version oldToolsJarVersion = mToolsJarVersion;
+        mToolsJarVersion = version;
+        mPropertyChangeSupport.firePropertyChange(TOOLS_JAR_VERSION, oldToolsJarVersion, mToolsJarVersion);
+    }
+
+    private void handleToolsJarChanged(String oldToolsJar, String newToolsJar)
     {
         if(!Common.stringsAreEqual(oldToolsJar, newToolsJar)) {
-            String toolsMainClassName = null;
-            IVMInstall vmInstall = null;
-            if(!Common.isEmpty(newToolsJar)) {
-                File f = new File(newToolsJar);
-                JarFile jarfile = null;
-                if(Common.isValidFile(f)) {
-                    Version toolsJarVersion = null;
-                    try {
-                        jarfile = new JarFile(f);
-                        String createdBy = jarfile.getManifest().getMainAttributes().getValue("Created-By"); //$NON-NLS-1$
-                        Matcher matcher = cCreatedByPattern.matcher(createdBy);
-                        if(matcher.matches()) {
-                            toolsJarVersion = Common.parseVersion(matcher.group(1));
-                        }
-                    }
-                    catch(Exception ex) {
-                        if(jarfile != null) {
-                            try {
-                                jarfile.close();
-                            }
-                            catch (IOException e) {
-                                e.printStackTrace();
+            JarFile jarfile = null;
+            try
+            {
+                String toolsMainClassName = null;
+                IVMInstall vmInstall = null;
+                Version toolsJarVersion = null;
+                if (!Common.isEmpty(newToolsJar))
+                {
+                    File f = new File(newToolsJar);
+                    if (Common.isValidFile(f))
+                    {
+                        try
+                        {
+                            jarfile = new JarFile(f);
+                            String createdBy = jarfile.getManifest().getMainAttributes().getValue("Created-By"); //$NON-NLS-1$
+                            Matcher matcher = cCreatedByPattern.matcher(createdBy);
+                            if (matcher.matches())
+                            {
+                                toolsJarVersion = Common.parseVersion(matcher.group(1));
                             }
                         }
-                        jarfile = null;
-                        toolsJarVersion = new Version(0,0,0);
+                        catch (Exception ex)
+                        {
+                            toolsJarVersion = new Version(0, 0, 0);
+                        }
+
+                        if (toolsJarVersion != null)
+                        {
+                            vmInstall = Common.getVMInstall(getMinJDKVersion(), toolsJarVersion);
+                            if (vmInstall == null)
+                            {
+                                MessageDialog.openError(getShell(), UtilitiesPlugin.getResourceString("error.title"), //$NON-NLS-1$
+                                        UtilitiesPlugin.getResourceString("mismatched.tools.jar.vm.version"));
+                            }
+                        }
                     }
 
-                    if(toolsJarVersion == null) {
-                        return;
-                    }
-                    vmInstall = Common.getVMInstall(getMinJDKVersion(), toolsJarVersion);
-                    if(vmInstall == null) {
-                        MessageDialog.openError(getShell(),UtilitiesPlugin.getResourceString("error.title"), //$NON-NLS-1$
-                                UtilitiesPlugin.getResourceString("mismatched.tools.jar.vm.version")); //$NON-NLS-1$
-                    }
-                }
-
-                if(vmInstall != null && jarfile != null) {
-                    toolsMainClassName = getToolsMainClassName(Common.parseVersion(((IVMInstall2)vmInstall).getJavaVersion()));
-                    ZipEntry entry = jarfile.getEntry(toolsMainClassName.replace('.','/')+".class"); //$NON-NLS-1$
-                    if(entry == null) {
-                        vmInstall = null;
-                        toolsMainClassName = null;
+                    if (toolsJarVersion != null && jarfile != null)
+                    {
+                        toolsMainClassName = getToolsMainClassName(toolsJarVersion);
+                        ZipEntry entry = jarfile.getEntry(toolsMainClassName.replace('.', '/') + ".class"); //$NON-NLS-1$
+                        if (entry == null)
+                        {
+                            vmInstall = null;
+                            toolsMainClassName = null;
+                        }
                     }
                 }
+                setVMInstall(vmInstall);
+                setToolsMainClassName(toolsMainClassName);
+                setToolsJarVersion(toolsJarVersion);
             }
-            setVMInstall(vmInstall);
-            setToolsMainClassName(toolsMainClassName);
+            finally
+            {
+                if(jarfile != null) {
+                    try {
+                        jarfile.close();
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                jarfile = null;
+
+            }
         }
     }
 
@@ -372,7 +467,7 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
 
     public final boolean isIgnoreErrors()
     {
-        return (mSelection.size() > 1?((Boolean)mValues.get(IGNORE_ERRORS)).booleanValue():true);
+        return mSelection.size() > 1?((Boolean)mValues.get(IGNORE_ERRORS)).booleanValue():true;
     }
 
     public final boolean isVerbose()
@@ -380,60 +475,72 @@ public abstract class AbstractToolsUtilityDialog extends Dialog
         return ((Boolean)mValues.get(VERBOSE)).booleanValue();
     }
 
-    protected final void updateButtons()
+    private final void updateStatus()
     {
         Button button = getButton(IDialogConstants.OK_ID);
-        if(button != null) {
-            button.setEnabled(isValid());
+        if (button != null && !button.isDisposed())
+        {
+            updateStatus(validate());
         }
     }
 
-    protected void setValue(String name, Object value)
+    protected final void setValue(String name, Object value)
     {
         Object oldValue = mValues.put(name,value);
-        if(!Common.objectsAreEqual(oldValue, value)) {
-            valueChanged(name, oldValue, value);
-        }
-        updateButtons();
+        mPropertyChangeSupport.firePropertyChange(name, oldValue, value);
+        updateStatus();
     }
 
-    protected void valueChanged(String name, Object oldValue, Object newValue)
+    private void setVMInstall(IVMInstall vmInstall)
     {
-        if(name.equals(TOOLS_JAR)) {
-            handleToolsJarChanged((String)oldValue, (String)newValue);
+        if (mVmInstalls != null && !mVmInstalls.getCombo().isDisposed())
+        {
+            mVmInstalls.setInput(Common.getVMInstalls(vmInstall==null?getMinJDKVersion():
+                Common.parseVersion(((IVMInstall2)vmInstall).getJavaVersion())));
+            StructuredSelection selection = vmInstall != null?new StructuredSelection(vmInstall):StructuredSelection.EMPTY;
+            mVmInstalls.setSelection(selection);
+        }
+        else
+        {
+            mVMInstall = vmInstall;
         }
     }
 
-    protected void setVMInstall(IVMInstall vmInstall)
-    {
-        mVMInstall = vmInstall;
-    }
-
-    public IVMInstall getVMInstall()
+    public final IVMInstall getVMInstall()
     {
         return mVMInstall;
     }
 
-    protected void setToolsMainClassName(String className)
+    public final void setToolsMainClassName(String className)
     {
         mToolsMainClassName = className;
     }
 
-    public String getToolsMainClassName()
+    public final String getToolsMainClassName()
     {
         return mToolsMainClassName;
     }
 
-    protected boolean isValid()
+    public Version getToolsJarVersion()
+    {
+        return mToolsJarVersion;
+    }
+
+    protected IStatus validate()
     {
         if( mVMInstall != null) {
             String toolsJar = getToolsJar();
             File f= new File(toolsJar);
             if(Common.isValidFile(f)) {
-                return true;
+                return Status.OK_STATUS;
             }
         }
-        return false;
+        return createStatus(IStatus.ERROR, "No JRE has been selected.");
+    }
+
+    protected final IStatus createStatus(int severity, String message)
+    {
+        return new Status(severity, getPlugin().getBundle().getSymbolicName(), message);
     }
 
     protected abstract String getDialogTitle();
