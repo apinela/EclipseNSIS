@@ -86,7 +86,7 @@ public class RegistryImporter
             winDir = WinAPI.GetEnvironmentVariable("windir"); //$NON-NLS-1$
         }
         if(winDir != null) {
-            File sys32Dir = new File(winDir,"system32");
+            File sys32Dir = new File(winDir,"system32"); //$NON-NLS-1$
             regExe = new File(sys32Dir,REG_EXE);
         }
         if(IOUtility.isValidFile(regExe)) {

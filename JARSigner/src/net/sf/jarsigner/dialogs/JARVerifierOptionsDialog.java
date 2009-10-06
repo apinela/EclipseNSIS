@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.jarsigner.dialogs;
 
+import java.beans.*;
 import java.util.*;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
         if(Common.isEmpty(keystore)) {
             keystore = ".keystore"; //$NON-NLS-1$
         }
-        Text t = makeFileBrowser(composite,JARSignerPlugin.getResourceString("key.store.location"), KEY_STORE,  //$NON-NLS-1$
+        Text t = makeBrowser(composite,JARSignerPlugin.getResourceString("key.store.location"), KEY_STORE,  //$NON-NLS-1$
                 new FileSelectionAdapter(JARSignerPlugin.getResourceString("key.store.location.message"),keystore,true), //$NON-NLS-1$
                 false);
         gd = (GridData)t.getLayoutData();
@@ -83,16 +84,15 @@ public class JARVerifierOptionsDialog extends AbstractJAROptionsDialog
 
         b = makeCheckBox(composite,JARSignerPlugin.getResourceString(CERTS),CERTS, false);
         mControlsList.add(b);
-    }
 
-    @Override
-    protected void valueChanged(String name, Object oldValue, Object newValue)
-    {
-        if(name.equals(VERBOSE)) {
-            boolean state = ((Boolean)newValue).booleanValue();
-            updateControlsState(state);
-        }
-        super.valueChanged(name, oldValue, newValue);
+        mPropertyChangeSupport.addPropertyChangeListener(VERBOSE, new PropertyChangeListener() {
+
+            public void propertyChange(PropertyChangeEvent evt)
+            {
+                boolean state = ((Boolean)evt.getNewValue()).booleanValue();
+                updateControlsState(state);
+            }
+        });
     }
 
     private void updateControlsState(boolean state)

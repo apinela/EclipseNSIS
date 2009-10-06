@@ -447,7 +447,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                 case LABEL:
                                     if(text2.charAt(0) == '.')
                                     {
-                                        element = new NSISOutlineElement("global label", name.toString(), position, element.getSelectPosition());
+                                        element = new NSISOutlineElement("global label", name.toString(), position, element.getSelectPosition()); //$NON-NLS-1$
                                     }
                                 case GLOBAL_LABEL:
                                     element.setName(text2);

@@ -29,7 +29,7 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
                                             "!else ifmacrondef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                                             "SubSection", "SubSectionEnd", "SectionGroup", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                            "Page", "PageEx", "PageExEnd","!include","Var", "Name","#label","#global label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+                                            "Page", "PageEx", "PageExEnd","!include","Var", "Name","#label","#global label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
     private static final String[] cClosingTypes = {"!endif", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$
                                                     "FunctionEnd", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$
                                                     "SubSectionEnd", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$
@@ -182,10 +182,10 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
 
     public String getType(String typeName)
     {
-        if(typeName.endsWith(":"))
+        if(typeName.endsWith(":")) //$NON-NLS-1$
         {
             //label
-            return mTypes.get("label");
+            return mTypes.get("label"); //$NON-NLS-1$
         }
         return mTypes.get(typeName);
     }

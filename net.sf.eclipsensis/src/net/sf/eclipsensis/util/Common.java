@@ -906,7 +906,7 @@ public class Common
 
     public static String escapeQuotes(String text)
     {
-        return escapeQuotes(text, "\"'`", "$\\");
+        return escapeQuotes(text, "\"'`", "$\\"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public static String escapeQuotes(String text, String quoteChars, String escape)

@@ -10,7 +10,7 @@ import net.sf.eclipsensis.util.CaseInsensitiveSet;
 
 @SuppressWarnings({"serial","unchecked"})
 public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConstants {
-    public static final String REGEX_PREFIX = "re:";
+    public static final String REGEX_PREFIX = "re:"; //$NON-NLS-1$
 
     private String mField;
     private Analyzer mAnalyzer;
@@ -27,7 +27,7 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
 
     public NSISHelpSearchQueryParser(String field, Analyzer analyzer)
     {
-        this(new StringReader(""));
+        this(new StringReader("")); //$NON-NLS-1$
         mField = field;
         mAnalyzer = analyzer;
     }
@@ -70,16 +70,16 @@ public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConst
             char c = wildcard.charAt(i);
             switch(c) {
                 case '*':
-                    s.append("\u005c\u005cw*");
+                    s.append("\u005c\u005cw*"); //$NON-NLS-1$
                     break;
                 case '?':
-                    s.append("\u005c\u005cw");
+                    s.append("\u005c\u005cw"); //$NON-NLS-1$
                     break;
                     // escape special regexp-characters
                 case '(': case ')': case '[': case ']': case '$':
                 case '^': case '.': case '{': case '}': case '|':
                 case '\u005c\u005c':
-                    s.append("\u005c\u005c");
+                    s.append("\u005c\u005c"); //$NON-NLS-1$
                     s.append(c);
                     break;
                 default:

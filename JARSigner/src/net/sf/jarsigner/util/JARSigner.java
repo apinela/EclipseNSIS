@@ -31,6 +31,14 @@ public class JARSigner extends AbstractJARUtil
     private boolean mInternalSF = false;
     private boolean mSectionsOnly = false;
 
+    private boolean mUseTimestamping = false;
+    private String mTSA = null;
+    private String mTSACert = null;
+
+    private boolean mUseAltSigning = false;
+    private String mAltSigner = null;
+    private String mAltSignerPath = null;
+
     public JARSigner(IVMInstall vmInstall, String toolsJar, List<?> targetJars, String keyStore, String storePass, String alias)
     {
         super(vmInstall, toolsJar,targetJars);
@@ -67,6 +75,36 @@ public class JARSigner extends AbstractJARUtil
     public void setStoreType(String storeType)
     {
         mStoreType = maybeQuote(storeType);
+    }
+
+    public void setUseTimestamping(boolean useTimestamping)
+    {
+        mUseTimestamping = useTimestamping;
+    }
+
+    public void setTSA(String tsa)
+    {
+        mTSA = maybeQuote(tsa);
+    }
+
+    public void setTSACert(String tsaCert)
+    {
+        mTSACert = maybeQuote(tsaCert);
+    }
+
+    public void setUseAltSigning(boolean useAltSigning)
+    {
+        mUseAltSigning = useAltSigning;
+    }
+
+    public void setAltSigner(String altSigner)
+    {
+        mAltSigner = altSigner;
+    }
+
+    public void setAltSignerPath(String altSignerPath)
+    {
+        mAltSignerPath = maybeQuote(altSignerPath);
     }
 
     @Override
@@ -119,6 +157,38 @@ public class JARSigner extends AbstractJARUtil
         }
         if(mSectionsOnly) {
             buf.append(" -sectionsonly"); //$NON-NLS-1$
+        }
+
+        if(mUseTimestamping)
+        {
+            if(!Common.isEmpty(mTSA))
+            {
+                buf.append(" -tsa ").append(mTSA);
+            }
+            else if(!Common.isEmpty(mTSACert))
+            {
+                buf.append(" -tsacert ").append(mTSACert);
+            }
+            else
+            {
+                throw new IllegalArgumentException("Either the TSA URL or the TSA certificate alias must be provided for timestamping.");
+            }
+        }
+
+        if(mUseAltSigning)
+        {
+            if(!Common.isEmpty(mAltSigner))
+            {
+                buf.append(" -altsigner ").append(mAltSigner);
+            }
+            if(!Common.isEmpty(mAltSignerPath))
+            {
+                buf.append(" -altsignerpath ").append(mAltSignerPath);
+            }
+            else
+            {
+                throw new IllegalArgumentException("The name of the signer class must be provided for alternate signing.");
+            }
         }
 
         buf.append(" {0} ").append(mAlias); //$NON-NLS-1$

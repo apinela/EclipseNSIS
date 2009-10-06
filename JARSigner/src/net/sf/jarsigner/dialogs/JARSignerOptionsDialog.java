@@ -9,7 +9,9 @@
  *******************************************************************************/
 package net.sf.jarsigner.dialogs;
 
+import java.beans.*;
 import java.io.File;
+import java.net.*;
 import java.security.*;
 import java.util.*;
 import java.util.List;
@@ -17,15 +19,24 @@ import java.util.List;
 import net.sf.eclipsensis.utilities.util.Common;
 import net.sf.jarsigner.JARSignerPlugin;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.osgi.framework.Version;
 
 public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
 {
+    /**
+     *
+     */
+    private static final char PATH_SEPARATOR = System.getProperty("path.separator").charAt(0);
+
+    private static final Version JAVA_5_VERSION = new Version(1,5,0);
+
     private static final String STORE_PASS = "store.pass"; //$NON-NLS-1$
     private static final String ALIAS = "alias"; //$NON-NLS-1$
     private static final String STORE_TYPE = "store.type"; //$NON-NLS-1$
@@ -35,8 +46,20 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
     private static final String INTERNAL_SF = "internal.sf"; //$NON-NLS-1$
     private static final String SECTIONS_ONLY = "sections.only"; //$NON-NLS-1$
 
+    private static final String SUPPORTS_TIMESTAMPING = "supports.timestamping"; //$NON-NLS-1$
+    private static final String USE_TIMESTAMPING = "use.timestamping"; //$NON-NLS-1$
+    private static final String TSA_CERT_OPTION = "tsa.cert.option"; //$NON-NLS-1$
+    private static final String TSA = "tsa"; //$NON-NLS-1$
+    private static final String TSA_CERT = "tsa.cert"; //$NON-NLS-1$
+
+    private static final String SUPPORTS_ALT_SIGNING = "supports.alt.signing"; //$NON-NLS-1$
+    private static final String USE_ALT_SIGNING = "use.alt.signing"; //$NON-NLS-1$
+    private static final String ALT_SIGNER = "alt.signer"; //$NON-NLS-1$
+    private static final String ALT_SIGNER_PATH = "alt.signer.path"; //$NON-NLS-1$
+
     private List<String> mAliases;
-    private ComboViewer mComboViewer;
+    private ComboViewer mAliasesComboViewer;
+    private ComboViewer mTSACertAliasesComboViewer;
 
     /**
      * @param parentShell
@@ -90,6 +113,26 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         }
         setValue(INTERNAL_SF,getDialogSettings().getBoolean(INTERNAL_SF)?Boolean.TRUE:Boolean.FALSE);
         setValue(SECTIONS_ONLY,getDialogSettings().getBoolean(SECTIONS_ONLY)?Boolean.TRUE:Boolean.FALSE);
+
+        setValue(USE_TIMESTAMPING,getDialogSettings().getBoolean(USE_TIMESTAMPING)?Boolean.TRUE:Boolean.FALSE);
+        setValue(TSA_CERT_OPTION,getDialogSettings().getBoolean(TSA_CERT_OPTION)?Boolean.TRUE:Boolean.FALSE);
+        setValue(TSA,getStringDialogSetting(TSA));
+        String alias = getStringDialogSetting(TSA_CERT);
+        if(mAliases.contains(alias)) {
+            setValue(TSA_CERT,alias);
+        }
+        else {
+            if(mAliases.size() > 0) {
+                setValue(TSA_CERT,mAliases.get(0));
+            }
+            else {
+                setValue(TSA_CERT,""); //$NON-NLS-1$
+            }
+        }
+
+        setValue(USE_ALT_SIGNING,getDialogSettings().getBoolean(USE_ALT_SIGNING)?Boolean.TRUE:Boolean.FALSE);
+        setValue(ALT_SIGNER,getStringDialogSetting(ALT_SIGNER));
+        setValue(ALT_SIGNER_PATH,getStringDialogSetting(ALT_SIGNER_PATH));
     }
 
     @Override
@@ -136,7 +179,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
                         catch (KeyStoreException e1) {
                             e1.printStackTrace();
                         }
-                        mComboViewer.refresh(true);
+                        mAliasesComboViewer.refresh(true);
                         if(!mAliases.contains(alias)) {
                             if(mAliases.size() > 0) {
                                 alias = mAliases.get(0);
@@ -146,43 +189,63 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
                             }
                         }
                         setValue(ALIAS,alias);
-                        mComboViewer.setSelection(new StructuredSelection(alias));
+                        mAliasesComboViewer.setSelection(new StructuredSelection(alias));
+
+                        mTSACertAliasesComboViewer.refresh(true);
+                        if(!mAliases.contains(alias)) {
+                            if(mAliases.size() > 0) {
+                                alias = mAliases.get(0);
+                            }
+                            else {
+                                alias = ""; //$NON-NLS-1$
+                            }
+                        }
+                        setValue(ALIAS,alias);
+                        mAliasesComboViewer.setSelection(new StructuredSelection(alias));
                     }
                 }
             }
         };
-        Text t = makeFileBrowser(composite,JARSignerPlugin.getResourceString("key.store.location"), KEY_STORE, sa, true); //$NON-NLS-1$
+        Text t = makeBrowser(composite,JARSignerPlugin.getResourceString("key.store.location"), KEY_STORE, sa, true); //$NON-NLS-1$
         t.setEditable(false);
         gd = (GridData)t.getLayoutData();
         gd.widthHint = convertWidthInCharsToPixels(50);
 
         makeLabel(composite, JARSignerPlugin.getResourceString(ALIAS), true);
-        final Combo combo = new Combo(composite,SWT.BORDER|SWT.DROP_DOWN|SWT.READ_ONLY);
-        gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        gd.horizontalSpan = 2;
-        combo.setLayoutData(gd);
-        mComboViewer = new ComboViewer(combo);
-        mComboViewer.setContentProvider(new ArrayContentProvider());
-        mComboViewer.setLabelProvider(new LabelProvider());
-        mComboViewer.addSelectionChangedListener(new ISelectionChangedListener(){
-            public void selectionChanged(SelectionChangedEvent event)
-            {
-                setValue(ALIAS,combo.getText());
-            }
-        });
-        mComboViewer.setInput(mAliases);
-        mComboViewer.setSelection(new StructuredSelection(getAlias()));
+
+        mAliasesComboViewer = makeAliasesComboViewer(composite,ALIAS);
+        ((GridData)mAliasesComboViewer.getCombo().getLayoutData()).horizontalSpan = 2;
 
         makeText(composite,JARSignerPlugin.getResourceString(STORE_TYPE),STORE_TYPE,false);
         makeText(composite,JARSignerPlugin.getResourceString(KEY_PASS),KEY_PASS,false);
         makeText(composite,JARSignerPlugin.getResourceString(SIG_FILE),SIG_FILE,false);
 
         if(getSelection().size() <= 1) {
-            makeFileBrowser(composite,JARSignerPlugin.getResourceString("signed.jar.location"), SIGNED_JAR,  //$NON-NLS-1$
+            makeBrowser(composite,JARSignerPlugin.getResourceString("signed.jar.location"), SIGNED_JAR,  //$NON-NLS-1$
                     new FileSelectionAdapter("signed.jar.location.message","",false), //$NON-NLS-1$ //$NON-NLS-2$
                     false);
         }
 
+    }
+
+    private ComboViewer makeAliasesComboViewer(Composite composite, final String property)
+    {
+        final Combo combo = new Combo(composite,SWT.BORDER|SWT.DROP_DOWN|SWT.READ_ONLY);
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        gd.horizontalSpan = ((GridLayout)composite.getLayout()).numColumns;
+        combo.setLayoutData(gd);
+        ComboViewer comboViewer = new ComboViewer(combo);
+        comboViewer.setContentProvider(new ArrayContentProvider());
+        comboViewer.setLabelProvider(new LabelProvider());
+        comboViewer.addSelectionChangedListener(new ISelectionChangedListener(){
+            public void selectionChanged(SelectionChangedEvent event)
+            {
+                setValue(property,combo.getText());
+            }
+        });
+        comboViewer.setInput(mAliases);
+        comboViewer.setSelection(new StructuredSelection(getValues().get(property)));
+        return comboViewer;
     }
 
     @Override
@@ -199,21 +262,272 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         applyDialogFont(composite);
         makeCheckBox(composite,JARSignerPlugin.getResourceString(INTERNAL_SF),INTERNAL_SF,false);
         makeCheckBox(composite,JARSignerPlugin.getResourceString(SECTIONS_ONLY),SECTIONS_ONLY,false);
+
+        final Group tsGroup = new Group(composite,SWT.NONE);
+        tsGroup.setText("Time Stamping");
+        gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+        tsGroup.setLayoutData(gd);
+        layout = new GridLayout(2,false);
+        tsGroup.setLayout(layout);
+
+        final Button useTimeStamping = makeCheckBox(tsGroup, "Time Stamp signature", USE_TIMESTAMPING, false);
+
+        final Button tsaOption = makeRadio(tsGroup, "TSA URL:", TSA_CERT_OPTION, true, Boolean.FALSE);
+        ((GridData)tsaOption.getLayoutData()).horizontalSpan = 1;
+
+        final Text tsa = makeText(tsGroup, "", TSA, false);
+        ((GridData)tsa.getLayoutData()).horizontalSpan = 1;
+
+        final Button tsaCertOption = makeRadio(tsGroup, "TSA Certificate Alias:", TSA_CERT_OPTION, true, Boolean.TRUE);
+        ((GridData)tsaCertOption.getLayoutData()).horizontalSpan = 1;
+
+        mTSACertAliasesComboViewer = makeAliasesComboViewer(tsGroup, TSA_CERT);
+        ((GridData)mTSACertAliasesComboViewer.getCombo().getLayoutData()).horizontalSpan = 1;
+
+        tsaOption.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e)
+            {
+                boolean enabled = tsaOption.getSelection();
+                setEnabled(tsa, enabled);
+                setEnabled(mTSACertAliasesComboViewer.getCombo(), !enabled);
+            }
+        });
+
+        tsaCertOption.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e)
+            {
+                boolean enabled = tsaCertOption.getSelection();
+                setEnabled(tsa, !enabled);
+                setEnabled(mTSACertAliasesComboViewer.getCombo(), enabled);
+            }
+        });
+
+
+        useTimeStamping.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e)
+            {
+                boolean enabled = useTimeStamping.getSelection();
+                setEnabled(tsaOption, enabled);
+                setEnabled(tsa, enabled && tsaOption.getSelection());
+                setEnabled(tsaCertOption, enabled);
+                setEnabled(mTSACertAliasesComboViewer.getCombo(), enabled && tsaCertOption.getSelection());
+            }
+        });
+
+
+        final Group asGroup = new Group(composite,SWT.NONE);
+        asGroup.setText("Alternate Signing Method");
+        gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+        asGroup.setLayoutData(gd);
+        layout = new GridLayout(3,false);
+        asGroup.setLayout(layout);
+
+        final Button useAltSigning = makeCheckBox(asGroup, "Use Alternate Signing Method", USE_ALT_SIGNING, false);
+
+        final Text altSigner = makeText(asGroup, "Class", ALT_SIGNER, true);
+        final Text altSignerPath = makeBrowser(asGroup, "Classpath", ALT_SIGNER_PATH, new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e)
+            {
+                Button b = (Button)e.widget;
+                if(b == null) {
+                    b = (Button)e.item;
+                }
+                Text text = (Text)b.getData(ATTR_TEXT);
+                if(text != null) {
+                    List<String> classpath = Common.tokenize(getAltSignerPath(), PATH_SEPARATOR);
+                    ClasspathDialog dialog = new ClasspathDialog(getShell(), classpath);
+                    if(dialog.open() == Window.OK)
+                    {
+                        text.setText(Common.flatten(dialog.getClasspath(), PATH_SEPARATOR));
+                    }
+                }
+            }
+        }, false, true);
+
+        useAltSigning.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e)
+            {
+                boolean enabled = useAltSigning.getSelection();
+                setEnabled(altSigner, enabled);
+                setEnabled(altSignerPath, enabled);
+            }
+        });
+
+        final Runnable runnable = new Runnable() {
+
+            public void run()
+            {
+                Version version = getToolsJarVersion();
+                boolean java5 = false;
+                if(version != null)
+                {
+                    java5 = version.compareTo(JAVA_5_VERSION) >= 0;
+                }
+                setValue(SUPPORTS_TIMESTAMPING, java5);
+                setValue(SUPPORTS_ALT_SIGNING, java5);
+                if(java5)
+                {
+                    tsGroup.setEnabled(true);
+                    setEnabled(useTimeStamping, true);
+                    setEnabled(tsaOption, useTimeStamping.getSelection());
+                    setEnabled(tsa, useTimeStamping.getSelection() && tsaOption.getSelection());
+                    setEnabled(tsaCertOption, useTimeStamping.getSelection());
+                    setEnabled(mTSACertAliasesComboViewer.getCombo(), useTimeStamping.getSelection() && tsaCertOption.getSelection());
+
+                    asGroup.setEnabled(true);
+                    setEnabled(useAltSigning, true);
+                    setEnabled(altSigner, useAltSigning.getSelection());
+                    setEnabled(altSignerPath, useAltSigning.getSelection());
+                }
+                else
+                {
+                    setEnabled(useTimeStamping, false);
+                    setEnabled(tsaOption, false);
+                    setEnabled(tsa, false);
+                    setEnabled(tsaCertOption, false);
+                    setEnabled(mTSACertAliasesComboViewer.getCombo(), false);
+                    tsGroup.setEnabled(false);
+
+                    setEnabled(useAltSigning, false);
+                    setEnabled(altSigner, false);
+                    setEnabled(altSignerPath, false);
+                    asGroup.setEnabled(false);
+                }
+            }
+        };
+        runnable.run();
+
+        mPropertyChangeSupport.addPropertyChangeListener(TOOLS_JAR_VERSION, new PropertyChangeListener() {
+
+            public void propertyChange(PropertyChangeEvent evt)
+            {
+                runnable.run();
+            }
+        });
+
+        applyDialogFont(tsGroup);
     }
 
     @Override
-    protected boolean isValid()
+    protected IStatus validate()
     {
-        if(super.isValid()) {
-            boolean state = !Common.isEmpty(getAlias());
-            if(state) {
+        IStatus status = super.validate();
+        if(status.isOK()) {
+            if(Common.isEmpty(getAlias())) {
+                status = createStatus(IStatus.ERROR, "JAR signing certificate alias has not been specified.");
+            }
+            if(status.isOK()) {
                 String signedJar = getSignedJar();
                 if(!Common.isEmpty(signedJar)) {
                     File file = new File(signedJar);
-                    state = !Common.isValidDirectory(file);
+                    if(Common.isValidDirectory(file))
+                    {
+                        status = createStatus(IStatus.ERROR, String.format("Signed JAR \"%1$s\" is a directory name.",file.getAbsolutePath()));
+                    }
                 }
             }
-            return state;
+
+            if (status.isOK())
+            {
+                if (isSupportsTimestamping())
+                {
+                    if (isUseTimestamping())
+                    {
+                        if (isTSACertOption())
+                        {
+                            if(Common.isEmpty(getTSACert())) {
+                                status = createStatus(IStatus.ERROR, "Time Stamping Authority certificate alias has not been specified.");
+                            }
+                        }
+                        else
+                        {
+                            String tsa = getTSA();
+                            if (!Common.isEmpty(tsa))
+                            {
+                                try
+                                {
+                                    new URI(tsa);
+                                }
+                                catch (URISyntaxException e)
+                                {
+                                    status = createStatus(IStatus.ERROR, "Time Stamping Authority URL alias is invalid.");
+                                }
+
+                            }
+                            else {
+                                status = createStatus(IStatus.ERROR, "Time Stamping Authority URL alias has not been specified.");
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (status.isOK())
+            {
+                if (isSupportsAltSigning())
+                {
+                    if (isUseAltSigning())
+                    {
+                        String altSigner = getAltSigner();
+                        if (!Common.isEmpty(altSigner))
+                        {
+                            List<String> parts = Common.tokenize(altSigner, '.');
+                            for (String part : parts)
+                            {
+                                if (!isJavaIdentifier(part))
+                                {
+                                    status = createStatus(IStatus.ERROR, String.format("Alternate Signer class name \"%1$s\" is invalid.",altSigner));
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            status = createStatus(IStatus.ERROR, String.format("Alternate Signer class name has not been specified.",altSigner));
+                        }
+
+                        if (status.isOK())
+                        {
+                            String altSignerPath = getAltSignerPath();
+                            if (!Common.isEmpty(altSignerPath))
+                            {
+                                List<String> parts = Common.tokenize(altSignerPath, PATH_SEPARATOR);
+                                for (String string : parts)
+                                {
+                                    if (!new File(string).exists())
+                                    {
+                                        status = createStatus(IStatus.ERROR, String.format("Alternate Signer classpath element \"%1$s\" is not a valid path.",string));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return status;
+    }
+
+    private boolean isJavaIdentifier(String name)
+    {
+        char[] chars = name.toCharArray();
+        if(chars.length > 0) {
+            if(Character.isJavaIdentifierStart(chars[0]))
+            {
+                for (int i = 1; i < chars.length; i++)
+                {
+                    if(!Character.isJavaIdentifierPart(chars[i]))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
         return false;
     }
@@ -231,6 +545,16 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
         }
         getDialogSettings().put(INTERNAL_SF,isInternalSF());
         getDialogSettings().put(SECTIONS_ONLY,isSectionsOnly());
+
+        getDialogSettings().put(USE_TIMESTAMPING, isUseTimestamping());
+        getDialogSettings().put(TSA_CERT_OPTION, isTSACertOption());
+        getDialogSettings().put(TSA, getTSA());
+        getDialogSettings().put(TSA_CERT, getTSACert());
+
+        getDialogSettings().put(USE_ALT_SIGNING, isUseAltSigning());
+        getDialogSettings().put(ALT_SIGNER, getAltSigner());
+        getDialogSettings().put(ALT_SIGNER_PATH, getAltSignerPath());
+
         super.okPressed();
     }
 
@@ -261,7 +585,7 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
 
     public String getSignedJar()
     {
-        return getSelection().size()>1?"":(String)getValues().get(SIGNED_JAR); //$NON-NLS-1$
+        return getSelection().size()>1?"":(String)getValues().get(SIGNED_JAR);
     }
 
     public String getStorePass()
@@ -272,5 +596,50 @@ public class JARSignerOptionsDialog extends AbstractJAROptionsDialog
     public String getStoreType()
     {
         return (String)getValues().get(STORE_TYPE);
+    }
+
+    public boolean isUseTimestamping()
+    {
+        return (Boolean)getValues().get(USE_TIMESTAMPING);
+    }
+
+    public boolean isTSACertOption()
+    {
+        return (Boolean)getValues().get(TSA_CERT_OPTION);
+    }
+
+    public String getTSA()
+    {
+        return (String)getValues().get(TSA);
+    }
+
+    public String getTSACert()
+    {
+        return (String)getValues().get(TSA_CERT);
+    }
+
+    public boolean isUseAltSigning()
+    {
+        return (Boolean)getValues().get(USE_ALT_SIGNING);
+    }
+
+    public String getAltSigner()
+    {
+        return (String)getValues().get(ALT_SIGNER);
+    }
+
+    public String getAltSignerPath()
+    {
+        return (String)getValues().get(ALT_SIGNER_PATH);
+    }
+
+    public boolean isSupportsTimestamping()
+    {
+        return (Boolean)getValues().get(SUPPORTS_TIMESTAMPING);
+    }
+
+    public boolean isSupportsAltSigning()
+    {
+        return (Boolean)getValues().get(SUPPORTS_ALT_SIGNING);
     }
 }

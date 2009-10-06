@@ -802,7 +802,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                 if(mIsMUI) {
                     if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 &&
                        !mSettings.isDisplaySupportedLanguages()) {
-                        mOnInitFunction.addElement(new NSISScriptDefine("MUI_LANGDLL_ALLLANGUAGES"));
+                        mOnInitFunction.addElement(new NSISScriptDefine("MUI_LANGDLL_ALLLANGUAGES")); //$NON-NLS-1$
                     }
                     mOnInitFunction.addElement(new NSISScriptInsertMacro("MUI_LANGDLL_DISPLAY")); //$NON-NLS-1$
                 }
@@ -819,7 +819,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         mOnInitFunction.addElement(new NSISScriptInstruction("Push",language.getLangDef())); //$NON-NLS-1$
                         mOnInitFunction.addElement(new NSISScriptInstruction("Push",language.getDisplayName())); //$NON-NLS-1$
                     }
-                    mOnInitFunction.addElement(new NSISScriptInstruction("Push",useCodePage?"CA":"A")); //$NON-NLS-1$ //$NON-NLS-2$
+                    mOnInitFunction.addElement(new NSISScriptInstruction("Push",useCodePage?"CA":"A")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     mOnInitFunction.addElement(new NSISScriptInstruction("LangDLL::LangDialog",new String[]{ //$NON-NLS-1$
                             EclipseNSISPlugin.getResourceString("scriptgen.langdialog.title"),EclipseNSISPlugin.getResourceString("scriptgen.langdialog.message")})); //$NON-NLS-1$ //$NON-NLS-2$
                     mOnInitFunction.addElement(new NSISScriptInstruction("Pop",getKeyword("$LANGUAGE"))); //$NON-NLS-1$ //$NON-NLS-2$

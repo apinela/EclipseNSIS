@@ -130,8 +130,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
 {
     public static final String ECLIPSENSIS_URI_SCHEME = "eclipsensis:"; //$NON-NLS-1$
     public static final String FILE_URI_SCHEME = "file:"; //$NON-NLS-1$
-    private static final Pattern cFileUriPattern = Pattern.compile("^file:///?(.*)$", Pattern.CASE_INSENSITIVE);
-    private static final Pattern cW3CFileUriPattern = Pattern.compile("^file://([^/].*)?$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern cFileUriPattern = Pattern.compile("^file:///?(.*)$", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+    private static final Pattern cW3CFileUriPattern = Pattern.compile("^file://([^/].*)?$", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
     private static String cFirstPage = null;
     private static final String IMAGE_LOCATION_FORMAT = EclipseNSISPlugin
             .getResourceString("help.browser.throbber.icon.format"); //$NON-NLS-1$
@@ -1009,7 +1009,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                                     {
                                         if (!isFileURI(location))
                                         {
-                                            location.replace("+", " ");
+                                            location.replace("+", " "); //$NON-NLS-1$ //$NON-NLS-2$
                                             // This is a windows file name
                                             location = decode(IOUtility.getFileURLString(new File(location)));
                                         }
@@ -1733,7 +1733,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         Matcher matcher = cW3CFileUriPattern.matcher(location);
         if(matcher.matches())
         {
-            return "file:///" + matcher.group(1).replace("+", "%20");
+            return "file:///" + matcher.group(1).replace("+", "%20"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         return location;
     }
@@ -1743,7 +1743,7 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
         Matcher matcher = cFileUriPattern.matcher(location);
         if(matcher.matches())
         {
-            return "file:///" + URLEncoder.encode(matcher.group(1),System.getProperty("file.encoding")).replace("+", "%20");
+            return "file:///" + URLEncoder.encode(matcher.group(1),System.getProperty("file.encoding")).replace("+", "%20"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
         return location;
     }

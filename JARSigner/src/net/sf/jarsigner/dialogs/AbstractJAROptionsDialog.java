@@ -18,6 +18,7 @@ import net.sf.eclipsensis.utilities.util.Common;
 import net.sf.jarsigner.JARSignerPlugin;
 import net.sf.jarsigner.util.AbstractJARUtil;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Version;
@@ -62,8 +63,8 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
     @Override
     protected void okPressed()
     {
-       getDialogSettings().put(KEY_STORE,getKeyStore());
-       super.okPressed();
+        getDialogSettings().put(KEY_STORE,getKeyStore());
+        super.okPressed();
     }
 
     public final String getKeyStore()
@@ -90,18 +91,17 @@ public abstract class AbstractJAROptionsDialog extends AbstractToolsUtilityDialo
     }
 
     @Override
-    protected boolean isValid()
+    protected IStatus validate()
     {
-        if(super.isValid()) {
-            boolean state = true;
-
+        IStatus status = super.validate();
+        if(status.isOK()) {
             if(!Common.isEmpty(getKeyStore())) {
                 File f = new File(getKeyStore());
-                state = Common.isValidFile(f);
+                if(!Common.isValidFile(f)) {
+                    return createStatus(IStatus.ERROR, String.format("Keystore \"%1$s\" is not a valid file.",f.getAbsolutePath()));
+                }
             }
-
-            return state;
         }
-        return false;
+        return status;
     }
 }

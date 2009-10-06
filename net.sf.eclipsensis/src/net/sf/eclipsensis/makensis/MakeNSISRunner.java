@@ -716,8 +716,8 @@ public class MakeNSISRunner implements INSISConstants
                     List<String> args = new ArrayList<String>();
                     if(EclipseNSISPlugin.getDefault().isWinVista())
                     {
-                        args.add("cmd.exe");
-                        args.add("/c");
+                        args.add("cmd.exe"); //$NON-NLS-1$
+                        args.add("/c"); //$NON-NLS-1$
                     }
                     args.add(exeName);
                     Process proc = Runtime.getRuntime().exec(args.toArray(new String[args.size()]),null,workDir);
@@ -821,8 +821,8 @@ public class MakeNSISRunner implements INSISConstants
             String[] newCmdArray = new String[cmdArray.length];
             for (int i = 0; i < cmdArray.length; i++)
             {
-                newCmdArray[i] = Common.escapeQuotes(cmdArray[i],"\\","\\");
-                newCmdArray[i] = Common.escapeQuotes(newCmdArray[i],"\"","\\");
+                newCmdArray[i] = Common.escapeQuotes(cmdArray[i],"\\","\\"); //$NON-NLS-1$ //$NON-NLS-2$
+                newCmdArray[i] = Common.escapeQuotes(newCmdArray[i],"\"","\\"); //$NON-NLS-1$ //$NON-NLS-2$
             }
             cmdArray = newCmdArray;
         }
