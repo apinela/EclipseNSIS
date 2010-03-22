@@ -18,6 +18,7 @@
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <stringAttribute key="pde.version" value="3.3"/>
 <stringAttribute key="product" value="org.eclipse.sdk.ide"/>
+<stringAttribute key="selected_workspace_plugins" value="net.sf.checklist@default:default,net.sf.eclipsensis.source@default:default,net.sf.eclipsensis.startup@default:default,net.sf.eclipsensis.utilities@default:default,net.sf.eclipsensis@default:default,net.sf.eclipsensis.update@default:default,net.sf.jarsigner@default:default,net.sf.jnigen@default:default,net.sf.eclipsensis.installoptions@default:default,DummyPlugin@default:default"/>
 <booleanAttribute key="show_selected_only" value="false"/>
 <stringAttribute key="templateConfig" value=""/>
 <booleanAttribute key="tracing" value="false"/>
