@@ -142,44 +142,39 @@ public class Common
 
     public static IVMInstall getVMInstall(Version minVersion)
     {
-        return getVMInstall(minVersion, null);
+        IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
+        if(vmInstall instanceof IVMInstall2) {
+            if(parseVersion(((IVMInstall2)vmInstall).getJavaVersion()).compareTo(minVersion) >= 0) {
+                return vmInstall;
+            }
+        }
+        return null;
     }
 
-    public static IVMInstall getVMInstall(Version minVersion, Version matchVersion)
+    public static List<IVMInstall> getVMInstalls(Version minVersion, Version matchVersion)
     {
-        if(matchVersion == null) {
-            IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
-            if(vmInstall instanceof IVMInstall2) {
-                if(parseVersion(((IVMInstall2)vmInstall).getJavaVersion()).compareTo(minVersion) >= 0) {
-                    return vmInstall;
-                }
-            }
-            return null;
-        }
-        else {
-            IVMInstall vmInstall = null;
-            IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
-            if(types != null) {
-                Version bestVersion = minVersion;
-                for (int i = 0; i < types.length; i++) {
-                    IVMInstall[] installs = types[i].getVMInstalls();
-                    if(installs != null) {
-                        for (int j = 0; j < installs.length; j++) {
-                            if(installs[j] instanceof IVMInstall2) {
-                                Version version = parseVersion(((IVMInstall2)installs[j]).getJavaVersion());
-                                if(version.compareTo(bestVersion) >= 0 &&
-                                        version.getMajor() == matchVersion.getMajor() &&
-                                        version.getMinor() == matchVersion.getMinor()) {
-                                    vmInstall = installs[j];
-                                    bestVersion = version;
-                                }
+        List<IVMInstall> vmInstalls = new ArrayList<IVMInstall>();
+
+        IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
+        if(types != null) {
+            for (int i = 0; i < types.length; i++) {
+                IVMInstall[] installs = types[i].getVMInstalls();
+                if(installs != null) {
+                    for (int j = 0; j < installs.length; j++) {
+                        if(installs[j] instanceof IVMInstall2) {
+                            Version version = parseVersion(((IVMInstall2)installs[j]).getJavaVersion());
+                            if(version.compareTo(minVersion) >= 0 &&
+                                    version.getMajor() == matchVersion.getMajor() &&
+                                    version.getMinor() == matchVersion.getMinor()) {
+                                vmInstalls.add(installs[j]);
                             }
                         }
                     }
                 }
             }
-            return vmInstall;
         }
+
+        return vmInstalls;
     }
 
     public static List<IVMInstall> getVMInstalls(Version minVersion)

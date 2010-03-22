@@ -24,6 +24,7 @@ import net.sf.eclipsensis.utilities.UtilitiesPlugin;
 import net.sf.eclipsensis.utilities.util.Common;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.launching.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
@@ -43,6 +44,7 @@ public abstract class AbstractToolsUtilityDialog extends StatusDialog
 
     protected static final String TOOLS_JAR_VERSION = "toolsjarversion"; //$NON-NLS-1$
     protected static final String TOOLS_JAR = "tools.jar"; //$NON-NLS-1$
+    protected static final String VM_INSTALL = "vminstall"; //$NON-NLS-1$
     protected static final String VERBOSE = "verbose"; //$NON-NLS-1$
     protected static final String IGNORE_ERRORS = "ignore.errors"; //$NON-NLS-1$
 
@@ -346,9 +348,15 @@ public abstract class AbstractToolsUtilityDialog extends StatusDialog
             @Override
             public String getText(Object element)
             {
-                if(element instanceof IVMInstall)
+                StringBuffer text = new StringBuffer();
+                if(element instanceof IVMInstall2)
                 {
-                    return ((IVMInstall)element).getName();
+                    text.append(((IVMInstall2)element).getJavaVersion()).append(" - ");
+                }
+                if(element instanceof IVMInstall2)
+                {
+                    IVMInstall vmInstall = (IVMInstall)element;
+                    return text.append(vmInstall.getName()).toString();
                 }
                 return super.getText(element);
             }
@@ -357,7 +365,7 @@ public abstract class AbstractToolsUtilityDialog extends StatusDialog
         mVmInstalls.addSelectionChangedListener(new ISelectionChangedListener(){
             public void selectionChanged(SelectionChangedEvent event)
             {
-                mVMInstall = (IVMInstall) (event.getSelection().isEmpty()?null:((IStructuredSelection)event.getSelection()).getFirstElement());
+                setVMInstall0((IVMInstall) (event.getSelection().isEmpty()?null:((IStructuredSelection)event.getSelection()).getFirstElement()));
             }
         });
         setVMInstall(mVMInstall);
@@ -409,7 +417,64 @@ public abstract class AbstractToolsUtilityDialog extends StatusDialog
 
                         if (toolsJarVersion != null)
                         {
-                            vmInstall = Common.getVMInstall(getMinJDKVersion(), toolsJarVersion);
+                            try
+                            {
+                                IVMInstall pathMatchedVM = null;
+                                IVMInstall versionMatchedVM = null;
+                                int bestPathMatch = 0;
+                                Path jarFilePath = new Path(f.getCanonicalPath());
+                                Version minJDKVersion = getMinJDKVersion();
+                                minJDKVersion = minJDKVersion.compareTo(toolsJarVersion)> 0?minJDKVersion:toolsJarVersion;
+                                List<IVMInstall> vmInstalls = Common.getVMInstalls(minJDKVersion);
+                                for (IVMInstall vmi : vmInstalls)
+                                {
+                                    if(versionMatchedVM == null)
+                                    {
+                                        Version version = Common.parseVersion(((IVMInstall2)vmi).getJavaVersion());
+                                        if(version.getMajor() == minJDKVersion.getMajor() &&
+                                                version.getMinor() == minJDKVersion.getMinor()) {
+                                            versionMatchedVM = vmi;
+                                        }
+                                    }
+                                    Path vmPath = new Path(vmi.getInstallLocation().getCanonicalPath());
+                                    int n = Math.min(jarFilePath.segmentCount(), vmPath.segmentCount());
+                                    if (Common.objectsAreEqual(jarFilePath.getDevice(), vmPath.getDevice()))
+                                    {
+                                        int pathMatch = 0;
+                                        for (int i = 0; i < n; i++)
+                                        {
+                                            if (vmPath.segment(i).equalsIgnoreCase(jarFilePath.segment(i)))
+                                            {
+                                                pathMatch++;
+                                                continue;
+                                            }
+                                            break;
+                                        }
+                                        if(pathMatch > bestPathMatch)
+                                        {
+                                            bestPathMatch = pathMatch;
+                                            pathMatchedVM = vmi;
+                                        }
+                                    }
+                                }
+                                if(pathMatchedVM != null)
+                                {
+                                    vmInstall = pathMatchedVM;
+                                    toolsJarVersion = Common.parseVersion(((IVMInstall2)vmInstall).getJavaVersion());
+                                }
+                                else if(versionMatchedVM != null)
+                                {
+                                    vmInstall = versionMatchedVM;
+                                }
+                                else if(vmInstalls.size() > 0)
+                                {
+                                    vmInstall = vmInstalls.get(0);
+                                }
+                            }
+                            catch (IOException e)
+                            {
+                                UtilitiesPlugin.getDefault().getLog().log(createStatus(IStatus.ERROR, e.getMessage()));
+                            }
                             if (vmInstall == null)
                             {
                                 MessageDialog.openError(getShell(), UtilitiesPlugin.getResourceString("error.title"), //$NON-NLS-1$
@@ -502,8 +567,15 @@ public abstract class AbstractToolsUtilityDialog extends StatusDialog
         }
         else
         {
-            mVMInstall = vmInstall;
+            setVMInstall0(vmInstall);
         }
+    }
+
+    private void setVMInstall0(IVMInstall vmInstall)
+    {
+        mVMInstall = vmInstall;
+        setValue(VM_INSTALL, mVMInstall==null?null:mVMInstall.getId());
+        updateStatus();
     }
 
     public final IVMInstall getVMInstall()
@@ -528,14 +600,28 @@ public abstract class AbstractToolsUtilityDialog extends StatusDialog
 
     protected IStatus validate()
     {
-        if( mVMInstall != null) {
-            String toolsJar = getToolsJar();
-            File f= new File(toolsJar);
-            if(Common.isValidFile(f)) {
-                return Status.OK_STATUS;
+        IStatus status = Status.OK_STATUS;
+        String toolsJar = getToolsJar();
+        File f= new File(toolsJar);
+        if(!Common.isValidFile(f))
+        {
+            status = createStatus(IStatus.ERROR, UtilitiesPlugin.getResourceString("missing.tools.jar")); //$NON-NLS-1$
+        }
+        else
+        {
+            if(Common.isEmpty(getToolsMainClassName()))
+            {
+                status = createStatus(IStatus.ERROR, UtilitiesPlugin.getResourceString("missing.tools.main")); //$NON-NLS-1$
+            }
+            else
+            {
+                if( mVMInstall == null)
+                {
+                    status = createStatus(IStatus.ERROR, UtilitiesPlugin.getResourceString("missing.jre")); //$NON-NLS-1$
+                }
             }
         }
-        return createStatus(IStatus.ERROR, UtilitiesPlugin.getResourceString("missing.jre")); //$NON-NLS-1$
+        return status;
     }
 
     protected final IStatus createStatus(int severity, String message)

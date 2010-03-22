@@ -9,6 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.utilities;
 
+import java.io.*;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
@@ -30,6 +31,8 @@ public class UtilitiesPlugin extends AbstractUIPlugin
     private ResourceBundle mResourceBundle;
     private Image mShellImage;
     private JobScheduler mJobScheduler = new JobScheduler();
+    private File mToolsVMCacheFile;
+    private Properties mToolsVMCache = new Properties();
 
     /**
      * The constructor.
@@ -59,7 +62,7 @@ public class UtilitiesPlugin extends AbstractUIPlugin
     {
         ResourceBundle bundle = getDefault().getResourceBundle();
         try {
-            return (bundle != null) ? bundle.getString(key) : key;
+            return bundle != null ? bundle.getString(key) : key;
         } catch (MissingResourceException e) {
             return key;
         }
@@ -81,10 +84,28 @@ public class UtilitiesPlugin extends AbstractUIPlugin
     public void start(BundleContext context) throws Exception
     {
         super.start(context);
+        mToolsVMCacheFile = new File(getStateLocation().toFile(),"net.sf.eclipsensis.utilities.tools-vms-cache.properties");
         mJobScheduler.start();
         URL entry = getBundle().getEntry(getResourceString("utilities.icon")); //$NON-NLS-1$
         getImageRegistry().put("utilities.icon", ImageDescriptor.createFromURL(entry)); //$NON-NLS-1$
         mShellImage = getImageRegistry().get("utilities.icon"); //$NON-NLS-1$
+
+        if(mToolsVMCacheFile.exists() && mToolsVMCacheFile.isFile())
+        {
+            BufferedInputStream is = null;
+            try
+            {
+                is = new BufferedInputStream(new FileInputStream(mToolsVMCacheFile));
+                mToolsVMCache.load(is);
+            }
+            finally
+            {
+                if(is != null)
+                {
+                    is.close();
+                }
+            }
+        }
     }
 
     public Image getShellImage()
@@ -97,9 +118,35 @@ public class UtilitiesPlugin extends AbstractUIPlugin
         return mJobScheduler;
     }
 
+    public String getCachedVMName(String toolsJarName)
+    {
+        return mToolsVMCache.getProperty(toolsJarName);
+    }
+
+    public void setCachedVMName(String toolsJarName, String vmName)
+    {
+        mToolsVMCache.setProperty(toolsJarName, vmName);
+    }
+
     @Override
     public void stop(BundleContext context) throws Exception
     {
+        if(mToolsVMCacheFile.exists() && mToolsVMCacheFile.isFile())
+        {
+            BufferedOutputStream os = null;
+            try
+            {
+                os = new BufferedOutputStream(new FileOutputStream(mToolsVMCacheFile));
+                mToolsVMCache.store(os, null);
+            }
+            finally
+            {
+                if(os != null)
+                {
+                    os.close();
+                }
+            }
+        }
         mJobScheduler.stop();
         mShellImage = null;
         super.stop(context);
