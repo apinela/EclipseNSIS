@@ -1,7 +1,7 @@
 Revision History
 ================
 
-0.9.7.3 (09/22/2009)
+0.9.7.3 (03/26/2010)
     * This bundles source code for the following EclipseNSIS plugins into a
       single plugin:
         o EclipseNSIS 0.9.7.3
