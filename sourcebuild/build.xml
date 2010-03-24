@@ -40,9 +40,9 @@
 		<zip destfile="../net.sf.eclipsensis.site/plugins/net.sf.eclipsensis.source_${Bundle-Version}.jar">
 			<fileset dir="${build.plugins.root}"/>
 		</zip>
-		<antcall target="sign.jar">
+<!--		<antcall target="sign.jar">
 			<param name="jar" value="../net.sf.eclipsensis.site/plugins/net.sf.eclipsensis.source_${Bundle-Version}.jar"/>
-		</antcall>
+		</antcall> -->
 		<zip destfile="../net.sf.eclipsensis.site/features/net.sf.eclipsensis.source_${Bundle-Version}.jar">
 			<fileset dir="../net.sf.eclipsensis.source.feature">
 				<exclude name="**/CVS/*"/>
@@ -51,9 +51,9 @@
 				<exclude name="build.properties"/>
 			</fileset>
 		</zip>
-		<antcall target="sign.jar">
+<!--		<antcall target="sign.jar">
 			<param name="jar" value="../net.sf.eclipsensis.site/features/net.sf.eclipsensis.source_${Bundle-Version}.jar"/>
-		</antcall>
+		</antcall> -->
         <copy todir="${build.features.root}">
             <fileset dir="../net.sf.eclipsensis.source.feature">
                 <exclude name="**/CVS/*"/>

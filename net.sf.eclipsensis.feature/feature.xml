@@ -60,8 +60,8 @@
          os="win32"
          ws="win32"
          arch="x86"
-         download-size="3599"
-         install-size="3599"
+         download-size="3490"
+         install-size="3490"
          version="0.9.7.3"
          unpack="false"/>
 
@@ -70,8 +70,8 @@
          os="win32"
          ws="win32"
          arch="x86"
-         download-size="126"
-         install-size="126"
+         download-size="118"
+         install-size="118"
          version="0.9.7.3"
          unpack="false"/>
 
@@ -80,8 +80,8 @@
          os="win32"
          ws="win32"
          arch="x86"
-         download-size="20"
-         install-size="20"
+         download-size="16"
+         install-size="16"
          version="0.9.7.3"
          unpack="false"/>
 
