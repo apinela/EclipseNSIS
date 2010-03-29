@@ -49,15 +49,15 @@
 
    <plugin
          id="net.sf.jarsigner"
-         download-size="62"
-         install-size="62"
+         download-size="63"
+         install-size="63"
          version="0.9.3"
          unpack="false"/>
 
    <plugin
          id="net.sf.jnigen"
-         download-size="34"
-         install-size="34"
+         download-size="35"
+         install-size="35"
          version="0.9.3"
          unpack="false"/>
 
