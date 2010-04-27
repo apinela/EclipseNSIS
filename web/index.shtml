@@ -29,8 +29,24 @@ editing, compiling and testing Nullsoft Installer (NSIS) scripts. The
 EclipseNSIS InstallOptions Editor plugin is an add-on to EclipseNSIS
 which enables editing of InstallOptions scripts.</p>
 <a name="features"></a><h2>Features</h2><h3>EclipseNSIS</h3>
-<ul><li>Requires <a href="http://www.eclipse.org/downloads/packages/release/galileo/sr1">Eclipse 3.5</a> or better.</li><li>Requires
-Windows NT 4.0, Windows 2000, Windows XP, Windows Server 2003, Windows Vista, or Windows 7.</li><li>Syntax highlighting editor.</li>
+<ul>
+<li>Requires <a href="http://www.eclipse.org/downloads/packages/release/galileo/sr1">Eclipse 3.5</a> or better.</li>
+<li>Requires one of the following operating systems:</li>
+  <ul>
+  <li>Windows NT 4.0</li>
+  <li>Windows 2000</li>
+  <li>Windows XP</li>
+  <li>Windows Server 2003</li>
+  <li>Windows Vista</li>
+  <li>Windows Server 2008</li>
+  <li>Windows 7</li>
+  </ul>
+<li>Requires one of the following processor architectures:</li>
+  <ul>
+  <li>x86 (32-bit)</li>
+  <li>x64 (64-bit)</li>
+  </ul>
+<li>Syntax highlighting editor.</li>
 <li>Outline view for quick navigation.</li>
 <li>Integrated compiling and testing support.</li>
 <li>Error and warning marker generation.</li>
@@ -121,7 +137,7 @@ Public License v1.0</a>.
 <input type="hidden" name="req" value="addrating">
 <input type="submit" value="Vote!">
 </form></td><td style="width: 20%; text-align: center;"><strong><small>Copyright
-&copy; 2004-2009 Sunil Kamath (IcemanK).</small></strong></td>
+&copy; 2004-2010 Sunil Kamath (IcemanK).</small></strong></td>
 <td style="width: 40%; text-align: right;">
 <!--#include virtual="counter.shtml" -->
 </td></tr></tbody></table></div></body></html>
