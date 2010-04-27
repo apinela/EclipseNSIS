@@ -59,8 +59,8 @@
          id="net.sf.eclipsensis"
          os="win32"
          ws="win32"
-         download-size="3786"
-         install-size="3786"
+         download-size="3735"
+         install-size="3735"
          version="0.9.8"
          unpack="false"/>
 
@@ -68,8 +68,8 @@
          id="net.sf.eclipsensis.update"
          os="win32"
          ws="win32"
-         download-size="116"
-         install-size="116"
+         download-size="115"
+         install-size="115"
          version="0.9.8"
          unpack="false"/>
 

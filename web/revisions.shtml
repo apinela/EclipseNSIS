@@ -136,7 +136,7 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis098"
 src="images/closed.gif" onClick="toggle('trigger_eclipsensis098', 'toggle_eclipsensis098'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
-<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.8.zip?download">0.9.8</a> (03/26/2010)
+<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.8.zip?download">0.9.8</a> (04/28/2010)
 <div id="toggle_eclipsensis098" class="toggle">
 <ul>
   <li>Added 64-bit support.</li>
@@ -524,7 +524,7 @@ src="images/closed.gif" onClick="toggle('trigger_installoptions098', 'toggle_ins
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.8.zip?download">0.9.8</a>
-(03/26/2010)
+(04/28/2010)
 <div id="toggle_installoptions098" class="toggle">
 <ul>
   <li>Added 64-bit support.</li>
@@ -876,7 +876,7 @@ src="images/closed.gif" onClick="toggle('trigger_sources098', 'toggle_sources098
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <a
  href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.source_0.9.8.zip?download">0.9.8</a>
-(03/26/2010)
+(04/28/2010)
 <div id="toggle_sources098" class="toggle">
 <ul>
   <li>This bundles source code for the following EclipseNSIS plugins into a single plugin:</li>
