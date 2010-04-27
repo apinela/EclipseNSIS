@@ -9,6 +9,8 @@
  ******************************************************************************/
 package net.sf.eclipsensis.util;
 
+import net.sf.eclipsensis.util.winapi.WinAPI;
+
 
 public class RegistryValue
 {

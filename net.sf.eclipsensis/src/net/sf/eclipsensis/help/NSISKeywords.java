@@ -15,6 +15,7 @@ import java.util.*;
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -165,8 +166,8 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                     }
                     else {
                         int n = key.indexOf('#');
-                        String name = (n >= 0?key.substring(0,n):key);
-                        Version version = (n >= 0?new Version(key.substring(n+1)):INSISVersions.MINIMUM_VERSION);
+                        String name = n >= 0?key.substring(0,n):key;
+                        Version version = n >= 0?new Version(key.substring(n+1)):INSISVersions.MINIMUM_VERSION;
                         if(nsisVersion.compareTo(version) >= 0) {
                             ArrayList<String[]> list = versionMap.get(version);
                             if(list == null) {
@@ -273,16 +274,16 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                                         set.remove(values[i].substring(1));
                                     } else if (m > 0) {
                                         String oldValue = values[i].substring(
-                                                0, m);
+                                                        0, m);
                                         String newValue = values[i]
-                                                .substring(m + 1);
+                                                                 .substring(m + 1);
                                         List<String> list2 = mNewerKeywordsMap
-                                                .get(oldValue);
+                                        .get(oldValue);
                                         if (list2 == null) {
                                             list2 = new ArrayList<String>();
                                             list2.add(oldValue);
                                             mNewerKeywordsMap.put(oldValue,
-                                                    list2);
+                                                            list2);
                                         }
                                         if (!list2.contains(newValue)) {
                                             list2.add(newValue);
@@ -291,15 +292,15 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                                         set.add(newValue);
                                     } else if (n > 0) {
                                         String oldValue = values[i].substring(
-                                                0, n);
+                                                        0, n);
                                         String newValue = values[i]
-                                                .substring(n + 1);
+                                                                 .substring(n + 1);
                                         List<String> list2 = mNewerKeywordsMap
-                                                .get(oldValue);
+                                        .get(oldValue);
                                         if (list2 == null) {
                                             list2 = new ArrayList<String>();
                                             mNewerKeywordsMap.put(oldValue,
-                                                    list2);
+                                                            list2);
                                         } else {
                                             list2.remove(oldValue);
                                         }
@@ -353,7 +354,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             set = getValidKeywords(pathConstants);
             mAllKeywordsSet.addAll(set);
             temp = (String[])Common.joinArrays(new Object[] {mKeywordGroupsMap.get(SHELL_CONSTANTS),
-                                                      set.toArray(Common.EMPTY_STRING_ARRAY)});
+                            set.toArray(Common.EMPTY_STRING_ARRAY)});
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(PATH_CONSTANTS,temp);
 
@@ -392,7 +393,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             mKeywordGroupsMap.put(ALL_CONSTANTS,temp);
 
             temp = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(REGISTERS), getKeywordsGroup(PATH_CONSTANTS_AND_VARIABLES),
-                                                                                      getKeywordsGroup(VARIABLES)});
+                            getKeywordsGroup(VARIABLES)});
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(ALL_VARIABLES,temp);
 
@@ -401,7 +402,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             mKeywordGroupsMap.put(ALL_CONSTANTS_AND_VARIABLES,temp);
 
             temp = (String[])Common.joinArrays(new Object[]{getKeywordsGroup(ALL_CONSTANTS), getKeywordsGroup(ALL_VARIABLES),
-                                                             getKeywordsGroup(SYMBOLS), getKeywordsGroup(PREDEFINES)});
+                            getKeywordsGroup(SYMBOLS), getKeywordsGroup(PREDEFINES)});
             Arrays.sort(temp, String.CASE_INSENSITIVE_ORDER);
             mKeywordGroupsMap.put(ALL_CONSTANTS_VARIABLES_AND_SYMBOLS,temp);
 
@@ -566,7 +567,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             Collections.sort(list, new Comparator<ShellConstant>() {
                 public int compare(ShellConstant o1, ShellConstant o2)
                 {
-                    return (o2).value.length()-(o1).value.length();
+                    return o2.value.length()-o1.value.length();
                 }
             });
         }
@@ -582,7 +583,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                     Map.Entry<String,String> entry = iter.next();
                     String name = entry.getKey();
                     if (isValidKeyword(name)) {
-                        String shellFolder = WinAPI.GetShellFolder(Integer.parseInt(entry.getValue()));
+                        String shellFolder = WinAPI.INSTANCE.getShellFolder(Integer.parseInt(entry.getValue()));
                         if (!Common.isEmpty(shellFolder)) {
                             if (entry.getKey().equals(getKeyword("$QUICKLAUNCH"))) { //$NON-NLS-1$
                                 shellFolder = shellFolder + "\\Microsoft\\Internet Explorer\\Quick Launch"; //$NON-NLS-1$
@@ -590,7 +591,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
                             entry.setValue(shellFolder);
                             list.add(new ShellConstant(name, shellFolder, context));
 
-                            String shortPath = WinAPI.GetShortPathName(shellFolder);
+                            String shortPath = WinAPI.INSTANCE.getShortPathName(shellFolder);
                             if (shortPath != null && !shortPath.equalsIgnoreCase(shellFolder)) {
                                 list.add(new ShellConstant(name, shortPath, context));
                             }
@@ -609,7 +610,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
         List<ShellConstant> list = new ArrayList<ShellConstant>();
         ShellConstant temp = null;
         if(isValidKeyword("$TEMP")) { //$NON-NLS-1$
-            temp = new ShellConstant(getKeyword("$TEMP"),WinAPI.GetEnvironmentVariable("TEMP"),ShellConstant.CONTEXT_GENERAL); //$NON-NLS-1$ //$NON-NLS-2$
+            temp = new ShellConstant(getKeyword("$TEMP"),WinAPI.INSTANCE.getEnvironmentVariable("TEMP"),ShellConstant.CONTEXT_GENERAL); //$NON-NLS-1$ //$NON-NLS-2$
         }
         if (!Common.isEmptyCollection(mShellConstants)) {
             for (Iterator<ShellConstant> iter = mShellConstants.iterator(); iter.hasNext();) {
@@ -769,7 +770,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
 
         public boolean isMatch()
         {
-            return (mPotentialMatchIndex >= 0 && mKeywords[mPotentialMatchIndex].equalsIgnoreCase(mText));
+            return mPotentialMatchIndex >= 0 && mKeywords[mPotentialMatchIndex].equalsIgnoreCase(mText);
         }
     }
 }

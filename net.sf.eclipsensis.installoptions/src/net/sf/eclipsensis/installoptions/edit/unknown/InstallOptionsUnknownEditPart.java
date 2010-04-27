@@ -18,6 +18,7 @@ import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsDirectEditCommand;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.*;

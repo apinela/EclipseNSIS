@@ -11,41 +11,23 @@ package net.sf.eclipsensis.installoptions;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
-import net.sf.eclipsensis.editor.text.NSISSyntaxStyle;
-import net.sf.eclipsensis.editor.text.NSISTextUtility;
+import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.installoptions.builder.InstallOptionsBuilder;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 import net.sf.eclipsensis.job.JobScheduler;
-import net.sf.eclipsensis.util.ColorManager;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.CompoundResourceBundle;
-import net.sf.eclipsensis.util.ImageManager;
+import net.sf.eclipsensis.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.gef.ui.palette.PaletteViewerPreferences;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
+import org.osgi.framework.*;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class InstallOptionsPlugin extends AbstractUIPlugin implements IInstallOptionsConstants

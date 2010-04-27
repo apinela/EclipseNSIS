@@ -21,6 +21,7 @@ import net.sf.eclipsensis.editor.codeassist.NSISBrowserUtility;
 import net.sf.eclipsensis.help.search.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Display;
@@ -50,11 +51,11 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     private static final String CHMLINK_JS = "chmlink.js"; //$NON-NLS-1$
 
     private static final String NSIS_PLATFORM_PLUGIN_HELP_PREFIX = new StringBuffer("/").append( //$NON-NLS-1$
-                                                                        INSISConstants.PLUGIN_ID).append("/").append( //$NON-NLS-1$
-                                                                        INSISConstants.NSIS_PLATFORM_HELP_DOCS_PREFIX).toString();
+                    INSISConstants.PLUGIN_ID).append("/").append( //$NON-NLS-1$
+                                    INSISConstants.NSIS_PLATFORM_HELP_DOCS_PREFIX).toString();
     private static final MessageFormat NSIS_PLATFORM_HELP_FORMAT = new MessageFormat(NSIS_PLATFORM_PLUGIN_HELP_PREFIX+"{0}"); //$NON-NLS-1$
     private static final Pattern NSIS_PLATFORM_HELP_PATTERN = Pattern.compile(new StringBuffer(".*/").append( //$NON-NLS-1$
-                                    INSISConstants.NSIS_PLATFORM_HELP_DOCS_PREFIX).append("(.*)").toString()); //$NON-NLS-1$
+                    INSISConstants.NSIS_PLATFORM_HELP_DOCS_PREFIX).append("(.*)").toString()); //$NON-NLS-1$
     static final MessageFormat NSIS_CHM_HELP_FORMAT = new MessageFormat("mk:@MSITStore:{0}::/{1}"); //$NON-NLS-1$
 
     static final ParserDelegator HTML_PARSER = new ParserDelegator();
@@ -86,24 +87,24 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         File styleSheet = null;
         try {
             styleSheet = IOUtility.ensureLatest(EclipseNSISPlugin.getDefault().getBundle(),
-                                        new Path(EclipseNSISPlugin.getResourceString("hoverhelp.style.sheet")), //$NON-NLS-1$
-                                        new File(EclipseNSISPlugin.getPluginStateLocation(),EclipseNSISPlugin.getResourceString("hoverhelp.state.location"))); //$NON-NLS-1$
+                            new Path(EclipseNSISPlugin.getResourceString("hoverhelp.style.sheet")), //$NON-NLS-1$
+                            new File(EclipseNSISPlugin.getPluginStateLocation(),EclipseNSISPlugin.getResourceString("hoverhelp.state.location"))); //$NON-NLS-1$
         }
         catch (IOException e1) {}
         final StringBuffer htmlPrefix = new StringBuffer("<html>\n<head>\n"); //$NON-NLS-1$
         if(styleSheet != null) {
             htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append(IOUtility.getFileURLString(styleSheet)).append( //$NON-NLS-1$
-                    "\" charset=\"ISO-8859-1\" type=\"text/css\">\n"); //$NON-NLS-1$
+            "\" charset=\"ISO-8859-1\" type=\"text/css\">\n"); //$NON-NLS-1$
         }
         else {
             htmlPrefix.append("<style type=\"text/css\">\n").append( //$NON-NLS-1$
-                    ".heading { font-weight: bold; font-size: 120%; }\n").append(  //$NON-NLS-1$
-                    ".link { font-weight: bold; }\n</style>\n"); //$NON-NLS-1$
+            ".heading { font-weight: bold; font-size: 120%; }\n").append(  //$NON-NLS-1$
+            ".link { font-weight: bold; }\n</style>\n"); //$NON-NLS-1$
         }
         if(NSISBrowserUtility.COLORS_CSS_FILE != null) {
             htmlPrefix.append("<link rel=\"stylesheet\" href=\"").append( //$NON-NLS-1$
-                    IOUtility.getFileURLString(NSISBrowserUtility.COLORS_CSS_FILE)).append(
-                    "\" charset=\"ISO-8859-1\" type=\"text/css\">\n"); //$NON-NLS-1$
+                            IOUtility.getFileURLString(NSISBrowserUtility.COLORS_CSS_FILE)).append(
+                            "\" charset=\"ISO-8859-1\" type=\"text/css\">\n"); //$NON-NLS-1$
         }
         htmlPrefix.append("</head>\n<body>\n"); //$NON-NLS-1$
         KEYWORD_HELP_HTML_PREFIX = htmlPrefix.toString();
@@ -146,7 +147,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                 monitor.subTask(EclipseNSISPlugin.getResourceString("loading.helpurls.message")); //$NON-NLS-1$
                 try {
                     mBundle = ResourceBundle.getBundle(NSISHelpURLProvider.class
-                            .getName());
+                                    .getName());
                 }
                 catch (MissingResourceException x) {
                     mBundle = null;
@@ -334,7 +335,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                     IOUtility.deleteDirectoryContents(mCachedHelpDocsLocation);
 
                     String[] tocAndIndex = new String[2];
-                    WinAPI.ExtractHtmlHelp(mNSISHtmlHelpFile.getAbsolutePath(), mCachedHelpDocsLocation.getAbsolutePath(), tocAndIndex);
+                    WinAPI.INSTANCE.extractHtmlHelp(mNSISHtmlHelpFile.getAbsolutePath(), mCachedHelpDocsLocation.getAbsolutePath(), tocAndIndex);
 
                     if (!Common.isEmpty(tocAndIndex[0])) {
                         File tocFile = new File(tocAndIndex[0]);
@@ -494,7 +495,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
                         parent.mkdirs();
                     }
                     String text = EclipseNSISPlugin.getFormattedString("missing.chm.format", //$NON-NLS-1$
-                            new String[] {EclipseNSISPlugin.getResourceString("help.style")}); //$NON-NLS-1$
+                                    new String[] {EclipseNSISPlugin.getResourceString("help.style")}); //$NON-NLS-1$
                     IOUtility.writeContentToFile(mNoHelpFile, text.getBytes());
                 }
                 mStartPage = mCachedStartPage = mCHMStartPage = IOUtility.getFileURLString(mNoHelpFile);
@@ -510,7 +511,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     public String getKeywordHelp(String keyword)
     {
         checkHelpFile();
-        return (mKeywordHelp==null?null:mKeywordHelp.get(keyword));
+        return mKeywordHelp==null?null:mKeywordHelp.get(keyword);
     }
 
     public String getHelpStartPage()
@@ -684,14 +685,14 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     {
         checkHelpFile();
         if(mNSISHelpAvailable) {
-            WinAPI.HtmlHelp(WinAPI.GetDesktopWindow(),url,WinAPI.HH_DISPLAY_TOPIC,0);
+            WinAPI.INSTANCE.htmlHelp(WinAPI.INSTANCE.getDesktopWindow(),url,WinAPI.HH_DISPLAY_TOPIC,0);
         }
         else {
             Display.getDefault().asyncExec(new Runnable() {
                 public void run()
                 {
                     Common.openError(Display.getCurrent().getActiveShell(),
-                            EclipseNSISPlugin.getResourceString("missing.help.file.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
+                                    EclipseNSISPlugin.getResourceString("missing.help.file.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
                 }
             });
         }

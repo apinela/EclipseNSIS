@@ -7,24 +7,19 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.NSISDocumentSetupParticipant;
-import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewer;
-import net.sf.eclipsensis.editor.template.NSISTemplateSourceViewerConfiguration;
+import net.sf.eclipsensis.editor.template.*;
 import net.sf.eclipsensis.editor.text.NSISTextUtility;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;

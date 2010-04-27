@@ -15,6 +15,7 @@ import net.sf.eclipsensis.dialogs.ColorEditor;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
+import net.sf.eclipsensis.installoptions.properties.descriptors.PropertyDescriptorHelper;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.viewers.*;
@@ -24,7 +25,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 public class LinkPropertySectionCreator extends UneditableElementPropertySectionCreator
@@ -68,7 +70,7 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
             composite2.setLayout(layout);
         }
         final IPropertyDescriptor descriptor = getWidget().getPropertyDescriptor(InstallOptionsModel.PROPERTY_TXTCOLOR);
-        final ICellEditorValidator validator = (ICellEditorValidator)Common.getObjectFieldValue(descriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
+        final ICellEditorValidator validator = PropertyDescriptorHelper.getCellEditorValidator((PropertyDescriptor) descriptor);
 
         CLabel label = widgetFactory.createCLabel(composite2, descriptor.getDisplayName());
         label.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
@@ -116,7 +118,7 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
         });
 
         Button resetButton = widgetFactory.createButton(composite2,
-                                InstallOptionsPlugin.getResourceString("restore.default.label"),SWT.PUSH); //$NON-NLS-1$
+                        InstallOptionsPlugin.getResourceString("restore.default.label"),SWT.PUSH); //$NON-NLS-1$
         resetButton.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
         resetButton.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -156,7 +158,7 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
                 }
             }
         };
-       getWidget().addPropertyChangeListener(propertyListener);
+        getWidget().addPropertyChangeListener(propertyListener);
         parent.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e)
             {
@@ -192,7 +194,7 @@ public class LinkPropertySectionCreator extends UneditableElementPropertySection
         if(!Common.objectsAreEqual(oldRGB, newRGB)) {
             colorText.setText(labelProvider.getText(newRGB));
             commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_TXTCOLOR,
-                    descriptor.getDisplayName(), getWidget(), newRGB);
+                            descriptor.getDisplayName(), getWidget(), newRGB);
         }
     }
 

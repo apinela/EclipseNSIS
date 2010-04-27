@@ -18,7 +18,7 @@
 #include "htmlhelp.h"
 #include "ITStorage.h"
 #include "VisualStylesXP.h"
-#include "net_sf_eclipsensis_util_WinAPI.h"
+#include "WinAPI.h"
 
 #define PACKVERSION(major,minor) MAKELONG(minor,major)
 #define MAX_KEY_LENGTH 255
@@ -53,7 +53,7 @@ BOOL is2K = FALSE;
 BOOL isME = FALSE;
 BOOL is9x = FALSE;
 BOOL isCommCtrl6 = FALSE;
-
+REGSAM RegView = 0;
 
 DWORD GetDllVersion(LPCTSTR lpszDllName)
 {
@@ -97,7 +97,7 @@ DWORD GetDllVersion(LPCTSTR lpszDllName)
     return dwVersion;
 }
 
-JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jclass jClass)
+JNIEXPORT void JNICALL WinAPI_init(JNIEnv *pEnv, jclass jClass)
 {
     OSVERSIONINFO osvi;
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
@@ -129,30 +129,57 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_init(JNIEnv *pEnv, jc
     isCommCtrl6 = (GetDllVersion(_T("comctl32.dll")) >= PACKVERSION(6,0));
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetWindowLong(JNIEnv *pEnv, jclass jClass, jint hWnd, jint nIndex, jint dwNewLong)
+JNIEXPORT jint JNICALL WinAPI_SetWindowLong(JNIEnv *pEnv, jobject jObject, jhandle hWnd, jint nIndex, jint dwNewLong)
 {
-    return SetWindowLong((HWND)hWnd, nIndex, (LONG)dwNewLong);
+    return (jint)SetWindowLong((HWND)hWnd, nIndex, (LONG)dwNewLong);
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetWindowLong(JNIEnv *pEnv, jclass jClass, jint hWnd, jint nIndex)
+JNIEXPORT jint JNICALL WinAPI_GetWindowLong(JNIEnv *pEnv, jobject jObject, jhandle hWnd, jint nIndex)
 {
-    return GetWindowLong((HWND)hWnd, nIndex);
+    return (jint)GetWindowLong((HWND)hWnd, nIndex);
 }
 
-JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetLayeredWindowAttributes(JNIEnv *pEnv, jclass jClass, jint hWnd, jint crRed, jint crGreen, jint crBlue, jint bAlpha, jint dwFlags)
+JNIEXPORT jlongptr JNICALL WinAPI_SetWindowLongPtr(JNIEnv *pEnv, jobject jObject, jhandle hWnd, jint nIndex, jlongptr dwNewLong)
+{
+    return (jlongptr)SetWindowLongPtr((HWND)hWnd, nIndex, (LONG_PTR)dwNewLong);
+}
+
+JNIEXPORT jlongptr JNICALL WinAPI_GetWindowLongPtr(JNIEnv *pEnv, jobject jObject, jhandle hWnd, jint nIndex)
+{
+    return (jlongptr)GetWindowLongPtr((HWND)hWnd, nIndex);
+}
+
+JNIEXPORT jboolean JNICALL WinAPI_SetLayeredWindowAttributes(JNIEnv *pEnv, jobject jObject, jhandle hWnd, jint crRed, jint crGreen, jint crBlue, jint bAlpha, jint dwFlags)
 {
     if(SetLayeredWindowAttributesProc) {
-        if ( dwFlags == net_sf_eclipsensis_util_WinAPI_LWA_COLORKEY ) {
-            return( SetLayeredWindowAttributesProc((HWND)hWnd, (COLORREF)RGB(crRed,crGreen,crBlue),
+        if ( dwFlags == net_sf_eclipsensis_util_winapi_WinAPI_LWA_COLORKEY ) {
+            return (jboolean)( SetLayeredWindowAttributesProc((HWND)hWnd, (COLORREF)RGB(crRed,crGreen,crBlue),
                                                (BYTE)bAlpha, (DWORD)dwFlags ));
         }
         else {
-            return( SetLayeredWindowAttributesProc((HWND)hWnd, NULL, (BYTE)bAlpha, (DWORD)dwFlags ));
+            return (jboolean)( SetLayeredWindowAttributesProc((HWND)hWnd, NULL, (BYTE)bAlpha, (DWORD)dwFlags ));
         }
     }
     else {
-        return TRUE;
+        return JNI_TRUE;
     }
+}
+
+JNIEXPORT jint JNICALL WinAPI_GetRegView(JNIEnv *pEnv, jobject jObject)
+{
+	return (jint)RegView;
+}
+
+JNIEXPORT void JNICALL WinAPI_SetRegView(JNIEnv *pEnv, jobject jObject, jint regView)
+{
+	switch(regView)
+	{
+	case KEY_WOW64_32KEY:
+		RegView = (REGSAM)regView;
+		break;
+	default:
+		RegView = KEY_WOW64_64KEY;
+	}
 }
 
 TCHAR* RegQueryStrValue(HKEY hRootKey, LPCSTR subKey, LPCSTR valueName)
@@ -164,7 +191,7 @@ TCHAR* RegQueryStrValue(HKEY hRootKey, LPCSTR subKey, LPCSTR valueName)
 	TCHAR *result = NULL;
 
     if(ERROR_SUCCESS == (rv = RegOpenKeyEx((HKEY)hRootKey,
-                                      subKey,0, KEY_QUERY_VALUE, &hKey))) {
+                                      subKey,0, KEY_QUERY_VALUE|RegView, &hKey))) {
         rv = RegQueryValueEx(hKey, valueName, 0, &type, NULL, &cbData);
         if(ERROR_SUCCESS == rv && (type == REG_SZ || type == REG_EXPAND_SZ)) {
             TCHAR *value = (TCHAR *)GlobalAlloc(GPTR, cbData*sizeof(TCHAR));
@@ -190,7 +217,7 @@ TCHAR* RegQueryStrValue(HKEY hRootKey, LPCSTR subKey, LPCSTR valueName)
     return result;
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(JNIEnv *pEnv, jclass jClass, jint hRootKey, jstring sSubKey, jstring sValue)
+JNIEXPORT jstring JNICALL WinAPI_RegQueryStrValue(JNIEnv *pEnv, jobject jObject, jhandle hRootKey, jstring sSubKey, jstring sValue)
 {
     jstring result = NULL;
 
@@ -207,25 +234,25 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryStrValue(J
     return result;
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetDesktopWindow(JNIEnv *pEnv, jclass jClass)
+JNIEXPORT jhandle JNICALL WinAPI_GetDesktopWindow(JNIEnv *pEnv, jobject jObject)
 {
-    return (jint)GetDesktopWindow();
+    return (jhandle)GetDesktopWindow();
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_HtmlHelp(JNIEnv *pEnv, jclass jClass, jint hwndCaller, jstring pszFile, jint uCommand, jint dwData)
+JNIEXPORT jhandle JNICALL WinAPI_HtmlHelp(JNIEnv *pEnv, jobject jObject, jhandle hwndCaller, jstring pszFile, jint uCommand, jint dwData)
 {
-    jint result = 0;
+    jhandle result = 0;
     if(pszFile) {
         LPCSTR file = (LPCSTR)pEnv->GetStringUTFChars(pszFile, 0);
-        result = (jint)HtmlHelp((HWND)hwndCaller, file, (UINT)uCommand, (DWORD)dwData);
+        result = (jhandle)HtmlHelp((HWND)hwndCaller, file, (UINT)uCommand, (DWORD)dwData);
         pEnv->ReleaseStringUTFChars(pszFile, file);
     }
     return result;
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultLangID(JNIEnv *pEnv, jclass jClass)
+JNIEXPORT jint JNICALL WinAPI_GetUserDefaultLangID(JNIEnv *pEnv, jobject jObject)
 {
-    return GetUserDefaultLangID();
+    return (jint)GetUserDefaultLangID();
 }
 
 LANGID GetRegistryLangId(HKEY rootKey, LPCSTR subKey, LPCSTR valueName)
@@ -234,7 +261,7 @@ LANGID GetRegistryLangId(HKEY rootKey, LPCSTR subKey, LPCSTR valueName)
     TCHAR *value = RegQueryStrValue(rootKey, subKey, valueName);
     if(value) {
         DWORD dwLangID;
-        int nFields = _stscanf( value, _T("%x"), &dwLangID );
+        int nFields = _stscanf_s( value, _T("%x"), &dwLangID );
         if( nFields == 1 ) {
             langId = LANGID( dwLangID );
         }
@@ -244,7 +271,7 @@ LANGID GetRegistryLangId(HKEY rootKey, LPCSTR subKey, LPCSTR valueName)
     return langId;
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultUILanguage(JNIEnv *pEnv, jclass jClass)
+JNIEXPORT jint JNICALL WinAPI_GetUserDefaultUILanguage(JNIEnv *pEnv, jobject jObject)
 {
     LANGID (WINAPI *GUDUIL)();
     static const TCHAR* guduil = _T("GetUserDefaultUILanguage");
@@ -264,7 +291,7 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultUILangu
     if (GUDUIL)
     {
         // Windows ME/2000+
-        return GUDUIL();
+        return (jint)GUDUIL();
     }
     else
     {
@@ -282,11 +309,11 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetUserDefaultUILangu
             static const TCHAR* regNtLocaleVal = _T("Locale");
             langId = GetRegistryLangId(HKEY_USERS, (LPCSTR)regNtLocaleKey, (LPCSTR)regNtLocaleVal);
         }
-        return langId;
+        return (jint)langId;
     }
 }
 
-JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelp(JNIEnv *pEnv, jclass jClass, jstring pszFile, jstring pszFolder, jobjectArray tocAndIndex)
+JNIEXPORT void JNICALL WinAPI_ExtractHtmlHelp(JNIEnv *pEnv, jobject jObject, jstring pszFile, jstring pszFolder, jobjectArray tocAndIndex)
 {
     HRESULT hr = CoInitialize(NULL);
 
@@ -294,9 +321,9 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelp(JNIEn
         TCHAR *tocFile = NULL;
         TCHAR *indexFile = NULL;
         tocFile = (TCHAR *)GlobalAlloc(GPTR, (MAX_PATH+1)*sizeof(TCHAR));
-        _tcscpy(tocFile,_T(""));
+        _tcscpy_s(tocFile,(MAX_PATH+1),_T(""));
         indexFile = (TCHAR *)GlobalAlloc(GPTR, (MAX_PATH+1)*sizeof(TCHAR));
-        _tcscpy(indexFile,_T(""));
+        _tcscpy_s(indexFile,(MAX_PATH+1),_T(""));
 
         LPCWSTR str1 = (LPCWSTR)pEnv->GetStringChars(pszFile, 0);
         LPCSTR str2 = (LPCSTR)pEnv->GetStringUTFChars(pszFolder, 0);
@@ -311,8 +338,8 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelp(JNIEn
 
         GlobalFree(tocFile);
         GlobalFree(indexFile);
-        pEnv->ReleaseStringChars(pszFile, str1);
-        pEnv->ReleaseStringUTFChars(pszFolder, str2);
+        pEnv->ReleaseStringChars(pszFile, (const jchar *)str1);
+        pEnv->ReleaseStringUTFChars(pszFolder, (const char *)str2);
 
         if(hr == S_OK) {
             CoUninitialize();
@@ -320,7 +347,40 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_ExtractHtmlHelp(JNIEn
     }
 }
 
-JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExports(JNIEnv *pEnv, jclass jClass, jstring pszPluginFile)
+#ifdef WIN64
+BOOL GetExportDirInfo32(PIMAGE_NT_HEADERS32 NTHeaders, LPDWORD pExportDirVA, LPDWORD pExportDirSize)
+{
+    if (NTHeaders->OptionalHeader.NumberOfRvaAndSizes > IMAGE_DIRECTORY_ENTRY_EXPORT) {
+
+        *pExportDirVA = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+        *pExportDirSize = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
+
+		return TRUE;
+	}
+	return FALSE;
+}
+#endif
+
+BOOL GetExportDirInfo(PIMAGE_NT_HEADERS NTHeaders, LPDWORD pExportDirVA, LPDWORD pExportDirSize)
+{
+#ifdef WIN64
+	if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_MACHINE_I386) {
+		// 32-bit DLL
+		return GetExportDirInfo32((PIMAGE_NT_HEADERS32)NTHeaders, pExportDirVA, pExportDirSize);
+	}
+#endif
+
+    if (NTHeaders->OptionalHeader.NumberOfRvaAndSizes > IMAGE_DIRECTORY_ENTRY_EXPORT) {
+
+        *pExportDirVA = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+        *pExportDirSize = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
+
+		return TRUE;
+	}
+	return FALSE;
+}
+
+JNIEXPORT jobjectArray JNICALL WinAPI_GetPluginExports(JNIEnv *pEnv, jobject jObject, jstring pszPluginFile)
 {
     jobjectArray result = NULL;
 
@@ -330,7 +390,8 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExpo
         long dlldatalen = 0;
         bool loaded = false;
 
-        FILE* dll = fopen(pluginFile,_T("rb"));
+        FILE* dll;
+		fopen_s(&dll, pluginFile,_T("rb"));
         if (dll) {
             fseek(dll,0,SEEK_END);
             dlldatalen = ftell(dll);
@@ -352,10 +413,9 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExpo
             PIMAGE_NT_HEADERS NTHeaders = PIMAGE_NT_HEADERS(dlldata + PIMAGE_DOS_HEADER(dlldata)->e_lfanew);
             if (NTHeaders->Signature == IMAGE_NT_SIGNATURE) {
                 if (NTHeaders->FileHeader.Characteristics & IMAGE_FILE_DLL) {
-                    if (NTHeaders->OptionalHeader.NumberOfRvaAndSizes > IMAGE_DIRECTORY_ENTRY_EXPORT) {
-
-                        DWORD ExportDirVA = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
-                        DWORD ExportDirSize = NTHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size;
+					DWORD ExportDirVA;
+                    DWORD ExportDirSize;
+                    if (GetExportDirInfo(NTHeaders, &ExportDirVA, &ExportDirSize)) {
                         PIMAGE_SECTION_HEADER sections = IMAGE_FIRST_SECTION(NTHeaders);
 
                         for (int i = 0; i < NTHeaders->FileHeader.NumberOfSections; i++) {
@@ -387,30 +447,30 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetPluginExpo
     return result;
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_SendMessage(JNIEnv *pEnv, jclass jClass, jint hWnd, jint msg, jint wParam, jint lParam)
+JNIEXPORT jlongptr JNICALL WinAPI_SendMessage(JNIEnv *pEnv, jobject jObject, jhandle hWnd, jint msg, jlongptr wParam, jlongptr lParam)
 {
-    return SendMessage((HWND)hWnd, msg, wParam, lParam);
+    return (jlongptr)SendMessage((HWND)hWnd, (UINT)msg, (WPARAM)wParam, (LPARAM)lParam);
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_CallWindowProc(JNIEnv *pEnv, jclass jClass, jint lpWndProc, jint hWnd, jint Msg, jint wParam, jint lParam)
+JNIEXPORT jlongptr JNICALL WinAPI_CallWindowProc(JNIEnv *pEnv, jobject jObject, jlongptr lpWndProc, jhandle hWnd, jint Msg, jlongptr wParam, jlongptr lParam)
 {
-    return CallWindowProc((WNDPROC)lpWndProc, (HWND)hWnd, Msg, wParam, lParam);
+    return (jlongptr)CallWindowProcA((WNDPROC)lpWndProc, (HWND)hWnd, (UINT)Msg, (WPARAM)wParam, (LPARAM)lParam);
 }
 
-JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_AreVisualStylesEnabled (JNIEnv *pEnv, jclass jClass)
+JNIEXPORT jboolean JNICALL WinAPI_AreVisualStylesEnabled (JNIEnv *pEnv, jobject jObject)
 {
     if(isXP && isCommCtrl6) {
         if(g_xpStyle.IsAppThemed() && g_xpStyle.IsThemeActive()) {
-            return TRUE;
+            return JNI_TRUE;
         }
     }
-    return FALSE;
+    return JNI_FALSE;
 }
 
-JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBackGround(JNIEnv *pEnv, jclass jClass, jint hWnd, jint hDC,
-                                                                                     jstring theme, jint partId, jint stateId)
+JNIEXPORT void JNICALL WinAPI_DrawWidgetThemeBackGround(JNIEnv *pEnv, jobject jObject, jhandle hWnd, jhandle hDC,
+                                                                         jstring theme, jint partId, jint stateId)
 {
-    if(Java_net_sf_eclipsensis_util_WinAPI_AreVisualStylesEnabled(pEnv,jClass)) {
+    if(WinAPI_AreVisualStylesEnabled(pEnv,jObject)) {
         LPCWSTR pszTheme =  (LPCWSTR)pEnv->GetStringChars(theme, 0);
         HTHEME hTheme = g_xpStyle.OpenThemeData((HWND)hWnd, pszTheme);
 
@@ -423,14 +483,14 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBackGr
 		g_xpStyle.DrawThemeBackground(hTheme, (HDC)hDC, partId, stateId, &rect, NULL);
 
         g_xpStyle.CloseThemeData(hTheme);
-        pEnv->ReleaseStringChars(theme, pszTheme);
+        pEnv->ReleaseStringChars(theme, (const jchar *)pszTheme);
     }
 }
 
-JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBorder(JNIEnv *pEnv, jclass jClass, jint hWnd, jint hDC,
-                                                                                     jstring theme, jint partId, jint stateId)
+JNIEXPORT void JNICALL WinAPI_DrawWidgetThemeBorder(JNIEnv *pEnv, jobject jObject, jhandle hWnd, jhandle hDC,
+                                                                     jstring theme, jint partId, jint stateId)
 {
-    if(Java_net_sf_eclipsensis_util_WinAPI_AreVisualStylesEnabled(pEnv,jClass)) {
+    if(WinAPI_AreVisualStylesEnabled(pEnv,jObject)) {
         LPCWSTR pszTheme =  (LPCWSTR)pEnv->GetStringChars(theme, 0);
         HTHEME hTheme = g_xpStyle.OpenThemeData((HWND)hWnd, pszTheme);
 
@@ -471,21 +531,21 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_DrawWidgetThemeBorder
 		g_xpStyle.DrawThemeBackground(hTheme, (HDC)hDC, partId, stateId, &rect, &clipRect);
 
         g_xpStyle.CloseThemeData(hTheme);
-        pEnv->ReleaseStringChars(theme, pszTheme);
+        pEnv->ReleaseStringChars(theme, (const jchar *)pszTheme);
     }
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSysColor(JNIEnv *pEnv, jclass jClass, jint index)
+JNIEXPORT jint JNICALL WinAPI_GetSysColor(JNIEnv *pEnv, jobject jObject, jint index)
 {
     return GetSysColor(index);
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetSystemMetrics(JNIEnv *pEnv, jclass jClass, jint index)
+JNIEXPORT jint JNICALL WinAPI_GetSystemMetrics(JNIEnv *pEnv, jobject jObject, jint index)
 {
     return GetSystemMetrics(index);
 }
 
-JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetIntFieldValue(JNIEnv *pEnv, jclass jClass, jobject object, jstring field, jint value)
+JNIEXPORT void JNICALL WinAPI_SetIntFieldValue(JNIEnv *pEnv, jobject jObject, jobject object, jstring field, jint value)
 {
     jclass clasz = pEnv->GetObjectClass(object);
     LPCSTR fieldName = (LPCSTR)pEnv->GetStringUTFChars(field, 0);
@@ -494,7 +554,7 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetIntFieldValue(JNIE
     pEnv->SetIntField(object, fieldId, value);
 }
 
-JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetObjectFieldValue(JNIEnv *pEnv, jclass jClass, jobject object, jstring field, jstring signature)
+JNIEXPORT jobject JNICALL WinAPI_GetObjectFieldValue(JNIEnv *pEnv, jobject jObject, jobject object, jstring field, jstring signature)
 {
     jclass clasz = pEnv->GetObjectClass(object);
     LPCSTR fieldName = (LPCSTR)pEnv->GetStringUTFChars(field, 0);
@@ -505,7 +565,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetObjectFieldValu
     return pEnv->GetObjectField(object, fieldId);
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetEnvironmentVariable(JNIEnv *pEnv, jclass jClass, jstring name)
+JNIEXPORT jstring JNICALL WinAPI_GetEnvironmentVariable(JNIEnv *pEnv, jobject jObject, jstring name)
 {
     jstring result = NULL;
     TCHAR *value = NULL;
@@ -528,7 +588,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetEnvironmentVari
     return result;
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_strftime(JNIEnv *pEnv, jclass jClass, jstring format)
+JNIEXPORT jstring JNICALL WinAPI_strftime(JNIEnv *pEnv, jobject jObject, jstring format)
 {
     TCHAR *szFormat = (TCHAR *)pEnv->GetStringUTFChars(format, 0);
     char datebuf[256];
@@ -537,7 +597,9 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_strftime(JNIEnv *p
     time(&rawtime);
 
     datebuf[0]=0;
-    size_t s=strftime(datebuf,sizeof(datebuf),szFormat,localtime(&rawtime));
+	struct tm localtime;
+	localtime_s(&localtime, &rawtime);
+    size_t s=strftime(datebuf,sizeof(datebuf),szFormat,&localtime);
 
     if (s < 0) {
         datebuf[0]=0;
@@ -550,7 +612,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_strftime(JNIEnv *p
     return pEnv->NewStringUTF(datebuf);
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetShellFolder(JNIEnv *pEnv, jclass jClass, jint id)
+JNIEXPORT jstring JNICALL WinAPI_GetShellFolder(JNIEnv *pEnv, jobject jObject, jint id)
 {
     LPITEMIDLIST idl;
     TCHAR buf[2*MAX_PATH+2*+sizeof(TCHAR)];
@@ -573,7 +635,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetShellFolder(JNI
     return NULL;
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetShortPathName(JNIEnv *pEnv, jclass jClass, jstring longPathName)
+JNIEXPORT jstring JNICALL WinAPI_GetShortPathName(JNIEnv *pEnv, jobject jObject, jstring longPathName)
 {
     LPCTSTR lpName = (LPCTSTR)pEnv->GetStringUTFChars(longPathName, 0);
     TCHAR buf[2*MAX_PATH+2];
@@ -586,7 +648,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetShortPathName(J
     return NULL;
 }
 
-JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegGetSubKeys(JNIEnv *pEnv, jclass jClass, jint hRootKey, jstring sSubKey)
+JNIEXPORT jobjectArray JNICALL WinAPI_RegGetSubKeys(JNIEnv *pEnv, jobject jObject, jhandle hRootKey, jstring sSubKey)
 {
     HKEY hKey;
     TCHAR achKey[MAX_KEY_LENGTH+1];   // buffer for subkey name
@@ -602,7 +664,7 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegGetSubKeys
     }
     else {
         LPCSTR str1 = (LPCSTR)pEnv->GetStringUTFChars(sSubKey, 0);
-        DWORD rv = RegOpenKeyEx((HKEY)hRootKey, str1,0, KEY_READ, &hKey);
+        DWORD rv = RegOpenKeyEx((HKEY)hRootKey, str1,0, KEY_READ|RegView, &hKey);
         pEnv->ReleaseStringUTFChars(sSubKey,str1);
         if(ERROR_SUCCESS != rv) {
             return NULL;
@@ -640,17 +702,17 @@ JNIEXPORT jobjectArray JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegGetSubKeys
     return result;
 }
 
-JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegKeyExists(JNIEnv *pEnv, jclass jClass, jint hRootKey, jstring sSubKey)
+JNIEXPORT jboolean JNICALL WinAPI_RegKeyExists(JNIEnv *pEnv, jobject jObject, jhandle hRootKey, jstring sSubKey)
 {
     HKEY hKey;
     DWORD rv;
 
     if(sSubKey == NULL) {
-        rv = RegOpenKeyEx((HKEY)hRootKey, NULL,0, KEY_READ, &hKey);
+        rv = RegOpenKeyEx((HKEY)hRootKey, NULL,0, KEY_READ|RegView, &hKey);
     }
     else {
         LPCSTR str1 = (LPCSTR)pEnv->GetStringUTFChars(sSubKey, 0);
-        rv = RegOpenKeyEx((HKEY)hRootKey, str1,0, KEY_READ, &hKey);
+        rv = RegOpenKeyEx((HKEY)hRootKey, str1,0, KEY_READ|RegView, &hKey);
         pEnv->ReleaseStringUTFChars(sSubKey,str1);
     }
     if(ERROR_SUCCESS != rv) {
@@ -660,7 +722,7 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegKeyExists(JNIE
     return JNI_TRUE;
 }
 
-JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_util_WinAPI_getDefaultAuthenticator(JNIEnv *pEnv, jclass jClass)
+JNIEXPORT jobject JNICALL WinAPI_getDefaultAuthenticator(JNIEnv *pEnv, jobject jObject)
 {
     jobject result = NULL;
 
@@ -675,21 +737,21 @@ JNIEXPORT jobject JNICALL Java_net_sf_eclipsensis_util_WinAPI_getDefaultAuthenti
     return result;
 }
 
-JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_PlaySound(JNIEnv *pEnv, jclass jClass, jstring pszFilename, jint hModule, jint dwFlags)
+JNIEXPORT jboolean JNICALL WinAPI_PlaySound(JNIEnv *pEnv, jobject jObject, jstring pszFilename, jhandle hModule, jint dwFlags)
 {
     if(pszFilename) {
         TCHAR filename[MAX_PATH+1];
         TCHAR* szFilename = (TCHAR*)pEnv->GetStringUTFChars(pszFilename, 0);
-        _tcscpy(filename, szFilename);
+        _tcscpy_s(filename, MAX_PATH+1, szFilename);
         pEnv->ReleaseStringUTFChars(pszFilename,szFilename);
-        return PlaySound(filename, (HINSTANCE)hModule, dwFlags);
+        return (jboolean)PlaySound(filename, (HINSTANCE)hModule, dwFlags);
     }
     else {
-        return PlaySound(NULL, (HINSTANCE)hModule, dwFlags);
+        return (jboolean)PlaySound(NULL, (HINSTANCE)hModule, dwFlags);
     }
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetFileAttributes(JNIEnv *pEnv, jclass jClass, jstring pszFilename)
+JNIEXPORT jint JNICALL WinAPI_GetFileAttributes(JNIEnv *pEnv, jobject jObject, jstring pszFilename)
 {
     DWORD result = 0;
     if(pszFilename) {
@@ -700,7 +762,7 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetFileAttributes(JNI
     return result;
 }
 
-JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetFileAttributes(JNIEnv *pEnv, jclass jClass, jstring pszFilename, jint dwAttributes)
+JNIEXPORT jboolean JNICALL WinAPI_SetFileAttributes(JNIEnv *pEnv, jobject jObject, jstring pszFilename, jint dwAttributes)
 {
     jboolean result = JNI_FALSE;
     if(pszFilename) {
@@ -713,12 +775,12 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_SetFileAttributes
     return result;
 }
 
-JNIEXPORT jshort JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetKeyState(JNIEnv *pEnv, jclass jClass, jint nVirtKey)
+JNIEXPORT jshort JNICALL WinAPI_GetKeyState(JNIEnv *pEnv, jobject jObject, jint nVirtKey)
 {
     return GetKeyState(nVirtKey);
 }
 
-JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_ValidateWildcard(JNIEnv *pEnv, jclass jClass, jstring wildcard)
+JNIEXPORT jboolean JNICALL WinAPI_ValidateWildcard(JNIEnv *pEnv, jobject jObject, jstring wildcard)
 {
     jboolean result = JNI_FALSE;
     if(wildcard) {
@@ -736,25 +798,25 @@ JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_ValidateWildcard(
     return result;
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegOpenKeyEx(JNIEnv *pEnv, jclass jClass, jint hKey, jstring lpSubKey, jint ulOptions, jint regSam)
+JNIEXPORT jhandle JNICALL WinAPI_RegOpenKeyEx(JNIEnv *pEnv, jobject jObject, jhandle hKey, jstring lpSubKey, jint ulOptions, jint regSam)
 {
     HKEY hSubKey;
 
     LPCSTR subKey = (LPCSTR)pEnv->GetStringUTFChars(lpSubKey, 0);
 
-    if(ERROR_SUCCESS != RegOpenKeyEx((HKEY)hKey,subKey,ulOptions,regSam,&hSubKey)) {
+    if(ERROR_SUCCESS != RegOpenKeyEx((HKEY)hKey,subKey,ulOptions,regSam|RegView,&hSubKey)) {
     	hSubKey = 0;
     }
     pEnv->ReleaseStringUTFChars(lpSubKey, subKey);
-    return (jint)hSubKey;
+    return (jhandle)hSubKey;
 }
 
-JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegCloseKey(JNIEnv *pEnv, jclass jClass, jint hKey)
+JNIEXPORT void JNICALL WinAPI_RegCloseKey(JNIEnv *pEnv, jobject jObject, jhandle hKey)
 {
 	RegCloseKey((HKEY)hKey);
 }
 
-JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryInfoKey(JNIEnv *pEnv, jclass jClass, jint hKey, jintArray sizes)
+JNIEXPORT void JNICALL WinAPI_RegQueryInfoKey(JNIEnv *pEnv, jobject jObject, jhandle hKey, jintArray sizes)
 {
 	jint newSizes[] = {0, 0};
 
@@ -763,7 +825,7 @@ JNIEXPORT void JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegQueryInfoKey(JNIEn
 	}
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegEnumKeyEx(JNIEnv *pEnv, jclass jClass, jint hKey, jint index, jint subKeySize)
+JNIEXPORT jstring JNICALL WinAPI_RegEnumKeyEx(JNIEnv *pEnv, jobject jObject, jhandle hKey, jint index, jint subKeySize)
 {
 	if(!isME && !is9x) {
 		subKeySize++;
@@ -779,7 +841,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegEnumKeyEx(JNIEn
 	return result;
 }
 
-JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_LoadResourceString(JNIEnv *pEnv, jclass jClass, jstring pszFilename, jint id, jint lcid)
+JNIEXPORT jstring JNICALL WinAPI_LoadResourceString(JNIEnv *pEnv, jobject jObject, jstring pszFilename, jint id, jint lcid)
 {
 	jstring result = NULL;
     LPCSTR filename = (LPCSTR)pEnv->GetStringUTFChars(pszFilename, 0);
@@ -822,7 +884,7 @@ JNIEXPORT jstring JNICALL Java_net_sf_eclipsensis_util_WinAPI_LoadResourceString
     return result;
 }
 
-JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetRegValuesCount(JNIEnv *pEnv, jclass jClass, jint hKey)
+JNIEXPORT jint JNICALL WinAPI_GetRegValuesCount(JNIEnv *pEnv, jobject jObject, jhandle hKey)
 {
 	DWORD cValues;
 
@@ -837,7 +899,7 @@ JNIEXPORT jint JNICALL Java_net_sf_eclipsensis_util_WinAPI_GetRegValuesCount(JNI
  * Method:    RegEnumValue
  * Signature: (IILnet/sf/eclipsensis/dialogs/RegistryValueSelectionDialog$RegistryValue;)V
  */
-JNIEXPORT jboolean JNICALL Java_net_sf_eclipsensis_util_WinAPI_RegEnumValue(JNIEnv *pEnv, jclass jClass, jint hKey, jint index, jobject objRegValue)
+JNIEXPORT jboolean JNICALL WinAPI_RegEnumValue(JNIEnv *pEnv, jobject jObject, jhandle hKey, jint index, jobject objRegValue)
 {
 	jclass clasz = pEnv->GetObjectClass(objRegValue);
 	jmethodID setMethod = pEnv->GetMethodID(clasz,_T("set"),_T("(Ljava/lang/String;I[B)V"));

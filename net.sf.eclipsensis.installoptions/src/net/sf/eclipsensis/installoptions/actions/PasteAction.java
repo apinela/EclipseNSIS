@@ -9,17 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.beans.*;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsEditPart;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsDesignEditor;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.PasteCommand;
 import net.sf.eclipsensis.util.Common;
 
@@ -28,9 +24,7 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.WorkbenchPartAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 
 public class PasteAction extends WorkbenchPartAction implements PropertyChangeListener

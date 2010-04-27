@@ -10,15 +10,12 @@
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
-import net.sf.eclipsensis.installoptions.model.InstallOptionsCheckBox;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 public class CheckBoxPropertySectionCreator extends UneditableElementPropertySectionCreator

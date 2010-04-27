@@ -9,14 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISVersions;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
-import net.sf.eclipsensis.wizard.INSISWizardConstants;
-import net.sf.eclipsensis.wizard.NSISWizard;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallLibraryDialog;
 import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
 

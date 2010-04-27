@@ -9,20 +9,14 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Node;
 
 public class GroupParam extends NSISParam

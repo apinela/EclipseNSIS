@@ -9,36 +9,21 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.beans.*;
+import java.util.*;
 
 import net.sf.eclipsensis.INSISConstants;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.INIComment;
-import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
-import net.sf.eclipsensis.installoptions.ini.INILine;
-import net.sf.eclipsensis.installoptions.ini.INISection;
-import net.sf.eclipsensis.installoptions.model.commands.IModelCommandListener;
-import net.sf.eclipsensis.installoptions.model.commands.ModelCommandEvent;
-import net.sf.eclipsensis.installoptions.model.commands.SetPropertyValueCommand;
+import net.sf.eclipsensis.installoptions.ini.*;
+import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
-import net.sf.eclipsensis.util.AbstractNodeConvertible;
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.gef.commands.Command;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.*;
 
 public abstract class InstallOptionsElement extends AbstractNodeConvertible implements IPropertySource
 {

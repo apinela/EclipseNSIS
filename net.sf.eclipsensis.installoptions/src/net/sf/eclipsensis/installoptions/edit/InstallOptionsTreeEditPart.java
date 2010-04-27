@@ -9,24 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.edit;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Collections;
-import java.util.Iterator;
+import java.beans.*;
+import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.*;
 import org.eclipse.gef.editparts.AbstractTreeEditPart;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.*;
 
 public class InstallOptionsTreeEditPart extends AbstractTreeEditPart implements PropertyChangeListener
 {

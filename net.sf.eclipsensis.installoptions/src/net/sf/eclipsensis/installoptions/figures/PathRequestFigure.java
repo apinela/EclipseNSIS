@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import java.util.*;
+import java.util.List;
 
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;

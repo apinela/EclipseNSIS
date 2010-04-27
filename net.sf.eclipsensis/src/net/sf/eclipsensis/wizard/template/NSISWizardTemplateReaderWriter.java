@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.template;
 
-import net.sf.eclipsensis.template.*;
+import net.sf.eclipsensis.template.AbstractTemplateReaderWriter;
 
 public class NSISWizardTemplateReaderWriter extends AbstractTemplateReaderWriter<NSISWizardTemplate>
 {

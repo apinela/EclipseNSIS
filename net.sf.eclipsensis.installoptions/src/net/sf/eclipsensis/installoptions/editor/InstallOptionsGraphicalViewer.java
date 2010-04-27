@@ -14,7 +14,8 @@ import java.beans.*;
 import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.dnd.InstallOptionsTemplateTransfer;
 import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.winapi.*;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.*;
@@ -70,8 +71,9 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
                 {
                     String property = evt.getPropertyName();
                     if(property.equals(InstallOptionsModel.PROPERTY_RTL)) {
+                        IHandle handle = Common.getControlHandle(canvas);
                         Integer rtl = (Integer)evt.getNewValue();
-                        int windowsStyle = WinAPI.GetWindowLong(canvas.handle,WinAPI.GWL_EXSTYLE);
+                        int windowsStyle = WinAPI.INSTANCE.getWindowLong(handle,WinAPI.GWL_EXSTYLE);
                         int style = canvas.getStyle();
                         if(InstallOptionsModel.OPTION_YES.equals(rtl)) {
                             windowsStyle |= WinAPI.WS_EX_LAYOUTRTL;
@@ -83,9 +85,9 @@ public class InstallOptionsGraphicalViewer extends GraphicalViewerImpl
                             style |= SWT.LEFT_TO_RIGHT;
                             style &= ~SWT.RIGHT_TO_LEFT;
                         }
-                        WinAPI.SetWindowLong(canvas.handle,WinAPI.GWL_EXSTYLE,windowsStyle);
+                        WinAPI.INSTANCE.setWindowLong(handle,WinAPI.GWL_EXSTYLE,windowsStyle);
                         try {
-                            WinAPI.SetIntFieldValue(canvas, "style", style); //$NON-NLS-1$
+                            WinAPI.INSTANCE.setIntFieldValue(canvas, "style", style); //$NON-NLS-1$
                         }
                         catch (Throwable t) {
                             InstallOptionsPlugin.getDefault().log(t);

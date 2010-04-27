@@ -15,6 +15,8 @@ import java.util.Map;
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.RegistryKeySelectionDialog;
 import net.sf.eclipsensis.settings.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
+import net.sf.eclipsensis.util.winapi.WinAPI.HKEY;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -39,21 +41,21 @@ public class RegistryImporter
 
     private String mRegKey = null;
 
-    private static void putRootKeyHandle(String longName, String shortName, int handle)
+    private static void putRootKeyHandle(String longName, String shortName, HKEY hKey)
     {
-        String hexHandle = "0x"+Integer.toHexString(handle); //$NON-NLS-1$
+        String hexHandle = "0x"+hKey.getHandle().toHexString(); //$NON-NLS-1$
         cRootKeyHandleMap.put(longName, hexHandle);
         cRootKeyHandleMap.put(shortName, hexHandle);
     }
 
     static {
-        putRootKeyHandle("HKEY_CLASSES_ROOT","HKCR",WinAPI.HKEY_CLASSES_ROOT); //$NON-NLS-1$ //$NON-NLS-2$
-        putRootKeyHandle("HKEY_CURRENT_USER","HKCU",WinAPI.HKEY_CURRENT_USER); //$NON-NLS-1$ //$NON-NLS-2$
-        putRootKeyHandle("HKEY_LOCAL_MACHINE","HKLM",WinAPI.HKEY_LOCAL_MACHINE); //$NON-NLS-1$ //$NON-NLS-2$
-        putRootKeyHandle("HKEY_USERS","HKU",WinAPI.HKEY_USERS); //$NON-NLS-1$ //$NON-NLS-2$
-        putRootKeyHandle("HKEY_PERFORMANCE_DATA","HKPD",WinAPI.HKEY_PERFORMANCE_DATA); //$NON-NLS-1$ //$NON-NLS-2$
-        putRootKeyHandle("HKEY_CURRENT_CONFIG","HKCC",WinAPI.HKEY_CURRENT_CONFIG); //$NON-NLS-1$ //$NON-NLS-2$
-        putRootKeyHandle("HKEY_DYN_DATA","HKDD",WinAPI.HKEY_DYN_DATA); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_CLASSES_ROOT","HKCR",HKEY.HKEY_CLASSES_ROOT); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_CURRENT_USER","HKCU",HKEY.HKEY_CURRENT_USER); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_LOCAL_MACHINE","HKLM",HKEY.HKEY_LOCAL_MACHINE); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_USERS","HKU",HKEY.HKEY_USERS); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_PERFORMANCE_DATA","HKPD",HKEY.HKEY_PERFORMANCE_DATA); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_CURRENT_CONFIG","HKCC",HKEY.HKEY_CURRENT_CONFIG); //$NON-NLS-1$ //$NON-NLS-2$
+        putRootKeyHandle("HKEY_DYN_DATA","HKDD",HKEY.HKEY_DYN_DATA); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public RegistryImporter()
@@ -81,9 +83,9 @@ public class RegistryImporter
             }
             regExe = null;
         }
-        String winDir = WinAPI.GetEnvironmentVariable("SystemRoot"); //$NON-NLS-1$
+        String winDir = WinAPI.INSTANCE.getEnvironmentVariable("SystemRoot"); //$NON-NLS-1$
         if(winDir == null) {
-            winDir = WinAPI.GetEnvironmentVariable("windir"); //$NON-NLS-1$
+            winDir = WinAPI.INSTANCE.getEnvironmentVariable("windir"); //$NON-NLS-1$
         }
         if(winDir != null) {
             File sys32Dir = new File(winDir,"system32"); //$NON-NLS-1$
@@ -93,7 +95,7 @@ public class RegistryImporter
             return regExe;
         }
         regExe = null;
-        String path = WinAPI.GetEnvironmentVariable("PATH"); //$NON-NLS-1$
+        String path = WinAPI.INSTANCE.getEnvironmentVariable("PATH"); //$NON-NLS-1$
         if(!Common.isEmpty(path)) {
             String[] paths = Common.tokenize(path, File.pathSeparatorChar);
             if(!Common.isEmptyArray(paths)) {
@@ -155,8 +157,8 @@ public class RegistryImporter
                             }
                             mRegKey = dialog.getRegKey();
                             String[] cmdArray = {regExe.getAbsolutePath(),"export", //$NON-NLS-1$
-                                                 mRegKey,
-                                                 regFile.getAbsolutePath()};
+                                            mRegKey,
+                                            regFile.getAbsolutePath()};
                             try {
                                 Process p = Runtime.getRuntime().exec(cmdArray);
                                 p.waitFor();
@@ -171,12 +173,12 @@ public class RegistryImporter
                     }
                     else {
                         throw new RuntimeException(EclipseNSISPlugin.getFormattedString("exec.reg.exe.error", //$NON-NLS-1$
-                                new String[]{regExe.getName()}));
+                                        new String[]{regExe.getName()}));
                     }
                 }
                 catch (Exception e) {
                     Common.openError(shell, EclipseNSISPlugin.getResourceString("error.title"),  //$NON-NLS-1$
-                            e.getMessage(), EclipseNSISPlugin.getShellImage());
+                                    e.getMessage(), EclipseNSISPlugin.getShellImage());
                     EclipseNSISPlugin.getDefault().log(e);
                 }
             }
@@ -231,7 +233,7 @@ public class RegistryImporter
                             String line = br.readLine();
                             if(line != null) {
                                 if ( !(isRegEdit4 && line.equals("REGEDIT4")) && //$NON-NLS-1$
-                                     !(isRegEdit5 && line.equals("Windows Registry Editor Version 5.00"))) { //$NON-NLS-1$
+                                                !(isRegEdit5 && line.equals("Windows Registry Editor Version 5.00"))) { //$NON-NLS-1$
                                     throw new RuntimeException(EclipseNSISPlugin.getResourceString("invalid.regfile.error")); //$NON-NLS-1$
                                 }
                                 String rootKey = null;
@@ -344,7 +346,7 @@ public class RegistryImporter
                                                                         //Expandable String
                                                                         String[] values = Common.tokenize(value, ',');
                                                                         if (!Common.isEmptyArray(values) && values.length % 2 == 0) {
-                                                                            int delta = (isRegEdit4?1:2);
+                                                                            int delta = isRegEdit4?1:2;
                                                                             bytes = new byte[values.length - delta]; //Last character is NULL
                                                                             for (int i = 0; i < bytes.length; i += delta) {
                                                                                 if (isRegEdit4) {
@@ -363,7 +365,7 @@ public class RegistryImporter
                                                                     else if (valueType.equals("hex(7)")) { //$NON-NLS-1$
                                                                         if (mShowMultiSZWarning) {
                                                                             Common.openWarning(shell, EclipseNSISPlugin.getResourceString("warning.title"), //$NON-NLS-1$
-                                                                                    EclipseNSISPlugin.getResourceString("reg.multistring.warning"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
+                                                                                            EclipseNSISPlugin.getResourceString("reg.multistring.warning"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
                                                                             mShowMultiSZWarning = false;
                                                                         }
                                                                         continue;
@@ -385,7 +387,7 @@ public class RegistryImporter
                         }
                         catch (Exception e) {
                             Common.openError(shell, EclipseNSISPlugin.getResourceString("error.title"),  //$NON-NLS-1$
-                                    e.getMessage(), EclipseNSISPlugin.getShellImage());
+                                            e.getMessage(), EclipseNSISPlugin.getShellImage());
                             EclipseNSISPlugin.getDefault().log(e);
                         }
                         finally {
@@ -401,7 +403,7 @@ public class RegistryImporter
     public static final String rootKeyNameToHandle(String rootKey)
     {
         String handle = cRootKeyHandleMap.get(rootKey);
-        return (handle==null?"":handle); //$NON-NLS-1$
+        return handle==null?"":handle; //$NON-NLS-1$
     }
 
     public static interface IRegistryImportStrategy

@@ -13,7 +13,7 @@ import java.io.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.template.*;
+import net.sf.eclipsensis.template.AbstractTemplateManager;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.eclipse.core.runtime.*;

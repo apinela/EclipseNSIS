@@ -17,6 +17,7 @@ import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
+import net.sf.eclipsensis.installoptions.properties.descriptors.PropertyDescriptorHelper;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.*;
 
@@ -29,7 +30,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 public class ListItemsPropertySectionCreator extends EditableElementPropertySectionCreator
@@ -108,7 +110,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
             final InstallOptionsListItems widget = (InstallOptionsListItems)getWidget();
             final List<String> listItems = new ArrayList<String>(widget.getListItems());
             String[] state = Common.tokenize(widget.getState(), IInstallOptionsConstants.LIST_SEPARATOR);
-            final ICellEditorValidator stateValidator = (ICellEditorValidator)Common.getObjectFieldValue(stateDescriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
+            final ICellEditorValidator stateValidator = PropertyDescriptorHelper.getCellEditorValidator((PropertyDescriptor) stateDescriptor);
             viewer.addCheckStateListener(new ICheckStateListener() {
                 public void checkStateChanged(CheckStateChangedEvent event)
                 {
@@ -128,7 +130,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                             String error = stateValidator.isValid(newState);
                             if(Common.isEmpty(error)) {
                                 commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_STATE,
-                                        stateDescriptor.getDisplayName(), getWidget(), newState);
+                                                stateDescriptor.getDisplayName(), getWidget(), newState);
                             }
                             else {
                                 Common.openError(viewer.getTable().getShell(), error, InstallOptionsPlugin.getShellImage());
@@ -211,9 +213,9 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
     protected void createListAndStateButtons(Composite buttons, final CheckboxTableViewer viewer, TabbedPropertySheetWidgetFactory widgetFactory, final InstallOptionsCommandHelper commandHelper)
     {
         final IPropertyDescriptor listItemsDescriptor = getWidget().getPropertyDescriptor(InstallOptionsModel.PROPERTY_LISTITEMS);
-        final ICellEditorValidator listItemsValidator = (ICellEditorValidator)Common.getObjectFieldValue(listItemsDescriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
+        final ICellEditorValidator listItemsValidator = PropertyDescriptorHelper.getCellEditorValidator((PropertyDescriptor) listItemsDescriptor);
         final IPropertyDescriptor stateDescriptor = getWidget().getPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE);
-        final ICellEditorValidator stateValidator = (ICellEditorValidator)Common.getObjectFieldValue(listItemsDescriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
+        final ICellEditorValidator stateValidator = PropertyDescriptorHelper.getCellEditorValidator((PropertyDescriptor) stateDescriptor);
 
         final TextCellEditor textEditor = new TextCellEditor(viewer.getTable());
         ((Text) textEditor.getControl()).addVerifyListener(new VerifyListener() {
@@ -258,7 +260,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                     String error = listItemsValidator.isValid(list);
                     if(Common.isEmpty(error)) {
                         CompoundCommand command = commandHelper.createPropertyChangedCommand(InstallOptionsModel.PROPERTY_LISTITEMS,
-                                    listItemsDescriptor.getDisplayName(), getWidget(), list);
+                                        listItemsDescriptor.getDisplayName(), getWidget(), list);
                         List<String> oldState = Common.tokenizeToList(((InstallOptionsListItems)getWidget()).getState(), IInstallOptionsConstants.LIST_SEPARATOR);
                         if(Common.collectionContainsIgnoreCase(oldState, oldValue)) {
                             if(!Common.collectionContainsIgnoreCase(list, oldValue)) {
@@ -271,7 +273,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                                         if(Common.isEmpty(error)) {
                                             CompoundCommand cmd = new ForwardUndoCompoundCommand(command.getLabel());
                                             cmd.add(commandHelper.createPropertyChangedCommand(InstallOptionsModel.PROPERTY_STATE,
-                                                        stateDescriptor.getDisplayName(), getWidget(), newState));
+                                                            stateDescriptor.getDisplayName(), getWidget(), newState));
                                             cmd.add(command);
                                             command = cmd;
                                         }
@@ -321,7 +323,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                     String error = listItemsValidator.isValid(list);
                     if(Common.isEmpty(error)) {
                         commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS,
-                                listItemsDescriptor.getDisplayName(), getWidget(), list);
+                                        listItemsDescriptor.getDisplayName(), getWidget(), list);
                         viewer.refresh(false);
                         viewer.setSelection(new StructuredSelection(item));
                         viewer.editElement(item,0);
@@ -353,7 +355,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                         String error = listItemsValidator.isValid(list);
                         if(Common.isEmpty(error)) {
                             commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS,
-                                    listItemsDescriptor.getDisplayName(), getWidget(), list);
+                                            listItemsDescriptor.getDisplayName(), getWidget(), list);
                             viewer.refresh(false);
                         }
                         else {
@@ -382,7 +384,7 @@ public class ListItemsPropertySectionCreator extends EditableElementPropertySect
                 String error = listItemsValidator.isValid(elements);
                 if(Common.isEmpty(error)) {
                     commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_LISTITEMS,
-                            listItemsDescriptor.getDisplayName(), getWidget(), elements);
+                                    listItemsDescriptor.getDisplayName(), getWidget(), elements);
                 }
                 else {
                     Common.openError(viewer.getTable().getShell(), error, InstallOptionsPlugin.getShellImage());

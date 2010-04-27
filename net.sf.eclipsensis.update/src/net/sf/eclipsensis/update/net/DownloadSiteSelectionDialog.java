@@ -17,7 +17,8 @@ import java.util.List;
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.jobs.NSISUpdateURLs;
 import net.sf.eclipsensis.update.preferences.IUpdatePreferenceConstants;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.winapi.*;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -59,7 +60,7 @@ public class DownloadSiteSelectionDialog extends Dialog
         super(parentShell);
         mSettingsKey = settingsKey;
         mDownloadSites = downloadSites;
-        mSelectedSite = (mDownloadSites.contains(selectedSite)?selectedSite:null);
+        mSelectedSite = mDownloadSites.contains(selectedSite)?selectedSite:null;
         initDialogSettings();
     }
 
@@ -204,16 +205,18 @@ public class DownloadSiteSelectionDialog extends Dialog
             };
 
             MouseTrackAdapter mouseTrackAdapter = null;
-            if(WinAPI.AreVisualStylesEnabled()) {
+            if(WinAPI.INSTANCE.areVisualStylesEnabled()) {
                 mouseTrackAdapter = new MouseTrackAdapter() {
                     private void paint(int selectedStateId, int unselectedStateId)
                     {
                         GC gc = new GC(button);
+                        IHandle handle = Common.getControlHandle(button);
+                        IHandle handle2 = Common.getGraphicsHandle(gc);
                         if(button.getSelection()) {
-                            WinAPI.DrawWidgetThemeBackGround(button.handle,gc.handle,"BUTTON",WinAPI.BP_RADIOBUTTON,selectedStateId); //$NON-NLS-1$
+                            WinAPI.INSTANCE.drawWidgetThemeBackGround(handle,handle2,"BUTTON",WinAPI.BP_RADIOBUTTON,selectedStateId); //$NON-NLS-1$
                         }
                         else {
-                            WinAPI.DrawWidgetThemeBackGround(button.handle,gc.handle,"BUTTON",WinAPI.BP_RADIOBUTTON,unselectedStateId); //$NON-NLS-1$
+                            WinAPI.INSTANCE.drawWidgetThemeBackGround(handle,handle2,"BUTTON",WinAPI.BP_RADIOBUTTON,unselectedStateId); //$NON-NLS-1$
                         }
                         gc.dispose();
                     }

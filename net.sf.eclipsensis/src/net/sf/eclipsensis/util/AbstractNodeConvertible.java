@@ -7,25 +7,16 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
+import java.beans.*;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.RGB;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 public abstract class AbstractNodeConvertible implements INodeConvertible, Serializable, Cloneable
 {

@@ -16,6 +16,7 @@ import java.util.regex.*;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 public class NSISValidator implements INSISConstants
 {
@@ -82,6 +83,27 @@ public class NSISValidator implements INSISConstants
         }
     }
 
+    public static String getRegistryNSISHome()
+    {
+        String nsisHome = WinAPI.INSTANCE.regQueryStrValue(INSISConstants.NSIS_REG_ROOTKEY.getHandle(),
+                        INSISConstants.NSIS_REG_SUBKEY,INSISConstants.NSIS_REG_VALUE);
+        if(Common.isEmpty(nsisHome) && EclipseNSISPlugin.getDefault().isX64())
+        {
+            int regView = WinAPI.INSTANCE.getRegView();
+            try
+            {
+                WinAPI.INSTANCE.setRegView(WinAPI.KEY_WOW64_32KEY);
+                nsisHome = WinAPI.INSTANCE.regQueryStrValue(INSISConstants.NSIS_REG_ROOTKEY.getHandle(),
+                                INSISConstants.NSIS_REG_SUBKEY,INSISConstants.NSIS_REG_VALUE);
+            }
+            finally
+            {
+                WinAPI.INSTANCE.setRegView(regView);
+            }
+        }
+        return nsisHome;
+    }
+
     public static NSISExe findNSISExe(File nsisHome)
     {
         if(IOUtility.isValidDirectory(nsisHome)) {
@@ -89,8 +111,8 @@ public class NSISValidator implements INSISConstants
             if(IOUtility.isValidFile(file)) {
                 String exeName = file.getAbsoluteFile().getAbsolutePath();
                 String[] output = MakeNSISRunner.runProcessWithOutput(exeName,
-                                                                      new String[]{MakeNSISRunner.MAKENSIS_HDRINFO_OPTION},
-                                                                      file.getParentFile(), 1);
+                                new String[]{MakeNSISRunner.MAKENSIS_HDRINFO_OPTION},
+                                file.getParentFile(), 1);
 
                 Properties definedSymbols = loadNSISDefinedSymbols(output);
                 Version version = getNSISVersion(definedSymbols);
@@ -118,7 +140,7 @@ public class NSISValidator implements INSISConstants
                             props.put(token.substring(0,n).trim(),token.substring(n+1).trim());
                         }
                         else {
-                            props.setProperty(token,Boolean.TRUE.toString()); //$NON-NLS-1$
+                            props.setProperty(token,Boolean.TRUE.toString());
                         }
                     }
                 }
@@ -193,7 +215,7 @@ public class NSISValidator implements INSISConstants
             }
         }
 
-        return (version == null?Version.EMPTY_VERSION:version);
+        return version == null?Version.EMPTY_VERSION:version;
     }
 
 }

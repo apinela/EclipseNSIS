@@ -20,6 +20,8 @@ import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.winapi.*;
+import net.sf.eclipsensis.util.winapi.WinAPI.HKEY;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
@@ -48,7 +50,7 @@ public class Common
 
     public static boolean isEmpty(String string)
     {
-        return (string == null || string.trim().length() == 0);
+        return string == null || string.trim().length() == 0;
     }
 
     /**
@@ -253,7 +255,7 @@ public class Common
         Class<?> clasz = array.getClass();
         if(clasz.isArray()) {
             Object arrayClone = Array.newInstance(clasz.getComponentType(),
-                                                  Array.getLength(array));
+                            Array.getLength(array));
             System.arraycopy(array,0,arrayClone,0,Array.getLength(arrayClone));
             return arrayClone;
         }
@@ -272,7 +274,7 @@ public class Common
     {
         if(array != null) {
             if(array.getClass().isArray()) {
-                return (Array.getLength(array) == 0);
+                return Array.getLength(array) == 0;
             }
         }
         return true;
@@ -287,7 +289,7 @@ public class Common
     public static boolean isEmptyCollection(Collection<?> collection)
     {
         if(collection != null) {
-            return (collection.size() == 0);
+            return collection.size() == 0;
         }
         return true;
     }
@@ -301,7 +303,7 @@ public class Common
     public static boolean isEmptyMap(Map<?,?> map)
     {
         if(map != null) {
-            return (map.size() == 0);
+            return map.size() == 0;
         }
         return true;
     }
@@ -451,8 +453,8 @@ public class Common
         String input2 = input;
         String search2 = search;
         if(!Common.isEmpty(input2) && !Common.isEmpty(search2) &&
-                search2.length() <= input2.length()) {
-            String replace2 = (replace == null?"":replace); //$NON-NLS-1$
+                        search2.length() <= input2.length()) {
+            String replace2 = replace == null?"":replace; //$NON-NLS-1$
             String tmp;
             if(ignoreCase) {
                 search2 = search2.toLowerCase();
@@ -469,7 +471,7 @@ public class Common
                     buf.append(input2.substring(start,n));
                     buf.append(replace2);
                     start = n+search2.length();
-                    if(start <= (tmp.length()-search2.length())) {
+                    if(start <= tmp.length()-search2.length()) {
                         n = tmp.indexOf(search2,start);
                     }
                     else {
@@ -569,7 +571,7 @@ public class Common
                         }
                         else if(clasz.equals(String.class)) {
                             String value = store.getString(name);
-                            args[0] = (value==null?"":value); //$NON-NLS-1$
+                            args[0] = value==null?"":value; //$NON-NLS-1$
                         }
                         else {
                             continue;
@@ -633,7 +635,7 @@ public class Common
     {
         Object value;
         try {
-            value = WinAPI.GetObjectFieldValue(object, fieldName, getClassSignature(fieldType));
+            value = WinAPI.INSTANCE.getObjectFieldValue(object, fieldName, getClassSignature(fieldType));
         }
         catch (Throwable t) {
             value = null;
@@ -644,7 +646,7 @@ public class Common
     public static boolean objectsAreEqual(Object obj1, Object obj2)
     {
         if(obj1 != obj2) {
-            return (obj1 == null?false:obj1.equals(obj2));
+            return obj1 == null?false:obj1.equals(obj2);
         }
         return true;
     }
@@ -656,7 +658,7 @@ public class Common
 
     public static boolean stringsAreEqual(String str1, String str2, boolean ignoreCase)
     {
-        return (str1 == null?str2 == null:(ignoreCase?str1.equalsIgnoreCase(str2):str1.equals(str2)));
+        return str1 == null?str2 == null:ignoreCase?str1.equalsIgnoreCase(str2):str1.equals(str2);
     }
 
     public static String maybeQuote(String text)
@@ -763,13 +765,13 @@ public class Common
     public static boolean openConfirm(Shell shell, String message, Image icon)
     {
         return openConfirm(shell,EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
-                                          message, icon);
+                        message, icon);
     }
 
     public static boolean openQuestion(Shell shell, String message, Image icon)
     {
         return openQuestion(shell,EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
-                                          message, icon);
+                        message, icon);
     }
 
     public static Point calculateControlSize(Control control, int chars, int lines)
@@ -854,7 +856,7 @@ public class Common
     public static boolean openConfirm(Shell parent, String title, String message, Image icon)
     {
         MessageDialog dialog = new MessageDialog(parent, title, icon,
-                message, MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
+                        message, MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
                         IDialogConstants.CANCEL_LABEL }, 0);
         return dialog.open() == 0;
     }
@@ -862,22 +864,22 @@ public class Common
     public static void openError(Shell parent, String title, String message, Image icon)
     {
         MessageDialog dialog = new MessageDialog(parent, title, icon,
-                message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
+                        message, MessageDialog.ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
         dialog.open();
     }
 
     public static void openInformation(Shell parent, String title, String message, Image icon)
     {
         MessageDialog dialog = new MessageDialog(parent, title, icon,
-                message, MessageDialog.INFORMATION,
-                new String[] { IDialogConstants.OK_LABEL }, 0);
+                        message, MessageDialog.INFORMATION,
+                        new String[] { IDialogConstants.OK_LABEL }, 0);
         dialog.open();
     }
 
     public static boolean openQuestion(Shell parent, String title, String message, Image icon)
     {
         MessageDialog dialog = new MessageDialog(parent, title, icon,
-                message, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
+                        message, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
                         IDialogConstants.NO_LABEL }, 0);
         return dialog.open() == 0;
     }
@@ -885,14 +887,14 @@ public class Common
     public static void openWarning(Shell parent, String title, String message, Image icon)
     {
         MessageDialog dialog = new MessageDialog(parent, title, icon,
-                message, MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL }, 0);
+                        message, MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL }, 0);
         dialog.open();
     }
 
     public static int openMessageDialog(Shell parent, String title, String message, Image icon, int dialogImageType, String[] buttons, int defaultIndex)
     {
         MessageDialog dialog = new MessageDialog(parent, title, icon,
-                message, dialogImageType, buttons, defaultIndex);
+                        message, dialogImageType, buttons, defaultIndex);
         return dialog.open();
     }
 
@@ -950,9 +952,11 @@ public class Common
     {
         String name = null;
         try {
-            name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}","LocalizedString"); //$NON-NLS-1$ //$NON-NLS-2$
+            name = WinAPI.INSTANCE.regQueryStrValue(HKEY.HKEY_CLASSES_ROOT.getHandle(),
+                            "CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}","LocalizedString"); //$NON-NLS-1$ //$NON-NLS-2$
             if(isEmpty(name)) {
-                name = WinAPI.RegQueryStrValue(WinAPI.HKEY_CLASSES_ROOT,"CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}",""); //$NON-NLS-1$ //$NON-NLS-2$
+                name = WinAPI.INSTANCE.regQueryStrValue(HKEY.HKEY_CLASSES_ROOT.getHandle(),
+                                "CLSID\\{20D04FE0-3AEA-1069-A2D8-08002B30309D}",""); //$NON-NLS-1$ //$NON-NLS-2$
             }
             if(!isEmpty(name)) {
                 if(name.charAt(0)=='@') {
@@ -988,7 +992,7 @@ public class Common
                     if(id >= 0) {
                         String resourceString;
                         try {
-                            resourceString = WinAPI.LoadResourceString(library, id,lcid);
+                            resourceString = WinAPI.INSTANCE.loadResourceString(library, id,lcid);
                         }
                         catch(Exception ex) {
                             resourceString = null;
@@ -1028,14 +1032,14 @@ public class Common
     {
         if(obj != null) {
             Class<?> clasz = obj.getClass();
-            return (Byte.class.equals(clasz) ||
-                Short.class.equals(clasz) ||
-                Integer.class.equals(clasz) ||
-                Long.class.equals(clasz) ||
-                Character.class.equals(clasz) ||
-                Float.class.equals(clasz) ||
-                Double.class.equals(clasz) ||
-                Boolean.class.equals(clasz));
+            return Byte.class.equals(clasz) ||
+            Short.class.equals(clasz) ||
+            Integer.class.equals(clasz) ||
+            Long.class.equals(clasz) ||
+            Character.class.equals(clasz) ||
+            Float.class.equals(clasz) ||
+            Double.class.equals(clasz) ||
+            Boolean.class.equals(clasz);
         }
         return false;
     }
@@ -1080,5 +1084,34 @@ public class Common
             newList.add(null);
         }
         return newList;
+    }
+
+    public static IHandle getControlHandle(Control control)
+    {
+        return getHandle(control);
+    }
+
+    public static IHandle getGraphicsHandle(GC gc)
+    {
+        return getHandle(gc);
+    }
+
+    private static <T> IHandle getHandle(T object)
+    {
+        IHandle handle = WinAPI.ZERO_HANDLE;
+        if (object != null)
+        {
+            try
+            {
+                Class<?> clasz = object.getClass();
+                Field f = clasz.getField("handle");
+                handle = WinAPI.INSTANCE.createHandle(((Number) f.get(object)));
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return handle;
     }
 }

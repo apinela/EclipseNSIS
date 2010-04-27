@@ -13,7 +13,8 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.winapi.*;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.SWT;
@@ -34,7 +35,9 @@ public class EditableComboBoxCellEditor extends CellEditor
     private FocusAdapter mAutoDropDownFocusAdapter = new FocusAdapter(){
         @Override
         public void focusGained(FocusEvent e) {
-            WinAPI.SendMessage(mCombo.handle, WinAPI.CB_SHOWDROPDOWN,1,0);
+            IHandle handle = Common.getControlHandle(mCombo);
+            WinAPI.INSTANCE.sendMessage(handle, WinAPI.CB_SHOWDROPDOWN,WinAPI.INSTANCE.createLongPtr(1),
+                            WinAPI.ZERO_LONGPTR);
         }
     };
 
@@ -91,7 +94,7 @@ public class EditableComboBoxCellEditor extends CellEditor
 
     public List<String> getItems()
     {
-        return (mItems == null?Collections.<String>emptyList():mItems);
+        return mItems == null?Collections.<String>emptyList():mItems;
     }
 
     public void setItems(List<String> items)
@@ -146,8 +149,9 @@ public class EditableComboBoxCellEditor extends CellEditor
             {
                 computeSelection();
                 if(isAutoApplyEditorValue()) {
-                    int n = WinAPI.SendMessage(mCombo.handle,WinAPI.CB_GETDROPPEDSTATE,0,0);
-                    if(n == 0 && !mDownArrowPressed) {
+                    IHandle handle = Common.getControlHandle(mCombo);
+                    ILongPtr result = WinAPI.INSTANCE.sendMessage(handle,WinAPI.CB_GETDROPPEDSTATE,WinAPI.ZERO_LONGPTR,WinAPI.ZERO_LONGPTR);
+                    if(WinAPI.ZERO_LONGPTR.equals(result) && !mDownArrowPressed) {
                         fireApplyEditorValue();
                     }
                 }
@@ -158,7 +162,7 @@ public class EditableComboBoxCellEditor extends CellEditor
             public void keyTraversed(TraverseEvent e)
             {
                 if (e.detail == SWT.TRAVERSE_ESCAPE
-                        || e.detail == SWT.TRAVERSE_RETURN) {
+                                || e.detail == SWT.TRAVERSE_RETURN) {
                     e.doit = false;
                 }
             }
@@ -208,13 +212,13 @@ public class EditableComboBoxCellEditor extends CellEditor
     public LayoutData getLayoutData()
     {
         LayoutData layoutData = super.getLayoutData();
-        if ((mCombo == null) || mCombo.isDisposed()) {
+        if (mCombo == null || mCombo.isDisposed()) {
             layoutData.minimumWidth = 60;
         }
         else {
             // make the comboBox 10 characters wide
             GC gc = new GC(mCombo);
-            layoutData.minimumWidth = (gc.getFontMetrics().getAverageCharWidth() * 10) + 10;
+            layoutData.minimumWidth = gc.getFontMetrics().getAverageCharWidth() * 10 + 10;
             gc.dispose();
         }
         return layoutData;
@@ -288,7 +292,7 @@ public class EditableComboBoxCellEditor extends CellEditor
         if (!isValid) {
             // try to insert the current value into the error message.
             setErrorMessage(MessageFormat.format(getErrorMessage(),
-                    new Object[]{newValue}));
+                            new Object[]{newValue}));
         }
         fireApplyEditorValue();
         deactivate();

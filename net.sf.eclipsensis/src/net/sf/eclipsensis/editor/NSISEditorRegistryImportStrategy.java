@@ -16,6 +16,7 @@ import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.help.NSISKeywords.ShellConstant;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImportStrategy
 {

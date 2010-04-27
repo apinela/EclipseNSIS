@@ -9,17 +9,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.ToggleEnablementCommand;
 import net.sf.eclipsensis.util.Common;
 

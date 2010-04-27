@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.*;
 import net.sf.eclipsensis.viewer.*;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -153,7 +154,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                     String value = regValue.getValue();
                     int type = regValue.getType();
                     String data = regValue.getData();
-                    boolean isDefault = (value==null || value.length() == 0);
+                    boolean isDefault = value==null || value.length() == 0;
                     switch(columnIndex) {
                         case 0:
                             return isDefault?EclipseNSISPlugin.getResourceString("reg.value.dialog.default.value"):value; //$NON-NLS-1$
@@ -195,7 +196,7 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
                                         intData = 0;
                                     }
                                     return new StringBuffer("0x").append(Common.leftPad(Integer.toHexString(intData).toLowerCase(),8,'0')).append( //$NON-NLS-1$
-                                            " (").append(intData).append(")").toString(); //$NON-NLS-1$ //$NON-NLS-2$
+                                    " (").append(intData).append(")").toString(); //$NON-NLS-1$ //$NON-NLS-2$
                                 default:
                                     if(type == WinAPI.REG_SZ && isDefault) {
                                         if(data == null) {
@@ -264,14 +265,14 @@ public class RegistryValueSelectionDialog extends StatusMessageDialog
             list = regKey.getValues();
             if(Common.isEmptyCollection(list)) {
                 list = new ArrayList<RegistryValue>();
-                int hKey = regKey.getHandle();
-                if(hKey != 0) {
+                IHandle hKey = regKey.getHandle();
+                if(hKey != null && !WinAPI.ZERO_HANDLE.equals(hKey)) {
                     boolean gotDefault = false;
-                    int count = WinAPI.GetRegValuesCount(hKey);
+                    int count = WinAPI.INSTANCE.getRegValuesCount(hKey);
                     if(count > 0) {
                         for(int i=0; i<count; i++) {
                             RegistryValue regValue = new RegistryValue(regKey.toString(), null);
-                            if(WinAPI.RegEnumValue(hKey,i,regValue)) {
+                            if(WinAPI.INSTANCE.regEnumValue(hKey,i,regValue)) {
                                 switch(regValue.getType()) {
                                     case WinAPI.REG_SZ:
                                         String value = regValue.getValue();

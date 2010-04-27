@@ -3,8 +3,7 @@ package net.sf.eclipsensis.help.commands;
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.XMLUtil;
 
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 public class PatternParam extends RegexpParam
 {

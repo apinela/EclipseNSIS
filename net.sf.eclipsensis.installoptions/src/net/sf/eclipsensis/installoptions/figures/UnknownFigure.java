@@ -13,22 +13,16 @@ import java.util.List;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.edit.unknown.InstallOptionsUnknownEditPart.IUnknownFigure;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.PropertySourceWrapper;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
-import org.eclipse.draw2d.Figure;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.XYLayout;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.draw2d.*;
+import org.eclipse.draw2d.geometry.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnknownFigure
@@ -111,10 +105,10 @@ public class UnknownFigure extends AbstractInstallOptionsFigure implements IUnkn
         Rectangle copy = new Rectangle(IInstallOptionsConstants.EMPTY_POINT,rect.getSize());
         Rectangle[] childBounds = {copy, copy.getCopy(),null};
         if(hScroll) {
-            childBounds[1].height -= WinAPI.GetSystemMetrics(WinAPI.SM_CYHSCROLL);
+            childBounds[1].height -= WinAPI.INSTANCE.getSystemMetrics(WinAPI.SM_CYHSCROLL);
         }
         if(vScroll) {
-            childBounds[1].width -= WinAPI.GetSystemMetrics(WinAPI.SM_CXVSCROLL);
+            childBounds[1].width -= WinAPI.INSTANCE.getSystemMetrics(WinAPI.SM_CXVSCROLL);
         }
         childBounds[2] = childBounds[1].getCopy().shrink(1,1);
         int height = FontUtility.getInstallOptionsFont().getFontData()[0].getHeight()+6;

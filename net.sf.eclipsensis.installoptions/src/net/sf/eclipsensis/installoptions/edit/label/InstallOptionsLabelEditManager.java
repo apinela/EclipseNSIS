@@ -10,9 +10,7 @@
 package net.sf.eclipsensis.installoptions.edit.label;
 
 import net.sf.eclipsensis.installoptions.edit.uneditable.InstallOptionsUneditableElementEditManager;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsLabel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsUneditableElement;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.gef.GraphicalEditPart;

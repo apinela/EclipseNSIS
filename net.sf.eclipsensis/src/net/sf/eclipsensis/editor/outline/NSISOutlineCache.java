@@ -11,12 +11,9 @@ package net.sf.eclipsensis.editor.outline;
 import java.io.File;
 import java.util.Map;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.IEclipseNSISService;
-import net.sf.eclipsensis.settings.INSISHomeListener;
-import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.settings.*;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 

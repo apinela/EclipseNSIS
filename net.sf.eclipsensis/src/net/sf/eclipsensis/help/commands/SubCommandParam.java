@@ -7,33 +7,19 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.XMLUtil;
-import net.sf.eclipsensis.viewer.MapContentProvider;
-import net.sf.eclipsensis.viewer.MapLabelProvider;
+import java.util.*;
 
-import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
+import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.viewer.*;
+
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.w3c.dom.*;
 
 public class SubCommandParam extends NSISParam
 {

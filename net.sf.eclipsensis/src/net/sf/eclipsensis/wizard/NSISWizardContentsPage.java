@@ -16,6 +16,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 import net.sf.eclipsensis.viewer.StructuredViewerUpDownMover;
 import net.sf.eclipsensis.wizard.settings.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
@@ -49,7 +50,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
     public NSISWizardContentsPage()
     {
         super(NAME, EclipseNSISPlugin.getResourceString("wizard.contents.title"), //$NON-NLS-1$
-              EclipseNSISPlugin.getResourceString("wizard.contents.description")); //$NON-NLS-1$
+                        EclipseNSISPlugin.getResourceString("wizard.contents.description")); //$NON-NLS-1$
     }
 
     @Override
@@ -310,36 +311,36 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             @Override
             public void widgetSelected(SelectionEvent e)
             {
-                    MenuItem mi = (MenuItem)e.widget;
-                    String type = (String)mi.getData();
-                    INSISInstallElement element = NSISInstallElementFactory.create(type);
-                    if(element != null) {
-                        try {
-                            if(element.isEditable()) {
-                                ISelection se = mContentsTreeViewer.getSelection();
-                                if(!se.isEmpty() && se instanceof IStructuredSelection) {
-                                    Object obj = ((IStructuredSelection)se).getFirstElement();
-                                    if(obj instanceof INSISInstallElement) {
-                                        INSISInstallElement parent = (INSISInstallElement)obj;
-                                        if(element.edit(mWizard)) {
-                                            if(parent.addChild(element)) {
-                                                mContentsTreeViewer.refresh(parent,true);
-                                                mContentsTreeViewer.reveal(element);
-                                                if(element.hasChildren()) {
-                                                    mContentsTreeViewer.expandToLevel(element,AbstractTreeViewer.ALL_LEVELS);
-                                                }
-                                                updateSelectComponents();
-                                                setPageComplete(validatePage(VALIDATE_ALL));
+                MenuItem mi = (MenuItem)e.widget;
+                String type = (String)mi.getData();
+                INSISInstallElement element = NSISInstallElementFactory.create(type);
+                if(element != null) {
+                    try {
+                        if(element.isEditable()) {
+                            ISelection se = mContentsTreeViewer.getSelection();
+                            if(!se.isEmpty() && se instanceof IStructuredSelection) {
+                                Object obj = ((IStructuredSelection)se).getFirstElement();
+                                if(obj instanceof INSISInstallElement) {
+                                    INSISInstallElement parent = (INSISInstallElement)obj;
+                                    if(element.edit(mWizard)) {
+                                        if(parent.addChild(element)) {
+                                            mContentsTreeViewer.refresh(parent,true);
+                                            mContentsTreeViewer.reveal(element);
+                                            if(element.hasChildren()) {
+                                                mContentsTreeViewer.expandToLevel(element,AbstractTreeViewer.ALL_LEVELS);
                                             }
+                                            updateSelectComponents();
+                                            setPageComplete(validatePage(VALIDATE_ALL));
                                         }
                                     }
                                 }
                             }
                         }
-                        catch(Exception ex) {
-                            delayedValidateAfterError(ex.getLocalizedMessage(),2000);
-                        }
                     }
+                    catch(Exception ex) {
+                        delayedValidateAfterError(ex.getLocalizedMessage(),2000);
+                    }
+                }
             }
         };
 
@@ -575,8 +576,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             {
                 int operation = DND.DROP_NONE;
                 if(newParent != null) {
-                    boolean shift = (WinAPI.GetKeyState(WinAPI.VK_SHIFT) < 0);
-                    boolean ctrl = (WinAPI.GetKeyState(WinAPI.VK_CTRL) < 0);
+                    boolean shift = WinAPI.INSTANCE.getKeyState(WinAPI.VK_SHIFT) < 0;
+                    boolean ctrl = WinAPI.INSTANCE.getKeyState(WinAPI.VK_CTRL) < 0;
                     if(ctrl && shift) {
                         operation = DND.DROP_NONE;
                     }
@@ -864,7 +865,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
     private boolean shouldSelectComponents(INSISInstallElement item)
     {
         if(item instanceof NSISSection) {
-            return (!((NSISSection)item).isHidden());
+            return !((NSISSection)item).isHidden();
         }
         else if(item instanceof NSISSectionGroup) {
             INSISInstallElement[] items = item.getChildren();
@@ -925,7 +926,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
             if(!ssel.isEmpty()) {
                 try {
                     int buttonId = -1;
-                    for(Iterator<?> iter = (ssel).iterator(); iter.hasNext(); ) {
+                    for(Iterator<?> iter = ssel.iterator(); iter.hasNext(); ) {
                         INSISInstallElement element = (INSISInstallElement)iter.next();
                         if(element.hasChildren()) {
                             if(buttonId == IDialogConstants.NO_TO_ALL_ID) {
@@ -933,8 +934,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                             }
                             else if(buttonId != IDialogConstants.YES_TO_ALL_ID) {
                                 int index = new MessageDialog(getShell(),cDeleteConfirmTitle,EclipseNSISPlugin.getShellImage(),
-                                        MessageFormat.format(cDeleteConfirmMessageFormat,new Object[]{element.getDisplayName()}), MessageDialog.QUESTION,
-                                        new String[]{IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL}, 0).open();
+                                                MessageFormat.format(cDeleteConfirmMessageFormat,new Object[]{element.getDisplayName()}), MessageDialog.QUESTION,
+                                                new String[]{IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.NO_TO_ALL_LABEL}, 0).open();
                                 if(index >= 0) {
                                     buttonId = cDeleteConfirmButtonIds[index];
                                 }
@@ -984,7 +985,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                     {
                         setPageComplete(validatePage(VALIDATE_ALL));
                     }
-                 });
+                });
             }
         },EclipseNSISPlugin.getResourceString("wizard.contents.validator.thread.name")).start(); //$NON-NLS-1$
     }
@@ -1055,7 +1056,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                             for (Iterator<INSISInstallElement> iterator = elements.iterator(); iterator.hasNext();) {
                                 INSISInstallElement element2 = iterator.next();
                                 if(isAncestorOf(element,element2) || isAncestorOf(element2, element)) {
-                                   return false;
+                                    return false;
                                 }
                             }
                             elements.add(element);
@@ -1200,7 +1201,7 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
                 mContentsTreeViewer.update(changedElements.toArray(),null);
             }
             setErrorMessage(error);
-            boolean b = (error == null);
+            boolean b = error == null;
             setPageComplete(b);
             checkUnselectedSections();
             return b;
@@ -1286,8 +1287,8 @@ public class NSISWizardContentsPage extends AbstractNSISWizardPage implements IN
     {
         public static final ContentsTransfer INSTANCE = new ContentsTransfer();
         private static final String[] TYPE_NAMES = {new StringBuffer("NSIS Wizard contents transfer").append( //$NON-NLS-1$
-                                                                 System.currentTimeMillis()).append(
-                                                                 ":").append(INSTANCE.hashCode()).toString()};//$NON-NLS-1$
+                        System.currentTimeMillis()).append(
+                        ":").append(INSTANCE.hashCode()).toString()};//$NON-NLS-1$
         private static final int[] TYPEIDS = {registerType(TYPE_NAMES[0])};
 
         private ContentsTransfer()

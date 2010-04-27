@@ -9,23 +9,18 @@
  *******************************************************************************/
 package net.sf.eclipsensis.dialogs;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.template.AbstractTemplateSettings;
 import net.sf.eclipsensis.wizard.NSISTemplateWizard;
-import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
-import net.sf.eclipsensis.wizard.template.NSISWizardTemplateManager;
+import net.sf.eclipsensis.wizard.template.*;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 public class NSISWizardTemplatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {

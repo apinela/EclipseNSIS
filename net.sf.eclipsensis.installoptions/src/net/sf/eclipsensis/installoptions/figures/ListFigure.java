@@ -13,7 +13,8 @@ import java.util.*;
 
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.winapi.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
@@ -42,7 +43,7 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
     {
         setListItems((java.util.List<String>)propertySource.getPropertyValue(InstallOptionsModel.PROPERTY_LISTITEMS));
         super.init(propertySource);
-   }
+    }
 
     public java.util.List<String> getSelected()
     {
@@ -107,8 +108,8 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
             list.setBounds(-bounds.width-10,-bounds.height-10,bounds.width,bounds.height);
             Rectangle rect = list.getClientArea();
             int borderWidth = list.getBorderWidth();
-            boolean hsVisible = (rect.height < (bounds.height - 2*borderWidth));
-            boolean vsVisible = (rect.width < (bounds.width - 2*borderWidth));
+            boolean hsVisible = rect.height < bounds.height - 2*borderWidth;
+            boolean vsVisible = rect.width < bounds.width - 2*borderWidth;
             boolean showHScrollbar = false;
             boolean showVScrollbar = false;
 
@@ -120,7 +121,7 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
                 hsVisible = true;
                 if(isVScroll() && !vsVisible) {
                     rect.height -= hbar.getSize().y;
-                    vsVisible = (rect.width < (bounds.width - 2*borderWidth));
+                    vsVisible = rect.width < bounds.width - 2*borderWidth;
                     if(vsVisible) {
                         rect.width -= vbar.getSize().x;
                     }
@@ -134,7 +135,7 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
                 vsVisible = true;
                 if(isHScroll() && !hsVisible) {
                     rect.width -= vbar.getSize().x;
-                    hsVisible = (rect.height < (bounds.height - 2*borderWidth));
+                    hsVisible = rect.height < bounds.height - 2*borderWidth;
                     if(hsVisible) {
                         rect.height -= hbar.getSize().y;
                     }
@@ -144,7 +145,9 @@ public class ListFigure extends EditableElementFigure implements IListItemsFigur
                 }
             }
             if(isHScroll() && showHScrollbar) {
-                WinAPI.SendMessage(list.handle, WinAPI.LB_SETHORIZONTALEXTENT, rect.width + 10, 0);
+                IHandle handle = Common.getControlHandle(list);
+                WinAPI.INSTANCE.sendMessage(handle, WinAPI.LB_SETHORIZONTALEXTENT,
+                                WinAPI.INSTANCE.createLongPtr(rect.width + 10), WinAPI.ZERO_LONGPTR);
             }
             if(isVScroll() && showVScrollbar) {
                 int height=list.getItemHeight();

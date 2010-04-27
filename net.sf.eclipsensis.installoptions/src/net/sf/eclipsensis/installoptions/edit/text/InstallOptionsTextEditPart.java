@@ -11,16 +11,13 @@ package net.sf.eclipsensis.installoptions.edit.text;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
-import net.sf.eclipsensis.installoptions.edit.editable.EditableElementDirectEditPolicy;
-import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditPart;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
-import net.sf.eclipsensis.installoptions.figures.TextFigure;
+import net.sf.eclipsensis.installoptions.edit.editable.*;
+import net.sf.eclipsensis.installoptions.figures.*;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
 
 import org.eclipse.gef.requests.DirectEditRequest;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.*;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
 

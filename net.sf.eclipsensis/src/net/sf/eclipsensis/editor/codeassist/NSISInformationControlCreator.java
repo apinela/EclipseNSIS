@@ -7,8 +7,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor.codeassist;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.util.Common;
 

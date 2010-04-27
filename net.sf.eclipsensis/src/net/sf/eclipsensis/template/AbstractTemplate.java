@@ -12,15 +12,9 @@ package net.sf.eclipsensis.template;
 import java.util.Collection;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.AbstractNodeConvertible;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.util.*;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
+import org.w3c.dom.*;
 
 public abstract class AbstractTemplate extends AbstractNodeConvertible implements ITemplate
 {

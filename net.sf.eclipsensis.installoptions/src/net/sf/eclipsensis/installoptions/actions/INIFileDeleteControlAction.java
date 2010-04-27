@@ -12,7 +12,7 @@ package net.sf.eclipsensis.installoptions.actions;
 import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.editor.InstallOptionsSourceEditor;
 import net.sf.eclipsensis.installoptions.ini.*;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.ui.PlatformUI;
@@ -32,15 +32,15 @@ public class INIFileDeleteControlAction extends INIFileEditControlAction
     protected boolean doRun2(INIFile iniFile, INISection section)
     {
         boolean showOnShift = InstallOptionsPlugin.getDefault().getPreferenceStore().getBoolean(IInstallOptionsConstants.PREFERENCE_DELETE_CONTROL_WARNING);
-        if(!showOnShift || WinAPI.GetKeyState(WinAPI.VK_SHIFT)<0) {
+        if(!showOnShift || WinAPI.INSTANCE.getKeyState(WinAPI.VK_SHIFT)<0) {
             MessageDialogWithToggle dialog = new MessageDialogWithToggle(
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                    mEditor.getPartName(),
-                    InstallOptionsPlugin.getShellImage(),
-                    InstallOptionsPlugin.getFormattedString("delete.control.action.warning", new String[] {section.getName()}), //$NON-NLS-1$
-                    MessageDialog.WARNING,
-                    new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0,
-                    InstallOptionsPlugin.getResourceString("delete.control.warning.toggle.label"), showOnShift); //$NON-NLS-1$
+                            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                            mEditor.getPartName(),
+                            InstallOptionsPlugin.getShellImage(),
+                            InstallOptionsPlugin.getFormattedString("delete.control.action.warning", new String[] {section.getName()}), //$NON-NLS-1$
+                            MessageDialog.WARNING,
+                            new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0,
+                            InstallOptionsPlugin.getResourceString("delete.control.warning.toggle.label"), showOnShift); //$NON-NLS-1$
             dialog.open();
             if(dialog.getReturnCode() == IDialogConstants.OK_ID) {
                 InstallOptionsPlugin.getDefault().getPreferenceStore().setValue(IInstallOptionsConstants.PREFERENCE_DELETE_CONTROL_WARNING,dialog.getToggleState());

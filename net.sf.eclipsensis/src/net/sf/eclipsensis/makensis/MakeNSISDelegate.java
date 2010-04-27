@@ -11,10 +11,19 @@ package net.sf.eclipsensis.makensis;
 
 import java.util.List;
 
+import net.sf.eclipsensis.EclipseNSISPlugin;
+
 class MakeNSISDelegate extends AbstractMakeNSISDelegate
 {
     static {
-        System.loadLibrary("MakeNSISRunner"); //$NON-NLS-1$
+        if(EclipseNSISPlugin.getDefault().isX64())
+        {
+            System.loadLibrary("MakeNSISRunner_x64"); //$NON-NLS-1$
+        }
+        else
+        {
+            System.loadLibrary("MakeNSISRunner"); //$NON-NLS-1$
+        }
     }
 
     public boolean isUnicode()

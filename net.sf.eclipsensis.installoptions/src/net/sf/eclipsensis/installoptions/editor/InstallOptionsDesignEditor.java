@@ -32,8 +32,9 @@ import net.sf.eclipsensis.installoptions.util.*;
 import net.sf.eclipsensis.job.*;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.startup.FileAssociationChecker;
-import net.sf.eclipsensis.template.*;
-import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.template.AbstractTemplateSettings;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.winapi.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -178,7 +179,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
                 String message = InstallOptionsPlugin.getResourceString("file.deleted.error.message"); //$NON-NLS-1$
                 String[] buttons = {InstallOptionsPlugin.getResourceString("save.button.name"), InstallOptionsPlugin.getResourceString("close.button.name")}; //$NON-NLS-1$ //$NON-NLS-2$
                 MessageDialog dialog = new MessageDialog(shell, title, InstallOptionsPlugin.getShellImage(),
-                        message, MessageDialog.QUESTION, buttons, 0);
+                                message, MessageDialog.QUESTION, buttons, 0);
                 if (dialog.open() == 0) {
                     if (!performSaveAs()) {
                         partActivated(part);
@@ -253,7 +254,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             }
             catch (Exception e) {
                 return new Status(IStatus.ERROR,IInstallOptionsConstants.PLUGIN_ID, IStatus.ERROR,
-                                  e.getMessage(), e);
+                                e.getMessage(), e);
             }
         }
     };
@@ -507,7 +508,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             mInstallOptionsFont = FontUtility.getInstallOptionsFont();
             JobScheduler scheduler = InstallOptionsPlugin.getDefault().getJobScheduler();
             scheduler.scheduleUIJob(mJobFamily,InstallOptionsPlugin.getResourceString("refresh.design.editor.job.name"), //$NON-NLS-1$
-                                    mSchedulingRule,mJobStatusRunnable);
+                            mSchedulingRule,mJobStatusRunnable);
         }
     }
 
@@ -520,7 +521,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         if(!mINIFile.hasErrors()) {
             mInstallOptionsFont = FontUtility.getInstallOptionsFont();
             mPalette = new FlyoutPaletteComposite(parent, SWT.NONE, getSite().getPage(),
-                    getPaletteViewerProvider(), getPalettePreferences());
+                            getPaletteViewerProvider(), getPalettePreferences());
             createGraphicalViewer(mPalette);
             mPalette.setGraphicalControl(getGraphicalControl());
             if (mPalettePage != null) {
@@ -590,10 +591,10 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
 
         viewer.setEditPartFactory(GraphicalPartFactory.INSTANCE);
         ContextMenuProvider provider = new InstallOptionsDesignMenuProvider(this,//viewer,
-                                                                    getActionRegistry());
+                        getActionRegistry());
         viewer.setContextMenu(provider);
         ((IEditorSite)getSite()).registerContextMenu("net.sf.eclipsensis.installoptions.editor.installoptionseditor.contextmenu", //$NON-NLS-1$
-                provider, viewer, false);
+                        provider, viewer, false);
         viewer.setKeyHandler(new GraphicalViewerKeyHandler(viewer).setParent(getCommonKeyHandler()));
         IFile file = null;
         Object source = ((IInstallOptionsEditorInput)getEditorInput()).getSource();
@@ -684,7 +685,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
     }
 
     protected void handleExceptionOnSave(IInstallOptionsEditorInput input, IDocumentProvider p,
-                                         CoreException exception, IProgressMonitor progressMonitor)
+                    CoreException exception, IProgressMonitor progressMonitor)
     {
         try {
             ++mErrorCorrectionOnSave;
@@ -699,7 +700,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             } else  {
                 long modifiedStamp= p.getModificationStamp(input);
                 long synchStamp= p.getSynchronizationStamp(input);
-                isSynchronized= (modifiedStamp == synchStamp);
+                isSynchronized= modifiedStamp == synchStamp;
             }
 
             if (mErrorCorrectionOnSave == 1 && !isSynchronized) {
@@ -903,9 +904,9 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         if (mSharedKeyHandler == null) {
             mSharedKeyHandler = new KeyHandler();
             mSharedKeyHandler.put(KeyStroke.getPressed(SWT.DEL, 127, 0),
-                                getActionRegistry().getAction(ActionFactory.DELETE.getId()));
+                            getActionRegistry().getAction(ActionFactory.DELETE.getId()));
             mSharedKeyHandler.put(KeyStroke.getPressed(SWT.F2, 0),
-                                getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT));
+                            getActionRegistry().getAction(GEFActionConstants.DIRECT_EDIT));
         }
         return mSharedKeyHandler;
     }
@@ -1122,7 +1123,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         getSelectionActions().add(action.getId());
 
         action = new AlignmentAction((IWorkbenchPart)this,
-                PositionConstants.LEFT);
+                        PositionConstants.LEFT);
         registry.registerAction(action);
         getSelectionActions().add(action.getId());
 
@@ -1211,7 +1212,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
     public boolean isSaveOnCloseNeeded()
     {
         IInstallOptionsEditorInput input = (IInstallOptionsEditorInput)getEditorInput();
-        return (input != null && input.getDocumentProvider().canSaveDocument(input)) || getCommandStack().isDirty();
+        return input != null && input.getDocumentProvider().canSaveDocument(input) || getCommandStack().isDirty();
     }
 
     private <T> T loadPreference(String name, TypeConverter<T> converter, T defaultValue)
@@ -1270,41 +1271,41 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
                 viewer.setProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER, provider);
 
                 viewer.setProperty(RulerProvider.PROPERTY_RULER_VISIBILITY,
-                        loadFileProperty(file, FILEPROPERTY_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
-                                SHOW_RULERS_DEFAULT));
+                                loadFileProperty(file, FILEPROPERTY_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
+                                                SHOW_RULERS_DEFAULT));
 
                 // Snap to Geometry property
                 viewer.setProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED,
-                        loadFileProperty(file, FILEPROPERTY_SNAP_TO_GEOMETRY,TypeConverter.BOOLEAN_CONVERTER,
-                                SNAP_TO_GEOMETRY_DEFAULT));
+                                loadFileProperty(file, FILEPROPERTY_SNAP_TO_GEOMETRY,TypeConverter.BOOLEAN_CONVERTER,
+                                                SNAP_TO_GEOMETRY_DEFAULT));
 
                 // Grid properties
                 viewer.setProperty(SnapToGrid.PROPERTY_GRID_ENABLED,
-                        loadFileProperty(file, FILEPROPERTY_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
-                                SNAP_TO_GRID_DEFAULT));
+                                loadFileProperty(file, FILEPROPERTY_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
+                                                SNAP_TO_GRID_DEFAULT));
                 viewer.setProperty(InstallOptionsGridLayer.PROPERTY_GRID_STYLE,
-                        loadFileProperty(file, FILEPROPERTY_GRID_STYLE,TypeConverter.STRING_CONVERTER,
-                                GRID_STYLE_DEFAULT));
+                                loadFileProperty(file, FILEPROPERTY_GRID_STYLE,TypeConverter.STRING_CONVERTER,
+                                                GRID_STYLE_DEFAULT));
                 viewer.setProperty(SnapToGrid.PROPERTY_GRID_ORIGIN,
-                        loadFileProperty(file, FILEPROPERTY_GRID_ORIGIN,TypeConverter.POINT_CONVERTER,
-                                GRID_ORIGIN_DEFAULT));
+                                loadFileProperty(file, FILEPROPERTY_GRID_ORIGIN,TypeConverter.POINT_CONVERTER,
+                                                GRID_ORIGIN_DEFAULT));
                 viewer.setProperty(SnapToGrid.PROPERTY_GRID_SPACING,
-                        loadFileProperty(file, FILEPROPERTY_GRID_SPACING,TypeConverter.DIMENSION_CONVERTER,
-                                GRID_SPACING_DEFAULT));
+                                loadFileProperty(file, FILEPROPERTY_GRID_SPACING,TypeConverter.DIMENSION_CONVERTER,
+                                                GRID_SPACING_DEFAULT));
                 viewer.setProperty(SnapToGrid.PROPERTY_GRID_VISIBLE,
-                        loadFileProperty(file, FILEPROPERTY_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
-                                SHOW_GRID_DEFAULT));
+                                loadFileProperty(file, FILEPROPERTY_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
+                                                SHOW_GRID_DEFAULT));
 
                 // Guides properties
                 viewer.setProperty(PROPERTY_SNAP_TO_GUIDES,
-                        loadFileProperty(file, FILEPROPERTY_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                                SNAP_TO_GUIDES_DEFAULT));
+                                loadFileProperty(file, FILEPROPERTY_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
+                                                SNAP_TO_GUIDES_DEFAULT));
                 viewer.setProperty(PROPERTY_GLUE_TO_GUIDES,
-                        loadFileProperty(file, FILEPROPERTY_GLUE_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                                GLUE_TO_GUIDES_DEFAULT));
+                                loadFileProperty(file, FILEPROPERTY_GLUE_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
+                                                GLUE_TO_GUIDES_DEFAULT));
                 viewer.setProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY,
-                        loadFileProperty(file, FILEPROPERTY_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                                SHOW_GUIDES_DEFAULT));
+                                loadFileProperty(file, FILEPROPERTY_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
+                                                SHOW_GUIDES_DEFAULT));
             }
 
             DialogSize dialogSize = null;
@@ -1334,7 +1335,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         Shell shell = getSite().getWorkbenchWindow().getShell();
         SaveAsDialog dialog = new SaveAsDialog(shell);
         IInstallOptionsEditorInput input = (IInstallOptionsEditorInput)getEditorInput();
-        IFile original = (input instanceof IFileEditorInput?((IFileEditorInput)input).getFile():null);
+        IFile original = input instanceof IFileEditorInput?((IFileEditorInput)input).getFile():null;
         if(original != null) {
             dialog.setOriginalFile(original);
         }
@@ -1386,10 +1387,10 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
                         switch (status.getSeverity()) {
                             case IStatus.INFO:
                                 Common.openInformation(shell, title, msg, InstallOptionsPlugin.getShellImage());
-                            break;
+                                break;
                             case IStatus.WARNING:
                                 Common.openWarning(shell, title, msg, InstallOptionsPlugin.getShellImage());
-                            break;
+                                break;
                             default:
                                 Common.openError(shell, title, msg, InstallOptionsPlugin.getShellImage());
                         }
@@ -1444,47 +1445,47 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         if(dialog != null && file.exists()) {
             GraphicalViewer viewer = getGraphicalViewer();
             saveFileProperty(file, FILEPROPERTY_SHOW_RULERS,TypeConverter.BOOLEAN_CONVERTER,
-                    (Boolean)viewer.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY),
-                    SHOW_RULERS_DEFAULT);
+                            (Boolean)viewer.getProperty(RulerProvider.PROPERTY_RULER_VISIBILITY),
+                            SHOW_RULERS_DEFAULT);
 
             // Snap to Geometry property
             saveFileProperty(file, FILEPROPERTY_SNAP_TO_GEOMETRY,TypeConverter.BOOLEAN_CONVERTER,
-                    (Boolean)viewer.getProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED),
-                    SNAP_TO_GEOMETRY_DEFAULT);
+                            (Boolean)viewer.getProperty(SnapToGeometry.PROPERTY_SNAP_ENABLED),
+                            SNAP_TO_GEOMETRY_DEFAULT);
 
             // Grid properties
             saveFileProperty(file, FILEPROPERTY_SNAP_TO_GRID,TypeConverter.BOOLEAN_CONVERTER,
-                    (Boolean)viewer.getProperty(SnapToGrid.PROPERTY_GRID_ENABLED),
-                    SNAP_TO_GRID_DEFAULT);
+                            (Boolean)viewer.getProperty(SnapToGrid.PROPERTY_GRID_ENABLED),
+                            SNAP_TO_GRID_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_GRID_STYLE,TypeConverter.STRING_CONVERTER,
-                    (String)viewer.getProperty(InstallOptionsGridLayer.PROPERTY_GRID_STYLE),
-                    GRID_STYLE_DEFAULT);
+                            (String)viewer.getProperty(InstallOptionsGridLayer.PROPERTY_GRID_STYLE),
+                            GRID_STYLE_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_GRID_ORIGIN,TypeConverter.POINT_CONVERTER,
-                    (org.eclipse.draw2d.geometry.Point)viewer.getProperty(SnapToGrid.PROPERTY_GRID_ORIGIN),
-                    GRID_ORIGIN_DEFAULT);
+                            (org.eclipse.draw2d.geometry.Point)viewer.getProperty(SnapToGrid.PROPERTY_GRID_ORIGIN),
+                            GRID_ORIGIN_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_GRID_SPACING,TypeConverter.DIMENSION_CONVERTER,
-                    (Dimension)viewer.getProperty(SnapToGrid.PROPERTY_GRID_SPACING),
-                    GRID_SPACING_DEFAULT);
+                            (Dimension)viewer.getProperty(SnapToGrid.PROPERTY_GRID_SPACING),
+                            GRID_SPACING_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_SHOW_GRID,TypeConverter.BOOLEAN_CONVERTER,
-                    (Boolean)viewer.getProperty(SnapToGrid.PROPERTY_GRID_VISIBLE),
-                    SHOW_GRID_DEFAULT);
+                            (Boolean)viewer.getProperty(SnapToGrid.PROPERTY_GRID_VISIBLE),
+                            SHOW_GRID_DEFAULT);
 
             // Guides properties
             saveFileProperty(file, FILEPROPERTY_SNAP_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                    (Boolean)viewer.getProperty(PROPERTY_SNAP_TO_GUIDES),
-                    SNAP_TO_GUIDES_DEFAULT);
+                            (Boolean)viewer.getProperty(PROPERTY_SNAP_TO_GUIDES),
+                            SNAP_TO_GUIDES_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_GLUE_TO_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                    (Boolean)viewer.getProperty(PROPERTY_GLUE_TO_GUIDES),
-                    GLUE_TO_GUIDES_DEFAULT);
+                            (Boolean)viewer.getProperty(PROPERTY_GLUE_TO_GUIDES),
+                            GLUE_TO_GUIDES_DEFAULT);
             saveFileProperty(file, FILEPROPERTY_SHOW_GUIDES,TypeConverter.BOOLEAN_CONVERTER,
-                    (Boolean)viewer.getProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY),
-                    SHOW_GUIDES_DEFAULT);
+                            (Boolean)viewer.getProperty(ToggleGuideVisibilityAction.PROPERTY_GUIDE_VISIBILITY),
+                            SHOW_GUIDES_DEFAULT);
 
             saveFileProperty(file, FILEPROPERTY_DIALOG_SIZE_NAME,TypeConverter.STRING_CONVERTER,
-                    dialog.getDialogSize().getName(),DEFAULT_DIALOG_SIZE.getName());
+                            dialog.getDialogSize().getName(),DEFAULT_DIALOG_SIZE.getName());
             saveFileProperty(file, FILEPROPERTY_SHOW_DIALOG_SIZE,TypeConverter.BOOLEAN_CONVERTER,
-                    Boolean.valueOf(dialog.isShowDialogSize()),
-                    SHOW_DIALOG_SIZE_DEFAULT);
+                            Boolean.valueOf(dialog.isShowDialogSize()),
+                            SHOW_DIALOG_SIZE_DEFAULT);
         }
     }
 
@@ -1665,7 +1666,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
                         name = ((IPath)source).lastSegment();
                     }
                     Common.openError(getSite().getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
-                            InstallOptionsPlugin.getFormattedString("editor.switch.error", //$NON-NLS-1$
+                                    InstallOptionsPlugin.getFormattedString("editor.switch.error", //$NON-NLS-1$
                                                     new String[]{name}),
                                                     InstallOptionsPlugin.getShellImage());
                     getActionRegistry().getAction(SwitchEditorAction.ID).run();
@@ -1764,11 +1765,11 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             getViewer().setEditDomain(getEditDomain());
             getViewer().setEditPartFactory(TreePartFactory.INSTANCE);
             ContextMenuProvider provider = new InstallOptionsDesignMenuProvider(getViewer(),
-                    getActionRegistry());
+                            getActionRegistry());
             getViewer().setContextMenu(provider);
             getSite().registerContextMenu(
-                    "net.sf.eclipsensis.installoptions.editor.outline.contextmenu", //$NON-NLS-1$
-                    provider, getSite().getSelectionProvider());
+                            "net.sf.eclipsensis.installoptions.editor.outline.contextmenu", //$NON-NLS-1$
+                            provider, getSite().getSelectionProvider());
             getViewer().setKeyHandler(getCommonKeyHandler());
             IToolBarManager tbm = getSite().getActionBars().getToolBarManager();
             mShowOutlineAction = new Action() {
@@ -1801,9 +1802,10 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         {
             mPageBook = new PageBook(parent, SWT.NONE);
             mOutline = getViewer().createControl(mPageBook);
+            IHandle handle = Common.getControlHandle(mOutline);
             if(mOutline instanceof Tree) {
-                WinAPI.SetWindowLong(mOutline.handle, WinAPI.GWL_STYLE, WinAPI.GetWindowLong(mOutline.handle, WinAPI.GWL_STYLE) ^ (WinAPI.TVS_HASLINES  | WinAPI.TVS_HASBUTTONS));
-           }
+                WinAPI.INSTANCE.setWindowLong(handle, WinAPI.GWL_STYLE, WinAPI.INSTANCE.getWindowLong(handle, WinAPI.GWL_STYLE) ^ (WinAPI.TVS_HASLINES  | WinAPI.TVS_HASBUTTONS));
+            }
             mOverview = new Canvas(mPageBook, SWT.NONE);
             mPageBook.showPage(mOutline);
             configureOutlineViewer();
@@ -1849,7 +1851,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
                 mThumbnail = new ScrollableThumbnail((Viewport)root.getFigure());
                 mThumbnail.setBorder(new MarginBorder(3));
                 mThumbnail.setSource(root
-                        .getLayer(LayerConstants.PRINTABLE_LAYERS));
+                                .getLayer(LayerConstants.PRINTABLE_LAYERS));
                 lws.setContents(mThumbnail);
                 mDisposeListener = new DisposeListener() {
                     public void widgetDisposed(DisposeEvent e)
@@ -1922,8 +1924,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         public boolean visit(IResourceDelta delta)
         {
             if (delta == null
-                    || !delta.getResource().equals(
-                            ((IFileEditorInput)getEditorInput()).getFile())) {
+                            || !delta.getResource().equals(
+                                            ((IFileEditorInput)getEditorInput()).getFile())) {
                 return true;
             }
 
@@ -2054,7 +2056,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         public void run()
         {
             Dialog settings = new CustomPaletteSettingsDialog(mPaletteViewer.getControl().getShell(),
-                                                              mPaletteViewer.getPaletteViewerPreferences());
+                            mPaletteViewer.getPaletteViewerPreferences());
             settings.open();
         }
     }
@@ -2082,7 +2084,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         {
             if(property.equals(PREFERENCE_UNLOAD_CREATION_TOOL_WHEN_FINISHED)) {
                 firePropertyChanged(property,
-                        (getUnloadCreationToolWhenFinished()?Boolean.TRUE:Boolean.FALSE));
+                                (getUnloadCreationToolWhenFinished()?Boolean.TRUE:Boolean.FALSE));
             }
             else {
                 super.handlePreferenceStorePropertyChanged(property);
@@ -2243,8 +2245,8 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             label.setLayoutData(data);
 
             Button b = createButton(composite2, UNLOAD_CREATION_TOOL_WHEN_FINISHED_ID,
-                    InstallOptionsPlugin.getResourceString("unload.creation.tool.when.finished.label"), //$NON-NLS-1$
-                    SWT.CHECK,null);
+                            InstallOptionsPlugin.getResourceString("unload.creation.tool.when.finished.label"), //$NON-NLS-1$
+                            SWT.CHECK,null);
             ((GridData)b.getLayoutData()).horizontalIndent = 5;
             b.setSelection(((PaletteViewerPreferences)mPrefs).getUnloadCreationToolWhenFinished());
             return composite2;

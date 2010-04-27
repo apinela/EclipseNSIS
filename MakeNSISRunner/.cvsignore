@@ -1,0 +1,11 @@
+MakeNSISRunner.plg
+MakeNSISRunner.opt
+MakeNSISRunner.positions
+env.bat
+MakeNSISRunner.dep
+MakeNSISRunner.ncb
+x64
+_ReSharper.MakeNSISRunner
+Win32
+*.user
+MakeNSISRunner.suo

@@ -14,14 +14,34 @@ import java.util.Collection;
 
 public class CollectionContentProvider extends EmptyContentProvider
 {
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-     */
+    private boolean mReversed = false;
+
+    public CollectionContentProvider()
+    {
+        super();
+    }
+
+    public CollectionContentProvider(boolean reversed)
+    {
+        super();
+        mReversed = reversed;
+    }
+
     @Override
     public Object[] getElements(Object inputElement)
     {
         if(inputElement != null && inputElement instanceof Collection<?>) {
-            return ((Collection<?>)inputElement).toArray();
+            Object[] array = ((Collection<?>)inputElement).toArray();
+            if(mReversed)
+            {
+                for(int i=0; i< array.length/2; i++)
+                {
+                    Object temp = array[i];
+                    array[i] = array[array.length - i - 1];
+                    array[array.length - i - 1] = temp;
+                }
+            }
+            return array;
         }
         return super.getElements(inputElement);
     }

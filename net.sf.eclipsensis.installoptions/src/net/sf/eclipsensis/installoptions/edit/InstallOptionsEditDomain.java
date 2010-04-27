@@ -15,6 +15,7 @@ import java.util.Stack;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.commands.*;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
@@ -79,11 +80,11 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
         else if (IOUtility.isValidFile(mFile)){
             if(!mFile.canWrite()) {
                 if(Common.openQuestion(getShell(), InstallOptionsPlugin.getResourceString("read.only.question.title"), //$NON-NLS-1$
-                        InstallOptionsPlugin.getFormattedString("read.only.question", new String[] {mFile.getAbsolutePath()}),  //$NON-NLS-1$
-                        InstallOptionsPlugin.getShellImage())) {
-                    int attributes = WinAPI.GetFileAttributes(mFile.getAbsolutePath());
+                                InstallOptionsPlugin.getFormattedString("read.only.question", new String[] {mFile.getAbsolutePath()}),  //$NON-NLS-1$
+                                InstallOptionsPlugin.getShellImage())) {
+                    int attributes = WinAPI.INSTANCE.getFileAttributes(mFile.getAbsolutePath());
                     if( (attributes & WinAPI.FILE_ATTRIBUTE_READONLY) > 0) {
-                        WinAPI.SetFileAttributes(mFile.getAbsolutePath(), attributes & ~WinAPI.FILE_ATTRIBUTE_READONLY);
+                        WinAPI.INSTANCE.setFileAttributes(mFile.getAbsolutePath(), attributes & ~WinAPI.FILE_ATTRIBUTE_READONLY);
                     }
                 }
                 return mFile.canWrite();
@@ -127,7 +128,7 @@ public class InstallOptionsEditDomain extends DefaultEditDomain implements IAdap
             }
             else {
                 IEditorActionBarContributor contributor= getEditorPart().getEditorSite().getActionBarContributor();
-                if ((contributor instanceof EditorActionBarContributor)) {
+                if (contributor instanceof EditorActionBarContributor) {
                     IActionBars actionBars= ((EditorActionBarContributor) contributor).getActionBars();
                     if (actionBars != null) {
                         IStatusLineManager manager = actionBars.getStatusLineManager();

@@ -15,6 +15,7 @@ import java.util.*;
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.ColorEditor;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.util.*;
 
@@ -66,11 +67,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
     public NSISWizardPresentationPage()
     {
         super(NAME, EclipseNSISPlugin.getResourceString("wizard.presentation.title"), //$NON-NLS-1$
-              EclipseNSISPlugin.getResourceString("wizard.presentation.description")); //$NON-NLS-1$
+                        EclipseNSISPlugin.getResourceString("wizard.presentation.description")); //$NON-NLS-1$
         mBGPreviewFontData = new FontData(EclipseNSISPlugin.getResourceString("background.preview.font","1|Times New Roman|24|3|WINDOWS|1|-53|0|0|0|700|1|0|0|1|0|0|0|0|Times New Roman")); //$NON-NLS-1$ //$NON-NLS-2$
         mBGPreviewEscapeFontData = new FontData(EclipseNSISPlugin.getResourceString("background.preview.escape.font","1|Times New Roman|12|1|WINDOWS|1|0|0|0|0|700|0|0|0|1|0|0|0|0|Times New Roman")); //$NON-NLS-1$ //$NON-NLS-2$
         mBGPreviewTextLocation = new Point(Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.text.x","16")), //$NON-NLS-1$ //$NON-NLS-2$
-                                           Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.text.y","8"))); //$NON-NLS-1$ //$NON-NLS-2$
+                        Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.text.y","8"))); //$NON-NLS-1$ //$NON-NLS-2$
         mBGPreviewGradientHeight = Integer.parseInt(EclipseNSISPlugin.getResourceString("background.preview.gradient.height","4")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -116,7 +117,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         Group backgroundGroup = NSISWizardDialogUtil.createGroup(parent, 1, "background.group.label", null, false);  //$NON-NLS-1$
 
         final Button showBackground = NSISWizardDialogUtil.createCheckBox(backgroundGroup,"show.background.label",settings.isShowBackground(), //$NON-NLS-1$
-                                         true, null, false);
+                        true, null, false);
 
         final MasterSlaveController m = new MasterSlaveController(showBackground);
 
@@ -128,14 +129,14 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
         final Text backgroundImage = NSISWizardDialogUtil.createFileBrowser(composite, settings.getBackgroundBMP(), false,
-                              Common.loadArrayProperty(bundle,"background.image.filternames"),  //$NON-NLS-1$
-                              Common.loadArrayProperty(bundle,"background.image.filters"), "background.image.label", //$NON-NLS-1$ //$NON-NLS-2$
-                              true,m, false);
+                        Common.loadArrayProperty(bundle,"background.image.filternames"),  //$NON-NLS-1$
+                        Common.loadArrayProperty(bundle,"background.image.filters"), "background.image.label", //$NON-NLS-1$ //$NON-NLS-2$
+                        true,m, false);
 
         final Text backgroundSound = NSISWizardDialogUtil.createFileBrowser(composite, settings.getBackgroundWAV(), false,
-                              Common.loadArrayProperty(bundle,"background.sound.filternames"),  //$NON-NLS-1$
-                              Common.loadArrayProperty(bundle,"background.sound.filters"), "background.sound.label", //$NON-NLS-1$ //$NON-NLS-2$
-                              true, m, false);
+                        Common.loadArrayProperty(bundle,"background.sound.filternames"),  //$NON-NLS-1$
+                        Common.loadArrayProperty(bundle,"background.sound.filters"), "background.sound.label", //$NON-NLS-1$ //$NON-NLS-2$
+                        true, m, false);
 
         composite = new Composite(backgroundGroup,SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
@@ -207,9 +208,9 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 NSISWizardSettings settings = mWizard.getSettings();
 
                 if(control == preview) {
-                    return (settings.isShowBackground() &&
-                            validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundBMP()),null) &&
-                            validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundWAV()),null));
+                    return settings.isShowBackground() &&
+                    validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundBMP()),null) &&
+                    validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundWAV()),null);
                 }
                 else {
                     return true;
@@ -272,7 +273,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         Group licenseGroup = NSISWizardDialogUtil.createGroup(parent, 3, "license.group.label", null, false); //$NON-NLS-1$
 
         final Button showLicense = NSISWizardDialogUtil.createCheckBox(licenseGroup,"show.license.label",settings.isShowLicense(),  //$NON-NLS-1$
-                                        true, null, false);
+                        true, null, false);
         showLicense.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e)
@@ -285,9 +286,9 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
         final MasterSlaveController m = new MasterSlaveController(showLicense);
         final Text licenseFile = NSISWizardDialogUtil.createFileBrowser(licenseGroup, settings.getLicenseData(), false,
-                                   Common.loadArrayProperty(bundle,"license.file.filternames"),  //$NON-NLS-1$
-                                   Common.loadArrayProperty(bundle,"license.file.filters"), "license.file.label", //$NON-NLS-1$ //$NON-NLS-2$
-                                   true, m, isScriptWizard());
+                        Common.loadArrayProperty(bundle,"license.file.filternames"),  //$NON-NLS-1$
+                        Common.loadArrayProperty(bundle,"license.file.filters"), "license.file.label", //$NON-NLS-1$ //$NON-NLS-2$
+                        true, m, isScriptWizard());
         licenseFile.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e)
             {
@@ -298,8 +299,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         });
 
         final Combo licenseButtons = NSISWizardDialogUtil.createCombo(licenseGroup, NSISWizardDisplayValues.LICENSE_BUTTON_TYPE_NAMES,
-                                    settings.getLicenseButtonType(),true,"license.button.label", //$NON-NLS-1$
-                                    (settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isShowLicense()), m, false);
+                        settings.getLicenseButtonType(),true,"license.button.label", //$NON-NLS-1$
+                        (settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isShowLicense()), m, false);
 
         licenseButtons.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -314,7 +315,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             public boolean canEnable(Control control)
             {
                 NSISWizardSettings settings = mWizard.getSettings();
-                return (settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isShowLicense());
+                return settings.getInstallerType() != INSTALLER_TYPE_SILENT && settings.isShowLicense();
             }
         };
         m.setEnabler(licenseButtons,mse);
@@ -358,7 +359,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         Group splashGroup = NSISWizardDialogUtil.createGroup(parent, 1, "splash.group.label", null, false); //$NON-NLS-1$
 
         final Button showSplash = NSISWizardDialogUtil.createCheckBox(splashGroup,"show.splash.label",settings.isShowSplash(), //$NON-NLS-1$
-                                         true, null, false);
+                        true, null, false);
 
         final MasterSlaveController m = new MasterSlaveController(showSplash);
 
@@ -370,14 +371,14 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         layout.marginWidth = 0;
         composite.setLayout(layout);
         final Text splashImage = NSISWizardDialogUtil.createFileBrowser(composite, settings.getSplashBMP(), false,
-                              Common.loadArrayProperty(bundle,"splash.image.filternames"),  //$NON-NLS-1$
-                              Common.loadArrayProperty(bundle,"splash.image.filters"), "splash.image.label", //$NON-NLS-1$ //$NON-NLS-2$
-                              true,m, isScriptWizard());
+                        Common.loadArrayProperty(bundle,"splash.image.filternames"),  //$NON-NLS-1$
+                        Common.loadArrayProperty(bundle,"splash.image.filters"), "splash.image.label", //$NON-NLS-1$ //$NON-NLS-2$
+                        true,m, isScriptWizard());
 
         final Text splashSound = NSISWizardDialogUtil.createFileBrowser(composite, settings.getSplashWAV(), false,
-                              Common.loadArrayProperty(bundle,"splash.sound.filternames"),  //$NON-NLS-1$
-                              Common.loadArrayProperty(bundle,"splash.sound.filters"), "splash.sound.label", //$NON-NLS-1$ //$NON-NLS-2$
-                              true, m, false);
+                        Common.loadArrayProperty(bundle,"splash.sound.filternames"),  //$NON-NLS-1$
+                        Common.loadArrayProperty(bundle,"splash.sound.filters"), "splash.sound.label", //$NON-NLS-1$ //$NON-NLS-2$
+                        true, m, false);
 
         composite = new Composite(splashGroup,SWT.NONE);
         gd = new GridData(SWT.FILL, SWT.CENTER, true, false);
@@ -424,10 +425,10 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 NSISWizardSettings settings = mWizard.getSettings();
 
                 if(control == preview) {
-                    return (settings.isShowSplash() &&
-                            IOUtility.isValidFile(IOUtility.decodePath(settings.getSplashBMP())) &&
-                            validateEmptyOrValidFile(IOUtility.decodePath(settings.getSplashWAV()),null) &&
-                            settings.getSplashDelay() > 0);
+                    return settings.isShowSplash() &&
+                    IOUtility.isValidFile(IOUtility.decodePath(settings.getSplashBMP())) &&
+                    validateEmptyOrValidFile(IOUtility.decodePath(settings.getSplashWAV()),null) &&
+                    settings.getSplashDelay() > 0;
                 }
                 else {
                     return true;
@@ -471,7 +472,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 Text text = (Text)e.widget;
                 String str = text.getText();
                 int index = ((Integer)text.getData()).intValue();
-                int value = (Common.isEmpty(str)?0:Integer.parseInt(str));
+                int value = Common.isEmpty(str)?0:Integer.parseInt(str);
                 switch(index) {
                     case 0:
                         settings.setSplashDelay(value);
@@ -553,7 +554,6 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         else {
             wavFile = null;
         }
-
         final Shell parentShell = getShell();
         shell.addKeyListener(new KeyAdapter(){
             @Override
@@ -564,7 +564,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     previewFont.dispose();
                     messageFont.dispose();
                     if(wavFile != null) {
-                        WinAPI.PlaySound(null, 0, WinAPI.SND_PURGE);
+                        WinAPI.INSTANCE.playSound(null, WinAPI.ZERO_HANDLE, WinAPI.SND_PURGE);
                     }
                     if(parentShell != null && !parentShell.getMinimized()) {
                         parentShell.forceActive();
@@ -610,7 +610,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         shell.setFullScreen(true);
         shell.forceActive();
         if (wavFile != null) {
-            WinAPI.PlaySound(wavFile.getAbsolutePath(), 0, WinAPI.SND_ASYNC | WinAPI.SND_FILENAME | WinAPI.SND_NODEFAULT | WinAPI.SND_LOOP);
+            WinAPI.INSTANCE.playSound(wavFile.getAbsolutePath(), WinAPI.ZERO_HANDLE,
+                            WinAPI.SND_ASYNC | WinAPI.SND_FILENAME | WinAPI.SND_NODEFAULT | WinAPI.SND_LOOP);
         }
         canvas.addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e)
@@ -620,10 +621,10 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 long r = topRGB.red << 10;
                 long g = topRGB.green << 10;
                 long b = topRGB.blue << 10;
-                Rectangle rect = display.getBounds();
-                long dr = (((botRGB.red << 10) - r) * 4) / rect.height;
-                long dg = (((botRGB.green << 10) - g) * 4) / rect.height;
-                long db = (((botRGB.blue << 10) - b) * 4) / rect.height;
+                Rectangle rect = display.getPrimaryMonitor().getBounds();
+                long dr = ((botRGB.red << 10) - r) * 4 / rect.height;
+                long dg = ((botRGB.green << 10) - g) * 4 / rect.height;
+                long db = ((botRGB.blue << 10) - b) * 4 / rect.height;
                 int ry = rect.y;
 
                 //Save GC settings
@@ -631,7 +632,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                 Color bgColor = gc.getBackground();
                 Font font = gc.getFont();
 
-                while (ry < (rect.y + rect.height)) {
+                while (ry < rect.y + rect.height) {
                     Color color = new Color(display, (int)(r >> 10), (int)(g >> 10), (int)(b >> 10));
                     gc.setBackground(color);
                     gc.fillRectangle(rect.x, ry, rect.width, mBGPreviewGradientHeight);
@@ -702,12 +703,12 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
         else {
             NSISWizardSettings settings = mWizard.getSettings();
 
-            boolean b = (!settings.isShowLicense() || ((flag & LICDATA_CHECK) == 0 || validateFile(IOUtility.decodePath(settings.getLicenseData()),cLicFileErrors))) &&
-                        (!settings.isShowSplash() || (((flag & SPLIMG_CHECK) == 0 || validateFile(IOUtility.decodePath(settings.getSplashBMP()), cSplashImageErrors)) &&
-                                                    ((flag & SPLWAV_CHECK) == 0 || validateEmptyOrValidFile(IOUtility.decodePath(settings.getSplashWAV()),null)) &&
-                                                    ((flag & SPLDLY_CHECK) == 0 || validateDelay(settings.getSplashDelay(),cSplashDelayErrors)))) &&
-                        (!settings.isShowBackground() || (((flag & BGIMG_CHECK) == 0 || validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundBMP()),null)) &&
-                                                       ((flag & BGWAV_CHECK) == 0 || validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundWAV()),null))));
+            boolean b = (!settings.isShowLicense() || (flag & LICDATA_CHECK) == 0 || validateFile(IOUtility.decodePath(settings.getLicenseData()),cLicFileErrors)) &&
+            (!settings.isShowSplash() || ((flag & SPLIMG_CHECK) == 0 || validateFile(IOUtility.decodePath(settings.getSplashBMP()), cSplashImageErrors)) &&
+                            ((flag & SPLWAV_CHECK) == 0 || validateEmptyOrValidFile(IOUtility.decodePath(settings.getSplashWAV()),null)) &&
+                            ((flag & SPLDLY_CHECK) == 0 || validateDelay(settings.getSplashDelay(),cSplashDelayErrors))) &&
+                            (!settings.isShowBackground() || ((flag & BGIMG_CHECK) == 0 || validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundBMP()),null)) &&
+                                            ((flag & BGWAV_CHECK) == 0 || validateEmptyOrValidFile(IOUtility.decodePath(settings.getBackgroundWAV()),null)));
             setPageComplete(b);
             if(b) {
                 setErrorMessage(null);
@@ -779,7 +780,7 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
 
             ImageData imageData = new ImageData(IOUtility.decodePath(settings.getSplashBMP()));
             mShell.setSize(imageData.width, imageData.height);
-            Rectangle rect = mDisplay.getClientArea();
+            Rectangle rect = mDisplay.getPrimaryMonitor().getClientArea();
             int x = (rect.width-imageData.width)/2;
             int y = (rect.height-imageData.height)/2;
             mShell.setBounds(x,y,imageData.width,imageData.height);
@@ -802,7 +803,8 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             if(mWavFile != null) {
                 new Thread(new Runnable() {
                     public void run() {
-                        WinAPI.PlaySound(mWavFile.getAbsolutePath(), 0, WinAPI.SND_ASYNC | WinAPI.SND_FILENAME | WinAPI.SND_NODEFAULT);
+                        WinAPI.INSTANCE.playSound(mWavFile.getAbsolutePath(), WinAPI.ZERO_HANDLE,
+                                        WinAPI.SND_ASYNC | WinAPI.SND_FILENAME | WinAPI.SND_NODEFAULT);
                         mWavFile = null;
                     }
                 },EclipseNSISPlugin.getResourceString("splash.preview.audio.thread.name")).start(); //$NON-NLS-1$
@@ -816,11 +818,11 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
             switch(mState) {
                 case STATE_FADE_IN:
                     if(mTimeLeft == 0) {
-                       mTimeLeft = mDisplayDelay;
-                       mState = STATE_DISPLAY;
+                        mTimeLeft = mDisplayDelay;
+                        mState = STATE_DISPLAY;
                     }
                     else {
-                        newAlpha = ((mFadeInDelay - mTimeLeft)*255)/mFadeInDelay;
+                        newAlpha = (mFadeInDelay - mTimeLeft)*255/mFadeInDelay;
                         break;
                     }
                     //$FALL-THROUGH$
@@ -836,28 +838,28 @@ public class NSISWizardPresentationPage extends AbstractNSISWizardPage
                     //$FALL-THROUGH$
                 case STATE_FADE_OUT:
                     if(mTimeLeft == 0) {
-                      mDisplay.asyncExec(new Runnable(){
-                          public void run(){
-                              if(mWavFile != null) {
-                                  WinAPI.PlaySound(null, 0, WinAPI.SND_PURGE);
-                                  mWavFile = null;
-                              }
-                              if(mImage != null) {
-                                  mImage.dispose();
-                              }
-                              mShell.close();
-                              mShell.dispose();
-                          }
-                      });
-                      cancel();
-                      return;
+                        mDisplay.asyncExec(new Runnable(){
+                            public void run(){
+                                if(mWavFile != null) {
+                                    WinAPI.INSTANCE.playSound(null, WinAPI.ZERO_HANDLE, WinAPI.SND_PURGE);
+                                    mWavFile = null;
+                                }
+                                if(mImage != null) {
+                                    mImage.dispose();
+                                }
+                                mShell.close();
+                                mShell.dispose();
+                            }
+                        });
+                        cancel();
+                        return;
                     }
                     else {
-                        newAlpha = (mTimeLeft*255)/mFadeOutDelay;
+                        newAlpha = mTimeLeft*255/mFadeOutDelay;
                         break;
                     }
-               default:
-                   newAlpha = 255;
+                default:
+                    newAlpha = 255;
             }
 
             if(mAdvSplash) {

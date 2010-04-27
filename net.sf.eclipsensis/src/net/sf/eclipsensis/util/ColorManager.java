@@ -10,6 +10,8 @@
 package net.sf.eclipsensis.util;
 
 
+import net.sf.eclipsensis.util.winapi.WinAPI;
+
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
@@ -55,7 +57,7 @@ public class ColorManager
 
     public static Color getSystemColor(int colorId)
     {
-        RGB rgb = getRGB(WinAPI.GetSysColor(colorId));
+        RGB rgb = getRGB(WinAPI.INSTANCE.getSysColor(colorId));
         //Need to flip
         int temp = rgb.red;
         rgb.red=rgb.blue;
@@ -124,7 +126,7 @@ public class ColorManager
     public static String rgbToHex(RGB rgb)
     {
         return new StringBuffer(Common.leftPad(Integer.toHexString(rgb.red),2,'0')).append(
-                                Common.leftPad(Integer.toHexString(rgb.green),2,'0')).append(
-                                Common.leftPad(Integer.toHexString(rgb.blue),2,'0')).toString().toUpperCase();
+                        Common.leftPad(Integer.toHexString(rgb.green),2,'0')).append(
+                                        Common.leftPad(Integer.toHexString(rgb.blue),2,'0')).toString().toUpperCase();
     }
 }

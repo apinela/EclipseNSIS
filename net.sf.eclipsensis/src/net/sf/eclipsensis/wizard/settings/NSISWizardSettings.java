@@ -9,32 +9,21 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.beans.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISVersions;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.lang.NSISLanguage;
-import net.sf.eclipsensis.lang.NSISLanguageManager;
+import net.sf.eclipsensis.lang.*;
 import net.sf.eclipsensis.makensis.MakeNSISRunner;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.AbstractNodeConvertible;
-import net.sf.eclipsensis.util.ColorManager;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.Version;
-import net.sf.eclipsensis.util.XMLUtil;
-import net.sf.eclipsensis.wizard.INSISWizardConstants;
-import net.sf.eclipsensis.wizard.NSISWizard;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
 
 import org.eclipse.swt.graphics.RGB;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 public class NSISWizardSettings extends AbstractNodeConvertible implements INSISWizardConstants
 {

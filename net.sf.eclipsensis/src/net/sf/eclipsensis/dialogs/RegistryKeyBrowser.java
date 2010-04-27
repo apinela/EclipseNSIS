@@ -10,28 +10,15 @@
 package net.sf.eclipsensis.dialogs;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.util.RegistryKey;
-import net.sf.eclipsensis.util.RegistryRoot;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
+import net.sf.eclipsensis.util.winapi.WinAPI.HKEY;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TreeEvent;
-import org.eclipse.swt.events.TreeListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.swt.widgets.TypedListener;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 
 public class RegistryKeyBrowser extends Composite
 {
@@ -206,9 +193,9 @@ public class RegistryKeyBrowser extends Composite
             mSelection = mRegistryKey.toString();
         }
         Event e = new Event ();
-        e.time = (event == null?(int)System.currentTimeMillis():event.time);
-        e.stateMask = (event == null?0:event.stateMask);
-        e.doit = (event == null?true:event.doit);
+        e.time = event == null?(int)System.currentTimeMillis():event.time;
+        e.stateMask = event == null?0:event.stateMask;
+        e.doit = event == null?true:event.doit;
         notifyListeners (SWT.Selection, e);
         if(event != null) {
             event.doit = e.doit;
@@ -223,7 +210,7 @@ public class RegistryKeyBrowser extends Composite
     {
         if(mTree != null && mSelection != null) {
             int n = mSelection.indexOf("\\"); //$NON-NLS-1$
-            int rootKey;
+            HKEY rootKey;
             String subKey;
             if(n > 0) {
                 rootKey = RegistryRoot.getRootKey(mSelection.substring(0,n));
@@ -233,14 +220,14 @@ public class RegistryKeyBrowser extends Composite
                 rootKey = RegistryRoot.getRootKey(mSelection);
                 subKey = null;
             }
-            if(rootKey != 0) {
+            if(rootKey != null) {
                 boolean exists = true;
                 if(subKey != null) {
-                    exists = WinAPI.RegKeyExists(rootKey, subKey);
+                    exists = WinAPI.INSTANCE.regKeyExists(rootKey.getHandle(), subKey);
                 }
                 if(exists) {
                     final TreeItem item = mTree.getItem(0);
-                    final String regKey = (subKey==null?RegistryRoot.getRootKeyName(rootKey):new StringBuffer(RegistryRoot.getRootKeyName(rootKey)).append("\\").append(subKey).toString()); //$NON-NLS-1$
+                    final String regKey = subKey==null?RegistryRoot.getRootKeyName(rootKey):new StringBuffer(RegistryRoot.getRootKeyName(rootKey)).append("\\").append(subKey).toString(); //$NON-NLS-1$
                     item.getDisplay().asyncExec(new Runnable() {
                         public void run()
                         {

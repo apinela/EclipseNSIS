@@ -12,21 +12,15 @@ package net.sf.eclipsensis.installoptions.edit.link;
 import java.beans.PropertyChangeEvent;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.IExtendedEditSupport;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
+import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.edit.label.InstallOptionsLabelEditPart;
 import net.sf.eclipsensis.installoptions.edit.uneditable.UneditableElementDirectEditPolicy;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
-import net.sf.eclipsensis.installoptions.figures.LinkFigure;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsLink;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.figures.*;
+import net.sf.eclipsensis.installoptions.model.*;
 
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.*;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.ColorDialog;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class InstallOptionsLinkEditPart extends InstallOptionsLabelEditPart

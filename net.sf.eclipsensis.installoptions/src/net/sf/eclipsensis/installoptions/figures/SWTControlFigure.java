@@ -14,7 +14,8 @@ import java.util.List;
 import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.winapi.*;
 
 import org.eclipse.draw2d.*;
 import org.eclipse.draw2d.geometry.*;
@@ -44,7 +45,8 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
         public void paintControl(PaintEvent e)
         {
             final Control source = (Control) e.getSource();
-            if(source != null && !source.isDisposed() && source.handle > 0) {
+            IHandle handle = Common.getControlHandle(source);
+            if(source != null && !source.isDisposed() && !WinAPI.ZERO_HANDLE.equals(handle)) {
                 try {
                     source.removePaintListener(mSWTPaintListener);
                     scrapeImage(source);
@@ -170,7 +172,7 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
             mImage = null;
             mImageData = null;
             if(isVisible()) {
-                int style = (mStyle <0?getDefaultStyle():mStyle);
+                int style = mStyle <0?getDefaultStyle():mStyle;
                 if(isHScroll()) {
                     style |= SWT.H_SCROLL;
                 }
@@ -193,8 +195,8 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
                     insets = new Insets(0,0,0,0);
                 }
                 setControlBounds(control, bounds.x + p1.x + insets.left, bounds.y + p1.y + insets.right,
-                                   bounds.width - (insets.left+insets.right),
-                                   bounds.height - (insets.top+insets.bottom));
+                                bounds.width - (insets.left+insets.right),
+                                bounds.height - (insets.top+insets.bottom));
                 control.addPaintListener(mSWTPaintListener);
                 setNeedsReScrape(false);
 
@@ -215,10 +217,10 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
     @Override
     protected boolean isTransparentAt(int x, int y)
     {
-        int pixel = (mImageData != null?mImageData.transparentPixel:-1);
+        int pixel = mImageData != null?mImageData.transparentPixel:-1;
         if(pixel != -1) {
             Rectangle rect = new Rectangle(x-TRANSPARENCY_TOLERANCE,y-TRANSPARENCY_TOLERANCE,
-                                           2*TRANSPARENCY_TOLERANCE+1,2*TRANSPARENCY_TOLERANCE+1);
+                            2*TRANSPARENCY_TOLERANCE+1,2*TRANSPARENCY_TOLERANCE+1);
             Rectangle cropped = getBounds().crop(getInsets());
             rect = rect.intersect(cropped).getTranslated(cropped.getLocation().getNegated());
             if(!rect.isEmpty()) {
@@ -267,14 +269,15 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
     {
         int style;
         if(isHScroll() || isVScroll()) {
-            style = WinAPI.GetWindowLong(control.handle, WinAPI.GWL_STYLE);
+            IHandle handle = Common.getControlHandle(control);
+            style = WinAPI.INSTANCE.getWindowLong(handle, WinAPI.GWL_STYLE);
             if (isHScroll()) {
                 style |= WinAPI.WS_HSCROLL;
             }
             if (isVScroll()) {
                 style |= WinAPI.WS_VSCROLL;
             }
-            WinAPI.SetWindowLong(control.handle,WinAPI.GWL_STYLE,style);
+            WinAPI.INSTANCE.setWindowLong(handle,WinAPI.GWL_STYLE,style);
         }
     }
 
@@ -305,7 +308,11 @@ public abstract class SWTControlFigure extends ScrollBarsFigure
                 mImage = new Image (control.getDisplay(), rect.width, rect.height);
             }
             GC gc = new GC (mImage);
-            WinAPI.SendMessage (control.handle, WinAPI.WM_PRINT, gc.handle, PRINT_BITS);
+            IHandle handle = Common.getControlHandle(control);
+            IHandle handle2 = Common.getGraphicsHandle(gc);
+            WinAPI.INSTANCE.sendMessage (handle, WinAPI.WM_PRINT,
+                            WinAPI.INSTANCE.createLongPtr(handle2.getValue()),
+                            WinAPI.INSTANCE.createLongPtr(PRINT_BITS));
             gc.dispose ();
         }
         mImageData = mImage.getImageData();

@@ -16,6 +16,7 @@ import java.util.List;
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
+import net.sf.eclipsensis.installoptions.properties.descriptors.PropertyDescriptorHelper;
 import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.viewer.CollectionContentProvider;
 
@@ -27,7 +28,8 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.tabbed.*;
 
 public class GeneralPropertySection extends InstallOptionsElementPropertySection
@@ -120,7 +122,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         final List<String> flags = new ArrayList<String>(widget.getFlags());
         final Collection<String> availableFlags = widget.getTypeDef().getFlags();
         final IPropertyDescriptor descriptor = widget.getPropertyDescriptor(InstallOptionsModel.PROPERTY_FLAGS);
-        final ICellEditorValidator validator = (ICellEditorValidator)Common.getObjectFieldValue(descriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
+        final ICellEditorValidator validator = PropertyDescriptorHelper.getCellEditorValidator((PropertyDescriptor) descriptor);
         final Runnable runnable = new Runnable() {
             public void run()
             {
@@ -135,8 +137,8 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                         }
                     }
                     commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_FLAGS,
-                            descriptor.getDisplayName(),
-                            widget, flags);
+                                    descriptor.getDisplayName(),
+                                    widget, flags);
                 }
                 finally {
                     nonUserChange[0]=false;
@@ -256,7 +258,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             {
                 if(!nonUserChange[0]) {
                     commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_INDEX, indexName,
-                            widget, new Integer(indexCombo.getSelectionIndex()));
+                                    widget, new Integer(indexCombo.getSelectionIndex()));
                 }
             }
         });
@@ -302,7 +304,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
                     }
                     if(!Common.stringsAreEqual(type, widget.getType())) {
                         commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_TYPE, indexName,
-                                widget, type);
+                                        widget, type);
                     }
                 }
             }
@@ -336,7 +338,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             public void keyTraversed(TraverseEvent e)
             {
                 if (e.detail == SWT.TRAVERSE_ESCAPE
-                        || e.detail == SWT.TRAVERSE_RETURN) {
+                                || e.detail == SWT.TRAVERSE_RETURN) {
                     e.doit = false;
                 }
             }
@@ -357,7 +359,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
         final Position position = widget.getPosition().getCopy();
         final Text[] positionTexts = new Text[4];
         String[] names = {"left.property.name","top.property.name", //$NON-NLS-1$ //$NON-NLS-2$
-                "right.property.name","bottom.property.name"}; //$NON-NLS-1$ //$NON-NLS-2$
+                        "right.property.name","bottom.property.name"}; //$NON-NLS-1$ //$NON-NLS-2$
         int[] values = {position.left,position.top,position.right,position.bottom};
         VerifyListener verifyListener = new NumberVerifyListener(true);
         TraverseListener traverseListener = new TraverseListener() {
@@ -433,7 +435,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
 
                     if(oldValue != value) {
                         commandHelper.propertyChanged(InstallOptionsModel.PROPERTY_POSITION,
-                                positionName, widget, position);
+                                        positionName, widget, position);
                     }
                 }
             }
@@ -460,7 +462,7 @@ public class GeneralPropertySection extends InstallOptionsElementPropertySection
             {
                 if(!nonUserChange[0]) {
                     commandHelper.propertyChanged(InstallOptionsWidget.PROPERTY_LOCKED,
-                            lockedName, widget, (lockedButton.getSelection()?Boolean.TRUE:Boolean.FALSE));
+                                    lockedName, widget, (lockedButton.getSelection()?Boolean.TRUE:Boolean.FALSE));
                 }
             }
         });

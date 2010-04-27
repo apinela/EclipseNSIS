@@ -7,54 +7,27 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.beans.*;
 import java.io.File;
 import java.text.Collator;
 import java.util.Locale;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.INSISVersions;
-import net.sf.eclipsensis.lang.NSISLanguage;
-import net.sf.eclipsensis.lang.NSISLanguageManager;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.lang.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
-import net.sf.eclipsensis.viewer.CollectionContentProvider;
-import net.sf.eclipsensis.viewer.ListViewerUpDownMover;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.viewer.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
-import net.sf.eclipsensis.wizard.util.MasterSlaveController;
-import net.sf.eclipsensis.wizard.util.MasterSlaveEnabler;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
-import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
+import net.sf.eclipsensis.wizard.util.*;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 public class NSISWizardAttributesPage extends AbstractNSISWizardPage
 {

@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.ini.validators;
 
-import java.util.*;
+import java.util.List;
 
 import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.ini.*;

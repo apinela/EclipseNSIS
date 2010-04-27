@@ -10,19 +10,12 @@
 package net.sf.eclipsensis.installoptions.template;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.template.AbstractTemplateManager;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
 
 public class InstallOptionsTemplateManager extends AbstractTemplateManager<IInstallOptionsTemplate>

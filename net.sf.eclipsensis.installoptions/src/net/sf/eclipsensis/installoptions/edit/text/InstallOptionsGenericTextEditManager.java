@@ -14,8 +14,7 @@ import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableEle
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.jface.viewers.TextCellEditor;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 public abstract class InstallOptionsGenericTextEditManager extends InstallOptionsEditableElementEditManager<TextCellEditor>
 {

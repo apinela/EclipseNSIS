@@ -9,12 +9,9 @@
  *******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.*;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 public class Version extends AbstractNodeConvertible implements Comparable<Version>
 {

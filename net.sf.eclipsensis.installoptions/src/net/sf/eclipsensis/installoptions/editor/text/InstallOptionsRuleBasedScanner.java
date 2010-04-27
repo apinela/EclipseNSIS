@@ -9,8 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.editor.text;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;

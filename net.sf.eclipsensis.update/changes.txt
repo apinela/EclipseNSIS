@@ -1,6 +1,9 @@
 Revision History
 ================
 
+0.9.8 (03/26/2010)
+    * Added 64-bit support.
+
 0.9.7.3 (03/26/2010)
     * Upgraded to Java 5.
     * Upgraded to Eclipse 3.5 - no longer compliant with Eclipse 3.4.

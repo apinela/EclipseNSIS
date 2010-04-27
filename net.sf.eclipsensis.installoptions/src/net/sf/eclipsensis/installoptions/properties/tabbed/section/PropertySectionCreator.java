@@ -9,33 +9,25 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.properties.tabbed.section;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
+import java.beans.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsElement;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
+import net.sf.eclipsensis.installoptions.properties.descriptors.PropertyDescriptorHelper;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.NumberVerifyListener;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 public abstract class PropertySectionCreator implements IPropertySectionCreator
@@ -70,7 +62,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
         Composite composite2 = composite;
         final IPropertyDescriptor descriptor = getElement().getPropertyDescriptor(propertyId);
         if (descriptor != null) {
-            final TypeConverter<String> converter = (multiline?TypeConverter.ESCAPED_STRING_CONVERTER:TypeConverter.STRING_CONVERTER);
+            final TypeConverter<String> converter = multiline?TypeConverter.ESCAPED_STRING_CONVERTER:TypeConverter.STRING_CONVERTER;
             GridLayout layout;
             layout = (GridLayout)composite2.getLayout();
             if(layout.numColumns != 2) {
@@ -85,7 +77,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
             }
             CLabel label = widgetFactory.createCLabel(composite2, descriptor.getDisplayName());
             label.setLayoutData(new GridData(SWT.FILL,(multiline?SWT.TOP:SWT.FILL),false,false));
-            ICellEditorValidator validator = (ICellEditorValidator)Common.getObjectFieldValue(descriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
+            ICellEditorValidator validator = PropertyDescriptorHelper.getCellEditorValidator((PropertyDescriptor) descriptor);
             final Text text = widgetFactory.createText(composite2, converter.asString(getElement().getStringPropertyValue(propertyId)), (multiline?SWT.MULTI|SWT.V_SCROLL:SWT.SINGLE)|SWT.FLAT);
             text.setData(LABEL,label);
             text.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,multiline));
@@ -103,7 +95,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
                         String t = converter.asType(text.getText());
                         if(!Common.stringsAreEqual(getElement().getStringPropertyValue(propertyId), t)) {
                             commandHelper.propertyChanged(propertyId,
-                                    descriptor.getDisplayName(), getElement(), t);
+                                            descriptor.getDisplayName(), getElement(), t);
                         }
                     }
                 }
@@ -160,7 +152,7 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
             }
             CLabel label = widgetFactory.createCLabel(composite2, descriptor.getDisplayName());
             label.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false));
-            final ICellEditorValidator validator = (ICellEditorValidator)Common.getObjectFieldValue(descriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
+            final ICellEditorValidator validator = PropertyDescriptorHelper.getCellEditorValidator((PropertyDescriptor) descriptor);
             final List<Map.Entry<Integer,String>> entries = new ArrayList<Map.Entry<Integer,String>>(comboData.entrySet());
             Object selected = getElement().getPropertyValue(propertyId);
 
@@ -195,10 +187,10 @@ public abstract class PropertySectionCreator implements IPropertySectionCreator
                             equal = Common.objectsAreEqual(oldValue, newValue);
                         }
                         if(!equal) {
-                            String error = (validator==null?null:validator.isValid(newValue));
+                            String error = validator==null?null:validator.isValid(newValue);
                             if(Common.isEmpty(error)) {
                                 commandHelper.propertyChanged(propertyId,
-                                        descriptor.getDisplayName(), getElement(), newValue);
+                                                descriptor.getDisplayName(), getElement(), newValue);
                             }
                             else {
                                 combo.removeSelectionListener(this);

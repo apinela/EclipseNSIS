@@ -9,21 +9,13 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.actions;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.model.DialogSize;
-import net.sf.eclipsensis.installoptions.model.DialogSizeManager;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.util.Common;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.ui.IEditorPart;
 
 public class SetDialogSizeMenuManager extends MenuManager

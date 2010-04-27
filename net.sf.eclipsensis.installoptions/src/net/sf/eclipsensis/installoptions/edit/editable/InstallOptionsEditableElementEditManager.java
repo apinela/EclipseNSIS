@@ -10,9 +10,7 @@
 package net.sf.eclipsensis.installoptions.edit.editable;
 
 import net.sf.eclipsensis.installoptions.edit.InstallOptionsDirectEditManager;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsEditableElement;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
+import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;

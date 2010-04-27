@@ -112,11 +112,12 @@ HRESULT SaveSub(IStorage* p, WCHAR* pwzSubstream, LPCSTR pszFilename)
         return hr;
     }
 
-    FILE* fp = fopen(pszFilename, "w");
+    FILE* fp;
+	fopen_s(&fp, pszFilename, "w");
     if (fp==NULL) {
         DWORD err = GetLastError();
         char *p = GetErr(err);
-        sprintf(t, "unable to create file %s\n%u - %s\n", pszFilename, err, p);
+        sprintf_s(t, READ_BLOCK_SIZE, "unable to create file %s\n%u - %s\n", pszFilename, err, p);
         OutputDebugStringA(t);
         LocalFree(p);
         return S_FALSE;
@@ -126,7 +127,7 @@ HRESULT SaveSub(IStorage* p, WCHAR* pwzSubstream, LPCSTR pszFilename)
     while (SUCCEEDED(hr) && cbRead==READ_BLOCK_SIZE) {
         hr = ps->Read(t, READ_BLOCK_SIZE, &cbRead);
         if (SUCCEEDED(hr)) {
-            cbWrote = fwrite(t, sizeof(char), cbRead, fp);
+            cbWrote = (ULONG)fwrite(t, sizeof(char), cbRead, fp);
             if (cbWrote!=cbRead) {
                 hr = S_FALSE;
             }
@@ -154,7 +155,7 @@ HRESULT ExtractHtmlHelpFromStorage(IStorage *ps, LPCSTR folder, LPSTR tocFile, L
         DWORD err = GetLastError();
         if (err!=ERROR_ALREADY_EXISTS) {
             LPSTR perr = GetErr(err);
-            sprintf(buf, "CreateDirectory failed - %u : %s\n", err, perr); 
+            sprintf_s(buf, sizeof(buf), "CreateDirectory failed - %u : %s\n", err, perr); 
             OutputDebugStringA(buf);
             LocalFree(perr);
             return S_FALSE;
@@ -172,19 +173,19 @@ HRESULT ExtractHtmlHelpFromStorage(IStorage *ps, LPCSTR folder, LPSTR tocFile, L
         if (entry.type == STGTY_STREAM) {
             WCHAR *pExt = wcsrchr(entry.pwcsName,'.');
             if(pExt) {
-                if(tocFile && !wcsicmp(pExt,L".hhc")) {
-                    sprintf(tocFile,"%s\\%S",folder,entry.pwcsName);
+                if(tocFile && !_wcsicmp(pExt,L".hhc")) {
+                    sprintf_s(tocFile,MAX_PATH,"%s\\%S",folder,entry.pwcsName);
                     hr = SaveSub(ps, entry.pwcsName, tocFile);
                 }
-                else if(indexFile && !wcsicmp(pExt,L".hhk")) {
-                    sprintf(indexFile,"%s\\%S",folder,entry.pwcsName);
+                else if(indexFile && !_wcsicmp(pExt,L".hhk")) {
+                    sprintf_s(indexFile,MAX_PATH,"%s\\%S",folder,entry.pwcsName);
                     hr = SaveSub(ps, entry.pwcsName, indexFile);
                 }
                 else {
                     int i =0;
                     while(supported_extensions[i]) {
-                        if(!wcsicmp(pExt,supported_extensions[i])) {
-                            sprintf(newFile,"%s\\%S",folder,entry.pwcsName);
+                        if(!_wcsicmp(pExt,supported_extensions[i])) {
+                            sprintf_s(newFile,sizeof(newFile),"%s\\%S",folder,entry.pwcsName);
                             hr = SaveSub(ps, entry.pwcsName, newFile);
                             break;
                         }
@@ -200,7 +201,7 @@ HRESULT ExtractHtmlHelpFromStorage(IStorage *ps, LPCSTR folder, LPSTR tocFile, L
                 break;
             }
 
-            sprintf(newFile,"%s\\%S",folder,entry.pwcsName);
+            sprintf_s(newFile,sizeof(newFile),"%s\\%S",folder,entry.pwcsName);
             hr = ExtractHtmlHelpFromStorage(psub, newFile, NULL, NULL);
             psub->Release();
             if (FAILED(hr)) {

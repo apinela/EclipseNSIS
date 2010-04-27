@@ -7,31 +7,19 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings.dialogs;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
-import net.sf.eclipsensis.wizard.NSISWizard;
-import net.sf.eclipsensis.wizard.NSISWizardDisplayValues;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallFile;
-import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;
-import net.sf.eclipsensis.wizard.util.NSISWizardUtil;
+import net.sf.eclipsensis.wizard.util.*;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 public class NSISInstallFileDialog extends AbstractNSISInstallItemDialog
 {

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.sf.eclipsensis; singleton:=true
-Bundle-Version: 0.9.7.3
+Bundle-Version: 0.9.8
 Bundle-Activator: net.sf.eclipsensis.EclipseNSISPlugin
 Bundle-Vendor: %plugin.vendor
 Bundle-Localization: plugin
@@ -18,7 +18,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.5.0",
  org.eclipse.ui.console;bundle-version="3.4.0",
  org.eclipse.core.variables;bundle-version="3.2.200",
  org.eclipse.ui.externaltools;bundle-version="3.2.0",
- net.sf.eclipsensis.startup;bundle-version="0.9.7.3",
+ net.sf.eclipsensis.startup;bundle-version="0.9.8",
  org.eclipse.core.filesystem;bundle-version="1.2.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: net.sf.eclipsensis,
@@ -47,6 +47,9 @@ Export-Package: net.sf.eclipsensis,
  net.sf.eclipsensis.settings,
  net.sf.eclipsensis.template,
  net.sf.eclipsensis.util,
+ net.sf.eclipsensis.util.winapi,
+ net.sf.eclipsensis.util.winapi.x64,
+ net.sf.eclipsensis.util.winapi.x86,
  net.sf.eclipsensis.viewer,
  net.sf.eclipsensis.wizard,
  net.sf.eclipsensis.wizard.settings,

@@ -1,8 +1,6 @@
 package net.sf.eclipsensis.help;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
+import java.io.*;
 
 public class NSISHelpInputStream extends InputStream
 {

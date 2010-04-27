@@ -13,6 +13,7 @@ import java.io.File;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -104,7 +105,7 @@ public class LocalPathParam extends LocalFileParam
                 else if(IOUtility.isValidPathSpec(path)) {
                     File file = new File(path);
                     if(file.isAbsolute()) {
-                        if(WinAPI.ValidateWildcard(path)) {
+                        if(WinAPI.INSTANCE.validateWildcard(path)) {
                             return null;
                         }
                     }

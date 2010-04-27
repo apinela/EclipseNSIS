@@ -18,6 +18,7 @@ import net.sf.eclipsensis.dialogs.TableResizer;
 import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
+import net.sf.eclipsensis.installoptions.properties.descriptors.PropertyDescriptorHelper;
 import net.sf.eclipsensis.installoptions.properties.labelproviders.FileFilterLabelProvider;
 import net.sf.eclipsensis.installoptions.util.*;
 import net.sf.eclipsensis.util.*;
@@ -29,7 +30,8 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.tabbed.*;
 
 public class FilterPropertySection extends InstallOptionsElementPropertySection
@@ -41,7 +43,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             final FileFilter[] current = { null };
             final boolean[] nonUserChange = { false };
             final IPropertyDescriptor descriptor = element.getPropertyDescriptor(InstallOptionsModel.PROPERTY_FILTER);
-            final ICellEditorValidator validator = (ICellEditorValidator)Common.getObjectFieldValue(descriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
+            final ICellEditorValidator validator = PropertyDescriptorHelper.getCellEditorValidator((PropertyDescriptor) descriptor);
 
             final TabbedPropertySheetWidgetFactory widgetFactory = getWidgetFactory();
 
@@ -204,7 +206,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             detailGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
             detailGroup.setLayout(new GridLayout(1, false));
 
-            boolean isNull = (current[0]==null);
+            boolean isNull = current[0]==null;
             Composite composite = widgetFactory.createComposite(detailGroup);
             composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
             layout = new GridLayout(2,false);
@@ -418,7 +420,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
             });
             IStructuredSelection sel = (IStructuredSelection)patternsViewer.getSelection();
             FilePattern[] patterns = (FilePattern[])patternsViewer.getInput();
-            int len = (Common.isEmptyArray(patterns)?0:patterns.length);
+            int len = Common.isEmptyArray(patterns)?0:patterns.length;
             patternsDel.setEnabled(!isNull && !sel.isEmpty() && sel.size() != len && len > 1);
 
             final TableViewerUpDownMover<FilePattern[], FilePattern> patternsMover = new TableViewerUpDownMover<FilePattern[], FilePattern>() {
@@ -487,7 +489,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                 {
                     IStructuredSelection sel = (IStructuredSelection)event.getSelection();
                     FilePattern[] patterns = (FilePattern[])patternsViewer.getInput();
-                    int len = (patterns==null?0:patterns.length);
+                    int len = patterns==null?0:patterns.length;
                     patternsDel.setEnabled(!sel.isEmpty() && sel.size() != len && len > 1);
                     patternsUp.setEnabled(patternsMover.canMoveUp());
                     patternsDown.setEnabled(patternsMover.canMoveDown());
@@ -507,7 +509,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                             current[0] = (FileFilter)sel.getFirstElement();
                         }
                     }
-                    boolean isNull = (current[0]==null);
+                    boolean isNull = current[0]==null;
                     descriptionText.setText((isNull?"":current[0].getDescription())); //$NON-NLS-1$
                     descriptionText.setSelection(descriptionText.getText().length());
                     patternsViewer.setInput((isNull?null:current[0].getPatterns()));
@@ -517,7 +519,7 @@ public class FilterPropertySection extends InstallOptionsElementPropertySection
                     patternsTable.setEnabled(!isNull);
                     patternsAdd.setEnabled(!isNull);
                     FilePattern[] patterns = (FilePattern[])patternsViewer.getInput();
-                    int len = (Common.isEmptyArray(patterns)?0:patterns.length);
+                    int len = Common.isEmptyArray(patterns)?0:patterns.length;
                     patternsDel.setEnabled(!isNull && !sel.isEmpty() && sel.size() != len && len > 1);
                     patternsUp.setEnabled(!isNull && patternsMover.canMoveUp());
                     patternsDown.setEnabled(!isNull && patternsMover.canMoveDown());

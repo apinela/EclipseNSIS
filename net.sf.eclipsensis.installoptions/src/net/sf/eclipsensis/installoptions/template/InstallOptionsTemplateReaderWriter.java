@@ -12,7 +12,7 @@ package net.sf.eclipsensis.installoptions.template;
 import java.io.*;
 import java.util.*;
 
-import net.sf.eclipsensis.template.*;
+import net.sf.eclipsensis.template.AbstractTemplateReaderWriter;
 
 class InstallOptionsTemplateReaderWriter extends AbstractTemplateReaderWriter<IInstallOptionsTemplate>
 {

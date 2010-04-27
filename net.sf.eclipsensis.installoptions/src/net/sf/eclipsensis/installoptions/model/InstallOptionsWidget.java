@@ -9,12 +9,8 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
+import java.beans.*;
+import java.util.*;
 import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
@@ -28,41 +24,20 @@ import net.sf.eclipsensis.installoptions.properties.labelproviders.ListLabelProv
 import net.sf.eclipsensis.installoptions.properties.tabbed.section.IPropertySectionCreator;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
-import net.sf.eclipsensis.installoptions.util.FontUtility;
-import net.sf.eclipsensis.installoptions.util.TypeConverter;
-import net.sf.eclipsensis.util.CaseInsensitiveSet;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.installoptions.util.*;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ComboBoxCellEditor;
-import org.eclipse.jface.viewers.DialogCellEditor;
-import org.eclipse.jface.viewers.ICellEditorValidator;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 public abstract class InstallOptionsWidget extends InstallOptionsElement
 {

@@ -2,11 +2,11 @@
 package net.sf.eclipsensis.help.search.parser;
 
 import java.io.*;
-import java.util.*;
-
-import org.apache.lucene.analysis.Analyzer;
+import java.util.Collection;
 
 import net.sf.eclipsensis.util.CaseInsensitiveSet;
+
+import org.apache.lucene.analysis.Analyzer;
 
 @SuppressWarnings({"serial","unchecked"})
 public class NSISHelpSearchQueryParser implements NSISHelpSearchQueryParserConstants {

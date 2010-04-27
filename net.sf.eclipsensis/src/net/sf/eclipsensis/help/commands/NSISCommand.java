@@ -7,13 +7,10 @@
  *******************************************************************************/
 package net.sf.eclipsensis.help.commands;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.XMLUtil;
+import net.sf.eclipsensis.*;
+import net.sf.eclipsensis.util.*;
 
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 public class NSISCommand
 {

@@ -10,44 +10,22 @@
 package net.sf.eclipsensis.installoptions.edit;
 
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
-import net.sf.eclipsensis.installoptions.figures.ScrollBarsFigure;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
-import net.sf.eclipsensis.installoptions.model.Position;
-import net.sf.eclipsensis.installoptions.requests.ExtendedEditRequest;
-import net.sf.eclipsensis.installoptions.requests.ReorderPartRequest;
+import net.sf.eclipsensis.installoptions.*;
+import net.sf.eclipsensis.installoptions.figures.*;
+import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.installoptions.requests.*;
 import net.sf.eclipsensis.installoptions.util.FontUtility;
 import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
-import org.eclipse.draw2d.ColorConstants;
-import org.eclipse.draw2d.FigureUtilities;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.MarginBorder;
-import org.eclipse.draw2d.ScrollBar;
-import org.eclipse.draw2d.XYLayout;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Rectangle;
-import org.eclipse.gef.AccessibleEditPart;
-import org.eclipse.gef.DragTracker;
-import org.eclipse.gef.EditPart;
-import org.eclipse.gef.GraphicalEditPart;
-import org.eclipse.gef.Request;
-import org.eclipse.gef.RequestConstants;
+import org.eclipse.draw2d.*;
+import org.eclipse.draw2d.geometry.*;
+import org.eclipse.gef.*;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
-import org.eclipse.gef.tools.DragEditPartsTracker;
-import org.eclipse.swt.accessibility.AccessibleControlEvent;
-import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.gef.tools.*;
+import org.eclipse.swt.accessibility.*;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPart implements IDirectEditLabelProvider, IExtendedEditLabelProvider
@@ -268,7 +246,7 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         InstallOptionsWidget widget = (InstallOptionsWidget)getInstallOptionsElement();
         Position pos = widget.getPosition();
         pos = widget.toGraphical(pos);
-        Rectangle r = new Rectangle(pos.left,pos.top,(pos.right-pos.left)+1,(pos.bottom-pos.top)+1);
+        Rectangle r = new Rectangle(pos.left,pos.top,pos.right-pos.left+1,pos.bottom-pos.top+1);
 
         ((GraphicalEditPart)getParent()).setLayoutConstraint(this, getFigure(), r);
     }
@@ -454,18 +432,18 @@ public abstract class InstallOptionsWidgetEditPart extends InstallOptionsEditPar
         {
             Rectangle childBounds = new Rectangle(0,0,newBounds.width,newBounds.height);
             setConstraint(mGlassPanel, childBounds.getCopy());
-            int hbarHeight = WinAPI.GetSystemMetrics (WinAPI.SM_CYHSCROLL);
-            int vbarWidth = WinAPI.GetSystemMetrics (WinAPI.SM_CXVSCROLL);
+            int hbarHeight = WinAPI.INSTANCE.getSystemMetrics (WinAPI.SM_CYHSCROLL);
+            int vbarWidth = WinAPI.INSTANCE.getSystemMetrics (WinAPI.SM_CXVSCROLL);
             mHScrollBar.setVisible(mHScroll);
             if(mHScroll) {
                 setConstraint(mHScrollBar, new Rectangle(0,newBounds.height-hbarHeight,
-                                                        newBounds.width-(mVScroll?vbarWidth:0), hbarHeight));
+                                newBounds.width-(mVScroll?vbarWidth:0), hbarHeight));
                 childBounds.height -= hbarHeight;
             }
             mVScrollBar.setVisible(mVScroll);
             if(mVScroll) {
                 setConstraint(mVScrollBar, new Rectangle(newBounds.width-vbarWidth,0,
-                                                         vbarWidth, newBounds.height-(mHScroll?hbarHeight:0)));
+                                vbarWidth, newBounds.height-(mHScroll?hbarHeight:0)));
                 childBounds.width -= vbarWidth;
             }
             if(!mChildBounds.equals(childBounds)) {

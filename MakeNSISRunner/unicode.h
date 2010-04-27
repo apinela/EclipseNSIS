@@ -4,8 +4,8 @@
 #ifdef UNICODE
 
 #define GetJavaStringChars(x,y) x->GetStringChars(y,0);
-#define ReleaseJavaStringChars(x,y,z) x->ReleaseStringChars(y, z)
-#define NewJavaString(x,y) x->NewString(y, _tcslen(y))
+#define ReleaseJavaStringChars(x,y,z) x->ReleaseStringChars(y, (const jchar*)z)
+#define NewJavaString(x,y) x->NewString((const jchar*)y, (jsize)_tcslen(y))
 
 #else
 

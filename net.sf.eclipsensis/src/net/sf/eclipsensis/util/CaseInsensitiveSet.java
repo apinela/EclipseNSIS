@@ -10,11 +10,7 @@
 package net.sf.eclipsensis.util;
 
 import java.io.Serializable;
-import java.util.AbstractSet;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * An implementation of the Set interface that supports storing of

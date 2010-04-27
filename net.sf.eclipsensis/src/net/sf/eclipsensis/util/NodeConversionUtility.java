@@ -8,17 +8,10 @@
 
 package net.sf.eclipsensis.util;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.lang.reflect.*;
+import java.util.*;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 public class NodeConversionUtility
 {

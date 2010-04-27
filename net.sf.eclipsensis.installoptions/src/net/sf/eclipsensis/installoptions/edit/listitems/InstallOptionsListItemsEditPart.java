@@ -13,13 +13,10 @@ import java.beans.PropertyChangeEvent;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.edit.IExtendedEditSupport;
-import net.sf.eclipsensis.installoptions.edit.InstallOptionsExtendedEditPolicy;
+import net.sf.eclipsensis.installoptions.edit.*;
 import net.sf.eclipsensis.installoptions.edit.editable.InstallOptionsEditableElementEditPart;
-import net.sf.eclipsensis.installoptions.figures.IInstallOptionsFigure;
-import net.sf.eclipsensis.installoptions.figures.IListItemsFigure;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsListItems;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
+import net.sf.eclipsensis.installoptions.figures.*;
+import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.properties.dialogs.ListItemsDialog;
 import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
 

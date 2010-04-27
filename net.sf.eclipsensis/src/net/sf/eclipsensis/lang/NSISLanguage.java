@@ -9,19 +9,12 @@
  *******************************************************************************/
 package net.sf.eclipsensis.lang;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Map;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISConstants;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
 public class NSISLanguage implements Serializable
 {

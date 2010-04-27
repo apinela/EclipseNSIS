@@ -9,13 +9,10 @@
  ******************************************************************************/
 package net.sf.eclipsensis.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
+import net.sf.eclipsensis.util.winapi.*;
 
 import org.eclipse.swt.graphics.Image;
 
@@ -38,7 +35,7 @@ public class RegistryKey
         OPEN_REGKEY_IMAGE = imageManager.getImage(EclipseNSISPlugin.getResourceString("registry.key.open.image")); //$NON-NLS-1$
     }
 
-    protected int mHandle = 0;
+    protected IHandle mHandle = WinAPI.ZERO_HANDLE;
     protected String mName = ""; //$NON-NLS-1$
     protected int mChildCount = -1;
     protected RegistryKey[] mChildren = null;
@@ -46,7 +43,7 @@ public class RegistryKey
     private String mString = null;
     private List<RegistryValue> mValues = new ArrayList<RegistryValue>();
 
-    RegistryKey(RegistryKey parent, int handle, String name)
+    RegistryKey(RegistryKey parent, IHandle handle, String name)
     {
         this(parent, name);
         mHandle = handle;
@@ -99,10 +96,10 @@ public class RegistryKey
         return mName;
     }
 
-    public int getHandle()
+    public IHandle getHandle()
     {
-        if(mHandle == 0) {
-            mHandle = WinAPI.RegOpenKeyEx(getParent().mHandle,getName(),0,WinAPI.KEY_QUERY_VALUE|WinAPI.KEY_ENUMERATE_SUB_KEYS);
+        if(mHandle != null && WinAPI.ZERO_HANDLE.equals(mHandle)) {
+            mHandle = WinAPI.INSTANCE.regOpenKeyEx(getParent().mHandle,getName(),0,WinAPI.KEY_QUERY_VALUE|WinAPI.KEY_ENUMERATE_SUB_KEYS);
         }
         return mHandle;
     }
@@ -123,15 +120,15 @@ public class RegistryKey
     public void open()
     {
         if(mChildCount < 0) {
-            int handle = getHandle();
-            if(handle != 0) {
+            IHandle handle = getHandle();
+            if(handle != null && !WinAPI.ZERO_HANDLE.equals(handle)) {
                 int[] sizes = {0,0};
-                WinAPI.RegQueryInfoKey(handle,sizes);
+                WinAPI.INSTANCE.regQueryInfoKey(handle,sizes);
                 mChildCount = sizes[0];
                 if(mChildCount > 0) {
                     mChildren = new RegistryKey[mChildCount];
                     for (int i = 0; i < mChildren.length; i++) {
-                        String subKey = WinAPI.RegEnumKeyEx(handle,i,sizes[1]);
+                        String subKey = WinAPI.INSTANCE.regEnumKeyEx(handle,i,sizes[1]);
                         mChildren[i] = new RegistryKey(this,subKey);
                     }
                     Arrays.sort(mChildren,SEARCH_COMPARATOR);
@@ -158,9 +155,9 @@ public class RegistryKey
             mChildCount = 0;
             mChildren = null;
         }
-        if(!(getParent() instanceof RegistryRoot) && mHandle > 0) {
-            WinAPI.RegCloseKey(mHandle);
-            mHandle = 0;
+        if(!(getParent() instanceof RegistryRoot) && mHandle != null && !WinAPI.ZERO_HANDLE.equals(mHandle)) {
+            WinAPI.INSTANCE.regCloseKey(mHandle);
+            mHandle = WinAPI.ZERO_HANDLE;
         }
     }
 
@@ -213,7 +210,7 @@ public class RegistryKey
             return this;
         }
         else {
-            return (mParent==null?null:mParent.getRootKey());
+            return mParent==null?null:mParent.getRootKey();
         }
     }
 }

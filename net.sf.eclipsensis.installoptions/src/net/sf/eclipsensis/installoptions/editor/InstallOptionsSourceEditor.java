@@ -10,125 +10,47 @@
 package net.sf.eclipsensis.installoptions.editor;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.actions.INIFileCreateControlAction;
-import net.sf.eclipsensis.installoptions.actions.INIFileDeleteControlAction;
-import net.sf.eclipsensis.installoptions.actions.INIFileEditControlAction;
-import net.sf.eclipsensis.installoptions.actions.INIFileFixProblemsAction;
-import net.sf.eclipsensis.installoptions.actions.INIFileReorderAction;
-import net.sf.eclipsensis.installoptions.actions.PreviewAction;
-import net.sf.eclipsensis.installoptions.actions.SwitchEditorAction;
+import net.sf.eclipsensis.installoptions.*;
+import net.sf.eclipsensis.installoptions.actions.*;
 import net.sf.eclipsensis.installoptions.builder.InstallOptionsNature;
 import net.sf.eclipsensis.installoptions.editor.annotation.INIProblemAnnotation;
-import net.sf.eclipsensis.installoptions.ini.IINIFileListener;
-import net.sf.eclipsensis.installoptions.ini.INIFile;
-import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
-import net.sf.eclipsensis.installoptions.ini.INIProblem;
-import net.sf.eclipsensis.installoptions.ini.INISection;
-import net.sf.eclipsensis.installoptions.model.IModelListener;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsDialog;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.installoptions.model.InstallOptionsModelTypeDef;
-import net.sf.eclipsensis.job.IJobStatusRunnable;
-import net.sf.eclipsensis.job.JobScheduler;
+import net.sf.eclipsensis.installoptions.ini.*;
+import net.sf.eclipsensis.installoptions.model.*;
+import net.sf.eclipsensis.job.*;
 import net.sf.eclipsensis.startup.FileAssociationChecker;
-import net.sf.eclipsensis.util.CaseInsensitiveMap;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.HTMLExporter;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.*;
 import net.sf.eclipsensis.viewer.EmptyContentProvider;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.gef.Disposable;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.commands.ActionHandler;
-import org.eclipse.jface.resource.CompositeImageDescriptor;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.DefaultPositionUpdater;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IPositionUpdater;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.text.TextViewer;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.AnnotationModel;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.jface.text.source.projection.IProjectionListener;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
-import org.eclipse.jface.text.source.projection.ProjectionSupport;
-import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.source.projection.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPathEditorInput;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.contexts.IContextActivation;
-import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.contexts.*;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.editors.text.IFoldingCommandIds;
-import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.handlers.IHandlerActivation;
-import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.handlers.*;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.IPageSite;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.texteditor.TextOperationAction;
-import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.views.contentoutline.*;
 
 public class InstallOptionsSourceEditor extends TextEditor implements IInstallOptionsEditor, IINIFileListener, IProjectionListener
 {
@@ -220,9 +142,9 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         boolean valid = !mINIFile.hasErrors();
         if(!valid) {
             Common.openError(getSite().getShell(),EclipseNSISPlugin.getResourceString("error.title"), //$NON-NLS-1$
-                                    InstallOptionsPlugin.getFormattedString("editor.switch.error", //$NON-NLS-1$
-                                                            new String[]{((IFileEditorInput)getEditorInput()).getFile().getName()}),
-                                    InstallOptionsPlugin.getShellImage());
+                            InstallOptionsPlugin.getFormattedString("editor.switch.error", //$NON-NLS-1$
+                                            new String[]{((IFileEditorInput)getEditorInput()).getFile().getName()}),
+                                            InstallOptionsPlugin.getShellImage());
         }
         return valid;
     }
@@ -264,8 +186,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
 
     protected void updateActions()
     {
-        boolean hasErrors = (mINIFile != null && mINIFile.hasErrors());
-        boolean hasWarnings = (mINIFile != null && mINIFile.hasWarnings());
+        boolean hasErrors = mINIFile != null && mINIFile.hasErrors();
+        boolean hasWarnings = mINIFile != null && mINIFile.hasWarnings();
         enableAction(SwitchEditorAction.ID,!hasErrors);
         enableAction(PreviewAction.PREVIEW_CLASSIC_ID,!hasErrors);
         enableAction(PreviewAction.PREVIEW_MUI_ID,!hasErrors);
@@ -627,7 +549,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     @Override
     protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles)
     {
-//        fAnnotationAccess= createAnnotationAccess();
+        //        fAnnotationAccess= createAnnotationAccess();
         fOverviewRuler= createOverviewRuler(getSharedColors());
 
         ISourceViewer viewer= new InstallOptionsSourceViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles);
@@ -693,54 +615,54 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
     {
         mJobScheduler.cancelJobs(mJobFamily, false);
         mJobScheduler.scheduleJob(mJobFamily, InstallOptionsPlugin.getResourceString("annotations.update.job.name"), //$NON-NLS-1$
-                new IJobStatusRunnable(){
-                    public IStatus run(IProgressMonitor monitor)
-                    {
-                        IStatus status = updateProjectionAnnotations(monitor);
-                        if(!status.isOK()) {
-                            return status;
-                        }
+                        new IJobStatusRunnable(){
+            public IStatus run(IProgressMonitor monitor)
+            {
+                IStatus status = updateProjectionAnnotations(monitor);
+                if(!status.isOK()) {
+                    return status;
+                }
 
-                        ISourceViewer viewer = getSourceViewer();
-                        if(viewer != null) {
-                            AnnotationModel model = (AnnotationModel)viewer.getAnnotationModel();
-                            if(model != null) {
-                                model.removeAllAnnotations();
-                                if(monitor.isCanceled()) {
-                                    return Status.CANCEL_STATUS;
-                                }
-                                if(mINIFile.hasErrors() || mINIFile.hasWarnings()) {
-                                    INIProblem[] problems = mINIFile.getProblems();
-                                    IDocument doc = getDocumentProvider().getDocument(getEditorInput());
-                                    for (int i = 0; i < problems.length; i++) {
-                                        if(monitor.isCanceled()) {
-                                            return Status.CANCEL_STATUS;
-                                        }
-                                        INIProblem problem = problems[i];
-                                        if(problems[i].getLine() > 0) {
-                                            try {
-                                                IRegion region = doc.getLineInformation(problem.getLine()-1);
-                                                model.addAnnotation(new INIProblemAnnotation(problem),
-                                                        new Position(region.getOffset(),region.getLength()));
-                                            }
-                                            catch (BadLocationException e) {
-                                                InstallOptionsPlugin.getDefault().log(e);
-                                            }
-                                        }
-                                        else {
-                                            model.addAnnotation(new INIProblemAnnotation(problem),
-                                                    new Position(0,0));
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                ISourceViewer viewer = getSourceViewer();
+                if(viewer != null) {
+                    AnnotationModel model = (AnnotationModel)viewer.getAnnotationModel();
+                    if(model != null) {
+                        model.removeAllAnnotations();
                         if(monitor.isCanceled()) {
                             return Status.CANCEL_STATUS;
                         }
-                        return Status.OK_STATUS;
+                        if(mINIFile.hasErrors() || mINIFile.hasWarnings()) {
+                            INIProblem[] problems = mINIFile.getProblems();
+                            IDocument doc = getDocumentProvider().getDocument(getEditorInput());
+                            for (int i = 0; i < problems.length; i++) {
+                                if(monitor.isCanceled()) {
+                                    return Status.CANCEL_STATUS;
+                                }
+                                INIProblem problem = problems[i];
+                                if(problems[i].getLine() > 0) {
+                                    try {
+                                        IRegion region = doc.getLineInformation(problem.getLine()-1);
+                                        model.addAnnotation(new INIProblemAnnotation(problem),
+                                                        new Position(region.getOffset(),region.getLength()));
+                                    }
+                                    catch (BadLocationException e) {
+                                        InstallOptionsPlugin.getDefault().log(e);
+                                    }
+                                }
+                                else {
+                                    model.addAnnotation(new INIProblemAnnotation(problem),
+                                                    new Position(0,0));
+                                }
+                            }
+                        }
                     }
-                });
+                }
+                if(monitor.isCanceled()) {
+                    return Status.CANCEL_STATUS;
+                }
+                return Status.OK_STATUS;
+            }
+        });
     }
 
     @Override
@@ -945,7 +867,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             super.createControl(parent);
 
             TreeViewer viewer = getTreeViewer();
-            WinAPI.SetWindowLong(viewer.getControl().handle, WinAPI.GWL_STYLE, WinAPI.GetWindowLong(viewer.getControl().handle, WinAPI.GWL_STYLE) ^ (WinAPI.TVS_HASLINES  | WinAPI.TVS_HASBUTTONS));
+            IHandle handle = Common.getControlHandle(viewer.getControl());
+            WinAPI.INSTANCE.setWindowLong(handle, WinAPI.GWL_STYLE, WinAPI.INSTANCE.getWindowLong(handle, WinAPI.GWL_STYLE) ^ (WinAPI.TVS_HASLINES  | WinAPI.TVS_HASBUTTONS));
             viewer.setContentProvider(new EmptyContentProvider(){
                 @Override
                 public Object[] getChildren(Object parentElement)
@@ -973,7 +896,7 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             viewer.setInput(mINIFile);
             Point sel = getSourceViewer().getSelectedRange();
             mSelectionSynchronizer.selectionChanged(new SelectionChangedEvent(getSourceViewer().getSelectionProvider(),
-                                                    new TextSelection(sel.x,sel.y)));
+                            new TextSelection(sel.x,sel.y)));
             MenuManager manager = new MenuManager("#SourceOutline", "#SourceOutline"); //$NON-NLS-1$ //$NON-NLS-2$
             manager.add(getAction(CREATE_CONTROL_ACTION));
             manager.add(getAction(EDIT_CONTROL_ACTION));
@@ -1062,22 +985,22 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         {
             mJobScheduler.cancelJobs(mOutlineJobFamily);
             mJobScheduler.scheduleUIJob(mOutlineJobFamily, InstallOptionsPlugin.getResourceString("outline.update.job.name"), //$NON-NLS-1$
-                          new IJobStatusRunnable(){
-                              public IStatus run(IProgressMonitor monitor)
-                              {
-                                  try {
-                                      final TreeViewer viewer = getTreeViewer();
-                                      if(viewer != null && mINIFile != null) {
-                                          viewer.refresh(mINIFile);
-                                      }
-                                      return Status.OK_STATUS;
-                                  }
-                                  catch(Exception e) {
-                                      InstallOptionsPlugin.getDefault().log(e);
-                                      return new Status(IStatus.ERROR,IInstallOptionsConstants.PLUGIN_ID,-1,e.getMessage(),e);
-                                  }
-                              }
-                          });
+                            new IJobStatusRunnable(){
+                public IStatus run(IProgressMonitor monitor)
+                {
+                    try {
+                        final TreeViewer viewer = getTreeViewer();
+                        if(viewer != null && mINIFile != null) {
+                            viewer.refresh(mINIFile);
+                        }
+                        return Status.OK_STATUS;
+                    }
+                    catch(Exception e) {
+                        InstallOptionsPlugin.getDefault().log(e);
+                        return new Status(IStatus.ERROR,IInstallOptionsConstants.PLUGIN_ID,-1,e.getMessage(),e);
+                    }
+                }
+            });
         }
 
         @Override
@@ -1199,20 +1122,20 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
             Image image2 = InstallOptionsPlugin.getImageManager().getImage(hashCode);
             if(image2 == null) {
                 InstallOptionsPlugin.getImageManager().putImageDescriptor(hashCode,
-                        new CompositeImageDescriptor(){
-                            @Override
-                            protected void drawCompositeImage(int width, int height)
-                            {
-                                drawImage(image.getImageData(),0,0);
-                                drawImage(data,0,getSize().y-data.height);
-                            }
+                                new CompositeImageDescriptor(){
+                    @Override
+                    protected void drawCompositeImage(int width, int height)
+                    {
+                        drawImage(image.getImageData(),0,0);
+                        drawImage(data,0,getSize().y-data.height);
+                    }
 
-                            @Override
-                            protected Point getSize()
-                            {
-                                return new Point(image.getBounds().width,image.getBounds().height);
-                            }
-                        });
+                    @Override
+                    protected Point getSize()
+                    {
+                        return new Point(image.getBounds().width,image.getBounds().height);
+                    }
+                });
                 image2 = InstallOptionsPlugin.getImageManager().getImage(hashCode);
             }
             return image2;
@@ -1236,8 +1159,8 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
         public boolean visit(IResourceDelta delta)
         {
             if (delta == null
-                    || !delta.getResource().equals(
-                            ((IFileEditorInput)getEditorInput()).getFile())) {
+                            || !delta.getResource().equals(
+                                            ((IFileEditorInput)getEditorInput()).getFile())) {
                 return true;
             }
 
@@ -1307,9 +1230,9 @@ public class InstallOptionsSourceEditor extends TextEditor implements IInstallOp
                                 mOutlinePage.setSelection(StructuredSelection.EMPTY);
                             }
                         }
-                        enableAction(EDIT_CONTROL_ACTION,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
-                        enableAction(DELETE_CONTROL_ACTION,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
-                        enableAction(DELETE_CONTROL_ACTION2,(section != null && section.isInstallOptionsField())&&(mINIFile != null && !mINIFile.hasErrors()));
+                        enableAction(EDIT_CONTROL_ACTION,section != null && section.isInstallOptionsField()&&mINIFile != null && !mINIFile.hasErrors());
+                        enableAction(DELETE_CONTROL_ACTION,section != null && section.isInstallOptionsField()&&mINIFile != null && !mINIFile.hasErrors());
+                        enableAction(DELETE_CONTROL_ACTION2,section != null && section.isInstallOptionsField()&&mINIFile != null && !mINIFile.hasErrors());
                     }
                 }
                 finally {

@@ -26,5 +26,5 @@
 #define MakeNSISRunner_getWarnings Java_net_sf_eclipsensis_makensis_MakeNSISDelegate_getWarnings
 
 #endif
-
+//JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved);
 #endif

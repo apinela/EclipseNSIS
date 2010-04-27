@@ -7,16 +7,11 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard.settings;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.help.NSISKeywords;
-import net.sf.eclipsensis.util.CaseInsensitiveSet;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.NSISWizard;
 import net.sf.eclipsensis.wizard.settings.dialogs.NSISInstallFilesDialog;
 import net.sf.eclipsensis.wizard.util.NSISWizardUtil;

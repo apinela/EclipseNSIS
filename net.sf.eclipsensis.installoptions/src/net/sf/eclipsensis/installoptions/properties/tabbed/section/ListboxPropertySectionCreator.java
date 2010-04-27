@@ -15,6 +15,7 @@ import java.util.List;
 import net.sf.eclipsensis.installoptions.*;
 import net.sf.eclipsensis.installoptions.model.*;
 import net.sf.eclipsensis.installoptions.model.commands.InstallOptionsCommandHelper;
+import net.sf.eclipsensis.installoptions.properties.descriptors.PropertyDescriptorHelper;
 import net.sf.eclipsensis.util.Common;
 
 import org.eclipse.jface.viewers.*;
@@ -22,7 +23,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 public class ListboxPropertySectionCreator extends ListItemsPropertySectionCreator
@@ -37,7 +39,7 @@ public class ListboxPropertySectionCreator extends ListItemsPropertySectionCreat
     {
         super.createListAndStateButtons(buttons, viewer, widgetFactory, commandHelper);
         final IPropertyDescriptor stateDescriptor = getWidget().getPropertyDescriptor(InstallOptionsModel.PROPERTY_STATE);
-        final ICellEditorValidator stateValidator = (ICellEditorValidator)Common.getObjectFieldValue(stateDescriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
+        final ICellEditorValidator stateValidator = PropertyDescriptorHelper.getCellEditorValidator((PropertyDescriptor) stateDescriptor);
 
         final Button selectAll = widgetFactory.createButton(buttons,"",SWT.PUSH|SWT.FLAT); //$NON-NLS-1$
         selectAll.setEnabled(((InstallOptionsListItems)getWidget()).isMultiSelect());

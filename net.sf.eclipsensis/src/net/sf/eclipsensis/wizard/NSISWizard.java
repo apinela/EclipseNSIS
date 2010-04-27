@@ -9,33 +9,22 @@
  *******************************************************************************/
 package net.sf.eclipsensis.wizard;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import net.sf.eclipsensis.EclipseNSISPlugin;
-import net.sf.eclipsensis.INSISVersions;
+import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.job.IJobStatusRunnable;
 import net.sf.eclipsensis.settings.NSISPreferences;
-import net.sf.eclipsensis.util.ColorManager;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.*;
 import net.sf.eclipsensis.wizard.settings.NSISWizardSettings;
 import net.sf.eclipsensis.wizard.template.NSISWizardTemplate;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.IPageChangeProvider;
-import org.eclipse.jface.dialogs.IPageChangedListener;
-import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardContainer;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.*;
 
 public abstract class NSISWizard extends Wizard implements IAdaptable, INewWizard, INSISWizardConstants
 {

@@ -16,8 +16,7 @@ import net.sf.eclipsensis.installoptions.figures.IEditableElementFigure;
 import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.*;
 import org.eclipse.jface.viewers.CellEditor;
 
 public abstract class InstallOptionsEditableElementEditPart<T extends CellEditor> extends InstallOptionsWidgetEditPart

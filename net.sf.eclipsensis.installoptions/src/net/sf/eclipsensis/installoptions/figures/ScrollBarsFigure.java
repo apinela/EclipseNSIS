@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.figures;
 
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 import org.eclipse.draw2d.geometry.Rectangle;
 
@@ -19,8 +19,8 @@ public abstract class ScrollBarsFigure extends AbstractInstallOptionsFigure
     {
         Rectangle rect = getClientArea().getCopy();
         if(supportsScrollBars()) {
-            rect.width -= (isVScroll()?WinAPI.GetSystemMetrics (WinAPI.SM_CXVSCROLL):0);
-            rect.height -= (isHScroll()?WinAPI.GetSystemMetrics (WinAPI.SM_CYHSCROLL):0);
+            rect.width -= isVScroll()?WinAPI.INSTANCE.getSystemMetrics (WinAPI.SM_CXVSCROLL):0;
+            rect.height -= isHScroll()?WinAPI.INSTANCE.getSystemMetrics (WinAPI.SM_CYHSCROLL):0;
         }
         return rect;
     }

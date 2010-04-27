@@ -51,9 +51,15 @@ jstring makeString(JNIEnv*, _TCHAR*);
 void createString(_TCHAR**,PCOPYDATASTRUCT);
 void createAppendArray(_TCHAR***, int*, PCOPYDATASTRUCT);
 
-BOOL APIENTRY DllMain(HINSTANCE hinstDll, DWORD dwReasion, LPVOID lpReserved)
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 {
-	if(dwReasion == DLL_PROCESS_ATTACH) {
+	g_pJvm = vm;
+	return JNI_VERSION_1_2;
+}
+
+BOOL APIENTRY DllMain(HINSTANCE hinstDll, DWORD dwReason, LPVOID lpReserved)
+{
+	if(dwReason == DLL_PROCESS_ATTACH) {
 		hInstance = hinstDll;
 		RegisterWindowClass();
 	}
@@ -112,27 +118,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 unsigned WINAPI CreateWndThread(LPVOID pThreadParam) {
 	jint nSize = 1;
-	jint nVms;
 	MSG Msg;
 	jint nStatus;
 
-	HANDLE hWnd = (HANDLE)pThreadParam;
-
-	nStatus = JNI_GetCreatedJavaVMs(&g_pJvm, nSize, &nVms);
-
-	if(nStatus == 0) {
-		nStatus = g_pJvm->AttachCurrentThreadAsDaemon((void **)&g_pEnv, NULL);
-		if(nStatus != 0) ErrorHandler(_T("Cannot attach thread"));
+	g_hWnd = CreateWindow(_T("Hidden EclipseNSIS Window"), NULL, WS_OVERLAPPEDWINDOW,
+						CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+						NULL, NULL, hInstance, NULL);
+	if(!g_hWnd) {
+		ErrorHandler(_T("Cannot create window"));
+		return 1;
 	}
-	else {
-		ErrorHandler(_T("Cannot get the JVM"));
+
+	nStatus = g_pJvm->AttachCurrentThreadAsDaemon((void **)&g_pEnv, NULL);
+	if(nStatus != 0) {
+		ErrorHandler(_T("Cannot attach thread"));
+		return 2;
 	}
 
 	while(GetMessage(&Msg, 0, 0, 0)) {
 		TranslateMessage(&Msg);
 		DispatchMessage(&Msg);
 	}
-	return Msg.wParam;
+	g_hThread = 0;
+	return 0;
 }
 
 JNIEXPORT jlong JNICALL MakeNSISRunner_init(JNIEnv *pEnv, jobject obj)
@@ -140,41 +148,51 @@ JNIEXPORT jlong JNICALL MakeNSISRunner_init(JNIEnv *pEnv, jobject obj)
     if(!g_isInit) {
     	jclass arrayListClass = pEnv->FindClass("java/util/ArrayList");
     	if(arrayListClass == NULL) {
-    		throwException(pEnv, "java/lang/ClassNotFoundException", "java.util.ArrayList");
+    		throwException(pEnv, "java/lang/ClassNotFoundException", "Cannot load java.util.ArrayList");
     		return 0;
     	}
 
     	g_arrayListConstructor = pEnv->GetMethodID(arrayListClass, "<init>", "()V");
     	if(g_arrayListConstructor == NULL) {
-    		throwException(pEnv, "java/lang/NoSuchMethodException", "java.util.ArrayList()");
+    		throwException(pEnv, "java/lang/NoSuchMethodException", "Cannot load java.util.ArrayList()");
     		return 0;
     	}
 
     	g_arrayListAdd = pEnv->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
     	if(g_arrayListAdd == NULL) {
-    		throwException(pEnv,"java/lang/NoSuchMethodException", "java.util.ArrayList.add(Object o)");
-    		return 0;
-    	}
-
-    	g_hWnd = CreateWindow(_T("Hidden EclipseNSIS Window"), NULL, WS_OVERLAPPEDWINDOW,
-    						CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-    						NULL, NULL, hInstance, NULL);
-    	if(g_hWnd == NULL) {
-    		throwException(pEnv, "java/lang/RuntimeException", "CreateWindow");
-    		return 0;
-    	}
-
-        UINT uThreadId = 0;
-    	g_hThread = (HANDLE)_beginthreadex(NULL, 0, &CreateWndThread, g_hWnd, 0, &uThreadId);
-    	if(!g_hThread)
-    	{
-    		throwException(pEnv, "java/lang/RuntimeException", "_beginthreadex");
+    		throwException(pEnv,"java/lang/NoSuchMethodException", "Cannot load java.util.ArrayList.add(Object o)");
     		return 0;
     	}
 
         g_arrayListClass = (jclass)pEnv->NewGlobalRef(arrayListClass);
         pEnv->DeleteLocalRef(arrayListClass);
 
+        UINT uThreadId = 0;
+    	g_hThread = (HANDLE)_beginthreadex(NULL, 0, &CreateWndThread, 0, 0, &uThreadId);
+    	if(!g_hThread)
+    	{
+			pEnv->DeleteGlobalRef(g_arrayListClass);
+			g_arrayListClass = NULL;
+    		throwException(pEnv, "java/lang/RuntimeException", "Cannot launch EclipseNSIS notification thread.");
+    		return 0;
+    	}
+
+		for(int counter = 0; counter < 100; counter++) {
+			if(g_hWnd) {
+				break;
+			}
+			Sleep(100);
+		}
+		if(!g_hWnd) {
+			pEnv->DeleteGlobalRef(g_arrayListClass);
+			g_arrayListClass = NULL;
+			if(g_hThread)
+			{
+				CloseHandle(g_hThread);
+			}
+			throwException(pEnv, "java/lang/RuntimeException", "Cannot create EclipseNSIS notification window.");
+    		return 0;
+		}
         g_isInit = TRUE;
     }
 	return (jlong)g_hWnd;
@@ -183,10 +201,17 @@ JNIEXPORT jlong JNICALL MakeNSISRunner_init(JNIEnv *pEnv, jobject obj)
 JNIEXPORT void JNICALL MakeNSISRunner_destroy(JNIEnv *pEnv, jobject obj)
 {
     if(g_isInit) {
-        pEnv->DeleteGlobalRef(g_arrayListClass);
+		if(g_arrayListClass) {
+			pEnv->DeleteGlobalRef(g_arrayListClass);
+			g_arrayListClass = NULL;
+		}
     	MakeNSISRunner_reset(pEnv, obj);
-    	PostMessage(g_hWnd,WM_QUIT,0,0);
-    	CloseHandle(g_hThread);
+		if(g_hWnd) {
+	    	PostMessage(g_hWnd,WM_QUIT,0,0);
+		}
+		if(g_hThread) {
+	    	CloseHandle(g_hThread);
+		}
     	g_hWnd = 0;
     	g_hThread = 0;
         g_isInit = FALSE;
@@ -288,7 +313,7 @@ void createString(_TCHAR** string, PCOPYDATASTRUCT cds)
 {
 	freeString(string);
 	*string = (_TCHAR *)GlobalAlloc(GPTR, (cds->cbData)*sizeof(_TCHAR));
-	_tcscpy(*string,(_TCHAR *)cds->lpData);
+	_tcscpy_s(*string,cds->cbData,(_TCHAR *)cds->lpData);
 }
 
 void createAppendArray(_TCHAR*** array, int *count, PCOPYDATASTRUCT cds)
@@ -305,7 +330,7 @@ void createAppendArray(_TCHAR*** array, int *count, PCOPYDATASTRUCT cds)
 	}
 	*array = (_TCHAR **)GlobalLock(hMem);
 	(*array)[*count] = (_TCHAR *)GlobalAlloc(GPTR, (cds->cbData)*sizeof(_TCHAR));
-	_tcscpy((*array)[*count],(_TCHAR *)cds->lpData);
+	_tcscpy_s((*array)[*count],cds->cbData,(_TCHAR *)cds->lpData);
 	(*count)++;
 	(*array)[*count] = NULL;
 }

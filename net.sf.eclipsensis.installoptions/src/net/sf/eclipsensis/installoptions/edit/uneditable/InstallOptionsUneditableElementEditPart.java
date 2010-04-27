@@ -16,8 +16,7 @@ import net.sf.eclipsensis.installoptions.figures.IUneditableElementFigure;
 import net.sf.eclipsensis.installoptions.model.*;
 
 import org.eclipse.gef.EditPolicy;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.viewers.*;
 
 public abstract class InstallOptionsUneditableElementEditPart extends InstallOptionsWidgetEditPart
 {

@@ -9,44 +9,24 @@
  *******************************************************************************/
 package net.sf.eclipsensis.installoptions.model;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.beans.*;
+import java.util.*;
 import java.util.regex.Matcher;
 
 import net.sf.eclipsensis.INSISConstants;
-import net.sf.eclipsensis.installoptions.IInstallOptionsConstants;
-import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
-import net.sf.eclipsensis.installoptions.ini.INIComment;
-import net.sf.eclipsensis.installoptions.ini.INIFile;
-import net.sf.eclipsensis.installoptions.ini.INIKeyValue;
-import net.sf.eclipsensis.installoptions.ini.INILine;
-import net.sf.eclipsensis.installoptions.ini.INISection;
+import net.sf.eclipsensis.installoptions.*;
+import net.sf.eclipsensis.installoptions.ini.*;
 import net.sf.eclipsensis.installoptions.properties.descriptors.CustomComboBoxPropertyDescriptor;
-import net.sf.eclipsensis.installoptions.properties.validators.NSISStringLengthValidator;
-import net.sf.eclipsensis.installoptions.properties.validators.NumberCellEditorValidator;
-import net.sf.eclipsensis.installoptions.rulers.InstallOptionsGuide;
-import net.sf.eclipsensis.installoptions.rulers.InstallOptionsRuler;
-import net.sf.eclipsensis.installoptions.rulers.InstallOptionsRulerProvider;
+import net.sf.eclipsensis.installoptions.properties.validators.*;
+import net.sf.eclipsensis.installoptions.rulers.*;
 import net.sf.eclipsensis.installoptions.util.TypeConverter;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.UpDownMover;
+import net.sf.eclipsensis.util.*;
 
 import org.eclipse.draw2d.PositionConstants;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 public class InstallOptionsDialog extends InstallOptionsElement implements IInstallOptionsConstants
 {

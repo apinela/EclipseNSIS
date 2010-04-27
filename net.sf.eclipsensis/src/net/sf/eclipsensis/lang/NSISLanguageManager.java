@@ -18,6 +18,7 @@ import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.settings.*;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -56,18 +57,18 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
             mLanguages = new ArrayList<NSISLanguage>();
             mPropertyChangeSupport = new PropertyChangeSupport(this);
             mDefineMUILangNamePattern = Pattern.compile(NSISKeywords.getInstance()
-                    .getKeyword("!DEFINE") + "\\s+MUI_LANGNAME\\s+(\\S+|(\")(?:\\\\?.)*?\\2)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$ //$NON-NLS-2$
+                            .getKeyword("!DEFINE") + "\\s+MUI_LANGNAME\\s+(\\S+|(\")(?:\\\\?.)*?\\2)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$ //$NON-NLS-2$
             mInsertMacroLangFilePattern = Pattern.compile(NSISKeywords.getInstance()
-            .getKeyword("!INSERTMACRO").toUpperCase() + "\\s+LANGFILE\\s+(\\S+|(\")(?:\\\\?.)*?\\2)\\s+(\\S+|(\")(?:\\\\?.)*?\\4)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$ //$NON-NLS-2$
+                            .getKeyword("!INSERTMACRO").toUpperCase() + "\\s+LANGFILE\\s+(\\S+|(\")(?:\\\\?.)*?\\2)\\s+(\\S+|(\")(?:\\\\?.)*?\\4)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$ //$NON-NLS-2$
             try {
                 ResourceBundle bundle = ResourceBundle
-                        .getBundle(NSISLanguageManager.class.getName());
+                .getBundle(NSISLanguageManager.class.getName());
                 mLocaleLanguageMap = Common.loadMapProperty(bundle,
-                        "locale.language.map"); //$NON-NLS-1$
+                                "locale.language.map"); //$NON-NLS-1$
                 mLanguageIdLocaleMap = Common.loadMapProperty(bundle,
-                        "langid.locale.map"); //$NON-NLS-1$
+                "langid.locale.map"); //$NON-NLS-1$
                 mDefaultLanguageId = Integer.valueOf(bundle
-                        .getString("default.langid")); //$NON-NLS-1$
+                                .getString("default.langid")); //$NON-NLS-1$
             }
             catch (Exception ex) {
                 mDefaultLanguageId = new Integer(1033);
@@ -125,13 +126,13 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                 if(nsisHome.exists()) {
                     mLangDir = new File(nsisHome,INSISConstants.LANGUAGE_FILES_LOCATION);
                     mMuiLangDir = new File(nsisHome,NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_30)>=0?
-                            INSISConstants.LANGUAGE_FILES_LOCATION:INSISConstants.MUI_LANGUAGE_FILES_LOCATION);
+                                    INSISConstants.LANGUAGE_FILES_LOCATION:INSISConstants.MUI_LANGUAGE_FILES_LOCATION);
                     if(mLangDir.exists()) {
                         File[] langFiles = mLangDir.listFiles(new FileFilter() {
-                           public boolean accept(File pathName)
-                           {
-                               return (IOUtility.isValidFile(pathName) && pathName.getName().toLowerCase().endsWith(INSISConstants.LANGUAGE_FILES_EXTENSION));
-                           }
+                            public boolean accept(File pathName)
+                            {
+                                return IOUtility.isValidFile(pathName) && pathName.getName().toLowerCase().endsWith(INSISConstants.LANGUAGE_FILES_EXTENSION);
+                            }
                         });
                         for (int i = 0; i < langFiles.length; i++) {
                             NSISLanguage language = loadLanguage(langFiles[i]);
@@ -290,11 +291,11 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         Version version = NSISPreferences.INSTANCE.getNSISVersion();
         int langId;
         if(version.compareTo(INSISVersions.VERSION_2_13) >= 0) {
-            langId = WinAPI.GetUserDefaultUILanguage();
+            langId = WinAPI.INSTANCE.getUserDefaultUILanguage();
             lang = mLanguageMap.get(Integer.toString(langId));
         }
         if(lang == null) {
-            langId = WinAPI.GetUserDefaultLangID();
+            langId = WinAPI.INSTANCE.getUserDefaultLangID();
             lang = mLanguageMap.get(Integer.toString(langId));
         }
         if(lang == null) {

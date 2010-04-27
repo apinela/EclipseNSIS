@@ -1,6 +1,13 @@
 Revision History
 ================
 
+0.9.7.8 (03/26/2010)
+    * Added 64-bit support.
+    * Added filter capability for NSIS Commands view.
+    * Bug Fixes
+        o 2813284
+        o 2943940
+
 0.9.7.3 (03/26/2010)
     * Upgraded to Java 5.
     * Upgraded to Eclipse 3.5 - no longer compliant with Eclipse 3.4.

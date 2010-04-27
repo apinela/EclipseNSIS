@@ -9,32 +9,23 @@
  *******************************************************************************/
 package net.sf.eclipsensis.update.net;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 
 import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.html.HTML.Attribute;
-import javax.swing.text.html.HTML.Tag;
+import javax.swing.text.html.HTML.*;
 import javax.swing.text.html.HTMLEditorKit.ParserCallback;
 
 import net.sf.eclipsensis.update.EclipseNSISUpdatePlugin;
 import net.sf.eclipsensis.update.jobs.NSISUpdateURLs;
-import net.sf.eclipsensis.util.Common;
-import net.sf.eclipsensis.util.IOUtility;
+import net.sf.eclipsensis.util.*;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 
 class DownloadURLsParserCallback extends ParserCallback
 {
     private static File cCacheFolder = new File(EclipseNSISUpdatePlugin.getPluginStateLocation(),"resources"); //$NON-NLS-1$
     private static final String PROPERTIES_FILE_NAME = "siteimages.properties"; //$NON-NLS-1$
-    private static File cCacheFile = new File(cCacheFolder, PROPERTIES_FILE_NAME);
     private static final IPath cLocalPropertiesPath = new Path("/resources/"+PROPERTIES_FILE_NAME); //$NON-NLS-1$
 
     private static final String FORM_ACTION = "/settings/set_mirror"; //$NON-NLS-1$
@@ -56,10 +47,8 @@ class DownloadURLsParserCallback extends ParserCallback
     {
         InputStream is = null;
         try {
-            File file = cCacheFile;
-            if(!NetworkUtil.downloadLatest(NSISUpdateURLs.getSiteImagesUpdateURL(),file)) {
-                file = IOUtility.ensureLatest(EclipseNSISUpdatePlugin.getDefault().getBundle(),cLocalPropertiesPath,cCacheFolder);
-            }
+            File file = IOUtility.ensureLatest(EclipseNSISUpdatePlugin.getDefault().getBundle(),cLocalPropertiesPath,cCacheFolder);
+            NetworkUtil.downloadLatest(NSISUpdateURLs.getSiteImagesUpdateURL(),file);
 
             if(file != null && file.exists()) {
                 is = new FileInputStream(file);
@@ -142,12 +131,16 @@ class DownloadURLsParserCallback extends ParserCallback
                                         String[] names = Common.tokenize((String)a.getAttribute(Attribute.VALUE),',');
                                         for (int i = 0; i < names.length; i++)
                                         {
-                                            mCurrentSite[3] = names[i];
-                                            mCurrentSite[0] = mImageURLs.getProperty(mCurrentSite[3]);
+                                            mCurrentSite[0] = mImageURLs.getProperty(names[i]);
                                             if(mCurrentSite[0] != null)
                                             {
+                                                mCurrentSite[3] = names[i];
                                                 break;
                                             }
+                                        }
+                                        if (mCurrentSite[3] == null)
+                                        {
+                                            mCurrentSite[3] = names[0];
                                         }
                                     }
                                 }

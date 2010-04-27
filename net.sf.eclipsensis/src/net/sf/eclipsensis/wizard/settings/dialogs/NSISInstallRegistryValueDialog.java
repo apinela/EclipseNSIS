@@ -12,6 +12,7 @@ package net.sf.eclipsensis.wizard.settings.dialogs;
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.dialogs.RegistryValueSelectionDialog;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 import net.sf.eclipsensis.wizard.*;
 import net.sf.eclipsensis.wizard.settings.NSISInstallRegistryValue;
 import net.sf.eclipsensis.wizard.util.NSISWizardDialogUtil;

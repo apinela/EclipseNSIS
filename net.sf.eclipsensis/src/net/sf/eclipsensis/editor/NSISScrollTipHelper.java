@@ -9,7 +9,7 @@
  *******************************************************************************/
 package net.sf.eclipsensis.editor;
 
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.swt.SWT;
@@ -54,7 +54,7 @@ public class NSISScrollTipHelper
                                     Point stLoc = st.toDisplay(0,0);
                                     Point stSize = st.getSize();
                                     Point sbSize = sb.getSize();
-                                    int arrowHeight = WinAPI.GetSystemMetrics(WinAPI.SM_CYVSCROLL);
+                                    int arrowHeight = WinAPI.INSTANCE.getSystemMetrics(WinAPI.SM_CYVSCROLL);
                                     int scrollTop = stLoc.y+arrowHeight;
                                     int scrollHeight = sbSize.y-2*arrowHeight;
 
@@ -71,7 +71,7 @@ public class NSISScrollTipHelper
                                     Point extent = shell.computeSize(SWT.DEFAULT,SWT.DEFAULT);
                                     int x = stLoc.x+stSize.x-sbSize.x-extent.x-4;
                                     shell.setBounds(x,scrollTop + (sb.getSelection()-sb.getMinimum())*scrollHeight/(sb.getMaximum()-sb.getMinimum()),
-                                                     extent.x,extent.y);
+                                                    extent.x,extent.y);
                                     if(!shell.isVisible()) {
                                         shell.setVisible(true);
                                     }

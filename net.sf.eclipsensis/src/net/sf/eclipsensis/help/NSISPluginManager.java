@@ -17,6 +17,7 @@ import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.job.*;
 import net.sf.eclipsensis.settings.NSISPreferences;
 import net.sf.eclipsensis.util.*;
+import net.sf.eclipsensis.util.winapi.WinAPI;
 
 import org.eclipse.core.runtime.*;
 
@@ -29,7 +30,7 @@ public class NSISPluginManager implements INSISConstants
         {
             if(pathname.isFile()) {
                 return pathname.getName().regionMatches(true,pathname.getName().length()-NSIS_PLUGINS_EXTENSION_LENGTH,
-                        NSIS_PLUGINS_EXTENSION,0,NSIS_PLUGINS_EXTENSION_LENGTH);
+                                NSIS_PLUGINS_EXTENSION,0,NSIS_PLUGINS_EXTENSION_LENGTH);
             }
             return false;
         }
@@ -131,11 +132,11 @@ public class NSISPluginManager implements INSISConstants
     private PluginInfo loadPluginInfo(String name, File pluginFile)
     {
         try {
-            String[] exports = WinAPI.GetPluginExports(pluginFile.getAbsolutePath());
+            String[] exports = WinAPI.INSTANCE.getPluginExports(pluginFile.getAbsolutePath());
             if(exports != null) {
                 Arrays.sort(exports, String.CASE_INSENSITIVE_ORDER);
                 return new PluginInfo(name, exports,
-                                      pluginFile.lastModified());
+                                pluginFile.lastModified());
             }
         }
         catch (Exception e) {
@@ -146,7 +147,7 @@ public class NSISPluginManager implements INSISConstants
 
     public String[] getDefaultPluginNames()
     {
-        return (mDefaultPluginsMap == null?Common.EMPTY_STRING_ARRAY:mDefaultPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY));
+        return mDefaultPluginsMap == null?Common.EMPTY_STRING_ARRAY:mDefaultPluginsMap.keySet().toArray(Common.EMPTY_STRING_ARRAY);
     }
 
     public String[] getDefaultPluginExports(String name)
@@ -162,30 +163,30 @@ public class NSISPluginManager implements INSISConstants
                         JobScheduler jobScheduler = EclipseNSISPlugin.getDefault().getJobScheduler();
                         jobScheduler.cancelJobs(NSISPluginManager.class);
                         jobScheduler.scheduleJob(NSISPluginManager.class, EclipseNSISPlugin.getResourceString("saving.plugin.cache.job.name"), //$NON-NLS-1$
-                            new IJobStatusRunnable() {
-                                public IStatus run(IProgressMonitor monitor)
-                                {
-                                    monitor.beginTask(EclipseNSISPlugin.getResourceString("caching.plugins.task.name"), 1); //$NON-NLS-1$
-                                    try {
-                                        if (!monitor.isCanceled()) {
-                                            try {
-                                                IOUtility.writeObject(mCacheFile, mDefaultPluginsMap);
-                                                monitor.worked(1);
-                                                return Status.OK_STATUS;
-                                            }
-                                            catch (Throwable t) {
-                                                return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, t.getMessage(), t);
-                                            }
+                                        new IJobStatusRunnable() {
+                            public IStatus run(IProgressMonitor monitor)
+                            {
+                                monitor.beginTask(EclipseNSISPlugin.getResourceString("caching.plugins.task.name"), 1); //$NON-NLS-1$
+                                try {
+                                    if (!monitor.isCanceled()) {
+                                        try {
+                                            IOUtility.writeObject(mCacheFile, mDefaultPluginsMap);
+                                            monitor.worked(1);
+                                            return Status.OK_STATUS;
                                         }
-                                        else {
-                                            return Status.CANCEL_STATUS;
+                                        catch (Throwable t) {
+                                            return new Status(IStatus.ERROR, PLUGIN_ID, IStatus.ERROR, t.getMessage(), t);
                                         }
                                     }
-                                    finally {
-                                        monitor.done();
+                                    else {
+                                        return Status.CANCEL_STATUS;
                                     }
                                 }
+                                finally {
+                                    monitor.done();
+                                }
                             }
+                        }
                         );
                     }
                 }

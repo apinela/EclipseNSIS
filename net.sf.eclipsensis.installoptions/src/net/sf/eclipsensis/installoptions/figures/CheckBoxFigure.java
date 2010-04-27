@@ -12,7 +12,8 @@ package net.sf.eclipsensis.installoptions.figures;
 import java.util.List;
 
 import net.sf.eclipsensis.installoptions.model.InstallOptionsModel;
-import net.sf.eclipsensis.util.WinAPI;
+import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.util.winapi.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -73,8 +74,9 @@ public class CheckBoxFigure extends ButtonFigure
         Button button = (Button)super.createUneditableSWTControl(parent, style);
         button.setSelection(mState);
         if(mLeftText) {
-            WinAPI.SetWindowLong(button.handle,WinAPI.GWL_STYLE,
-                    WinAPI.GetWindowLong(button.handle,WinAPI.GWL_STYLE)|WinAPI.BS_LEFTTEXT);
+            IHandle handle = Common.getControlHandle(button);
+            WinAPI.INSTANCE.setWindowLong(handle,WinAPI.GWL_STYLE,
+                            WinAPI.INSTANCE.getWindowLong(handle,WinAPI.GWL_STYLE)|WinAPI.BS_LEFTTEXT);
         }
         return button;
     }

@@ -11,7 +11,7 @@ package net.sf.eclipsensis.installoptions.edit;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.*;
-import net.sf.eclipsensis.util.Common;
+import net.sf.eclipsensis.installoptions.properties.descriptors.PropertyDescriptorHelper;
 
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.*;
@@ -29,7 +29,7 @@ public abstract class InstallOptionsDirectEditManager<T extends CellEditor> exte
      * @param locator
      */
     public InstallOptionsDirectEditManager(GraphicalEditPart source,
-            Class<T> editorType, CellEditorLocator locator)
+                    Class<T> editorType, CellEditorLocator locator)
     {
         super(source, editorType, locator);
         mEditorType = editorType;
@@ -59,7 +59,7 @@ public abstract class InstallOptionsDirectEditManager<T extends CellEditor> exte
         IPropertyDescriptor descriptor = control.getPropertyDescriptor(getDirectEditProperty());
         if(descriptor instanceof PropertyDescriptor) {
             try {
-                ICellEditorValidator validator = (ICellEditorValidator)Common.getObjectFieldValue(descriptor, "validator", ICellEditorValidator.class); //$NON-NLS-1$
+                ICellEditorValidator validator = PropertyDescriptorHelper.getCellEditorValidator((PropertyDescriptor) descriptor);
                 if (validator != null) {
                     getCellEditor().setValidator(validator);
                 }

@@ -20,8 +20,7 @@ import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.tools.CellEditorLocator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 
 public class InstallOptionsComboboxEditManager extends InstallOptionsEditableElementEditManager<EditableComboBoxCellEditor>
 {

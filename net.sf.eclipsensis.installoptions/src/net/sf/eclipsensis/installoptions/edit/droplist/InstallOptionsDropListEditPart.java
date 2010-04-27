@@ -14,8 +14,7 @@ import net.sf.eclipsensis.installoptions.edit.InstallOptionsWidgetEditPart;
 import net.sf.eclipsensis.installoptions.edit.combobox.InstallOptionsComboboxEditPart;
 import net.sf.eclipsensis.installoptions.properties.editors.EditableComboBoxCellEditor;
 
-import org.eclipse.gef.tools.CellEditorLocator;
-import org.eclipse.gef.tools.DirectEditManager;
+import org.eclipse.gef.tools.*;
 
 public class InstallOptionsDropListEditPart extends InstallOptionsComboboxEditPart
 {

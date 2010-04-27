@@ -11,7 +11,7 @@ package net.sf.eclipsensis.installoptions.template;
 
 import net.sf.eclipsensis.installoptions.InstallOptionsPlugin;
 import net.sf.eclipsensis.installoptions.model.InstallOptionsWidget;
-import net.sf.eclipsensis.template.*;
+import net.sf.eclipsensis.template.AbstractTemplateDialog;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;

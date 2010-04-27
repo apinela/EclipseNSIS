@@ -1,15 +1,11 @@
 package net.sf.eclipsensis.editor;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 
 import net.sf.eclipsensis.settings.NSISPreferences;
 
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.content.ITextContentDescriber;
+import org.eclipse.core.runtime.content.*;
 
 public class NSISContentDescriber implements ITextContentDescriber
 {
