@@ -37,14 +37,14 @@ For further information on NSIS commands, please consult the
 the EclipseNSIS, though it is not necessarily brought to the front. Click on the image below to learn more about the NSIS Commands View. </p>
 <table  border="0" align="center" cellpadding="2" cellspacing="2">
   <tr>
-    <td><img src="images/commandview1.gif" alt="NSIS Commands View - Hierarchical Layout" ismap="ismap" usemap="#cmdview" style="border: medium none; width: 238px; height: 396px;"></td>
+    <td><img src="images/commandview1.gif" alt="NSIS Commands View - Hierarchical Layout" ismap="ismap" usemap="#cmdview" style="border: medium none; width: 368px; height: 514px;"></td>
     <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-    <td><img src="images/commandview2.gif" alt="NSIS Commands View - Flat Layout" ismap="ismap" usemap="#cmdview" style="border: medium none; width: 238px; height: 396px;"></td>
+    <td><img src="images/commandview2.gif" alt="NSIS Commands View - Flat Layout" ismap="ismap" usemap="#cmdview" style="border: medium none; width: 368px; height: 514px;"></td>
   </tr>
   <tr>
-    <td><div align="center">Hierarchical Layout </div></td>
+    <td><div align="center">Hierarchical Layout</div></td>
     <td>&nbsp;</td>
-    <td><div align="center">Flat Layout </div></td>
+    <td><div align="center">Flat Layout</div></td>
   </tr>
   <tr>
     <td colspan="3"><div align="center">NSIS Commands View </div></td>
@@ -79,6 +79,18 @@ alphabetically.</dd></dl>
 <a name="a_collapse"></a><dl id="id_collapse">
 <dt>Collapse All</dt>
 <dd>Collapse all categories. This is only available for the hierarchical layout.</dd></dl>
+<a name="a_filter"></a><dl id="id_filter">
+<dt>Filter</dt>
+<dd>Filter the displayed list of commands. This supports simple wildcards as well as regular expressions. The supported
+regular expression constructs are documented by the Java <a href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/Pattern.html#sum">Pattern</a> class.</dd></dl>
+<table  border="0" align="center" cellpadding="2" cellspacing="2">
+  <tr>
+    <td><img src="images/commandfilter.gif" alt="NSIS Commands View - Filter" style="border: medium none; width: 368px; height: 514px;"></td>
+  </tr>
+  <tr>
+    <td><div align="center">Filtered Commands</div></td>
+  </tr>
+</table>
 
 <a name="commandwizard"></a><h2>NSIS Command Wizard Dialog</h2>
 <p>The NSIS Command Wizard dialog provides the actual graphical interface for entering command parameters. Click on the image below to learn more about the NSIS Command Wizard dialog. </p>
@@ -149,10 +161,11 @@ can be chosen using radio buttons.
     <area shape="rect" coords="13,417,334,482" href="#a_preview" alt="Preview" onClick="highlightDef('id_preview');">
 </map>
 <map name="cmdview" id="cmdview">
-  <area shape="rect" coords="124,26,147,48" href="#a_hierarchical" alt="Hierarchical Layout" onClick="highlightDef('id_hierarchical');">
-  <area shape="rect" coords="148,26,171,48" href="#a_flat" alt="Flat Layout" onClick="highlightDef('id_flat');">
-  <area shape="rect" coords="172,26,195,48" href="#a_expand" alt="Expand All" onClick="highlightDef('id_expand');">
-  <area shape="rect" coords="196,26,219,48" href="#a_collapse" alt="Collapse All" onClick="highlightDef('id_collapse');">
-  <area shape="rect" coords="3,51,234,392" href="#a_list" alt="Commands List" onClick="highlightDef('id_list');">
+  <area shape="rect" coords="195,2,218,24" href="#a_hierarchical" alt="Hierarchical Layout" onClick="highlightDef('id_hierarchical');">
+  <area shape="rect" coords="218,2,241,24" href="#a_flat" alt="Flat Layout" onClick="highlightDef('id_flat');">
+  <area shape="rect" coords="241,2,264,24" href="#a_expand" alt="Expand All" onClick="highlightDef('id_expand');">
+  <area shape="rect" coords="264,2,287,24" href="#a_collapse" alt="Collapse All" onClick="highlightDef('id_collapse');">
+  <area shape="rect" coords="287,2,310,24" href="#a_filter" alt="Filter" onClick="highlightDef('id_filter');">
+  <area shape="rect" coords="9,30,360,506" href="#a_list" alt="Commands List" onClick="highlightDef('id_list');">
 </map>
 </body></html>
