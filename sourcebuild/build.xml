@@ -40,9 +40,6 @@
 		<zip destfile="../net.sf.eclipsensis.site/plugins/net.sf.eclipsensis.source_${Bundle-Version}.jar">
 			<fileset dir="${build.plugins.root}"/>
 		</zip>
-<!--		<antcall target="sign.jar">
-			<param name="jar" value="../net.sf.eclipsensis.site/plugins/net.sf.eclipsensis.source_${Bundle-Version}.jar"/>
-		</antcall> -->
 		<zip destfile="../net.sf.eclipsensis.site/features/net.sf.eclipsensis.source_${Bundle-Version}.jar">
 			<fileset dir="../net.sf.eclipsensis.source.feature">
 				<exclude name="**/CVS/*"/>
@@ -51,9 +48,6 @@
 				<exclude name="build.properties"/>
 			</fileset>
 		</zip>
-<!--		<antcall target="sign.jar">
-			<param name="jar" value="../net.sf.eclipsensis.site/features/net.sf.eclipsensis.source_${Bundle-Version}.jar"/>
-		</antcall> -->
         <copy todir="${build.features.root}">
             <fileset dir="../net.sf.eclipsensis.source.feature">
                 <exclude name="**/CVS/*"/>
@@ -63,10 +57,8 @@
             </fileset>
         </copy>
 		<zip destfile="${build.root}/net.sf.eclipsensis.source_${Bundle-Version}.zip">
-			<fileset dir="${build.root}">
-				<include name="features/**"/>
-                <include name="plugins/**"/>
-			</fileset>
+			<zipfileset dir="${build.root}/features" prefix="features/net.sf.eclipsensis.source_${Bundle-Version}"/>
+            <zipfileset dir="${build.root}/plugins" prefix="plugins/net.sf.eclipsensis.source_${Bundle-Version}"/>
 		</zip>
 		<copy todir=".." overwrite="true">
 			<fileset dir="${build.root}">
@@ -88,22 +80,6 @@
 				<include name="net.sf.eclipsensis.source_${Bundle-Version}.zip"/>
 			</fileset>
 		</delete>
-	</target>
-	<target name="sign.jar" depends="sign.jar.precheck">
-		<antcall target="sign.jar.run"/>
-	</target>
-	<target name="sign.jar.run" if="sign.jar.ok">
-		<signjar jar="${jar}" keystore="${keystore}" storepass="${storepass}" alias="${alias}" tsaurl="${tsaurl}"/>
-	</target>
-	<target name="sign.jar.precheck">
-		<condition property="sign.jar.ok">
-			<and>
-				<isset property="jar"/>
-				<isset property="keystore"/>
-				<isset property="storepass"/>
-				<isset property="alias"/>
-			</and>
-		</condition>
 	</target>
 	<target name="test.plugin.dir" unless="plugin.dir">
 		<fail message="Property plugin.dir not set"/>

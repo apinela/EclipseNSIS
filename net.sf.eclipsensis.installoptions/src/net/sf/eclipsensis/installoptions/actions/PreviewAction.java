@@ -127,11 +127,11 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                 boolean shouldSave = autosaveBeforePreview;
                 if(!shouldSave) {
                     MessageDialogWithToggle dialog = new MessageDialogWithToggle(shell, EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
-                            InstallOptionsPlugin.getShellImage(), InstallOptionsPlugin.getResourceString("save.before.preview.confirm"), //$NON-NLS-1$
-                            MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0,
-                            InstallOptionsPlugin.getResourceString("confirm.toggle.message"),false); //$NON-NLS-1$
+                                    InstallOptionsPlugin.getShellImage(), InstallOptionsPlugin.getResourceString("save.before.preview.confirm"), //$NON-NLS-1$
+                                    MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0,
+                                    InstallOptionsPlugin.getResourceString("confirm.toggle.message"),false); //$NON-NLS-1$
                     dialog.open();
-                    shouldSave = (dialog.getReturnCode()==IDialogConstants.OK_ID);
+                    shouldSave = dialog.getReturnCode()==IDialogConstants.OK_ID;
                     if(shouldSave && dialog.getToggleState()) {
                         mPreferenceStore.setValue(IInstallOptionsConstants.PREFERENCE_AUTOSAVE_BEFORE_PREVIEW, true);
                     }
@@ -153,14 +153,14 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
             INIFile iniFile = mEditor.getINIFile();
             if(iniFile.hasErrors()) {
                 Common.openError(shell,InstallOptionsPlugin.getResourceString("ini.errors.preview.error"),  //$NON-NLS-1$
-                        InstallOptionsPlugin.getShellImage());
+                                InstallOptionsPlugin.getShellImage());
                 return;
             }
             INISection settings = iniFile.findSections(InstallOptionsModel.SECTION_SETTINGS)[0];
             INIKeyValue numFields = settings.findKeyValues(InstallOptionsModel.PROPERTY_NUMFIELDS)[0];
             if(Integer.parseInt(numFields.getValue()) <= 0) {
                 Common.openError(shell,InstallOptionsPlugin.getResourceString("ini.numfields.preview.error"),  //$NON-NLS-1$
-                        InstallOptionsPlugin.getShellImage());
+                                InstallOptionsPlugin.getShellImage());
             }
             else {
                 IPathEditorInput editorInput = NSISEditorUtilities.getPathEditorInput(mEditor);
@@ -173,7 +173,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                         }
                         else {
                             Common.openError(shell,EclipseNSISPlugin.getResourceString("local.filesystem.error"),  //$NON-NLS-1$
-                                    InstallOptionsPlugin.getShellImage());
+                                            InstallOptionsPlugin.getShellImage());
                         }
                     }
                 }
@@ -251,12 +251,17 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                         shell.getDisplay().syncExec(new Runnable() {
                                             public void run()
                                             {
-                                                Image bitmap = new Image(shell.getDisplay(), dim.width, dim.height);
+                                                Image widgetImage = picture.getImage();
+                                                ImageData data = widgetImage.getImageData();
+                                                data.width = dim.width;
+                                                data.height = dim.height;
+                                                data.type = picture.getSWTImageType();
+
+                                                Image bitmap = new Image(shell.getDisplay(), data);
                                                 GC gc = new GC(bitmap);
                                                 gc.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
                                                 gc.setForeground(shell.getDisplay().getSystemColor(SWT.COLOR_BLACK));
                                                 gc.fillRectangle(0, 0, dim.width, dim.height);
-                                                Image widgetImage = picture.getImage();
                                                 Rectangle rect = widgetImage.getBounds();
                                                 int x, y, width, height;
                                                 if (rect.width > dim.width) {
@@ -418,8 +423,8 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
     private File getPreviewScript() throws IOException
     {
         return IOUtility.ensureLatest(InstallOptionsPlugin.getDefault().getBundle(),
-                new Path("/preview/preview.nsi"),  //$NON-NLS-1$
-                new File(InstallOptionsPlugin.getPluginStateLocation(),"preview")); //$NON-NLS-1$
+                        new Path("/preview/preview.nsi"),  //$NON-NLS-1$
+                        new File(InstallOptionsPlugin.getPluginStateLocation(),"preview")); //$NON-NLS-1$
     }
 
     private class PreviewCacheKey
@@ -436,8 +441,8 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         @Override
         public int hashCode()
         {
-            int result = 31 + ((mFile == null)?0:mFile.hashCode());
-            result = 31 * result + ((mLanguage == null)?0:mLanguage.hashCode());
+            int result = 31 + (mFile == null?0:mFile.hashCode());
+            result = 31 * result + (mLanguage == null?0:mLanguage.hashCode());
             return result;
         }
 
@@ -447,7 +452,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
             if(obj != this) {
                 if(obj instanceof PreviewCacheKey) {
                     return Common.objectsAreEqual(mFile,((PreviewCacheKey)obj).mFile) &&
-                        Common.objectsAreEqual(mLanguage,((PreviewCacheKey)obj).mLanguage);
+                    Common.objectsAreEqual(mLanguage,((PreviewCacheKey)obj).mLanguage);
                 }
                 return false;
             }
