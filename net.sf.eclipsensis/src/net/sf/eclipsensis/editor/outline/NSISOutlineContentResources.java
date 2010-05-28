@@ -25,21 +25,19 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
     private static NSISOutlineContentResources cInstance = null;
 
     private static final String[] cTypes = {"!define", "!if","!ifdef", "!ifndef", "!ifmacrodef",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                                            "!ifmacrondef", "!else", "!else if","!else ifdef", "!else ifndef", "!else ifmacrodef",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-                                            "!else ifmacrondef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                            "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                            "SubSection", "SubSectionEnd", "SectionGroup", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                                            "Page", "PageEx", "PageExEnd","!include","Var", "Name","#label","#global label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-    private static final String[] cClosingTypes = {"!endif", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$
-                                                    "FunctionEnd", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$
-                                                    "SubSectionEnd", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$
-                                                    "PageExEnd","Name"}; //$NON-NLS-1$ //$NON-NLS-2$
+        "!ifmacrondef", "!else", "!else if","!else ifdef", "!else ifndef", "!else ifmacrodef",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+        "!else ifmacrondef", "!endif", "!macro", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        "Function", "FunctionEnd", "Section", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        "SubSection", "SubSectionEnd", "SectionGroup", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        "Page", "PageEx", "PageExEnd","!include","Var", "Name","#label","#global label"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    private static final Set<String> cClosingTypes = new HashSet<String>(Arrays.asList("!endif", "!macroend",  //$NON-NLS-1$ //$NON-NLS-2$
+                    "FunctionEnd", "SectionEnd",  //$NON-NLS-1$ //$NON-NLS-2$
+                    "SubSectionEnd", "SectionGroupEnd",  //$NON-NLS-1$ //$NON-NLS-2$
+                    "PageExEnd","Name")); //$NON-NLS-1$ //$NON-NLS-2$
     private static final File cFilterCacheFile = new File(EclipseNSISPlugin.getPluginStateLocation(),NSISOutlineContentResources.class.getName()+".Filter.ser"); //$NON-NLS-1$
 
-    private List<String> mTypeList = null;
-    private Map<String, String> mTypes = null;
-    private Map<String, String> mTypeNames = null;
-    private Map<String, Image> mImages = null;
+    private Map<Type, Integer> mTypeIndexes = new HashMap<Type, Integer>();
+    private Map<String, Type> mTypes = null;
     private List<NSISContentOutlinePage> mPages = null;
     private Collection<String> mFilteredTypes = null;
 
@@ -50,28 +48,27 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
 
     private void load()
     {
-        mTypeList.clear();
+        mTypeIndexes.clear();
         mTypes.clear();
-        mTypeNames.clear();
-        mImages.clear();
         for(int i=0; i<cTypes.length; i++) {
+            boolean pseudo = false;
             String type = cTypes[i];
             String typeName;
             if(type.charAt(0) == '#') {
+                pseudo = true;
                 type = typeName = type.substring(1);
-                mTypeList.add(type);
             }
             else {
-                mTypeList.add(type);
                 typeName = NSISKeywords.getInstance().getKeyword(type, false);
                 if(!NSISKeywords.getInstance().isValidKeyword(typeName)) {
                     continue;
                 }
             }
-            mTypes.put(typeName,type);
-            mTypeNames.put(type, typeName);
-            mImages.put(type,EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
-                    type.toLowerCase().replaceAll("!","").replaceAll(" ",".")).append(".icon").toString(),null))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+            Image image = EclipseNSISPlugin.getImageManager().getImage(EclipseNSISPlugin.getResourceString(new StringBuffer("outline.").append( //$NON-NLS-1$
+                            type.toLowerCase().replaceAll("!","").replaceAll(" ",".")).append(".icon").toString(),null));
+            Type t = new Type(typeName, type, image, pseudo, cClosingTypes.contains(type));
+            mTypeIndexes.put(t, i);
+            mTypes.put(typeName,t);
         }
     }
 
@@ -86,11 +83,10 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
             try {
                 monitor.beginTask("", 1); //$NON-NLS-1$
                 monitor.subTask(EclipseNSISPlugin.getResourceString("loading.outline.message")); //$NON-NLS-1$
-                mTypeList = new ArrayList<String>();
-                mTypes = new CaseInsensitiveMap<String>();
-                mTypeNames = new HashMap<String, String>();
-                mImages = new HashMap<String, Image>();
+                mTypeIndexes = new HashMap<Type, Integer>();
+                mTypes = new CaseInsensitiveMap<Type>();
                 mPages = new ArrayList<NSISContentOutlinePage>();
+                load();
                 if(IOUtility.isValidFile(cFilterCacheFile)) {
                     try {
                         mFilteredTypes = IOUtility.readObject(cFilterCacheFile);
@@ -103,7 +99,6 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
                 else {
                     mFilteredTypes = new CaseInsensitiveSet();
                 }
-                load();
                 NSISKeywords.getInstance().addKeywordsListener(this);
                 cInstance = this;
             }
@@ -129,10 +124,8 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
             else if(IOUtility.isValidFile(cFilterCacheFile)) {
                 cFilterCacheFile.delete();
             }
-            mTypeList = null;
+            mTypeIndexes = null;
             mTypes = null;
-            mTypeNames = null;
-            mImages = null;
             mPages = null;
         }
     }
@@ -175,12 +168,12 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
         }
     }
 
-    public Collection<String> getTypes()
+    public Collection<Type> getTypes()
     {
-        return Collections.unmodifiableSet(mTypeNames.keySet());
+        return Collections.unmodifiableCollection(mTypes.values());
     }
 
-    public String getType(String typeName)
+    public Type getType(String typeName)
     {
         if(typeName.endsWith(":")) //$NON-NLS-1$
         {
@@ -190,19 +183,9 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
         return mTypes.get(typeName);
     }
 
-    public int getTypeIndex(String type)
+    public int getTypeIndex(Type type)
     {
-        return (mTypes.containsKey(type)?mTypeList.indexOf(type):-1);
-    }
-
-    public String getTypeName(String type)
-    {
-        return mTypeNames.get(type);
-    }
-
-    public Image getImage(String type)
-    {
-        return mImages.get(type);
+        return type != null && mTypeIndexes.containsKey(type)?mTypeIndexes.get(type):-1;
     }
 
     public Collection<String> getFilteredTypes()
@@ -218,13 +201,53 @@ public class NSISOutlineContentResources implements IEclipseNSISService,  INSISK
         }
     }
 
-    public boolean isClosingType(String type)
+    public static class Type
     {
-        for (int i = 0; i < cClosingTypes.length; i++) {
-            if(Common.stringsAreEqual(type, cClosingTypes[i],true)) {
-                return true;
-            }
+        private String mName;
+        private String mType;
+        private Image mImage;
+        private boolean mPseudo;
+        private boolean mClosing;
+
+        public Type(String name, String type, Image image, boolean pseudo, boolean closing)
+        {
+            super();
+            mName = name;
+            mType = type;
+            mImage = image;
+            mPseudo = pseudo;
+            mClosing = closing;
         }
-        return false;
+
+        public String getName()
+        {
+            return mName;
+        }
+
+        public String getType()
+        {
+            return mType;
+        }
+
+        public Image getImage()
+        {
+            return mImage;
+        }
+
+        public boolean isPseudo()
+        {
+            return mPseudo;
+        }
+
+        public boolean isClosing()
+        {
+            return mClosing;
+        }
+
+        @Override
+        public String toString()
+        {
+            return getName();
+        }
     }
 }

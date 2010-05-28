@@ -24,9 +24,9 @@ public class NSISOutlineElement implements Serializable
 {
     private static final long serialVersionUID = -7247998999735822359L;
 
-    static final String ROOT = "ROOT"; //$NON-NLS-1$
+    static final NSISOutlineContentResources.Type ROOT = null;
 
-    private String mType;
+    private NSISOutlineContentResources.Type mType;
     private String mName;
     private transient Position mSelectPosition;
     private transient Position mPosition;
@@ -38,7 +38,7 @@ public class NSISOutlineElement implements Serializable
      * @param name
      * @param position
      */
-    NSISOutlineElement(String type, String name, Position position)
+    NSISOutlineElement(NSISOutlineContentResources.Type type, String name, Position position)
     {
         mType = type;
         mName = name;
@@ -50,7 +50,7 @@ public class NSISOutlineElement implements Serializable
      * @param name
      * @param position
      */
-    NSISOutlineElement(String type, String name, Position position, Position selectPosition)
+    NSISOutlineElement(NSISOutlineContentResources.Type type, String name, Position position, Position selectPosition)
     {
         this(type, name, position);
         setSelectPosition(selectPosition);
@@ -69,7 +69,7 @@ public class NSISOutlineElement implements Serializable
                 return mName;
             }
             else {
-                return ROOT;
+                return "";
             }
         }
         else {
@@ -84,7 +84,7 @@ public class NSISOutlineElement implements Serializable
 
     public boolean isRoot()
     {
-        return mParent == null && ROOT.equals(mType);
+        return mParent == null && ROOT == mType;
     }
 
     public boolean hasChildren()
@@ -104,10 +104,10 @@ public class NSISOutlineElement implements Serializable
      */
     public Image getIcon()
     {
-        return NSISOutlineContentResources.getInstance().getImage(mType);
+        return mType.getImage();
     }
 
-    public String getType()
+    public NSISOutlineContentResources.Type getType()
     {
         return mType;
     }
@@ -117,7 +117,7 @@ public class NSISOutlineElement implements Serializable
      */
     public String getTypeName()
     {
-        return NSISOutlineContentResources.getInstance().getTypeName(mType);
+        return mType.getType();
     }
     /**
      * @return Returns the position.
@@ -187,7 +187,7 @@ public class NSISOutlineElement implements Serializable
         if(position != null) {
             int start = Math.min(mPosition.getOffset(),position.getOffset());
             int end = Math.max(mPosition.getOffset()+mPosition.getLength(),
-                    position.getOffset()+position.getLength());
+                            position.getOffset()+position.getLength());
             mPosition.setOffset(start);
             mPosition.setLength(end-start);
         }

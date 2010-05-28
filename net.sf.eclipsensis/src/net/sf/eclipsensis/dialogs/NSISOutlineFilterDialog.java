@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.sf.eclipsensis.EclipseNSISPlugin;
 import net.sf.eclipsensis.editor.outline.NSISOutlineContentResources;
+import net.sf.eclipsensis.editor.outline.NSISOutlineContentResources.Type;
 import net.sf.eclipsensis.help.NSISKeywords;
 import net.sf.eclipsensis.viewer.*;
 
@@ -29,12 +30,24 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
     private static final int MAX_WIDTH = 300;
     private CheckboxTableViewer mViewer;
     private NSISOutlineContentResources mResources = NSISOutlineContentResources.getInstance();
-    private List<String> mFilteredTypes;
+    private List<String> mOriginalFilteredTypes;
+    private List<Type> mFilteredTypes;
 
     public NSISOutlineFilterDialog(Shell parent, List<String> filteredTypes)
     {
         super(parent);
-        mFilteredTypes = filteredTypes;
+        mOriginalFilteredTypes = filteredTypes;
+        mFilteredTypes = new ArrayList<Type>();
+        for (Iterator<String> iterator = mOriginalFilteredTypes.iterator(); iterator.hasNext();)
+        {
+            String typeName = iterator.next();
+            Type type = mResources.getType(typeName);
+            if(type != null)
+            {
+                mFilteredTypes.add(type);
+                iterator.remove();
+            }
+        }
         setHelpAvailable(false);
         setTitle(EclipseNSISPlugin.getResourceString("filter.dialog.title")); //$NON-NLS-1$
     }
@@ -82,7 +95,11 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
             public Image getColumnImage(Object element, int columnIndex)
             {
                 if(element instanceof String && columnIndex == 0) {
-                    return mResources.getImage((String)element);
+                    Type type = mResources.getType((String)element);
+                    if (type != null)
+                    {
+                        return type.getImage();
+                    }
                 }
                 return super.getColumnImage(element, columnIndex);
             }
@@ -91,22 +108,30 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
             public String getColumnText(Object element, int columnIndex)
             {
                 if(element instanceof String && columnIndex == 0) {
-                    return mResources.getTypeName((String)element);
+                    Type type = mResources.getType((String)element);
+                    if (type != null)
+                    {
+                        return type.getName();
+                    }
                 }
                 return super.getColumnText(element, columnIndex);
             }
         });
         mViewer.setComparator(new ViewerComparator());
-        final List<String> types = new ArrayList<String>(mResources.getTypes());
-        for (Iterator<String> iter = types.iterator(); iter.hasNext();) {
-            String type = iter.next();
-            if(mResources.isClosingType(type)) {
+        final List<Type> types = new ArrayList<Type>(mResources.getTypes());
+        for (Iterator<Type> iter = types.iterator(); iter.hasNext();) {
+            Type type = iter.next();
+            if(type.isClosing()) {
                 iter.remove();
                 continue;
             }
-            String keyword = NSISKeywords.getInstance().getKeyword(type);
-            if(!NSISKeywords.getInstance().isValidKeyword(keyword)) {
-                iter.remove();
+            if (!type.isPseudo())
+            {
+                String keyword = NSISKeywords.getInstance().getKeyword(type.getType());
+                if (!NSISKeywords.getInstance().isValidKeyword(keyword))
+                {
+                    iter.remove();
+                }
             }
         }
         mViewer.setInput(types);
@@ -114,7 +139,7 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         mViewer.addCheckStateListener(new ICheckStateListener() {
             public void checkStateChanged(CheckStateChangedEvent event)
             {
-                String type = (String)event.getElement();
+                Type type = (Type)event.getElement();
                 if(event.getChecked()) {
                     mFilteredTypes.add(type);
                 }
@@ -131,7 +156,8 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
             @Override
             public void widgetSelected(SelectionEvent e)
             {
-                mFilteredTypes.addAll(types);
+                mFilteredTypes.clear();
+                mFilteredTypes.addAll(mResources.getTypes());
                 mViewer.setAllChecked(true);
             }
         });
@@ -149,5 +175,15 @@ public class NSISOutlineFilterDialog extends StatusMessageDialog
         });
 
         return composite;
+    }
+
+    @Override
+    protected void okPressed()
+    {
+        super.okPressed();
+        for(Type t : mFilteredTypes)
+        {
+            mOriginalFilteredTypes.add(t.getName());
+        }
     }
 }

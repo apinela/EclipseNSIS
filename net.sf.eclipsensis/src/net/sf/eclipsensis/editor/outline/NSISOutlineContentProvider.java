@@ -13,6 +13,7 @@ import java.util.*;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.editor.NSISEditorUtilities;
+import net.sf.eclipsensis.editor.outline.NSISOutlineContentResources.Type;
 import net.sf.eclipsensis.editor.text.*;
 import net.sf.eclipsensis.util.Common;
 import net.sf.eclipsensis.viewer.EmptyContentProvider;
@@ -110,7 +111,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     }
 
     private NSISOutlineElement openElement(NSISOutlineElement current, NSISOutlineElement element,
-                                           int[] invalidParents)
+                    int[] invalidParents)
     {
         NSISOutlineElement current2 = current;
         boolean found = false;
@@ -130,8 +131,8 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     }
 
     private NSISOutlineElement closeElement(IDocument document, NSISOutlineElement current, NSISOutlineElement element,
-                                            int[] validTypes) throws BadLocationException, BadPositionCategoryException
-    {
+                    int[] validTypes) throws BadLocationException, BadPositionCategoryException
+                    {
         NSISOutlineElement current2 = current;
         if(!Common.isEmptyArray(validTypes)) {
             List<NSISOutlineElement> elementsToClose = new ArrayList<NSISOutlineElement>();
@@ -160,7 +161,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
             }
         }
         return current2;
-    }
+                    }
 
     /**
      * @param nsisLine
@@ -177,7 +178,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     {
         try {
             document.addPosition(NSIS_OUTLINE,element.getPosition());
-            document.addPosition(NSIS_OUTLINE_SELECT,element.getSelectPosition());
+            document.addPosition(NSIS_OUTLINE_SELECT,element.getSelectPosition() != null?element.getSelectPosition():element.getPosition());
         }
         catch (Exception e) {
         }
@@ -201,10 +202,10 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
             }
         }
         ITypedRegion[][] nsisLines = NSISTextUtility.getNSISLines(document, partitions);
-        boolean isHeader = (mPath != null && NSH_EXTENSION.equalsIgnoreCase(mPath.getFileExtension()));
+        boolean isHeader = mPath != null && NSH_EXTENSION.equalsIgnoreCase(mPath.getFileExtension());
         NSISOutlineElement rootElement = new NSISOutlineElement(NSISOutlineElement.ROOT,
-                                                EclipseNSISPlugin.getResourceString(isHeader?"outline.root.header.label":"outline.root.installer.label"), //$NON-NLS-1$ //$NON-NLS-2$
-                                                null);
+                        EclipseNSISPlugin.getResourceString(isHeader?"outline.root.header.label":"outline.root.installer.label"), //$NON-NLS-1$ //$NON-NLS-2$
+                        null);
         rootElement.setPosition(new Position(0,document.getLength()));
         if(!Common.isEmptyArray(nsisLines)) {
             NSISOutlineElement current = rootElement;
@@ -290,7 +291,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                             NSISOutlineTextData data;
                                             String temp = null;
                                             if(!regionType.equals(NSISPartitionScanner.NSIS_STRING) &&
-                                                    !regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+                                                            !regionType.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
                                                 break;
                                             }
                                             NSISOutlineRule rule = null;
@@ -333,13 +334,13 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                                                 continue;
                                                             case ELSE:
                                                                 if(name.length() == 0) {
-                                                                    name2 = new StringBuffer(nsisToken.getType()).append(" ").append(temp).toString(); //$NON-NLS-1$
-                                                                    int type2 = mResources.getTypeIndex(name2);
+                                                                    name2 = new StringBuffer(nsisToken.getType().getName()).append(" ").append(temp).toString(); //$NON-NLS-1$
+                                                                    int type2 = mResources.getTypeIndex(nsisToken.getType());
                                                                     if(type2 >= 0) {
                                                                         type = type2;
                                                                         IRegion r1 = nsisToken.getRegion();
                                                                         IRegion r2 = data.getRegion();
-                                                                        nsisToken = new NSISOutlineData(name2, /*name2,*/ new Region(r1.getOffset(),r2.getOffset()+r2.getLength()-r1.getOffset()));
+                                                                        nsisToken = new NSISOutlineData(nsisToken.getType(), /*name2,*/ new Region(r1.getOffset(),r2.getOffset()+r2.getLength()-r1.getOffset()));
                                                                         continue;
                                                                     }
                                                                 }
@@ -387,7 +388,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                                                 break;
                                                             case PAGE:
                                                                 if( regionType.equals(IDocument.DEFAULT_CONTENT_TYPE) && temp.equalsIgnoreCase("custom")|| //$NON-NLS-1$
-                                                                        temp.substring(1,temp.length()-1).equalsIgnoreCase("custom")) { //$NON-NLS-1$
+                                                                                temp.substring(1,temp.length()-1).equalsIgnoreCase("custom")) { //$NON-NLS-1$
                                                                     name.append(temp);
                                                                 }
                                                                 else {
@@ -447,7 +448,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                 case LABEL:
                                     if(text2.charAt(0) == '.')
                                     {
-                                        element = new NSISOutlineElement("global label", name.toString(), position, element.getSelectPosition()); //$NON-NLS-1$
+                                        element = new NSISOutlineElement(mResources.getType("global label"), name.toString(), position, element.getSelectPosition()); //$NON-NLS-1$
                                     }
                                 case GLOBAL_LABEL:
                                     element.setName(text2);
@@ -469,25 +470,25 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                     break;
                                 case ENDIF:
                                     current = closeElement(document, current, element,
-                                            new int[]{IF, IFDEF, IFNDEF, IFMACRODEF, IFMACRONDEF});
+                                                    new int[]{IF, IFDEF, IFNDEF, IFMACRODEF, IFMACRONDEF});
                                     break;
                                 case MACROEND:
                                     current = closeElement(document, current, element,
-                                            new int[]{MACRO});
+                                                    new int[]{MACRO});
                                     break;
                                 case FUNCTION:
                                     current = openElement(current, element, new int[]{SECTION,SUBSECTION,SECTIONGROUP,FUNCTION});
                                     break;
                                 case FUNCTIONEND:
                                     current = closeElement(document, current, element,
-                                            new int[]{FUNCTION});
+                                                    new int[]{FUNCTION});
                                     break;
                                 case SECTION:
                                     current = openElement(current, element, new int[]{SECTION,FUNCTION});
                                     break;
                                 case SECTIONEND:
                                     current = closeElement(document, current, element,
-                                            new int[]{SECTION});
+                                                    new int[]{SECTION});
                                     break;
                                 case SUBSECTION:
                                 case SECTIONGROUP:
@@ -496,14 +497,14 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                 case SUBSECTIONEND:
                                 case SECTIONGROUPEND:
                                     current = closeElement(document, current, element,
-                                            new int[]{SECTIONGROUP,SUBSECTION});
+                                                    new int[]{SECTIONGROUP,SUBSECTION});
                                     break;
                                 case PAGE:
                                 case INCLUDE:
                                 case VAR:
                                     if(current.getType() == NSISOutlineElement.ROOT || currentType == MACRO ||
-                                            currentType == IFDEF || currentType == IFNDEF ||
-                                            currentType == IFMACRODEF || currentType == IFMACRONDEF) {
+                                                    currentType == IFDEF || currentType == IFNDEF ||
+                                                    currentType == IFMACRODEF || currentType == IFMACRONDEF) {
                                         current.addChild(element);
                                     }
                                     break;
@@ -512,7 +513,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
                                     break;
                                 case PAGEEXEND:
                                     current = closeElement(document, current, element,
-                                            new int[]{PAGEEX});
+                                                    new int[]{PAGEEX});
                                     break;
                             }
                         }
@@ -625,7 +626,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         if(element instanceof NSISOutlineElement) {
             for (Iterator<NSISOutlineElement> iter = ((NSISOutlineElement)element).getChildren().iterator(); iter.hasNext();) {
                 NSISOutlineElement child = iter.next();
-                if(!isFiltered(child.getType())) {
+                if(!isFiltered(child.getType().getName())) {
                     return true;
                 }
                 else if(hasChildren(child)) {
@@ -645,7 +646,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         if (element instanceof NSISOutlineElement) {
             NSISOutlineElement parent = ((NSISOutlineElement)element).getParent();
             if(parent != null) {
-                if(isFiltered(parent.getType())) {
+                if(parent.getType() != null && isFiltered(parent.getType().getName())) {
                     return getParent(parent);
                 }
             }
@@ -680,7 +681,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
     {
         for (Iterator<NSISOutlineElement> iter = element.getChildren().iterator(); iter.hasNext();) {
             NSISOutlineElement child = iter.next();
-            if(filtered && isFiltered(child.getType())) {
+            if(filtered && isFiltered(child.getType().getName())) {
                 addChildren(child, list, filtered);
             }
             else {
@@ -846,36 +847,35 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
 
         protected IToken createToken(String text, int startOffset, int length)
         {
-            String text2 = text;
             if(mMatchKeywords) {
-                if(text2.length()==0 && !mIsString) {
+                if(text.length()==0 && !mIsString) {
                     return Token.WHITESPACE;
                 }
                 else {
                     if(mIsString) {
-                        if(text2.length() > 0) {
-                            if(text2.length() > 1 && text2.charAt(0) == text2.charAt(text2.length()-1)) {
-                                text2 = text2.substring(1,text2.length()-1);
+                        if(text.length() > 0) {
+                            if(text.length() > 1 && text.charAt(0) == text.charAt(text.length()-1)) {
+                                text = text.substring(1,text.length()-1);
                             }
                             else {
-                                text2 = text2.substring(1);
+                                text = text.substring(1);
                             }
                         }
                     }
-                    String type = mResources.getType(text2);
+                    Type type = mResources.getType(text);
 
                     return type == null?Token.UNDEFINED:new Token(new NSISOutlineData(type, /*text2,*/ new Region(startOffset,length)));
                 }
             }
             else {
-                return new Token(new NSISOutlineTextData(text2, new TypedRegion(startOffset,length,(mIsString?NSISPartitionScanner.NSIS_STRING:IDocument.DEFAULT_CONTENT_TYPE))));
+                return new Token(new NSISOutlineTextData(text, new TypedRegion(startOffset,length,(mIsString?NSISPartitionScanner.NSIS_STRING:IDocument.DEFAULT_CONTENT_TYPE))));
             }
         }
     }
 
     private class NSISOutlineData
     {
-        private String  mType;
+        private NSISOutlineContentResources.Type  mType;
         //        private String mText;
         private IRegion mRegion;
 
@@ -883,7 +883,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
          * @param type
          * @param region
          */
-        public NSISOutlineData(String type, /*String text,*/ IRegion region)
+        public NSISOutlineData(NSISOutlineContentResources.Type type, /*String text,*/ IRegion region)
         {
             mType = type;
             //            mText = text;
@@ -901,7 +901,7 @@ public class NSISOutlineContentProvider extends EmptyContentProvider implements 
         /**
          * @return Returns the type.
          */
-        public String getType()
+        public NSISOutlineContentResources.Type getType()
         {
             return mType;
         }
