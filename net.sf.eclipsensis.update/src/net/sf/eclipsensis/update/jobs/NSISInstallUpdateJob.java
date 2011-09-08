@@ -56,8 +56,16 @@ class NSISInstallUpdateJob extends NSISUpdateJob
             monitor.beginTask(getName(), IProgressMonitor.UNKNOWN);
             boolean fileMonStopped = false;
             try {
-                String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
+                String nsisHome = "";
+                final NSISPreferences prefs = NSISPreferences.getInstance();
+                if(prefs.getNSISHome() != null)
+                {
+                    nsisHome = prefs.getNSISHome().getLocation().getAbsolutePath();
+                }
                 NSISUpdateJobSettings settings = getSettings();
+                if(!Common.isEmpty(nsisHome)) {
+                    fileMonStopped = FileMonitor.INSTANCE.stop();
+                }
                 final List<String> cmd = new ArrayList<String>();
                 if(EclipseNSISPlugin.getDefault().isWinVista())
                 {
@@ -122,8 +130,8 @@ class NSISInstallUpdateJob extends NSISUpdateJob
                                 Display.getDefault().syncExec(new Runnable() {
                                     public void run()
                                     {
-                                        NSISPreferences.INSTANCE.setNSISHome(newNSISHome);
-                                        NSISPreferences.INSTANCE.store();
+                                        prefs.setNSISHome(newNSISHome);
+                                        prefs.store();
                                     }
                                 });
                             }

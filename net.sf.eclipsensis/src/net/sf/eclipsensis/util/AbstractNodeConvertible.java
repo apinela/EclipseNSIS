@@ -2,7 +2,7 @@
  * Copyright (c) 2004-2010 Sunil Kamath (IcemanK). All rights reserved. This
  * program is made available under the terms of the Common Public License v1.0
  * which is available at http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors: Sunil Kamath (IcemanK) - initial API and implementation
  *******************************************************************************/
 package net.sf.eclipsensis.util;
@@ -85,7 +85,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                             if (!skippedProperties.contains(propertyName))
                             {
                                 PropertyDescriptor propertyDescriptor = propertyMap
-                                        .get(propertyName);
+                                .get(propertyName);
                                 if (propertyDescriptor != null)
                                 {
                                     propertyFromNode(childNode, propertyDescriptor);
@@ -111,7 +111,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
             try
             {
                 writeMethod.invoke(this, new Object[] { getNodeValue(childNode, propertyDescriptor.getName(),
-                        paramTypes[0]) });
+                                paramTypes[0]) });
             }
             catch (Exception e1)
             {
@@ -134,7 +134,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         }
         else if (Collection.class.isAssignableFrom(clasz))
         {
-            return NodeConversionUtility.readCollectionNode(node, (Class<Collection>)clasz);
+            return NodeConversionUtility.readCollectionNode(node, (Class<? extends Collection<Object>>)clasz);
         }
         else if (String.class.equals(clasz))
         {
@@ -198,7 +198,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
     }
 
     protected Node propertyToNode(Document document, PropertyDescriptor descriptor) throws IllegalAccessException,
-            InvocationTargetException
+    InvocationTargetException
     {
         Method readMethod = descriptor.getReadMethod();
         if (readMethod != null)
@@ -278,13 +278,13 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
         if (value != null) {
             if (value.getClass().isArray()) {
                 NodeConversionUtility.createArrayNode(document, childNode,
-                        value);
+                                value);
             } else if (value instanceof Collection<?>) {
                 NodeConversionUtility.createCollectionNode(document, childNode,
-                        (Collection<?>) value);
+                                (Collection<?>) value);
             } else if (value instanceof INodeConvertible) {
                 childNode.appendChild(((INodeConvertible) value)
-                        .toNode(document));
+                                .toNode(document));
             } else if (value instanceof Node) {
                 childNode.appendChild((Node) value);
             } else if (value instanceof NodeList) {
@@ -308,7 +308,7 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
                     return childNode;
                 }
                 XMLUtil.addAttribute(document, childNode, VALUE_ATTRIBUTE,
-                        convertToString(name, value));
+                                convertToString(name, value));
             }
         }
         return childNode;
@@ -316,16 +316,16 @@ public abstract class AbstractNodeConvertible implements INodeConvertible, Seria
 
     protected boolean isConvertibleAttributeType(Class<?> clasz)
     {
-        return  (String.class.equals(clasz)    ||
-                 Long.class.equals(clasz)      || long.class.equals(clasz)    ||
-                 Integer.class.equals(clasz)   || int.class.equals(clasz)     ||
-                 Short.class.equals(clasz)     || short.class.equals(clasz)   ||
-                 Float.class.equals(clasz)     || float.class.equals(clasz)   ||
-                 Double.class.equals(clasz)    || double.class.equals(clasz)  ||
-                 Byte.class.equals(clasz)      || byte.class.equals(clasz)    ||
-                 Boolean.class.equals(clasz)   || boolean.class.equals(clasz) ||
-                 Character.class.equals(clasz) || char.class.equals(clasz)    ||
-                 RGB.class.equals(clasz));
+        return  String.class.equals(clasz)    ||
+        Long.class.equals(clasz)      || long.class.equals(clasz)    ||
+        Integer.class.equals(clasz)   || int.class.equals(clasz)     ||
+        Short.class.equals(clasz)     || short.class.equals(clasz)   ||
+        Float.class.equals(clasz)     || float.class.equals(clasz)   ||
+        Double.class.equals(clasz)    || double.class.equals(clasz)  ||
+        Byte.class.equals(clasz)      || byte.class.equals(clasz)    ||
+        Boolean.class.equals(clasz)   || boolean.class.equals(clasz) ||
+        Character.class.equals(clasz) || char.class.equals(clasz)    ||
+        RGB.class.equals(clasz);
     }
 
     protected abstract String getChildNodeName();

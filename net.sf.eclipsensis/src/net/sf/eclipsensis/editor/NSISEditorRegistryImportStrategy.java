@@ -46,7 +46,7 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
         mWriteRegBin = NSISKeywords.getInstance().getKeyword("WriteRegBin"); //$NON-NLS-1$
         mBuffer = new StringBuffer(""); //$NON-NLS-1$
         try {
-            mTextLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+            mTextLimit = Integer.parseInt(NSISPreferences.getInstance().getNSISHome().getNSISExe().getDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
         catch(Exception e){
             mTextLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
@@ -71,7 +71,7 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
             mBuffer.append(INSISConstants.LINE_SEPARATOR);
         }
         mBuffer.append(cCommentFormat.format(new String[] {rootKey,subKey})).append(
-                INSISConstants.LINE_SEPARATOR);
+                        INSISConstants.LINE_SEPARATOR);
     }
 
     public void addRegistryKey(String rootKey, String subKey)
@@ -119,13 +119,13 @@ class NSISEditorRegistryImportStrategy implements RegistryImporter.IRegistryImpo
         String newContext = mShellConstantConverter.getShellContext();
         if(!newContext.equals(ShellConstant.CONTEXT_GENERAL) && !newContext.equals(mContext)) {
             mBuffer.append(NSISKeywords.getInstance().getKeyword("SetShellVarContext")).append( //$NON-NLS-1$
-                    " ").append(newContext).append(INSISConstants.LINE_SEPARATOR); //$NON-NLS-1$
+            " ").append(newContext).append(INSISConstants.LINE_SEPARATOR); //$NON-NLS-1$
             mContext = newContext;
         }
         while(line2.length() > mTextLimit) {
             mBuffer.append(line2.substring(0, mTextLimit-1)).append(
-                    INSISConstants.LINE_CONTINUATION_CHAR).append(
-                    INSISConstants.LINE_SEPARATOR);
+                            INSISConstants.LINE_CONTINUATION_CHAR).append(
+                                            INSISConstants.LINE_SEPARATOR);
             line2 = line2.substring(mTextLimit-1);
         }
         mBuffer.append(line2).append(INSISConstants.LINE_SEPARATOR);

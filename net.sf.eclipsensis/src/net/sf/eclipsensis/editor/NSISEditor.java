@@ -107,8 +107,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
 
                                 mCurrentPosition = position;
                                 setHighlightRange(mCurrentPosition.getOffset(),
-                                                  mCurrentPosition.getLength(),
-                                                  false);
+                                                mCurrentPosition.getLength(),
+                                                false);
                             }
                         }
                     }
@@ -130,17 +130,17 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                         mCurrentPosition = position;
                         try {
                             boolean moveCursor = acquiredMutex;
-//                        ISelection sel = getSelectionProvider().getSelection();
-//                        if(sel != null && sel instanceof ITextSelection) {
-//                            int offset = ((ITextSelection)sel).getOffset();
-//                            if(position.includes(offset)) {
-//                                moveCursor = false;
-//                            }
-//                        }
+                            //                        ISelection sel = getSelectionProvider().getSelection();
+                            //                        if(sel != null && sel instanceof ITextSelection) {
+                            //                            int offset = ((ITextSelection)sel).getOffset();
+                            //                            if(position.includes(offset)) {
+                            //                                moveCursor = false;
+                            //                            }
+                            //                        }
 
                             setHighlightRange(mCurrentPosition.getOffset(),
-                                              mCurrentPosition.getLength(),
-                                              moveCursor);
+                                            mCurrentPosition.getLength(),
+                                            moveCursor);
                         }
                         catch (IllegalArgumentException x) {
                             resetHighlightRange();
@@ -187,7 +187,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         mProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.task"); //$NON-NLS-1$
         mProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.bookmark"); //$NON-NLS-1$
         mProjectionSupport.install();
-        NSISPreferences.INSTANCE.addListener(this);
+        NSISPreferences.getInstance().addListener(this);
         if(viewer.canDoOperation(ProjectionViewer.TOGGLE)) {
             viewer.doOperation(ProjectionViewer.TOGGLE);
         }
@@ -322,10 +322,10 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
             mOutlineContentProvider = null;
         }
         getSelectionProvider().removeSelectionChangedListener(this);
-        ProjectionViewer viewer = ((ProjectionViewer)getSourceViewer());
+        ProjectionViewer viewer = (ProjectionViewer)getSourceViewer();
         viewer.removeProjectionListener(this);
         viewer.removePostSelectionChangedListener(this);
-        NSISPreferences.INSTANCE.removeListener(this);
+        NSISPreferences.getInstance().removeListener(this);
         super.dispose();
     }
 
@@ -390,7 +390,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         SourceViewerDecorationSupport decorationSupport = getSourceViewerDecorationSupport(viewer);
         decorationSupport.setCharacterPairMatcher(new NSISCharacterPairMatcher());
         decorationSupport.setMatchingCharacterPainterPreferenceKeys(MATCHING_DELIMITERS,
-                                                                    MATCHING_DELIMITERS_COLOR);
+                        MATCHING_DELIMITERS_COLOR);
         viewer.addProjectionListener(this);
         ISelectionChangedListener listener = new ISelectionChangedListener(){
             public void selectionChanged(SelectionChangedEvent event)
@@ -508,8 +508,8 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
             public void dragEnter(DropTargetEvent event)
             {
                 if(NSISCommandTransfer.INSTANCE.isSupportedType(event.currentDataType) ||
-                   FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
-                   //Don't want default feedback- we will do it ourselves
+                                FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+                    //Don't want default feedback- we will do it ourselves
                     event.feedback = DND.FEEDBACK_NONE;
                     if (event.detail == DND.DROP_DEFAULT) {
                         event.detail = DND.DROP_COPY;
@@ -536,7 +536,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
             public void dragOperationChanged(DropTargetEvent event)
             {
                 if (NSISCommandTransfer.INSTANCE.isSupportedType(event.currentDataType) ||
-                    FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+                                FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
                     // Don't want default feedback- we will do it ourselves
                     event.feedback = DND.FEEDBACK_NONE;
                     if (event.detail == DND.DROP_DEFAULT) {
@@ -560,7 +560,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
             public void dragOver(DropTargetEvent event)
             {
                 if (NSISCommandTransfer.INSTANCE.isSupportedType(event.currentDataType) ||
-                    FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
+                                FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
                     // Don't want default feedback- we will do it ourselves
                     event.feedback = DND.FEEDBACK_NONE;
                     st.setFocus();
@@ -607,15 +607,15 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                     insertCommand((NSISCommand)event.data, false);
                 }
                 else if (FileTransfer.getInstance().isSupportedType(event.currentDataType)) {
-                    int dropNSISFilesAction = NSISPreferences.INSTANCE.getPreferenceStore().getInt(DROP_EXTERNAL_FILES_ACTION);
+                    int dropNSISFilesAction = NSISPreferences.getInstance().getPreferenceStore().getInt(DROP_EXTERNAL_FILES_ACTION);
                     switch(dropNSISFilesAction) {
                         case DROP_EXTERNAL_FILES_ASK:
                             MessageDialog dialog = new MessageDialog(getSite().getShell(),
-                                                    EclipseNSISPlugin.getResourceString("drop.external.files.ask.title"), //$NON-NLS-1$
-                                                    EclipseNSISPlugin.getShellImage(),
-                                                    EclipseNSISPlugin.getResourceString("drop.external.files.ask.message"), //$NON-NLS-1$
-                                                    MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
-                                                    IDialogConstants.CANCEL_LABEL }, 0);
+                                            EclipseNSISPlugin.getResourceString("drop.external.files.ask.title"), //$NON-NLS-1$
+                                            EclipseNSISPlugin.getShellImage(),
+                                            EclipseNSISPlugin.getResourceString("drop.external.files.ask.message"), //$NON-NLS-1$
+                                            MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
+                                IDialogConstants.CANCEL_LABEL }, 0);
                             if(dialog.open() != 0) {
                                 break;
                             }
@@ -666,10 +666,10 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
             }
         };
         dndService.addMergedDropTarget(st, DND.DROP_DEFAULT | DND.DROP_MOVE | DND.DROP_COPY,
-                                        new Transfer[] {NSISCommandTransfer.INSTANCE,
-                                                        FileTransfer.getInstance(),
-                                                        TextTransfer.getInstance()},
-                                        dropTargetListener);
+                        new Transfer[] {NSISCommandTransfer.INSTANCE,
+                        FileTransfer.getInstance(),
+                        TextTransfer.getInstance()},
+                        dropTargetListener);
 
         mTextDragAndDropInstalled= true;
         mTextDragAndDropEnabled= true;
@@ -686,128 +686,128 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
      * @param text
      * @param target
      */
-//    protected void initializeDragAndDrop(ISourceViewer viewer)
-//    {
-//        final StyledText text = viewer.getTextWidget();
-//        IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
-//        if(dndService != null) {
-//            int ops = DND.DROP_DEFAULT | DND.DROP_COPY;
-//            Transfer[] transfers = new Transfer[]{NSISCommandTransfer.INSTANCE,
-//                                                  FileTransfer.getInstance()};
-//
-//            final ITextEditorDropTargetListener listener = getTextEditorDropTargetListener();
-//
-//            if (listener != null) {
-//                ops |= DND.DROP_MOVE;
-//                transfers = (Transfer[])Common.joinArrays(new Object[] {transfers, listener.getTransfers()});
-//            }
-//
-//            DropTargetListener listener2 = new DropTargetListener() {
-//                public void dragEnter(DropTargetEvent e)
-//                {
-//                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
-//                       FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
-//                        //Don't want default feedback- we will do it ourselves
-//                        e.feedback = DND.FEEDBACK_NONE;
-//                        if (e.detail == DND.DROP_DEFAULT) {
-//                            e.detail = DND.DROP_COPY;
-//                        }
-//                    }
-//                    else if(listener != null) {
-//                        listener.dragEnter(e);
-//                    }
-//                }
-//
-//                public void dragOperationChanged(DropTargetEvent e)
-//                {
-//                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
-//                       FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
-//                        //Don't want default feedback- we will do it ourselves
-//                        e.feedback = DND.FEEDBACK_NONE;
-//                        if (e.detail == DND.DROP_DEFAULT) {
-//                            e.detail = DND.DROP_COPY;
-//                        }
-//                    }
-//                    else if(listener != null) {
-//                        listener.dragOperationChanged(e);
-//                    }
-//                }
-//
-//                public void dragOver(DropTargetEvent e)
-//                {
-//                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
-//                       FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
-//                        //Don't want default feedback- we will do it ourselves
-//                        e.feedback = DND.FEEDBACK_NONE;
-//                       text.setFocus();
-//                        Point location = text.getDisplay().map(null, text, e.x, e.y);
-//                        location.x = Math.max(0, location.x);
-//                        location.y = Math.max(0, location.y);
-//                        int offset;
-//                        try {
-//                            offset = text.getOffsetAtLocation(new Point(location.x, location.y));
-//                        }
-//                        catch (IllegalArgumentException ex) {
-//                            try {
-//                                offset = text.getOffsetAtLocation(new Point(0, location.y));
-//                            }
-//                            catch (IllegalArgumentException ex2) {
-//                                offset = text.getCharCount();
-//                                Point maxLocation = text.getLocationAtOffset(offset);
-//                                if (location.y >= maxLocation.y) {
-//                                    if (location.x < maxLocation.x) {
-//                                        offset = text.getOffsetAtLocation(new Point(location.x, maxLocation.y));
-//                                    }
-//                                }
-//                            }
-//                        }
-//                        IDocument doc = getDocumentProvider().getDocument(getEditorInput());
-//                        offset = getCaretOffsetForInsertCommand(doc, offset);
-//
-//                        text.setCaretOffset(offset);
-//                    }
-//                    else if(listener != null) {
-//                        listener.dragOver(e);
-//                    }
-//                }
-//
-//                public void drop(DropTargetEvent e)
-//                {
-//                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType)) {
-//                        insertCommand((NSISCommand)e.data, false);
-//                    }
-//                    else if(FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
-//                        insertFiles((String[])e.data);
-//                    }
-//                    else if(listener != null) {
-//                        listener.drop(e);
-//                    }
-//                }
-//
-//                public void dragLeave(DropTargetEvent e)
-//                {
-//                    if(listener != null) {
-//                        listener.dragLeave(e);
-//                    }
-//                }
-//
-//                public void dropAccept(DropTargetEvent e)
-//                {
-//                    if(listener != null) {
-//                        listener.dropAccept(e);
-//                    }
-//                }
-//            };
-//            dndService.addMergedDropTarget(text, DND.DROP_DEFAULT | DND.DROP_COPY,
-//                                           transfers,listener2);
-//        }
-//
-//
-//        IPreferenceStore store= getPreferenceStore();
-//        if (store != null && store.getBoolean(PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED)) {
-//            installTextDragAndDrop(viewer);
-//        }
-//    }
+    //    protected void initializeDragAndDrop(ISourceViewer viewer)
+    //    {
+    //        final StyledText text = viewer.getTextWidget();
+    //        IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
+    //        if(dndService != null) {
+    //            int ops = DND.DROP_DEFAULT | DND.DROP_COPY;
+    //            Transfer[] transfers = new Transfer[]{NSISCommandTransfer.INSTANCE,
+    //                                                  FileTransfer.getInstance()};
+    //
+    //            final ITextEditorDropTargetListener listener = getTextEditorDropTargetListener();
+    //
+    //            if (listener != null) {
+    //                ops |= DND.DROP_MOVE;
+    //                transfers = (Transfer[])Common.joinArrays(new Object[] {transfers, listener.getTransfers()});
+    //            }
+    //
+    //            DropTargetListener listener2 = new DropTargetListener() {
+    //                public void dragEnter(DropTargetEvent e)
+    //                {
+    //                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
+    //                       FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+    //                        //Don't want default feedback- we will do it ourselves
+    //                        e.feedback = DND.FEEDBACK_NONE;
+    //                        if (e.detail == DND.DROP_DEFAULT) {
+    //                            e.detail = DND.DROP_COPY;
+    //                        }
+    //                    }
+    //                    else if(listener != null) {
+    //                        listener.dragEnter(e);
+    //                    }
+    //                }
+    //
+    //                public void dragOperationChanged(DropTargetEvent e)
+    //                {
+    //                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
+    //                       FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+    //                        //Don't want default feedback- we will do it ourselves
+    //                        e.feedback = DND.FEEDBACK_NONE;
+    //                        if (e.detail == DND.DROP_DEFAULT) {
+    //                            e.detail = DND.DROP_COPY;
+    //                        }
+    //                    }
+    //                    else if(listener != null) {
+    //                        listener.dragOperationChanged(e);
+    //                    }
+    //                }
+    //
+    //                public void dragOver(DropTargetEvent e)
+    //                {
+    //                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType) ||
+    //                       FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+    //                        //Don't want default feedback- we will do it ourselves
+    //                        e.feedback = DND.FEEDBACK_NONE;
+    //                       text.setFocus();
+    //                        Point location = text.getDisplay().map(null, text, e.x, e.y);
+    //                        location.x = Math.max(0, location.x);
+    //                        location.y = Math.max(0, location.y);
+    //                        int offset;
+    //                        try {
+    //                            offset = text.getOffsetAtLocation(new Point(location.x, location.y));
+    //                        }
+    //                        catch (IllegalArgumentException ex) {
+    //                            try {
+    //                                offset = text.getOffsetAtLocation(new Point(0, location.y));
+    //                            }
+    //                            catch (IllegalArgumentException ex2) {
+    //                                offset = text.getCharCount();
+    //                                Point maxLocation = text.getLocationAtOffset(offset);
+    //                                if (location.y >= maxLocation.y) {
+    //                                    if (location.x < maxLocation.x) {
+    //                                        offset = text.getOffsetAtLocation(new Point(location.x, maxLocation.y));
+    //                                    }
+    //                                }
+    //                            }
+    //                        }
+    //                        IDocument doc = getDocumentProvider().getDocument(getEditorInput());
+    //                        offset = getCaretOffsetForInsertCommand(doc, offset);
+    //
+    //                        text.setCaretOffset(offset);
+    //                    }
+    //                    else if(listener != null) {
+    //                        listener.dragOver(e);
+    //                    }
+    //                }
+    //
+    //                public void drop(DropTargetEvent e)
+    //                {
+    //                    if(NSISCommandTransfer.INSTANCE.isSupportedType(e.currentDataType)) {
+    //                        insertCommand((NSISCommand)e.data, false);
+    //                    }
+    //                    else if(FileTransfer.getInstance().isSupportedType(e.currentDataType)) {
+    //                        insertFiles((String[])e.data);
+    //                    }
+    //                    else if(listener != null) {
+    //                        listener.drop(e);
+    //                    }
+    //                }
+    //
+    //                public void dragLeave(DropTargetEvent e)
+    //                {
+    //                    if(listener != null) {
+    //                        listener.dragLeave(e);
+    //                    }
+    //                }
+    //
+    //                public void dropAccept(DropTargetEvent e)
+    //                {
+    //                    if(listener != null) {
+    //                        listener.dropAccept(e);
+    //                    }
+    //                }
+    //            };
+    //            dndService.addMergedDropTarget(text, DND.DROP_DEFAULT | DND.DROP_COPY,
+    //                                           transfers,listener2);
+    //        }
+    //
+    //
+    //        IPreferenceStore store= getPreferenceStore();
+    //        if (store != null && store.getBoolean(PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED)) {
+    //            installTextDragAndDrop(viewer);
+    //        }
+    //    }
 
     private void openFiles(String[] files)
     {
@@ -860,12 +860,12 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                                 }
                             }
                             buf.append(fileKeyword).append(" ").append( //$NON-NLS-1$
-                                        IOUtility.resolveFileName(files[i], this)).append(
-                                        delim);
+                                            IOUtility.resolveFileName(files[i], this)).append(
+                                                            delim);
                         }
                         else {
                             buf.append(fileKeyword).append(" ").append(recursiveKeyword).append( //$NON-NLS-1$
-                                    " ").append(IOUtility.resolveFileName(files[i], this)).append(delim); //$NON-NLS-1$
+                            " ").append(IOUtility.resolveFileName(files[i], this)).append(delim); //$NON-NLS-1$
                         }
                     }
                     String text = buf.toString();
@@ -889,13 +889,13 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
                 try {
                     ITypedRegion partition = NSISTextUtility.getNSISPartitionAtOffset(doc, offset2);
                     if(partition.getType().equals(NSISPartitionScanner.NSIS_SINGLELINE_COMMENT) ||
-                       partition.getType().equals(NSISPartitionScanner.NSIS_MULTILINE_COMMENT)) {
+                                    partition.getType().equals(NSISPartitionScanner.NSIS_MULTILINE_COMMENT)) {
                         offset2 = partition.getOffset();
                         if(offset2 > 0) {
                             offset2--;
                             partition = NSISTextUtility.getNSISPartitionAtOffset(doc, offset2);
                             if(partition.getType().equals(NSISPartitionScanner.NSIS_SINGLELINE_COMMENT) ||
-                               partition.getType().equals(NSISPartitionScanner.NSIS_MULTILINE_COMMENT)) {
+                                            partition.getType().equals(NSISPartitionScanner.NSIS_MULTILINE_COMMENT)) {
                                 offset2 = offset2+1;
                             }
                             else {
@@ -1045,7 +1045,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
     protected void initializeEditor()
     {
         super.initializeEditor();
-        IPreferenceStore preferenceStore = NSISPreferences.INSTANCE.getPreferenceStore();
+        IPreferenceStore preferenceStore = NSISPreferences.getInstance().getPreferenceStore();
         preferenceStore = new ChainedPreferenceStore(new IPreferenceStore[]{preferenceStore, EditorsUI.getPreferenceStore()});
         setPreferenceStore(preferenceStore);
         setSourceViewerConfiguration(new NSISEditorSourceViewerConfiguration(preferenceStore));
@@ -1061,7 +1061,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         mActions.remove(action);
     }
 
-    public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+    public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome)
     {
         try {
             if(monitor != null) {
@@ -1217,7 +1217,7 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
     {
         IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(this);
         if(!(input instanceof IFileEditorInput)){
-            File file = new File((input).getPath().toOSString());
+            File file = new File(input.getPath().toOSString());
             if(IOUtility.isValidFile(file)) {
                 MakeNSISResults results = NSISCompileTestUtility.INSTANCE.getCachedResults(file);
                 if(results != null) {
@@ -1240,9 +1240,9 @@ public class NSISEditor extends TextEditor implements INSISConstants, INSISEdito
         if(isDirty()) {
             IPathEditorInput input = NSISEditorUtilities.getPathEditorInput(this);
             if(!Common.openConfirm(getSourceViewer().getTextWidget().getShell(),
-                    EclipseNSISPlugin.getFormattedString("export.html.save.confirmation", //$NON-NLS-1$
-                    new Object[] {input.getPath().lastSegment()}),
-                    EclipseNSISPlugin.getShellImage())) {
+                            EclipseNSISPlugin.getFormattedString("export.html.save.confirmation", //$NON-NLS-1$
+                                            new Object[] {input.getPath().lastSegment()}),
+                                            EclipseNSISPlugin.getShellImage())) {
                 return;
             }
             IProgressMonitor monitor = getProgressMonitor();

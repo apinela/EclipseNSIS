@@ -34,7 +34,7 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
 
     private static final List<String> cInternalNSISHomes;
     private static File cNSISHomesListFile = new File(EclipseNSISPlugin.getPluginStateLocation(),
-                                                NSISPreferencePage.class.getName()+".NSISHomesList.ser"); //$NON-NLS-1$
+                    NSISPreferencePage.class.getName()+".NSISHomesList.ser"); //$NON-NLS-1$
     private static IJobStatusRunnable cSaveNSISHomesRunnable = new IJobStatusRunnable() {
         public IStatus run(IProgressMonitor monitor)
         {
@@ -132,7 +132,7 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
     public static void show()
     {
         PreferencesUtil.createPreferenceDialogOn(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                PREFERENCE_PAGE_ID, null, null).open();
+                        PREFERENCE_PAGE_ID, null, null).open();
     }
 
     @Override
@@ -173,8 +173,9 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
         @Override
         protected NSISSettings loadSettings()
         {
-            mNSISExe = NSISPreferences.INSTANCE.getNSISExe();
-            return NSISPreferences.INSTANCE;
+            NSISHome home = NSISPreferences.getInstance().getNSISHome();
+            mNSISExe = home==null?null:home.getNSISExe();
+            return NSISPreferences.getInstance();
         }
 
         private class PreferencesEditorGeneralPage extends NSISSettingsEditorGeneralPage
@@ -201,7 +202,7 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
                         long[] data = cSolidCompressionMap.get(exeFile);
                         if(data != null) {
                             if(data[0] == exeFile.lastModified() && data[1] == exeFile.length()) {
-                                return (data[2] == 1);
+                                return data[2] == 1;
                             }
                         }
                         else {
@@ -215,7 +216,7 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
                             data[2] = 1;
                         }
                         cSolidCompressionMap.put(exeFile,data);
-                        return (data[2] == 1);
+                        return data[2] == 1;
                     }
                 }
                 return false;
@@ -255,13 +256,13 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
                         if(!Common.isEmpty(nsisHome)) {
                             if(nsisHome.endsWith("\\") && !nsisHome.endsWith(":\\")) { //$NON-NLS-1$ //$NON-NLS-2$
                                 nsisHome = nsisHome.substring(0,nsisHome.length()-1);
-                                    mNSISHome.getCombo().setText(nsisHome);
+                                mNSISHome.getCombo().setText(nsisHome);
                             }
                             NSISExe nsisExe = NSISValidator.findNSISExe(new File(nsisHome));
                             if (nsisExe == null) {
                                 if(eraseInvalid) {
                                     Common.openError(getShell(),
-                                                     EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
+                                                    EclipseNSISPlugin.getResourceString("invalid.nsis.home.message"), EclipseNSISPlugin.getShellImage()); //$NON-NLS-1$
                                     mNSISHome.getCombo().setText(""); //$NON-NLS-1$
                                     mNSISHome.getCombo().forceFocus();
                                     mNSISHomeDirty = false;
@@ -328,7 +329,8 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
             public void reset()
             {
                 NSISPreferences prefs = (NSISPreferences)getSettings();
-                mNSISHome.getCombo().setText(prefs.getNSISHome());
+                NSISHome nsisHome = prefs.getNSISHome();
+                mNSISHome.getCombo().setText(nsisHome==null?"":nsisHome.getLocation().getAbsolutePath());
                 mUseEclipseHelp.setSelection(prefs.isUseEclipseHelp());
                 mAutoShowConsole.select(getAutoShowConsoleIndex(prefs.getAutoShowConsole()));
                 mBeforeCompileSave.select(getBeforeCompileSaveIndex(prefs.getBeforeCompileSave()));
@@ -425,7 +427,7 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
                 super.createProcessPriorityCombo(parent);
                 mWarnProcessPriority = new Button(parent,SWT.CHECK);
                 mWarnProcessPriority.setText(EclipseNSISPlugin.getResourceString("warn.process.priority.label")); //$NON-NLS-1$
-                mWarnProcessPriority.setSelection(NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(WARN_PROCESS_PRIORITY));
+                mWarnProcessPriority.setSelection(NSISPreferences.getInstance().getPreferenceStore().getBoolean(WARN_PROCESS_PRIORITY));
                 GridData data = new GridData(SWT.FILL,SWT.FILL,true,false);
                 data.horizontalIndent=20;
                 data.horizontalSpan = ((GridLayout)parent.getLayout()).numColumns;
@@ -481,7 +483,12 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
                 c.setLayoutData(data);
 
                 List<String> nsisHomes = new ArrayList<String>(cInternalNSISHomes);
-                String home = ((NSISPreferences)getSettings()).getNSISHome();
+                String home = "";
+                NSISHome nsisHome = NSISPreferences.getInstance().getNSISHome();
+                if (nsisHome != null)
+                {
+                    home = nsisHome.getLocation().getAbsolutePath();
+                }
                 addNSISHome(nsisHomes, home);
 
                 mNSISHome = new ComboViewer(c);
@@ -513,7 +520,7 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
                 });
 
                 Button button = createButton(composite, EclipseNSISPlugin.getResourceString("browse.text"), //$NON-NLS-1$
-                                             EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
+                                EclipseNSISPlugin.getResourceString("browse.tooltip")); //$NON-NLS-1$
                 button.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e)
@@ -555,22 +562,22 @@ public class NSISPreferencePage    extends NSISSettingsPage implements INSISPref
                 layout.marginHeight = 0;
                 composite2.setLayout(layout);
                 mAutoShowConsole = createCombo(composite2, EclipseNSISPlugin.getResourceString("auto.show.console.text"), //$NON-NLS-1$
-                                              EclipseNSISPlugin.getResourceString("auto.show.console.tooltip"), //$NON-NLS-1$
-                                              cAutoShowConsoleText,getAutoShowConsoleIndex(((NSISPreferences)getSettings()).getAutoShowConsole()));
+                                EclipseNSISPlugin.getResourceString("auto.show.console.tooltip"), //$NON-NLS-1$
+                                cAutoShowConsoleText,getAutoShowConsoleIndex(((NSISPreferences)getSettings()).getAutoShowConsole()));
 
                 mUseEclipseHelp = createCheckBox(composite, EclipseNSISPlugin.getResourceString("use.eclipse.help.text"), //$NON-NLS-1$
-                                              EclipseNSISPlugin.getResourceString("use.eclipse.help.tooltip"), //$NON-NLS-1$
-                                              ((NSISPreferences)getSettings()).isUseEclipseHelp());
+                                EclipseNSISPlugin.getResourceString("use.eclipse.help.tooltip"), //$NON-NLS-1$
+                                ((NSISPreferences)getSettings()).isUseEclipseHelp());
                 ((GridData)mUseEclipseHelp.getLayoutData()).horizontalSpan = 3;
 
                 mNotifyMakeNSISChanged = createCheckBox(composite, EclipseNSISPlugin.getResourceString("notify.makensis.changed.text"), //$NON-NLS-1$
-                                              EclipseNSISPlugin.getResourceString("notify.makensis.changed.tooltip"), //$NON-NLS-1$
-                                              NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(NOTIFY_MAKENSIS_CHANGED));
+                                EclipseNSISPlugin.getResourceString("notify.makensis.changed.tooltip"), //$NON-NLS-1$
+                                NSISPreferences.getInstance().getPreferenceStore().getBoolean(NOTIFY_MAKENSIS_CHANGED));
                 ((GridData)mNotifyMakeNSISChanged.getLayoutData()).horizontalSpan = 3;
 
                 mBeforeCompileSave = createCombo(composite, EclipseNSISPlugin.getResourceString("before.compile.save.text"), //$NON-NLS-1$
-                        EclipseNSISPlugin.getResourceString("before.compile.save.tooltip"), //$NON-NLS-1$
-                        cBeforeCompileSaveText,getBeforeCompileSaveIndex(((NSISPreferences)getSettings()).getBeforeCompileSave()));
+                                EclipseNSISPlugin.getResourceString("before.compile.save.tooltip"), //$NON-NLS-1$
+                                cBeforeCompileSaveText,getBeforeCompileSaveIndex(((NSISPreferences)getSettings()).getBeforeCompileSave()));
                 return composite;
             }
         }

@@ -35,10 +35,10 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         EclipseNSISPlugin plugin = EclipseNSISPlugin.getDefault();
         String name = plugin.getName();
         cAboutTitle = EclipseNSISPlugin.getFormattedString("about.title.format", //$NON-NLS-1$
-                                           new Object[]{name});
+                        new Object[]{name});
 
         cAboutHeader = EclipseNSISPlugin.getFormattedString("about.header.format", //$NON-NLS-1$
-                                           new Object[]{name, plugin.getVersion()});
+                        new Object[]{name, plugin.getVersion()});
 
         cAboutText = EclipseNSISPlugin.getResourceString("about.text"); //$NON-NLS-1$
     }
@@ -70,7 +70,7 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
     {
         // create OK button
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
-                     true);
+                        true);
     }
 
     @Override
@@ -88,11 +88,11 @@ public class NSISAboutDialog extends Dialog implements INSISConstants
         label.setBackground(background);
         label.setForeground(foreground);
         label.setFont(JFaceResources.getBannerFont());
-        if(NSISPreferences.INSTANCE.getNSISExePath() != null) {
+        if(NSISPreferences.getInstance().getNSISHome() != null) {
             StringBuffer buf = new StringBuffer(cAboutHeader).append(INSISConstants.LINE_SEPARATOR);
             buf.append(EclipseNSISPlugin.getFormattedString("about.header.format", //$NON-NLS-1$
-                                                new Object[]{EclipseNSISPlugin.getResourceString("makensis.display.name"),  //$NON-NLS-1$
-                                                             NSISPreferences.INSTANCE.getNSISVersion().toString()}));
+                            new Object[]{EclipseNSISPlugin.getResourceString("makensis.display.name"),  //$NON-NLS-1$
+                            NSISPreferences.getInstance().getNSISHome().getNSISExe().getVersion().toString()}));
             label.setText(buf.toString());
         }
         else {

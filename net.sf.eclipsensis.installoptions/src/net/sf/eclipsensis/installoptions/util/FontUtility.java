@@ -45,12 +45,12 @@ public class FontUtility
     private static boolean cListening = false;
 
     private static INSISHomeListener cNSISHomeListener = new INSISHomeListener() {
-        public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+        public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome)
         {
             if(EclipseNSISPlugin.getDefault().isConfigured()) {
                 loadInstallOptionsFont();
                 if(cInstallOptionsFont != null) {
-                    NSISPreferences.INSTANCE.removeListener(cNSISHomeListener);
+                    NSISPreferences.getInstance().removeListener(cNSISHomeListener);
                 }
             }
         }
@@ -128,11 +128,11 @@ public class FontUtility
             }
             if(cInstallOptionsFont == null || cInstallOptionsFont == cDefaultFont) {
                 if(!cListening) {
-                    NSISPreferences.INSTANCE.addListener(cNSISHomeListener);
+                    NSISPreferences.getInstance().addListener(cNSISHomeListener);
                     Display.getDefault().disposeExec(new Runnable() {
                         public void run()
                         {
-                            NSISPreferences.INSTANCE.removeListener(cNSISHomeListener);
+                            NSISPreferences.getInstance().removeListener(cNSISHomeListener);
                             cListening = false;
                         }
                     });
@@ -141,7 +141,7 @@ public class FontUtility
             }
             else {
                 if (cListening) {
-                    NSISPreferences.INSTANCE.removeListener(cNSISHomeListener);
+                    NSISPreferences.getInstance().removeListener(cNSISHomeListener);
                     cListening = false;
                 }
             }
@@ -151,7 +151,7 @@ public class FontUtility
 
     public static Font getInstallOptionsFont()
     {
-        return (cInstallOptionsFont==null?loadInstallOptionsFont():cInstallOptionsFont);
+        return cInstallOptionsFont==null?loadInstallOptionsFont():cInstallOptionsFont;
     }
 
     public static Font getFont(NSISLanguage lang)
@@ -191,14 +191,14 @@ public class FontUtility
                 }
                 Map<String,String> symbols = cNSISSettings.getSymbols();
 
-                if(EclipseNSISPlugin.getDefault().isWinVista() && NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_21) >= 0) {
+                if(EclipseNSISPlugin.getDefault().isWinVista() && NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_21) >= 0) {
                     symbols.put("WINDOWS_VISTA",""); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 symbols.put("LANGUAGE", lang.getName()); //$NON-NLS-1$
                 symbols.put("PROPERTIES_FILE", cPropertiesFile.getAbsolutePath()); //$NON-NLS-1$
                 cNSISSettings.setSymbols(symbols);
                 File fontScript = IOUtility.ensureLatest(InstallOptionsPlugin.getDefault().getBundle(), new Path("/font/getfont.nsi"), //$NON-NLS-1$
-                        InstallOptionsPlugin.getPluginStateLocation());
+                                InstallOptionsPlugin.getPluginStateLocation());
                 long timestamp = System.currentTimeMillis();
                 MakeNSISResults results = MakeNSISRunner.compile(fontScript, cNSISSettings, cNSISConsole, new INSISConsoleLineProcessor() {
                     public NSISConsoleLine processText(String text)

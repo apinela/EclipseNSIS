@@ -79,12 +79,12 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
         String label = InstallOptionsPlugin.getResourceString(resource);
         setText(label);
         setToolTipText(label);
-        NSISPreferences.INSTANCE.addListener(this);
+        NSISPreferences.getInstance().addListener(this);
         MakeNSISRunner.addListener(this);
         updateEnabled();
     }
 
-    public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+    public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome)
     {
         updateEnabled();
     }
@@ -113,7 +113,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
 
     public void dispose()
     {
-        NSISPreferences.INSTANCE.removeListener(this);
+        NSISPreferences.getInstance().removeListener(this);
         MakeNSISRunner.removeListener(this);
     }
 
@@ -347,7 +347,7 @@ public class PreviewAction extends Action implements Disposable, IMakeNSISRunLis
                                     symbols.put("PREVIEW_BRANDING",InstallOptionsPlugin.getResourceString(locale,"preview.setup.branding")); //$NON-NLS-1$ //$NON-NLS-2$
                                 }
                                 symbols.put("PREVIEW_NAME",InstallOptionsPlugin.getResourceString(locale,"preview.setup.name")); //$NON-NLS-1$ //$NON-NLS-2$
-                                if(EclipseNSISPlugin.getDefault().isWinVista() && NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_21) >= 0) {
+                                if(EclipseNSISPlugin.getDefault().isWinVista() && NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_21) >= 0) {
                                     symbols.put("WINDOWS_VISTA",""); //$NON-NLS-1$ //$NON-NLS-2$
                                 }
 

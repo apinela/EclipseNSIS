@@ -75,7 +75,7 @@ public class NSISWizardTemplate extends AbstractTemplate
     public boolean isAvailable()
     {
         return (mSettings != null && (mSettings.getMinimumNSISVersion() == null ||
-                NSISPreferences.INSTANCE.getNSISVersion().compareTo(mSettings.getMinimumNSISVersion()) >= 0));
+                NSISPreferences.getInstance().getNSISVersion().compareTo(mSettings.getMinimumNSISVersion()) >= 0));
     }
 
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException

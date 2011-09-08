@@ -256,7 +256,12 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         mNSISHelpAvailable = false;
 
         try {
-            String home = NSISPreferences.INSTANCE.getNSISHome();
+            String home = "";
+            NSISPreferences prefs = NSISPreferences.getInstance();
+            if(prefs.getNSISHome() != null)
+            {
+                home = prefs.getNSISHome().getLocation().getAbsolutePath();
+            }
             if (!Common.isEmpty(home)) {
                 mNSISHtmlHelpFile = new File(home, NSIS_CHM_HELP_FILE);
                 if (IOUtility.isValidFile(mNSISHtmlHelpFile)) {
@@ -612,7 +617,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         if(file != null && !file.exists()) {
             String path = file.getAbsolutePath();
             if(mCachedHelpLocation.regionMatches(true,0,path,0,mCachedHelpLocation.length())) {
-                File file2 = new File(NSISPreferences.INSTANCE.getNSISHome(),path.substring(mCachedHelpLocation.length()));
+                File file2 = new File(NSISPreferences.getInstance().getNSISHome().getLocation(),path.substring(mCachedHelpLocation.length()));
                 if(file2.exists()) {
                     return file2;
                 }
@@ -626,7 +631,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         checkHelpFile();
         String url = getHelpStartPage();
         if(!Common.isEmpty(url)) {
-            if(NSISPreferences.INSTANCE.isUseEclipseHelp()) {
+            if(NSISPreferences.getInstance().isUseEclipseHelp()) {
                 showPlatformHelp(url);
                 return;
             }
@@ -648,7 +653,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
     public void showHelp(String file)
     {
         checkHelpFile();
-        if(NSISPreferences.INSTANCE.isUseEclipseHelp()) {
+        if(NSISPreferences.getInstance().isUseEclipseHelp()) {
             showPlatformHelp(NSIS_PLATFORM_HELP_FORMAT.format(new String[] {file}));
         }
         else if(!NSISHTMLHelp.showHelp(IOUtility.getFileURLString(new File(mCachedHelpDocsLocation,file)))) {
@@ -661,7 +666,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
         checkHelpFile();
         String url = getHelpURL(keyword, true);
         if(!Common.isEmpty(url)) {
-            if(NSISPreferences.INSTANCE.isUseEclipseHelp()) {
+            if(NSISPreferences.getInstance().isUseEclipseHelp()) {
                 showPlatformHelp(url);
                 return true;
             }
@@ -700,7 +705,7 @@ public class NSISHelpURLProvider implements INSISConstants, INSISKeywordsListene
 
     public String getNSISContribPath()
     {
-        Version nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
+        Version nsisVersion = NSISPreferences.getInstance().getNSISVersion();
         String nsisContribPath = null;
         for(Iterator<Version> iter=mNSISContribPaths.keySet().iterator(); iter.hasNext(); ) {
             Version v = iter.next();

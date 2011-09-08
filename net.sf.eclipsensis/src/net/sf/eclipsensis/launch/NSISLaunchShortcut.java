@@ -144,7 +144,7 @@ public class NSISLaunchShortcut implements ILaunchShortcut
         }
         else {
             script = path.toOSString();
-            settings = new NSISLaunchSettings(NSISPreferences.INSTANCE);
+            settings = new NSISLaunchSettings(NSISPreferences.getInstance());
         }
         settings.setScript(script);
         settings.setRunInstaller(false);

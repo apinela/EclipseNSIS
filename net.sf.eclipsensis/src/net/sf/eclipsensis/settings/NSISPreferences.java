@@ -51,14 +51,13 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     public static final RGB SYNTAX_TASK_TAGS = new RGB(0x0,0x50,0x50);
     public static final RGB SYNTAX_PLUGINS   = new RGB(0x54,0x4a,0x3d);
 
-    public static final NSISPreferences INSTANCE;
+    private static volatile NSISPreferences cInstance = null;
 
     public static final String NSIS_CONFIG_COMPRESSION_SUPPORT="NSIS_CONFIG_COMPRESSION_SUPPORT"; //$NON-NLS-1$
     public static final String NSIS_UNICODE_SUPPORT="NSIS_UNICODE"; //$NON-NLS-1$
 
     private IPreferenceStore mPreferenceStore = null;
-    private NSISExe mNSISExe = null;
-    private String mNSISHome = null;
+    private NSISHome mNSISHome = null;
     private boolean mUseEclipseHelp = false;
     private int mAutoShowConsole = AUTO_SHOW_CONSOLE_DEFAULT;
     private int mBeforeCompileSave = BEFORE_COMPILE_SAVE_DEFAULT;
@@ -66,16 +65,28 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     private Collection<NSISTaskTag> mDefaultTaskTags = null;
     private boolean mCaseSensitiveTaskTags = true;
     private List<INSISHomeListener> mListeners = new ArrayList<INSISHomeListener>();
-    private boolean mUnicode = false;
-    private boolean mSolidCompressionSupported = false;
-    private boolean mProcessPrioritySupported = false;
 
-    static
+    private static NSISPreferences loadInstance()
     {
         IPreferenceStore preferenceStore = EclipseNSISPlugin.getDefault().getPreferenceStore();
         NSISPreferences instance = new NSISPreferences(preferenceStore);
         instance.load();
-        INSTANCE = instance;
+        return instance;
+    }
+
+    public static NSISPreferences getInstance()
+    {
+        if(cInstance == null)
+        {
+            synchronized(NSISPreferences.class)
+            {
+                if(cInstance == null)
+                {
+                    cInstance = loadInstance();
+                }
+            }
+        }
+        return cInstance;
     }
 
     protected NSISPreferences(IPreferenceStore preferenceStore)
@@ -157,7 +168,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             autoShowConsole = Integer.parseInt(pref);
         }
         catch (NumberFormatException e) {
-            autoShowConsole = (Boolean.valueOf(pref).booleanValue()?AUTO_SHOW_CONSOLE_ALWAYS:AUTO_SHOW_CONSOLE_NEVER);
+            autoShowConsole = Boolean.valueOf(pref).booleanValue()?AUTO_SHOW_CONSOLE_ALWAYS:AUTO_SHOW_CONSOLE_NEVER;
             mPreferenceStore.setValue(AUTO_SHOW_CONSOLE, autoShowConsole);
         }
         setAutoShowConsole(autoShowConsole);
@@ -172,13 +183,13 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         initializePreference(MATCHING_DELIMITERS_COLOR,StringConverter.asString(new RGB(128,128,128)));
 
         initializePreference(DROP_EXTERNAL_FILES_ACTION,new Integer(DROP_EXTERNAL_FILES_DEFAULT));
-}
+    }
 
     private void initializeSyntaxPreference(String name, RGB foreground, RGB background, boolean bold,
-                                            boolean italic, boolean underline, boolean strikethrough)
+                    boolean italic, boolean underline, boolean strikethrough)
     {
         NSISSyntaxStyle style = new NSISSyntaxStyle(foreground, background, bold, italic,
-                                                    underline, strikethrough);
+                        underline, strikethrough);
         mPreferenceStore.setDefault(name,style.toString());
         if(!mPreferenceStore.contains(name)) {
             mPreferenceStore.setToDefault(name);
@@ -231,8 +242,8 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
             if(IPluginVersions.VERSION_0_9_6.compareTo(settingsVersion) > 0) {
                 mPreferenceStore.setDefault(USE_SPACES_FOR_TABS,true);
                 EditorsUI.getPreferenceStore().setValue(
-                        AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS,
-                        mPreferenceStore.getBoolean(USE_SPACES_FOR_TABS));
+                                AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS,
+                                mPreferenceStore.getBoolean(USE_SPACES_FOR_TABS));
                 b = true;
             }
         }
@@ -272,7 +283,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     @Override
     public void store()
     {
-        setValue(NSIS_HOME,mNSISHome);
+        setValue(NSIS_HOME,mNSISHome != null?mNSISHome.getLocation().getAbsolutePath():"");
         setValue(USE_ECLIPSE_HELP,mUseEclipseHelp);
         setValue(AUTO_SHOW_CONSOLE,mAutoShowConsole);
         setValue(BEFORE_COMPILE_SAVE,mBeforeCompileSave);
@@ -295,7 +306,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      */
     public Collection<NSISTaskTag> getTaskTags()
     {
-        return (mTaskTags == null?getDefaultTaskTags():createCopy(mTaskTags));
+        return mTaskTags == null?getDefaultTaskTags():createCopy(mTaskTags);
     }
 
     /**
@@ -347,24 +358,51 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     /**
      * @return Returns the NSISHome.
      */
-    public String getNSISHome()
+    public NSISHome getNSISHome()
     {
         return mNSISHome;
     }
 
     public boolean isSolidCompressionSupported()
     {
-        return mSolidCompressionSupported;
+        NSISHome nsisHome = getNSISHome();
+        if(nsisHome != null)
+        {
+            NSISExe nsisExe = nsisHome.getNSISExe();
+            if(nsisExe != null)
+            {
+                return nsisExe.isSolidCompressionSupported();
+            }
+        }
+        return false;
     }
 
     public boolean isUnicode()
     {
-        return mUnicode;
+        NSISHome nsisHome = getNSISHome();
+        if(nsisHome != null)
+        {
+            NSISExe nsisExe = nsisHome.getNSISExe();
+            if(nsisExe != null)
+            {
+                return nsisExe.isUnicode();
+            }
+        }
+        return false;
     }
 
     public boolean isProcessPrioritySupported()
     {
-        return mProcessPrioritySupported;
+        NSISHome nsisHome = getNSISHome();
+        if(nsisHome != null)
+        {
+            NSISExe nsisExe = nsisHome.getNSISExe();
+            if(nsisExe != null)
+            {
+                return nsisExe.isProcessPrioritySupported();
+            }
+        }
+        return false;
     }
 
     /**
@@ -372,7 +410,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      */
     public void setNSISHome(String nsisHome)
     {
-        final String oldHome = mNSISHome;
+        final NSISHome oldHome = mNSISHome;
         internalSetNSISHome(nsisHome);
         if(Display.getCurrent() != null) {
             fireNSISHomeChanged(oldHome, mNSISHome);
@@ -387,9 +425,9 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         }
     }
 
-    private void fireNSISHomeChanged(final String oldHome, final String newHome)
+    private void fireNSISHomeChanged(final NSISHome oldHome, final NSISHome newHome)
     {
-        if(!Common.stringsAreEqual(oldHome, newHome) && mListeners.size() > 0) {
+        if(!Common.objectsAreEqual(oldHome, newHome) && mListeners.size() > 0) {
             EclipseNSISPlugin.getDefault().run(true,false,new NSISHomeChangedRunnable(oldHome, newHome));
         }
     }
@@ -399,22 +437,17 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      */
     private void internalSetNSISHome(String nsisHome)
     {
-        if(mNSISExe != null) {
-            FileMonitor.INSTANCE.unregister(mNSISExe.getFile(),this);
+        if(mNSISHome != null) {
+            FileMonitor.INSTANCE.unregister(mNSISHome.getNSISExe().getFile(),this);
         }
-        mNSISExe = (Common.isEmpty(nsisHome)?null:NSISValidator.findNSISExe(new File(nsisHome)));
-        if(mNSISExe != null) {
-            mNSISHome = nsisHome;
-            mUnicode = mNSISExe.getDefinedSymbols().containsKey(NSIS_UNICODE_SUPPORT);
-            MakeNSISRunner.setUnicode(mUnicode);
-            FileMonitor.INSTANCE.register(mNSISExe.getFile(),this);
-            mSolidCompressionSupported = (mNSISExe.getVersion().compareTo(INSISVersions.VERSION_2_07) >=0 && mNSISExe.getDefinedSymbols().containsKey(NSIS_CONFIG_COMPRESSION_SUPPORT));
-            mProcessPrioritySupported = mNSISExe.getVersion().compareTo(INSISVersions.VERSION_2_24) >=0;
+        NSISHome home = new NSISHome(new File(nsisHome));
+        if(home.getNSISExe() != null) {
+            mNSISHome = home;
+            MakeNSISRunner.setUnicode(home.getNSISExe().isUnicode());
+            FileMonitor.INSTANCE.register(home.getNSISExe().getFile(),this);
         }
         else {
-            mNSISHome = ""; //$NON-NLS-1$
-            mSolidCompressionSupported = false;
-            mProcessPrioritySupported = false;
+            mNSISHome = null;
         }
     }
 
@@ -422,7 +455,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
     {
         internalSetNSISHome(nsisHome);
         boolean dirty = false;
-        while(Common.isEmpty(mNSISHome)) {
+        while(mNSISHome == null) {
             dirty = true;
             NSISPreferencePage.removeNSISHome(nsisHome);
             if(NSISPreferencePage.NSIS_HOMES.size() > 0) {
@@ -440,7 +473,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
 
     public void fileChanged(int type, File file)
     {
-        if(file.equals(mNSISExe == null ? null : mNSISExe.getFile())) {
+        if(file.equals(mNSISHome == null ? null : mNSISHome.getNSISExe().getFile())) {
             final String message;
             switch(type) {
                 case FileMonitor.FILE_MODIFIED:
@@ -453,7 +486,7 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
                 default:
                     return;
             }
-            final String nsisHome = mNSISHome;
+            final String nsisHome = mNSISHome.getLocation().getAbsolutePath();
             mNSISHome = null;
             final boolean silent = !mPreferenceStore.getBoolean(NOTIFY_MAKENSIS_CHANGED);
             if(silent) {
@@ -475,13 +508,13 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
                     {
                         Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
                         MessageDialogWithToggle dialog = new MessageDialogWithToggle(
-                                shell,
-                                EclipseNSISPlugin.getDefault().getName(),
-                                EclipseNSISPlugin.getShellImage(),
-                                message,
-                                MessageDialog.WARNING,
-                                new String[] { IDialogConstants.OK_LABEL }, 0,
-                                EclipseNSISPlugin.getResourceString("notify.makensis.changed.toggle"), silent); //$NON-NLS-1$
+                                        shell,
+                                        EclipseNSISPlugin.getDefault().getName(),
+                                        EclipseNSISPlugin.getShellImage(),
+                                        message,
+                                        MessageDialog.WARNING,
+                                        new String[] { IDialogConstants.OK_LABEL }, 0,
+                                        EclipseNSISPlugin.getResourceString("notify.makensis.changed.toggle"), silent); //$NON-NLS-1$
                         dialog.open();
                         mPreferenceStore.setValue(NOTIFY_MAKENSIS_CHANGED,!dialog.getToggleState());
                         BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
@@ -501,37 +534,19 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
 
     private void maybeConfigure()
     {
-        if(Common.isEmpty(mNSISHome)) {
+        if(mNSISHome == null) {
             Shell shell = Display.getDefault().getActiveShell();
             if (Common.openConfirm(shell,
-                   EclipseNSISPlugin.getDefault().getName(),
-                   EclipseNSISPlugin.getResourceString("unconfigured.confirm"), //$NON-NLS-1$
-                   EclipseNSISPlugin.getShellImage())) {
+                            EclipseNSISPlugin.getDefault().getName(),
+                            EclipseNSISPlugin.getResourceString("unconfigured.confirm"), //$NON-NLS-1$
+                            EclipseNSISPlugin.getShellImage())) {
                 new NSISConfigWizardDialog(shell).open();
             }
-            if (Common.isEmpty(mNSISHome)) {
+            if (mNSISHome == null) {
                 Common.openWarning(shell, EclipseNSISPlugin.getDefault().getName(), EclipseNSISPlugin.getResourceString("unconfigured.warning"), //$NON-NLS-1$
-                        EclipseNSISPlugin.getShellImage());
+                                EclipseNSISPlugin.getShellImage());
             }
         }
-    }
-
-    public String getNSISExePath()
-    {
-        return (mNSISExe !=null?mNSISExe.getFile().getAbsolutePath():null);
-    }
-
-    public NSISExe getNSISExe()
-    {
-        return mNSISExe;
-    }
-
-    /**
-     * @return Returns the NSIS Defined Symbols.
-     */
-    public Properties getNSISDefinedSymbols()
-    {
-        return mNSISExe == null?null:mNSISExe.getDefinedSymbols();
     }
 
     /**
@@ -539,7 +554,17 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
      */
     public Version getNSISVersion()
     {
-        return mNSISExe == null?Version.EMPTY_VERSION:mNSISExe.getVersion();
+        NSISHome nsisHome = getNSISHome();
+        if(nsisHome != null)
+        {
+            NSISExe nsisExe = nsisHome.getNSISExe();
+            if(nsisExe != null)
+            {
+                return nsisExe.getVersion();
+            }
+        }
+
+        return Version.EMPTY_VERSION;
     }
 
     /**
@@ -665,11 +690,6 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
         mPreferenceStore.setValue(name, IPreferenceStore.STRING_DEFAULT_DEFAULT);
     }
 
-    public String getNSISDefinedSymbol(String symbol)
-    {
-        return mNSISExe == null?null:mNSISExe.getDefinedSymbols().getProperty(symbol);
-    }
-
     @Override
     public <T> void storeObject(String name, T object)
     {
@@ -728,10 +748,10 @@ public class NSISPreferences extends NSISSettings implements IFileChangeListener
 
     private class NSISHomeChangedRunnable implements IRunnableWithProgress
     {
-        private String mOldHome;
-        private String mNewHome;
+        private NSISHome mOldHome;
+        private NSISHome mNewHome;
 
-        public NSISHomeChangedRunnable(String oldHome, String newHome)
+        public NSISHomeChangedRunnable(NSISHome oldHome, NSISHome newHome)
         {
             mOldHome = oldHome;
             mNewHome = newHome;

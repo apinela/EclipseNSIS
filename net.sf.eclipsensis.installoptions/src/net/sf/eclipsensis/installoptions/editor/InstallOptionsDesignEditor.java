@@ -501,7 +501,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
         }
     }
 
-    public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+    public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome)
     {
         Font font = FontUtility.getInstallOptionsFont();
         if(font != null && font != mInstallOptionsFont) {
@@ -531,7 +531,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
             InstallOptionsModel.INSTANCE.addModelListener(mModelListener);
             PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,PLUGIN_CONTEXT_PREFIX+"installoptions_designeditor_context"); //$NON-NLS-1$
             mCreatedEmptyPart = false;
-            NSISPreferences.INSTANCE.addListener(this);
+            NSISPreferences.getInstance().addListener(this);
         }
     }
 
@@ -643,7 +643,7 @@ public class InstallOptionsDesignEditor extends EditorPart implements INSISHomeL
     @Override
     public void dispose()
     {
-        NSISPreferences.INSTANCE.removeListener(this);
+        NSISPreferences.getInstance().removeListener(this);
         InstallOptionsModel.INSTANCE.removeModelListener(mModelListener);
         boolean hasErrors = mINIFile.hasErrors();
         IInstallOptionsEditorInput input = (IInstallOptionsEditorInput)getEditorInput();

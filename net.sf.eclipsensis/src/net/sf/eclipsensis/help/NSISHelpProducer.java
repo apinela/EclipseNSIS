@@ -28,8 +28,8 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
 
     private static final String NSIS_CONTRIB_PATH="help/NSIS/$CONTRIB$"; //$NON-NLS-1$
     private static final byte[] NSIS_CONTRIB_JS=new StringBuffer("<!--").append(LINE_SEPARATOR).append( //$NON-NLS-1$
-        "var nsisContribPath=\"/").append(PLUGIN_ID).append("/").append(NSIS_CONTRIB_PATH).append( //$NON-NLS-1$ //$NON-NLS-2$
-        "\";").append(LINE_SEPARATOR).append("//-->").append(LINE_SEPARATOR).toString().getBytes(); //$NON-NLS-1$ //$NON-NLS-2$
+    "var nsisContribPath=\"/").append(PLUGIN_ID).append("/").append(NSIS_CONTRIB_PATH).append( //$NON-NLS-1$ //$NON-NLS-2$
+    "\";").append(LINE_SEPARATOR).append("//-->").append(LINE_SEPARATOR).toString().getBytes(); //$NON-NLS-1$ //$NON-NLS-2$
 
     private static final byte[] GO_BACK = "<html><head><script language=\"javascript\">\n<!--\nhistory.go(-1);\n//-->\n</script></head></html>".getBytes(); //$NON-NLS-1$
     private static final File cHelpCacheLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),PLUGIN_HELP_LOCATION_PREFIX);
@@ -70,7 +70,12 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                     }
                     href2 = Common.replaceAll(href2, NSIS_CONTRIB_PATH, nsisContribPath, true);
                 }
-                String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
+                String nsisHome = "";
+                NSISPreferences prefs = NSISPreferences.getInstance();
+                if(prefs.getNSISHome() != null)
+                {
+                    nsisHome = prefs.getNSISHome().getLocation().getAbsolutePath();
+                }
                 if(!Common.isEmpty(nsisHome)) {
                     File nsisDir = new File(nsisHome);
                     if(IOUtility.isValidDirectory(nsisDir)) {
@@ -143,17 +148,17 @@ public class NSISHelpProducer implements IExecutableExtension, IHelpContentProdu
                                 }
                             }
                             return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("missing.help.format", //$NON-NLS-1$
-                                                                    new Object[]{STYLE, href2,PLUGIN_ID,
-                                                                                 NSISLiveHelpAction.class.getName()}).getBytes());
+                                            new Object[]{STYLE, href2,PLUGIN_ID,
+                                            NSISLiveHelpAction.class.getName()}).getBytes());
                         }
                         else {
                             return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("missing.file.format", //$NON-NLS-1$
-                                                                                new Object[]{STYLE,href2}).getBytes());
+                                            new Object[]{STYLE,href2}).getBytes());
                         }
                     }
                 }
                 return new ByteArrayInputStream(EclipseNSISPlugin.getFormattedString("unconfigured.help.format", //$NON-NLS-1$
-                                                                    new Object[]{STYLE,PLUGIN_ID,NSISLiveHelpAction.class.getName(),CONFIGURE}).getBytes());
+                                new Object[]{STYLE,PLUGIN_ID,NSISLiveHelpAction.class.getName(),CONFIGURE}).getBytes());
             }
         }
         return null;

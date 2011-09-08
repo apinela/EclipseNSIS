@@ -67,14 +67,14 @@ public class InstallOptionsRulerComposite extends Composite
     {
         RulerViewer viewer = new RulerViewer(dialog);
         final boolean isHorizontal = orientation == PositionConstants.NORTH
-                || orientation == PositionConstants.SOUTH;
+        || orientation == PositionConstants.SOUTH;
 
         // Finish initializing the viewer
         viewer.setRootEditPart(new RulerRootEditPart(isHorizontal));
         viewer.setEditPartFactory(new InstallOptionsRulerEditPartFactory(mViewer));
         viewer.createControl(this);
         ((GraphicalEditPart)viewer.getRootEditPart()).getFigure()
-                .setBorder(new RulerBorder(isHorizontal));
+        .setBorder(new RulerBorder(isHorizontal));
         viewer.setProperty(GraphicalViewer.class.toString(), mViewer);
 
         // Configure the viewer's control
@@ -90,10 +90,10 @@ public class InstallOptionsRulerComposite extends Composite
         canvas.setFont(mFont);
         if (isHorizontal) {
             canvas.getViewport().setHorizontalRangeModel(
-                    mEditor.getViewport().getHorizontalRangeModel());
+                            mEditor.getViewport().getHorizontalRangeModel());
         } else {
             canvas.getViewport().setVerticalRangeModel(
-                    mEditor.getViewport().getVerticalRangeModel());
+                            mEditor.getViewport().getVerticalRangeModel());
         }
 
         // Add the viewer to the rulerEditDomain
@@ -145,15 +145,15 @@ public class InstallOptionsRulerComposite extends Composite
 
         int leftWidth, rightWidth, topHeight, bottomHeight;
         leftWidth = mLeft == null ? 0
-                : mLeft.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+                        : mLeft.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
         rightWidth = 0;
         topHeight = mTop == null ? 0
-                : mTop.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+                        : mTop.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         bottomHeight = 0;
 
         Point size = getSize();
         Point editorSize = new Point(size.x - (leftWidth + rightWidth),
-                   size.y - (topHeight + bottomHeight));
+                        size.y - (topHeight + bottomHeight));
         if (!mEditor.getSize().equals(editorSize)) {
             mEditor.setSize(editorSize);
         }
@@ -178,14 +178,14 @@ public class InstallOptionsRulerComposite extends Composite
 
         if (mLeft != null) {
             Rectangle leftBounds = new Rectangle(
-                    0, topHeight - 1, leftWidth, editorSize.y - hBarHeight);
+                            0, topHeight - 1, leftWidth, editorSize.y - hBarHeight);
             if (!mLeft.getControl().getBounds().equals(leftBounds)) {
                 mLeft.getControl().setBounds(leftBounds);
             }
         }
         if (mTop != null) {
             Rectangle topBounds = new Rectangle(
-                    leftWidth - 1, 0, editorSize.x - vBarWidth, topHeight);
+                            leftWidth - 1, 0, editorSize.x - vBarWidth, topHeight);
             if (!mTop.getControl().getBounds().equals(topBounds)) {
                 mTop.getControl().setBounds(topBounds);
             }
@@ -266,15 +266,15 @@ public class InstallOptionsRulerComposite extends Composite
                 String property = evt.getPropertyName();
                 if (RulerProvider.PROPERTY_HORIZONTAL_RULER.equals(property)) {
                     setRuler(mViewer.getDialog(),(RulerProvider)mViewer.getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER),
-                        PositionConstants.NORTH);
+                                    PositionConstants.NORTH);
                 }
                 else if (RulerProvider.PROPERTY_VERTICAL_RULER.equals(property)) {
                     setRuler(null, (RulerProvider)mViewer.getProperty(RulerProvider.PROPERTY_VERTICAL_RULER),
-                        PositionConstants.WEST);
+                                    PositionConstants.WEST);
                 }
                 else if (RulerProvider.PROPERTY_RULER_VISIBILITY.equals(property)) {
                     setRulerVisibility(((Boolean)mViewer.getProperty(
-                            RulerProvider.PROPERTY_RULER_VISIBILITY)).booleanValue());
+                                    RulerProvider.PROPERTY_RULER_VISIBILITY)).booleanValue());
                 }
             }
         };
@@ -284,7 +284,7 @@ public class InstallOptionsRulerComposite extends Composite
             setRulerVisibility(rulerVisibility.booleanValue());
         }
         setRuler(mViewer.getDialog(),
-                (RulerProvider)mViewer.getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER), PositionConstants.NORTH);
+                        (RulerProvider)mViewer.getProperty(RulerProvider.PROPERTY_HORIZONTAL_RULER), PositionConstants.NORTH);
         setRuler(null, (RulerProvider)mViewer.getProperty(RulerProvider.PROPERTY_VERTICAL_RULER), PositionConstants.WEST);
     }
 
@@ -342,7 +342,7 @@ public class InstallOptionsRulerComposite extends Composite
     }
 
     private static class RulerBorder
-        extends AbstractBorder
+    extends AbstractBorder
     {
         private static final Insets H_INSETS = new Insets(0, 1, 0, 0);
         private static final Insets V_INSETS = new Insets(1, 0, 0, 0);
@@ -371,13 +371,13 @@ public class InstallOptionsRulerComposite extends Composite
             if (horizontal)
             {
                 graphics.drawLine(figure.getBounds().getTopLeft(),
-                        figure.getBounds().getBottomLeft()
-                        .translate(new org.eclipse.draw2d.geometry.Point(0, -4)));
+                                figure.getBounds().getBottomLeft()
+                                .translate(new org.eclipse.draw2d.geometry.Point(0, -4)));
             }
             else {
                 graphics.drawLine(figure.getBounds().getTopLeft(),
-                        figure.getBounds().getTopRight()
-                        .translate(new org.eclipse.draw2d.geometry.Point(-4, 0)));
+                                figure.getBounds().getTopRight()
+                                .translate(new org.eclipse.draw2d.geometry.Point(-4, 0)));
             }
             graphics.popState();
             graphics.restoreState();
@@ -414,7 +414,7 @@ public class InstallOptionsRulerComposite extends Composite
         @SuppressWarnings({ "restriction", "unchecked" })
         public Handle findHandleAt(org.eclipse.draw2d.geometry.Point p) {
             final GraphicalEditPart gep =
-                    (GraphicalEditPart)findObjectAtExcluding(p, new ArrayList());
+                (GraphicalEditPart)findObjectAtExcluding(p, new ArrayList<Object>());
             if (!(gep instanceof GuideEditPart)) {
                 return null;
             }
@@ -475,16 +475,16 @@ public class InstallOptionsRulerComposite extends Composite
                     // If a guide has focus, delete it
                     if (getFocusEditPart() instanceof GuideEditPart) {
                         RulerEditPart parent =
-                                (RulerEditPart)getFocusEditPart().getParent();
+                            (RulerEditPart)getFocusEditPart().getParent();
                         getViewer().getEditDomain().getCommandStack().execute(
-                                parent.getRulerProvider().getDeleteGuideCommand(
-                                getFocusEditPart().getModel()));
+                                        parent.getRulerProvider().getDeleteGuideCommand(
+                                                        getFocusEditPart().getModel()));
                         event.doit = false;
                         return true;
                     }
                     return false;
-                } else if (((event.stateMask & SWT.ALT) != 0)
-                        && (event.keyCode == SWT.ARROW_UP)) {
+                } else if ((event.stateMask & SWT.ALT) != 0
+                                && event.keyCode == SWT.ARROW_UP) {
                     // ALT + UP_ARROW pressed
                     // If a guide has focus, give focus to the ruler
                     EditPart parent = getFocusEditPart().getParent();

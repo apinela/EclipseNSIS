@@ -77,13 +77,13 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             mAllKeywordsSet = new CaseInsensitiveSet();
             mListeners = new ArrayList<INSISKeywordsListener>();
             mNSISHomeListener  = new INSISHomeListener() {
-                public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+                public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome)
                 {
                     loadKeywords(monitor);
                 }
             };
             loadKeywords(monitor);
-            NSISPreferences.INSTANCE.addListener(mNSISHomeListener);
+            NSISPreferences.getInstance().addListener(mNSISHomeListener);
             cInstance = this;
         }
     }
@@ -97,7 +97,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
     {
         if (cInstance == this) {
             cInstance = null;
-            NSISPreferences.INSTANCE.removeListener(mNSISHomeListener);
+            NSISPreferences.getInstance().removeListener(mNSISHomeListener);
             mKeywordGroupsMap = null;
             mNewerKeywordsMap = null;
             mAllKeywordsSet = null;
@@ -117,7 +117,7 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             mAllKeywordsSet.clear();
 
             ResourceBundle bundle;
-            Version nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
+            Version nsisVersion = NSISPreferences.getInstance().getNSISVersion();
             try {
                 bundle = ResourceBundle.getBundle(NSISKeywords.class.getName());
             } catch (MissingResourceException x) {
@@ -365,8 +365,8 @@ public class NSISKeywords implements INSISConstants, IEclipseNSISService
             mKeywordGroupsMap.put(STRING_CONSTANTS,temp);
 
             set = new CaseInsensitiveSet();
-            if(!Common.isEmpty(NSISPreferences.INSTANCE.getNSISHome())) {
-                Set<Object> keySet = NSISPreferences.INSTANCE.getNSISDefinedSymbols().keySet();
+            if(NSISPreferences.getInstance().getNSISHome() != null) {
+                Set<Object> keySet = NSISPreferences.getInstance().getNSISHome().getNSISExe().getDefinedSymbols().keySet();
                 StringBuffer buf = new StringBuffer("${"); //$NON-NLS-1$
                 for (Iterator<Object> iter = keySet.iterator(); iter.hasNext();) {
                     set.add(buf.append(String.valueOf(iter.next())).append("}").toString()); //$NON-NLS-1$

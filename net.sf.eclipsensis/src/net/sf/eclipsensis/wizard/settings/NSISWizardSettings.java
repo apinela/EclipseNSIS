@@ -180,7 +180,7 @@ public class NSISWizardSettings extends AbstractNodeConvertible implements INSIS
     public NSISWizardSettings(boolean empty)
     {
         super();
-        setInstallerType(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_34) >= 0 ?
+        setInstallerType(NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_34) >= 0 ?
                             INSTALLER_TYPE_MUI2 :
                             INSTALLER_TYPE_MUI);
         if(!empty) {

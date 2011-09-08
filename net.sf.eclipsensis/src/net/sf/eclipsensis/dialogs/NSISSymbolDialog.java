@@ -39,7 +39,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
         mValue = value;
         setHelpAvailable(false);
         setTitle(EclipseNSISPlugin.getResourceString((Common.isEmpty(mName)?"add.symbol.dialog.title": //$NON-NLS-1$
-                                                                            "edit.symbol.dialog.title"))); //$NON-NLS-1$
+        "edit.symbol.dialog.title"))); //$NON-NLS-1$
     }
 
     public NSISSymbolDialog(Shell parentShell)
@@ -68,7 +68,7 @@ public class NSISSymbolDialog extends StatusMessageDialog
         composite.setLayout(layout);
 
         mNameText = createText(composite, EclipseNSISPlugin.getResourceString("symbols.name.text"), //$NON-NLS-1$
-                               EclipseNSISPlugin.getResourceString("symbols.name.tooltip"),mName); //$NON-NLS-1$
+                        EclipseNSISPlugin.getResourceString("symbols.name.tooltip"),mName); //$NON-NLS-1$
 
         mNameText.addVerifyListener(new VerifyListener() {
             public void verifyText(VerifyEvent e)
@@ -94,10 +94,10 @@ public class NSISSymbolDialog extends StatusMessageDialog
         mNameText.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
 
         mValueText = createText(composite, EclipseNSISPlugin.getResourceString("symbols.value.text"), //$NON-NLS-1$
-                               EclipseNSISPlugin.getResourceString("symbols.value.tooltip"),mValue); //$NON-NLS-1$
+                        EclipseNSISPlugin.getResourceString("symbols.value.tooltip"),mValue); //$NON-NLS-1$
         int textLimit;
         try {
-            textLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+            textLimit = Integer.parseInt(NSISPreferences.getInstance().getNSISHome().getNSISExe().getDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
         catch(Exception ex){
             textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
@@ -148,8 +148,8 @@ public class NSISSymbolDialog extends StatusMessageDialog
         mName = mNameText.getText();
         if(!Common.isEmptyCollection(mExistingSymbols) && mExistingSymbols.contains(mName)) {
             if(!Common.openConfirm(getShell(), EclipseNSISPlugin.getFormattedString("symbol.overwrite.confirm", //$NON-NLS-1$
-                                                                  new String[]{mName}),
-                                   EclipseNSISPlugin.getShellImage())) {
+                            new String[]{mName}),
+                            EclipseNSISPlugin.getShellImage())) {
                 return;
             }
         }

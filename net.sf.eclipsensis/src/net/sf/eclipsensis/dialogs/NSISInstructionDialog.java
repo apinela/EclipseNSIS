@@ -35,7 +35,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
         mInstruction = instruction;
         setHelpAvailable(false);
         setTitle(EclipseNSISPlugin.getResourceString((Common.isEmpty(mInstruction)?"add.instruction.dialog.title": //$NON-NLS-1$
-                                                                                   "edit.instruction.dialog.title"))); //$NON-NLS-1$
+        "edit.instruction.dialog.title"))); //$NON-NLS-1$
     }
 
     public NSISInstructionDialog(Shell parentShell)
@@ -67,11 +67,11 @@ public class NSISInstructionDialog extends StatusMessageDialog
         }
 
         mInstructionCombo = createCombo(composite, EclipseNSISPlugin.getResourceString("instructions.instruction.text"), //$NON-NLS-1$
-                                        EclipseNSISPlugin.getResourceString("instructions.instruction.tooltip"), //$NON-NLS-1$
-                                        instruction);
+                        EclipseNSISPlugin.getResourceString("instructions.instruction.tooltip"), //$NON-NLS-1$
+                        instruction);
         int textLimit;
         try {
-            textLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+            textLimit = Integer.parseInt(NSISPreferences.getInstance().getNSISHome().getNSISExe().getDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
         catch(Exception ex){
             textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
@@ -85,7 +85,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
                     StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
                     int pos = mInstructionCombo.getSelection().x;
                     for (int i = 0; i < chars.length; i++) {
-                        if(Character.isLetterOrDigit(chars[i]) || (i==0 && chars[i]=='!')) {
+                        if(Character.isLetterOrDigit(chars[i]) || i==0 && chars[i]=='!') {
                             buf.append(chars[i]);
                         }
                         else {
@@ -105,7 +105,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
         });
 
         mParametersText = createText(composite, EclipseNSISPlugin.getResourceString("instructions.parameters.text"), //$NON-NLS-1$
-                                     EclipseNSISPlugin.getResourceString("instructions.parameters.tooltip"),parameters); //$NON-NLS-1$
+                        EclipseNSISPlugin.getResourceString("instructions.parameters.tooltip"),parameters); //$NON-NLS-1$
         mParametersText.setTextLimit(INSISConstants.DIALOG_TEXT_LIMIT);
         return composite;
     }
@@ -129,7 +129,7 @@ public class NSISInstructionDialog extends StatusMessageDialog
     }
 
     protected Combo createCombo(Composite composite, String text, String tooltipText,
-                                String value)
+                    String value)
     {
         Label label = new Label(composite, SWT.LEFT);
         label.setText(text);

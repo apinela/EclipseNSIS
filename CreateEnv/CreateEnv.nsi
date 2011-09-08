@@ -1,7 +1,7 @@
 ###############################################################################
 # Copyright (c) 2004-2009 Sunil Kamath (IcemanK).
-# All rights reserved. 
-# This program is made available under the terms of the Common Public License 
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
 #
 # Contributors:
@@ -28,53 +28,31 @@ Section
     Push $R2
     FileOpen $R1 env.bat w
 
-;Find the JAVA_HOME
-;
-;Sun
-    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\JavaSoft\Java Development Kit\1.4" JavaHome
-    StrCmp $R0 "" ibmsdk
-    StrCpy $R2 "Sun"
-    GoTo javahome
-
-;IBM
-ibmsdk:
-    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\IBM\Java Development Kit\1.4" JavaHome
-    StrCmp $R0 "" jrockit
-    StrCpy $R2 "IBM"
-    GoTo javahome
-
-;BEA JRockit
-jrockit:
-    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\JRockit\Java Development Kit\1.4" JavaHome
-    StrCmp $R0 "" dotnet
-    StrCpy $R2 "BEA JRockit"
-
-javahome:
+;jdk
+    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\JavaSoft\Java Development Kit\1.5" JavaHome
 !insertmacro STRIP_TRAILING_SLASH $R0
     Pop $R0
-    FileWrite $R1 "rem *******$\r$\n"
-    FileWrite $R1 "rem $R2 JDK 1.4$\r$\n"
-    FileWrite $R1 "rem *******$\r$\n"
+    FileWrite $R1 "rem *********$\r$\n"
+    FileWrite $R1 "rem Sun JDK 5$\r$\n"
+    FileWrite $R1 "rem *********$\r$\n"
     FileWrite $R1 "set JAVA_HOME=$R0$\r$\n"
     FileWrite $R1 "set INCLUDE=%JAVA_HOME%\include;%JAVA_HOME%\include\win32;%INCLUDE%$\r$\n"
     FileWrite $R1 "set LIB=%JAVA_HOME%\lib;%LIB%$\r$\n"
     FileWrite $R1 "$\r$\n"
 
-;msvc:
-    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\DevStudio\6.0\Products\Microsoft Visual C++" ProductDir
-    StrCmp $R0 "" 0 +3
-    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\VisualStudio\6.0\Setup\Microsoft Visual C++" ProductDir
-    StrCmp $R0 "" dotnet
+;ms vc++ 2005:
+    ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\VisualStudio\8.0\Setup\VC" ProductDir
+    StrCmp $R0 "" vcexp
 !insertmacro STRIP_TRAILING_SLASH $R0
     Pop $R0
-    FileWrite $R1 "rem ************************$\r$\n"
-    FileWrite $R1 "rem Microsoft Visual C++ 6.0$\r$\n"
-    FileWrite $R1 "rem ************************$\r$\n"
-    FileWrite $R1 "call $\"$R0\Bin\vcvars32.bat$\"$\r$\n"
+    FileWrite $R1 "rem ********************************$\r$\n"
+    FileWrite $R1 "rem Microsoft Studio 2005 Visual C++$\r$\n"
+    FileWrite $R1 "rem ********************************$\r$\n"
+    FileWrite $R1 "set VCVARS_BAT=$R0\Bin\vcvarsall.bat$\r$\n"
     FileWrite $R1 "$\r$\n"
     goto psdk
 
-dotnet:
+vcexp:
     ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\.NETFramework" sdkInstallRootv1.1
     StrCmp $R0 "" psdk
 !insertmacro STRIP_TRAILING_SLASH $R0

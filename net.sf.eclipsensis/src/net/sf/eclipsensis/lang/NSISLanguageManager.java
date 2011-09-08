@@ -64,7 +64,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                 ResourceBundle bundle = ResourceBundle
                 .getBundle(NSISLanguageManager.class.getName());
                 mLocaleLanguageMap = Common.loadMapProperty(bundle,
-                                "locale.language.map"); //$NON-NLS-1$
+                "locale.language.map"); //$NON-NLS-1$
                 mLanguageIdLocaleMap = Common.loadMapProperty(bundle,
                 "langid.locale.map"); //$NON-NLS-1$
                 mDefaultLanguageId = Integer.valueOf(bundle
@@ -74,7 +74,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                 mDefaultLanguageId = new Integer(1033);
             }
             loadLanguages(monitor);
-            NSISPreferences.INSTANCE.addListener(this);
+            NSISPreferences.getInstance().addListener(this);
             cInstance = this;
         }
     }
@@ -83,7 +83,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
     {
         if (cInstance == this) {
             cInstance = null;
-            NSISPreferences.INSTANCE.removeListener(this);
+            NSISPreferences.getInstance().removeListener(this);
             mDefineMUILangNamePattern = null;
             mInsertMacroLangFilePattern = null;
             mLanguageMap = null;
@@ -95,7 +95,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
         }
     }
 
-    public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+    public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome)
     {
         loadLanguages(monitor);
     }
@@ -122,10 +122,10 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
             mLangDir = null;
             mMuiLangDir = null;
             if(EclipseNSISPlugin.getDefault().isConfigured()) {
-                File nsisHome = new File(NSISPreferences.INSTANCE.getNSISHome());
+                File nsisHome = NSISPreferences.getInstance().getNSISHome().getLocation();
                 if(nsisHome.exists()) {
                     mLangDir = new File(nsisHome,INSISConstants.LANGUAGE_FILES_LOCATION);
-                    mMuiLangDir = new File(nsisHome,NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_30)>=0?
+                    mMuiLangDir = new File(nsisHome,NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_30)>=0?
                                     INSISConstants.LANGUAGE_FILES_LOCATION:INSISConstants.MUI_LANGUAGE_FILES_LOCATION);
                     if(mLangDir.exists()) {
                         File[] langFiles = mLangDir.listFiles(new FileFilter() {
@@ -245,7 +245,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
                                 if (m >= 0) {
                                     line = line.substring(0, m).trim();
                                 }
-                                if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_30) >= 0) {
+                                if(NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_30) >= 0) {
                                     Matcher matcher = mInsertMacroLangFilePattern.matcher(line);
                                     if (matcher.matches()) {
                                         displayName = Common.maybeUnquote(matcher.group(3));
@@ -288,7 +288,7 @@ public class NSISLanguageManager implements INSISHomeListener, IEclipseNSISServi
     {
         NSISLanguage lang = null;
         //Try the user's lang id
-        Version version = NSISPreferences.INSTANCE.getNSISVersion();
+        Version version = NSISPreferences.getInstance().getNSISVersion();
         int langId;
         if(version.compareTo(INSISVersions.VERSION_2_13) >= 0) {
             langId = WinAPI.INSTANCE.getUserDefaultUILanguage();

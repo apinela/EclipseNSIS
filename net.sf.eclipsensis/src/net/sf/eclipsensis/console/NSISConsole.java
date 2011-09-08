@@ -91,7 +91,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
         mOffset = getDocument().getLength();
         mPreferenceStore = EclipseNSISPlugin.getDefault().getPreferenceStore();
         mConsoleManager = ConsolePlugin.getDefault().getConsoleManager();
-        mAutoShowLevel = NSISPreferences.INSTANCE.getAutoShowConsole();
+        mAutoShowLevel = NSISPreferences.getInstance().getAutoShowConsole();
         mPartitioner = new NSISConsolePartitioner(this);
         mPartitioner.connect(getDocument());
         mPreferenceStore.addPropertyChangeListener(this);
@@ -286,7 +286,7 @@ public class NSISConsole extends TextConsole implements INSISConsole, IPropertyC
             }
         }
         if (property.equals(AUTO_SHOW_CONSOLE)) {
-            mAutoShowLevel = NSISPreferences.INSTANCE.getAutoShowConsole();
+            mAutoShowLevel = NSISPreferences.getInstance().getAutoShowConsole();
         }
     }
 

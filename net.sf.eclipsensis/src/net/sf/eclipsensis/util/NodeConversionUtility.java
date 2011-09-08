@@ -20,14 +20,14 @@ public class NodeConversionUtility
     }
 
     @SuppressWarnings("unchecked")
-    public static final Object readArrayNode(Node node, Class<?> clasz)
+    public static final <S,T> T readArrayNode(Node node, Class<T> clasz)
     {
         if (clasz.isArray())
         {
-            Class clasz2 = clasz.getComponentType();
-            INodeConverter nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz2);
+            Class<S> clasz2 = (Class<S>) clasz.getComponentType();
+            INodeConverter<? super S> nodeConverter = NodeConverterFactory.INSTANCE.getNodeConverter(clasz2);
             Node[] children = XMLUtil.findChildren(node);
-            Object array = Array.newInstance(clasz2, children.length);
+            T array = (T) Array.newInstance(clasz2, children.length);
             for (int i = 0; i < children.length; i++)
             {
                 Array.set(array, i, readComponentNode(children[i], nodeConverter, clasz2));
@@ -38,7 +38,7 @@ public class NodeConversionUtility
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T readComponentNode(Node node, INodeConverter<T> nodeConverter, Class<T> clasz)
+    private static <T> T readComponentNode(Node node, INodeConverter<T> nodeConverter, Class<? extends T> clasz)
     {
         if (!AbstractNodeConvertible.NULL_NODE.equals(node.getNodeName()))
         {
@@ -83,7 +83,7 @@ public class NodeConversionUtility
     }
 
     @SuppressWarnings("unchecked")
-    public static final <T extends Collection> T readCollectionNode(Node node, Class<T> clasz)
+    public static final <T extends Collection<Object>> T readCollectionNode(Node node, Class<T> clasz)
     {
         T collection = null;
         if (!Modifier.isAbstract(clasz.getModifiers()))

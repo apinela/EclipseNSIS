@@ -105,7 +105,7 @@ public class InstallOptionsBuilder extends IncrementalProjectBuilder implements 
         final IModelListener modelListener = new IModelListener(){
             public void modelChanged()
             {
-                Version v = NSISPreferences.INSTANCE.getNSISVersion();
+                Version v = NSISPreferences.getInstance().getNSISVersion();
                 String nsisVersion = v == null? null : v.toString();
                 if(!Common.stringsAreEqual(nsisVersion, mNSISVersion)) {
                     resetNSISVersion(nsisVersion);

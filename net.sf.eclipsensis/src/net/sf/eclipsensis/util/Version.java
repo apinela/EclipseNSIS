@@ -45,7 +45,7 @@ public class Version extends AbstractNodeConvertible implements Comparable<Versi
 
     public Version(String version, String separators)
     {
-        mDisplayText = (Common.isEmpty(version)?"0.0":version); //$NON-NLS-1$
+        mDisplayText = Common.isEmpty(version)?"0.0":version; //$NON-NLS-1$
         parse(separators);
     }
 
@@ -57,31 +57,31 @@ public class Version extends AbstractNodeConvertible implements Comparable<Versi
         Arrays.fill(mNumbers,0);
         for(int i=0; i<mNumbers.length; i++) {
             outer: {
-                String token = st.nextToken();
-                char[] chars = token.toCharArray();
-                for (int j = 0; j < chars.length; j++) {
-                    if(!Character.isDigit(chars[j])) {
-                        mNumbers[i] = (j>0?Integer.parseInt(token.substring(0,j)):0);
-                        mQualifiers[i] = token.substring(j);
-                        break outer;
-                    }
+            String token = st.nextToken();
+            char[] chars = token.toCharArray();
+            for (int j = 0; j < chars.length; j++) {
+                if(!Character.isDigit(chars[j])) {
+                    mNumbers[i] = j>0?Integer.parseInt(token.substring(0,j)):0;
+                    mQualifiers[i] = token.substring(j);
+                    break outer;
                 }
-                mNumbers[i] = Integer.parseInt(token);
-                mQualifiers[i] = null;
             }
+            mNumbers[i] = Integer.parseInt(token);
+            mQualifiers[i] = null;
+        }
         }
     }
 
     public Version(Version version)
     {
-       this(version, null);
+        this(version, null);
     }
 
     public Version(Version version, String displayText)
     {
-        mNumbers = (version.mNumbers == null?null:(int[])version.mNumbers.clone());
-        mQualifiers = (version.mQualifiers == null?null:(String[])version.mQualifiers.clone());
-        mDisplayText = (displayText==null?version.mDisplayText:displayText);
+        mNumbers = version.mNumbers == null?null:(int[])version.mNumbers.clone();
+        mQualifiers = version.mQualifiers == null?null:(String[])version.mQualifiers.clone();
+        mDisplayText = displayText==null?version.mDisplayText:displayText;
     }
 
     @Override
@@ -157,12 +157,12 @@ public class Version extends AbstractNodeConvertible implements Comparable<Versi
         if(!equals(v)) {
             int max = Math.max(mNumbers.length,v.mNumbers.length);
             for(int i=0; i<max; i++) {
-                int n1 = (i >= mNumbers.length?0:mNumbers[i]);
-                int n2 = (i >= v.mNumbers.length?0:v.mNumbers[i]);
+                int n1 = i >= mNumbers.length?0:mNumbers[i];
+                int n2 = i >= v.mNumbers.length?0:v.mNumbers[i];
                 int diff = n1 - n2;
                 if(diff == 0) {
-                    String q1 = (i >= mQualifiers.length?null:mQualifiers[i]);
-                    String q2 = (i >= v.mQualifiers.length?null:v.mQualifiers[i]);
+                    String q1 = i >= mQualifiers.length?null:mQualifiers[i];
+                    String q2 = i >= v.mQualifiers.length?null:v.mQualifiers[i];
                     if(q1 != null && q2 == null) {
                         return -1;
                     }
@@ -230,10 +230,10 @@ public class Version extends AbstractNodeConvertible implements Comparable<Versi
                     if (nameNode != null) {
                         String propertyName = nameNode.getNodeValue();
                         if(NUMBERS_ATTRIBUTE.equals(propertyName)) {
-                            mNumbers = (int[])NodeConversionUtility.readArrayNode(childNode, int[].class);
+                            mNumbers = NodeConversionUtility.readArrayNode(childNode, int[].class);
                         }
                         else if(QUALIFIERS_ATTRIBUTE.equals(propertyName)) {
-                            mQualifiers = (String[])NodeConversionUtility.readArrayNode(childNode, String[].class);
+                            mQualifiers = NodeConversionUtility.readArrayNode(childNode, String[].class);
                         }
                         else if(DISPLAY_TEXT_ATTRIBUTE.equals(propertyName)) {
                             mDisplayText = (String)getNodeValue(childNode, propertyName, String.class);

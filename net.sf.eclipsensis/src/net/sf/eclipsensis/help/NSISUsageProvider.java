@@ -37,14 +37,14 @@ public class NSISUsageProvider implements IEclipseNSISService
         if (cInstance == null) {
             mUsages = new CaseInsensitiveMap<String>();
             mNSISHomeListener = new INSISHomeListener() {
-                public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+                public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome)
                 {
                     loadUsages(monitor);
                 }
             };
             mLineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
             loadUsages(monitor);
-            NSISPreferences.INSTANCE.addListener(mNSISHomeListener);
+            NSISPreferences.getInstance().addListener(mNSISHomeListener);
             cInstance = this;
         }
     }
@@ -58,7 +58,7 @@ public class NSISUsageProvider implements IEclipseNSISService
     {
         if (cInstance == this) {
             cInstance = null;
-            NSISPreferences.INSTANCE.removeListener(mNSISHomeListener);
+            NSISPreferences.getInstance().removeListener(mNSISHomeListener);
             mUsages = null;
             mNSISHomeListener = null;
             mLineSeparator = null;
@@ -83,7 +83,8 @@ public class NSISUsageProvider implements IEclipseNSISService
                 monitor.subTask(EclipseNSISPlugin.getResourceString("loading.cmdhelp.message")); //$NON-NLS-1$
             }
             mUsages.clear();
-            NSISExe exe = NSISPreferences.INSTANCE.getNSISExe();
+            NSISHome home = NSISPreferences.getInstance().getNSISHome();
+            NSISExe exe = home==null?null:home.getNSISExe();
             if(exe != null && exe.getFile() != null && exe.getFile().exists()) {
                 long exeTimeStamp = exe.getFile().lastModified();
 
@@ -96,9 +97,9 @@ public class NSISUsageProvider implements IEclipseNSISService
 
                 if(exeTimeStamp != cacheTimeStamp) {
                     String[] output = MakeNSISRunner.runProcessWithOutput(exe.getFile().getAbsolutePath(),new String[]{
-                                                                          MakeNSISRunner.MAKENSIS_VERBOSITY_OPTION+"1", //$NON-NLS-1$
-                                                                          MakeNSISRunner.MAKENSIS_CMDHELP_OPTION},
-                                                                          null,1);
+                        MakeNSISRunner.MAKENSIS_VERBOSITY_OPTION+"1", //$NON-NLS-1$
+                        MakeNSISRunner.MAKENSIS_CMDHELP_OPTION},
+                        null,1);
 
                     if(!Common.isEmptyArray(output)) {
                         StringBuffer buf = null;
@@ -149,7 +150,7 @@ public class NSISUsageProvider implements IEclipseNSISService
     private void setUsage(String usage)
     {
         int n = usage.indexOf(" "); //$NON-NLS-1$
-        String keyword = (n > 0?usage.substring(0,n):usage);
+        String keyword = n > 0?usage.substring(0,n):usage;
         mUsages.put(keyword,usage);
     }
 }

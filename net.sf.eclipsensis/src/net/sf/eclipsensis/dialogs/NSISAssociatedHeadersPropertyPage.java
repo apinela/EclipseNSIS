@@ -186,7 +186,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
 
         mReassociateHeaderWarning = new Button(c,SWT.CHECK);
         mReassociateHeaderWarning.setLayoutData(new GridData(SWT.FILL,SWT.TOP,false,false));
-        mReassociateHeaderWarning.setSelection(NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(INSISPreferenceConstants.WARN_REASSOCIATE_HEADER));
+        mReassociateHeaderWarning.setSelection(NSISPreferences.getInstance().getPreferenceStore().getBoolean(INSISPreferenceConstants.WARN_REASSOCIATE_HEADER));
         l = new Label(c,SWT.WRAP);
         l.setText(EclipseNSISPlugin.getResourceString("show.associated.header.warning.label")); //$NON-NLS-1$
         l.setLayoutData(new GridData(SWT.LEFT,SWT.TOP,true,false));
@@ -225,7 +225,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
             mViewer.refresh(false);
         }
         if(mReassociateHeaderWarning != null) {
-            mReassociateHeaderWarning.setSelection(NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(INSISPreferenceConstants.WARN_REASSOCIATE_HEADER));
+            mReassociateHeaderWarning.setSelection(NSISPreferences.getInstance().getPreferenceStore().getBoolean(INSISPreferenceConstants.WARN_REASSOCIATE_HEADER));
         }
     }
 
@@ -255,7 +255,7 @@ public class NSISAssociatedHeadersPropertyPage extends NSISSettingsEditorPage
         for (Iterator<IFile> iter = addedHeaders.iterator(); iter.hasNext();) {
             mHeaderAssociationManager.associateWithScript(iter.next(), file);
         }
-        NSISPreferences.INSTANCE.getPreferenceStore().setValue(INSISPreferenceConstants.WARN_REASSOCIATE_HEADER, mReassociateHeaderWarning.getSelection());
+        NSISPreferences.getInstance().getPreferenceStore().setValue(INSISPreferenceConstants.WARN_REASSOCIATE_HEADER, mReassociateHeaderWarning.getSelection());
         return true;
     }
 }

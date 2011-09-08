@@ -225,7 +225,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
     private void writeScript()
     {
         String defaultTaskTag = ""; //$NON-NLS-1$
-        Collection<NSISTaskTag> taskTags = NSISPreferences.INSTANCE.getTaskTags();
+        Collection<NSISTaskTag> taskTags = NSISPreferences.getInstance().getTaskTags();
         for (Iterator<NSISTaskTag> iter = taskTags.iterator(); iter.hasNext();) {
             NSISTaskTag taskTag = iter.next();
             if(taskTag.isDefault()) {
@@ -731,14 +731,14 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
             }
             if(mSettings.isEnableLanguageSupport() && mSettings.isSelectLanguage() && languages.size() > 1) {
                 if(mIsMUI) {
-                    if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 &&
+                    if(NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 &&
                        !mSettings.isDisplaySupportedLanguages()) {
                         mOnInitFunction.addElement(new NSISScriptDefine("MUI_LANGDLL_ALLLANGUAGES")); //$NON-NLS-1$
                     }
                     mOnInitFunction.addElement(new NSISScriptInsertMacro("MUI_LANGDLL_DISPLAY")); //$NON-NLS-1$
                 }
                 else {
-                    boolean useCodePage = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 &&
+                    boolean useCodePage = NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0 &&
                                               mSettings.isDisplaySupportedLanguages();
                     mOnInitFunction.addElement(new NSISScriptInstruction("Push","")); //$NON-NLS-1$ //$NON-NLS-2$
                     for (Iterator<NSISLanguage> iter = languages.iterator(); iter.hasNext();) {
@@ -1466,7 +1466,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                                 libType = "REGDLLTLB"; //$NON-NLS-1$
                                 break;
                             case LIBTYPE_REGEXE:
-                                if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_42) >= 0) {
+                                if(NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_42) >= 0) {
                                     libType = "REGEXE"; //$NON-NLS-1$
                                     break;
                                 }
@@ -1504,7 +1504,7 @@ public class NSISWizardScriptGenerator implements INSISWizardConstants
                         if(library.isUnloadLibraries()) {
                             section.addElement(new NSISScriptDefine("LIBRARY_COM")); //$NON-NLS-1$
                         }
-                        boolean flag = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
+                        boolean flag = NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
                         if(flag) {
                             if(library.isX64()) {
                                 section.addElement(new NSISScriptDefine("LIBRARY_X64")); //$NON-NLS-1$

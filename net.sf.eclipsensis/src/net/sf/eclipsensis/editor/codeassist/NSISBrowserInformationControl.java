@@ -38,7 +38,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
 public class NSISBrowserInformationControl implements IInformationControl, IInformationControlExtension,
-        IInformationControlExtension2, IInformationControlExtension3, DisposeListener
+IInformationControlExtension2, IInformationControlExtension3, DisposeListener
 {
     private static final int BORDER = 1;
     private static final int MAX_WIDTH = 500;
@@ -149,7 +149,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                 try
                 {
                     statusText = NSISInformationUtility.buildStatusText(command.getCommand().getDescription(),
-                            list.toArray(new KeySequence[list.size()]));
+                                    list.toArray(new KeySequence[list.size()]));
                 }
                 catch (Exception e)
                 {
@@ -246,8 +246,8 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
     private void createToolBar(Composite displayArea, boolean helpAvailable)
     {
         if (isValid(NSISBrowserUtility.BACK_IMAGE) && isValid(NSISBrowserUtility.DISABLED_BACK_IMAGE)
-                && isValid(NSISBrowserUtility.FORWARD_IMAGE) && isValid(NSISBrowserUtility.DISABLED_FORWARD_IMAGE)
-                && isValid(NSISBrowserUtility.HOME_IMAGE))
+                        && isValid(NSISBrowserUtility.FORWARD_IMAGE) && isValid(NSISBrowserUtility.DISABLED_FORWARD_IMAGE)
+                        && isValid(NSISBrowserUtility.HOME_IMAGE))
         {
             mToolBar = new ToolBar(displayArea, SWT.FLAT);
             GridData data = new GridData(SWT.LEFT, SWT.FILL, true, false);
@@ -425,7 +425,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
         else if (input instanceof INSISKeywordInformation)
         {
             setInput(new NSISBrowserInformationProvider()
-                    .getInformation(((INSISKeywordInformation) input).getKeyword()));
+            .getInformation(((INSISKeywordInformation) input).getKeyword()));
         }
         else if (input instanceof INSISInformation)
         {
@@ -571,7 +571,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
     public void setSize(int width, int height)
     {
         mShell.setSize(Math.max(MIN_WIDTH, Math.min(width, mMaxWidth)), Math.max(MIN_HEIGHT, Math.min(height,
-                mMaxHeight)));
+                        mMaxHeight)));
     }
 
     public void setLocation(Point location)
@@ -725,7 +725,12 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
             }
             else
             {
-                String home = NSISPreferences.INSTANCE.getNSISHome();
+                String home = "";
+                NSISPreferences prefs = NSISPreferences.getInstance();
+                if(prefs.getNSISHome() != null)
+                {
+                    home = prefs.getNSISHome().getLocation().getAbsolutePath();
+                }
                 if (home != null)
                 {
                     try
@@ -734,7 +739,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
                         {
                             String ext = IOUtility.getFileExtension(f);
                             if (NSISBrowserUtility.HTML_EXTENSIONS != null
-                                    && NSISBrowserUtility.HTML_EXTENSIONS.contains(ext))
+                                            && NSISBrowserUtility.HTML_EXTENSIONS.contains(ext))
                             {
                                 NSISHTMLHelp.showHelp(IOUtility.getFileURLString(f));
                                 return;
@@ -791,7 +796,7 @@ public class NSISBrowserInformationControl implements IInformationControl, IInfo
             try
             {
                 IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), editorInput,
-                        descriptor.getId());
+                                descriptor.getId());
                 return true;
             }
             catch (PartInitException e)

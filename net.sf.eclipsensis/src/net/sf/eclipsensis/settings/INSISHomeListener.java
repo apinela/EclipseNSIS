@@ -13,5 +13,5 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public interface INSISHomeListener
 {
-    public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome);
+    public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome);
 }

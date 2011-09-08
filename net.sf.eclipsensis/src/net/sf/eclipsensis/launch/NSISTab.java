@@ -29,7 +29,7 @@ abstract class NSISTab extends AbstractLaunchConfigurationTab implements INSISSe
 
     public NSISTab()
     {
-        mSettings = new NSISLaunchSettings(NSISPreferences.INSTANCE,null,createSettingsFilter());
+        mSettings = new NSISLaunchSettings(NSISPreferences.getInstance(),null,createSettingsFilter());
         mPage = createPage();
     }
 

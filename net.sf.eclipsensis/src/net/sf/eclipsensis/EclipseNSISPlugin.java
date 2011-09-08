@@ -137,7 +137,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         if(!isConfigured()) {
             // First try autoconfigure
-            NSISPreferences.INSTANCE.setNSISHome(NSISValidator.getRegistryNSISHome());
+            NSISPreferences.getInstance().setNSISHome(NSISValidator.getRegistryNSISHome());
             if(!isConfigured()) {
                 final IWorkbenchWindow wwindow = getWorkbench().getActiveWorkbenchWindow();
                 final Runnable configOp = new Runnable() {
@@ -202,7 +202,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
                 }
             }
             else {
-                NSISPreferences.INSTANCE.store();
+                NSISPreferences.getInstance().store();
             }
         }
 
@@ -624,7 +624,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
     {
         if (mTemplateStore == null) {
             mTemplateStore= new ContributionTemplateStore(getContextTypeRegistry(),
-                            NSISPreferences.INSTANCE.getPreferenceStore(),
+                            NSISPreferences.getInstance().getPreferenceStore(),
                             INSISEditorPreferenceConstants.CUSTOM_TEMPLATES);
             try {
                 mTemplateStore.load();
@@ -678,7 +678,7 @@ public class EclipseNSISPlugin extends AbstractUIPlugin implements INSISConstant
 
     public boolean isConfigured()
     {
-        return NSISPreferences.INSTANCE.getNSISExePath() != null;
+        return NSISPreferences.getInstance().getNSISHome() != null;
     }
 
     public void log(Throwable t)

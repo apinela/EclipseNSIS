@@ -109,7 +109,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     {
         super();
         setDescription(EclipseNSISPlugin.getResourceString("editor.preferences.description")); //$NON-NLS-1$
-        setPreferenceStore(NSISPreferences.INSTANCE.getPreferenceStore());
+        setPreferenceStore(NSISPreferences.getInstance().getPreferenceStore());
         mPreferenceStore= new PreferenceStoreWrapper(getPreferenceStore());
         mPreferenceStore.load(cPreferenceKeys);
     }
@@ -397,7 +397,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
 
         initializeFields();
         mFileAssociationButton.setSelection(FileAssociationChecker.getFileAssociationChecking(FILE_ASSOCIATION_ID));
-        mDropExternalFilesCombo.select(NSISPreferences.INSTANCE.getPreferenceStore().getInt(DROP_EXTERNAL_FILES_ACTION));
+        mDropExternalFilesCombo.select(NSISPreferences.getInstance().getPreferenceStore().getInt(DROP_EXTERNAL_FILES_ACTION));
         for (int i= 0; i < cSyntaxStyleListModel.length; i++) {
             mSyntaxStyleList.add(cSyntaxStyleListModel[i][0]);
         }
@@ -431,7 +431,7 @@ public class NSISEditorPreferencePage extends PreferencePage implements IWorkben
     public boolean performOk() {
         mPreferenceStore.update();
         NSISEditorUtilities.updatePresentations();
-        NSISPreferences.INSTANCE.getPreferenceStore().setValue(DROP_EXTERNAL_FILES_ACTION,mDropExternalFilesCombo.getSelectionIndex());
+        NSISPreferences.getInstance().getPreferenceStore().setValue(DROP_EXTERNAL_FILES_ACTION,mDropExternalFilesCombo.getSelectionIndex());
         FileAssociationChecker.setFileAssociationChecking(FILE_ASSOCIATION_ID, mFileAssociationButton.getSelection());
         return super.performOk();
     }

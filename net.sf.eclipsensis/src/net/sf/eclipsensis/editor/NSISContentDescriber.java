@@ -22,7 +22,7 @@ public class NSISContentDescriber implements ITextContentDescriber
             return INDETERMINATE;
         }
         byte[] bom = getByteOrderMark(contents);
-        boolean unicodeSupported = NSISPreferences.INSTANCE.isUnicode();
+        boolean unicodeSupported = NSISPreferences.getInstance().isUnicode();
         if (bom != null)
         {
             description.setProperty(IContentDescription.BYTE_ORDER_MARK, bom);

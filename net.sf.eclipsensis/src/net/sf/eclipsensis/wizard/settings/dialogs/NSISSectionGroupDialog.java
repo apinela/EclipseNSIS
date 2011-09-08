@@ -76,7 +76,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
         composite.setLayout(layout);
 
         final Text t = NSISWizardDialogUtil.createText(composite,mStore.getString("caption"), //$NON-NLS-1$
-                            "wizard.caption.label",true,null,true); //$NON-NLS-1$
+                        "wizard.caption.label",true,null,true); //$NON-NLS-1$
         t.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e)
             {
@@ -93,8 +93,8 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
                 text = buf.toString();
                 if(text.length() > 0) {
                     char c = text.charAt(0);
-                    if((text.length()>=3 && text.substring(0,3).equalsIgnoreCase("un.")) || //$NON-NLS-1$
-                        Character.isWhitespace(c) || c == '!') {
+                    if(text.length()>=3 && text.substring(0,3).equalsIgnoreCase("un.") || //$NON-NLS-1$
+                                    Character.isWhitespace(c) || c == '!') {
                         e.display.beep();
                         e.doit = false;
                         return;
@@ -103,7 +103,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
             }
         });
         if(mWizard.getSettings().getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_MUI ||
-           mWizard.getSettings().getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_MUI2) {
+                        mWizard.getSettings().getInstallerType() == INSISWizardConstants.INSTALLER_TYPE_MUI2) {
             Label l = NSISWizardDialogUtil.createLabel(composite, "wizard.description.label", true, null, false); //$NON-NLS-1$
             ((GridData)l.getLayoutData()).horizontalSpan = 2;
             final Text t2 = NSISWizardDialogUtil.createText(composite, mStore.getString("description"), SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL, 1, true, null); //$NON-NLS-1$
@@ -123,7 +123,7 @@ public class NSISSectionGroupDialog extends AbstractNSISInstallItemDialog
             });
             int textLimit;
             try {
-                textLimit = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+                textLimit = Integer.parseInt(NSISPreferences.getInstance().getNSISHome().getNSISExe().getDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
             }
             catch (Exception ex) {
                 textLimit = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;

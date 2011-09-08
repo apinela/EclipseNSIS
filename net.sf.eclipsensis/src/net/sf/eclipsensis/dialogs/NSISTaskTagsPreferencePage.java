@@ -179,7 +179,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
 
         mCaseSensitiveButton = new Button(composite, SWT.CHECK);
         mCaseSensitiveButton.setText(EclipseNSISPlugin.getResourceString("task.tags.case.sensitive.label")); //$NON-NLS-1$
-        mCaseSensitiveButton.setSelection(NSISPreferences.INSTANCE.isCaseSensitiveTaskTags());
+        mCaseSensitiveButton.setSelection(NSISPreferences.getInstance().isCaseSensitiveTaskTags());
         data = new GridData(SWT.FILL, SWT.CENTER, true, false);
         data.horizontalSpan = 2;
 
@@ -190,9 +190,9 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         }
         mBoldFont = new Font(getShell().getDisplay(),fd);
 
-        mOriginalTags = NSISPreferences.INSTANCE.getTaskTags();
-        Collection<NSISTaskTag> taskTags = NSISPreferences.INSTANCE.getTaskTags();
-        mTableViewer.setInput(NSISPreferences.INSTANCE.getTaskTags());
+        mOriginalTags = NSISPreferences.getInstance().getTaskTags();
+        Collection<NSISTaskTag> taskTags = NSISPreferences.getInstance().getTaskTags();
+        mTableViewer.setInput(NSISPreferences.getInstance().getTaskTags());
         mTableViewer.setAllChecked(false);
         for (Iterator<NSISTaskTag> iter=taskTags.iterator(); iter.hasNext(); ) {
             NSISTaskTag t = iter.next();
@@ -291,7 +291,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
         if (super.performOk()) {
             Collection<NSISTaskTag> taskTags = (Collection<NSISTaskTag>)mTableViewer.getInput();
             boolean caseSensitive = mCaseSensitiveButton.getSelection();
-            boolean different = (caseSensitive != NSISPreferences.INSTANCE.isCaseSensitiveTaskTags());
+            boolean different = (caseSensitive != NSISPreferences.getInstance().isCaseSensitiveTaskTags());
             if (!different) {
                 if (taskTags.size() == mOriginalTags.size()) {
                     for (Iterator<NSISTaskTag> iter = taskTags.iterator(); iter.hasNext();) {
@@ -330,8 +330,8 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
             }
             boolean updateTaskTags = false;
             if (different) {
-                NSISPreferences.INSTANCE.setTaskTags(taskTags);
-                NSISPreferences.INSTANCE.setCaseSensitiveTaskTags(caseSensitive);
+                NSISPreferences.getInstance().setTaskTags(taskTags);
+                NSISPreferences.getInstance().setCaseSensitiveTaskTags(caseSensitive);
                 MessageDialog dialog = new MessageDialog(getShell(), EclipseNSISPlugin.getResourceString("confirm.title"), //$NON-NLS-1$
                         EclipseNSISPlugin.getShellImage(), EclipseNSISPlugin.getResourceString("task.tags.settings.changed"), MessageDialog.QUESTION, //$NON-NLS-1$
                         new String[]{IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
@@ -344,7 +344,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
                 else {
                     updateTaskTags = (rv == 0);
                 }
-                NSISPreferences.INSTANCE.store();
+                NSISPreferences.getInstance().store();
             }
             if (updateTaskTags) {
                 new NSISTaskTagUpdater().updateTaskTags();
@@ -363,7 +363,7 @@ public class NSISTaskTagsPreferencePage extends PreferencePage implements IWorkb
     @Override
     protected void performDefaults()
     {
-        mTableViewer.setInput(NSISPreferences.INSTANCE.getDefaultTaskTags());
+        mTableViewer.setInput(NSISPreferences.getInstance().getDefaultTaskTags());
         mTableViewer.refresh(true);
         super.performDefaults();
     }

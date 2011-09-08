@@ -70,7 +70,7 @@ public class NSISProperties extends NSISSettings implements INSISConstants
     {
         mResource = resource;
         if(mResource instanceof IProject) {
-            mParentSettings = NSISPreferences.INSTANCE;
+            mParentSettings = NSISPreferences.getInstance();
         }
         else if(mResource instanceof IFile || mResource instanceof IFolder) {
             mParentSettings = getProperties(resource.getParent());

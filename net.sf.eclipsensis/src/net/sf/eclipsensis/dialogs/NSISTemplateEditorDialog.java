@@ -330,7 +330,7 @@ public class NSISTemplateEditorDialog extends StatusMessageDialog
     {
         final SourceViewer viewer= new NSISTemplateSourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         NSISTextUtility.hookSourceViewer(viewer);
-        SourceViewerConfiguration configuration= new NSISTemplateEditorSourceViewerConfiguration(new ChainedPreferenceStore(new IPreferenceStore[]{NSISPreferences.INSTANCE.getPreferenceStore(), EditorsUI.getPreferenceStore()}),
+        SourceViewerConfiguration configuration= new NSISTemplateEditorSourceViewerConfiguration(new ChainedPreferenceStore(new IPreferenceStore[]{NSISPreferences.getInstance().getPreferenceStore(), EditorsUI.getPreferenceStore()}),
                                                         mTemplateContextType);
         viewer.configure(configuration);
         return viewer;

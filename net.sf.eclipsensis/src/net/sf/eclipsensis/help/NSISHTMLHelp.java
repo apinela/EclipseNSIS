@@ -261,8 +261,8 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
     @Override
     public void createPartControl(Composite parent)
     {
-        mShowNav = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_HELP_VIEW_SHOW_NAV);
-        mSynched = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_HELP_VIEW_SYNCHED);
+        mShowNav = NSISPreferences.getInstance().getBoolean(INSISPreferenceConstants.NSIS_HELP_VIEW_SHOW_NAV);
+        mSynched = NSISPreferences.getInstance().getBoolean(INSISPreferenceConstants.NSIS_HELP_VIEW_SYNCHED);
 
         initResources();
 
@@ -1424,12 +1424,12 @@ public class NSISHTMLHelp extends ViewPart implements INSISConstants
                         item.setToolTipText(hideNavToolTip);
                     }
                     mSynchedButton.setEnabled(mShowNav);
-                    NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.NSIS_HELP_VIEW_SHOW_NAV, mShowNav);
+                    NSISPreferences.getInstance().setValue(INSISPreferenceConstants.NSIS_HELP_VIEW_SHOW_NAV, mShowNav);
                 }
                 else if (item == mSynchedButton)
                 {
                     mSynched = mSynchedButton.getSelection();
-                    NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.NSIS_HELP_VIEW_SYNCHED, mSynched);
+                    NSISPreferences.getInstance().setValue(INSISPreferenceConstants.NSIS_HELP_VIEW_SYNCHED, mSynched);
                     synch(mBrowser.getUrl());
                 }
             }

@@ -123,7 +123,7 @@ public class NSISCommandManager
 
     public static NSISCommand getCommand(String name)
     {
-        Version version = NSISPreferences.INSTANCE.getNSISVersion();
+        Version version = NSISPreferences.getInstance().getNSISVersion();
         if (version != null)
         {
             Set<String> removeSet = new HashSet<String>();
@@ -160,7 +160,7 @@ public class NSISCommandManager
     public static NSISCommand[] getCommands()
     {
         Map<String, NSISCommand> map = new HashMap<String, NSISCommand>();
-        Version version = NSISPreferences.INSTANCE.getNSISVersion();
+        Version version = NSISPreferences.getInstance().getNSISVersion();
         if (version != null)
         {
             for (Iterator<Version> iter = cVersionList.iterator(); iter.hasNext();)

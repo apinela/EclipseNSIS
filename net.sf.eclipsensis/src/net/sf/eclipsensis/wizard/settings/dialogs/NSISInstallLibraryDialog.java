@@ -87,7 +87,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
         layout.marginWidth = 0;
         composite.setLayout(layout);
 
-        final boolean supportsExeCom = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_42) >= 0;
+        final boolean supportsExeCom = NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_42) >= 0;
 
         String[] filterNames = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), "wizard.library.filternames"); //$NON-NLS-1$
         String[] filters = Common.loadArrayProperty(EclipseNSISPlugin.getDefault().getResourceBundle(), "wizard.library.filters"); //$NON-NLS-1$
@@ -190,7 +190,7 @@ public class NSISInstallLibraryDialog extends AbstractNSISInstallItemDialog
             }
         });
 
-        boolean flag = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
+        boolean flag = NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
 
         if (flag && mWizard.getSettings().getTargetPlatform() == INSISWizardConstants.TARGET_PLATFORM_ANY) {
             final Button cb4 = NSISWizardDialogUtil.createCheckBox(composite, "wizard.x64.library.label", mStore.getBoolean("x64"), true, null, false); //$NON-NLS-1$ //$NON-NLS-2$

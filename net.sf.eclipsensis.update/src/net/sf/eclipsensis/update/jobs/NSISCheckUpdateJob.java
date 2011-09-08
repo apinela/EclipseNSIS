@@ -56,7 +56,7 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
     @Override
     protected URL getURL() throws IOException
     {
-        Version version = NSISPreferences.INSTANCE.getNSISVersion();
+        Version version = NSISPreferences.getInstance().getNSISVersion();
         if(version != null) {
             if(!NSISValidator.isCVSVersion(version)) {
                 String site = cPreferenceStore.getString(IUpdatePreferenceConstants.NSIS_UPDATE_SITE);
@@ -80,7 +80,7 @@ public class NSISCheckUpdateJob extends NSISHttpUpdateJob
     @Override
     protected URL getDefaultURL() throws IOException
     {
-        Version version = NSISPreferences.INSTANCE.getNSISVersion();
+        Version version = NSISPreferences.getInstance().getNSISVersion();
         if(version != null) {
             if(!NSISValidator.isCVSVersion(version)) {
                 return NSISUpdateURLs.getUpdateURL(version.toString());

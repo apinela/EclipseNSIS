@@ -245,7 +245,7 @@ public class NSISInstallLibrary extends AbstractNSISInstallItem
             case LIBTYPE_REGDLLTLB:
                 break;
             case LIBTYPE_REGEXE:
-                if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_42) >= 0) {
+                if(NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_42) >= 0) {
                     break;
                 }
                 //$FALL-THROUGH$

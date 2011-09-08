@@ -111,7 +111,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
     {
         super();
         loadModel();
-        NSISPreferences.INSTANCE.getPreferenceStore().addPropertyChangeListener(this);
+        NSISPreferences.getInstance().getPreferenceStore().addPropertyChangeListener(this);
     }
 
     public int getMaxLength()
@@ -250,23 +250,23 @@ public class InstallOptionsModel implements IPropertyChangeListener
         mControlTypes.clear();
         if (bundle != null) {
             for (Iterator<String> iter = controlTypes.iterator(); iter
-                    .hasNext();) {
+            .hasNext();) {
                 String type = iter.next();
                 InstallOptionsModelTypeDef typeDef = mCachedControlTypes
-                        .remove(type);
+                .remove(type);
                 if (typeDef == null) {
                     String name = bundle.getString(type + ".Name"); //$NON-NLS-1$
                     String description = bundle
-                            .getString(type + ".Description"); //$NON-NLS-1$
+                    .getString(type + ".Description"); //$NON-NLS-1$
                     String largeIcon = bundle.getString(type + ".LargeIcon"); //$NON-NLS-1$
                     String smallIcon = bundle.getString(type + ".SmallIcon"); //$NON-NLS-1$
                     String displayProperty = bundle.getString(type
-                            + ".DisplayProperty"); //$NON-NLS-1$
+                                    + ".DisplayProperty"); //$NON-NLS-1$
                     String model = bundle.getString(type + ".Model"); //$NON-NLS-1$
                     String part = bundle.getString(type + ".Part"); //$NON-NLS-1$
                     typeDef = new InstallOptionsModelTypeDef(type, name,
-                            description, smallIcon, largeIcon, displayProperty,
-                            model, part);
+                                    description, smallIcon, largeIcon, displayProperty,
+                                    model, part);
                 }
                 mControlTypes.put(type, typeDef);
                 List<String> list = controlSettings.get(type);
@@ -284,7 +284,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
         }
 
         try {
-            mMaxLength = Integer.parseInt(NSISPreferences.INSTANCE.getNSISDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
+            mMaxLength = Integer.parseInt(NSISPreferences.getInstance().getNSISHome().getNSISExe().getDefinedSymbol("NSIS_MAX_STRLEN")); //$NON-NLS-1$
         }
         catch(Exception ex){
             mMaxLength = INSISConstants.DEFAULT_NSIS_TEXT_LIMIT;
@@ -297,7 +297,7 @@ public class InstallOptionsModel implements IPropertyChangeListener
     {
         Version nsisVersion;
         if(EclipseNSISPlugin.getDefault().isConfigured()) {
-            nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
+            nsisVersion = NSISPreferences.getInstance().getNSISVersion();
         }
         else {
             nsisVersion = INSISVersions.MINIMUM_VERSION;

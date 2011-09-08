@@ -167,7 +167,7 @@ public class NSISCompileTestUtility
             IFile nsisScriptFile = (nsisScript.getDevice() == null?ResourcesPlugin.getWorkspace().getRoot().getFile(nsisScript):null);
             List<IFile> associatedHeaders = (nsisScriptFile == null?null:NSISHeaderAssociationManager.getInstance().getAssociatedHeaders(nsisScriptFile));
             List<IEditorPart> editorList = new ArrayList<IEditorPart>();
-            int beforeCompileSave = NSISPreferences.INSTANCE.getPreferenceStore().getInt(INSISPreferenceConstants.BEFORE_COMPILE_SAVE);
+            int beforeCompileSave = NSISPreferences.getInstance().getPreferenceStore().getInt(INSISPreferenceConstants.BEFORE_COMPILE_SAVE);
             IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
             outer:
             for (int i = 0; i < windows.length; i++) {
@@ -282,8 +282,8 @@ public class NSISCompileTestUtility
                 dialog.open();
                 ok = dialog.getReturnCode() == IDialogConstants.OK_ID;
                 if(ok && dialog.getToggleState()) {
-                    NSISPreferences.INSTANCE.setBeforeCompileSave(beforeCompileSave|INSISPreferenceConstants.BEFORE_COMPILE_SAVE_AUTO_FLAG);
-                    NSISPreferences.INSTANCE.store();
+                    NSISPreferences.getInstance().setBeforeCompileSave(beforeCompileSave|INSISPreferenceConstants.BEFORE_COMPILE_SAVE_AUTO_FLAG);
+                    NSISPreferences.getInstance().store();
                 }
             }
             if(ok) {
@@ -476,7 +476,7 @@ public class NSISCompileTestUtility
                 }
                 else {
                     File file = new File(mScript.toOSString());
-                    results = MakeNSISRunner.compile(file, NSISPreferences.INSTANCE,
+                    results = MakeNSISRunner.compile(file, NSISPreferences.getInstance(),
                                                      EclipseNSISPlugin.getDefault().getConsole(),this);
                 }
                 if(results != null) {

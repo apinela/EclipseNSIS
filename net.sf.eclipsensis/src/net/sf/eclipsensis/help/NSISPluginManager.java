@@ -48,7 +48,12 @@ public class NSISPluginManager implements INSISConstants
 
     void loadDefaultPlugins()
     {
-        String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
+        String nsisHome = "";
+        NSISPreferences prefs = NSISPreferences.getInstance();
+        if(prefs.getNSISHome() != null)
+        {
+            nsisHome = prefs.getNSISHome().getLocation().getAbsolutePath();
+        }
         if(!Common.isEmpty(nsisHome)) {
             File nsisHomeDir = new File(nsisHome);
             if(IOUtility.isValidDirectory(nsisHomeDir)) {
@@ -155,7 +160,7 @@ public class NSISPluginManager implements INSISConstants
         if (mDefaultPluginsMap != null) {
             PluginInfo pi = mDefaultPluginsMap.get(name);
             if (pi == null) {
-                File pluginFile = new File(new File(NSISPreferences.INSTANCE.getNSISHome(), NSIS_PLUGINS_LOCATION), name + NSIS_PLUGINS_EXTENSION);
+                File pluginFile = new File(new File(NSISPreferences.getInstance().getNSISHome().getLocation(), NSIS_PLUGINS_LOCATION), name + NSIS_PLUGINS_EXTENSION);
                 if (IOUtility.isValidFile(pluginFile)) {
                     pi = loadPluginInfo(name, pluginFile);
                     if (pi != null) {

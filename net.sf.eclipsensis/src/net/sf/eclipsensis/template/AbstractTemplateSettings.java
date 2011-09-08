@@ -141,7 +141,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
         mTableViewer.addFilter(filter);
 
         final INSISHomeListener nsisHomeListener = new INSISHomeListener() {
-            public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+            public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome)
             {
                 Display.getDefault().asyncExec(new Runnable() {
                     public void run()
@@ -152,11 +152,11 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
                 });
             }
         };
-        NSISPreferences.INSTANCE.addListener(nsisHomeListener);
+        NSISPreferences.getInstance().addListener(nsisHomeListener);
         table.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e)
             {
-                NSISPreferences.INSTANCE.removeListener(nsisHomeListener);
+                NSISPreferences.getInstance().removeListener(nsisHomeListener);
             }
         });
 
@@ -416,7 +416,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
         IStructuredSelection selection= (IStructuredSelection) mTableViewer.getSelection();
 
         Object[] objects= selection.toArray();
-        if ((objects == null) || (objects.length != 1)) {
+        if (objects == null || objects.length != 1) {
             return;
         }
 
@@ -442,7 +442,7 @@ public abstract class AbstractTemplateSettings<T extends ITemplate> extends Comp
     private boolean updateTemplate(T oldTemplate, T template)
     {
         boolean createnew = false;
-        if((!oldTemplate.getName().equals(template.getName()))) {
+        if(!oldTemplate.getName().equals(template.getName())) {
             createnew = Common.openQuestion(null,EclipseNSISPlugin.getResourceString("template.rename.confirm"),getShellImage()); //$NON-NLS-1$
         }
 

@@ -243,7 +243,7 @@ public class InstallOptionsLink extends InstallOptionsLabel
      */
     private boolean checkMultiLine()
     {
-        Version version = NSISPreferences.INSTANCE.getNSISVersion();
+        Version version = NSISPreferences.getInstance().getNSISVersion();
         return (version != null && version.compareTo(INSISVersions.VERSION_2_26) >= 0 );
     }
 }

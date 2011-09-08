@@ -40,13 +40,13 @@ public class NSISOutlineCache implements IEclipseNSISService
     {
         if (cInstance == null) {
             mNSISHomeListener  = new INSISHomeListener() {
-                public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+                public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome)
                 {
                     mOutlineCache.clear();
                 }
             };
             loadCache(monitor);
-            NSISPreferences.INSTANCE.addListener(mNSISHomeListener);
+            NSISPreferences.getInstance().addListener(mNSISHomeListener);
             cInstance = this;
         }
     }
@@ -60,7 +60,7 @@ public class NSISOutlineCache implements IEclipseNSISService
     {
         if (cInstance == this) {
             cInstance = null;
-            NSISPreferences.INSTANCE.removeListener(mNSISHomeListener);
+            NSISPreferences.getInstance().removeListener(mNSISHomeListener);
             mNSISHomeListener = null;
         }
     }
@@ -92,7 +92,7 @@ public class NSISOutlineCache implements IEclipseNSISService
             }
         }
         else {
-            mOutlineCache = new CaseInsensitiveMap();
+            mOutlineCache = new CaseInsensitiveMap<String>();
         }
     }
 

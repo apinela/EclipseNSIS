@@ -164,7 +164,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         });
 
         final Combo targetPlatform;
-        if(INSISVersions.VERSION_2_26.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) <= 0) {
+        if(INSISVersions.VERSION_2_26.compareTo(NSISPreferences.getInstance().getNSISVersion()) <= 0) {
             targetPlatform = NSISWizardDialogUtil.createCombo(appGroup,NSISWizardDisplayValues.TARGET_PLATFORMS,
                         settings.getTargetPlatform(), true, "target.platform.label", true, null, false);  //$NON-NLS-1$
             targetPlatform.addSelectionListener(new SelectionAdapter() {
@@ -230,7 +230,7 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         NSISWizardDialogUtil.loadImage(instIcon);
 
         String[] installerTypeNames;
-        if(NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_34) >= 0) {
+        if(NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_34) >= 0) {
             installerTypeNames = NSISWizardDisplayValues.INSTALLER_TYPE_NAMES;
         }
         else {
@@ -294,9 +294,9 @@ public class NSISWizardGeneralPage extends AbstractNSISWizardPage
         }
 
         final Combo execLevel;
-        if(INSISVersions.VERSION_2_21.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) <= 0) {
+        if(INSISVersions.VERSION_2_21.compareTo(NSISPreferences.getInstance().getNSISVersion()) <= 0) {
             String[] execLevels = NSISWizardDisplayValues.EXECUTION_LEVELS;
-            if(INSISVersions.VERSION_2_22.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) > 0) {
+            if(INSISVersions.VERSION_2_22.compareTo(NSISPreferences.getInstance().getNSISVersion()) > 0) {
                 execLevels = (String[])Common.subArray(execLevels,0,execLevels.length - 1);
             }
 

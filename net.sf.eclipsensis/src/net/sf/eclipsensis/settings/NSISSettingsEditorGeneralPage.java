@@ -129,7 +129,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         mSolidCompression = createCheckBox(composite, EclipseNSISPlugin.getResourceString("solid.compression.text"), //$NON-NLS-1$
                                           EclipseNSISPlugin.getResourceString("solid.compression.tooltip"), //$NON-NLS-1$
                                           mSettings.getSolidCompression());
-        mSolidCompression.setVisible(NSISPreferences.INSTANCE.isSolidCompressionSupported());
+        mSolidCompression.setVisible(NSISPreferences.getInstance().isSolidCompressionSupported());
         mCompressor.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e)
@@ -139,7 +139,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         });
 
         createProcessPriorityCombo(composite);
-        internalSetProcessPriorityVisible(NSISPreferences.INSTANCE.isProcessPrioritySupported());
+        internalSetProcessPriorityVisible(NSISPreferences.getInstance().isProcessPrioritySupported());
         return group;
     }
 
@@ -305,7 +305,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
             settings.setVerbosity(mVerbosity.getSelectionIndex()-1);
             settings.setCompressor(mCompressor.getSelectionIndex());
             settings.setSolidCompression(mSolidCompression.getSelection());
-            if (NSISPreferences.INSTANCE.isProcessPrioritySupported()) {
+            if (NSISPreferences.getInstance().isProcessPrioritySupported()) {
                 settings.setProcessPriority(mProcessPriority.getSelectionIndex()-1);
             }
             settings.setInstructions((List<String>)mInstructions.getInput());
@@ -323,7 +323,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         mVerbosity.select(mSettings.getVerbosity()+1);
         mCompressor.select(mSettings.getCompressor());
         mSolidCompression.setSelection(mSettings.getSolidCompression());
-        if (NSISPreferences.INSTANCE.isProcessPrioritySupported()) {
+        if (NSISPreferences.getInstance().isProcessPrioritySupported()) {
             mProcessPriority.select(mSettings.getProcessPriority()+1);
             mProcessPriorityIndex = mProcessPriority.getSelectionIndex();
         }
@@ -340,7 +340,7 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
         mVerbosity.select(mSettings.getDefaultVerbosity()+1);
         mCompressor.select(mSettings.getDefaultCompressor());
         mSolidCompression.setSelection(mSettings.getDefaultSolidCompression());
-        if (NSISPreferences.INSTANCE.isProcessPrioritySupported()) {
+        if (NSISPreferences.getInstance().isProcessPrioritySupported()) {
             mProcessPriority.select(mSettings.getDefaultProcessPriority()+1);
             mProcessPriorityIndex = mProcessPriority.getSelectionIndex();
         }
@@ -370,17 +370,17 @@ public abstract class NSISSettingsEditorGeneralPage extends NSISSettingsEditorPa
 
     protected boolean isProcessPrioritySupported()
     {
-        return NSISPreferences.INSTANCE.isProcessPrioritySupported();
+        return NSISPreferences.getInstance().isProcessPrioritySupported();
     }
 
     protected boolean isWarnProcessPriority()
     {
-        return NSISPreferences.INSTANCE.getPreferenceStore().getBoolean(INSISPreferenceConstants.WARN_PROCESS_PRIORITY);
+        return NSISPreferences.getInstance().getPreferenceStore().getBoolean(INSISPreferenceConstants.WARN_PROCESS_PRIORITY);
     }
 
     protected void setWarnProcessPriority(boolean warnProcessPriority)
     {
-        NSISPreferences.INSTANCE.getPreferenceStore().setValue(INSISPreferenceConstants.WARN_PROCESS_PRIORITY,warnProcessPriority);
+        NSISPreferences.getInstance().getPreferenceStore().setValue(INSISPreferenceConstants.WARN_PROCESS_PRIORITY,warnProcessPriority);
     }
 
     protected abstract Composite createMasterControl(Composite parent);

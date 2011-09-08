@@ -99,14 +99,19 @@ public class NSISLanguage implements Serializable
     {
         if(o instanceof NSISLanguage) {
             NSISLanguage language = (NSISLanguage)o;
-            return (mName.equals(language.mName) && mLangId == language.mLangId);
+            return mName.equals(language.mName) && mLangId == language.mLangId;
         }
         return false;
     }
 
     public synchronized String getLangString(String key)
     {
-        String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
+        String nsisHome = "";
+        NSISPreferences prefs = NSISPreferences.getInstance();
+        if(prefs.getNSISHome() != null)
+        {
+            nsisHome = prefs.getNSISHome().getLocation().getAbsolutePath();
+        }
         if(!Common.isEmpty(nsisHome)) {
             if(mLangStrings == null) {
                 mLangStrings = new CaseInsensitiveMap<String>();

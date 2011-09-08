@@ -33,7 +33,7 @@ public class NSISInstallElementFactory
     private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class[0];
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
     private static INSISHomeListener cNSISHomeListener  = new INSISHomeListener() {
-        public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+        public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome)
         {
             loadTypes(monitor);
         }
@@ -73,14 +73,14 @@ public class NSISInstallElementFactory
             public void start(IProgressMonitor monitor)
             {
                 loadTypes(monitor);
-                NSISPreferences.INSTANCE.addListener(cNSISHomeListener);
+                NSISPreferences.getInstance().addListener(cNSISHomeListener);
                 mStarted = true;
             }
 
             public void stop(IProgressMonitor monitor)
             {
                 mStarted = false;
-                NSISPreferences.INSTANCE.removeListener(cNSISHomeListener);
+                NSISPreferences.getInstance().removeListener(cNSISHomeListener);
             }
 
             public boolean isStarted()
@@ -118,7 +118,7 @@ public class NSISInstallElementFactory
 
     private static void loadTypes(IProgressMonitor monitor)
     {
-        Version nsisVersion = NSISPreferences.INSTANCE.getNSISVersion();
+        Version nsisVersion = NSISPreferences.getInstance().getNSISVersion();
         cValidTypes.clear();
         if(cBundle != null) {
             Version maxVersion = null;
@@ -127,7 +127,7 @@ public class NSISInstallElementFactory
                 String key = e.nextElement();
                 if(key.startsWith(VALID_TYPES)) {
                     int n = key.indexOf('#');
-                    Version version = (n >= 0?new Version(key.substring(n+1)):INSISVersions.MINIMUM_VERSION);
+                    Version version = n >= 0?new Version(key.substring(n+1)):INSISVersions.MINIMUM_VERSION;
                     if(nsisVersion.compareTo(version) >= 0) {
                         if(maxVersion == null || version.compareTo(maxVersion) > 0) {
                             maxVersion = version;
@@ -235,7 +235,7 @@ public class NSISInstallElementFactory
 
     public static boolean isValidType(String type)
     {
-        return cValidTypes.contains(type) || (!cValidTypes.contains(null) && cValidTypes.contains(cTypeAliases.get(type)));
+        return cValidTypes.contains(type) || !cValidTypes.contains(null) && cValidTypes.contains(cTypeAliases.get(type));
     }
 
     static void setImage(String type, Image image)

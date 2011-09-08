@@ -75,7 +75,7 @@ public class RegistryImporter
     private File findRegExe(Shell shell)
     {
         File regExe = null;
-        String pref = NSISPreferences.INSTANCE.getString(INSISPreferenceConstants.REG_EXE_LOCATION);
+        String pref = NSISPreferences.getInstance().getString(INSISPreferenceConstants.REG_EXE_LOCATION);
         if(!Common.isEmpty(pref)) {
             regExe = new File(pref);
             if(IOUtility.isValidFile(regExe)) {
@@ -129,7 +129,7 @@ public class RegistryImporter
     {
         if(!IOUtility.isValidFile(cRegExe)) {
             cRegExe = findRegExe(shell);
-            NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.REG_EXE_LOCATION, (cRegExe==null?"":cRegExe.getAbsolutePath())); //$NON-NLS-1$
+            NSISPreferences.getInstance().setValue(INSISPreferenceConstants.REG_EXE_LOCATION, (cRegExe==null?"":cRegExe.getAbsolutePath())); //$NON-NLS-1$
         }
         return cRegExe;
     }

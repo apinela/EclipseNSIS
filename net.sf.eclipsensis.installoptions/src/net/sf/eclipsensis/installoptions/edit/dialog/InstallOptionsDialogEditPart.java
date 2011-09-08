@@ -200,7 +200,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
 
         installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, null);
         installEditPolicy(EditPolicy.COMPONENT_ROLE,
-                new RootComponentEditPolicy());
+                        new RootComponentEditPolicy());
         installEditPolicy(EditPolicy.CONTAINER_ROLE, new InstallOptionsDialogEditPolicy());
         installEditPolicy(EditPolicy.LAYOUT_ROLE, new InstallOptionsXYLayoutEditPolicy((XYLayout)getContentPane().getLayoutManager()));
 
@@ -285,9 +285,9 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     {
         super.addNotify();
         getViewer().setProperty(IInstallOptionsConstants.PROPERTY_DIALOG_SIZE,
-                    getInstallOptionsDialog().getDialogSize().getCopy());
+                        getInstallOptionsDialog().getDialogSize().getCopy());
         getViewer().setProperty(IInstallOptionsConstants.PROPERTY_SHOW_DIALOG_SIZE,
-                    Boolean.valueOf(getInstallOptionsDialog().isShowDialogSize()));
+                        Boolean.valueOf(getInstallOptionsDialog().isShowDialogSize()));
         getViewer().addPropertyChangeListener(mPropertyChangeListener);
     }
 
@@ -302,7 +302,7 @@ public class InstallOptionsDialogEditPart extends InstallOptionsEditPart impleme
     public DragTracker getDragTracker(Request req)
     {
         if (req instanceof SelectionRequest
-                && ((SelectionRequest)req).getLastButtonPressed() == 3) {
+                        && ((SelectionRequest)req).getLastButtonPressed() == 3) {
             return new DeselectAllTracker(this);
         }
         return new MarqueeDragTracker();

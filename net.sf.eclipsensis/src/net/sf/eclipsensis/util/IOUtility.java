@@ -186,7 +186,12 @@ public class IOUtility
         String path2 = path;
         if(!Common.isEmpty(path2)) {
             String nsisdirKeyword = NSISKeywords.getInstance().getKeyword("${NSISDIR}"); //$NON-NLS-1$
-            String nsisHome = NSISPreferences.INSTANCE.getNSISHome().toLowerCase();
+            String nsisHome = "";
+            NSISPreferences prefs = NSISPreferences.getInstance();
+            if(prefs.getNSISHome() != null)
+            {
+                nsisHome = prefs.getNSISHome().getLocation().getAbsolutePath().toLowerCase();
+            }
             if(path2.toLowerCase().startsWith(nsisHome)) {
                 path2 = nsisdirKeyword + path2.substring(nsisHome.length());
             }
@@ -198,8 +203,14 @@ public class IOUtility
     {
         String path2 = path;
         String nsisdirKeyword = NSISKeywords.getInstance().getKeyword("${NSISDIR}").toLowerCase(); //$NON-NLS-1$
-        String nsisHome = NSISPreferences.INSTANCE.getNSISHome();
-        if(path2.toLowerCase().startsWith(nsisdirKeyword)) {
+        String nsisHome = "";
+        NSISPreferences prefs = NSISPreferences.getInstance();
+        if(prefs.getNSISHome() != null)
+        {
+            nsisHome = prefs.getNSISHome().getLocation().getAbsolutePath();
+        }
+        if(path2.toLowerCase().startsWith(nsisdirKeyword))
+        {
             path2 = nsisHome + path2.substring(nsisdirKeyword.length());
         }
         return path2;
@@ -390,12 +401,12 @@ public class IOUtility
 
     public static boolean isValidFile(File file)
     {
-        return (file != null && file.exists() && file.isFile());
+        return file != null && file.exists() && file.isFile();
     }
 
     public static boolean isValidDirectory(File file)
     {
-        return (file != null && file.exists() && file.isDirectory());
+        return file != null && file.exists() && file.isDirectory();
     }
 
     public static boolean isValidPath(String pathName)
@@ -437,30 +448,30 @@ public class IOUtility
         if(!Common.isEmpty(pathname)) {
             IPath childPath = new Path(pathname);
             if(reference != null && reference.isAbsolute() && childPath.isAbsolute()) {
-              if(Common.stringsAreEqual(reference.getDevice(), childPath.getDevice(), true)) {
-                  StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
-                  int l1 = reference.segmentCount();
-                  int l2 = childPath.segmentCount();
-                  int n = Math.min(l1,l2);
+                if(Common.stringsAreEqual(reference.getDevice(), childPath.getDevice(), true)) {
+                    StringBuffer buf = new StringBuffer(""); //$NON-NLS-1$
+                    int l1 = reference.segmentCount();
+                    int l2 = childPath.segmentCount();
+                    int n = Math.min(l1,l2);
 
-                  int i=0;
-                  for(; i<n; i++) {
-                      if(!reference.segment(i).equalsIgnoreCase(childPath.segment(i))) {
-                          break;
-                      }
-                  }
+                    int i=0;
+                    for(; i<n; i++) {
+                        if(!reference.segment(i).equalsIgnoreCase(childPath.segment(i))) {
+                            break;
+                        }
+                    }
 
-                  if(i > 0) {
-                      for(int j=i; j<l1; j++) {
-                          buf.append(cOnePathLevelUp);
-                      }
-                      for(int j=i; j<l2-1; j++) {
-                          buf.append(childPath.segment(j)).append(cPathSeparator);
-                      }
-                      buf.append(childPath.lastSegment());
-                      childPath = new Path(buf.toString());
-                  }
-              }
+                    if(i > 0) {
+                        for(int j=i; j<l1; j++) {
+                            buf.append(cOnePathLevelUp);
+                        }
+                        for(int j=i; j<l2-1; j++) {
+                            buf.append(childPath.segment(j)).append(cPathSeparator);
+                        }
+                        buf.append(childPath.lastSegment());
+                        childPath = new Path(buf.toString());
+                    }
+                }
             }
             return childPath.toOSString();
         }

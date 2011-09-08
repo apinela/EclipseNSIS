@@ -90,7 +90,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     @Override
     public void dispose()
     {
-        NSISPreferences.INSTANCE.removeListener(this);
+        NSISPreferences.getInstance().removeListener(this);
         super.dispose();
     }
 
@@ -172,7 +172,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
     @Override
     public void createPartControl(Composite parent)
     {
-        mFlatMode = NSISPreferences.INSTANCE.getBoolean(INSISPreferenceConstants.NSIS_COMMAND_VIEW_FLAT_MODE);
+        mFlatMode = NSISPreferences.getInstance().getBoolean(INSISPreferenceConstants.NSIS_COMMAND_VIEW_FLAT_MODE);
 
         mControl = new Composite(parent,SWT.NONE);
         GridLayout l = new GridLayout(1,true);
@@ -298,7 +298,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
             }
         });
 
-        NSISPreferences.INSTANCE.addListener(this);
+        NSISPreferences.getInstance().addListener(this);
         mViewer.addDragSupport(DND.DROP_COPY,
                         new Transfer[]{NSISCommandTransfer.INSTANCE},
                         new DragSourceAdapter() {
@@ -630,7 +630,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
         mViewer.getControl().setFocus();
     }
 
-    public void nsisHomeChanged(IProgressMonitor monitor, String oldHome, String newHome)
+    public void nsisHomeChanged(IProgressMonitor monitor, NSISHome oldHome, NSISHome newHome)
     {
         Display.getDefault().asyncExec(new Runnable() {
             public void run()
@@ -745,7 +745,7 @@ public class NSISCommandView extends ViewPart implements INSISHomeListener
             mHierarchicalLayoutAction.setChecked(!mFlatMode);
             mExpandAllAction.setEnabled(!mFlatMode);
             mCollapseAllAction.setEnabled(!mFlatMode);
-            NSISPreferences.INSTANCE.setValue(INSISPreferenceConstants.NSIS_COMMAND_VIEW_FLAT_MODE, mFlatMode);
+            NSISPreferences.getInstance().setValue(INSISPreferenceConstants.NSIS_COMMAND_VIEW_FLAT_MODE, mFlatMode);
             updateInput(rootNode);
         }
     }

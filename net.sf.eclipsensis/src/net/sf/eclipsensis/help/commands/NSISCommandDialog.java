@@ -58,10 +58,10 @@ public class NSISCommandDialog extends StatusMessageDialog
     static
     {
         STYLE_LINK = new StringBuffer("<link rel=\"stylesheet\" href=\"").append( //$NON-NLS-1$
-                IOUtility.getFileURLString(NSISBrowserUtility.COLORS_CSS_FILE)).append(
-                "\" charset=\"ISO-8859-1\" type=\"text/css\">").toString();//$NON-NLS-1$
+                        IOUtility.getFileURLString(NSISBrowserUtility.COLORS_CSS_FILE)).append(
+                        "\" charset=\"ISO-8859-1\" type=\"text/css\">").toString();//$NON-NLS-1$
         final File stateLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),
-                "net.sf.eclipsensis.help.commands.NSISCommandSettings.ser"); //$NON-NLS-1$
+        "net.sf.eclipsensis.help.commands.NSISCommandSettings.ser"); //$NON-NLS-1$
         EclipseNSISPlugin.getDefault().registerService(new IEclipseNSISService() {
             private boolean mStarted = false;
 
@@ -128,16 +128,16 @@ public class NSISCommandDialog extends StatusMessageDialog
             if (event.widget instanceof Control)
             {
                 if (mParamEditorControl != null && !mParamEditorControl.isDisposed()
-                        && isChildOf(mParamEditorControl, (Control) event.widget))
+                                && isChildOf(mParamEditorControl, (Control) event.widget))
                 {
                     jobScheduler.cancelJobs(JOB_FAMILY);
                     jobScheduler.scheduleUIJob(JOB_FAMILY, "NSISCommandDialog", new IJobStatusRunnable() { //$NON-NLS-1$
-                                public IStatus run(IProgressMonitor monitor)
-                                {
-                                    validate();
-                                    return Status.OK_STATUS;
-                                }
-                            });
+                        public IStatus run(IProgressMonitor monitor)
+                        {
+                            validate();
+                            return Status.OK_STATUS;
+                        }
+                    });
                 }
             }
         }
@@ -353,7 +353,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         titleImage.setBackground(white);
         titleImage.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
         titleImage.setImage(EclipseNSISPlugin.getImageManager().getImage(
-                EclipseNSISPlugin.getResourceString("command.wizard.title.image"))); //$NON-NLS-1$
+                        EclipseNSISPlugin.getResourceString("command.wizard.title.image"))); //$NON-NLS-1$
 
         Label titleSeparator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
         data = new GridData(SWT.FILL, SWT.FILL, true, false);
@@ -379,11 +379,11 @@ public class NSISCommandDialog extends StatusMessageDialog
     private NSISSourceViewer createPreviewer(Composite parent)
     {
         NSISSourceViewer previewer = new NSISSourceViewer(parent, null, null, false, SWT.V_SCROLL | SWT.H_SCROLL
-                | SWT.BORDER | SWT.WRAP);
+                        | SWT.BORDER | SWT.WRAP);
         NSISTextUtility.hookSourceViewer(previewer);
         SourceViewerConfiguration configuration = new NSISSourceViewerConfiguration(
-                new ChainedPreferenceStore(new IPreferenceStore[] { NSISPreferences.INSTANCE.getPreferenceStore(),
-                        EditorsUI.getPreferenceStore() }));
+                        new ChainedPreferenceStore(new IPreferenceStore[] { NSISPreferences.getInstance().getPreferenceStore(),
+                                        EditorsUI.getPreferenceStore() }));
         previewer.configure(configuration);
         new NSISDocumentSetupParticipant().setup(mCommandDoc);
         previewer.setDocument(mCommandDoc);
@@ -417,7 +417,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         ToolBar toolbar = new ToolBar(child, SWT.FLAT);
         ToolItem toolItem = new ToolItem(toolbar, SWT.PUSH);
         toolItem.setImage(EclipseNSISPlugin.getImageManager().getImage(
-                EclipseNSISPlugin.getResourceString("command.help.icon"))); //$NON-NLS-1$
+                        EclipseNSISPlugin.getResourceString("command.help.icon"))); //$NON-NLS-1$
         toolItem.setToolTipText(EclipseNSISPlugin.getResourceString("command.description.tooltip")); //$NON-NLS-1$
         GridData gridData = new GridData(SWT.FILL, SWT.CENTER, false, false);
         toolbar.setLayoutData(gridData);
@@ -599,7 +599,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         getShell().getDisplay().addFilter(SWT.Modify, mFilter);
         getShell().getDisplay().addFilter(SWT.Selection, mFilter);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(child,
-                INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_cmdwizard_context"); //$NON-NLS-1$
+                        INSISConstants.PLUGIN_CONTEXT_PREFIX + "nsis_cmdwizard_context"); //$NON-NLS-1$
         return child;
     }
 
@@ -746,7 +746,7 @@ public class NSISCommandDialog extends StatusMessageDialog
         {
             Display display = Display.getCurrent();
             int[] shape = new int[] { 1, 2, 3, 1, 5, 3, 6, 3, 8, 1, 10, 1, 10, 3, 8, 5, 8, 6, 10, 8, 10, 10, 8, 10, 6,
-                    8, 5, 8, 3, 10, 1, 10, 1, 8, 3, 6, 3, 5, 1, 3 };
+                            8, 5, 8, 3, 10, 1, 10, 1, 8, 3, 6, 3, 5, 1, 3 };
 
             /*
              * Use magenta as transparency color since it is used infrequently.
@@ -757,7 +757,7 @@ public class NSISCommandDialog extends StatusMessageDialog
             Color transparent = display.getSystemColor(SWT.COLOR_MAGENTA);
 
             PaletteData palette = new PaletteData(new RGB[] { transparent.getRGB(), border.getRGB(),
-                    background.getRGB(), backgroundHot.getRGB() });
+                            background.getRGB(), backgroundHot.getRGB() });
             ImageData data = new ImageData(12, 12, 8, palette);
             data.transparentPixel = 0;
 
@@ -785,8 +785,8 @@ public class NSISCommandDialog extends StatusMessageDialog
         private void createToolBar(Composite displayArea)
         {
             if (isValid(NSISBrowserUtility.BACK_IMAGE) && isValid(NSISBrowserUtility.DISABLED_BACK_IMAGE)
-                    && isValid(NSISBrowserUtility.FORWARD_IMAGE) && isValid(NSISBrowserUtility.DISABLED_FORWARD_IMAGE)
-                    && isValid(NSISBrowserUtility.HOME_IMAGE))
+                            && isValid(NSISBrowserUtility.FORWARD_IMAGE) && isValid(NSISBrowserUtility.DISABLED_FORWARD_IMAGE)
+                            && isValid(NSISBrowserUtility.HOME_IMAGE))
             {
 
                 ToolBar toolBar = new ToolBar(displayArea, SWT.FLAT);
@@ -922,7 +922,7 @@ public class NSISCommandDialog extends StatusMessageDialog
             if (n >= 0)
             {
                 text2 = new StringBuffer(text2.substring(0, n)).append(NEW_STYLE_LINK).append(
-                        text2.substring(n + STYLE_LINK.length())).toString();
+                                text2.substring(n + STYLE_LINK.length())).toString();
             }
             return text2;
         }
@@ -993,7 +993,12 @@ public class NSISCommandDialog extends StatusMessageDialog
             }
             else
             {
-                String home = NSISPreferences.INSTANCE.getNSISHome();
+                String home = "";
+                NSISPreferences prefs = NSISPreferences.getInstance();
+                if(prefs.getNSISHome() != null)
+                {
+                    home = prefs.getNSISHome().getLocation().getAbsolutePath();
+                }
                 if (home != null)
                 {
                     try
@@ -1002,7 +1007,7 @@ public class NSISCommandDialog extends StatusMessageDialog
                         {
                             String ext = IOUtility.getFileExtension(f);
                             if (NSISBrowserUtility.HTML_EXTENSIONS != null
-                                    && NSISBrowserUtility.HTML_EXTENSIONS.contains(ext))
+                                            && NSISBrowserUtility.HTML_EXTENSIONS.contains(ext))
                             {
                                 NSISHTMLHelp.showHelp(IOUtility.getFileURLString(f));
                                 return;

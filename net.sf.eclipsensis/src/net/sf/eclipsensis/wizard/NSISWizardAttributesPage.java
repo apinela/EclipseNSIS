@@ -160,7 +160,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         createInstallationDirectoryGroup(composite);
         createStartMenuGroupGroup(composite);
 
-        if (INSISVersions.VERSION_2_35.compareTo(NSISPreferences.INSTANCE.getNSISVersion()) <= 0)
+        if (INSISVersions.VERSION_2_35.compareTo(NSISPreferences.getInstance().getNSISVersion()) <= 0)
         {
             createMultiUserGroup(composite);
         }
@@ -511,7 +511,7 @@ public class NSISWizardAttributesPage extends AbstractNSISWizardPage
         m.addSlave(downButton);
 
         Composite langOptions = langGroup;
-        boolean showSupportedLangOption = NSISPreferences.INSTANCE.getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
+        boolean showSupportedLangOption = NSISPreferences.getInstance().getNSISVersion().compareTo(INSISVersions.VERSION_2_26) >= 0;
         if(showSupportedLangOption)
         {
             langOptions = new Composite(langGroup, SWT.None);

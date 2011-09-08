@@ -14,7 +14,7 @@ import java.util.Date;
 
 import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.makensis.*;
-import net.sf.eclipsensis.settings.NSISPreferences;
+import net.sf.eclipsensis.settings.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
@@ -40,8 +40,9 @@ class NSISLaunchProcess implements IProcess, IMakeNSISRunListener, IWorkbenchAda
         mLaunch = launch;
         MakeNSISRunner.addListener(this);
         fireCreationEvent();
-        mLabel = MessageFormat.format("{0} ({1})",new Object[]{NSISPreferences.INSTANCE.getNSISExePath(), //$NON-NLS-1$
-                                            cDateFormat.format(new Date(System.currentTimeMillis()))}).trim();
+        NSISHome home = NSISPreferences.getInstance().getNSISHome();
+        mLabel = MessageFormat.format("{0} ({1})",new Object[]{home == null?null:home.getNSISExe().getFile().getAbsolutePath(), //$NON-NLS-1$
+                        cDateFormat.format(new Date(System.currentTimeMillis()))}).trim();
     }
 
     protected void fireCreationEvent()

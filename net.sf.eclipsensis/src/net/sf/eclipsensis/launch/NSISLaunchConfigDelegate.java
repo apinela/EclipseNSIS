@@ -137,7 +137,7 @@ public class NSISLaunchConfigDelegate implements ILaunchConfigurationDelegate
             if(encoding != null && !encoding.equals(defaultEncoding)) {
                 console = new EncodingNSISConsole(console, encoding);
             }
-            NSISSettings settings = new NSISLaunchSettings(NSISPreferences.INSTANCE, configuration);
+            NSISSettings settings = new NSISLaunchSettings(NSISPreferences.getInstance(), configuration);
             final NSISLaunchProcess process = new NSISLaunchProcess(path, launch);
             launch.addProcess(process);
 
