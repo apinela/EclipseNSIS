@@ -3,7 +3,7 @@
 <head>
 <!--
 ###############################################################################
-# Copyright (c) 2004-2009 Sunil Kamath (IcemanK).
+# Copyright (c) 2004-2011 Sunil Kamath (IcemanK).
 # All rights reserved.
 # This program is made available under the terms of the Common Public License
 # v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
@@ -35,10 +35,10 @@
   image_closed_over.src = "images/closed_over.gif";
 
   var latest = new Array();
-  latest["eclipsensis"] = "eclipsensis098";
-  latest["installoptions"] = "installoptions098";
+  latest["eclipsensis"] = "eclipsensis0981";
+  latest["installoptions"] = "installoptions0981";
   latest["utilities"] = "utilities093";
-  latest["sources"] = "sources098";
+  latest["sources"] = "sources0981";
 
   function rollover(image)
   {
@@ -133,6 +133,18 @@ Guides</a> | <a href="revisions.html">Revision History</a> | <a
 <li><a href="#sources">EclipseNSIS Sources</a></li>
 </ul>
 <a name="eclipsensis"></a><h3>EclipseNSIS</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis0981"
+src="images/closed.gif" onClick="toggle('trigger_eclipsensis0981', 'toggle_eclipsensis0981'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis_0.9.8.1.zip?download">0.9.8.1</a> (09/12/2011)
+<div id="toggle_eclipsensis0981" class="toggle">
+<ul>
+  <li>Added support for Java 7.</li>
+  <li>Added support for Oracle Java VMs.</li>
+</ul>
+</div>
+</div>
+
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_eclipsensis098"
 src="images/closed.gif" onClick="toggle('trigger_eclipsensis098', 'toggle_eclipsensis098'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
@@ -519,6 +531,20 @@ scripts.</li>
 //-->
 </script>
 <a name="installoptions"></a><h3>EclipseNSIS InstallOptions Editor</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions0981"
+src="images/closed.gif" onClick="toggle('trigger_installoptions0981', 'toggle_installoptions0981'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.installoptions_0.9.8.1.zip?download">0.9.8.1</a>
+(09/12/2011)
+<div id="toggle_installoptions0981" class="toggle">
+<ul>
+  <li>Added support for Java 7.</li>
+  <li>Added support for Oracle Java VMs.</li>
+</ul>
+</div>
+</div>
+
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_installoptions098"
 src="images/closed.gif" onClick="toggle('trigger_installoptions098', 'toggle_installoptions098'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
@@ -871,6 +897,28 @@ Eclipse 3.0</li>
 //-->
 </script>
 <a name="sources"></a><h3>EclipseNSIS Sources</h3>
+<div><img class="trigger" alt="Expand/Collapse" id="trigger_sources0981"
+src="images/closed.gif" onClick="toggle('trigger_sources0981', 'toggle_sources0981'); rollover(this);"
+onmouseover="rollover(this);" onMouseOut="rollover(this);">
+<a
+ href="http://prdownloads.sourceforge.net/eclipsensis/net.sf.eclipsensis.source_0.9.8.1.zip?download">0.9.8.1</a>
+(09/12/2011)
+<div id="toggle_sources0981" class="toggle">
+<ul>
+  <li>This bundles source code for the following EclipseNSIS plugins into a single plugin:</li>
+      <ul>
+      <li>EclipseNSIS 0.9.8.1</li>
+      <li>EclipseNSIS Startup 0.9.8.1</li>
+      <li>EclipseNSIS Update 0.9.8.1</li>
+      <li>EclipseNSIS InstallOptions Editor 0.9.8.1</li>
+      <li>EclipseNSIS Utilities 0.9.3</li>
+      <li>JAR Signer 0.9.3</li>
+      <li>JNI Generator 0.9.3</li>
+      </ul>
+</ul>
+</div>
+</div>
+
 <div><img class="trigger" alt="Expand/Collapse" id="trigger_sources098"
 src="images/closed.gif" onClick="toggle('trigger_sources098', 'toggle_sources098'); rollover(this);"
 onmouseover="rollover(this);" onMouseOut="rollover(this);">
@@ -1133,7 +1181,7 @@ onmouseover="rollover(this);" onMouseOut="rollover(this);">
 <input type="hidden" name="req" value="addrating">
 <input type="submit" value="Vote!">
 </form></td><td style="width: 20%; text-align: center;"><strong><small>Copyright
-&copy; 2004-2010 Sunil Kamath (IcemanK).</small></strong></td>
+&copy; 2004-2011 Sunil Kamath (IcemanK).</small></strong></td>
 <td style="width: 40%; text-align: right;">
 <!--#include virtual="counter.shtml" -->
 </td></tr></tbody></table>

@@ -1,6 +1,10 @@
 Revision History
 ================
 
+0.9.8.1 (09/12/2011)
+    * Added support for Java 7.
+    * Added support for Oracle Java VMs.
+
 0.9.8 (04/28/2010)
     * This bundles source code for the following EclipseNSIS plugins into a
       single plugin:

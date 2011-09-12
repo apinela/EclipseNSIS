@@ -10,6 +10,7 @@
 package net.sf.eclipsensis.help.search;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import net.sf.eclipsensis.*;
@@ -154,16 +155,42 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
 
         private Document makeDocument(File f) throws IOException, InterruptedException
         {
-            Document doc = new Document();
-
-            doc.add(new Field(INDEX_FIELD_URL, IOUtility.getFileURLString(f), Field.Store.YES, Field.Index.NO));
-
             HTMLParser parser = new HTMLParser(new FileInputStream(f));
             parser.parse();
 
-            doc.add(new Field(INDEX_FIELD_CONTENTS, parser.getReader(), Field.TermVector.NO));
-            doc.add(new Field(INDEX_FIELD_SUMMARY, parser.getSummary(), Field.Store.YES, Field.Index.NO));
-            doc.add(new Field(INDEX_FIELD_TITLE, parser.getTitle(), Field.Store.YES, Field.Index.TOKENIZED));
+            Field[] fields = {
+                            new Field(INDEX_FIELD_URL, IOUtility.getFileURLString(f), Field.Store.YES, Field.Index.NO),
+                            new Field(INDEX_FIELD_CONTENTS, parser.getReader(), Field.TermVector.NO),
+                            new Field(INDEX_FIELD_SUMMARY, parser.getSummary(), Field.Store.YES, Field.Index.NO),
+                            new Field(INDEX_FIELD_TITLE, parser.getTitle(), Field.Store.YES, Field.Index.TOKENIZED)
+            };
+
+            Document doc = new Document();
+
+            Class<? extends Document> clasz = doc.getClass();
+            Method[] methods = clasz.getDeclaredMethods();
+            for(Method method : methods)
+            {
+                if(method.getName().equals("add") && method.getParameterTypes().length == 1)
+                {
+                    Class<?> paramClass = method.getParameterTypes()[0];
+                    if(paramClass.isAssignableFrom(Field.class))
+                    {
+                        for(Field field : fields)
+                        {
+                            try
+                            {
+                                method.invoke(doc, paramClass.cast(field));
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
 
             return doc;
         }

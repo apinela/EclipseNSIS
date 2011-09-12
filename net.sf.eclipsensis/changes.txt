@@ -1,6 +1,10 @@
 Revision History
 ================
 
+0.9.8.1 (09/12/2011)
+    * Added support for Java 7.
+    * Added support for Oracle Java VMs.
+
 0.9.8 (04/28/2010)
     * Added 64-bit support.
     * Added filter capability for NSIS Commands view.
