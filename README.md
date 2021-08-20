@@ -12,10 +12,10 @@ Compared to the official EclipseNSIS release 0.9.8.1 this project adds support f
 
 *   Eclipse 2021-06 (4.20.0)
 
-**You can use the following update side:**
+# You can use the following update site:
 *   https://apinela.github.io/EclipseNSIS/
 
-**Screenshots**
+# Screenshots
 
 ![image](https://user-images.githubusercontent.com/1696986/130283443-63d3d8dc-29eb-4325-830f-b83fc2f03ba3.png)
 
