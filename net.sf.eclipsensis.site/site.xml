@@ -9,6 +9,10 @@
    <feature url="features/net.sf.eclipsensis.installoptions_0.10.1.jar" id="net.sf.eclipsensis.installoptions" version="0.10.1" os="win32" ws="win32" arch="x86,x86_64">
       <category name="EclipseNSIS InstallOptions Editor"/>
    </feature>
+   <feature url="features/net.sf.eclipsensis.source_0.10.0.jar" id="net.sf.eclipsensis.source" version="0.10.0">
+      <category name="EclipseNSIS Source"/>
+   </feature>
    <category-def name="EclipseNSIS" label="EclipseNSIS"/>
    <category-def name="EclipseNSIS InstallOptions Editor" label="EclipseNSIS InstallOptions Editor"/>
+   <category-def name="EclipseNSIS Source" label="EclipseNSIS Source"/>
 </site>
