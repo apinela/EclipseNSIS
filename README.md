@@ -14,6 +14,7 @@ Compared to the official EclipseNSIS release 0.9.8.1 this project adds support f
 
 # Eclipse update site
 *   https://apinela.github.io/EclipseNSIS/
+
 ![image](https://user-images.githubusercontent.com/1696986/130286126-49d648c7-5f2c-4776-9dd9-54eeb26a1f21.png)
 
 
