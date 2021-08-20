@@ -11,3 +11,6 @@ The purpose of this project was to make EclipseNSIS plugin compatible with my ow
 Compared to the official EclipseNSIS release 0.9.8.1 this project adds support for:
 
 *   Eclipse 2021-06 (4.20.0)
+
+You can use the following update side:
+*   https://apinela.github.io/EclipseNSIS/
