@@ -16,24 +16,18 @@ import net.sf.eclipsensis.*;
 import net.sf.eclipsensis.util.IOUtility;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.util.Version;
 import org.eclipse.core.runtime.FileLocator;
 
 public class NSISHelpSearchManager implements INSISHelpSearchConstants
 {
     private NSISHelpIndexer mStandardIndexer = null;
-    private NSISHelpIndexer mStemmedIndexer = null;
     private String mSearchSyntaxURL;
 
     public NSISHelpSearchManager(File documentRoot)
     {
         File helpLocation = new File(EclipseNSISPlugin.getPluginStateLocation(),INSISConstants.PLUGIN_HELP_LOCATION_PREFIX);
-		mStandardIndexer = new NSISHelpIndexer(new File(helpLocation,
-				STANDARD_INDEX_LOCATION), documentRoot, new StandardAnalyzer(
-				Version.LUCENE_35));
-		mStemmedIndexer = new NSISHelpIndexer(new File(helpLocation,
-				STEMMED_INDEX_LOCATION), documentRoot, new StandardAnalyzer(
-				Version.LUCENE_35));
+        mStandardIndexer = new NSISHelpIndexer(new File(helpLocation,
+                STANDARD_INDEX_LOCATION), documentRoot, new StandardAnalyzer());
         try {
             URL url = FileLocator.toFileURL(getClass().getResource("search_syntax.htm")); //$NON-NLS-1$
             try {
@@ -72,25 +66,23 @@ public class NSISHelpSearchManager implements INSISHelpSearchConstants
 
     public void search(String field, INSISHelpSearchRequester requester)
     {
-        NSISHelpSearcher searcher = (requester.useStemming()?mStemmedIndexer.getSearcher():mStandardIndexer.getSearcher());
+
+        NSISHelpSearcher searcher = mStandardIndexer.getSearcher();
         searcher.search(field, requester);
     }
 
     public void stopSearching()
     {
         mStandardIndexer.getSearcher().stopSearching();
-        mStemmedIndexer.getSearcher().stopSearching();
     }
 
     public void stopIndexing()
     {
         mStandardIndexer.stopIndexing();
-        mStemmedIndexer.stopIndexing();
     }
 
     public void indexHelp()
     {
         mStandardIndexer.indexHelp();
-        mStemmedIndexer.indexHelp();
     }
 }

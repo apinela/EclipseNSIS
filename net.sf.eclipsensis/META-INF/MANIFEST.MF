@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: net.sf.eclipsensis; singleton:=true
-Bundle-Version: 0.9.9.9
+Bundle-Version: 0.10.7
 Bundle-Activator: net.sf.eclipsensis.EclipseNSISPlugin
 Bundle-Vendor: %plugin.vendor
 Bundle-Localization: plugin
@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.5.0",
  org.eclipse.core.variables;bundle-version="3.2.200",
  org.eclipse.ui.externaltools;bundle-version="3.2.0",
  net.sf.eclipsensis.startup;bundle-version="0.9.8",
- org.eclipse.core.filesystem;bundle-version="1.2.0"
+ org.eclipse.core.filesystem;bundle-version="1.2.0",
+ org.eclipse.m2e.maven.indexer
 Bundle-ActivationPolicy: lazy
 Export-Package: net.sf.eclipsensis,
  net.sf.eclipsensis.actions,
@@ -56,4 +57,4 @@ Export-Package: net.sf.eclipsensis,
  net.sf.eclipsensis.wizard.settings.dialogs,
  net.sf.eclipsensis.wizard.template,
  net.sf.eclipsensis.wizard.util
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

@@ -11,9 +11,7 @@
 !include "MUI.nsh"
 !endif
 XPStyle on
-!ifdef WINDOWS_VISTA
 RequestExecutionLevel user
-!endif
 !ifndef PREVIEW_NAME
 !define PREVIEW_NAME "InstallOptions Preview"
 !endif

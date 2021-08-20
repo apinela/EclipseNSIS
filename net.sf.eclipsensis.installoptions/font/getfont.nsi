@@ -1,9 +1,7 @@
 !include "WinMessages.nsh"
 Name GetFont
 OutFile getfont.exe
-!ifdef WINDOWS_VISTA
 RequestExecutionLevel user
-!endif
 
 LoadLanguageFile "${NSISDIR}\Contrib\Language Files\${LANGUAGE}.nlf"
 
@@ -25,7 +23,7 @@ Function .onGuiInit
     Push $R7 ;lfFaceName
 
     SendMessage $HWNDPARENT ${WM_GETFONT} 0 0 $0
-    ReadRegStr $1 HKLM "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
+    ReadRegStr $1 HKCU "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
     IfErrors 0 winnt
     StrCpy $2 60
     GoTo next

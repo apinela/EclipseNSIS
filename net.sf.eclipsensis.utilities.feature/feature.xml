@@ -13,7 +13,7 @@
 <feature
       id="net.sf.eclipsensis.utilities"
       label="%feature.name"
-      version="0.9.3"
+      version="0.10.0"
       provider-name="%provider.name"
       image="%splash.image">
    <install-handler/>
@@ -65,7 +65,7 @@
          id="net.sf.eclipsensis.utilities"
          download-size="42"
          install-size="42"
-         version="0.9.3"
+         version="0.10.0"
          unpack="false"/>
 
 </feature>

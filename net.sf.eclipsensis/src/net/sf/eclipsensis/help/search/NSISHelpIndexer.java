@@ -20,7 +20,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.demo.html.HTMLParser;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriter.MaxFieldLength;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -35,11 +35,13 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
     }
 
     private final ISchedulingRule SCHEDULING_RULE = new ISchedulingRule() {
+        @Override
         public boolean contains(ISchedulingRule rule)
         {
             return rule == this;
         }
 
+        @Override
         public boolean isConflicting(ISchedulingRule rule)
         {
             return rule == this;
@@ -84,6 +86,7 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
 
     private class NSISHelpIndexerJob implements IJobStatusRunnable
     {
+        @Override
         public IStatus run(IProgressMonitor monitor)
         {
             IndexWriter writer = null;
@@ -93,14 +96,9 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
                 if(mIndexLocation.exists()) {
                     mIndexLocation.mkdirs();
                 }
-				writer = new IndexWriter(new SimpleFSDirectory(mIndexLocation),
-						mAnalyzer, true, MaxFieldLength.LIMITED);
-                writer.setMaxFieldLength(1000000);
+                writer = new IndexWriter(new SimpleFSDirectory(mIndexLocation.toPath()), new IndexWriterConfig(mAnalyzer));
 
                 status = indexDocs(monitor, writer, mDocumentRoot);
-                if(status.isOK()) {
-                    writer.optimize();
-                }
             }
             catch(Exception ex) {
                 EclipseNSISPlugin.getDefault().log(ex);
@@ -166,8 +164,8 @@ public class NSISHelpIndexer implements INSISHelpSearchConstants
 
             doc.add(new Field(INDEX_FIELD_CONTENTS, parser.getReader(), Field.TermVector.NO));
             doc.add(new Field(INDEX_FIELD_SUMMARY, parser.getSummary(), Field.Store.YES, Field.Index.NO));
-			doc.add(new Field(INDEX_FIELD_TITLE, parser.getTitle(),
-					Field.Store.YES, Field.Index.ANALYZED));
+            doc.add(new Field(INDEX_FIELD_TITLE, parser.getTitle(),
+                    Field.Store.YES, Field.Index.ANALYZED));
 
             return doc;
         }
