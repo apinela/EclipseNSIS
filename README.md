@@ -26,4 +26,9 @@ Compared to the official EclipseNSIS release 0.9.8.1 this project adds support f
 
 ![image](https://user-images.githubusercontent.com/1696986/130283656-536cf4b4-d9a4-4c4b-8b67-58e27a676837.png)
 
+![image](https://user-images.githubusercontent.com/1696986/130286742-44aee42b-6071-4a98-810c-558bd556fd71.png)
+
+![image](https://user-images.githubusercontent.com/1696986/130286877-223b57bb-bc19-4bfa-84da-7a4e316dc6b2.png)
+
+
 
