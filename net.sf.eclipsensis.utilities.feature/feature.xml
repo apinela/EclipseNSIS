@@ -13,7 +13,7 @@
 <feature
       id="net.sf.eclipsensis.utilities"
       label="%feature.name"
-      version="0.10.0"
+      version="0.10.8"
       provider-name="%provider.name"
       image="%splash.image">
    <install-handler/>
@@ -51,21 +51,14 @@
          id="net.sf.jarsigner"
          download-size="63"
          install-size="63"
-         version="0.9.3"
-         unpack="false"/>
-
-   <plugin
-         id="net.sf.jnigen"
-         download-size="35"
-         install-size="35"
-         version="0.9.3"
+         version="0.10.8"
          unpack="false"/>
 
    <plugin
          id="net.sf.eclipsensis.utilities"
          download-size="42"
          install-size="42"
-         version="0.10.0"
+         version="0.10.8"
          unpack="false"/>
 
 </feature>
