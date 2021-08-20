@@ -10,10 +10,4 @@ The purpose of this project was to make EclipseNSIS plugin compatible with my ow
 
 Compared to the official EclipseNSIS release 0.9.8.1 this project adds support for:
 
-*   Windows 8 and 8.1;
-*   Oracle branded Java8; and
-*   Eclipse Kepler 4.3 and Luna 4.4.
-
-Some users have found that this version doesn't work with older Eclipse versions, at least with Indigo 3.7 and Galileo 3.5.
-
-Latest version: [0.9.9](https://github.com/henrikor2/eclipsensis/raw/master/dist/eclipsensis-0.9.9.zip)
+*   Eclipse 2021-06 (4.20.0)
