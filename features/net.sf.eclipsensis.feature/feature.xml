@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+###############################################################################
+# Copyright (c) 2004-2010 Sunil Kamath (IcemanK).
+# All rights reserved.
+# This program is made available under the terms of the Common Public License
+# v1.0 which is available at http://www.eclipse.org/legal/cpl-v10.html
+
+# Contributors:
+#     Sunil Kamath (IcemanK) - initial API and implementation
+###############################################################################
+-->
+<feature
+      id="net.sf.eclipsensis.feature"
+      label="%feature.name"
+      version="1.0.0"
+      provider-name="%provider.name"
+      os="win32"
+      ws="win32"
+      arch="x86_64"
+      image="%splash.image">
+
+   <description url="%description.url">
+      %description.text
+   </description>
+
+   <copyright url="%copyright.url">
+      %copyright.text
+   </copyright>
+
+   <license url="%license.url">
+      %license.text
+   </license>
+
+   <url>
+      <update label="%update.site.name" url="http://eclipsensis.sf.net/update/"/>
+      <discovery label="%update.site.name" url="http://eclipsensis.sf.net/update/"/>
+   </url>
+
+   <requires>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.help.base"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.core.variables"/>
+      <import plugin="org.eclipse.ui.externaltools"/>
+      <import plugin="net.sf.eclipsensis.startup"/>
+      <import plugin="org.eclipse.core.filesystem"/>
+      <import plugin="org.eclipse.m2e.maven.indexer"/>
+   </requires>
+
+   <plugin
+         id="net.sf.eclipsensis"
+         os="win32"
+         ws="win32"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsensis.updater"
+         os="win32"
+         ws="win32"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="net.sf.eclipsensis.startup"
+         os="win32"
+         ws="win32"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

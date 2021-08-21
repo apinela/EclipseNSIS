@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description name="EclipseNSIS Update Site">Download released versions of EclipseNSIS plugins here.</description>
+   <feature
+        id="net.sf.eclipsensis.feature"
+        version="1.0.0"
+        os="win32"
+        ws="win32"
+        arch="x86_64">
+        <category name="net.sf.eclipsensis"/>
+   </feature>
+   <feature
+        id="net.sf.eclipsensis.installoptions.feature"
+        version="1.0.0"
+        os="win32"
+        ws="win32"
+        arch="x86_64">
+        <category name="net.sf.eclipsensis.installoptions"/>
+   </feature>
+   <feature
+        id="net.sf.eclipsensis.utilities.feature"
+        version="1.0.0">
+        <category name="net.sf.eclipsensis.utilities"/>
+   </feature>
+
+   <feature id="net.sf.eclipsensis.feature.source" version="0.0.0">
+        <category name="net.sf.eclipsensis.source"/>
+   </feature>
+   <feature id="net.sf.eclipsensis.installoptions.feature.source" version="0.0.0">
+        <category name="net.sf.eclipsensis.source"/>
+   </feature>
+   <feature id="net.sf.eclipsensis.utilities.feature.source" version="0.0.0">
+        <category name="net.sf.eclipsensis.source"/>
+   </feature>
+
+   <category-def name="net.sf.eclipsensis" label="EclipseNSIS"/>
+   <category-def name="net.sf.eclipsensis.installoptions" label="EclipseNSIS InstallOptions Editor"/>
+   <category-def name="net.sf.eclipsensis.utilities" label="EclipseNSIS Utilities"/>
+   <category-def name="net.sf.eclipsensis.source" label="EclipseNSIS Sources"/>
+</site>
