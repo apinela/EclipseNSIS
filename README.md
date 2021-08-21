@@ -1,3 +1,4 @@
+[![Java CI with Maven](https://github.com/apinela/EclipseNSIS/actions/workflows/maven.yml/badge.svg)](https://github.com/apinela/EclipseNSIS/actions/workflows/maven.yml)
 # EclipseNSIS
 
 EclipseNSIS is a plugin for the Eclipse platform which enables editing,
